@@ -26,76 +26,6 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<StockLocation> ActivateSubcontractingLocationRulesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
-            // def _activate_subcontracting_location_rules(self):
-            // """ Create or unarchive rules for the 'custom' subcontracting location(s).
-            // The subcontracting location defined on the company is considered as the 'reference' one.
-            // All rules defined on this 'reference' location will be replicated on 'custom' subcontracting locations.
-            // """
-            // locations_per_company = {}
-            // for location in self:
-            //     if location.is_subcontracting_location and location != location.company_id.subcontracting_location_id:
-            //         locations_per_company.setdefault(location.company_id, []).extend(location)
-            // new_rules_vals = []
-            // rules_to_unarchive = self.env['stock.rule']
-            // for company, locations in locations_per_company.items():
-            //     reference_location_id = company.subcontracting_location_id
-            //     if reference_location_id:
-            //         reference_rules_from = self.env['stock.rule'].search([('location_src_id', '=', reference_location_id.id)])
-            //         reference_rules_to = self.env['stock.rule'].search([('location_dest_id', '=', reference_location_id.id)])
-            //         for location in locations:
-            //             existing_rules = {
-            //                 (rule.route_id, rule.picking_type_id, rule.action, rule.location_src_id): rule
-            //                 for rule in self.env['stock.rule'].with_context(active_test=False).search([('location_src_id', '=', location.id)])
-            //             }
-            //             for rule in reference_rules_from:
-            //                 if (rule.route_id, rule.picking_type_id, rule.action, location) not in existing_rules:
-            //                     new_rules_vals.append(rule.copy_data({
-            //                         'location_src_id': location.id,
-            //                         'name': rule.name.replace(reference_location_id.name, location.name)
-            //                     })[0])
-            //                 else:
-            //                     existing_rule = existing_rules[(rule.route_id, rule.picking_type_id, rule.action, location)]
-            //                     if not existing_rule.active:
-            //                         rules_to_unarchive += existing_rule
-            //             existing_rules = {
-            //                 (rule.route_id, rule.picking_type_id, rule.action, rule.location_dest_id): rule
-            //                 for rule in self.env['stock.rule'].with_context(active_test=False).search([('location_dest_id', '=', location.id)])
-            //             }
-            //             for rule in reference_rules_to:
-            //                 if (rule.route_id, rule.picking_type_id, rule.action, location) not in existing_rules:
-            //                     new_rules_vals.append(rule.copy_data({
-            //                         'location_dest_id': location.id,
-            //                         'name': rule.name.replace(reference_location_id.name, location.name)
-            //                     })[0])
-            //                 else:
-            //                     existing_rule = existing_rules[(rule.route_id, rule.picking_type_id, rule.action, location)]
-            //                     if not existing_rule.active:
-            //                         rules_to_unarchive += existing_rule
-            // self.env['stock.rule'].create(new_rules_vals)
-            // rules_to_unarchive.action_unarchive()
-            */
-            return default;
-        }
-
-        protected async Task<StockLocation> ArchiveSubcontractingLocationRulesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
-            // def _archive_subcontracting_location_rules(self):
-            // """ Archive subcontracting rules for locations that are no longer 'custom' subcontracting locations."""
-            // reference_location_ids = self.company_id.subcontracting_location_id
-            // reference_rules = self.env['stock.rule'].search(['|', ('location_src_id', 'in', reference_location_ids.ids), ('location_dest_id', 'in', reference_location_ids.ids)])
-            // reference_routes = reference_rules.route_id
-            // rules_to_archive = self.env['stock.rule'].search(['&', ('route_id', 'in', reference_routes.ids), '|', ('location_src_id', 'in', self.ids), ('location_dest_id', 'in', self.ids)])
-            // rules_to_archive.action_archive()
-            */
-            return default;
-        }
-
         protected async Task<StockLocation> CheckAccessPutawayInternalAsync()
         {
             /*
@@ -144,7 +74,7 @@ namespace Bamboo.Core.Application.Services
             //             return False
             //         if product_capacity and quantity + location_qty > product_capacity.quantity:
             //             return False
-            //     positive_quant = self.quant_ids.filtered(lambda q: float_compare(q.quantity, 0, precision_rounding=q.product_id.uom_id.rounding) > 0)
+            //     positive_quant = self.quant_ids.filtered(lambda q: q.product_id.uom_id.compare(q.quantity, 0) > 0)
             //     # check if only allow new product when empty
             //     if self.storage_category_id.allow_new_product == "empty" and positive_quant:
             //         return False
@@ -152,7 +82,7 @@ namespace Bamboo.Core.Application.Services
             //     if self.storage_category_id.allow_new_product == "same":
             //         # In case it's a package, `product` is not defined, so try to get
             //         # the package products from the context
-            //         product = product or self._context.get('products')
+            //         product = product or self.env.context.get('products')
             //         if (positive_quant and positive_quant.product_id != product) or len(product) > 1:
             //             return False
             //         if self.env['stock.move.line'].search_count([
@@ -187,7 +117,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
             // def _check_scrap_location(self):
             // for record in self:
-            //     if record.scrap_location and self.env['stock.picking.type'].search_count([('code', '=', 'mrp_operation'), ('default_location_dest_id', '=', record.id)], limit=1):
+            //     if record.usage == 'inventory' and self.env['stock.picking.type'].search_count([('code', '=', 'mrp_operation'), ('default_location_dest_id', '=', record.id)], limit=1):
             //         raise ValidationError(_("You cannot set a location as a scrap location when it is assigned as a destination location for a manufacturing type operation."))
             */
             return default;
@@ -201,7 +131,7 @@ namespace Bamboo.Core.Application.Services
             // for location in self:
             //     if location == location.company_id.subcontracting_location_id:
             //         raise ValidationError(_("You cannot alter the company's subcontracting location"))
-            //     if location.is_subcontracting_location and location.usage != 'internal':
+            //     if location.is_subcontract() and location.usage != 'internal':
             //         raise ValidationError(_("In order to manage stock accurately, subcontracting locations must be type Internal, linked to the appropriate company."))
             */
             return default;
@@ -244,6 +174,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockLocation> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
+            // def _compute_display_name(self):
+            // super()._compute_display_name()
+            // for location in self:
+            //     has_parent = location.location_id and location.usage != 'view'
+            //     if location.env.context.get('formatted_display_name') and has_parent:
+            //         location.display_name = f"--{location.location_id.complete_name}/--{location.name}"
+            //     elif has_parent:
+            //         location.display_name = f"{location.location_id.complete_name}/{location.name}"
+            */
+            return default;
+        }
+
+        protected async Task<StockLocation> ComputeEquipmentCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: stock_location.py) ---
+            // def _compute_equipment_count(self):
+            // equipment_data = self.env['maintenance.equipment']._read_group([('location_id', 'in', self.ids)], ['location_id'], ['__count'])
+            // mapped_data = {location.id: count for location, count in equipment_data}
+            // for location in self:
+            //     location.equipment_count = mapped_data.get(location.id, 0)
+            */
+            return default;
+        }
+
         protected async Task<StockLocation> ComputeIsEmptyInternalAsync()
         {
             /*
@@ -256,6 +215,22 @@ namespace Bamboo.Core.Application.Services
             // groups = dict(groups)
             // for location in self:
             //     location.is_empty = groups.get(location, 0) <= 0
+            */
+            return default;
+        }
+
+        protected async Task<StockLocation> ComputeIsValuedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_location.py) ---
+            // def _compute_is_valued(self):
+            // for location in self:
+            //     if location._should_be_valued():
+            //         location.is_valued_internal = True
+            //         location.is_valued_external = False
+            //     else:
+            //         location.is_valued_internal = False
+            //         location.is_valued_external = True
             */
             return default;
         }
@@ -345,24 +320,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public override async Task<StockLocation> CreateAsync(StockLocation entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
-            // def create(self, vals_list):
-            // res = super().create(vals_list)
-            // new_subcontracting_locations = res.filtered(lambda l: l.is_subcontracting_location)
-            // new_subcontracting_locations._activate_subcontracting_location_rules()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
-            // def create(self, vals_list):
-            // res = super().create(vals_list)
-            // self.invalidate_model(['warehouse_id'])
-            // return res
-            */
-            return await base.CreateAsync(entity, fields);
-        }
-
         protected async Task<StockLocation> GetNextInventoryDateInternalAsync()
         {
             /*
@@ -376,9 +333,9 @@ namespace Bamboo.Core.Application.Services
             // if self.usage not in ['internal', 'transit']:
             //     return False
             // next_inventory_date = False
-            // if self.next_inventory_date:
-            //     next_inventory_date = self.next_inventory_date
-            // elif self.company_id.annual_inventory_month:
+            // company_inventory_date = False
+            // 
+            // if self.company_id.annual_inventory_month:
             //     today = fields.Date.today()
             //     annual_inventory_month = int(self.company_id.annual_inventory_month)
             //     # Manage 0 and negative annual_inventory_day
@@ -386,14 +343,18 @@ namespace Bamboo.Core.Application.Services
             //     max_day = calendar.monthrange(today.year, annual_inventory_month)[1]
             //     # Manage annual_inventory_day bigger than last_day
             //     annual_inventory_day = min(annual_inventory_day, max_day)
-            //     next_inventory_date = today.replace(
+            //     company_inventory_date = today.replace(
             //         month=annual_inventory_month, day=annual_inventory_day)
-            //     if next_inventory_date <= today:
+            //     if company_inventory_date <= today:
             //         # Manage leap year with the february
             //         max_day = calendar.monthrange(today.year + 1, annual_inventory_month)[1]
             //         annual_inventory_day = min(annual_inventory_day, max_day)
-            //         next_inventory_date = next_inventory_date.replace(
+            //         company_inventory_date = company_inventory_date.replace(
             //             day=annual_inventory_day, year=today.year + 1)
+            // if self.next_inventory_date:
+            //     next_inventory_date = min(self.next_inventory_date, company_inventory_date) if company_inventory_date else self.next_inventory_date
+            // elif self.company_id.annual_inventory_month:
+            //     next_inventory_date = company_inventory_date
             // return next_inventory_date
             */
             return default;
@@ -430,21 +391,23 @@ namespace Bamboo.Core.Application.Services
             //                                                (not rule.category_id or rule.category_id in categs) and
             //                                                (not rule.package_type_ids or package_type in rule.package_type_ids))
             // 
-            // putaway_rules = putaway_rules.sorted(lambda rule: (rule.package_type_ids,
-            //                                                    rule.product_id,
-            //                                                    rule.category_id == categs[:1],  # same categ, not a parent
-            //                                                    rule.category_id),
+            // putaway_rules = putaway_rules.sorted(lambda rule: (bool(rule.package_type_ids),
+            //                                                    bool(rule.product_id),
+            //                                                    bool(rule.category_id == categs[:1]),  # same categ, not a parent
+            //                                                    bool(rule.category_id)),
             //                                      reverse=True)
             // 
             // putaway_location = None
-            // locations = self.child_internal_location_ids
+            // locations = self.env.context.get("locations")
+            // if not locations:
+            //     locations = self.child_internal_location_ids
             // if putaway_rules:
             //     # get current product qty (qty in current quants and future qty on assigned ml) of all child locations
             //     qty_by_location = defaultdict(lambda: 0)
             //     if locations.storage_category_id:
             //         if package and package.package_type_id:
             //             move_line_data = self.env['stock.move.line']._read_group([
-            //                 ('id', 'not in', list(self._context.get('exclude_sml_ids', set()))),
+            //                 ('id', 'not in', list(self.env.context.get('exclude_sml_ids', set()))),
             //                 ('result_package_id.package_type_id', '=', package_type.id),
             //                 ('state', 'not in', ['draft', 'cancel', 'done']),
             //             ], ['location_dest_id'], ['result_package_id:count_distinct'])
@@ -457,7 +420,7 @@ namespace Bamboo.Core.Application.Services
             //                 qty_by_location[location.id] += count
             //         else:
             //             move_line_data = self.env['stock.move.line']._read_group([
-            //                 ('id', 'not in', list(self._context.get('exclude_sml_ids', set()))),
+            //                 ('id', 'not in', list(self.env.context.get('exclude_sml_ids', set()))),
             //                 ('product_id', '=', product.id),
             //                 ('location_dest_id', 'in', locations.ids),
             //                 ('state', 'not in', ['draft', 'done', 'cancel'])
@@ -493,30 +456,39 @@ namespace Bamboo.Core.Application.Services
             // """Returns a dictionary with the net and forecasted weight of the location.
             // param excluded_sml_ids: set of stock.move.line ids to exclude from the computation
             // """
-            // result = defaultdict(lambda: defaultdict(float))
             // if not excluded_sml_ids:
             //     excluded_sml_ids = set()
             // Product = self.env['product.product']
             // StockMoveLine = self.env['stock.move.line']
             // 
-            // quants = self.env['stock.quant'].read_group([('location_id', 'in', self.ids)], ['quantity'], ['location_id', 'product_id'], lazy=False)
-            // base_domain = [('state', 'not in', ['draft', 'done', 'cancel']), ('id', 'not in', tuple(excluded_sml_ids))]
-            // outgoing_move_lines = StockMoveLine.read_group(expression.AND([[('location_id', 'in', self.ids)], base_domain]), ['quantity_product_uom'], ['location_id', 'product_id'], lazy=False)
-            // incoming_move_lines = StockMoveLine.read_group(expression.AND([[('location_dest_id', 'in', self.ids)], base_domain]), ['quantity_product_uom'], ['location_dest_id', 'product_id'], lazy=False)
+            // quants = self.env['stock.quant']._read_group(
+            //     [('location_id', 'in', self.ids)],
+            //     groupby=['location_id', 'product_id'], aggregates=['quantity:sum'],
+            // )
+            // base_domain = Domain('state', 'not in', ['draft', 'done', 'cancel']) & Domain('id', 'not in', tuple(excluded_sml_ids))
+            // outgoing_move_lines = StockMoveLine._read_group(
+            //     Domain('location_id', 'in', self.ids) & base_domain,
+            //     groupby=['location_id', 'product_id'], aggregates=['quantity_product_uom:sum'],
+            // )
+            // incoming_move_lines = StockMoveLine._read_group(
+            //     Domain('location_dest_id', 'in', self.ids) & base_domain,
+            //     groupby=['location_dest_id', 'product_id'], aggregates=['quantity_product_uom:sum']
+            // )
             // 
-            // product_ids = {record['product_id'][0] for record in quants + outgoing_move_lines + incoming_move_lines}
-            // weight_per_product = {weight['id']: weight['weight'] for weight in Product.browse(product_ids).read(['weight'])}
+            // products = Product.union(*(product for __, product, __ in quants + outgoing_move_lines + incoming_move_lines))
+            // products.fetch(['weight'])
             // 
-            // for quant in quants:
-            //     weight = quant['quantity'] * weight_per_product[quant['product_id'][0]]
-            //     result[self.browse(quant['location_id'][0])]['net_weight'] += weight
-            //     result[self.browse(quant['location_id'][0])]['forecast_weight'] += weight
+            // result = defaultdict(lambda: defaultdict(float))
+            // for loc, product, quantity_sum in quants:
+            //     weight = quantity_sum * product.weight
+            //     result[loc]['net_weight'] += weight
+            //     result[loc]['forecast_weight'] += weight
             // 
-            // for line in outgoing_move_lines:
-            //     result[self.browse(line['location_id'][0])]['forecast_weight'] -= line['quantity_product_uom'] * weight_per_product[line['product_id'][0]]
+            // for loc, product, quantity_product_uom_sum in outgoing_move_lines:
+            //     result[loc]['forecast_weight'] -= quantity_product_uom_sum * product.weight
             // 
-            // for line in incoming_move_lines:
-            //     result[self.browse(line['location_dest_id'][0])]['forecast_weight'] += line['quantity_product_uom'] * weight_per_product[line['product_id'][0]]
+            // for dest_loc, product, quantity_product_uom_sum in incoming_move_lines:
+            //     result[dest_loc]['forecast_weight'] += quantity_product_uom_sum * product.weight
             // 
             // return result
             */
@@ -538,15 +510,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockLocation> OnchangeUsageInternalAsync()
+        public async Task<StockLocation> IsSubcontractAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
-            // def _onchange_usage(self):
-            // if self.usage not in ('internal', 'inventory'):
-            //     self.scrap_location = False
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
+            // def is_subcontract(self):
+            // subcontracting_location = self.company_id.subcontracting_location_id
+            // return subcontracting_location and self._child_of(subcontracting_location)
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<StockLocation> SearchIsEmptyInternalAsync(object @operator, object @value)
@@ -554,19 +526,33 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
             // def _search_is_empty(self, operator, value):
-            // if operator not in ('=', '!=') or not isinstance(value, bool):
-            //     raise NotImplementedError(_(
-            //         "The search does not support the %(operator)s operator or %(value)s value.",
-            //         operator=operator,
-            //         value=value,
-            //     ))
-            // groups = self.env['stock.quant']._read_group([
-            //     ('location_id.usage', 'in', ['internal', 'transit'])],
-            //     ['location_id'], ['quantity:sum'])
-            // location_ids = {loc.id for loc, quantity in groups if quantity >= 0}
-            // if value and operator == '=' or not value and operator == '!=':
-            //     return [('id', 'not in', list(location_ids))]
-            // return [('id', 'in', list(location_ids))]
+            // if operator != 'in':
+            //     return NotImplemented
+            // location_ids = [
+            //     location.id
+            //     for location, in self.env['stock.quant']._read_group(
+            //         [('location_id.usage', 'in', ['internal', 'transit'])],
+            //         ['location_id'],
+            //         having=[('quantity:sum', '>', 0)]
+            //     )
+            // ]
+            // return [('id', 'not in', location_ids)]
+            */
+            return default;
+        }
+
+        protected async Task<StockLocation> SearchIsValuedInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_location.py) ---
+            // def _search_is_valued(self, operator, value):
+            // if operator not in ['=', '!=']:
+            //     raise NotImplementedError(self.env._("Invalid search operator or value"))
+            // positive_operator = (operator == '=' and value) or (operator == '!=' and not value)
+            // domain = Domain([('company_id', '!=', False), ('usage', 'in', ['internal', 'transit'])])
+            // if positive_operator:
+            //     return domain
+            // return ~domain
             */
             return default;
         }
@@ -580,7 +566,7 @@ namespace Bamboo.Core.Application.Services
             // be considered when valuating the stock of a company.
             // """
             // self.ensure_one()
-            // return self.usage == 'internal' or bool(self.usage == 'transit' and self.company_id)
+            // return bool(self.company_id) and self.usage in ['internal', 'transit']
             */
             return default;
         }
@@ -591,7 +577,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
             // def should_bypass_reservation(self):
             // self.ensure_one()
-            // return self.usage in ('supplier', 'customer', 'inventory', 'production') or self.scrap_location
+            // return self.usage in ('supplier', 'customer', 'inventory', 'production')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -608,67 +594,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, StockLocation entity, List<string> fields)
+        public async Task<StockLocation> ViewEquipmentsRecordsAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
-            // def write(self, values):
-            // res = super().write(values)
-            // if 'is_subcontracting_location' in values:
-            //     if values['is_subcontracting_location']:
-            //         self._activate_subcontracting_location_rules()
-            //     else:
-            //         self._archive_subcontracting_location_rules()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
-            // def write(self, values):
-            // if 'company_id' in values:
-            //     for location in self:
-            //         if location.company_id.id != values['company_id']:
-            //             raise UserError(_("Changing the company of this record is forbidden at this point, you should rather archive it and create a new one."))
-            // if 'usage' in values and values['usage'] == 'view':
-            //     if self.mapped('quant_ids'):
-            //         raise UserError(_("This location's usage cannot be changed to view as it contains products."))
-            // if 'usage' in values or 'scrap_location' in values:
-            //     modified_locations = self.filtered(
-            //         lambda l: any(l[f] != values[f] if f in values else False
-            //                       for f in {'usage', 'scrap_location'}))
-            //     reserved_quantities = self.env['stock.quant'].search_count([
-            //         ('location_id', 'in', modified_locations.ids),
-            //         ('quantity', '>', 0),
-            //         ],
-            //         limit=1)
-            //     if reserved_quantities:
-            //         raise UserError(_(
-            //             "Internal locations having stock can't be converted"
-            //         ))
-            // if 'active' in values:
-            //     if not values['active']:
-            //         for location in self:
-            //             warehouses = self.env['stock.warehouse'].search([('active', '=', True), '|', ('lot_stock_id', '=', location.id), ('view_location_id', '=', location.id)], limit=1)
-            //             if warehouses:
-            //                 raise UserError(_(
-            //                     "You cannot archive location %(location)s because it is used by warehouse %(warehouse)s",
-            //                     location=location.display_name, warehouse=warehouses.display_name))
-            // 
-            //     if not self.env.context.get('do_not_check_quant'):
-            //         children_location = self.env['stock.location'].with_context(active_test=False).search([('id', 'child_of', self.ids)])
-            //         internal_children_locations = children_location.filtered(lambda l: l.usage == 'internal')
-            //         children_quants = self.env['stock.quant'].search(['&', '|', ('quantity', '!=', 0), ('reserved_quantity', '!=', 0), ('location_id', 'in', internal_children_locations.ids)])
-            //         if children_quants and not values['active']:
-            //             raise UserError(_(
-            //                 "You can't disable locations %s because they still contain products.",
-            //                 ', '.join(children_quants.mapped('location_id.display_name'))))
-            //         else:
-            //             super(Location, children_location - self).with_context(do_not_check_quant=True).write({
-            //                 'active': values['active'],
-            //             })
-            // 
-            // res = super().write(values)
-            // self.invalidate_model(['warehouse_id'])
-            // return res
+            --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: stock_location.py) ---
+            // def action_view_equipments_records(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("maintenance.hr_equipment_action")
+            // action['domain'] = [('location_id', '=', self.id)]
+            // return action
             */
-            return await base.WriteAsync(ids, entity, fields);
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

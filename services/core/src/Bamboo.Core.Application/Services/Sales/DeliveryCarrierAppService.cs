@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("Delivery", Category = "Sales", Depends = new[] { "sale" })]
+    [Module("Delivery", Category = "Sales", Depends = new[] { "sale", "payment_custom" })]
     public class DeliveryCarrierAppService : GenericApplicationService<DeliveryCarrier>, IDeliveryCarrierAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
@@ -26,15 +26,14 @@ namespace Bamboo.Core.Application.Services
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
         }
 
-        protected async Task<DeliveryCarrier> ApplyMarginsInternalAsync(object price)
+        protected async Task<DeliveryCarrier> ApplyMarginsInternalAsync(object price, object order)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _apply_margins(self, price):
+            // def _apply_margins(self, price, order=False):
             // self.ensure_one()
             // if self.delivery_type == 'fixed':
             //     return float(price)
-            // order = self.env.context.get('order', self.env['sale.order'])
             // fixed_margin_in_sale_currency = self._compute_currency(order, self.fixed_margin, 'company_to_pricelist') if order else self.fixed_margin
             // return float(price) * (1.0 + self.margin) + fixed_margin_in_sale_currency
             */
@@ -45,20 +44,25 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def available_carriers(self, partner, order):
-            // return self.filtered(lambda c: c._match(partner, order))
+            // def available_carriers(self, partner, source):
+            // return self.filtered(lambda c: c._match(partner, source))
             --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: delivery_carrier.py) ---
-            // def available_carriers(self, partner, order):
+            // def available_carriers(self, partner, source):
             // """ Override of `delivery` to filter out regular delivery methods from Gelato orders and
             // Gelato delivery methods from non-Gelato orders.
             // 
             // :param res.partner partner: The partner to check.
-            // :param sale.order order: The current order.
+            // :param sale.order or stock.picking source: The current order or stock transfer.
             // :return: The available delivery methods.
             // :rtype: delivery.carrier
             // """
-            // available_delivery_methods = super().available_carriers(partner, order)
-            // is_gelato_order = any(order.order_line.product_id.mapped('gelato_product_uid'))
+            // available_delivery_methods = super().available_carriers(partner, source)
+            // if source._name == 'sale.order':
+            //     is_gelato_order = any(source.order_line.product_id.mapped('gelato_product_uid'))
+            // elif source._name == 'stock.picking':
+            //     is_gelato_order = any(source.move_ids.product_id.mapped('gelato_product_uid'))
+            // else:
+            //     raise UserError(_("Invalid source document type"))
             // if is_gelato_order:
             //     return available_delivery_methods.filtered(lambda m: m.delivery_type == 'gelato')
             // else:
@@ -302,37 +306,26 @@ namespace Bamboo.Core.Application.Services
             // for vals in vals_list:
             //     if vals.get('delivery_type') == 'in_store':
             //         vals['integration_level'] = 'rate'
+            //         vals['allow_cash_on_delivery'] = False
+            // 
+            //         # Set the default warehouses and publish if one is found.
+            //         if 'company_id' in vals:
+            //             company_id = vals.get('company_id')
+            //         else:
+            //             company_id = (
+            //                 self.env['product.product'].browse(vals.get('product_id')).company_id.id
+            //                 or self.env.company.id
+            //             )
+            //         warehouses = self.env['stock.warehouse'].search(
+            //             [('company_id', 'in', company_id)]
+            //         )
+            //         vals.update({
+            //             'warehouse_ids': [Command.set(warehouses.ids)],
+            //             'is_published': bool(warehouses),
+            //         })
             // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
-        }
-
-        protected async Task<DeliveryCarrier> EnsurePartnerAddressIsCompleteInternalAsync(object partner)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: delivery_carrier.py) ---
-            // def _ensure_partner_address_is_complete(self, partner):
-            // """ Ensure that all partner address fields required by Gelato are set.
-            // 
-            // :param res.partner partner: The partner address to check.
-            // :return: An error message if the address is incomplete, None otherwise.
-            // :rtype: str | None
-            // """
-            // required_address_fields = ['city', 'country_id', 'street']
-            // if partner.country_id.code not in const.COUNTRIES_WITHOUT_ZIPCODE:
-            //     required_address_fields.append('zip')
-            // missing_fields = [
-            //     partner._fields[field_name]
-            //     for field_name in required_address_fields if not partner[field_name]
-            // ]
-            // if missing_fields:
-            //     translated_field_names = [f._description_string(self.env) for f in missing_fields]
-            //     return _(
-            //         "The following required address fields are missing: %s",
-            //         ", ".join(translated_field_names),
-            //     )
-            */
-            return default;
         }
 
         public async Task<DeliveryCarrier> FixedCancelShipmentAsync(Guid id, DeliveryCarrierFixedCancelShipmentRequestDto input)
@@ -411,7 +404,7 @@ namespace Bamboo.Core.Application.Services
             // :return: The shipment rate request results.
             // :rtype: dict
             // """
-            // if error_message := self._ensure_partner_address_is_complete(order.partner_id):
+            // if error_message := order._ensure_partner_address_is_complete():
             //     return {
             //         'success': False,
             //         'price': 0,
@@ -470,7 +463,7 @@ namespace Bamboo.Core.Application.Services
             // commodities = []
             // 
             // for line in order.order_line.filtered(lambda line: not line.is_delivery and not line.display_type and line.product_id.type == 'consu'):
-            //     unit_quantity = line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
+            //     unit_quantity = line.product_uom_id._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
             //     rounded_qty = max(1, float_round(unit_quantity, precision_digits=0))
             //     country_of_origin = line.product_id.country_of_origin.code or order.warehouse_id.partner_id.country_id.code
             //     commodities.append(DeliveryCommodity(
@@ -710,7 +703,7 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     if line.product_id.type == "service":
             //         continue
-            //     qty = line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
+            //     qty = line.product_uom_id._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
             //     weight += (line.product_id.weight or 0.0) * qty
             //     volume += (line.product_id.volume or 0.0) * qty
             //     wv += (line.product_id.weight or 0.0) * (line.product_id.volume or 0.0) * qty
@@ -803,11 +796,13 @@ namespace Bamboo.Core.Application.Services
             // ''' Ask the tracking link to the service provider
             // 
             // :param picking: record of stock.picking
-            // :return str: an URL containing the tracking link or False
+            // :returns: an URL containing the tracking link or None
+            // :rtype: str | None
             // '''
             // self.ensure_one()
             // if hasattr(self, '%s_get_tracking_link' % self.delivery_type):
             //     return getattr(self, '%s_get_tracking_link' % self.delivery_type)(picking)
+            // return None
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -835,52 +830,23 @@ namespace Bamboo.Core.Application.Services
             // partner_address.geo_localize()  # Calculate coordinates.
             // 
             // pickup_locations = []
-            // order_sudo = request.website.sale_get_order()
+            // order_sudo = request.cart
             // for wh in self.warehouse_ids:
+            //     pickup_location_values = wh._prepare_pickup_location_data()
+            //     if not pickup_location_values:  # Ignore warehouses with badly configured addresses.
+            //         continue
+            // 
             //     # Prepare the stock data based on either the product or the order.
             //     if product:  # Called from the product page.
             //         in_store_stock_data = utils.format_product_stock_values(product, wh.id)
             //     else:  # Called from the checkout page.
             //         in_store_stock_data = {'in_stock': order_sudo._is_in_stock(wh.id)}
             // 
-            //     # Prepare the warehouse location.
-            //     wh_location = wh.partner_id
-            //     if not wh_location.partner_latitude or not wh_location.partner_longitude:
-            //         wh_location.geo_localize()  # Find the longitude and latitude of the warehouse.
-            // 
-            //     # Format the pickup location values of the warehouse.
-            //     try:
-            //         pickup_location_values = {
-            //             'id': wh.id,
-            //             'name': wh_location['name'].title(),
-            //             'street': wh_location['street'].title(),
-            //             'city': wh_location.city.title(),
-            //             'zip_code': wh_location.zip or '',
-            //             'country_code': wh_location.country_code,
-            //             'state': wh_location.state_id.code,
-            //             'latitude': wh_location.partner_latitude,
-            //             'longitude': wh_location.partner_longitude,
-            //             'additional_data': {'in_store_stock': in_store_stock_data},
-            //         }
-            //     except AttributeError:
-            //         continue  # Ignore warehouses with badly configured address.
-            // 
-            //     # Prepare the opening hours data.
-            //     if wh.opening_hours:
-            //         opening_hours_dict = {str(i): [] for i in range(7)}
-            //         for att in wh.opening_hours.attendance_ids:
-            //             if att.day_period in ('morning', 'afternoon'):
-            //                 opening_hours_dict[att.dayofweek].append(
-            //                     f'{format_duration(att.hour_from)} - {format_duration(att.hour_to)}'
-            //                 )
-            //         pickup_location_values['opening_hours'] = opening_hours_dict
-            //     else:
-            //         pickup_location_values['opening_hours'] = {}
-            // 
             //     # Calculate the distance between the partner address and the warehouse location.
-            //     pickup_location_values['distance'] = utils.calculate_partner_distance(
-            //         partner_address, wh_location
-            //     )
+            //     pickup_location_values.update({
+            //         'additional_data': {'in_store_stock_data': in_store_stock_data},
+            //         'distance': utils.calculate_partner_distance(partner_address, wh.partner_id),
+            //     })
             //     pickup_locations.append(pickup_location_values)
             // 
             // return sorted(pickup_locations, key=lambda k: k['distance'])
@@ -911,8 +877,12 @@ namespace Bamboo.Core.Application.Services
             // exclude_apps = ['delivery_barcode', 'delivery_stock_picking_batch', 'delivery_iot']
             // return {
             //     'name': _('New Providers'),
-            //     'view_mode': 'kanban,form',
             //     'res_model': 'ir.module.module',
+            //     'view_mode': 'kanban,list',
+            //     'views': [
+            //         (self.env.ref('delivery.delivery_provider_module_kanban').id, 'kanban'),
+            //         (self.env.ref('delivery.delivery_provider_module_list').id, 'list'),
+            //     ],
             //     'domain': [['name', '=like', 'delivery_%'], ['name', 'not in', exclude_apps]],
             //     'type': 'ir.actions.act_window',
             //     'help': _('''<p class="o_view_nocontent">
@@ -964,7 +934,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // if self.debug_logging:
             //     self.env.flush_all()
-            //     db_name = self._cr.dbname
+            //     db_name = self.env.cr.dbname
             // 
             //     # Use a new cursor to avoid rollback that could be caused by an upper method
             //     try:
@@ -1005,60 +975,102 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<DeliveryCarrier> MatchExcludedTagsInternalAsync(object order)
+        protected async Task<DeliveryCarrier> MatchExcludedTagsInternalAsync(object source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _match_excluded_tags(self, order):
+            // def _match_excluded_tags(self, source):
             // self.ensure_one()
-            // return not any(tag in order.order_line.product_id.all_product_tag_ids for tag in self.excluded_tag_ids)
+            // if source._name == 'sale.order':
+            //     products = source.order_line.product_id
+            // elif source._name == 'stock.picking':
+            //     products = source.move_ids.with_prefetch().mapped('product_id')
+            // else:
+            //     raise UserError(_("Invalid source document type"))
+            // return not any(tag in products.all_product_tag_ids for tag in self.excluded_tag_ids)
             */
             return default;
         }
 
-        protected async Task<DeliveryCarrier> MatchInternalAsync(object partner, object order)
+        protected async Task<DeliveryCarrier> MatchInternalAsync(object partner, object source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _match(self, partner, order):
+            // def _match(self, partner, source):
             // self.ensure_one()
-            // return self._match_address(partner) and self._match_must_have_tags(order) and self._match_excluded_tags(order) and self._match_weight(order) and self._match_volume(order)
+            // return (
+            //     self._match_address(partner)
+            //     and self._match_must_have_tags(source)
+            //     and self._match_excluded_tags(source)
+            //     and self._match_weight(source)
+            //     and self._match_volume(source)
+            // )
             */
             return default;
         }
 
-        protected async Task<DeliveryCarrier> MatchMustHaveTagsInternalAsync(object order)
+        protected async Task<DeliveryCarrier> MatchMustHaveTagsInternalAsync(object source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _match_must_have_tags(self, order):
+            // def _match_must_have_tags(self, source):
             // self.ensure_one()
+            // if source._name == 'sale.order':
+            //     products = source.order_line.product_id
+            // elif source._name == 'stock.picking':
+            //     products = source.move_ids.with_prefetch().mapped('product_id')
+            // else:
+            //     raise UserError(_("Invalid source document type"))
             // return not self.must_have_tag_ids or any(
-            //     tag in order.order_line.product_id.all_product_tag_ids
+            //     tag in products.all_product_tag_ids
             //     for tag in self.must_have_tag_ids
             // )
             */
             return default;
         }
 
-        protected async Task<DeliveryCarrier> MatchVolumeInternalAsync(object order)
+        protected async Task<DeliveryCarrier> MatchVolumeInternalAsync(object source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _match_volume(self, order):
+            // def _match_volume(self, source):
             // self.ensure_one()
-            // return not self.max_volume or sum(order_line.product_id.volume * order_line.product_qty for order_line in order.order_line) <= self.max_volume
+            // if source._name == 'sale.order':
+            //     total_volume = sum(
+            //         line.product_id.volume * line.product_qty
+            //         for line in source.order_line
+            //     )
+            // elif source._name == 'stock.picking':
+            //     total_volume = sum(
+            //         move.product_id.volume * move.product_uom_qty
+            //         for move in source.move_ids
+            //     )
+            // else:
+            //     raise UserError(_("Invalid source document type"))
+            // return not self.max_volume or total_volume <= self.max_volume
             */
             return default;
         }
 
-        protected async Task<DeliveryCarrier> MatchWeightInternalAsync(object order)
+        protected async Task<DeliveryCarrier> MatchWeightInternalAsync(object source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
-            // def _match_weight(self, order):
+            // def _match_weight(self, source):
             // self.ensure_one()
-            // return not self.max_weight or sum(order_line.product_id.weight * order_line.product_qty for order_line in order.order_line) <= self.max_weight
+            // if source._name == 'sale.order':
+            //     total_weight = sum(
+            //         line.product_id.weight * line.product_qty
+            //         for line in source.order_line
+            //     )
+            // elif source._name == 'stock.picking':
+            //     total_weight = sum(
+            //         move.product_id.weight * move.product_uom_qty
+            //         for move in source.move_ids
+            //     )
+            // else:
+            //     raise UserError(_("Invalid source document type"))
+            // return not self.max_weight or total_weight <= self.max_weight
             */
             return default;
         }
@@ -1128,12 +1140,16 @@ namespace Bamboo.Core.Application.Services
             // ''' Compute the price of the order shipment
             // 
             // :param order: record of sale.order
-            // :return dict: {'success': boolean,
-            //                'price': a float,
-            //                'error_message': a string containing an error message,
-            //                'warning_message': a string containing a warning message}
-            //                # TODO maybe the currency code?
+            // :returns: a dict with structure
+            //   ::
+            // 
+            //     {'success': boolean,
+            //      'price': a float,
+            //      'error_message': a string containing an error message,
+            //      'warning_message': a string containing a warning message}
+            // :rtype: dict
             // '''
+            // # TODO maybe the currency code?
             // self.ensure_one()
             // if hasattr(self, '%s_rate_shipment' % self.delivery_type):
             //     res = getattr(self, '%s_rate_shipment' % self.delivery_type)(order)
@@ -1149,7 +1165,7 @@ namespace Bamboo.Core.Application.Services
             //         product_currency=company.currency_id
             //     )
             //     # apply margin on computed price
-            //     res['price'] = self.with_context(order=order)._apply_margins(res['price'])
+            //     res['price'] = self._apply_margins(res['price'], order)
             //     # save the real price in case a free_over rule overide it to 0
             //     res['carrier_price'] = res['price']
             //     # free when order is large enough
@@ -1179,11 +1195,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: delivery_carrier.py) ---
             // def _search_is_mondialrelay(self, operator, value):
-            // if operator not in ('=', '!=') or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
-            // if not value:
-            //     operator = '!=' if operator == '=' else '='
-            // return [('product_id.default_code', operator, 'MR')]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('product_id.default_code', '=', 'MR')]
             */
             return default;
         }
@@ -1196,16 +1210,20 @@ namespace Bamboo.Core.Application.Services
             // ''' Send the package to the service provider
             // 
             // :param pickings: A recordset of pickings
-            // :return list: A list of dictionaries (one per picking) containing of the form::
+            // :returns: A list of dictionaries (one per picking) containing of
+            //     the form::
+            // 
             //                  { 'exact_price': price,
             //                    'tracking_number': number }
-            //                    # TODO missing labels per package
-            //                    # TODO missing currency
-            //                    # TODO missing success, error, warnings
+            // :rtype: list[dict] | None
             // '''
+            // # TODO missing labels per package
+            // # TODO missing currency
+            // # TODO missing success, error, warnings
             // self.ensure_one()
             // if hasattr(self, '%s_send_shipping' % self.delivery_type):
             //     return getattr(self, '%s_send_shipping' % self.delivery_type)(pickings)
+            // return None
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1250,6 +1268,7 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // if vals.get('delivery_type') == 'in_store':
             //     vals['integration_level'] = 'rate'
+            //     vals['allow_cash_on_delivery'] = False
             // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);

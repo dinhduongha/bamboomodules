@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldIntegerable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // lang = self.user_lang()
             // value = element.text_content().strip()
@@ -41,7 +41,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(IntegerConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     format_decimalized_number=dict(type='boolean', string=_('Decimalized number')),
             //     precision_digits=dict(type='integer', string=_('Precision Digits')),

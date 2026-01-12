@@ -11,25 +11,34 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
     public interface ITemplateResetMixinAppService : IMixinAppService
     {
         Task<TEntity> ActionCreateSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> ActionOpenMailPreviewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ActionUnlinkSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
-        Task<TEntity> CancelUnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> CheckAbstractModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> CheckCanBeRenderedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fnames, object render_options) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ComputeCanWriteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> ComputeHasDynamicReportsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> ComputeHasMailServerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ComputeIsTemplateEditorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ComputeRenderModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ComputeTemplateCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> CreateActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> CreateAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> ExpressionIsDefaultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> FixAttachmentOwnershipInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> GenerateTemplateAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object render_results) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
-        Task<TEntity> GenerateTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object find_or_create_partners) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
-        Task<TEntity> GenerateTemplateRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object find_or_create_partners, object render_results) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> GenerateTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object recipients_allow_suggested, object find_or_create_partners) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> GenerateTemplateRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object allow_suggested, object find_or_create_partners, object render_results) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> GenerateTemplateScheduledDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_results) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> GenerateTemplateStaticValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object render_results) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> GetDynamicFieldNamesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> GetNonAbstractModelsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> HasUnsafeExpressionTemplateInlineTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> HasUnsafeExpressionTemplateQwebInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> LoadRecordsWriteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
-        Task<TEntity> OpenDeleteConfirmationModalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
+        Task<TEntity> OnchangeModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> OverrideTranslationTermInternalAsync<TEntity>(IEnumerable<TEntity> entities, object module_name, List<Guid> xml_ids) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> ResetTemplateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable;
         Task<TEntity> SearchTemplateCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, ITemplateResetMixinable;

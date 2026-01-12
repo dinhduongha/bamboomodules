@@ -52,7 +52,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Error Case: Selected group of users, but no user found for that email
             // email = email_normalize(message_dict.get('email_from', ''))
-            // email_has_access = self.search_count([('id', '=', self.id), ('access_group_id.users.email_normalized', '=', email)])
+            // email_has_access = self.search_count([('id', '=', self.id), ('access_group_id.user_ids.email_normalized', '=', email)])
             // if self.access_mode == 'groups' and not email_has_access:
             //     return AliasError('error_mail_group_members_restricted',
             //                           _('Only selected groups of users can send email to the mailing list.'))
@@ -138,6 +138,17 @@ namespace Bamboo.Core.Application.Services
             // return lxml.etree.tostring(tree, encoding='utf-8').decode()
             */
             return default;
+        }
+
+        public async Task<MailGroup> CloseAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def action_close(self):
+            // self.ensure_one()
+            // self.is_closed = True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<MailGroup> ComputeCanManageGroupInternalAsync()
@@ -339,18 +350,12 @@ namespace Bamboo.Core.Application.Services
             //     # empty email should match nobody
             //     return {}
             // 
-            // domain = [('email_normalized', '=', email_normalize(email))]
+            // domain = Domain('email_normalized', '=', email_normalize(email))
             // if partner_id:
-            //     domain = expression.OR([
-            //         expression.AND([
-            //             [('partner_id', '=', False)],
-            //             domain,
-            //         ]),
-            //         [('partner_id', '=', partner_id)],
-            //     ])
+            //     domain = (Domain('partner_id', '=', False) & domain) | Domain('partner_id', '=', partner_id)
             //     order = 'partner_id DESC'
             // 
-            // domain = expression.AND([domain, [('mail_group_id', 'in', self.ids)]])
+            // domain &= Domain('mail_group_id', 'in', self.ids)
             // members_data = self.env['mail.group.member'].sudo().search(domain, order=order)
             // return {
             //     member.mail_group_id.id: member
@@ -399,7 +404,7 @@ namespace Bamboo.Core.Application.Services
             //     })
             // )
             // base_url = self.get_base_url()
-            // confirm_action_url = urls.url_join(base_url, confirm_action_url)
+            // confirm_action_url = tools.urls.urljoin(base_url, confirm_action_url)
             // return confirm_action_url
             */
             return default;
@@ -441,9 +446,9 @@ namespace Bamboo.Core.Application.Services
             //     'email': email_to,
             //     'token': self._generate_email_access_token(email_to),
             // })
-            // return urls.url_join(
+            // return tools.urls.urljoin(
             //     self.get_base_url(),
-            //     f'group/{self.id}/unsubscribe_oneclick?{params}'
+            //     f'group/{self.id}/unsubscribe_oneclick?{params}',
             // )
             */
             return default;
@@ -470,6 +475,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
             // def action_join(self):
             // self.check_access('read')
+            // if self.is_closed:
+            //     raise UserError(_("You can not join a closed group."))
             // partner = self.env.user.partner_id
             // self.sudo()._join_group(partner.email, partner.id)
             // 
@@ -581,13 +588,13 @@ namespace Bamboo.Core.Application.Services
             //     format used in mail groups;
             //   * apply moderation rules;
             // 
-            // :return message: newly-created mail.message
+            // :returns: newly-created mail.message
             // """
             // self.ensure_one()
             // # First create the <mail.message>
             // Mailthread = self.env['mail.thread']
             // values = dict((key, val) for key, val in kwargs.items() if key in self.env['mail.message']._fields)
-            // author_id, email_from = Mailthread._message_compute_author(author_id, email_from, raise_on_email=True)
+            // author_id, email_from = Mailthread._message_compute_author(author_id, email_from)
             // 
             // values.update({
             //     'author_id': author_id,
@@ -792,7 +799,6 @@ namespace Bamboo.Core.Application.Services
             //             body=body,
             //             email_from=email_from,
             //             model='mail.group',
-            //             notify_author=True,
             //             res_id=group.id,
             //         )
             */
@@ -819,6 +825,39 @@ namespace Bamboo.Core.Application.Services
             // def _onchange_moderation(self):
             // if self.moderation and self.env.user not in self.moderator_ids:
             //     self.moderator_ids |= self.env.user
+            */
+            return default;
+        }
+
+        public async Task<MailGroup> OpenAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def action_open(self):
+            // self.ensure_one()
+            // self.is_closed = False
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<MailGroup> RoutingCheckRouteInternalAsync(object message, object message_dict, object route, object raise_exception)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def _routing_check_route(self, message, message_dict, route, raise_exception=True):
+            // """Bounce the incoming emails if the group is closed."""
+            // if route[0] == 'mail.group' and self.browse(route[1]).is_closed:
+            //     body = self.env["ir.qweb"]._render(
+            //         "mail_group.email_template_mail_group_closed"
+            //     )
+            //     self.env['mail.thread']._routing_create_bounce_email(
+            //         message_dict["from"],
+            //         body,
+            //         message,
+            //         references=message_dict.get("message_id", ""),
+            //     )
+            //     return ()
+            // return self.env['mail.thread']._routing_check_route(message, message_dict, route, raise_exception)
             */
             return default;
         }
@@ -852,6 +891,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // if not self.moderation_guidelines_msg:
             //     raise UserError(_('The guidelines description is empty.'))
+            // 
+            // if self.is_closed:
+            //     raise UserError(_("You can not send guidelines for a closed group."))
             // 
             // template = self.env.ref('mail_group.mail_template_guidelines', raise_if_not_found=False)
             // if not template:

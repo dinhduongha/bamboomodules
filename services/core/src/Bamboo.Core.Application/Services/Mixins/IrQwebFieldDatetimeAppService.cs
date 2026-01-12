@@ -27,9 +27,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldDatetimeable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def attributes(self, record, field_name, options, values):
-            // attrs = super(DateTime, self).attributes(record, field_name, options, values)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def attributes(self, record, field_name, options, values=None):
+            // attrs = super().attributes(record, field_name, options, values)
             // 
             // if options.get('inherit_branding'):
             //     value = record[field_name]
@@ -59,7 +59,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldDatetimeable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // value = element.text_content().strip()
             // if not value:
@@ -81,7 +81,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         utc = pytz.utc
             // 
             //         dt = user_tz.localize(dt).astimezone(utc)
-            //     except Exception:
+            //     except Exception:  # noqa: BLE001
             //         logger.warning(
             //             "Failed to convert the value for a field of the model"
             //             " %s back from the user's timezone (%s) to UTC",
@@ -99,7 +99,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(DateTimeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     format=dict(type='string', string=_('Pattern to format')),
             //     tz_name=dict(type='char', string=_('Optional timezone name')),

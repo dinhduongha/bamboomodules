@@ -11,14 +11,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IEventEventAppService : IGenericApplicationService<EventEvent>
     {
         Task<EventEvent> CopyDataAsync(Guid id, EventEventCopyDataRequestDto input);
-        Task<EventEvent> GenerateLeadsAsync(Guid id);
+        Task<EventEvent> CopyEventMenusAsync(Guid id, EventEventCopyEventMenusRequestDto input);
+        Task<EventEvent> GenerateLeadsAsync(Guid id, EventEventGenerateLeadsRequestDto input);
         Task<EventEvent> GetBackendMenuIdAsync(Guid id);
         Task<EventEvent> GetKioskUrlAsync(Guid id);
+        Task<EventEvent> GetSlotTicketsAvailabilityPosAsync(Guid id, EventEventGetSlotTicketsAvailabilityPosRequestDto input);
         Task<EventEvent> GoogleMapLinkAsync(Guid id, EventEventGoogleMapLinkRequestDto input);
         Task<EventEvent> InviteContactsAsync(Guid id);
-        Task<EventEvent> MailAttendeesAsync(Guid id, EventEventMailAttendeesRequestDto input);
         Task<EventEvent> MassMailingAttendeesAsync(Guid id);
         Task<EventEvent> MassMailingTrackSpeakersAsync(Guid id);
+        Task<EventEvent> OpenSlotCalendarAsync(Guid id);
         Task<EventEvent> SetDoneAsync(Guid id);
         Task<EventEvent> ToggleBoothMenuAsync(Guid id, EventEventToggleBoothMenuRequestDto input);
         Task<EventEvent> ToggleExhibitorMenuAsync(Guid id, EventEventToggleExhibitorMenuRequestDto input);

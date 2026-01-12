@@ -59,6 +59,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/spreadsheet-fetch-balance-tag")]
+        public async Task<IActionResult> SpreadsheetFetchBalanceTagAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
+        {
+            var result = await _appService.SpreadsheetFetchBalanceTagAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/spreadsheet-fetch-debit-credit")]
         public async Task<IActionResult> SpreadsheetFetchDebitCreditAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {

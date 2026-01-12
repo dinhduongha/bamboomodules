@@ -7,6 +7,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class PosOrderLineGetExistingLotsRequestDto
     {
         public Guid CompanyId { get; set; }
+        public Guid ConfigId { get; set; }
         public Guid ProductId { get; set; }
     }
 }

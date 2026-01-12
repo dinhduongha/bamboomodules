@@ -9,9 +9,14 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Force { get; set; }
     }
     
-    public class PurchaseOrderConfirmReminderMailRequestDto
+    public class PurchaseOrderCreateDocumentFromAttachmentRequestDto
     {
-        public object ConfirmedDate { get; set; }
+        public List<Guid> AttachmentIds { get; set; }
+    }
+    
+    public class PurchaseOrderCreateInvoiceRequestDto
+    {
+        public List<Guid> AttachmentIds { get; set; }
     }
     
     public class PurchaseOrderGetConfirmUrlRequestDto

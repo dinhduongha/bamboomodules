@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class ThemeUtilsAppService : ApplicationService, IThemeUtilsAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -66,6 +66,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for view in self._footer_templates:
             //         self.disable_view(view)
             // self._toggle_view(xml_id, True)
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: theme_utils.py) ---
+            // def enable_view(self, xml_id):
+            // """Override of `theme.utils` to disable all category style templates when enabling one."""
+            // if xml_id in self.category_style_templates:
+            //     for template in self.category_style_templates:
+            //         self.disable_view(template)
+            // super().enable_view(xml_id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FooterTemplatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IThemeUtilsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: theme_utils.py) ---
+            // def _footer_templates(self):
+            // return ['website_sale.template_footer_website_sale'] + super()._footer_templates
             */
             return default;
         }
@@ -92,7 +109,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
             // def _reset_default_config(self):
             // # Reinitialize some css customizations
-            // self.env['web_editor.assets'].make_scss_customization(
+            // self.env['website.assets'].make_scss_customization(
             //     '/website/static/src/scss/options/user_values.scss',
             //     {
             //         'font': 'null',
@@ -133,8 +150,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
             // def _toggle_asset(self, key, active):
-            // ThemeAsset = self.env['theme.ir.asset'].sudo().with_context(active_test=False)
-            // obj = ThemeAsset.search([('key', '=', key)])
+            // ThemeIrAsset = self.env['theme.ir.asset'].sudo().with_context(active_test=False)
+            // obj = ThemeIrAsset.search([('key', '=', key)])
             // website = self.env['website'].get_current_website()
             // if obj:
             //     obj = obj.copy_ids.filtered(lambda x: x.website_id == website)

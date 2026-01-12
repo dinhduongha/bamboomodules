@@ -38,8 +38,8 @@ namespace Bamboo.Core.Application.Services
             //     return tracker[field_name]
             // 
             // # build a query to fetch all needed link trackers at once
-            // search_query = expression.OR([
-            //     expression.AND([
+            // search_query = Domain.OR([
+            //     Domain.AND([
             //         [('url', '=', tracker.url)],
             //         [('campaign_id', '=', tracker.campaign_id.id)],
             //         [('medium_id', '=', tracker.medium_id.id)],
@@ -79,7 +79,7 @@ namespace Bamboo.Core.Application.Services
             //     if url.scheme:
             //         tracker.absolute_url = tracker.url
             //     else:
-            //         tracker.absolute_url = urls.url_join(tracker.get_base_url(), url)
+            //         tracker.absolute_url = tools.urls.urljoin(tracker.get_base_url(), url.to_url())
             */
             return default;
         }
@@ -90,7 +90,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
             // def _compute_code(self):
             // for tracker in self:
-            //     record = self.env['link.tracker.code'].search([('link_id', '=', tracker.id)], limit=1, order='id DESC')
+            //     record = self.env['link.tracker.code'].search([('link_id', 'in', tracker.ids)], limit=1, order='id DESC')
             //     tracker.code = record.code
             */
             return default;
@@ -134,14 +134,19 @@ namespace Bamboo.Core.Application.Services
             //         continue
             // 
             //     query = parsed.decode_query()
-            //     for key, field_name, cook in self.env['utm.mixin'].tracking_fields():
+            //     for key, field_name, _cook in self.env['utm.mixin'].tracking_fields():
             //         field = self._fields[field_name]
             //         attr = tracker[field_name]
             //         if field.type == 'many2one':
             //             attr = attr.name
             //         if attr:
             //             query[key] = attr
-            //     tracker.redirected_url = parsed.replace(query=urls.url_encode(query)).to_url()
+            // 
+            //     query = urls.url_encode(query)
+            //     # '...' is detected as malicious by some nginx
+            //     # configuration, encoding it solve the issue
+            //     query = query.replace('...', '%2E%2E%2E')
+            //     tracker.redirected_url = parsed.replace(query=query).to_url()
             */
             return default;
         }
@@ -158,7 +163,7 @@ namespace Bamboo.Core.Application.Services
             // current_website = self.env['website'].get_current_website()
             // base_url = current_website.get_base_url() if current_website == self.env.company.website_id else self.env.company.get_base_url()
             // for tracker in self:
-            //     tracker.short_url_host = urls.url_join(base_url, '/r/')
+            //     tracker.short_url_host = urls.urljoin(base_url, '/r/')
             */
             return default;
         }
@@ -169,7 +174,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
             // def _compute_short_url(self):
             // for tracker in self:
-            //     tracker.short_url = urls.url_join(tracker.short_url_host or '', tracker.code or '')
+            //     tracker.short_url = tools.urls.urljoin(tracker.short_url_host or '', tracker.code or '')
             */
             return default;
         }
@@ -273,7 +278,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // def _format_key_domain(field_values):
             //     """Handle "label" being False / '' and be defensive."""
-            //     return expression.AND([
+            //     return Domain.AND([
             //         [(field_name, '=', value) if value or field_name != 'label' else ('label', 'in', (False, ''))]
             //         for field_name, value in field_values
             //     ])
@@ -293,7 +298,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Find unique keys of trackers, then fetch existing trackers
             // unique_keys = {_format_key(vals) for vals in vals_list}
-            // found_trackers = self.search(expression.OR([_format_key_domain(key) for key in unique_keys]))
+            // found_trackers = self.search(Domain.OR(_format_key_domain(key) for key in unique_keys))
             // key_to_trackers_map = {_format_key(tracker): tracker for tracker in found_trackers}
             // 
             // if len(unique_keys) != len(found_trackers):
@@ -318,7 +323,7 @@ namespace Bamboo.Core.Application.Services
             // def action_view_statistics(self):
             // action = self.env['ir.actions.act_window']._for_xml_id('link_tracker.link_tracker_click_action_statistics')
             // action['domain'] = [('link_id', '=', self.id)]
-            // action['context'] = dict(self._context, create=False)
+            // action['context'] = dict(self.env.context, create=False)
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;

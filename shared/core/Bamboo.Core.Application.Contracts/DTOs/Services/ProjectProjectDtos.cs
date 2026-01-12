@@ -4,9 +4,25 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class ProjectProjectCheckFeaturesEnabledRequestDto
+    {
+        public object UpdatedFeatures { get; set; }
+    }
+    
     public class ProjectProjectCopyDataRequestDto
     {
         public object Default { get; set; }
+    }
+    
+    public class ProjectProjectCreateFromTemplateRequestDto
+    {
+        public object Values { get; set; }
+        public object RoleToUsersMapping { get; set; }
+    }
+    
+    public class ProjectProjectCreateTemplateFromProjectUndoCallbackRequestDto
+    {
+        public object Callbacks { get; set; }
     }
     
     public class ProjectProjectGetSaleItemsDataRequestDto
@@ -38,5 +54,10 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object SectionName { get; set; }
         public object Domain { get; set; }
         public Guid ResId { get; set; }
+    }
+    
+    public class ProjectProjectTemplateToProjectConfirmationCallbackRequestDto
+    {
+        public object Callbacks { get; set; }
     }
 }

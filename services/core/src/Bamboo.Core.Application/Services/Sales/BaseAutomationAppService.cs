@@ -12,6 +12,7 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
@@ -19,10 +20,12 @@ namespace Bamboo.Core.Application.Services
     [Module("BaseAutomationModule", Category = "Sales", Depends = new[] { "base", "digest", "resource", "mail", "sms" })]
     public class BaseAutomationAppService : GenericApplicationService<BaseAutomation>, IBaseAutomationAppService
     {
-
-        public BaseAutomationAppService(IRepository<BaseAutomation, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
+        private readonly IMailThreadAppService _mailThreadAppService;
+        public BaseAutomationAppService(IRepository<BaseAutomation, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-
+            _mailActivityMixinAppService = mailActivityMixinAppService;
+            _mailThreadAppService = mailThreadAppService;
         }
 
         protected async Task<BaseAutomation> AddPostmortemInternalAsync(object e)
@@ -65,70 +68,21 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
             // def _check(self, automatic=False, use_new_cursor=False):
-            // """ This Function is called by scheduler. """
-            // if '__action_done' not in self._context:
-            //     self = self.with_context(__action_done={})
-            // 
-            // # retrieve all the automation rules to run based on a timed condition
-            // for automation in self.with_context(active_test=True).search([('trigger', 'in', TIME_TRIGGERS)]):
-            //     _logger.info("Starting time-based automation rule `%s`.", automation.name)
-            //     last_run = fields.Datetime.from_string(automation.last_run) or datetime.datetime.fromtimestamp(0, tz=None)
-            //     eval_context = automation._get_eval_context()
-            // 
-            //     # retrieve all the records that satisfy the automation's condition
-            //     domain = []
-            //     context = dict(self._context)
-            //     if automation.filter_domain:
-            //         domain = safe_eval.safe_eval(automation.filter_domain, eval_context)
-            //     records = self.env[automation.model_name].with_context(context).search(domain)
-            // 
-            //     def get_record_dt(record):
-            //         # determine when automation should occur for the records
-            //         if automation.trg_date_id.name == "date_automation_last" and "create_date" in records._fields:
-            //             return record[automation.trg_date_id.name] or record.create_date
-            //         else:
-            //             return record[automation.trg_date_id.name]
-            // 
-            //     # process action on the records that should be executed
-            //     now = datetime.datetime.now()
-            //     past_now = {}
-            //     past_last_run = {}
-            //     for record in records:
-            //         record_dt = get_record_dt(record)
-            //         if not record_dt:
-            //             continue
-            //         if automation.trg_date_calendar_id and automation.trg_date_range_type == 'day':
-            //             calendar = self._get_calendar(automation, record)
-            //             if calendar.id not in past_now:
-            //                 past_now[calendar.id] = calendar.plan_days(
-            //                     - automation.trg_date_range,
-            //                     now,
-            //                     compute_leaves=True,
-            //                 )
-            //                 past_last_run[calendar.id] = calendar.plan_days(
-            //                     - automation.trg_date_range,
-            //                     last_run,
-            //                     compute_leaves=True,
-            //                 )
-            //             is_process_to_run = past_last_run[calendar.id] <= fields.Datetime.to_datetime(record_dt) < past_now[calendar.id]
-            //         else:
-            //             is_process_to_run = (
-            //                 last_run <=
-            //                 fields.Datetime.from_string(record_dt) + DATE_RANGE_FUNCTION[automation.trg_date_range_type](automation.trg_date_range)
-            //                 < now
-            //             )
-            //         if is_process_to_run:
-            //             try:
-            //                 automation._process(record)
-            //             except Exception:
-            //                 _logger.error(traceback.format_exc())
-            // 
-            //     automation.write({'last_run': now.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-            //     _logger.info("Time-based automation rule `%s` done.", automation.name)
-            // 
-            //     if automatic:
-            //         # auto-commit for batch processing
-            //         self._cr.commit()
+            // if not automatic:
+            //     raise RuntimeError("can run time-based automations only in automatic mode")
+            // self._cron_process_time_based_actions()
+            */
+            return default;
+        }
+
+        protected async Task<BaseAutomation> CheckTimeTriggerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def _check_time_trigger(self):
+            // for record in self:
+            //     if record.trigger in TIME_TRIGGERS and record.trg_date_range < 0:
+            //         raise exceptions.ValidationError(_("Delay must be positive. Set 'Delay mode' to 'Before' to negate the delay."))
             */
             return default;
         }
@@ -144,12 +98,12 @@ namespace Bamboo.Core.Application.Services
             //     # all fields are implicit triggers
             //     return True
             // 
-            // if self._context.get('old_values') is None:
+            // if self.env.context.get('old_values') is None:
             //     # this is a create: all fields are considered modified
             //     return True
             // 
             // # note: old_vals are in the record format
-            // old_vals = self._context['old_values'].get(record.id, {})
+            // old_vals = self.env.context['old_values'].get(record.id, {})
             // 
             // def differ(name):
             //     return name in old_vals and record[name] != old_vals[name]
@@ -177,6 +131,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
             // def _check_trigger_state(self):
             // for record in self:
+            //     warning_actions = record.action_server_ids.filtered('warning')
+            //     if warning_actions:
+            //         raise exceptions.ValidationError(
+            //             _("Following child actions have warnings: %(children)s", children=', '.join(warning_actions.mapped('name')))
+            //         )
             //     no_code_actions = record.action_server_ids.filtered(lambda a: a.state != 'code')
             //     if record.trigger == 'on_change' and no_code_actions:
             //         raise exceptions.ValidationError(
@@ -262,17 +221,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<BaseAutomation> ComputeLeastDelayMsgInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
-            // def _compute_least_delay_msg(self):
-            // msg = _("Note that this automation rule can be triggered up to %d minutes after its schedule.")
-            // self.least_delay_msg = msg % self._get_cron_interval()
-            */
-            return default;
-        }
-
         protected async Task<BaseAutomation> ComputeOnChangeFieldIdsInternalAsync()
         {
             /*
@@ -281,7 +229,7 @@ namespace Bamboo.Core.Application.Services
             // to_reset = self.filtered(lambda a: a.trigger != 'on_change')
             // to_reset.on_change_field_ids = False
             // for automation in (self - to_reset):
-            //     automation.on_change_field_ids |= automation._get_filter_domain_fields()
+            //     automation._onchange_domain()
             */
             return default;
         }
@@ -317,10 +265,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
             // def _compute_trg_date_range_data(self):
-            // to_reset = self.filtered(lambda a: a.trigger not in TIME_TRIGGERS)
-            // to_reset.trg_date_range = False
-            // to_reset.trg_date_range_type = False
-            // (self - to_reset).filtered(lambda a: not a.trg_date_range_type).trg_date_range_type = 'hour'
+            // for record in self:
+            //     if record.trigger not in TIME_TRIGGERS:
+            //         record.trg_date_range = False
+            //         record.trg_date_range_type = False
+            //         record.trg_date_range_mode = False
+            //         continue
+            //     if not record.trg_date_range_type:
+            //         record.trg_date_range_type = 'hour'
+            //     if not record.trg_date_range_mode or record.trigger not in 'on_time':
+            //         record.trg_date_range_mode = 'after'
             */
             return default;
         }
@@ -372,7 +326,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_trigger_field_ids(self):
             // for automation in self:
             //     if automation.trigger == "on_create_or_write":
-            //         automation.trigger_field_ids |= automation._get_filter_domain_fields()
+            //         automation._onchange_domain()
             //         continue
             //     automation._onchange_trigger()
             */
@@ -399,6 +353,52 @@ namespace Bamboo.Core.Application.Services
             //         automation.url = ""
             //     else:
             //         automation.url = "%s/web/hook/%s" % (automation.get_base_url(), automation.webhook_uuid)
+            */
+            return default;
+        }
+
+        protected async Task<BaseAutomation> CronProcessTimeBasedActionsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def _cron_process_time_based_actions(self):
+            // """ Execute the time-based automations. """
+            // if '__action_done' not in self.env.context:
+            //     self = self.with_context(__action_done={})
+            // 
+            // # retrieve all the automation rules to run based on a timed condition
+            // final_exception = None
+            // automations = self.with_context(active_test=True).search([('trigger', 'in', TIME_TRIGGERS)])
+            // self.env['ir.cron']._commit_progress(remaining=len(automations))
+            // 
+            // for automation in automations:
+            //     # is automation deactivated or disappeared between commits?
+            //     try:
+            //         if not automation.active:
+            //             continue
+            //     except MissingError:
+            //         continue
+            //     _logger.info("Starting time-based automation rule `%s`.", automation.name)
+            //     now = self.env.cr.now()
+            //     records = automation._search_time_based_automation_records(until=now)
+            //     # run the automation on the records
+            //     try:
+            //         for record in records:
+            //             automation._process(record)
+            //         self.env.flush_all()
+            //     except Exception as e:
+            //         self.env.cr.rollback()
+            //         _logger.exception("Error in time-based automation rule `%s`.", automation.name)
+            //         final_exception = e
+            //         continue
+            // 
+            //     automation.write({'last_run': now})
+            //     _logger.info("Time-based automation rule `%s` done.", automation.name)
+            //     if not self.env['ir.cron']._commit_progress(1):
+            //         break
+            // if final_exception is not None:
+            //     # raise the last found exception to mark the cron job as failing
+            //     raise final_exception
             */
             return default;
         }
@@ -515,7 +515,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // # Note: we keep the old action naming for the method and context variable
             // # to avoid breaking existing code/downstream modules
-            // if '__action_done' not in self._context:
+            // if '__action_done' not in self.env.context:
             //     self = self.with_context(__action_done={})
             // domain = [('model_name', '=', records._name), ('trigger', 'in', triggers)]
             // automations = self.with_context(active_test=True).sudo().search(domain)
@@ -539,16 +539,21 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
             // def _get_cron_interval(self, automations=None):
-            // """ Return the expected time interval used by the cron, in minutes. """
+            // """Return the expected time interval used by the cron, in minutes or hours."""
             // def get_delay(rec):
             //     return abs(rec.trg_date_range) * DATE_RANGE_FACTOR[rec.trg_date_range_type]
             // 
             // if automations is None:
             //     automations = self.with_context(active_test=True).search([('trigger', 'in', TIME_TRIGGERS)])
             // 
-            // # Minimum 1 minute, maximum 4 hours, 10% tolerance
-            // delay = min(automations.mapped(get_delay), default=0)
-            // return min(max(1, delay // 10), 4 * 60) if delay else 4 * 60
+            // # Minimum 1 minute, maximum 4 hours, 10% tolerance, ignore automations with no delay
+            // delays = [d for d in automations.mapped(get_delay) if d]
+            // interval = min(max(1, min(delays) // 10), 4 * 60) if delays else 4 * 60
+            // interval_type = 'minutes'
+            // if interval % 60 == 0:
+            //     interval //= 60
+            //     interval_type = 'hours'
+            // return interval, interval_type
             */
             return default;
         }
@@ -578,28 +583,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<BaseAutomation> GetFilterDomainFieldsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
-            // def _get_filter_domain_fields(self):
-            // self.ensure_one()
-            // if not self.filter_domain or not self.model_id:
-            //     return self.env['ir.model.fields']
-            // model = self.model_id.model
-            // fields = self.env["ir.model.fields"]
-            // # wondering why we use a regex instead of safe_eval?
-            // # because this method is called on a compute method hence could be triggered
-            // # from an onchange call (i.e. a manually crafted malicious one)
-            // # see: https://github.com/odoo/odoo/pull/189772#issuecomment-2548804283
-            // for match in DOMAIN_FIELDS_RE.finditer(self.filter_domain):
-            //     if field := match.groupdict().get('field'):
-            //         fields |= self.env["ir.model.fields"]._get(model, field)
-            // return fields
-            */
-            return default;
-        }
-
         protected async Task<BaseAutomation> GetTriggerSpecificFieldInternalAsync()
         {
             /*
@@ -608,7 +591,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // match self.trigger:
             //     case 'on_create_or_write':
-            //         return self._get_filter_domain_fields()
+            //         return _get_domain_fields(self.env, self.model_id.model, self.filter_domain)
             //     case 'on_stage_set':
             //         domain = [('ttype', '=', 'many2one'), ('name', 'in', ['stage_id', 'x_studio_stage_id'])]
             //     case 'on_tag_set':
@@ -661,11 +644,42 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<BaseAutomation> OnchangeDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def _onchange_domain(self):
+            // removed_fields, added_fields = _domain_fields_differences(self, self.previous_domain, self.filter_domain)
+            // if self.trigger == "on_change":
+            //     self.on_change_field_ids = self.on_change_field_ids.filtered(lambda f: f._origin.id not in removed_fields.ids)
+            //     self.on_change_field_ids |= added_fields
+            // if self.trigger == "on_create_or_write":
+            //     self.trigger_field_ids = self.trigger_field_ids.filtered(lambda f: f._origin.id not in removed_fields.ids)
+            //     self.trigger_field_ids |= added_fields
+            // self.previous_domain = self.filter_domain
+            */
+            return default;
+        }
+
+        protected async Task<BaseAutomation> OnchangeTrgDateRangeDataInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def _onchange_trg_date_range_data(self):
+            // if self.trg_date_range < 0:
+            //     self.trg_date_range = abs(self.trg_date_range)
+            //     if self.trigger == 'on_time':
+            //         self.trg_date_range_mode = 'before' if self.trg_date_range_mode == 'after' else 'after'
+            */
+            return default;
+        }
+
         protected async Task<BaseAutomation> OnchangeTriggerInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
             // def _onchange_trigger(self):
+            // self.ensure_one()
             // field = (
             //     self._get_trigger_specific_field()
             //     if self.trigger not in TIME_TRIGGERS
@@ -709,6 +723,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<BaseAutomation> OpenScheduledActionAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def action_open_scheduled_action(self):
+            // cron = self.env.ref('base_automation.ir_cron_data_base_automation_check', raise_if_not_found=False)
+            // if not cron:
+            //     message = _("The scheduled action for Automation Rules seems to have vanished.")
+            //     raise exceptions.MissingError(message)
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Scheduled Action'),
+            //     'view_mode': 'form',
+            //     'res_model': 'ir.cron',
+            //     'res_id': cron.id,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<BaseAutomation> PrepareLogginValuesInternalAsync()
         {
             /*
@@ -718,7 +752,7 @@ namespace Bamboo.Core.Application.Services
             // defaults = {
             //     'name': _("Webhook Log"),
             //     'type': 'server',
-            //     'dbname': self._cr.dbname,
+            //     'dbname': self.env.cr.dbname,
             //     'level': 'INFO',
             //     'path': "base_automation(%s)" % self.id,
             //     'func': '',
@@ -737,7 +771,7 @@ namespace Bamboo.Core.Application.Services
             // def _process(self, records, domain_post=None):
             // """ Process automation ``self`` on the ``records`` that have not been done yet. """
             // # filter out the records on which self has already been done
-            // automation_done = self._context.get('__action_done', {})
+            // automation_done = self.env.context.get('__action_done', {})
             // records_done = automation_done.get(self, records.browse())
             // records -= records_done
             // if not records:
@@ -761,7 +795,7 @@ namespace Bamboo.Core.Application.Services
             // automation_done[self] = records_done + records
             // 
             // if records and 'date_automation_last' in records._fields:
-            //     records.date_automation_last = fields.Datetime.now()
+            //     records.date_automation_last = self.env.cr.now()
             // 
             // # prepare the contexts for server actions
             // contexts = [
@@ -912,6 +946,11 @@ namespace Bamboo.Core.Application.Services
             //     """ Instanciate an onchange method for the given automation rule. """
             //     def base_automation_onchange(self):
             //         automation_rule = self.env['base.automation'].browse(automation_rule_id)
+            // 
+            //         if not automation_rule._filter_post(self):
+            //             # Do nothing if onchange record does not satisfy the filter_domain
+            //             return
+            // 
             //         result = {}
             //         actions = automation_rule.sudo().action_server_ids.with_context(
             //             active_model=self._name,
@@ -1022,6 +1061,92 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<BaseAutomation> SearchTimeBasedAutomationRecordsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
+            // def _search_time_based_automation_records(self, *, until):
+            // automation = self.ensure_one()
+            // 
+            // # retrieve the domain and field
+            // domain = Domain.TRUE
+            // if automation.filter_domain:
+            //     eval_context = automation._get_eval_context()
+            //     domain = Domain(safe_eval.safe_eval(automation.filter_domain, eval_context))
+            // Model = self.env[automation.model_name]
+            // date_field = Model._fields.get(automation.trg_date_id.name)
+            // if not date_field:
+            //     _logger.warning("Missing date trigger field in automation rule `%s`", automation.name)
+            //     return Model
+            // 
+            // # get the time information and find the records
+            // last_run = automation.last_run or datetime.datetime.fromtimestamp(0, tz=None)
+            // is_date_automation_last = date_field.name == "date_automation_last" and "create_date" in Model._fields
+            // range_sign = 1 if automation.trg_date_range_mode == 'before' else -1
+            // date_range = range_sign * automation.trg_date_range
+            // 
+            // def get_record_dt(record):
+            //     # the field can be a date or datetime, cast always to a datetime
+            //     dt = record[date_field.name]
+            //     if not dt and is_date_automation_last:
+            //         dt = record.create_date
+            //     return fields.Datetime.to_datetime(dt)
+            // 
+            // if automation.trg_date_calendar_id and automation.trg_date_range_type == 'day':
+            //     # use the calendar information from the record
+            //     # _get_calendar can be overwritten and cannot be optimized
+            //     time_domain = Domain.TRUE if is_date_automation_last else Domain(date_field.name, '!=', False)
+            //     if (date_field.store or date_field.search):
+            //         records = Model.search(time_domain & domain)
+            //     else:
+            //         records = Model.search(domain).filtered_domain(time_domain)
+            // 
+            //     past_until = {}
+            //     past_last_run = {}
+            // 
+            //     def calendar_filter(record):
+            //         record_dt = get_record_dt(record)
+            //         if not record_dt:
+            //             return False
+            //         calendar = self._get_calendar(automation, record)
+            //         if calendar.id not in past_until:
+            //             past_until[calendar.id] = calendar.plan_days(
+            //                 date_range,
+            //                 until,
+            //                 compute_leaves=True,
+            //             )
+            //             past_last_run[calendar.id] = calendar.plan_days(
+            //                 date_range,
+            //                 last_run,
+            //                 compute_leaves=True,
+            //             )
+            //         return past_last_run[calendar.id] <= record_dt < past_until[calendar.id]
+            // 
+            //     return records.filtered(calendar_filter)
+            // 
+            // # we can search for the records to trigger
+            // # find the relative dates
+            // relative_offset = DATE_RANGE[automation.trg_date_range_type] * date_range
+            // relative_until = until + relative_offset
+            // relative_last_run = last_run + relative_offset
+            // if date_field.type == 'date':
+            //     # find records that have a date in past, but were not yet executed that day
+            //     time_domain = Domain(date_field.name, '>', relative_last_run.date()) & Domain(date_field.name, '<=', relative_until.date())
+            //     if is_date_automation_last:
+            //         time_domain |= Domain(date_field.name, '=', False) & Domain('create_date', '>', relative_last_run.date()) & Domain('create_date', '<=', relative_until.today())
+            // else:  # datetime
+            //     time_domain = Domain(date_field.name, '>=', relative_last_run) & Domain(date_field.name, '<', relative_until)
+            //     if is_date_automation_last:
+            //         time_domain |= Domain(date_field.name, '=', False) & Domain('create_date', '>=', relative_last_run) & Domain('create_date', '<', relative_until)
+            // 
+            // if (date_field.store or date_field.search):
+            //     return Model.search(time_domain & domain)
+            // else:
+            //     return Model.search(domain).filtered_domain(time_domain)
+            */
+            return default;
+        }
+
         protected async Task<BaseAutomation> UnregisterHookInternalAsync()
         {
             /*
@@ -1051,12 +1176,23 @@ namespace Bamboo.Core.Application.Services
             // """
             // cron = self.env.ref('base_automation.ir_cron_data_base_automation_check', raise_if_not_found=False)
             // if cron:
+            //     try:
+            //         cron.lock_for_update(allow_referencing=True)
+            //     except LockError:
+            //         return
             //     automations = self.with_context(active_test=True).search([('trigger', 'in', TIME_TRIGGERS)])
-            //     cron.try_write({
-            //         'active': bool(automations),
-            //         'interval_type': 'minutes',
-            //         'interval_number': self._get_cron_interval(automations),
-            //     })
+            //     interval_number, interval_type = self._get_cron_interval(automations)
+            //     vals = {'active': bool(automations)}
+            // 
+            //     actual_cron_timedelta = TIMEDELTA_TYPES[cron.interval_type](cron.interval_number)
+            //     new_cron_timedelta = TIMEDELTA_TYPES[interval_type](interval_number)
+            //     if new_cron_timedelta < actual_cron_timedelta:
+            //         # we only update the cron interval if the new delay is shorter than the current one
+            //         vals.update({
+            //             'interval_type': interval_type,
+            //             'interval_number': interval_number,
+            //         })
+            //     cron.write(vals)
             */
             return default;
         }

@@ -28,6 +28,29 @@ namespace Bamboo.Core.Application.Services
             _websiteMultiMixinAppService = websiteMultiMixinAppService;
         }
 
+        protected async Task<ProductTag> CanReturnContentInternalAsync(object field_name, object access_token)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_tag.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // if field_name == "image" and self.sudo().visible_to_customers:
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            */
+            return default;
+        }
+
+        protected async Task<ProductTag> ComputeHasImageInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
+            // def _compute_has_image(self):
+            // for record in self:
+            //     record.has_image = bool(record.image)
+            */
+            return default;
+        }
+
         protected async Task<ProductTag> ComputeProductIdsInternalAsync()
         {
             /*
@@ -70,12 +93,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductTag> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ProductTag> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['name']
+            // def _load_pos_data_fields(self, config):
+            // return ['name', 'pos_description', 'color', 'has_image', 'write_date']
+            */
+            return default;
+        }
+
+        protected async Task<ProductTag> LoadPosSelfDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_tag.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // return [('visible_to_customers', '=', True)]
             */
             return default;
         }
@@ -85,11 +118,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_tag.py) ---
             // def _search_product_ids(self, operator, operand):
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     return [('product_template_ids.product_variant_ids', operator, operand), ('product_product_ids', operator, operand)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // return ['|', ('product_template_ids.product_variant_ids', operator, operand), ('product_product_ids', operator, operand)]
             */
             return default;
+        }
+
+        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProductTag entity, List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
+            // def write(self, vals):
+            // if vals.get('pos_description') and is_html_empty(vals['pos_description']):
+            //     vals['pos_description'] = ''
+            // return super().write(vals)
+            */
+            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

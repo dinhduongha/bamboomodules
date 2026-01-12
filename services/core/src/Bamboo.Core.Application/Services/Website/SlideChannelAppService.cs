@@ -49,7 +49,7 @@ namespace Bamboo.Core.Application.Services
             //         channel._message_employee_chatter(
             //             _('The employee subscribed to the course %s',
             //                 Markup('<a href="%(link)s">%(course)s</a>') % {
-            //                     'link': channel.website_url,
+            //                     'link': channel.website_absolute_url,
             //                     'course': channel.name
             //             }),
             //             target_partners
@@ -68,7 +68,7 @@ namespace Bamboo.Core.Application.Services
             //         :return: returns the union of new records and the ones unarchived.
             // """
             // SlideChannelPartnerSudo = self.env['slide.channel.partner'].sudo()
-            // allowed_channels = self._filter_add_members(target_partners, raise_on_access=raise_on_access)
+            // allowed_channels = self._filter_add_members(raise_on_access=raise_on_access)
             // if not allowed_channels or not target_partners:
             //     return SlideChannelPartnerSudo
             // 
@@ -168,14 +168,15 @@ namespace Bamboo.Core.Application.Services
             // def _action_request_access(self, partner):
             // activities = self.env['mail.activity']
             // requested_cids = self.sudo().activity_search(
-            //     ['website_slides.mail_activity_data_access_request'],
-            //     additional_domain=[('request_partner_id', '=', partner.id)]
+            //     ['mail.mail_activity_data_todo'],
+            //     additional_domain=[('request_partner_id', '=', partner.id)],
             // ).mapped('res_id')
             // for channel in self:
             //     if channel.id not in requested_cids and channel.user_id:
             //         activities += channel.activity_schedule(
-            //             'website_slides.mail_activity_data_access_request',
+            //             'mail.mail_activity_data_todo',
             //             note=_('<b>%s</b> is requesting access to this course.', partner.name),
+            //             summary=_('Access Request'),
             //             user_id=channel.user_id.id,
             //             request_partner_id=partner.id
             //         )
@@ -190,9 +191,41 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _add_groups_members(self):
             // for channel in self:
-            //     channel._action_add_members(channel.mapped('enroll_group_ids.users.partner_id'))
+            //     channel._action_add_members(channel.mapped('enroll_group_ids.all_user_ids.partner_id'))
             */
             return default;
+        }
+
+        protected async Task<SlideChannel> AllowPublishRatingStatsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _allow_publish_rating_stats(self):
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<SlideChannel> ArchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_archive(self):
+            // """ Archiving a channel does it on its slides, too.
+            // 
+            // We want to be archiving the channel FIRST.
+            // So that when slides are archived and the recompute is triggered,
+            // it does not try to mark the channel as "completed".
+            // That happens because it counts slide_done / slide_total, but slide_total
+            // will be 0 since all the slides for the course have been archived as well.
+            // """
+            // archived = self.filtered(self._active_name)
+            // res = super().action_archive()
+            // archived.is_published = False
+            // archived.slide_ids.action_archive()
+            // return res
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<SlideChannel> ChannelEnrollAsync(Guid id)
@@ -236,6 +269,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SlideChannel> ComputeAllowCommentInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_allow_comment(self):
+            // """Comment allowed by default except for documentation channels."""
+            // for record in self:
+            //     record.allow_comment = record.channel_type != 'documentation'
+            */
+            return default;
+        }
+
         protected async Task<SlideChannel> ComputeCanPublishInternalAsync()
         {
             /*
@@ -264,8 +309,8 @@ namespace Bamboo.Core.Application.Services
             // for record in self:
             //     if record.user_id == self.env.user:
             //         record.can_upload = True
-            //     elif record.upload_group_ids:
-            //         record.can_upload = bool(record.upload_group_ids & self.env.user.groups_id)
+            //     elif record.sudo().upload_group_ids:
+            //         record.can_upload = bool(record.sudo().upload_group_ids & self.env.user.group_ids)
             //     else:
             //         record.can_upload = self.env.user.has_group('website_slides.group_website_slides_manager')
             */
@@ -300,11 +345,27 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_has_requested_access(self):
             // requested_cids = self.sudo().activity_search(
-            //     ['website_slides.mail_activity_data_access_request'],
-            //     additional_domain=[('request_partner_id', '=', self.env.user.partner_id.id)]
+            //     ['mail.mail_activity_data_todo'],
+            //     additional_domain=[('request_partner_id', '=', self.env.user.partner_id.id)],
+            //     only_automated=False,
             // ).mapped('res_id')
             // for channel in self:
             //     channel.has_requested_access = channel.id in requested_cids
+            */
+            return default;
+        }
+
+        protected async Task<SlideChannel> ComputeIsVisibleInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_is_visible(self):
+            // for channel in self:
+            //     channel.is_visible = (
+            //         channel.visibility == 'public'
+            //         or channel.is_member
+            //         or (not self.env.user._is_public() and channel.visibility == 'connected')
+            //     )
             */
             return default;
         }
@@ -457,7 +518,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_rating_stats(self):
-            // super(Channel, self)._compute_rating_stats()
+            // super()._compute_rating_stats()
             // for record in self:
             //     record.rating_avg_stars = record.rating_avg
             */
@@ -522,6 +583,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SlideChannel> ComputeWebsiteAbsoluteUrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_website_absolute_url(self):
+            // super()._compute_website_absolute_url()
+            */
+            return default;
+        }
+
         protected async Task<SlideChannel> ComputeWebsiteDefaultBackgroundImageUrlInternalAsync()
         {
             /*
@@ -538,11 +609,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_website_url(self):
-            // super(Channel, self)._compute_website_url()
+            // super()._compute_website_url()
             // for channel in self:
             //     if channel.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
-            //         base_url = channel.get_base_url()
-            //         channel.website_url = '%s/slides/%s' % (base_url, self.env['ir.http']._slug(channel))
+            //         channel.website_url = f"/slides/{self.env['ir.http']._slug(channel)}"
             */
             return default;
         }
@@ -569,7 +639,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
             // def create(self, vals_list):
-            // channels = super(Channel, self).create(vals_list)
+            // channels = super().create(vals_list)
             // channels.filtered(lambda channel: channel.enroll == 'payment')._synchronize_product_publish()
             // return channels
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -583,7 +653,7 @@ namespace Bamboo.Core.Application.Services
             //     if not is_html_empty(vals.get('description')) and is_html_empty(vals.get('description_short')):
             //         vals['description_short'] = vals['description']
             // 
-            // channels = super(Channel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // channels = super(SlideChannel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             // 
             // for channel in channels:
             //     if channel.user_id:
@@ -594,7 +664,7 @@ namespace Bamboo.Core.Application.Services
             // return channels
             --- ODOO METHOD SOURCE (MODULE: website_slides_forum, FILE: slide_channel.py) ---
             // def create(self, vals_list):
-            // channels = super(Channel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // channels = super(SlideChannel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             // channels.forum_id.privacy = False
             // return channels
             */
@@ -622,7 +692,7 @@ namespace Bamboo.Core.Application.Services
             // its height is set to fit to content (snippet option to change this also disabled on the view)."""
             // res = super()._default_cover_properties()
             // res.update({
-            //     "background_color_class": "o_cc3",
+            //     "background_color_class": "o_cc4",
             //     'background_color_style': (
             //         'background-color: rgba(0, 0, 0, 0); '
             //         'background-image: linear-gradient(120deg, #875A7B, #78516F);'
@@ -635,31 +705,37 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SlideChannel> FilterAddMembersInternalAsync(object target_partners, object raise_on_access)
+        protected async Task<SlideChannel> FilterAddMembersInternalAsync(object raise_on_access)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
-            // def _filter_add_members(self, target_partners, raise_on_access=False):
-            // """ Overridden to add 'payment' channels to the filtered channels. People
-            // that can write on payment-based channels can add members. """
-            // result = super(Channel, self)._filter_add_members(target_partners, raise_on_access=raise_on_access)
-            // on_payment = self.filtered(lambda channel: channel.enroll == 'payment')
-            // if on_payment:
-            //     if on_payment.has_access('write'):
-            //         result |= on_payment
-            //     elif raise_on_access:
-            //         raise AccessError(_('You are not allowed to add members to this course. Please contact the course responsible or an administrator.'))
-            // return result
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def _filter_add_members(self, target_partners, raise_on_access=False):
+            // def _filter_add_members(self, raise_on_access=False):
             // allowed = self.filtered(lambda channel: channel.enroll == 'public')
-            // on_invite = self.filtered(lambda channel: channel.enroll == 'invite')
-            // if on_invite:
-            //     if on_invite.has_access('write'):
-            //         allowed |= on_invite
-            //     elif raise_on_access:
-            //         raise AccessError(_('You are not allowed to add members to this course. Please contact the course responsible or an administrator.'))
+            // if controlled_access := (self - allowed):
+            //     allowed += controlled_access._filtered_access('write')
+            //     if raise_on_access and allowed != self:
+            //         raise AccessError(_('You are not allowed to add members to this course. '
+            //                             'Please contact the course responsible or an administrator.'))
             // return allowed
+            */
+            return default;
+        }
+
+        protected async Task<SlideChannel> GetAccessActionInternalAsync(object access_uid, object force_website)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _get_access_action(self, access_uid=None, force_website=False):
+            // """ Instead of the classic form view, redirect to website if it is published. """
+            // self.ensure_one()
+            // if force_website or self.website_published:
+            //     return {
+            //         "type": "ir.actions.act_url",
+            //         "url": self.website_url,
+            //         "target": "self",
+            //         "target_type": "public",
+            //     }
+            // return super()._get_access_action(access_uid=access_uid, force_website=force_website)
             */
             return default;
         }
@@ -830,8 +906,9 @@ namespace Bamboo.Core.Application.Services
             // if partner:
             //     if self._action_add_members(partner):
             //         self.activity_search(
-            //             ['website_slides.mail_activity_data_access_request'],
-            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //             ['mail.mail_activity_data_todo'],
+            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)],
+            //             only_automated=False,
             //         ).action_feedback(feedback=_('Access Granted'))
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -848,7 +925,7 @@ namespace Bamboo.Core.Application.Services
             //     it for every record.
             // """
             // if column_name != 'access_token':
-            //     super(Channel, self)._init_column(column_name)
+            //     super()._init_column(column_name)
             // else:
             //     query = """
             //         UPDATE %(table_name)s
@@ -933,6 +1010,7 @@ namespace Bamboo.Core.Application.Services
             //         ("author_id", "=", message.author_id.id),
             //         ("model", "=", "slide.channel"),
             //         ("subtype_id", "=", self.env.ref("mail.mt_comment").id),
+            //         ("rating_ids", "!=", False),
             //     ]
             //     if self.env["mail.message"].search_count(domain, limit=2) > 1:
             //         raise ValidationError(_("Only a single review can be posted per course."))
@@ -962,27 +1040,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> OpenWebsiteUrlAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def open_website_url(self):
-            // """ Overridden to use a relative URL instead of an absolute when website_id is False. """
-            // if self.website_id:
-            //     return super().open_website_url()
-            // return self.env['website'].get_client_action(f'/slides/{self.env["ir.http"]._slug(self)}')
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<SlideChannel> RatingDomainInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _rating_domain(self):
             // """ Only take the published rating into account to compute avg and count """
-            // domain = super(Channel, self)._rating_domain()
-            // return expression.AND([domain, [('is_internal', '=', False)]])
+            // return super()._rating_domain() & Domain('is_internal', '=', False)
             */
             return default;
         }
@@ -1092,8 +1156,9 @@ namespace Bamboo.Core.Application.Services
             // partner = self.env['res.partner'].browse(partner_id).exists()
             // if partner:
             //     self.activity_search(
-            //         ['website_slides.mail_activity_data_access_request'],
-            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //         ['mail.mail_activity_data_todo'],
+            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)],
+            //         only_automated=False,
             //     ).action_feedback(feedback=_('Access Refused'))
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1112,7 +1177,7 @@ namespace Bamboo.Core.Application.Services
             //     channel._message_employee_chatter(
             //         _('The employee left the course %s',
             //             Markup('<a href="%(link)s">%(course)s</a>') % {
-            //                 'link': channel.website_url,
+            //                 'link': channel.website_absolute_url,
             //                 'course': channel.name,
             //         }),
             //         partners)
@@ -1125,11 +1190,11 @@ namespace Bamboo.Core.Application.Services
             // if not partner_ids:
             //     raise ValueError("Do not use this method with an empty partner_id recordset")
             // 
-            // removed_channel_partner_domain = expression.OR([
-            //     [('partner_id', 'in', partner_ids),
-            //      ('channel_id', '=', channel.id)]
+            // removed_channel_partner_domain = Domain.OR(
+            //     Domain('partner_id', 'in', partner_ids)
+            //     & Domain('channel_id', '=', channel.id)
             //     for channel in self
-            // ])
+            // )
             // 
             // self.message_unsubscribe(partner_ids=partner_ids)
             // if self:
@@ -1144,10 +1209,10 @@ namespace Bamboo.Core.Application.Services
             // track of the current pool of attempts allowed since the user (last) joined
             // the course, as only those will have a slide_partner_id."""
             // if self:
-            //     removed_channel_partner_domain = expression.OR([
-            //         [('partner_id', 'in', partner_ids), ('channel_id', '=', channel.id)]
+            //     removed_channel_partner_domain = Domain.OR(
+            //         Domain('partner_id', 'in', partner_ids) & Domain('channel_id', '=', channel.id)
             //         for channel in self
-            //     ])
+            //     )
             //     slide_partners_sudo = self.env['slide.slide.partner'].sudo().search(
             //         removed_channel_partner_domain)
             //     slide_partners_sudo.user_input_ids.slide_partner_id = False
@@ -1219,7 +1284,7 @@ namespace Bamboo.Core.Application.Services
             // my = options.get('my')
             // search_tags = options.get('tag')
             // slide_category = options.get('slide_category')
-            // domain = [website.website_domain()]
+            // domain = [website.website_domain(), [('is_visible', '=', True)]]
             // if my:
             //     domain.append([('is_member', '=', True)])
             // if search_tags:
@@ -1231,8 +1296,8 @@ namespace Bamboo.Core.Application.Services
             //         tags = ChannelTag
             //     # Group by group_id
             //     # OR inside a group, AND between groups.
-            //     for tags in tags.grouped('group_id').values():
-            //         domain.append([('tag_ids', 'in', tags.ids)])
+            //     for tags_ in tags.grouped('group_id').values():
+            //         domain.append([('tag_ids', 'in', tags_.ids)])
             // if slide_category and 'nbr_%s' % slide_category in self:
             //     domain.append([('nbr_%s' % slide_category, '>', 0)])
             // search_fields = ['name']
@@ -1278,10 +1343,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_is_member(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // check_has_access = operator == '=' and value or operator == '!=' and not value
-            // return [('id', 'in' if check_has_access else 'not in', self._search_is_member_channel_ids())]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('id', 'in', self._search_is_member_channel_ids())]
             */
             return default;
         }
@@ -1291,10 +1355,24 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_is_member_invited(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // check_has_access = operator == '=' and value or operator == '!=' and not value
-            // return [('id', 'in' if check_has_access else 'not in', self._search_is_member_channel_ids(invited=True))]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('id', 'in', self._search_is_member_channel_ids(invited=True))]
+            */
+            return default;
+        }
+
+        protected async Task<SlideChannel> SearchIsVisibleInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _search_is_visible(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [
+            //     '|', ('is_member', '=', True),
+            //     ('visibility', 'in', ['public'] if self.env.user._is_public() else ['public', 'connected']),
+            // ]
             */
             return default;
         }
@@ -1304,10 +1382,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_partner_ids(self, operator, value):
-            // if isinstance(value, int) and operator == 'in':
-            //     value = [value]
             // return [(
-            //     'channel_partner_ids', '=', self.env['slide.channel.partner'].sudo()._search(
+            //     'channel_partner_ids', 'in', self.env['slide.channel.partner'].sudo()._search(
             //         [('partner_id', operator, value),
             //          ('active', '=', True),
             //          ('member_status', '!=', 'invited')],
@@ -1371,33 +1447,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> ToggleActiveAsync(Guid id)
+        public async Task<SlideChannel> UnarchiveAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def toggle_active(self):
-            // """ Archiving/unarchiving a channel does it on its slides, too.
-            // 1. When archiving
-            // We want to be archiving the channel FIRST.
-            // So that when slides are archived and the recompute is triggered,
-            // it does not try to mark the channel as "completed".
-            // That happens because it counts slide_done / slide_total, but slide_total
-            // will be 0 since all the slides for the course have been archived as well.
+            // def action_unarchive(self):
+            // """ Unarchiving a channel does it on its slides, too.
             // 
-            // 2. When un-archiving
             // We want to archive the channel LAST.
             // So that when it recomputes stats for the channel and completion, it correctly
-            // counts the slides_total by counting slides that are already un-archived. """
-            // 
-            // to_archive = self.filtered(lambda channel: channel.active)
+            // counts the slides_total by counting slides that are already un-archived.
+            // """
             // to_activate = self.filtered(lambda channel: not channel.active)
-            // if to_archive:
-            //     super(Channel, to_archive).toggle_active()
-            //     to_archive.is_published = False
-            //     to_archive.mapped('slide_ids').action_archive()
-            // if to_activate:
-            //     to_activate.with_context(active_test=False).mapped('slide_ids').action_unarchive()
-            //     super(Channel, to_activate).toggle_active()
+            // to_activate.with_context(active_test=False).slide_ids.action_unarchive()
+            // return super(SlideChannel, to_activate).action_unarchive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1409,7 +1472,7 @@ namespace Bamboo.Core.Application.Services
             // def action_view_ratings(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
             // action['name'] = _('Rating of %s', self.name)
-            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
+            // action['domain'] = Domain.AND([ast.literal_eval(action.get('domain', '[]')), Domain('res_id', 'in', self.ids)])
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1448,7 +1511,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
             // def write(self, vals):
-            // res = super(Channel, self).write(vals)
+            // res = super().write(vals)
             // if 'is_published' in vals:
             //     self.filtered(lambda channel: channel.enroll == 'payment')._synchronize_product_publish()
             // return res
@@ -1458,11 +1521,14 @@ namespace Bamboo.Core.Application.Services
             // if not is_html_empty(vals.get('description')) and is_html_empty(vals.get('description_short')) and self.description == self.description_short:
             //     vals['description_short'] = vals.get('description')
             // 
-            // res = super(Channel, self).write(vals)
+            // res = super().write(vals)
             // 
             // if vals.get('user_id'):
             //     self._action_add_members(self.env['res.users'].sudo().browse(vals['user_id']).partner_id)
-            //     self.activity_reschedule(['website_slides.mail_activity_data_access_request'], new_user_id=vals.get('user_id'))
+            //     self.activity_reschedule(
+            //         ['mail_activity_data_todo'],
+            //         new_user_id=vals.get('user_id'),
+            //     )
             // if 'enroll_group_ids' in vals:
             //     self._add_groups_members()
             // 
@@ -1471,7 +1537,7 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // old_forum = self.forum_id
             // 
-            // res = super(Channel, self).write(vals)
+            // res = super().write(vals)
             // if 'forum_id' in vals:
             //     self.forum_id.privacy = False
             //     if old_forum != self.forum_id:

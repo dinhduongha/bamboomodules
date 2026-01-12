@@ -4,11 +4,6 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class HrExpenseCheckAmountNotZeroRequestDto
-    {
-        public object Vals { get; set; }
-    }
-    
     public class HrExpenseCreateExpenseFromAttachmentsRequestDto
     {
         public List<Guid> AttachmentIds { get; set; }

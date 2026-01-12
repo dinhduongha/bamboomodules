@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountFiscalPositionAppService : IGenericApplicationService<AccountFiscalPosition>
     {
-        Task<AccountFiscalPosition> AdjustValsCountryIdAsync(Guid id, AccountFiscalPositionAdjustValsCountryIdRequestDto input);
+        Task<AccountFiscalPosition> ArchiveAsync(Guid id);
         Task<AccountFiscalPosition> CreateForeignTaxesAsync(Guid id);
         Task<AccountFiscalPosition> MapAccountAsync(Guid id, AccountFiscalPositionMapAccountRequestDto input);
         Task<AccountFiscalPosition> MapTaxAsync(Guid id, AccountFiscalPositionMapTaxRequestDto input);
-        Task<AccountFiscalPosition> RaiseVatErrorMessageAsync(Guid id, AccountFiscalPositionRaiseVatErrorMessageRequestDto input);
+        Task<AccountFiscalPosition> OpenRelatedTaxesAsync(Guid id);
     }
 }

@@ -66,16 +66,16 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResourceCalendarLeaves> ComputeCalendarIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: resource_calendar_leaves.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: resource_calendar_leaves.py) ---
             // def _compute_calendar_id(self):
             // def date2datetime(date, tz):
             //     dt = datetime.fromordinal(date.toordinal())
             //     return tz.localize(dt).astimezone(utc).replace(tzinfo=None)
             // 
-            // leaves_by_contract = self.grouped(lambda leave: leave.resource_id.employee_id.contract_id)
-            // # set aside leaves without contract_id for super
+            // leaves_by_contract = self.grouped(lambda leave: leave.resource_id.employee_id.version_id)
+            // # set aside leaves without version_id for super
             // remaining = leaves_by_contract.pop(
-            //     self.env['hr.contract'],
+            //     self.env['hr.version'],
             //     self.env['resource.calendar.leaves'],
             // )
             // for contract, leaves in leaves_by_contract.items():
@@ -99,6 +99,10 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResourceCalendarLeaves> ComputeCompanyIdInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: resource.py) ---
+            // def _compute_company_id(self):
+            // for leave in self:
+            //     leave.company_id = leave.holiday_id.employee_id.company_id or leave.calendar_id.company_id or self.env.company
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar_leaves.py) ---
             // def _compute_company_id(self):
             // for leave in self:
@@ -112,7 +116,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar_leaves.py) ---
             // def _compute_date_to(self):
-            // user_tz = timezone(self.env.user.tz or self._context.get('tz') or self.company_id.resource_calendar_id.tz or 'UTC')
+            // user_tz = self.env.tz
+            // if not (self.env.user.tz or self.env.context.get('tz')):
+            //     user_tz = timezone(self.company_id.resource_calendar_id.tz or 'UTC')
             // for leave in self:
             //     if not leave.date_from or (leave.date_to and leave.date_to > leave.date_from):
             //         continue
@@ -149,7 +155,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResourceCalendarLeaves> CopyLeaveValsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: resource.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: resource_calendar_leaves.py) ---
             // def _copy_leave_vals(self):
             // res = super()._copy_leave_vals()
             // res['work_entry_type_id'] = self.work_entry_type_id.id
@@ -179,7 +185,7 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: resource_calendar_leaves.py) ---
             // def create(self, vals_list):
-            // results = super(ResourceCalendarLeaves, self).create(vals_list)
+            // results = super().create(vals_list)
             // results._generate_timesheeets()
             // return results
             */
@@ -264,15 +270,34 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: resource.py) ---
             // def _get_domain(self, time_domain_dict):
-            // domain = expression.OR([
+            // return Domain.OR(
             //     [
             //         ('employee_company_id', '=', date['company_id']),
             //         ('date_to', '>', date['date_from']),
             //         ('date_from', '<', date['date_to']),
             //     ]
             //     for date in time_domain_dict
-            // ])
-            // return expression.AND([domain, [('state', 'not in', ['refuse', 'cancel'])]])
+            // ) & Domain('state', 'not in', ['refuse', 'cancel'])
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendarLeaves> GetOverlappingHrLeavesInternalAsync(object domain)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: resource_calendar_leaves.py) ---
+            // def _get_overlapping_hr_leaves(self, domain=None):
+            // """Find leaves with potentially missing timesheets."""
+            // self.ensure_one()
+            // leave_domain = domain or []
+            // leave_domain += [
+            //     ('company_id', '=', self.company_id.id),
+            //     ('date_from', '<=', self.date_to),
+            //     ('date_to', '>=', self.date_from),
+            // ]
+            // if self.calendar_id:
+            //     leave_domain += [('resource_calendar_id', 'in', [False, self.calendar_id.id])]
+            // return self.env['hr.leave'].search(leave_domain)
             */
             return default;
         }
@@ -286,7 +311,9 @@ namespace Bamboo.Core.Application.Services
             // calendars = leaves_with_calendar.calendar_id
             // leaves_wo_calendar = self - leaves_with_calendar
             // if leaves_wo_calendar:
-            //     calendars += self.env['resource.calendar'].search([('company_id', 'in', leaves_wo_calendar.company_id.ids)])
+            //     calendars += self.env['resource.calendar'].search([
+            //         ('company_id', 'in', leaves_wo_calendar.company_id.ids + [False]),
+            //     ])
             // return calendars
             */
             return default;
@@ -346,23 +373,23 @@ namespace Bamboo.Core.Application.Services
             // 
             // previous_durations = leaves.mapped('number_of_days')
             // previous_states = leaves.mapped('state')
+            // self.env.add_to_compute(self.env['hr.leave']._fields['number_of_days'], leaves)
+            // self.env.add_to_compute(self.env['hr.leave']._fields['duration_display'], leaves)
             // leaves.sudo().write({
             //     'state': 'confirm',
             // })
-            // self.env.add_to_compute(self.env['hr.leave']._fields['number_of_days'], leaves)
-            // self.env.add_to_compute(self.env['hr.leave']._fields['duration_display'], leaves)
-            // sick_time_status = self.env.ref('hr_holidays.holiday_status_sl', raise_if_not_found=False)
+            // sick_time_status = self.env.ref('hr_holidays.leave_type_sick_time_off', raise_if_not_found=False)
             // leaves_to_recreate = self.env['hr.leave']
             // for previous_duration, leave, state in zip(previous_durations, leaves, previous_states):
             //     duration_difference = previous_duration - leave.number_of_days
             //     message = False
-            //     if duration_difference > 0 and leave.holiday_status_id.requires_allocation == 'yes':
+            //     if duration_difference > 0 and leave.holiday_status_id.requires_allocation:
             //         message = _("Due to a change in global time offs, you have been granted %s day(s) back.", duration_difference)
             //     if leave.number_of_days > previous_duration\
             //             and (not sick_time_status or leave.holiday_status_id not in sick_time_status):
             //         message = _("Due to a change in global time offs, %s extra day(s) have been taken from your allocation. Please review this leave if you need it to be changed.", -1 * duration_difference)
             //     try:
-            //         leave.write({'state': state})
+            //         leave.sudo().write({'state': state})  # sudo in order to skip _check_approval_update
             //         leave._check_validity()
             //         if leave.state == 'validate':
             //             # recreate the resource leave that were removed by writing state to draft
@@ -373,6 +400,22 @@ namespace Bamboo.Core.Application.Services
             //     if message:
             //         leave._notify_change(message)
             // leaves_to_recreate.sudo()._create_resource_leave()
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendarLeaves> RegenerateHrLeaveTimesheetsOnGtoUnlinkedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: resource_calendar_leaves.py) ---
+            // def _regenerate_hr_leave_timesheets_on_gto_unlinked(self):
+            // overlapping_leaves = self.env['hr.leave']
+            // global_leaves = self.filtered(lambda l: not l.resource_id)
+            // for global_leave in global_leaves:
+            //     overlapping_leaves += global_leave._get_overlapping_hr_leaves()
+            // if overlapping_leaves:
+            //     # we need to ignore the global time off since it hasn't been deleted yet
+            //     overlapping_leaves.sudo()._generate_timesheets(ignored_resource_calendar_leaves=global_leaves.ids)
             */
             return default;
         }
@@ -400,7 +443,7 @@ namespace Bamboo.Core.Application.Services
             // min_date = max_date = None
             // for values in work_hours_data.values():
             //     for vals in values.values():
-            //         for d, dummy in vals:
+            //         for d, _dummy in vals:
             //             if not min_date and not max_date:
             //                 min_date = max_date = d
             //             elif d < min_date:
@@ -540,7 +583,7 @@ namespace Bamboo.Core.Application.Services
             // )
             // for company, leaves, resources, date_from_min, date_to_max in comp_leaves_read_group:
             //     for calendar_id in resource_calendars.ids:
-            //         if calendars_dict[calendar_id].company_id != company:
+            //         if (calendar_company := calendars_dict[calendar_id].company_id) and calendar_company != company:
             //             continue  # only consider global leaves of the same company as the calendar
             //         calendar_data = cal_attendance_intervals_dict.get(calendar_id)
             //         if calendar_data is None:
@@ -575,7 +618,7 @@ namespace Bamboo.Core.Application.Services
             //     for leave in cal_attendance_intervals_params_entry['leaves']:
             //         work_hours_data = work_hours_intervals[leave.resource_id.id]
             // 
-            //         for date_from, date_to, dummy in work_hours_data:
+            //         for date_from, date_to, _dummy in work_hours_data:
             //             if date_to > utc.localize(leave.date_from) and date_from < utc.localize(leave.date_to):
             //                 tmp_start = max(date_from, utc.localize(leave.date_from))
             //                 tmp_end = min(date_to, utc.localize(leave.date_to))
@@ -601,14 +644,21 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // date_from, date_to, calendar_id = vals.get('date_from'), vals.get('date_to'), vals.get('calendar_id')
             // global_time_off_updated = self.env['resource.calendar.leaves']
+            // overlapping_leaves = self.env['hr.leave']
             // if date_from or date_to or 'calendar_id' in vals:
             //     global_time_off_updated = self.filtered(lambda r: (date_from is not None and r.date_from != date_from) or (date_to is not None and r.date_to != date_to) or (calendar_id is None or r.calendar_id.id != calendar_id))
             //     timesheets = global_time_off_updated.sudo().timesheet_ids
             //     if timesheets:
             //         timesheets.write({'global_leave_id': False})
             //         timesheets.unlink()
-            // result = super(ResourceCalendarLeaves, self).write(vals)
+            //     if calendar_id:
+            //         for gto in global_time_off_updated:
+            //             domain = [] if gto.calendar_id else [('resource_calendar_id', '!=', calendar_id)]
+            //             overlapping_leaves += gto._get_overlapping_hr_leaves(domain)
+            // result = super().write(vals)
             // global_time_off_updated and global_time_off_updated.sudo()._generate_timesheeets()
+            // if overlapping_leaves:
+            //     overlapping_leaves.sudo()._generate_timesheets()
             // return result
             */
             return await base.WriteAsync(ids, entity, fields);

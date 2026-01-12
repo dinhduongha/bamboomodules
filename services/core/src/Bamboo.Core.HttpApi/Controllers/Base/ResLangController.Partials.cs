@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/c-a-c-h-e-d-f-i-e-l-d-s")]
         public async Task<IActionResult> CACHEDFIELDSAsync(Guid id)
         {
@@ -63,14 +71,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> InstallLangAsync(Guid id)
         {
             var result = await _appService.InstallLangAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

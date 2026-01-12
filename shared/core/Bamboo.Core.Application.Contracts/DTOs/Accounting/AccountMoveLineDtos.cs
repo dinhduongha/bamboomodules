@@ -24,6 +24,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Fnames { get; set; }
     }
     
+    public class AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto
+    {
+        public object Taxes { get; set; }
+    }
+    
     public class AccountMoveLineGetInvoiceLineAccountRequestDto
     {
         public object Type { get; set; }

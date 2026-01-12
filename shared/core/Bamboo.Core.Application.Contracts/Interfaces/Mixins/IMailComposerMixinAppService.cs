@@ -16,7 +16,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeIsMailTemplateEditorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable;
         Task<TEntity> ComputeLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable;
         Task<TEntity> ComputeSubjectInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable;
-        Task<TEntity> RenderFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field) where TEntity : IEntity<Guid>, IMailComposerMixinable;
-        Task<TEntity> RenderLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable;
+        Task<TEntity> RenderFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, List<Guid> res_ids) where TEntity : IEntity<Guid>, IMailComposerMixinable;
+        Task<TEntity> RenderLangInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object engine) where TEntity : IEntity<Guid>, IMailComposerMixinable;
     }
 }

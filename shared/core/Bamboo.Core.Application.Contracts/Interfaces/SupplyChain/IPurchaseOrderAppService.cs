@@ -10,19 +10,22 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPurchaseOrderAppService : IGenericApplicationService<PurchaseOrder>
     {
+        Task<PurchaseOrder> AcknowledgeAsync(Guid id);
         Task<PurchaseOrder> AddFromCatalogAsync(Guid id);
         Task<PurchaseOrder> BillMatchingAsync(Guid id);
         Task<PurchaseOrder> ButtonApproveAsync(Guid id, PurchaseOrderButtonApproveRequestDto input);
         Task<PurchaseOrder> ButtonCancelAsync(Guid id);
         Task<PurchaseOrder> ButtonConfirmAsync(Guid id);
-        Task<PurchaseOrder> ButtonDoneAsync(Guid id);
         Task<PurchaseOrder> ButtonDraftAsync(Guid id);
+        Task<PurchaseOrder> ButtonLockAsync(Guid id);
         Task<PurchaseOrder> ButtonUnlockAsync(Guid id);
         Task<PurchaseOrder> CompareAlternativeLinesAsync(Guid id);
-        Task<PurchaseOrder> ConfirmReminderMailAsync(Guid id, PurchaseOrderConfirmReminderMailRequestDto input);
         Task<PurchaseOrder> CreateAlternativeAsync(Guid id);
-        Task<PurchaseOrder> CreateInvoiceAsync(Guid id);
+        Task<PurchaseOrder> CreateDocumentFromAttachmentAsync(Guid id, PurchaseOrderCreateDocumentFromAttachmentRequestDto input);
+        Task<PurchaseOrder> CreateInvoiceAsync(Guid id, PurchaseOrderCreateInvoiceRequestDto input);
+        Task<PurchaseOrder> GetAcknowledgeUrlAsync(Guid id);
         Task<PurchaseOrder> GetConfirmUrlAsync(Guid id, PurchaseOrderGetConfirmUrlRequestDto input);
+        Task<PurchaseOrder> GetImportTemplatesAsync(Guid id);
         Task<PurchaseOrder> GetLocalizedDatePlannedAsync(Guid id, PurchaseOrderGetLocalizedDatePlannedRequestDto input);
         Task<PurchaseOrder> GetOrderTimezoneAsync(Guid id);
         Task<PurchaseOrder> GetReportMatrixesAsync(Guid id);
@@ -32,9 +35,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<PurchaseOrder> MessagePostAsync(Guid id);
         Task<PurchaseOrder> OnchangeDatePlannedAsync(Guid id);
         Task<PurchaseOrder> OnchangePartnerIdAsync(Guid id);
-        Task<PurchaseOrder> OnchangePartnerIdWarningAsync(Guid id);
         Task<PurchaseOrder> OnchangePickingTypeIdAsync(Guid id);
+        Task<PurchaseOrder> OpenBusinessDocAsync(Guid id);
         Task<PurchaseOrder> PrintQuotationAsync(Guid id);
+        Task<PurchaseOrder> PurchaseComparisonAsync(Guid id);
+        Task<PurchaseOrder> PurchaseOrderSuggestAsync(Guid id);
         Task<PurchaseOrder> RetrieveDashboardAsync(Guid id);
         Task<PurchaseOrder> RfqSendAsync(Guid id);
         Task<PurchaseOrder> SendReminderPreviewAsync(Guid id);

@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldHtmlable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def attributes(self, record, field_name, options, values=None):
             // attrs = super().attributes(record, field_name, options, values)
             // if options.get('inherit_branding'):
@@ -61,7 +61,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldHtmlable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // content = []
             // if element.text:

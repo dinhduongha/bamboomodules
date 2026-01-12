@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-add-entire-packs")]
+        public async Task<IActionResult> ActionAddEntirePacksAsync(Guid id, [FromBody] StockPickingAddEntirePacksRequestDto input)
+        {
+            var result = await _appService.AddEntirePacksAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-add-operations")]
         public async Task<IActionResult> ActionAddOperationsAsync(Guid id)
         {
@@ -84,17 +92,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-put-in-pack")]
-        public async Task<IActionResult> ActionPutInPackAsync(Guid id, [FromBody] StockPickingPutInPackRequestDto input)
+        public async Task<IActionResult> ActionPutInPackAsync(Guid id)
         {
-            var result = await _appService.PutInPackAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-record-components")]
-        public async Task<IActionResult> ActionRecordComponentsAsync(Guid id)
-        {
-            var result = await _appService.RecordComponentsAsync(id);
+            var result = await _appService.PutInPackAsync(id);
             return Ok(result);
         }
         
@@ -115,6 +115,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-see-package-histories")]
+        public async Task<IActionResult> ActionSeePackageHistoriesAsync(Guid id)
+        {
+            var result = await _appService.SeePackageHistoriesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-see-packages")]
         public async Task<IActionResult> ActionSeePackagesAsync(Guid id)
         {
@@ -127,6 +135,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionSeeReturnsAsync(Guid id)
         {
             var result = await _appService.SeeReturnsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-show-subcontract-details")]
+        public async Task<IActionResult> ActionShowSubcontractDetailsAsync(Guid id)
+        {
+            var result = await _appService.ShowSubcontractDetailsAsync(id);
             return Ok(result);
         }
         
@@ -175,14 +191,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionViewRepairsAsync(Guid id)
         {
             var result = await _appService.ViewRepairsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-view-stock-valuation-layers")]
-        public async Task<IActionResult> ActionViewStockValuationLayersAsync(Guid id)
-        {
-            var result = await _appService.ViewStockValuationLayersAsync(id);
             return Ok(result);
         }
         

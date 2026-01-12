@@ -46,6 +46,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object IncludeReceipts { get; set; }
     }
     
+    public class AccountMoveInvoiceDownloadPdfRequestDto
+    {
+        public object Target { get; set; }
+    }
+    
     public class AccountMoveIsInboundRequestDto
     {
         public object IncludeReceipts { get; set; }
@@ -64,11 +69,13 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class AccountMoveIsPurchaseDocumentRequestDto
     {
         public object IncludeReceipts { get; set; }
+        public object MoveType { get; set; }
     }
     
     public class AccountMoveIsSaleDocumentRequestDto
     {
         public object IncludeReceipts { get; set; }
+        public object MoveType { get; set; }
     }
     
     public class AccountMoveJsAssignOutstandingLineRequestDto
@@ -90,5 +97,15 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class AccountMoveProcessEdiWebServicesRequestDto
     {
         public object WithCommit { get; set; }
+    }
+    
+    public class AccountMoveReflectCancelledSolRequestDto
+    {
+        public object IsCancelled { get; set; }
+    }
+    
+    public class AccountMoveSetMovesCheckedRequestDto
+    {
+        public object IsChecked { get; set; }
     }
 }

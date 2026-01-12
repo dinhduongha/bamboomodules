@@ -76,7 +76,7 @@ namespace Bamboo.Core.Application.Services
             //     return
             // if not date:
             //     raise ValidationError(_("The API key must have an expiration date"))
-            // max_duration = max(group.api_key_duration for group in self.env.user.groups_id) or 1.0
+            // max_duration = max(group.api_key_duration for group in self.env.user.all_group_ids) or 1.0
             // if date > datetime.datetime.now() + datetime.timedelta(days=max_duration):
             //     raise ValidationError(_("You cannot exceed %(duration)s days.", duration=max_duration))
             */
@@ -116,23 +116,65 @@ namespace Bamboo.Core.Application.Services
         protected async Task<AuthTotpDevice> GenerateInternalAsync(object scope, object name, object expiration_date)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: auth_totp_device.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _generate(self, scope, name, expiration_date):
-            // """ Notify users when trusted devices are added onto their account.
-            // We override this method instead of 'create' as those records are inserted directly into the
-            // database using raw SQL. """
+            // """Generates an api key.
+            // :param str scope: the scope of the key. If None, the key will give access to any rpc.
+            // :param str name: the name of the key, mainly intended to be displayed in the UI.
+            // :param date expiration_date: the expiration date of the key.
+            // :return: str: the key.
             // 
-            // res = super()._generate(scope, name, expiration_date)
+            // Note:
+            // This method must be called in sudo to use a duration
+            // greater than that allowed by the user's privileges.
+            // For a persistent key (infinite duration), no value for expiration date.
+            // """
+            // self._check_expiration_date(expiration_date)
+            // # no need to clear the LRU when *adding* a key, only when removing
+            // k = binascii.hexlify(os.urandom(API_KEY_SIZE)).decode()
+            // self.env.cr.execute("""
+            // INSERT INTO {table} (name, user_id, scope, expiration_date, key, index)
+            // VALUES (%s, %s, %s, %s, %s, %s)
+            // RETURNING id
+            // """.format(table=self._table),
+            // [name, self.env.user.id, scope, expiration_date or None, KEY_CRYPT_CONTEXT.hash(k), k[:INDEX_SIZE]])
             // 
-            // self.env.user._notify_security_setting_update(
-            //     _("Security Update: Device Added"),
-            //     _(
-            //         "A trusted device has just been added to your account: %(device_name)s",
-            //         device_name=name
-            //     ),
-            // )
+            // ip = request.httprequest.environ['REMOTE_ADDR'] if request else 'n/a'
+            // _logger.info("%s generated: scope: <%s> for '%s' (#%s) from %s",
+            //     self._description, scope, self.env.user.login, self.env.uid, ip)
             // 
-            // return res
+            // return k
+            */
+            return default;
+        }
+
+        protected async Task<AuthTotpDevice> GetTrustedDeviceAgeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: auth_totp_device.py) ---
+            // def _get_trusted_device_age(self):
+            // age = super()._get_trusted_device_age()
+            // user_lock_timeout_mfa = [
+            //     threshold for threshold, mfa in self.env.user._get_lock_timeouts().get("lock_timeout") if mfa
+            // ]
+            // if user_lock_timeout_mfa:
+            //     return min(age, *user_lock_timeout_mfa)
+            // return age
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: auth_totp.py) ---
+            // def _get_trusted_device_age(self):
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // try:
+            //     nbr_days = int(ICP.get_param('auth_totp.trusted_device_age', TRUSTED_DEVICE_AGE_DAYS))
+            //     if nbr_days <= 0:
+            //         nbr_days = None
+            // except ValueError:
+            //     nbr_days = None
+            // 
+            // if nbr_days is None:
+            //     _logger.warning("Invalid value for 'auth_totp.trusted_device_age', using default value.")
+            //     nbr_days = TRUSTED_DEVICE_AGE_DAYS
+            // 
+            // return nbr_days * 86400
             */
             return default;
         }

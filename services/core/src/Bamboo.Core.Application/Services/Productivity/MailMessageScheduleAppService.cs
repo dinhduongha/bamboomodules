@@ -66,7 +66,8 @@ namespace Bamboo.Core.Application.Services
             //   ``notify_thread``. Those are default values overridden by content of
             //   ``notification_parameters`` field.
             // 
-            // :return bool: False if no schedule has been found, True otherwise
+            // :returns: False if no schedule has been found, True otherwise
+            // :rtype: bool
             // """
             // messages_scheduled = self.search(
             //     [('mail_message_id', 'in', messages.ids)]
@@ -142,7 +143,8 @@ namespace Bamboo.Core.Application.Services
             // :param datetime new_datetime: new datetime for sending. New triggers
             //   are created based on it;
             // 
-            // :return bool: False if no schedule has been found, True otherwise
+            // :returns: False if no schedule has been found, True otherwise
+            // :rtype: bool
             // """
             // messages_scheduled = self.search(
             //     [('mail_message_id', 'in', messages.ids)]

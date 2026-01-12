@@ -11,10 +11,18 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
         {
-            var result = await _appService.ToggleActiveAsync(id);
+            var result = await _appService.ArchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
             return Ok(result);
         }
     }

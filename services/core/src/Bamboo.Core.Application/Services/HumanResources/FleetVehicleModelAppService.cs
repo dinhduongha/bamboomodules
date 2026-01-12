@@ -30,6 +30,20 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
+        protected async Task<FleetVehicleModel> ComputeCo2EmissionUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
+            // def _compute_co2_emission_unit(self):
+            // for record in self:
+            //     if record.range_unit == 'km':
+            //         record.co2_emission_unit = 'g/km'
+            //     else:
+            //         record.co2_emission_unit = 'g/mi'
+            */
+            return default;
+        }
+
         protected async Task<FleetVehicleModel> ComputeDisplayNameInternalAsync()
         {
             /*
@@ -55,6 +69,17 @@ namespace Bamboo.Core.Application.Services
             // count_by_model = {model.id: count for model, count in group}
             // for model in self:
             //     model.vehicle_count = count_by_model.get(model.id, 0)
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicleModel> GetYearSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
+            // def _get_year_selection(self):
+            // current_year = datetime.now().year
+            // return [(str(i), i) for i in range(1970, current_year + 1)]
             */
             return default;
         }
@@ -91,14 +116,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
             // def _search_display_name(self, operator, value):
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     positive_operator = expression.TERM_OPERATORS_NEGATION[operator]
-            // else:
-            //     positive_operator = operator
-            // domain = expression.OR([[('name', positive_operator, value)], [('brand_id.name', positive_operator, value)]])
-            // if positive_operator != operator:
-            //     domain = ['!', *domain]
-            // return domain
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // return ['|', ('name', operator, value), ('brand_id.name', operator, value)]
             */
             return default;
         }
@@ -108,17 +128,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
             // def _search_vehicle_count(self, operator, value):
-            // if operator not in ['=', '!=', '<', '>'] or not isinstance(value, int):
-            //     raise NotImplementedError(_('Operation not supported.'))
-            // fleet_models = self.env['fleet.vehicle.model'].search([])
-            // if operator == '=':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count == value)
-            // elif operator == '!=':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count != value)
-            // elif operator == '<':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count < value)
-            // elif operator == '>':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count > value)
+            // fleet_models = self.env['fleet.vehicle.model'].search_fetch([], ['vehicle_count'])
+            // fleet_models = fleet_models.filtered_domain([('vehicle_count', operator, value)])
             // return [('id', 'in', fleet_models.ids)]
             */
             return default;

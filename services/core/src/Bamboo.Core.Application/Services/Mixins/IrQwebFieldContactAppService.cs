@@ -27,9 +27,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def attributes(self, record, field_name, options, values):
-            // attrs = super(Contact, self).attributes(record, field_name, options, values)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def attributes(self, record, field_name, options, values=None):
+            // attrs = super().attributes(record, field_name, options, values)
             // if options.get('inherit_branding'):
             //     attrs['data-oe-contact-options'] = json.dumps(options)
             // return attrs
@@ -42,7 +42,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(Contact, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     website_description=dict(type='boolean', string=_('Display the website description')),
             //     UserBio=dict(type='boolean', string=_('Display the biography')),
@@ -51,12 +51,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(Contact, self).get_available_options()
+            // options = super().get_available_options()
             // contact_fields = [
             //     {'field_name': 'name', 'label': _('Name'), 'default': True},
             //     {'field_name': 'address', 'label': _('Address'), 'default': True},
             //     {'field_name': 'phone', 'label': _('Phone'), 'default': True},
-            //     {'field_name': 'mobile', 'label': _('Mobile'), 'default': True},
             //     {'field_name': 'email', 'label': _('Email'), 'default': True},
             //     {'field_name': 'vat', 'label': _('VAT')},
             // ]
@@ -78,12 +77,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetRecordToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object ids, object options) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
+        public async Task<TEntity> GetRecordToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> contact_ids, object options) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def get_record_to_html(self, ids, options=None):
-            // return self.value_to_html(self.env['res.partner'].search([('id', '=', ids[0])]), options=options)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def get_record_to_html(self, contact_ids, options=None):
+            // """ Helper to call the rendering of contact field. """
+            // return self.value_to_html(self.env['res.partner'].search([('id', '=', contact_ids[0])]), options=options)
             */
             return default;
         }
@@ -102,7 +102,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return self.env['ir.qweb']._render('base.no_contact', val, **template_options)
             //     return ''
             // 
-            // opf = options.get('fields') or ["name", "address", "phone", "mobile", "email"]
+            // opf = options.get('fields') or ["name", "address", "phone", "email"]
             // sep = options.get('separator')
             // if sep:
             //     opsep = escape(sep)
@@ -125,7 +125,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'name': display_name.split("\n")[0],
             //     'address': address,
             //     'phone': value.phone,
-            //     'mobile': value.mobile,
             //     'city': value.city,
             //     'country_id': value.country_id.display_name,
             //     'website': value.website,

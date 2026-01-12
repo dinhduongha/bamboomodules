@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class WebsiteAppService : GenericApplicationService<Website>, IWebsiteAppService
     {
 
@@ -85,23 +85,26 @@ namespace Bamboo.Core.Application.Services
             // :return: yields words
             // """
             // match_pattern = r'[\w./-]{%s,}' % min(4, len(search) - 3)
-            // first = sqltools.escape_psql(search[0])
+            // first = escape_psql(search[0])
             // for search_detail in search_details:
             //     model_name, fields = search_detail['model'], search_detail['search_fields']
             //     model = self.env[model_name]
             //     if search_detail.get('requires_sudo'):
             //         model = model.sudo()
-            //     domain = search_detail['base_domain'].copy()
-            //     fields_domain = []
+            //     domain = Domain.AND(search_detail['base_domain'])
             //     direct_fields = set(fields).intersection(model._fields)
             //     indirect_fields = self._search_get_indirect_fields(fields, model)
             //     fields = direct_fields.union(indirect_fields)
-            //     for field in fields:
-            //         fields_domain.append([(field, '=ilike', '%s%%' % first)])
-            //         fields_domain.append([(field, '=ilike', '%% %s%%' % first)])
-            //         fields_domain.append([(field, '=ilike', '%%>%s%%' % first)])  # HTML
-            //     domain.append(OR(fields_domain))
-            //     domain = AND(domain)
+            //     fields_domain = Domain.OR(
+            //         Domain(field, '=ilike', pattern)
+            //         for field in fields
+            //         for pattern in (
+            //             '%s%%' % first,
+            //             '%% %s%%' % first,
+            //             '%%>%s%%' % first,  # HTML
+            //         )
+            //     )
+            //     domain &= fields_domain
             //     perf_limit = 1000
             //     records = model.search_read(domain, direct_fields, limit=perf_limit)
             //     if len(records) == perf_limit:
@@ -142,8 +145,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //         # keep strange indentation in python file, to get it correctly in database
             //         new_homepage_view = '''<t name="Homepage" t-name="website.homepage">
-            //     <t t-call="website.layout">
-            //         <t t-set="pageName" t-value="'homepage'"/>
+            //     <t t-call="website.layout" pageName.f="homepage">
             //         <div id="wrap" class="oe_structure oe_empty"/>
             //     </t>
             // </t>'''
@@ -182,6 +184,26 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<Website> CheckDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _check_domain(self):
+            // for record in self:
+            //     if not record.domain:
+            //         continue
+            // 
+            //     try:
+            //         parsed = urlparse(record.domain)
+            //     except ValueError:
+            //         raise ValidationError(_("The provided website domain is not a valid URL."))
+            // 
+            //     if tools.urls._contains_dot_segments(parsed.path):
+            //         raise ValidationError(_("The domain path cannot contain relative path segments like '/./' or '/../'."))
+            */
+            return default;
+        }
+
         protected async Task<Website> CheckEventsAppNameInternalAsync()
         {
             /*
@@ -192,6 +214,60 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_('"Events App Name" field is required.'))
             */
             return default;
+        }
+
+        public async Task<Website> CheckExistingPageAsync(Guid id, WebsiteCheckExistingPageRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def check_existing_page(self, page):
+            // """
+            //     Returns a boolean, whether the page is considered to exist for the
+            //     current website. This is a heuristic and is not perfectly reliable.
+            // """
+            // # The page exists if there is a 'website.page' record with this url
+            // if len(self._get_website_pages(domain=[('url', '=', page), ('view_id', '!=', False)], limit=1)) > 0:
+            //     return True
+            // 
+            // # The page is considered to exist if there is a 'website.rewrite' record
+            // # that does a redirect 301 or 302, for simplicity we do not check
+            // # further whether the redirection points to an existing url.
+            // redirects_domain = self.get_current_website().website_domain() & Domain(
+            //     [('url_from', '=', page), ('redirect_type', 'in', ('301', '302'))]
+            // )
+            // if len(self.env['website.rewrite'].search(redirects_domain, limit=1)) > 0:
+            //     return True
+            // 
+            // router = request.env['ir.http'].routing_map().bind_to_environ(request.httprequest.environ)
+            // # If there is no rules matching this page, it does not exists
+            // if not router.test(path_info=page, method='GET'):
+            //     return False
+            // 
+            // try:
+            //     rule, args = router.match(page, method='GET', return_rule=True)
+            // except werkzeug.routing.RequestRedirect:
+            //     # The page is considered to exist if it redirects (this happens if
+            //     # there is a 'website.rewrite' 308), for simplicity we do not check
+            //     # further whether the redirection points to an existing url.
+            //     return True
+            // 
+            // try:
+            //     # The rule may have restriction for some records that appear in its
+            //     # url, these are checked by `rule.build`.
+            //     for arg in args:
+            //         if isinstance(args[arg], models.BaseModel):
+            //             # Models from `router.match` are missing users in their env
+            //             args[arg] = args[arg].with_user(self.env.uid)
+            //             # For record that may be related to a website, we skip them
+            //             # if they are for a different website than the current one
+            //             if hasattr(args[arg], 'website_id') and args[arg].website_id and args[arg].website_id != self:
+            //                 return False
+            //     rule.build(args, append_unknown=False)
+            // except MissingError:
+            //     return False
+            // return True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<Website> CheckHomepageUrlInternalAsync()
@@ -294,7 +370,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def _compute_currency_id(self):
             // for website in self:
-            //     website.currency_id = website.pricelist_id.currency_id or website.company_id.currency_id
+            //     website.currency_id = (
+            //         request and hasattr(request, 'pricelist') and request.pricelist.currency_id
+            //         or website.company_id.sudo().currency_id
+            //     )
             */
             return default;
         }
@@ -308,8 +387,11 @@ namespace Bamboo.Core.Application.Services
             // for website in self:
             //     website_domain = website.domain or ''
             //     hostname = urlparse(website_domain).hostname or ''
-            //     punycode_hostname = hostname.encode('idna').decode('ascii')
-            //     website.domain_punycode = website_domain.replace(hostname, punycode_hostname)
+            //     try:
+            //         punycode_hostname = hostname.encode('idna').decode('ascii')
+            //         website.domain_punycode = website_domain.replace(hostname, punycode_hostname)
+            //     except UnicodeError:
+            //         website.domain_punycode = website_domain
             */
             return default;
         }
@@ -322,17 +404,6 @@ namespace Bamboo.Core.Application.Services
             // for website in self:
             //     if not website.events_app_name:
             //         website.events_app_name = _('%s Events') % website.name
-            */
-            return default;
-        }
-
-        protected async Task<Website> ComputeFiscalPositionIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _compute_fiscal_position_id(self):
-            // for website in self:
-            //     website.fiscal_position_id = website._get_current_fiscal_position()
             */
             return default;
         }
@@ -381,33 +452,26 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def _compute_menu(self):
+            // # prefetch all accessible menus at once
+            // all_menus = self.env['website.menu'].search_fetch(Domain('website_id', 'in', self.ids))
+            // 
             // for website in self:
-            //     menus = self.env['website.menu'].browse(website._get_menu_ids())
+            //     menus = all_menus.filtered(lambda m: m.website_id == website)
             // 
             //     # use field parent_id (1 query) to determine field child_id (2 queries by level)"
-            //     for menu in menus:
-            //         menu._cache['child_id'] = ()
+            //     children = dict.fromkeys(menus, ())
             //     for menu in menus:
             //         # don't add child menu if parent is forbidden
             //         if menu.parent_id and menu.parent_id in menus:
-            //             menu.parent_id._cache['child_id'] += (menu.id,)
+            //             children[menu.parent_id] += (menu.id,)
+            //     for menu, child_items in children.items():
+            //         menu._fields['child_id']._update_cache(menu, child_items)
             // 
             //     # prefetch every website.page and ir.ui.view at once
             //     menus.mapped('is_visible')
             // 
             //     top_menus = menus.filtered(lambda m: not m.parent_id)
-            //     website.menu_id = top_menus and top_menus[0].id or False
-            */
-            return default;
-        }
-
-        protected async Task<Website> ComputePricelistIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _compute_pricelist_id(self):
-            // for website in self:
-            //     website.pricelist_id = website._get_current_pricelist()
+            //     website.menu_id = top_menus[:1].id
             */
             return default;
         }
@@ -420,11 +484,126 @@ namespace Bamboo.Core.Application.Services
             // for website in self:
             //     website = website.with_company(website.company_id)
             //     ProductPricelist = website.env['product.pricelist']  # with correct company in env
-            //     website.pricelist_ids = ProductPricelist.sudo().search(
+            //     website.pricelist_ids = ProductPricelist.sudo().search_fetch(
             //         ProductPricelist._get_website_pricelists_domain(website)
             //     )
             */
             return default;
+        }
+
+        protected async Task<Website> ComputeSendAbandonedCartEmailActivationTimeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _compute_send_abandoned_cart_email_activation_time(self):
+            // for website in self:
+            //     if website.send_abandoned_cart_email:
+            //         website.send_abandoned_cart_email_activation_time = fields.Datetime.now()
+            */
+            return default;
+        }
+
+        protected async Task<Website> ComputeShowLineSubtotalsTaxSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _compute_show_line_subtotals_tax_selection(self):
+            // for website in self:
+            //     website.show_line_subtotals_tax_selection = 'tax_excluded'
+            */
+            return default;
+        }
+
+        public async Task<Website> ConfiguratorAddonsApplyAsync(Guid id, WebsiteConfiguratorAddonsApplyRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def configurator_addons_apply(self, industry_name=None, **kwargs):
+            // pass
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def configurator_addons_apply(self, industry_name=None, **kwargs):
+            // """Override of `website` to generate eCommerce categories for a given industry using AI."""
+            // 
+            // def generate_categories(industry_name_):
+            //     lang = self.env.context.get('lang')
+            //     prompt = (
+            //         f"You are a seasoned Marketing Expert specializing in crafting high-converting eCommerce experiences.\n"
+            //         f"Your task is to develop compelling category names and descriptions for a {industry_name_}'s new online store.\n"
+            //         f"The goal is to create categories that are persuasive, attention-grabbing, and concise, encouraging visitors to explore the offerings.\n"
+            //         f"All content should be in {lang}.\n"
+            //         f"Here's the format you will use to generate the categories:\n"
+            //         f'{{"categories": ['
+            //         f'{{"name": "$category_name_1", "description": "$category_description_1"}}, '
+            //         f'{{"name": "$category_name_2", "description": "$category_description_2"}}, '
+            //         f'{{"name": "$category_name_3", "description": "$category_description_3"}}, '
+            //         f'{{"name": "$category_name_4", "description": "$category_description_4"}}, '
+            //         f'{{"name": "$category_name_5", "description": "$category_description_5"}}, '
+            //         f'{{"name": "$category_name_6", "description": "$category_description_6"}}, '
+            //         f'{{"name": "$category_name_7", "description": "$category_description_7"}}, '
+            //         f'{{"name": "$category_name_8", "description": "$category_description_8"}}'
+            //         f']}}\n'
+            //         f"Constraints:\n"
+            //         f"Language: {lang}\n"
+            //         f"Category Names: Must be nouns only (no adjectives).\n"
+            //         f"Description Length: Keep descriptions very short and to the point (ideally under 20 words).\n"
+            //         f"Persuasion: Descriptions should be persuasive and designed to attract attention.\n"
+            //         f"Number of Categories: Exactly 8 categories are required.\n"
+            //         f"Now, generate the 8 eCommerce categories for the {industry_name_}, adhering to the specified format and constraints."
+            //     )
+            //     IrConfigParameterSudo = self.env['ir.config_parameter'].sudo()
+            //     database_id = IrConfigParameterSudo.get_param('database.uuid')
+            //     try:
+            //         response = self._OLG_api_rpc('/api/olg/1/chat', {
+            //             'prompt': prompt,
+            //             'conversation_history': [],
+            //             'database_id': database_id,
+            //         })
+            //     except AccessError:
+            //         logger.warning("API is unreachable for the category generation")
+            //         return None
+            // 
+            //     if response['status'] == 'success':
+            //         content = response['content'].replace('```json\n', '').replace('\n```', '')
+            //         try:
+            //             return json.loads(content)
+            //         except json.JSONDecodeError:
+            //             logger.warning("API response is not a valid JSON for the category generation")
+            //     elif response['status'] == 'error_prompt_too_long':
+            //         logger.warning("Prompt is too long for the category generation")
+            //     elif response['status'] == 'limit_call_reached':
+            //         logger.warning("Limit call reached for the category generation")
+            //     else:
+            //         logger.warning("Response could not be generated for the category generation")
+            //     return None
+            // 
+            // res = super().configurator_addons_apply(industry_name=industry_name, **kwargs)
+            // 
+            // if self.env['product.public.category'].search_count([], limit=1):
+            //     logger.info("Categories already exist, skipping AI generation.")
+            //     return
+            // 
+            // category_specs = generate_categories(industry_name)
+            // if not isinstance(category_specs, dict):
+            //     return
+            // 
+            // if len(category_specs.get('categories')) == 8:
+            //     images_names = [f'shape_mixed_{i}.png' for i in range(1, 9)]
+            //     categories = []
+            //     for idx, cat in enumerate(category_specs['categories']):
+            //         image_name = images_names[idx]
+            //         img_path = 'website_sale/static/src/img/categories/' + image_name
+            //         with file_open(img_path, 'rb') as file:
+            //             image_base64 = base64.b64encode(file.read())
+            //         categories.append({
+            //             'name': cat['name'],
+            //             'website_description': cat['description'],
+            //             'image_1920': image_base64,
+            //             'cover_image': image_base64,
+            //         })
+            //     self.env['product.public.category'].sudo().create(categories)
+            // return res
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<Website> ConfiguratorApplyAsync(Guid id)
@@ -459,7 +638,7 @@ namespace Bamboo.Core.Application.Services
             // # Configure the color palette
             // selected_palette = kwargs.get('selected_palette')
             // if selected_palette:
-            //     Assets = self.env['web_editor.assets']
+            //     Assets = self.env['website.assets']
             //     selected_palette_name = selected_palette if isinstance(selected_palette, str) else 'base-1'
             //     Assets.make_scss_customization(
             //         '/website/static/src/scss/options/user_values.scss',
@@ -551,6 +730,11 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.env['website'].browse(website.id).configurator_set_menu_links(menu_company, module_data)
             // 
+            // # Extension hook: allows installed modules (e.g. website_sale, website_blog, ...) to perform
+            // # additional setup steps on the generated website. This acts as an entry point for modules to
+            // # customize the website.
+            // self.env['website'].configurator_addons_apply(**kwargs)
+            // 
             // # We need to refresh the environment of the website because we installed
             // # some new module and we need the overrides of these new menus e.g. for
             // # the call to `get_cta_data`.
@@ -560,25 +744,29 @@ namespace Bamboo.Core.Application.Services
             // # through module overrides of `configurator_get_footer_links`.
             // footer_links = website.configurator_get_footer_links()
             // footer_ids = [
-            //     'website.template_footer_contact', 'website.template_footer_headline',
+            //     'website.template_footer_contact',
             //     'website.footer_custom', 'website.template_footer_links',
-            //     'website.template_footer_minimalist',
+            //     'website.template_footer_minimalist', 'website.template_footer_mega', 'website.template_footer_mega_columns', 'website.template_footer_mega_links',
             // ]
             // for footer_id in footer_ids:
-            //     try:
-            //         view_id = self.env['website'].viewref(footer_id)
-            //         if view_id:
-            //             # Deliberately hardcode dynamic code inside the view arch,
-            //             # it will be transformed into static nodes after a save/edit
-            //             # thanks to the t-ignore in parents node.
+            //     view_id = self.env['website'].viewref(footer_id)
+            //     if view_id:
+            //         # Deliberately hardcode dynamic code inside the view arch,
+            //         # it will be transformed into static nodes after a save/edit
+            //         # thanks to the t-ignore in parents node.
+            //         try:
             //             arch_string = etree.fromstring(view_id.arch_db)
-            //             el = arch_string.xpath("//t[@t-set='configurator_footer_links']")[0]
-            //             el.attrib['t-value'] = json.dumps(footer_links)
+            //         except etree.XMLSyntaxError as e:
+            //             # The xml view could have been modified in the backend, we don't
+            //             # want the xpath error to break the configurator feature
+            //             logger.warning("Failed to update footer links in view %s: %s", footer_id, e)
+            //         else:
+            //             el = arch_string.xpath("//t[@t-set='configurator_footer_links']")
+            //             if not el:
+            //                 logger.warning("No 'configurator_footer_links' found in view %s", footer_id)
+            //                 continue
+            //             el[0].attrib['t-value'] = json.dumps(footer_links)
             //             view_id.with_context(website_id=website.id).write({'arch_db': etree.tostring(arch_string)})
-            //     except Exception as e:
-            //         # The xml view could have been modified in the backend, we don't
-            //         # want the xpath error to break the configurator feature
-            //         logger.warning(e)
             // 
             // # Load suggestion from iap for selected pages
             // industry_id = kwargs['industry_id']
@@ -593,135 +781,29 @@ namespace Bamboo.Core.Application.Services
             // industry = kwargs['industry_name']
             // 
             // IrQweb = self.env['ir.qweb'].with_context(website_id=website.id, lang=website.default_lang_id.code)
-            // snippets_cache = {}
-            // translated_content = {}
-            // hashes_to_tags_and_attributes = {}
-            // html_string_to_wrapping_tags = {}
-            // 
-            // def _compute_placeholder(html_string):
-            //     """
-            //     Transforms an HTML string by converting specific HTML tags into a
-            //     custom pseudo-markdown format.
-            // 
-            //     The function wraps the input `html_string` with a root `<div>`
-            //     element, parses it into a tree, and iterates through the HTML
-            //     elements. It replaces recognized HTML tags with a custom pseudo-
-            //     markdown format like `#[text](hash_value)`, where `text` is the
-            //     content of the tag and `hash_value` is the key to fetch the tag name
-            //     and the attributes.
-            // 
-            //     Args:
-            //         html_string (str): The input HTML string to be transformed.
-            // 
-            //     Returns:
-            //         str: The transformed string with HTML tags replaced by
-            //              pseudo-markdown.
-            //     """
-            //     tree = etree.fromstring(f'<div>{html_string}</div>')
-            // 
-            //     # Identifying one or more wrapping tags that enclose the entire HTML
-            //     # content e.g., <strong><em>text ...</em></strong>. Store them to
-            //     # reapply them after processing with chatGPT.
-            //     wrapping_html = []
-            //     for element in tree.iter():
-            //         wrapping_html.append({"tag": element.tag, "attr": element.attrib})
-            //         if len(element) != 1 \
-            //                 or (element.text and element.text.strip()) \
-            //                 or (element[-1].tail and element[-1].tail.strip()):
-            //             break
-            //     # Remove the wrapping element used for parsing into a tree
-            //     wrapping_html = wrapping_html[1:]
-            // 
-            //     # Loop through all nodes, ignoring wrapping ones, to mark them with
-            //     # a pseudo-markdown identifier if they are leaf nodes.
-            //     nb_tags_to_skip = len(wrapping_html) + 1
-            //     for cursor, element in enumerate(tree.iter()):
-            //         if cursor < nb_tags_to_skip or len(element) > 0:
-            //             continue
-            // 
-            //         # Generate a unique hash based on the element's text, tag
-            //         # and attributes.
-            //         attrib_string = ','.join(f'{key}={value}' for key, value in sorted(element.attrib.items()))
-            //         combined_string = f'{element.text or ""}-{element.tag}-{attrib_string}'
-            //         unique_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, combined_string)
-            //         hash_value = unique_uuid.hex[:12]
-            // 
-            //         hashes_to_tags_and_attributes[hash_value] = {"tag": element.tag, "attr": element.attrib}
-            //         element.text = f'#[{element.text or "0"}]({hash_value})'
-            // 
-            //     res = tree.xpath('string()')
-            // 
-            //     # If there is at least one wrapping tag, save the way it needs to
-            //     # be re-applied.
-            //     if wrapping_html:
-            //         tags = [
-            //             (
-            //                 f'<{tag}{" " if attrs else ""}{attrs}>',
-            //                 f'</{tag}>'
-            //             )
-            //             for el in wrapping_html
-            //             for tag, attrs in [(el["tag"], " ".join([f'{k}="{v}"' for k, v in el["attr"].items()]))]
-            //         ]
-            //         opening_tags, closing_tags = zip(*tags)
-            //         html_string_to_wrapping_tags[html_string] = f'{"".join(opening_tags)}$0{"".join(closing_tags[::-1])}'
-            // 
-            //     # Note that `get_text_content` here is still needed despite the use
-            //     # of `string()` in the XPath expression above. Indeed, it allows to
-            //     # strip newlines and double-spaces, which would confuse IAP (without
-            //     # this, it does not perform any replacement for some reason).
-            //     return xml_translate.get_text_content(res.strip())
-            // 
-            // def _render_snippet(key):
-            //     # Using this avoids rendering the same snippet multiple times
-            //     data = snippets_cache.get(key)
-            //     if data:
-            //         return data
-            // 
-            //     render = IrQweb._render(key, cta_data)
-            // 
-            //     terms = []
-            //     xml_translate(terms.append, render)
-            //     placeholders = [_compute_placeholder(term) for term in terms]
-            // 
-            //     if text_must_be_translated_for_openai:
-            //         # Check if terms are translated.
-            //         translation_dictionary = self.env['website.page']._fields['arch_db'].get_translation_dictionary(
-            //             str(IrQweb._render(key, cta_data, lang="en_US")),
-            //             {text_generation_target_lang: str(render)},
-            //         )
-            //         # Remove all numeric keys.
-            //         translation_dictionary = {
-            //             k: v
-            //             for k, v in translation_dictionary.items()
-            //             if not xml_translate.get_text_content(k).strip().isnumeric()
-            //         }
-            //         for from_lang_term, to_lang_terms in translation_dictionary.items():
-            //             translated_content[from_lang_term] = to_lang_terms[text_generation_target_lang]
-            // 
-            //     data = (render, placeholders)
-            //     snippets_cache[key] = data
-            //     return data
-            // 
             // text_generation_target_lang = self.get_current_website().default_lang_id.code
             // # If the target language is not English, we need a good translation
             // # coverage. But if the target lang is en_XX it's ok to have en_US text.
             // text_must_be_translated_for_openai = not text_generation_target_lang.startswith('en_')
+            // 
+            // # Initialize HTML processor with context chaining - similar to website.with_context() pattern
+            // html_text_processor = self.env['website.html.text.processor']._with_processing_context(
+            //     IrQweb=IrQweb,
+            //     cta_data=cta_data,
+            //     text_generation_target_lang=text_generation_target_lang,
+            //     text_must_be_translated_for_openai=text_must_be_translated_for_openai,
+            // )
             // generated_content = {}
+            // translated_content = {}
             // for page_code in requested_pages - {'privacy_policy'}:
             //     snippet_list = configurator_snippets.get(page_code, [])
             //     for snippet in snippet_list:
-            //         render, placeholders = _render_snippet(f'website.configurator_{page_code}_{snippet}')
-            //         for placeholder in placeholders:
-            //             generated_content[placeholder] = ''
-            // if text_must_be_translated_for_openai:
-            //     nb_terms_translated = len([k for k, v in translated_content.items() if k != v])
-            //     nb_terms_total = len(translated_content)
-            // else:
-            //     nb_terms_translated = len(generated_content)
-            //     nb_terms_total = len(generated_content)
-            // translated_ratio = nb_terms_translated / nb_terms_total
-            // logger.debug("Ratio of translated content: %s%% (%s/%s)", translated_ratio * 100, nb_terms_translated, nb_terms_total)
+            //         snippet_key = website._get_snippet_view_key(snippet, page_code)
+            //         html_text_processor, snippet_generated_content, snippet_translated_content = html_text_processor._get_snippet_content(snippet_key)
+            //         generated_content.update(snippet_generated_content)
+            //         translated_content.update(snippet_translated_content)
             // 
+            // translated_ratio = html_text_processor._calculate_translation_ratio(generated_content, translated_content)
             // if translated_ratio > 0.8:
             //     try:
             //         database_id = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
@@ -732,69 +814,18 @@ namespace Bamboo.Core.Application.Services
             //             'database_id': database_id,
             //         })
             //         name_replace_parser = re.compile(r"XXXX", re.MULTILINE)
+            //         website_name = re.escape(website.name)
             //         for key in generated_content:
             //             if response.get(key):
-            //                 generated_content[key] = (name_replace_parser.sub(website.name, response[key], 0))
+            //                 generated_content[key] = (name_replace_parser.sub(website_name, response[key], 0))
             //     except AccessError:
             //         # If IAP is broken continue normally (without generating text)
             //         pass
             // else:
             //     logger.info("Skip AI text generation because translation coverage is too low (%s%%)", translated_ratio * 100)
             // 
-            // def _format_replacement(html_string):
-            //     """
-            //     Reapplies original HTML formatting by replacing pseudo-markdown
-            //     with corresponding HTML tags.
-            // 
-            //     The function searches for the replacement of the given HTML string
-            //     then processes it by identifying and replacing pseudo-markdown
-            //     in the form of `#[string](hash)` with actual HTML tags. It uses
-            //     stored tag and attribute information and reconstructs the correct
-            //     HTML structure. Additionally, it handles any wrapping tags that was
-            //     identified for the given HTML.
-            // 
-            //     Args:
-            //         html_string (str): The source HTML whose replacement has to
-            //             receive original formatting
-            // 
-            //     Returns:
-            //         str: The text with HTML tags re-applied.
-            //     """
-            //     replacement = generated_content.get(_compute_placeholder(html_string))
-            //     if not replacement:
-            //         return html_string
-            // 
-            //     # Replace #[string](hash) with <tag>...</tag> based on stored tag
-            //     # and attribute information
-            //     def _replace_tag(match):
-            //         content = match.group(1)  # The string inside the square brackets
-            //         hash_value = match.group(2)  # The hash value inside the parentheses
-            //         if hash_value not in hashes_to_tags_and_attributes:
-            //             return content
-            // 
-            //         tag = hashes_to_tags_and_attributes[hash_value]['tag']
-            //         attr = hashes_to_tags_and_attributes[hash_value]['attr']
-            //         attr_string = (" " + " ".join([f'{key}="{value}"' for key, value in attr.items()])) if attr else ''
-            // 
-            //         # Handle self-closing tag if content is "0"
-            //         if content == "0":
-            //             return f'<{tag}{attr_string}/>'
-            // 
-            //         return f'<{tag}{attr_string}>{content}</{tag}>'
-            // 
-            //     # Use regular expression to find instances of #[string](hash) and
-            //     # replace them
-            //     tag_pattern = r'#\[([^\]]+)\]\(([^)]+)\)'
-            //     replacement = re.sub(tag_pattern, _replace_tag, replacement)
-            // 
-            //     # Handle possible wrapping tags identified
-            //     if html_string in html_string_to_wrapping_tags:
-            //         replacement = html_string_to_wrapping_tags[html_string].replace('$0', replacement)
-            // 
-            //     return replacement
-            // 
             // # Configure the pages
-            // for page_code in requested_pages:
+            // for index, page_code in enumerate(requested_pages):
             //     snippet_list = configurator_snippets.get(page_code, [])
             //     if page_code == 'homepage':
             //         page_view_id = self.with_context(website_id=website.id).viewref('website.homepage')
@@ -804,15 +835,19 @@ namespace Bamboo.Core.Application.Services
             //     nb_snippets = len(snippet_list)
             //     for i, snippet in enumerate(snippet_list, start=1):
             //         try:
-            //             render, placeholders = _render_snippet(f'website.configurator_{page_code}_{snippet}')
-            //             # Fill rendered block with AI text
-            //             render = xml_translate(_format_replacement, render)
-            // 
-            //             el = html.fromstring(render)
+            //             snippet_key = website._get_snippet_view_key(snippet, page_code)
+            //             el = html_text_processor._update_snippet_content(generated_content, snippet_key)
             // 
             //             # Add the data-snippet attribute to identify the snippet
             //             # for compatibility code
             //             el.attrib['data-snippet'] = snippet
+            // 
+            //             # Theme specific customizations for non-website snippets
+            //             theme_customizations = get_manifest(theme_name).get('theme_customizations', {})
+            //             customizations = theme_customizations.get(snippet, {})
+            // 
+            //             # Configure non-website snippet with defaults and theme-level customizations.
+            //             website._preconfigure_snippet(snippet, el, customizations)
             // 
             //             # Remove the previews needed for the snippets dialog
             //             dialog_preview_els = el.find_class('s_dialog_preview')
@@ -838,6 +873,12 @@ namespace Bamboo.Core.Application.Services
             //             logger.warning(e)
             //     page_view_id.save(value=f'<div class="oe_structure">{"".join(rendered_snippets)}</div>',
             //                       xpath="(//div[hasclass('oe_structure')])[last()]")
+            //     # Copy the configurator pages to preserve the original untouched
+            //     # pages in the landing page category when creating a new page.
+            //     page_view_id.copy({
+            //         'key': f"{index}_{page_view_id.key}_configurator_pages_landing",
+            //         'website_id': website.id,
+            //     })
             // 
             // # Configure the images
             // images = custom_resources.get('images', {})
@@ -933,17 +974,143 @@ namespace Bamboo.Core.Application.Services
             //     fallback_create_missing_industry_image('s_carousel_intro_default_image_1', 's_cover_default_image')
             //     fallback_create_missing_industry_image('s_carousel_intro_default_image_2', 's_image_text_default_image')
             //     fallback_create_missing_industry_image('s_carousel_intro_default_image_3', 's_text_image_default_image')
-            // 
+            //     fallback_create_missing_industry_image('s_website_form_overlay_default_image', 's_cover_default_image')
+            //     fallback_create_missing_industry_image('s_website_form_cover_default_image', 's_cover_default_image')
+            //     fallback_create_missing_industry_image('s_split_intro_default_image', 's_cover_default_image')
             //     fallback_create_missing_industry_image('s_framed_intro_default_image', 's_cover_default_image')
             //     fallback_create_missing_industry_image('s_wavy_grid_default_image_1', 's_cover_default_image')
             //     fallback_create_missing_industry_image('s_wavy_grid_default_image_2', 's_image_text_default_image')
             //     fallback_create_missing_industry_image('s_wavy_grid_default_image_3', 's_text_image_default_image')
             //     fallback_create_missing_industry_image('s_wavy_grid_default_image_4', 's_carousel_default_image_1')
+            //     fallback_create_missing_industry_image('s_timeline_images_default_image_1', 's_media_list_default_image_1')
+            //     fallback_create_missing_industry_image('s_timeline_images_default_image_2', 's_media_list_default_image_2')
+            //     fallback_create_missing_industry_image('s_carousel_cards_default_image_1', 's_carousel_default_image_1')
+            //     fallback_create_missing_industry_image('s_carousel_cards_default_image_2', 's_carousel_default_image_2')
+            //     fallback_create_missing_industry_image('s_carousel_cards_default_image_3', 's_carousel_default_image_3')
+            //     fallback_create_missing_industry_image('s_banner_connected_default_image', 's_cover_default_image')
             // 
             // except Exception:
             //     pass
             // 
             // return {'url': redirect_url, 'website_id': website.id}
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def configurator_apply(
+            //     self, *, shop_page_style_option=None, product_page_style_option=None, **kwargs
+            // ):
+            //     """Override of `website` to apply eCommerce page style configurations.
+            // 
+            //     :param str shop_page_style_option: The key of the selected shop page style option. See
+            //                                        `const.SHOP_PAGE_STYLE_MAPPING`.
+            //     :param str product_page_style_option: The key of the selected product page style option. See
+            //                                           `const.PRODUCT_PAGE_STYLE_MAPPING`.
+            //     """
+            //     res = super().configurator_apply(**kwargs)
+            // 
+            //     website = self.get_current_website()
+            //     website_settings = {}
+            //     category_settings = {}
+            //     views_to_disable = []
+            //     views_to_enable = []
+            //     scss_customization_params = {}
+            //     ThemeUtils = self.env['theme.utils'].with_context(website_id=website.id)
+            //     Assets = self.env['website.assets']
+            // 
+            //     def parse_style_config(style_config_):
+            //         website_settings.update(style_config_['website_fields'])
+            //         category_settings.update(style_config_.get('category_fields', {}))
+            //         views_to_disable.extend(style_config_['views']['disable'])
+            //         views_to_enable.extend(style_config_['views']['enable'])
+            //         scss_customization_params.update(style_config_.get('scss_customization_params', {}))
+            // 
+            //     # Extract shop page settings.
+            //     if shop_page_style_option:
+            //         style_config = const.SHOP_PAGE_STYLE_MAPPING[shop_page_style_option]
+            //         parse_style_config(style_config)
+            // 
+            //     # Extract product page settings.
+            //     if product_page_style_option:
+            //         style_config = const.PRODUCT_PAGE_STYLE_MAPPING[product_page_style_option]
+            //         parse_style_config(style_config)
+            // 
+            //     # Apply eCommerce page style configurations.
+            //     if website_settings:
+            //         website.write(website_settings)
+            //     if category_settings:
+            //         self.env['product.public.category'].search(website.website_domain()).write(
+            //             category_settings
+            //         )
+            //     for xml_id in views_to_disable:
+            //         ThemeUtils.disable_view(xml_id)
+            //     for xml_id in views_to_enable:
+            //         ThemeUtils.enable_view(xml_id)
+            // 
+            //     for footer_id in ThemeUtils._footer_templates:
+            //         footer_view = self.with_context(website_id=website.id).viewref(
+            //             footer_id,
+            //             raise_if_not_found=False,  # don't raise on custom footers not installed on website
+            //         )
+            //         if not footer_view.active:
+            //             continue
+            // 
+            //         footer_updated = False
+            //         try:
+            //             arch_tree = etree.fromstring(footer_view.arch)
+            //         except etree.XMLSyntaxError as e:
+            //             logger.warning("Failed to update ecommerce footer view %s: %s", footer_id, e)
+            //         else:
+            //             # TODO this should be moved as a website feature (not eCommerce-specific)
+            //             footer_div_node = arch_tree.xpath(
+            //                 "//section/div[hasclass('container') or hasclass('o_container_small') or hasclass('container-fluid')]",
+            //             )
+            //             # The xml view could have been modified in the backend, we don't
+            //             # want the xpath error to break the configurator feature
+            //             if not footer_div_node:
+            //                 logger.warning(
+            //                     "Failed to match footer width with header in ecommerce footer view %s",
+            //                     footer_id,
+            //                 )
+            //             else:
+            //                 # Logic for matching header width
+            //                 if 'website.footer_copyright_content_width_fluid' in views_to_enable:
+            //                     footer_updated = True
+            //                     footer_div_node[0].set("class", "container-fluid s_allow_columns")
+            //                 elif 'website.footer_copyright_content_width_small' in views_to_enable:
+            //                     footer_updated = True
+            //                     footer_div_node[0].set("class", "o_container_small s_allow_columns")
+            // 
+            //             if footer_id == 'website_sale.template_footer_website_sale':
+            //                 ecommerce_categories_node = arch_tree.xpath("//t[@t-set='ecommerce_categories']")
+            //                 if not ecommerce_categories_node:
+            //                     logger.warning("Skipping ecommerce categories in ecommerce footer view %s", footer_id)
+            //                 else:
+            //                     # Logic for inserting eCommerce categories in footer
+            //                     ecommerce_categories = self.env['product.public.category'].search([], limit=6)
+            //                     # Deliberately hardcode categories inside the view arch, it will be transformed into
+            //                     # static nodes after a save/edit thanks to the t-ignore in parent node.
+            //                     footer_updated = True
+            //                     ecommerce_categories_node[0].attrib['t-value'] = json.dumps([
+            //                         {
+            //                             'name': cat.name,
+            //                             'id': cat.id,
+            //                         }
+            //                         for cat in ecommerce_categories
+            //                     ])
+            // 
+            //             if footer_updated:
+            //                 footer_view.write({'arch': etree.tostring(arch_tree)})
+            // 
+            //     if 'website_sale.template_footer_website_sale' in views_to_enable:
+            //         scss_customization_params['footer-template'] = 'website_sale'
+            // 
+            //     # For a website editor to recognize the correct header/footer templates
+            //     # (reason `isApplied` method of footer plugin)
+            //     if scss_customization_params:
+            //         Assets.make_scss_customization(
+            //             '/website/static/src/scss/options/user_values.scss',
+            //             scss_customization_params,
+            //         )
+            // 
+            //     return res
             #endif
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -971,7 +1138,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def configurator_init(self):
             // r = dict()
-            // theme = self.env["ir.module.module"].search([("name", "=", "theme_default")])
             // current_website = self.get_current_website()
             // company = current_website.company_id
             // configurator_features = self.env['website.configurator.feature'].search([])
@@ -987,8 +1153,7 @@ namespace Bamboo.Core.Application.Services
             // r['logo'] = False
             // if not company.uses_default_logo:
             //     r['logo'] = company.logo.decode('utf-8')
-            // if current_website.configurator_done:
-            //     r['redirect_url'] = theme.button_choose_theme()
+            // r['configurator_done'] = current_website.configurator_done
             // try:
             //     result = self._website_api_rpc('/api/website/1/configurator/industries', {'lang': self.env.context.get('lang')})
             //     r['industries'] = result['industries']
@@ -1023,7 +1188,7 @@ namespace Bamboo.Core.Application.Services
             // def configurator_recommended_themes(self, industry_id, palette, result_nbr_max=3):
             // Module = request.env['ir.module.module']
             // domain = Module.get_themes_domain()
-            // domain = AND([[('name', '!=', 'theme_default')], domain])
+            // domain = Domain.AND([[('name', '!=', 'theme_default')], domain])
             // client_themes = Module.search(domain).mapped('name')
             // client_themes_img = {t: get_manifest(t).get('images_preview_theme', {}) for t in client_themes if get_manifest(t)}
             // themes_suggested = self._website_api_rpc(
@@ -1086,7 +1251,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def configurator_skip(self):
             // website = self.get_current_website()
+            // theme = self.env["ir.module.module"].search([("name", "=", "theme_default")])
             // website.configurator_done = True
+            // return theme.button_choose_theme()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1154,8 +1321,57 @@ namespace Bamboo.Core.Application.Services
             // websites = super().create(vals_list)
             // websites._update_forum_count()
             // return websites
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def create(self, vals_list):
+            // websites = super().create(vals_list)
+            // for website in websites:
+            //     website._create_checkout_steps()
+            // return websites
             */
             return await base.CreateAsync(entity, fields);
+        }
+
+        protected async Task<Website> CreateCartInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _create_cart(self):
+            // self.ensure_one()
+            // 
+            // partner_sudo = self.env.user.partner_id
+            // 
+            // so_data = self._prepare_sale_order_values(partner_sudo)
+            // sale_order_sudo = self.env['sale.order'].with_user(
+            //     SUPERUSER_ID
+            // ).with_company(self.company_id).create(so_data)
+            // 
+            // # The order was created with SUPERUSER_ID, revert back to request user.
+            // sale_order_sudo = sale_order_sudo.with_user(self.env.user).sudo()
+            // 
+            // request.session[CART_SESSION_CACHE_KEY] = sale_order_sudo.id
+            // request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
+            // request.cart = sale_order_sudo
+            // 
+            // return sale_order_sudo
+            */
+            return default;
+        }
+
+        protected async Task<Website> CreateCheckoutStepsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _create_checkout_steps(self):
+            // generic_steps = self.env['website.checkout.step'].sudo().search([
+            //     ('website_id', '=', False),
+            // ])
+            // for step in generic_steps:
+            //     is_published = True
+            //     if step.step_href == '/shop/extra_info':
+            //         is_published = self.with_context(website_id=self.id).viewref('website_sale.extra_info').active
+            //     step.copy({'website_id': self.id, 'is_published': is_published})
+            */
+            return default;
         }
 
         public async Task<Website> DashboardRedirectAsync(Guid id)
@@ -1176,6 +1392,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<Website> DefaultConfirmationEmailTemplateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _default_confirmation_email_template(self):
+            // template_id = self.env['ir.config_parameter'].sudo().get_param(
+            //     'sale.default_confirmation_template'
+            // )
+            // default_template = template_id and self.env['mail.template'].browse(int(template_id)).exists()
+            // if default_template:
+            //     return default_template
+            // return self.env.ref('sale.mail_template_sale_confirmation', raise_if_not_found=False)
+            */
+            return default;
+        }
+
         protected async Task<Website> DefaultFaviconInternalAsync()
         {
             /*
@@ -1183,6 +1415,20 @@ namespace Bamboo.Core.Application.Services
             // def _default_favicon(self):
             // with tools.file_open('web/static/img/favicon.ico', 'rb') as f:
             //     return base64.b64encode(f.read())
+            */
+            return default;
+        }
+
+        protected async Task<Website> DefaultFeedIsValidInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _default_feed_is_valid(self):
+            // self.ensure_one()
+            // product_count = self.env['product.product'].search_count(
+            //     self._get_basic_feed_product_domain(), limit=const.PRODUCT_FEED_SOFT_LIMIT + 1
+            // )
+            // return product_count <= const.PRODUCT_FEED_SOFT_LIMIT
             */
             return default;
         }
@@ -1232,6 +1478,16 @@ namespace Bamboo.Core.Application.Services
             // if team and team.active:
             //     return team.id
             // return None
+            */
+            return default;
+        }
+
+        protected async Task<Website> DefaultSocialDiscordInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _default_social_discord(self):
+            // return self.env.ref('base.main_company').social_discord
             */
             return default;
         }
@@ -1345,20 +1601,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<Website> DisplayPartnerB2bFieldsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """ This method is to be inherited by localizations and return
-            // True if localization should always displayed b2b fields """
-            // self.ensure_one()
-            // 
-            // return self.is_view_active('website_sale.address_b2b')
-            */
-            return default;
-        }
-
         protected async Task<Website> EnumeratePagesInternalAsync(object query_string, object force)
         {
             /*
@@ -1377,7 +1619,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // # ==== WEBSITE.PAGES ====
             // # '/' already has a http.route & is in the routing_map so it will already have an entry in the xml
-            // domain = [('url', '!=', '/')]
+            // domain = [('view_id', '!=', False), ('url', '!=', '/')]
             // if not force:
             //     domain += [('website_indexed', '=', True), ('visibility', '=', False)]
             //     # is_visible
@@ -1393,14 +1635,11 @@ namespace Bamboo.Core.Application.Services
             // 
             // for page in pages:
             //     record = {'loc': page['url'], 'id': page['id'], 'name': page['name']}
-            //     if page.view_id and page.view_id.priority != 16:
+            //     if page.view_id.priority != 16:
             //         record['priority'] = min(round(page.view_id.priority / 32.0, 1), 1)
-            //     last_updated_date = max(
-            //         [d for d in (page.write_date, page.view_id.write_date) if isinstance(d, datetime)],
-            //         default=None,
-            //     )
-            //     if last_updated_date:
-            //         record['lastmod'] = last_updated_date.date()
+            //     last_dates = [d for d in (page.write_date, page.view_write_date) if d]
+            //     if last_dates:
+            //         record['lastmod'] = max(last_dates).date()
             //     yield record
             // 
             // # ==== CONTROLLERS ====
@@ -1409,25 +1648,42 @@ namespace Bamboo.Core.Application.Services
             // 
             // sitemap_endpoint_done = set()
             // 
-            // for rule in router.iter_rules():
-            //     if 'sitemap' in rule.endpoint.routing and rule.endpoint.routing['sitemap'] is not True:
-            //         endpoint_func = rule.endpoint.func
-            //         if isinstance(endpoint_func, functools.partial): # follow partial in case of redirect
-            //             endpoint_func = endpoint_func.func
-            //         if endpoint_func.__func__ in sitemap_endpoint_done:
-            //             continue
-            //         sitemap_endpoint_done.add(endpoint_func.__func__)
+            // # Helper to normalize URLs while keeping '/' intact
+            // def _norm(url):
+            //     return '/' if url == '/' else url.rstrip('/')
             // 
-            //         func = rule.endpoint.routing['sitemap']
-            //         if func is False:
+            // # Avoid recomputing identical sitemap callables more than once
+            // def _unwrap_callable(f):
+            //     # Unwrap functools.partial and bound methods to a stable function key
+            //     if isinstance(f, functools.partial):
+            //         f = f.func
+            //     # Unwrap bound methods (obj.method) to their underlying function
+            //     if isinstance(f, types.MethodType):
+            //         return f.__func__
+            //     return f
+            // 
+            // for rule in router.iter_rules():
+            //     sitemap_func = rule.endpoint.routing.get('sitemap')
+            //     if sitemap_func is False:
+            //         continue
+            // 
+            //     if callable(sitemap_func):
+            //         func_key = _unwrap_callable(sitemap_func)
+            //         if func_key in sitemap_endpoint_done:
             //             continue
-            //         for loc in func(self.with_context(lang=self.default_lang_id.code).env, rule, query_string):
-            //             yield loc
+            //         sitemap_endpoint_done.add(func_key)
+            //         for loc in sitemap_func(self.with_context(lang=self.default_lang_id.code).env, rule, query_string):
+            //             loc_norm = {**loc, 'loc': _norm(loc['loc'])}
+            //             url = loc_norm['loc']
+            //             if url not in url_set:
+            //                 yield loc_norm
+            //                 url_set.add(url)
             //         continue
             // 
             //     if not self.rule_is_enumerable(rule):
             //         continue
             // 
+            //     # Warn only if the 'sitemap' key is absent from routing (legacy behavior)
             //     if 'sitemap' not in rule.endpoint.routing:
             //         logger.warning('No Sitemap value provided for controller %s (%s)' %
             //                        (rule.endpoint.original_endpoint, ','.join(rule.endpoint.routing['routes'])))
@@ -1452,7 +1708,7 @@ namespace Bamboo.Core.Application.Services
             //             if query:
             //                 r = "".join([x[1] for x in rule._trace[1:] if not x[0]])  # remove model converter from route
             //                 query = sitemap_qs2dom(query, r, self.env[converter.model]._rec_name)
-            //                 if query == FALSE_DOMAIN:
+            //                 if query.is_false():
             //                     continue
             // 
             //             for rec in converter.generate(self.env, args=val, dom=query):
@@ -1462,6 +1718,8 @@ namespace Bamboo.Core.Application.Services
             // 
             //     for value in values:
             //         domain_part, url = rule.build(value, append_unknown=False)
+            //         # Normalize trailing slash but keep '/'
+            //         url = _norm(url)
             //         pattern = query_string and '*%s*' % "*".join(query_string.split('/'))
             //         if not query_string or fnmatch.fnmatch(url.lower(), pattern):
             //             page = {'loc': url}
@@ -1491,6 +1749,211 @@ namespace Bamboo.Core.Application.Services
             // def _force_website(self, website_id):
             // if request:
             //     request.session['force_website_id'] = website_id and str(website_id).isdigit() and int(website_id)
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetAllowedStepsDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_allowed_steps_domain(self):
+            // return [
+            //     ('website_id', '=', self.id),
+            //     ('is_published', '=', True)
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetAndCacheCurrentCartInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_and_cache_current_cart(self):
+            // """ Retrieves and caches the current cart for the session.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :return: A sudoed Sales order record.
+            // :rtype: sale.order
+            // """
+            // self.ensure_one()
+            // 
+            // SaleOrderSudo = self.env['sale.order'].sudo()
+            // 
+            // sale_order_sudo = SaleOrderSudo
+            // if CART_SESSION_CACHE_KEY in request.session:
+            //     sale_order_sudo = SaleOrderSudo.browse(request.session[CART_SESSION_CACHE_KEY])
+            // 
+            //     try:
+            //         # fetch the record field or raise a missingError
+            //         # avoids a query with the use of exists()
+            //         sale_order_sudo and sale_order_sudo.state
+            //     except MissingError:
+            //         self.sale_reset()
+            //         sale_order_sudo = SaleOrderSudo
+            // 
+            //     if sale_order_sudo and (
+            //         sale_order_sudo.state != 'draft'
+            //         or sale_order_sudo.get_portal_last_transaction().state in (
+            //             'pending', 'authorized', 'done'
+            //         )
+            //         or sale_order_sudo.website_id != self
+            //     ):
+            //         self.sale_reset()
+            //         sale_order_sudo = SaleOrderSudo
+            // 
+            //     # If customer logs in, the cart must be recomputed based on his information (in the
+            //     # first non readonly request).
+            //     if (
+            //         sale_order_sudo
+            //         and not self.env.user._is_public()
+            //         and self.env.user.partner_id.id != sale_order_sudo.partner_id.id
+            //         and not request.env.cr.readonly
+            //     ):
+            //         sale_order_sudo._update_address(self.env.user.partner_id.id, ['partner_id'])
+            // elif (
+            //     self.env.user
+            //     and not self.env.user._is_public()
+            //     # If the company of the partner doesn't allow them to buy from this website, updating
+            //     # the cart customer would raise because of multi-company checks.
+            //     # No abandoned cart should be returned in this situation.
+            //     and self.env.user.partner_id.filtered_domain(
+            //         self.env['res.partner']._check_company_domain(self.company_id.id)
+            //     )
+            // ):  # Search for abandonned cart.
+            //     partner_sudo = self.env.user.partner_id
+            //     abandonned_cart_sudo = SaleOrderSudo.search([
+            //         ('partner_id', '=', partner_sudo.id),
+            //         ('website_id', '=', self.id),
+            //         ('state', '=', 'draft'),
+            //     ], limit=1)
+            //     if abandonned_cart_sudo:
+            //         if not request.env.cr.readonly:
+            //             # Force the recomputation of the pricelist and fiscal position when resurrecting
+            //             # an abandonned cart
+            //             abandonned_cart_sudo._update_address(partner_sudo.id, ['partner_id'])
+            //             abandonned_cart_sudo._verify_cart()
+            //         sale_order_sudo = abandonned_cart_sudo
+            // 
+            // if (
+            //     (sale_order_sudo or not self.env.user._is_public())
+            //     and sale_order_sudo.id != request.session.get(CART_SESSION_CACHE_KEY)
+            // ):
+            //     # Store the id of the cart if there is one, or False if the user is logged in, to avoid
+            //     # searching for an abandoned cart again for that user.
+            //     request.session[CART_SESSION_CACHE_KEY] = sale_order_sudo.id
+            //     if 'website_sale_cart_quantity' not in request.session:
+            //         request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
+            // return sale_order_sudo
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetAndCacheCurrentFiscalPositionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_and_cache_current_fiscal_position(self):
+            // """Retrieve and cache the current fiscal position for the session.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :return: A sudoed fiscal position record.
+            // :rtype: account.fiscal.position
+            // """
+            // self.ensure_one()
+            // 
+            // AccountFiscalPositionSudo = self.env['account.fiscal.position'].sudo()
+            // fpos_sudo = AccountFiscalPositionSudo
+            // 
+            // if FISCAL_POSITION_SESSION_CACHE_KEY in request.session:
+            //     fpos_sudo = AccountFiscalPositionSudo.browse(
+            //         request.session[FISCAL_POSITION_SESSION_CACHE_KEY]
+            //     )
+            //     if fpos_sudo and fpos_sudo.exists():
+            //         return fpos_sudo
+            // 
+            // partner_sudo = self.env.user.partner_id
+            // 
+            // # If the current user is the website public user, the fiscal position
+            // # is computed according to geolocation.
+            // if request and request.geoip.country_code and self.partner_id.id == partner_sudo.id:
+            //     country = self.env['res.country'].search(
+            //         [('code', '=', request.geoip.country_code)],
+            //         limit=1,
+            //     )
+            //     partner_geoip = self.env['res.partner'].sudo().new({'country_id': country.id})
+            //     fpos_sudo = AccountFiscalPositionSudo._get_fiscal_position(partner_geoip)
+            // 
+            // if not fpos_sudo:
+            //     fpos_sudo = AccountFiscalPositionSudo._get_fiscal_position(partner_sudo)
+            // 
+            // request.session[FISCAL_POSITION_SESSION_CACHE_KEY] = fpos_sudo.id
+            // 
+            // return fpos_sudo
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetAndCacheCurrentPricelistInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_and_cache_current_pricelist(self):
+            // """Retrieve and cache the current pricelist for the session.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :return: The determined pricelist, which could be empty, as a sudoed record.
+            // :rtype: product.pricelist
+            // """
+            // self.ensure_one()
+            // 
+            // ProductPricelistSudo = self.env['product.pricelist'].sudo()
+            // if not self.env['res.groups']._is_feature_enabled('product.group_product_pricelist'):
+            //     return ProductPricelistSudo  # Skip pricelist computation if pricelists are disabled.
+            // 
+            // if PRICELIST_SESSION_CACHE_KEY in request.session:
+            //     pricelist_sudo = ProductPricelistSudo.browse(
+            //         request.session[PRICELIST_SESSION_CACHE_KEY]
+            //     )
+            //     if pricelist_sudo and (
+            //         pricelist_sudo.exists()
+            //         and pricelist_sudo._is_available_on_website(self)
+            //         and pricelist_sudo._is_available_in_country(self._get_geoip_country_code())
+            //     ):
+            //         return pricelist_sudo.sudo()
+            // 
+            // if cart_sudo := request.cart:
+            //     if not request.env.cr.readonly:
+            //         # If there is a cart, recompute on the cart and take it from there
+            //         cart_sudo._compute_pricelist_id()
+            //     pricelist_sudo = cart_sudo.pricelist_id
+            // else:
+            //     pricelist_sudo = self.env.user.partner_id.property_product_pricelist
+            //     available_pricelists = self.get_pricelist_available()
+            //     if available_pricelists and pricelist_sudo not in available_pricelists:
+            //         pricelist_sudo = available_pricelists[0].sudo()
+            // 
+            // request.session[PRICELIST_SESSION_CACHE_KEY] = pricelist_sudo.id
+            // 
+            // return pricelist_sudo
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetBasicFeedProductDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_basic_feed_product_domain(self):
+            // return Domain.AND([
+            //     Domain('is_published', '=', True),
+            //     Domain('type', 'in', ('consu', 'combo')),
+            //     self.website_domain(),
+            // ])
             */
             return default;
         }
@@ -1531,16 +1994,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<Website> GetCachedPricelistIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _get_cached_pricelist_id(self):
-            // return request and request.session.get('website_sale_current_pl') or None
-            */
-            return default;
-        }
-
         protected async Task<Website> GetCachedValuesInternalAsync()
         {
             /*
@@ -1571,6 +2024,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<Website> GetCanonicalUrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _get_canonical_url(self):
+            // """ Returns the canonical URL of the current request. """
+            // self.ensure_one()
+            // return self.env['ir.http']._url_localized(
+            //     lang_code=request.lang.code, canonical_domain=self.get_base_url()
+            // )
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_canonical_url(self):
+            // """ Override of `website` to customize the canonical URL for product pages.
+            // 
+            // A product page URL can have a category in its path. However, since the page is exactly the
+            // same whether the category is present or not, the canonical URL shouldn't include the
+            // category.
+            // """
+            // canonical_url = urls.url_parse(super()._get_canonical_url())
+            // 
+            // try:
+            //     rule = self.env['ir.http']._match(canonical_url.path)[0].rule
+            // except NotFound:
+            //     rule = None
+            // if rule == (
+            //     '/shop/<model("product.public.category"):category>/<model("product.template"):product>'
+            // ):
+            //     path_parts = canonical_url.path.split('/')
+            //     path_parts.pop(2)
+            //     canonical_url = canonical_url.replace(path='/'.join(path_parts))
+            // return canonical_url.to_url()
+            */
+            return default;
+        }
+
         public async Task<Website> GetCdnUrlAsync(Guid id, WebsiteGetCdnUrlRequestDto input)
         {
             /*
@@ -1583,90 +2071,73 @@ namespace Bamboo.Core.Application.Services
             // cdn_filters = (self.cdn_filters or '').splitlines()
             // for flt in cdn_filters:
             //     if flt and re.match(flt, uri):
-            //         return urls.url_join(cdn_url, uri)
+            //         return tools.urls.urljoin(cdn_url, uri)
             // return uri
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<Website> GetCheckoutStepListInternalAsync()
+        protected async Task<Website> GetCheckoutStepInternalAsync(object href)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _get_checkout_step_list(self):
-            // """ Return an ordered list of steps according to the current template rendered.
-            // 
-            // :rtype: list
-            // :return: A list with the following structure:
-            //     [
-            //         [xmlid],
-            //         {
-            //             'name': str,
-            //             'current_href': str,
-            //             'main_button': str,
-            //             'main_button_href': str,
-            //             'back_button': str,
-            //             'back_button_href': str
-            //         }
-            //     ]
-            // """
-            // self.ensure_one()
-            // is_extra_step_active = self.viewref('website_sale.extra_info').active
-            // redirect_to_sign_in = self.account_on_checkout == 'mandatory' and self.is_public_user()
-            // 
-            // steps = [(['website_sale.cart'], {
-            //     'name': _lt("Review Order"),
-            //     'current_href': '/shop/cart',
-            //     'main_button': _lt("Sign In") if redirect_to_sign_in else _lt("Checkout"),
-            //     'main_button_href': f'{"/web/login?redirect=" if redirect_to_sign_in else ""}/shop/checkout?try_skip_step=true',
-            //     'back_button':  _lt("Continue shopping"),
-            //     'back_button_href': '/shop',
-            // }), (['website_sale.checkout', 'website_sale.address'], {
-            //     'name': _lt("Delivery"),
-            //     'current_href': '/shop/checkout',
-            //     'main_button': _lt("Confirm"),
-            //     'main_button_href': f'{"/shop/extra_info" if is_extra_step_active else "/shop/confirm_order"}',
-            //     'back_button':  _lt("Back to cart"),
-            //     'back_button_href': '/shop/cart',
-            // })]
-            // if is_extra_step_active:
-            //     steps.append((['website_sale.extra_info'], {
-            //         'name': _lt("Extra Info"),
-            //         'current_href': '/shop/extra_info',
-            //         'main_button': _lt("Continue checkout"),
-            //         'main_button_href': '/shop/confirm_order',
-            //         'back_button':  _lt("Back to delivery"),
-            //         'back_button_href': '/shop/checkout',
-            //     }))
-            // steps.append((['website_sale.payment'], {
-            //     'name': _lt("Payment"),
-            //     'current_href': '/shop/payment',
-            //     'back_button':  _lt("Back to delivery"),
-            //     'back_button_href': '/shop/checkout',
-            // }))
-            // return steps
+            // def _get_checkout_step(self, href):
+            // return self.env['website.checkout.step'].sudo().search([
+            //     ('website_id', '=', self.id),
+            //     ('step_href', '=', href),
+            // ], limit=1)
             */
             return default;
         }
 
-        protected async Task<Website> GetCheckoutStepsInternalAsync(object current_step)
+        protected async Task<Website> GetCheckoutStepValuesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _get_checkout_steps(self, current_step=None):
-            // """ Return an ordered list of steps according to the current template rendered.
-            // If `current_step` is provided, returns only the corresponding step.
-            // Note: self.ensure_one()
-            // :param str current_step: The xmlid of the current step, defaults to None.
-            // :rtype: list
-            // :return: A list containing the steps generated by :meth:`_get_checkout_step_list`.
-            // """
-            // self.ensure_one()
+            // def _get_checkout_step_values(self):
+            // def rewrite(path):
+            //     return self.env['ir.http'].url_rewrite(path)[0]
+            // href = rewrite(request.httprequest.path)
+            // # /shop/address is associated with the delivery step
+            // if href == rewrite('/shop/address'):
+            //     href = rewrite('/shop/checkout')
             // 
-            // steps = self._get_checkout_step_list()
+            // allowed_steps_domain = self._get_allowed_steps_domain()
+            // current_step = request.env['website.checkout.step'].sudo()
+            // for step in current_step.search(allowed_steps_domain):
+            //     if rewrite(step.step_href) == href:
+            //         current_step = step
+            //         href = step.step_href
+            //         break
+            // next_step = current_step._get_next_checkout_step(allowed_steps_domain)
+            // previous_step = current_step._get_previous_checkout_step(allowed_steps_domain)
             // 
-            // if current_step:
-            //     return next(step for step in steps if current_step in step[0])[1]
+            // next_href = next_step.step_href
+            // # try_skip_step option required on /shop/checkout next button
+            // if next_step.step_href == '/shop/checkout':
+            //     next_href = '/shop/checkout?try_skip_step=true'
+            // # redirect handled by '/shop/address/submit' route when all values are properly filled
+            // if request.httprequest.path == rewrite('/shop/address'):
+            //     next_href = False
+            // 
+            // return {
+            //     'current_website_checkout_step_href': href,
+            //     'previous_website_checkout_step': previous_step,
+            //     'next_website_checkout_step': next_step,
+            //     'next_website_checkout_step_href': next_href,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetCheckoutStepsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_checkout_steps(self):
+            // steps = self.env['website.checkout.step'].sudo().search(
+            //     self._get_allowed_steps_domain(), order='sequence'
+            // )
             // return steps
             */
             return default;
@@ -1678,12 +2149,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def get_client_action(self, url, mode_edit=False, website_id=False):
             // action = self.env["ir.actions.actions"]._for_xml_id("website.website_preview")
-            // action['context'] = {
-            //     'params': {
-            //         'path': url,
-            //         'enable_editor': mode_edit,
-            //         'website_id': website_id,
-            //     }
+            // action['params'] = {
+            //     'path': url,
+            //     'enable_editor': mode_edit,
+            //     'website_id': website_id,
             // }
             // return action
             */
@@ -1694,13 +2163,51 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
-            // def get_client_action_url(self, url, mode_edit=False):
+            // def get_client_action_url(self, url, mode_edit=False, mode_debug=0):
             // action_params = {
             //     "path": url,
             // }
             // if mode_edit:
             //     action_params["enable_editor"] = 1
+            // if mode_debug:
+            //     action_params["debug"] = mode_debug
             // return "/odoo/action-website.website_preview?" + urls.url_encode(action_params)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<Website> GetConfiguratorProductPageStylesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def get_configurator_product_page_styles(self):
+            // """Format and return ids and images of each product page style for website onboarding.
+            // 
+            // :return: The product page style information.
+            // :rtype: list[dict]
+            // """
+            // return [
+            //     {'option': option, 'img_src': config['img_src'], 'title': config['title']}
+            //     for option, config in const.PRODUCT_PAGE_STYLE_MAPPING.items()
+            // ]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<Website> GetConfiguratorShopPageStylesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def get_configurator_shop_page_styles(self):
+            // """Format and return the ids and images of each shop page style for website onboarding.
+            // 
+            // :return: The shop page style information.
+            // :rtype: list[dict]
+            // """
+            // return [
+            //     {'option': option, 'img_src': config['img_src'], 'title': config['title']}
+            //     for option, config in const.SHOP_PAGE_STYLE_MAPPING.items()
+            // ]
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1734,89 +2241,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<Website> GetCurrentFiscalPositionInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _get_current_fiscal_position(self):
-            // AccountFiscalPosition = self.env['account.fiscal.position'].sudo()
-            // fpos = AccountFiscalPosition
-            // partner_sudo = self.env.user.partner_id
-            // 
-            // # If the current user is the website public user, the fiscal position
-            // # is computed according to geolocation.
-            // if request and request.geoip.country_code and self.partner_id.id == partner_sudo.id:
-            //     country = self.env['res.country'].search(
-            //         [('code', '=', request.geoip.country_code)],
-            //         limit=1,
-            //     )
-            //     partner_geoip = self.env["res.partner"].new({'country_id': country.id})
-            //     fpos = AccountFiscalPosition._get_fiscal_position(partner_geoip)
-            // 
-            // if not fpos:
-            //     fpos = AccountFiscalPosition._get_fiscal_position(partner_sudo)
-            // 
-            // return fpos
-            */
-            return default;
-        }
-
-        protected async Task<Website> GetCurrentPricelistInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def _get_current_pricelist(self):
-            // """
-            // :returns: The current pricelist record
-            // """
-            // self = self.with_company(self.company_id)
-            // ProductPricelist = self.env['product.pricelist']
-            // 
-            // pricelist = ProductPricelist
-            // if request and request.session.get('website_sale_current_pl'):
-            //     # `website_sale_current_pl` is set only if the user specifically chose it:
-            //     #  - Either, he chose it from the pricelist selection
-            //     #  - Either, he entered a coupon code
-            //     pricelist = ProductPricelist.browse(request.session['website_sale_current_pl']).exists().sudo()
-            //     country_code = self._get_geoip_country_code()
-            //     if not pricelist or not pricelist._is_available_on_website(self) or not pricelist._is_available_in_country(country_code):
-            //         request.session.pop('website_sale_current_pl')
-            //         pricelist = ProductPricelist
-            // 
-            // if not pricelist:
-            //     partner_sudo = self.env.user.partner_id
-            // 
-            //     # If the user has a saved cart, it take the pricelist of this last unconfirmed cart
-            //     pricelist = partner_sudo.last_website_so_id.pricelist_id
-            //     if not pricelist:
-            //         # The pricelist of the user set on its partner form.
-            //         # If the user is not signed in, it's the public user pricelist
-            //         pricelist = partner_sudo.property_product_pricelist
-            // 
-            //     # The list of available pricelists for this user.
-            //     # If the user is signed in, and has a pricelist set different than the public user pricelist
-            //     # then this pricelist will always be considered as available
-            //     available_pricelists = self.get_pricelist_available()
-            //     if available_pricelists and pricelist not in available_pricelists:
-            //         # If there is at least one pricelist in the available pricelists
-            //         # and the chosen pricelist is not within them
-            //         # it then choose the first available pricelist.
-            //         # This can only happen when the pricelist is the public user pricelist and this pricelist is not in the available pricelist for this localization
-            //         # If the user is signed in, and has a special pricelist (different than the public user pricelist),
-            //         # then this special pricelist is amongs these available pricelists, and therefore it won't fall in this case.
-            //         pricelist = available_pricelists[0]
-            // 
-            // return pricelist
-            */
-            return default;
-        }
-
         public async Task<Website> GetCurrentWebsiteAsync(Guid id, WebsiteGetCurrentWebsiteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def get_current_website(self, fallback=True):
             // """ The current website is returned in the following order:
+            // 
             // - the website forced in session `force_website_id`
             // - the website set in context
             // - (if frontend or fallback) the website matching the request's "domain"
@@ -1978,7 +2409,7 @@ namespace Bamboo.Core.Application.Services
             //     try:
             //         model = self.env[model_name]
             //         field = model._fields[field_name]
-            //         if model._abstract or model._table_query is not None or not field.store:
+            //         if model._abstract or model._table_query or not field.store:
             //             continue
             //     except KeyError:
             //         continue
@@ -1999,62 +2430,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // self.ensure_one()
             // if self.channel_id:
-            //     livechat_info = self.channel_id.sudo().get_livechat_info()
-            //     if livechat_info['available']:
-            //         livechat_request_session = self._get_livechat_request_session()
-            //         if livechat_request_session:
-            //             livechat_info['options']['force_thread'] = livechat_request_session
-            //     return livechat_info
+            //     # sudo - im_livechat.channel: getting bsaic info related to live chat channel is allowed.
+            //     return self.channel_id.sudo().get_livechat_info()
             // return {}
-            */
-            return default;
-        }
-
-        protected async Task<Website> GetLivechatRequestSessionInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website.py) ---
-            // def _get_livechat_request_session(self):
-            // """
-            // Check if there is an opened chat request for the website livechat channel and the current visitor (from request).
-            // If so, prepare the livechat session information that will be stored in visitor's cookies
-            // and used by livechat widget to directly open this session instead of allowing the visitor to
-            // initiate a new livechat session.
-            // :param {int} channel_id: channel
-            // :return: {dict} livechat request session information
-            // """
-            // visitor = self.env['website.visitor']._get_visitor_from_request()
-            // chat_request_session = {}
-            // if visitor:
-            //     # get active chat_request linked to visitor
-            //     chat_request_channel = self.env['discuss.channel'].sudo().search([
-            //         ("channel_type", "=", "livechat"),
-            //         ('livechat_visitor_id', '=', visitor.id),
-            //         ('livechat_channel_id', '=', self.channel_id.id),
-            //         ('livechat_active', '=', True),
-            //         ('has_message', '=', True)
-            //     ], order='create_date desc', limit=1)
-            //     if chat_request_channel:
-            //         if not visitor.partner_id:
-            //             current_guest = self.env['mail.guest']._get_guest_from_context()
-            //             channel_guest_member = chat_request_channel.channel_member_ids.filtered(lambda m: m.guest_id)
-            //             if current_guest and current_guest != channel_guest_member.guest_id:
-            //                 # Channel was created with a guest but the visitor was
-            //                 # linked to another guest in the meantime. We need to
-            //                 # update the channel to link it to the current guest.
-            //                 chat_request_channel.write({'channel_member_ids': [
-            //                     Command.unlink(channel_guest_member.id),
-            //                     Command.create({'guest_id': current_guest.id, 'fold_state': 'open'})
-            //                 ]})
-            //             if not current_guest and channel_guest_member:
-            //                 channel_guest_member.guest_id._set_auth_cookie()
-            //                 chat_request_channel = chat_request_channel.with_context(guest=channel_guest_member.guest_id.sudo(False))
-            //         if chat_request_channel.is_member:
-            //             chat_request_session = {
-            //                 "id": chat_request_channel.id,
-            //                 "model": "discuss.channel",
-            //             }
-            // return chat_request_session
             */
             return default;
         }
@@ -2073,23 +2451,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<Website> GetMenuIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
-            // def _get_menu_ids(self):
-            // return self.env['website.menu'].search([('website_id', '=', self.id)]).ids
-            */
-            return default;
-        }
-
-        protected async Task<Website> GetPlPartnerOrderInternalAsync(object country_code, object show_visible, Guid current_pl_id, List<Guid> website_pricelist_ids, Guid partner_pl_id, Guid order_pl_id)
+        protected async Task<Website> GetPlPartnerOrderInternalAsync(object country_code, object show_visible, Guid current_pl_id, List<Guid> website_pricelist_ids, Guid partner_pl_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def _get_pl_partner_order(
-            //     self, country_code, show_visible, current_pl_id, website_pricelist_ids,
-            //     partner_pl_id=False, order_pl_id=False
+            //     self, country_code, show_visible, current_pl_id, website_pricelist_ids, partner_pl_id=False
             // ):
             //     """ Return the list of pricelists that can be used on website for the current user.
             // 
@@ -2099,18 +2466,17 @@ namespace Bamboo.Core.Application.Services
             //         (If not selectable but currently used anyway, e.g. pricelist with promo code)
             //     :param tuple website_pricelist_ids: List of ids of pricelists available for this website
             //     :param int partner_pl_id: the partner pricelist
-            //     :param int order_pl_id: the current cart pricelist
             //     :returns: list of product.pricelist ids
             //     :rtype: list
             //     """
             //     self.ensure_one()
             //     pricelists = self.env['product.pricelist']
             // 
-            //     if show_visible:
-            //         # Only show selectable or currently used pricelist (cart or session)
-            //         check_pricelist = lambda pl: pl.selectable or pl.id in (current_pl_id, order_pl_id)
-            //     else:
-            //         check_pricelist = lambda _pl: True
+            //     def check_pricelist(pricelist):
+            //         if show_visible:
+            //             return pricelist.selectable or pricelist.id == current_pl_id
+            //         else:
+            //             return True
             // 
             //     # Note: 1. pricelists from all_pl are already website compliant (went through
             //     #          `_get_website_pricelists_domain`)
@@ -2182,7 +2548,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def _get_plausible_share_url(self):
             // embed_url = f'/share/{self.plausible_site}?auth={self.plausible_shared_key}&embed=true&theme=system'
-            // return self.plausible_shared_key and urls.url_join(self._get_plausible_server(), embed_url) or ''
+            // return self.plausible_shared_key and tools.urls.urljoin(self._get_plausible_server(), embed_url) or ''
             */
             return default;
         }
@@ -2199,32 +2565,35 @@ namespace Bamboo.Core.Application.Services
             // """
             // self.ensure_one()
             // 
+            // ProductPricelist = self.env['product.pricelist']
+            // 
+            // if not self.env['res.groups']._is_feature_enabled('product.group_product_pricelist'):
+            //     return ProductPricelist  # Skip pricelist computation if pricelists are disabled.
+            // 
             // country_code = self._get_geoip_country_code()
             // website = self.with_company(self.company_id)
             // 
             // partner_sudo = website.env.user.partner_id
             // is_user_public = self.env.user._is_public()
             // if not is_user_public:
-            //     last_order_pricelist = partner_sudo.last_website_so_id.pricelist_id
             //     # Don't needlessly trigger `depends_context` recompute
             //     ctx = {'country_code': country_code} if country_code else {}
-            //     partner_pricelist = partner_sudo.with_context(**ctx).property_product_pricelist
+            //     partner_pricelist_id = partner_sudo.with_context(**ctx).property_product_pricelist.id
             // else:  # public user: do not compute partner pl (not used)
-            //     last_order_pricelist = self.env['product.pricelist']
-            //     partner_pricelist = self.env['product.pricelist']
+            //     partner_pricelist_id = False
             // website_pricelists = website.sudo().pricelist_ids
             // 
-            // current_pricelist_id = self._get_cached_pricelist_id()
+            // current_pricelist_id = request and request.session.get(PRICELIST_SESSION_CACHE_KEY) or None
             // 
             // pricelist_ids = website._get_pl_partner_order(
             //     country_code,
             //     show_visible,
             //     current_pl_id=current_pricelist_id,
             //     website_pricelist_ids=tuple(website_pricelists.ids),
-            //     partner_pl_id=partner_pricelist.id,
-            //     order_pl_id=last_order_pricelist.id)
+            //     partner_pl_id=partner_pricelist_id,
+            // )
             // 
-            // return self.env['product.pricelist'].browse(pricelist_ids)
+            // return ProductPricelist.browse(pricelist_ids)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2245,7 +2614,89 @@ namespace Bamboo.Core.Application.Services
             // return free_qty
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: website.py) ---
             // def _get_product_available_qty(self, product, **kwargs):
+            // """Give the available quantity of a given product.
+            // 
+            // NB: this method is only meant to be used on the shop before the checkout.
+            // For checkout steps, please use `cart._get_free_qty` instead to consider
+            // the chosen warehouse for delivery (website_sale_collect).
+            // 
+            // :param product: product.product record
+            // :param dict kwargs: unused parameters, available for overrides
+            // :return: available quantity
+            // :rtype: float
+            // """
             // return product.with_context(warehouse_id=self.warehouse_id.id).free_qty
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetProductImageRatioHeightInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_product_image_ratio_height(self):
+            // match self._get_product_image_ratio():
+            //     case '16_9':
+            //         return '36px'
+            //     case '4_3':
+            //         return '48px'
+            //     case '6_5':
+            //         return '53px'
+            //     case '4_5':
+            //         return '96px'
+            // return '64px'
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetProductImageRatioInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_product_image_ratio(self):
+            // """Get the product image aspect ratio based on the website's design classes.
+            // 
+            // Returns:
+            //     str: The aspect ratio as a string (e.g., '16_9', '4_3', '1_1')
+            // """
+            // classes = self.shop_opt_products_design_classes or ''
+            // ratio_mapping = {
+            //     'o_wsale_products_opt_thumb_16_9': '16_9',
+            //     'o_wsale_products_opt_thumb_4_3': '4_3',
+            //     'o_wsale_products_opt_thumb_6_5': '6_5',
+            //     'o_wsale_products_opt_thumb_4_5': '4_5',
+            //     'o_wsale_products_opt_thumb_2_3': '2_3',
+            // }
+            // for class_name, ratio in ratio_mapping.items():
+            //     if class_name in classes:
+            //         return ratio
+            // return '1_1'
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetProductPageContainerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_product_page_container(self):
+            // return self.shop_page_container if self.product_page_container == 'unset' else self.product_page_container
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetProductPageGridImageRoundedClassesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_product_page_grid_image_rounded_classes(self):
+            // roundness_map = {
+            //     'none': 'o_wsale_product_page_opt_image_radius_none',
+            //     'small': 'o_wsale_product_page_opt_image_radius_small',
+            //     'medium': 'o_wsale_product_page_opt_image_radius_medium',
+            //     'big': 'o_wsale_product_page_opt_image_radius_big',
+            // }
+            // return roundness_map.get(self.product_page_image_roundness)
             */
             return default;
         }
@@ -2256,10 +2707,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def _get_product_page_grid_image_spacing_classes(self):
             // spacing_map = {
-            //     'none': 'm-0',
-            //     'small': 'm-1',
-            //     'medium': 'm-2',
-            //     'big': 'm-3',
+            //     'none': 'gap-0',
+            //     'small': 'gap-1',
+            //     'medium': 'gap-2',
+            //     'big': 'gap-3',
             // }
             // return spacing_map.get(self.product_page_image_spacing)
             */
@@ -2293,11 +2744,38 @@ namespace Bamboo.Core.Application.Services
             // def _get_product_sort_mapping():
             // return [
             //     ('website_sequence asc', _("Featured")),
-            //     ('create_date desc', _("Newest Arrivals")),
+            //     ('publish_date desc', _("Newest Arrivals")),
             //     ('name asc', _("Name (A-Z)")),
             //     ('list_price asc', _("Price - Low to High")),
             //     ('list_price desc', _("Price - High to Low")),
             // ]
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetSnippetDefaultsInternalAsync(object snippet)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _get_snippet_defaults(self, snippet):
+            // """Retrieve the default configuration for a given dynamic snippet."""
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _get_snippet_defaults(self, snippet):
+            // return super()._get_snippet_defaults(snippet) | const.SNIPPET_DEFAULTS.get(snippet, {})
+            */
+            return default;
+        }
+
+        protected async Task<Website> GetSnippetViewKeyInternalAsync(object snippet, object page_code)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _get_snippet_view_key(self, snippet, page_code):
+            // if '.' not in snippet:
+            //     snippet = 'website.' + snippet
+            // module, snippet = snippet.split('.')
+            // return f'{module}.configurator_{page_code}_{snippet}'
             */
             return default;
         }
@@ -2346,16 +2824,6 @@ namespace Bamboo.Core.Application.Services
             // suggested_controllers = super(Website, self).get_suggested_controllers()
             // suggested_controllers.append((_('Jobs'), self.env['ir.http']._url_for('/jobs'), 'website_hr_recruitment'))
             // return suggested_controllers
-            --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website.py) ---
-            // def get_suggested_controllers(self):
-            // suggested_controllers = super(Website, self).get_suggested_controllers()
-            // suggested_controllers.append((_('Live Support'), self.env['ir.http']._url_for('/livechat'), 'website_livechat'))
-            // return suggested_controllers
-            --- ODOO METHOD SOURCE (MODULE: website_membership, FILE: website.py) ---
-            // def get_suggested_controllers(self):
-            // suggested_controllers = super(Website, self).get_suggested_controllers()
-            // suggested_controllers.append((_('Members'), self.env['ir.http']._url_for('/members'), 'website_membership'))
-            // return suggested_controllers
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def get_suggested_controllers(self):
             // suggested_controllers = super().get_suggested_controllers()
@@ -2377,10 +2845,7 @@ namespace Bamboo.Core.Application.Services
             // def get_template(self, template):
             // if isinstance(template, str) and '.' not in template:
             //     template = 'website.%s' % template
-            // view = self.env['ir.ui.view']._get(template).sudo()
-            // if not view:
-            //     raise NotFound
-            // return view
+            // return self.env['ir.ui.view']._get_template_view(template).sudo()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2390,10 +2855,41 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def get_theme_configurator_snippets(self, theme_name):
-            // return {
+            // """
+            // Prepare and return configurator_snippets by fetching theme snippets and
+            // inserting addon snippets at their intended positions.
+            // """
+            // configurator_snippets = {
             //     **get_manifest('website')['configurator_snippets'],
             //     **get_manifest(theme_name).get('configurator_snippets', {}),
             // }
+            // configurator_snippets_addons = {
+            //     **get_manifest(theme_name).get('configurator_snippets_addons', {}),
+            // }
+            // 
+            // if not configurator_snippets_addons:
+            //     return configurator_snippets
+            // 
+            // installed_modules = self.env['ir.module.module']._installed()
+            // 
+            // for module_name, module_addon in configurator_snippets_addons.items():
+            //     if module_name not in installed_modules:
+            //         continue
+            //     for page, snippets_to_insert in module_addon.items():
+            //         snippet_list = configurator_snippets.setdefault(page, [])
+            //         for snippet_name, position, target in snippets_to_insert:
+            //             if snippet_name in snippet_list:
+            //                 continue
+            //             try:
+            //                 snippet_idx = snippet_list.index(target) + (position == 'after')
+            //                 snippet_list.insert(snippet_idx, snippet_name)
+            //             except ValueError:
+            //                 logger.error(
+            //                     "Skipping snippet '%s' because the target snippet is misconfigured.",
+            //                     snippet_name,
+            //                 )
+            // 
+            // return configurator_snippets
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2452,26 +2948,21 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<Website> GetWarehouseAvailableInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: website.py) ---
-            // def _get_warehouse_available(self):
-            // return (
-            //     self.warehouse_id.id or
-            //     self.env['ir.default'].sudo()._get('sale.order', 'warehouse_id', company_id=self.company_id.id) or
-            //     self.env['ir.default'].sudo()._get('sale.order', 'warehouse_id') or
-            //     self.env['stock.warehouse'].sudo().search([('company_id', '=', self.company_id.id)], limit=1).id
-            // )
-            */
-            return default;
-        }
-
         public async Task<Website> GetWebsitePageIdsAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def get_website_page_ids(self):
+            // """
+            // Returns website page IDs grouped by website.
+            // 
+            // If called with an empty or non-existent recordset, returns all pages
+            // under the None key.
+            // Else, returns a mapping of website IDs to their respective page IDs.
+            // 
+            // :returns: Dict mapping website ID (or None) to list of website.page IDs.
+            // :rtype: dict[int | None, list[int]]
+            // """
             // if not self.env.user.has_group('website.group_website_restricted_editor'):
             //     # Note that `website.pages` have `0,0,0,0` ACL rights by default for
             //     # everyone except for the website designer which receive `1,0,0,0`.
@@ -2482,13 +2973,21 @@ namespace Bamboo.Core.Application.Services
             //     # custos granting them read and/or write access on page.
             //     raise AccessError(_("Access Denied"))
             // 
-            // domain = [('url', '!=', False)]
-            // if self:
-            //     domain = AND([domain, self.website_domain()])
-            // pages = self.env['website.page'].sudo().search(domain)
-            // if self:
-            //     pages = pages.with_context(website_id=self.id)._get_most_specific_pages()
-            // return pages.ids
+            // domain = Domain('url', '!=', False)
+            // pages_sudo = self.env['website.page'].sudo()
+            // 
+            // if not self or not self.exists():
+            //     pages = pages_sudo.search(domain)
+            //     return {None: pages.ids}
+            // 
+            // pages_by_website = {}
+            // for website in self:
+            //     website_domain = Domain.AND((domain, website.website_domain()))
+            //     pages = pages_sudo.search(website_domain)
+            //     pages_for_website = pages.with_context(website_id=website.id)._get_most_specific_pages()
+            //     pages_by_website[website.id] = pages_for_website.ids
+            // 
+            // return pages_by_website
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2499,9 +2998,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def _get_website_pages(self, domain=None, order='name', limit=None):
             // website = self.get_current_website()
-            // if domain is None:
-            //     domain = []
-            // domain += website.website_domain()
+            // domain = Domain(domain or Domain.TRUE) & website.website_domain()
             // pages = self.env['website.page'].sudo().search(domain, order=order, limit=limit)
             // pages = pages.with_context(website_id=website.id)._get_most_specific_pages()
             // return pages
@@ -2538,7 +3035,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def _handle_favicon(self, vals):
             // if vals.get('favicon'):
-            //     vals['favicon'] = base64.b64encode(tools.image_process(base64.b64decode(vals['favicon']), size=(256, 256), crop='center', output_format='ICO'))
+            //     vals['favicon'] = base64.b64encode(image_process(base64.b64decode(vals['favicon']), size=(256, 256), crop='center', output_format='ICO'))
             */
             return default;
         }
@@ -2611,7 +3108,7 @@ namespace Bamboo.Core.Application.Services
             // # the language in the path. It is important to also test the domain of
             // # the current URL.
             // current_url = request.httprequest.url_root[:-1] + request.httprequest.environ['REQUEST_URI']
-            // canonical_url = self.env['ir.http']._url_localized(lang_code=request.lang.code, canonical_domain=self.get_base_url())
+            // canonical_url = self._get_canonical_url()
             // # A request path with quotable characters (such as ",") is never
             // # canonical because request.httprequest.base_url is always unquoted,
             // # and canonical url is always quoted, so it is never possible to tell
@@ -2651,8 +3148,8 @@ namespace Bamboo.Core.Application.Services
             // Checks if the website menu contains a record like url.
             // :return: True if the menu contains a record like url
             // """
-            // return any(self.env['website.menu'].browse(self._get_menu_ids()).filtered(
-            //     lambda menu: (menu.url and re.search(r"[/](([^/=?&]+-)?[0-9]+)([/]|$)", menu.url)) or menu.group_ids
+            // return any(self.env['website.menu'].search_fetch(Domain('website_id', '=', self.id), ['url']).filtered(
+            //     lambda menu: re.search(r"[/](([^/=?&]+-)?[0-9]+)([/]|$)", menu.url) or menu.sudo().group_ids
             // ))
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2725,8 +3222,7 @@ namespace Bamboo.Core.Application.Services
             // """
             //     Return True if active, False if not active, None if not found
             // """
-            // view = self.viewref(key, raise_if_not_found=False)
-            // return view.active if view else None
+            // return self.env['ir.ui.view'].with_context(active_test=False)._get_cached_template_info(key).get('active')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2735,7 +3231,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
-            // def new_page(self, name=False, add_menu=False, template='website.default_page', ispage=True, namespace=None, page_values=None, menu_values=None, sections_arch=None):
+            // def new_page(self, name=False, add_menu=False, template='website.default_page', ispage=True, namespace=None, page_values=None, menu_values=None, sections_arch=None, page_title=None):
             // """ Create a new website page, and assign it a xmlid based on the given one
             //     :param name: the name of the page
             //     :param add_menu: if True, add a menu for that page
@@ -2744,6 +3240,7 @@ namespace Bamboo.Core.Application.Services
             //     :param page_values: default values for the page to be created
             //     :param menu_values: default values for the menu to be created
             //     :param sections_arch: HTML content of sections
+            //     :param page_title: if set, it allows using 'name' for the URL and a different title
             // """
             // if namespace:
             //     template_module = namespace
@@ -2766,13 +3263,13 @@ namespace Bamboo.Core.Application.Services
             //     for section in html.fromstring(f'<wrap>{sections_arch}</wrap>'):
             //         wrap.append(section)
             //     arch = etree.tostring(tree, encoding="unicode")
-            // website_id = self._context.get('website_id')
+            // website_id = self.env.context.get('website_id')
             // key = self.get_unique_key(page_key, template_module)
             // view = template_record.copy({'website_id': website_id, 'key': key})
             // 
             // view.with_context(lang=None).write({
             //     'arch': arch.replace(template, key),
-            //     'name': name,
+            //     'name': page_title or name,
             // })
             // result['view_id'] = view.id
             // 
@@ -2792,18 +3289,83 @@ namespace Bamboo.Core.Application.Services
             //     page = self.env['website.page'].create(default_page_values)
             //     result['page_id'] = page.id
             // if add_menu:
-            //     default_menu_values = {
-            //         'name': name,
-            //         'url': page_url,
-            //         'parent_id': website.menu_id.id,
-            //         'page_id': page.id,
-            //         'website_id': website.id,
-            //     }
-            //     if menu_values:
-            //         default_menu_values.update(menu_values)
-            //     menu = self.env['website.menu'].create(default_menu_values)
+            //     menu = self.env['website.menu'].search([
+            //         ('url', '=', page_url),
+            //         ('website_id', '=', website.id),
+            //     ], limit=1)
+            //     if not menu:
+            //         default_menu_values = {
+            //             'name': name,
+            //             'url': page_url,
+            //             'parent_id': website.menu_id.id,
+            //             'page_id': page.id,
+            //             'website_id': website.id,
+            //         }
+            //         if menu_values:
+            //             default_menu_values.update(menu_values)
+            //         menu = self.env['website.menu'].create(default_menu_values)
             //     result['menu_id'] = menu.id
             // return result
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: website.py) ---
+            // def new_page(self, name=False, add_menu=False, template='website.default_page', ispage=True, namespace=None, page_values=None, menu_values=None, sections_arch=None, page_title=None):
+            // """ Override the page creation in the context of events.
+            // 
+            //  When creating a page for an event, the page needs to be embedded inside the
+            //  'website_event.layout' template, otherwise it is not visually contained within that event.
+            //  Note that to create an event page, one has to first create a menu entry in that event.
+            // 
+            //  To determine if this page is an event page:
+            //  - Check that the path starts with 'event/', this should avoid extra requests in other contexts
+            //  - Fetch a website.menu linked to this path
+            //  - Check if we have a website.event.menu linked to that website.menu.
+            // 
+            //  In addition, we attach the created view to the website.event.menu and adapt they view key
+            //  to make it unique in the context of our event, which makes it possible to find the view in
+            //  the event pages controller.
+            // 
+            //  Finally, we also manually adapt the content of the generated page so that it's suited for
+            //  the website editor generation.
+            //  This includes removing false attributes and making sure the content is contained within a
+            //  single oe_structure element (which cannot be 'wrap' as wrap contains the event menu).
+            // 
+            //  See: website.menu#save override """
+            // 
+            // website_event_menu = False
+            // if template == 'website.default_page' and name and name.startswith('event/'):
+            //     website_event_menu = self.env["website.event.menu"].sudo().search([
+            //         ('menu_id.url', '=', '/' + name)
+            //     ], limit=1)
+            //     if website_event_menu:
+            //         template = "website_event.layout"
+            // 
+            // new_page = super().new_page(name, add_menu, template, ispage, namespace, page_values, menu_values, sections_arch, page_title)
+            // 
+            // if website_event_menu and new_page.get('view_id'):
+            //     website_event_menu.view_id = new_page['view_id']
+            //     website_event_menu.view_id.key = f'website_event.{website_event_menu.event_id.name}-{name.split("/")[-1]}'
+            // 
+            //     arch = website_event_menu.view_id.arch
+            //     if arch:
+            //         tree = html.fromstring(arch)
+            //         content_container = tree.xpath('//div[@id="oe_structure_website_event_layout_1"]')
+            //         if content_container:
+            //             # remove ID and editor sub-message for custom pages as it doesn't apply
+            //             wrap = tree.xpath('//div[@id="wrap"]')[0]
+            //             content_container = content_container[0]
+            //             content_container.attrib.pop('t-att-data-editor-sub-message', None)
+            //             content_container.attrib.pop('data-editor-sub-message.translate', None)
+            //             content_container.attrib.pop('id', None)
+            // 
+            //             if sections_arch:
+            //                 for section in wrap.xpath('//section'):
+            //                     # to be properly editable, the content needs to be contained within a
+            //                     # single empty oe_structure, unlike 'wrap' that has the event menu inside
+            //                     wrap.remove(section)
+            //                     content_container.append(section)
+            // 
+            //             website_event_menu.view_id.arch = etree.tostring(tree, encoding="unicode")
+            // 
+            // return new_page
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2860,24 +3422,122 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<Website> PopulateProductFeedsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
+            // def _populate_product_feeds(self):
+            // """Populate product feeds for the website with default values."""
+            // self.env['product.feed'].create([
+            //     {
+            //         'name': website.env._("GMC 1"),
+            //         'website_id': website.id,
+            //     } for website in self.filtered(lambda w: w._default_feed_is_valid())
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<Website> PreconfigureSnippetInternalAsync(object snippet, object el, object customizations)
+        {
+            #if PYTHON_CODE
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _preconfigure_snippet(self, snippet, el, customizations):
+            // """Apply default configuration values to a snippet element.
+            // 
+            // This ensures that when a dynamic snippet is appended via the
+            // configurator, all of its required default classes/attributes
+            // are added to the DOM element before it is rendered.
+            // """
+            // def modify_class(target_classes, class_name, operation):
+            //     """Add or remove a single class string from target_classes list."""
+            //     if operation == 'remove' and class_name in target_classes:
+            //         target_classes.remove(class_name)
+            //     elif operation == 'add' and class_name not in target_classes:
+            //         target_classes.append(class_name)
+            // 
+            // default_settings = self._get_snippet_defaults(snippet)
+            // if not (customizations or default_settings):
+            //     # Nothing to preconfigure on the given snippet
+            //     return
+            // 
+            // snippet_classes = el.get('class', '').split()
+            // 
+            // filter_name = customizations.get('filter_xmlid') or default_settings.get('filter_xmlid')
+            // if filter_name:
+            //     selected_filter = self.env.ref(filter_name)
+            //     el.set('data-filter-id', str(selected_filter.id))
+            //     el.set('data-number-of-records', str(selected_filter.limit))
+            // 
+            // selected_template_key = customizations.get('template_key') or default_settings.get('template_key')
+            // if selected_template_key:
+            //     el.set('data-template-key', selected_template_key)
+            //     template_class = re.sub(r'.*\.dynamic_filter_template_', 's_', selected_template_key)
+            //     if template_class not in snippet_classes:
+            //         snippet_classes.append(template_class)
+            // 
+            // # Add 'o_colored_level' to maintain correct color configuration.
+            // snippet_classes.append('o_colored_level')
+            // 
+            // # Apply class modifications (add/remove) to the snippet or its children.
+            // # - If dict is found, apply to the first child matching the selector.
+            // # - Otherwise, treated as direct modification on the snippet element.
+            // class_modifications = [
+            //     ('remove', customizations.get('remove_classes', []) or default_settings.get('remove_classes', [])),
+            //     ('add', customizations.get('add_classes', []) or default_settings.get('add_classes', [])),
+            // ]
+            // 
+            // for operation, items in class_modifications:
+            //     for item in items:
+            //         if isinstance(item, dict):
+            //             for selector, classes in item.items():
+            //                 child_el = el.xpath(f"//*[hasclass('{selector}')]")
+            //                 if child_el:
+            //                     node = child_el[0]
+            //                     child_classes = node.get('class', '').split()
+            //                     modify_class(child_classes, classes, operation)
+            //                     node.set('class', ' '.join(child_classes))
+            //         else:
+            //             modify_class(snippet_classes, item, operation)
+            // 
+            // data_attributes = {
+            //     **default_settings.get('data_attributes', {}),
+            //     **customizations.get('data_attributes', {}),
+            // }
+            // for key, value in data_attributes.items():
+            //     el.set(f'data-{key}', value)
+            // 
+            // el.set('class', ' '.join(snippet_classes))
+            // 
+            // style = customizations.get('style', {}) or default_settings.get('style', {})
+            // if style:
+            //     style_attr = ' '.join(f'{attr}: {value};' for attr, value in style.items())
+            //     el.set('style', style_attr)
+            // 
+            // # Apply theme-specific customizations to the dynamic snippets
+            // if 'background' in customizations:
+            //     self._set_background_options(el, customizations['background'])
+            // 
+            // return
+            #endif
+            return default;
+        }
+
         protected async Task<Website> PrepareSaleOrderValuesInternalAsync(object partner_sudo)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def _prepare_sale_order_values(self, partner_sudo):
             // self.ensure_one()
-            // affiliate_id = request.session.get('affiliate_id')
-            // salesperson_user_sudo = self.env['res.users'].sudo().browse(affiliate_id).exists()
-            // if not salesperson_user_sudo:
-            //     salesperson_user_sudo = self.salesperson_id or partner_sudo.user_id or partner_sudo.parent_id.user_id
             // 
             // return {
             //     'company_id': self.company_id.id,
-            //     'fiscal_position_id': self.fiscal_position_id.id,
             //     'partner_id': partner_sudo.id,
-            //     'pricelist_id': self.pricelist_id.id,
+            // 
+            //     'fiscal_position_id': request.fiscal_position.id,
+            //     'pricelist_id': request.pricelist.id,
+            // 
             //     'team_id': self.salesteam_id.id,
-            //     'user_id': salesperson_user_sudo.id,
             //     'website_id': self.id,
             // }
             */
@@ -2946,105 +3606,20 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> SaleGetOrderAsync(Guid id, WebsiteSaleGetOrderRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
-            // def sale_get_order(self, force_create=False):
-            // """ Return the current sales order after mofications specified by params.
-            // 
-            // :param bool force_create: Create sales order if not already existing
-            // 
-            // :returns: current cart, as a sudoed `sale.order` recordset (might be empty)
-            // """
-            // self.ensure_one()
-            // 
-            // self = self.with_company(self.company_id)
-            // SaleOrder = self.env['sale.order'].sudo()
-            // 
-            // sale_order_id = request.session.get('sale_order_id')
-            // 
-            // if sale_order_id:
-            //     sale_order_sudo = SaleOrder.browse(sale_order_id).exists()
-            // elif self.env.user and not self.env.user._is_public():
-            //     sale_order_sudo = self.env.user.partner_id.last_website_so_id
-            //     if sale_order_sudo:
-            //         available_pricelists = self.get_pricelist_available()
-            //         so_pricelist_sudo = sale_order_sudo.pricelist_id
-            //         if so_pricelist_sudo and so_pricelist_sudo not in available_pricelists:
-            //             # Do not reload the cart of this user last visit
-            //             # if the cart uses a pricelist no longer available.
-            //             sale_order_sudo = SaleOrder
-            //         else:
-            //             # Do not reload the cart of this user last visit
-            //             # if the Fiscal Position has changed.
-            //             fpos = sale_order_sudo.env['account.fiscal.position'].with_company(
-            //                 sale_order_sudo.company_id
-            //             )._get_fiscal_position(
-            //                 sale_order_sudo.partner_id,
-            //                 delivery=sale_order_sudo.partner_shipping_id
-            //             )
-            //             if fpos.id != sale_order_sudo.fiscal_position_id.id:
-            //                 sale_order_sudo = SaleOrder
-            // else:
-            //     sale_order_sudo = SaleOrder
-            // 
-            // # Ignore the current order if a payment has been initiated. We don't want to retrieve the
-            // # cart and allow the user to update it when the payment is about to confirm it.
-            // if sale_order_sudo and sale_order_sudo.get_portal_last_transaction().state in (
-            //     'pending', 'authorized', 'done'
-            // ):
-            //     sale_order_sudo = None
-            // 
-            // if not (sale_order_sudo or force_create):
-            //     # Do not create a SO record unless needed
-            //     if request.session.get('sale_order_id'):
-            //         request.session.pop('sale_order_id')
-            //         request.session.pop('website_sale_cart_quantity', None)
-            //     return self.env['sale.order']
-            // 
-            // partner_sudo = self.env.user.partner_id
-            // 
-            // # cart creation was requested
-            // if not sale_order_sudo:
-            //     so_data = self._prepare_sale_order_values(partner_sudo)
-            //     sale_order_sudo = SaleOrder.with_user(SUPERUSER_ID).create(so_data)
-            // 
-            //     request.session['sale_order_id'] = sale_order_sudo.id
-            //     request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
-            //     # The order was created with SUPERUSER_ID, revert back to request user.
-            //     return sale_order_sudo.with_user(self.env.user).sudo()
-            // 
-            // # Existing Cart:
-            // #   * For logged user
-            // #   * In session, for specified partner
-            // 
-            // # case when user emptied the cart
-            // if not request.session.get('sale_order_id'):
-            //     request.session['sale_order_id'] = sale_order_sudo.id
-            //     request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
-            // 
-            // # check for change of partner_id ie after signup
-            // if partner_sudo.id not in (sale_order_sudo.partner_id.id, self.partner_id.id):
-            //     sale_order_sudo._update_address(partner_sudo.id, ['partner_id'])
-            // 
-            // return sale_order_sudo
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<Website> SaleProductDomainAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def sale_product_domain(self):
             // website_domain = self.get_current_website().website_domain()
-            // if not self.env.user._is_internal():
-            //     website_domain = expression.AND([website_domain, [
+            // if self.env.user._is_internal():
+            //     user_domain = Domain.TRUE
+            // else:
+            //     user_domain = [
             //         ('is_published', '=', True),
             //         ('service_tracking', 'in', self.env['product.template']._get_saleable_tracking_types()),
-            //     ]])
-            // return expression.AND([self._product_domain(), website_domain])
+            //     ]
+            // return Domain.AND([self._product_domain(), website_domain, user_domain])
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3054,19 +3629,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def sale_reset(self):
-            // request.session.pop('sale_order_id', None)
-            // request.session.pop('website_sale_current_pl', None)
+            // request.session.pop(CART_SESSION_CACHE_KEY, None)
             // request.session.pop('website_sale_cart_quantity', None)
-            // request.session.pop('website_sale_selected_pl_id', None)
+            // request.session.pop(PRICELIST_SESSION_CACHE_KEY, None)
+            // request.session.pop(FISCAL_POSITION_SESSION_CACHE_KEY, None)
+            // request.session.pop(PRICELIST_SELECTED_SESSION_CACHE_KEY, None)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<Website> SearchBuildDomainInternalAsync(object domain, object search, object fields, object extra)
+        protected async Task<Website> SearchBuildDomainInternalAsync(object domain_list, object search, object fields, object extra)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
-            // def _search_build_domain(self, domain, search, fields, extra=None):
+            // def _search_build_domain(self, domain_list, search, fields, extra=None):
             // """
             // Builds a search domain AND-combining a base domain with partial matches of each term in
             // the search expression in any of the fields.
@@ -3078,16 +3654,15 @@ namespace Bamboo.Core.Application.Services
             // 
             // :return: domain limited to the matches of the search expression
             // """
-            // domains = domain.copy()
+            // # just like website.searchable.mixin
+            // domain = Domain.AND(domain_list)
             // if search:
             //     for search_term in search.split(' '):
-            //         subdomains = []
-            //         for field in fields:
-            //             subdomains.append([(field, 'ilike', sqltools.escape_psql(search_term))])
+            //         subdomains = [Domain(field, 'ilike', escape_psql(search_term)) for field in fields]
             //         if extra:
             //             subdomains.append(extra(self.env, search_term))
-            //         domains.append(OR(subdomains))
-            // return AND(domains)
+            //         domain &= Domain.OR(subdomains)
+            // return domain
             */
             return default;
         }
@@ -3195,6 +3770,18 @@ namespace Bamboo.Core.Application.Services
             // result = super()._search_get_details(search_type, order, options)
             // if search_type in ['events', 'all']:
             //     result.append(self.env['event.event']._search_get_detail(self, order, options))
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: website.py) ---
+            // def _search_get_details(self, search_type, order, options):
+            // result = super()._search_get_details(search_type, order, options)
+            // if search_type in ['sponsor', 'all'] and options.get('event'):
+            //     result.append(self.env['event.sponsor']._search_get_detail(self, order, options))
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: website.py) ---
+            // def _search_get_details(self, search_type, order, options):
+            // result = super()._search_get_details(search_type, order, options)
+            // if search_type in ['track', 'all'] and options.get('event'):
+            //     result.append(self.env['event.track']._search_get_detail(self, order, options))
             // return result
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: website.py) ---
             // def _search_get_details(self, search_type, order, options):
@@ -3346,10 +3933,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def search_url_dependencies(self, res_model, res_ids):
             // """ Search dependencies just for information. It will not catch 100%
-            //     of dependencies and False positive is more than possible
-            //     Each module could add dependences in this dict
-            //     :returns a dictionnary where key is the 'categorie' of object related to the given
-            //         view, and the value is the list of text and link to the resource using given page
+            // of dependencies and False positive is more than possible
+            // Each module could add dependences in this dict
+            // 
+            // :returns: a dictionnary where key is the 'categorie' of object related to the given
+            //     view, and the value is the list of text and link to the resource using given page
             // """
             // dependencies = {}
             // current_website = self.get_current_website()
@@ -3376,11 +3964,7 @@ namespace Bamboo.Core.Application.Services
             //     url = 'website_url' in record and record.website_url or record.url
             //     search_criteria.append((url, website.website_domain()))
             // 
-            // # Search the URL in every relevant field
-            // html_fields = self._get_html_fields() + [
-            //     ('website.menu', 'url'),
-            // ]
-            // for model_name, field_name in html_fields:
+            // for model_name, field_name in self._get_html_fields():
             //     Model = self.env[model_name]
             //     if not Model.has_access('read'):
             //         continue
@@ -3388,12 +3972,12 @@ namespace Bamboo.Core.Application.Services
             //     # Generate the exact domain to search for the URL in this field
             //     domains = []
             //     for url, website_domain in search_criteria:
-            //         domains.append(AND([
+            //         domains.append(Domain.AND([
             //             [(field_name, 'ilike', url)],
             //             website_domain if hasattr(Model, 'website_id') else [],
             //         ]))
             // 
-            //     dependency_records = Model.search(OR(domains))
+            //     dependency_records = Model.search(Domain.OR(domains))
             //     if model_name == 'ir.ui.view':
             //         dependency_records = _handle_views_and_pages(dependency_records)
             //     if dependency_records:
@@ -3463,6 +4047,7 @@ namespace Bamboo.Core.Application.Services
             //         ('is_abandoned_cart', '=', True),
             //         ('cart_recovery_email_sent', '=', False),
             //         ('website_id', '=', website.id),
+            //         ('date_order', '>=', website.send_abandoned_cart_email_activation_time),
             //     ])
             //     if not all_abandoned_carts:
             //         continue
@@ -3482,6 +4067,31 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<Website> SetBackgroundOptionsInternalAsync(object el, object background_options)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
+            // def _set_background_options(self, el, background_options):
+            // snippet_classes = el.get('class').split()
+            // snippet_style = (el.get('style') or '').split()
+            // 
+            // if 'color' in background_options:
+            //     snippet_classes = [c for c in snippet_classes if not c.startswith('o_cc')]
+            //     snippet_classes.append('o_cc ' + background_options['color'])
+            // if 'image' in background_options:
+            //     snippet_classes.append('oe_img_bg o_bg_img_center')
+            //     snippet_style.append(background_options['image'])
+            // if 'shape' in background_options:
+            //     el.set('data-oe-shape-data', background_options['shape']['data-oe-shape-data'])
+            //     shape_el = html.fromstring(background_options['shape']['element'])
+            //     el.insert(0, shape_el)
+            // 
+            // el.set('class', ' '.join(snippet_classes))
+            // el.set('style', ' '.join(snippet_style))
+            */
+            return default;
+        }
+
         protected async Task<Website> TrigramEnumerateWordsInternalAsync(object search_details, object search, object limit)
         {
             /*
@@ -3497,83 +4107,102 @@ namespace Bamboo.Core.Application.Services
             // :param limit: maximum number of records fetched per model to build the word list
             // :return: yields words
             // """
+            // def get_similarity_subquery(model, fields, id_column, rel_table='', rel_joinkey=''):
+            //     """ Build a subquery retrieving the greatest word_similarity between search and fields.
+            //     It adds joins/left joins to the subquery when needed.
+            // 
+            //     :param model: current model used to retrieve the subquery table
+            //     :param fields: sequence of fields used in similarity computation
+            //     :id_column: name of the column used to get the correct ids.
+            //         E.g. id for model=product_template, product_tmpl_id for model=product_product)
+            //     :rel_table: name of the rel table when search_fields in search_details contains a Many2many.
+            //     :rel_joinkey: name of the column used to join model._table with rel_table.
+            //     """
+            //     subquery = Query(self.env.cr, model._table, model._table_query)
+            //     unaccent = self.env.registry.unaccent
+            //     similarity = SQL(
+            //         "GREATEST(%(similarities)s) as similarity",
+            //         similarities=SQL(", ").join(
+            //             SQL("word_similarity(%(search)s, %(field)s)",
+            //                 search=unaccent(SQL("%s", search)),
+            //                 field=unaccent(model._field_to_sql(model._table, field, subquery)),
+            //             )
+            //             for field in fields
+            //         ),
+            //     )
+            //     where_clauses = []
+            //     for field_name in fields:
+            //         field = model._fields[field_name]
+            //         if field.translate:
+            //             alias = model._table
+            //             if field.related and not field.store:
+            //                 _, field, alias = model._traverse_related_sql(model._table, field, subquery)
+            //             where_clauses.append(SQL("(%(search)s <%% %(jsonb_path)s AND %(search)s <%% (%(field)s))",
+            //                 search=unaccent(SQL("%s", search)),
+            //                 jsonb_path=unaccent(SQL("jsonb_path_query_array(%s, '$.*')::text", SQL.identifier(alias, field.name))),
+            //                 field=unaccent(model._field_to_sql(model._table, field_name, subquery)),
+            //             ))
+            //         else:
+            //             where_clauses.append(SQL("%(search)s <%% %(field)s",
+            //                 search=unaccent(SQL("%s", search)),
+            //                 field=unaccent(model._field_to_sql(model._table, field_name, subquery)),
+            //             ))
+            //     subquery.add_where(SQL(' OR ').join(where_clauses))
+            //     tbl_alias = model._table
+            //     if rel_table:
+            //         rel_alias = subquery.make_alias(rel_table, rel_joinkey)
+            //         subquery.add_join("JOIN", rel_alias, rel_table, SQL("%s = %s",
+            //                 SQL.identifier(rel_alias, rel_joinkey),
+            //                 SQL.identifier(model._table, "id"),
+            //             ),
+            //         )
+            //         tbl_alias = rel_alias
+            //     return subquery.select(SQL("%s as id", SQL.identifier(tbl_alias, id_column)), similarity)
+            // 
             // match_pattern = r'[\w./-]{%s,}' % min(4, len(search) - 3)
-            // similarity_threshold = 0.3
+            // # SET the `<%` similarity threshold to 0.3 for the current transaction (cluster default is 0.6)
+            // self.env.cr.execute("SET LOCAL pg_trgm.word_similarity_threshold to 0.3;")
             // for search_detail in search_details:
             //     model_name, fields = search_detail['model'], search_detail['search_fields']
             //     model = self.env[model_name]
             //     if search_detail.get('requires_sudo'):
             //         model = model.sudo()
-            //     domain = search_detail['base_domain'].copy()
+            //     domain = Domain.AND(search_detail['base_domain'])
             //     direct_fields = set(fields).intersection(model._fields)
             //     indirect_fields = self._search_get_indirect_fields(fields, model)
-            // 
-            //     query = Query(self.env.cr, model._table, model._table_query)
-            // 
-            //     unaccent = self.env.registry.unaccent
-            //     similarities = [
-            //         SQL("word_similarity(%(search)s, %(field)s)",
-            //             search=unaccent(SQL('%s', search)),
-            //             field=unaccent(model._field_to_sql(model._table, field, query)),
-            //             )
-            //         for field in direct_fields
-            //     ]
-            //     indirect_similarities = []
-            //     for field_info in indirect_fields.values():
-            //         direct = field_info['direct']
-            //         direct_field = model._fields[direct]
-            //         comodel = field_info['comodel']
-            //         coalias = query.make_alias(model._table, direct)
-            //         cofield = field_info['cofield']
-            //         if cofield:
-            //             # One2many's comodel references the model's id.
-            //             query.add_join('LEFT JOIN', coalias, comodel._table, SQL("%s = %s",
-            //                 SQL.identifier(model._table, 'id'),
-            //                 SQL.identifier(coalias, cofield),
-            //             ))
-            //         elif 'relation' in dir(direct_field):
-            //             # Many2many's relation holds the model's id in column1 and
-            //             # the comodel's record id in column2.
-            //             rel_alias = coalias
-            //             query.add_join('LEFT JOIN', rel_alias, direct_field.relation, SQL("%s = %s",
-            //                 SQL.identifier(model._table, 'id'),
-            //                 SQL.identifier(rel_alias, direct_field.column1),
-            //             ))
-            //             coalias = query.make_alias(coalias, direct_field.column2)
-            //             query.add_join('LEFT JOIN', coalias, comodel._table, SQL("%s = %s",
-            //                 SQL.identifier(rel_alias, direct_field.column2),
-            //                 SQL.identifier(coalias, 'id'),
-            //             ))
-            //         indirect_similarities.append(SQL("word_similarity(%(search)s, %(field)s)",
-            //             search=unaccent(SQL('%s', search)),
-            //             field=unaccent(comodel._field_to_sql(coalias, field_info['indirect'], query)),
-            //         ))
-            //     similarities.extend(indirect_similarities)
-            //     best_similarity = SQL('GREATEST(%(similarities)s)', similarities=SQL(', ').join(similarities))
-            // 
-            //     # Filter unpublished records for portal and public user for
-            //     # performance.
-            //     # TODO: Same for `active` field?
-            //     filter_is_published = (
-            //         'is_published' in model._fields
-            //         and model._fields['is_published'].base_field.model_name == model_name
-            //         and not self.env.user._is_internal()
-            //     )
-            //     if filter_is_published:
-            //         query.add_where('is_published')
-            // 
-            //     query.order = '_best_similarity desc'
-            //     query.limit = 1000
-            //     self.env.cr.execute(query.select(
-            //         SQL.identifier(model._table, 'id'),
-            //         SQL('%s AS _best_similarity', best_similarity),
-            //     ))
-            //     ids = {row[0] for row in self.env.cr.fetchall() if row[1] and row[1] >= similarity_threshold}
-            //     domain.append([('id', 'in', list(ids))])
-            //     domain = AND(domain)
+            //     # Group indirect_fields by comodel
+            //     indirect_fields_info = defaultdict(dict)  # {comodel: {field_name: field_info}}
+            //     for name, indirect_field in indirect_fields.items():
+            //         indirect_fields_info[indirect_field['comodel']][name] = indirect_field
+            //     subqueries = [get_similarity_subquery(model, direct_fields, 'id')]
+            //     for comodel in indirect_fields_info:
+            //         comodel_similarity_fields = set()
+            //         id_column = rel_table = rel_joinkey = ''
+            //         for indirect_field_info in indirect_fields_info[comodel].values():
+            //             direct_field = model._fields[indirect_field_info['direct']]
+            //             if direct_field.type == 'one2many':
+            //                 comodel_similarity_fields.add(indirect_field_info['indirect'])
+            //                 id_column = indirect_field_info['cofield']
+            //             elif direct_field.type == 'many2many':
+            //                 comodel_similarity_fields.add(indirect_field_info['indirect'])
+            //                 id_column = direct_field.column1
+            //                 rel_table = direct_field.relation
+            //                 rel_joinkey = direct_field.column2
+            //         subqueries.append(get_similarity_subquery(comodel, comodel_similarity_fields, id_column, rel_table, rel_joinkey))
+            //     query = SQL("""
+            //         SELECT id,
+            //             MAX(similarity) as _best_similarity
+            //         FROM (%s) sub
+            //         GROUP BY id
+            //         ORDER BY _best_similarity DESC
+            //         LIMIT 1000
+            //     """, SQL("\nUNION ALL\n").join(subqueries))  # UNION ALL allows to hit GIST indexes in subplans.
+            //     self.env.cr.execute(query)
+            //     ids = {row[0] for row in self.env.cr.fetchall()}
+            //     domain = Domain.AND([domain, Domain([('id', 'in', list(ids))])])
             //     records = model.search_read(domain, direct_fields, limit=limit)
             //     for record in records:
-            //         for field, value in record.items():
+            //         for value in record.values():
             //             if isinstance(value, str):
             //                 value = value.lower()
             //                 yield from re.findall(match_pattern, value)
@@ -3629,42 +4258,16 @@ namespace Bamboo.Core.Application.Services
             // ''' Given an xml_id or a view_id, return the corresponding view record.
             //     In case of website context, return the most specific one.
             // 
-            //     If no website_id is in the context, it will return the generic view,
-            //     instead of a random one like `_get_view_id`.
-            // 
             //     Look also for archived views, no matter the context.
             // 
             //     :param view_id: either a string xml_id or an integer view_id
             //     :param raise_if_not_found: should the method raise an error if no view found
             //     :return: The view record or empty recordset
             // '''
-            // View = self.env['ir.ui.view'].sudo()
-            // view = View
-            // if isinstance(view_id, str):
-            //     if 'website_id' in self._context:
-            //         domain = [('key', '=', view_id)] + self.env['website'].website_domain(self._context.get('website_id'))
-            //         order = 'website_id'
-            //     else:
-            //         domain = [('key', '=', view_id)]
-            //         order = View._order
-            //     views = View.with_context(active_test=False).search(domain, order=order)
-            //     if views:
-            //         view = views.filter_duplicate()[:1]
-            //     else:
-            //         # we handle the raise below
-            //         view = self.env.ref(view_id, raise_if_not_found=False)
-            //         # self.env.ref might return something else than an ir.ui.view (eg: a theme.ir.ui.view)
-            //         if not view or view._name != 'ir.ui.view':
-            //             # make sure we always return a recordset
-            //             view = View
-            // elif isinstance(view_id, int):
-            //     view = View.browse(view_id)
-            // else:
+            // if not isinstance(view_id, (int, str)):
             //     raise ValueError('Expecting a string or an integer, not a %s.' % (type(view_id)))
             // 
-            // if not view and raise_if_not_found:
-            //     raise ValueError('No record found for unique ID %s. It may have been deleted.' % (view_id))
-            // return view
+            // return self.env['ir.ui.view'].sudo().with_context(active_test=False)._get_template_view(view_id, raise_if_not_found=raise_if_not_found)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3680,12 +4283,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> WebsiteDomainAsync(Guid id, WebsiteWebsiteDomainRequestDto input)
+        public async Task<Website> WebsiteDomainAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
-            // def website_domain(self, website_id=False):
-            // return [('website_id', 'in', (False, website_id or self.id))]
+            // def website_domain(self):
+            // return Domain('website_id', 'in', [False, *self.ids])
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3695,8 +4298,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
             // def _website_form_last_record(self):
-            // if request and request.session.form_builder_model_model:
-            //     return request.env[request.session.form_builder_model_model].browse(request.session.form_builder_id)
+            // if request and request.session.get('form_builder_model_model'):
+            //     return request.env[request.session['form_builder_model_model']].browse(request.session['form_builder_id'])
             // return False
             */
             return default;

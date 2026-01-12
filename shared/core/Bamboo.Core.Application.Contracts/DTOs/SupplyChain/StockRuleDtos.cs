@@ -8,4 +8,16 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Default { get; set; }
     }
+    
+    public class StockRuleRunRequestDto
+    {
+        public object Procurements { get; set; }
+        public object RaiseUserError { get; set; }
+    }
+    
+    public class StockRuleRunSchedulerRequestDto
+    {
+        public object UseNewCursor { get; set; }
+        public Guid CompanyId { get; set; }
+    }
 }

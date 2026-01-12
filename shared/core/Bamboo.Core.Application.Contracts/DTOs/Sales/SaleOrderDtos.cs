@@ -16,7 +16,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class SaleOrderGetEmptyListHelpRequestDto
     {
-        public object HelpMsg { get; set; }
+        public object HelpMessage { get; set; }
     }
     
     public class SaleOrderGetPromoCodeErrorRequestDto
@@ -29,16 +29,9 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Delete { get; set; }
     }
     
-    public class SaleOrderSaveIncludedPdfRequestDto
+    public class SaleOrderLoadSaleOrderFromPosRequestDto
     {
-        public object SelectedPdf { get; set; }
-    }
-    
-    public class SaleOrderSaveNewCustomContentRequestDto
-    {
-        public object DocumentType { get; set; }
-        public object FormField { get; set; }
-        public object Content { get; set; }
+        public Guid ConfigId { get; set; }
     }
     
     public class SaleOrderSetDeliveryLineRequestDto

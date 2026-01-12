@@ -24,11 +24,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> DbIdForAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object subfield, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> DbIdForAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object subfield, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def db_id_for(self, model, field, subfield, value):
+            // def db_id_for(self, model, field, subfield, value, savepoint):
             // """ Finds a database id for the reference ``value`` in the referencing
             // subfield ``subfield`` of the provided field of the provided model.
             // 
@@ -39,6 +39,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                  ``id`` for an external id and ``.id`` for a database
             //                  id
             // :param value: value of the reference to match to an actual record
+            // :param savepoint: savepoint for rollback on errors
             // :return: a pair of the matched database identifier (if any), the
             //          translated user-readable name for the field and the list of
             //          warnings
@@ -46,7 +47,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // # the function 'flush' comes from BaseModel.load(), and forces the
             // # creation/update of former records (batch creation)
-            // flush = self._context.get('import_flush', lambda **kw: None)
+            // flush = self.env.context.get('import_flush', lambda **kw: None)
             // 
             // id = None
             // warnings = []
@@ -57,7 +58,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_mode': 'list,form',
             //     'views': [(False, 'list'), (False, 'form')],
             //     'context': {'create': False},
-            //     'help': _(u"See all possible values")}
+            //     'help': self.env._("See all possible values")}
             // if subfield is None:
             //     action['res_model'] = field.comodel_name
             // elif subfield in ('id', '.id'):
@@ -66,33 +67,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // RelatedModel = self.env[field.comodel_name]
             // if subfield == '.id':
-            //     field_type = _(u"database id")
-            //     if isinstance(value, str) and not self._str_to_boolean(model, field, value)[0]:
-            //         return False, field_type, warnings
+            //     field_type = self.env._("database id")
+            //     if isinstance(value, str) and not self._str_to_boolean(model, field, value, savepoint=savepoint)[0]:
+            //         return False, warnings
             //     try:
             //         tentative_id = int(value)
             //     except ValueError:
             //         raise self._format_import_error(
             //             ValueError,
-            //             _(u"Invalid database id '%s' for the field '%%(field)s'"),
+            //             self.env._("Invalid database id '%s' for the field '%%(field)s'"),
             //             value,
             //             {'moreinfo': action})
             //     if RelatedModel.browse(tentative_id).exists():
             //         id = tentative_id
             // elif subfield == 'id':
-            //     field_type = _(u"external id")
-            //     if not self._str_to_boolean(model, field, value)[0]:
-            //         return False, field_type, warnings
+            //     field_type = self.env._("external id")
+            //     if not self._str_to_boolean(model, field, value, savepoint=savepoint)[0]:
+            //         return False, warnings
             //     if '.' in value:
             //         xmlid = value
             //     else:
-            //         xmlid = "%s.%s" % (self._context.get('_import_current_module', ''), value)
+            //         xmlid = "%s.%s" % (self.env.context.get('_import_current_module', ''), value)
             //     flush(xml_id=xmlid)
             //     id = self._xmlid_to_record_id(xmlid, RelatedModel)
             // elif subfield is None:
-            //     field_type = _(u"name")
+            //     field_type = self.env._("name")
             //     if value == '':
-            //         return False, field_type, warnings
+            //         return False, warnings
             //     flush(model=field.comodel_name)
             //     ids = RelatedModel.name_search(name=value, operator='=')
             //     if ids:
@@ -107,14 +108,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         name_create_enabled_fields = self.env.context.get('name_create_enabled_fields') or {}
             //         if name_create_enabled_fields.get(field.name):
             //             try:
-            //                 with self.env.cr.savepoint():
-            //                     id, _name = RelatedModel.name_create(name=value)
-            //             except (Exception, psycopg2.IntegrityError):
-            //                 error_msg = _("Cannot create new '%s' records from their name alone. Please create those records manually and try importing again.", RelatedModel._description)
+            //                 id, _name = RelatedModel.name_create(name=value)
+            //                 RelatedModel.env.flush_all()
+            //             except Exception:  # noqa: BLE001
+            //                 savepoint.rollback()
+            //                 error_msg = self.env._("Cannot create new '%s' records from their name alone. Please create those records manually and try importing again.", RelatedModel._description)
             // else:
             //     raise self._format_import_error(
             //         Exception,
-            //         _("Unknown sub-field “%s”", subfield),
+            //         self.env._("Unknown sub-field “%s”", subfield),
             //     )
             // 
             // set_empty = False
@@ -126,9 +128,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     skip_record = field_path in self.env.context.get('import_skip_records', [])
             // if id is None and not set_empty and not skip_record:
             //     if error_msg:
-            //         message = _("No matching record found for %(field_type)s '%(value)s' in field '%%(field)s' and the following error was encountered when we attempted to create one: %(error_message)s")
+            //         message = self.env._("No matching record found for %(field_type)s '%(value)s' in field '%%(field)s' and the following error was encountered when we attempted to create one: %(error_message)s")
             //     else:
-            //         message = _("No matching record found for %(field_type)s '%(value)s' in field '%%(field)s'")
+            //         message = self.env._("No matching record found for %(field_type)s '%(value)s' in field '%%(field)s'")
             // 
             //     error_info_dict = {'moreinfo': action}
             //     if self.env.context.get('import_file'):
@@ -142,7 +144,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         message,
             //         {'field_type': field_type, 'value': value, 'error_message': error_msg},
             //         error_info_dict)
-            // return id, field_type, warnings
+            // return id, warnings
             */
             return default;
         }
@@ -151,14 +153,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def for_model(self, model, fromtype=str):
+            // def for_model(self, model, fromtype=str, *, savepoint):
             // """ Returns a converter object for the model. A converter is a
             // callable taking a record-ish (a dictionary representing an odoo
             // record with values of typetag ``fromtype``) and returning a converted
-            // records matching what :meth:`odoo.osv.orm.Model.write` expects.
+            // records matching what :meth:`odoo.models.Model.write` expects.
             // 
-            // :param model: :class:`odoo.osv.orm.Model` for the conversion base
+            // :param model: :class:`odoo.models.Model` for the conversion base
             // :param fromtype:
+            // :param savepoint: savepoint to rollback to on error
             // :returns: a converter callable
             // :rtype: (record: dict, logger: (field, error) -> None) -> dict
             // """
@@ -166,7 +169,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // model = self.env[model._name]
             // 
             // converters = {
-            //     name: self.to_field(model, field, fromtype)
+            //     name: self.to_field(model, field, fromtype, savepoint=savepoint)
             //     for name, field in model._fields.items()
             // }
             // 
@@ -239,7 +242,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_boolean_translations(self, src):
             // # Cache translations so they don't have to be reloaded from scratch on
             // # every row of the file
-            // tnx_cache = self._cr.cache.setdefault(self._name, {})
+            // tnx_cache = self.env.cr.cache.setdefault(self._name, {})
             // if src in tnx_cache:
             //     return tnx_cache[src]
             // 
@@ -275,6 +278,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // The field_path value is computed based on the last field in the chain.
             // for example,
+            // 
             //     - path_field for 'Private address' at childA_1 is ['partner_id', 'type']
             //     - path_field for 'childA_1' is ['partner_id']
             // 
@@ -282,7 +286,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // we can the link the errors to the correct header-field couple in the import UI.
             // """
             // field_path = [field]
-            // parent_fields_hierarchy = self._context.get('parent_fields_hierarchy')
+            // parent_fields_hierarchy = self.env.context.get('parent_fields_hierarchy')
             // if parent_fields_hierarchy:
             //     field_path = parent_fields_hierarchy + field_path
             // 
@@ -306,7 +310,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return []
             // # Cache translations so they don't have to be reloaded from scratch on
             // # every row of the file
-            // tnx_cache = self._cr.cache.setdefault(self._name, {})
+            // tnx_cache = self.env.cr.cache.setdefault(self._name, {})
             // if src in tnx_cache:
             //     return tnx_cache[src]
             // 
@@ -334,23 +338,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
             // def _input_tz(self):
-            // # if there's a tz in context, try to use that
-            // if self._context.get('tz'):
-            //     try:
-            //         return pytz.timezone(self._context['tz'])
-            //     except pytz.UnknownTimeZoneError:
-            //         pass
-            // 
-            // # if the current user has a tz set, try to use that
-            // user = self.env.user
-            // if user.tz:
-            //     try:
-            //         return pytz.timezone(user.tz)
-            //     except pytz.UnknownTimeZoneError:
-            //         pass
-            // 
-            // # fallback if no tz in context or on user: UTC
-            // return pytz.UTC
+            // return self.env.tz
             */
             return default;
         }
@@ -373,10 +361,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // fieldset = set(record)
             // if fieldset - REFERENCING_FIELDS:
             //     raise ValueError(
-            //         _(u"Can not create Many-To-One records indirectly, import the field separately"))
+            //         self.env._("Can not create Many-To-One records indirectly, import the field separately"))
             // if len(fieldset) > 1:
             //     raise ValueError(
-            //         _(u"Ambiguous specification for field '%(field)s', only provide one of name, external id or database id"))
+            //         self.env._("Ambiguous specification for field '%(field)s', only provide one of name, external id or database id"))
             // 
             // # only one field left possible, unpack
             // [subfield] = fieldset
@@ -385,21 +373,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StrIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_id(self, model, field, value):
+            // def _str_id(self, model, field, value, savepoint):
             // return value, []
             */
             return default;
         }
 
-        public async Task<TEntity> StrToBooleanInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToBooleanInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_boolean(self, model, field, value):
+            // def _str_to_boolean(self, model, field, value, savepoint):
             // # all translatables used for booleans
             // # potentially broken casefolding? What about locales?
             // trues = set(word.lower() for word in itertools.chain(
@@ -419,51 +407,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if value.lower() in falses:
             //     return False, []
             // 
-            // if field.name in self._context.get('import_skip_records', []):
+            // if field.name in self.env.context.get('import_skip_records', []):
             //     return None, []
             // 
             // return True, [self._format_import_error(
             //     ValueError,
-            //     _(u"Unknown value '%s' for boolean field '%%(field)s'"),
+            //     self.env._("Unknown value '%s' for boolean field '%%(field)s'"),
             //     value,
-            //     {'moreinfo': _(u"Use '1' for yes and '0' for no")}
+            //     {'moreinfo': self.env._("Use '1' for yes and '0' for no")}
             // )]
             */
             return default;
         }
 
-        public async Task<TEntity> StrToDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_date(self, model, field, value):
+            // def _str_to_date(self, model, field, value, savepoint):
             // try:
             //     parsed_value = fields.Date.from_string(value)
             //     return fields.Date.to_string(parsed_value), []
             // except ValueError:
             //     raise self._format_import_error(
             //         ValueError,
-            //         _(u"'%s' does not seem to be a valid date for field '%%(field)s'"),
+            //         self.env._("'%s' does not seem to be a valid date for field '%%(field)s'"),
             //         value,
-            //         {'moreinfo': _(u"Use the format '%s'", u"2012-12-31")}
+            //         {'moreinfo': self.env._("Use the format '%s'", u"2012-12-31")}
             //     )
             */
             return default;
         }
 
-        public async Task<TEntity> StrToDatetimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToDatetimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_datetime(self, model, field, value):
+            // def _str_to_datetime(self, model, field, value, savepoint):
             // try:
             //     parsed_value = fields.Datetime.from_string(value)
             // except ValueError:
             //     raise self._format_import_error(
             //         ValueError,
-            //         _(u"'%s' does not seem to be a valid datetime for field '%%(field)s'"),
+            //         self.env._("'%s' does not seem to be a valid datetime for field '%%(field)s'"),
             //         value,
-            //         {'moreinfo': _(u"Use the format '%s'", u"2012-12-31 23:59:59")}
+            //         {'moreinfo': self.env._("Use the format '%s'", u"2012-12-31 23:59:59")}
             //     )
             // 
             // input_tz = self._input_tz()# Apply input tz to the parsed naive datetime
@@ -474,75 +462,75 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StrToFloatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToFloatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_float(self, model, field, value):
+            // def _str_to_float(self, model, field, value, savepoint):
             // try:
             //     return float(value), []
             // except ValueError:
             //     raise self._format_import_error(
             //         ValueError,
-            //         _(u"'%s' does not seem to be a number for field '%%(field)s'"),
+            //         self.env._("'%s' does not seem to be a number for field '%%(field)s'"),
             //         value
             //     )
             */
             return default;
         }
 
-        public async Task<TEntity> StrToIntegerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToIntegerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_integer(self, model, field, value):
+            // def _str_to_integer(self, model, field, value, savepoint):
             // try:
             //     return int(value), []
             // except ValueError:
             //     raise self._format_import_error(
             //         ValueError,
-            //         _(u"'%s' does not seem to be an integer for field '%%(field)s'"),
+            //         self.env._("'%s' does not seem to be an integer for field '%%(field)s'"),
             //         value
             //     )
             */
             return default;
         }
 
-        public async Task<TEntity> StrToJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_json(self, model, field, value):
+            // def _str_to_json(self, model, field, value, savepoint):
             // try:
             //     return json.loads(value), []
             // except ValueError:
-            //     msg = _("'%s' does not seem to be a valid JSON for field '%%(field)s'")
+            //     msg = self.env._("'%s' does not seem to be a valid JSON for field '%%(field)s'")
             //     raise self._format_import_error(ValueError, msg, value)
             */
             return default;
         }
 
-        public async Task<TEntity> StrToMany2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToMany2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_many2many(self, model, field, value):
+            // def _str_to_many2many(self, model, field, value, savepoint):
             // [record] = value
             // 
             // subfield, warnings = self._referencing_subfield(record)
             // 
             // ids = []
             // for reference in record[subfield].split(','):
-            //     id, _, ws = self.db_id_for(model, field, subfield, reference)
+            //     id, ws = self.db_id_for(model, field, subfield, reference, savepoint)
             //     ids.append(id)
             //     warnings.extend(ws)
             // 
-            // if field.name in self._context.get('import_set_empty_fields', []) and any([id is None for id in ids]):
+            // if field.name in self.env.context.get('import_set_empty_fields', []) and any(id is None for id in ids):
             //     ids = [id for id in ids if id]
-            // elif field.name in self._context.get('import_skip_records', []) and any([id is None for id in ids]):
+            // elif field.name in self.env.context.get('import_skip_records', []) and any(id is None for id in ids):
             //     return None, warnings
             // 
-            // if self._context.get('update_many2many'):
+            // if self.env.context.get('update_many2many'):
             //     return [Command.link(id) for id in ids], warnings
             // else:
             //     return [Command.set(ids)], warnings
@@ -550,38 +538,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StrToMany2oneInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object values) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToMany2oneInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object values, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_many2one(self, model, field, values):
+            // def _str_to_many2one(self, model, field, values, savepoint):
             // # Should only be one record, unpack
             // [record] = values
             // 
             // subfield, w1 = self._referencing_subfield(record)
             // 
-            // id, _, w2 = self.db_id_for(model, field, subfield, record[subfield])
+            // id, w2 = self.db_id_for(model, field, subfield, record[subfield], savepoint)
             // return id, w1 + w2
             */
             return default;
         }
 
-        public async Task<TEntity> StrToMany2oneReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToMany2oneReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_many2one_reference(self, model, field, value):
-            // return self._str_to_integer(model, field, value)
+            // def _str_to_many2one_reference(self, model, field, value, savepoint):
+            // return self._str_to_integer(model, field, value, savepoint)
             */
             return default;
         }
 
-        public async Task<TEntity> StrToOne2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object records) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToOne2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object records, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_one2many(self, model, field, records):
-            // name_create_enabled_fields = self._context.get('name_create_enabled_fields') or {}
+            // def _str_to_one2many(self, model, field, records, savepoint):
+            // name_create_enabled_fields = self.env.context.get('name_create_enabled_fields') or {}
             // prefix = field.name + '/'
             // relative_name_create_enabled_fields = {
             //     k[len(prefix):]: v
@@ -611,12 +599,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Complete the field hierarchy path
             // # E.g. For "parent/child/subchild", field hierarchy path for "subchild" is ['parent', 'child']
-            // parent_fields_hierarchy = self._context.get('parent_fields_hierarchy', []) + [field.name]
+            // parent_fields_hierarchy = self.env.context.get('parent_fields_hierarchy', []) + [field.name]
             // 
             // convert = self.with_context(
             //     name_create_enabled_fields=relative_name_create_enabled_fields,
             //     parent_fields_hierarchy=parent_fields_hierarchy
-            // ).for_model(self.env[field.comodel_name])
+            // ).for_model(self.env[field.comodel_name], savepoint=savepoint)
             // 
             // for record in records:
             //     id = None
@@ -626,7 +614,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         subfield, w1 = self._referencing_subfield(refs)
             //         warnings.extend(w1)
             //         try:
-            //             id, _, w2 = self.db_id_for(model, field, subfield, record[subfield])
+            //             id, w2 = self.db_id_for(model, field, subfield, record[subfield], savepoint)
             //             warnings.extend(w2)
             //         except ValueError:
             //             if subfield != 'id':
@@ -644,33 +632,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StrToPropertiesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToPropertiesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_properties(self, model, field, value):
+            // def _str_to_properties(self, model, field, value, savepoint):
             // 
             // # If we want to import the all properties at once (with the technical value)
             // if isinstance(value, str):
             //     try:
             //         value = json.loads(value)
             //     except ValueError:
-            //         msg = _("Unable to import'%%(field)s' Properties field as a whole, target individual property instead.")
+            //         msg = self.env._("Unable to import'%%(field)s' Properties field as a whole, target individual property instead.")
             //         raise self._format_import_error(ValueError, msg)
             // 
             // if not isinstance(value, list):
-            //     msg = _("Unable to import'%%(field)s' Properties field as a whole, target individual property instead.")
+            //     msg = self.env._("Unable to import'%%(field)s' Properties field as a whole, target individual property instead.")
             //     raise self._format_import_error(ValueError, msg, {'value': value})
             // 
             // warnings = []
             // for property_dict in value:
             //     if not (property_dict.keys() >= {'name', 'type', 'string'}):
-            //         msg = _("'%(value)s' does not seem to be a valid Property value for field '%%(field)s'. Each property need at least 'name', 'type' and 'string' attribute.")
+            //         msg = self.env._("'%(value)s' does not seem to be a valid Property value for field '%%(field)s'. Each property need at least 'name', 'type' and 'string' attribute.")
             //         raise self._format_import_error(ValueError, msg, {'value': property_dict})
             // 
             //     val = property_dict.get('value')
             //     if not val:
-            //         property_dict.pop('value', None)
             //         continue
             // 
             //     property_type = property_dict['type']
@@ -682,7 +669,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if val in (sel_val, sel_label)
             //         ), None)
             //         if not new_val:
-            //             msg = _("'%(value)s' does not seem to be a valid Selection value for '%(label_property)s' (subfield of '%%(field)s' field).")
+            //             msg = self.env._("'%(value)s' does not seem to be a valid Selection value for '%(label_property)s' (subfield of '%%(field)s' field).")
             //             raise self._format_import_error(ValueError, msg, {'value': val, 'label_property': property_dict['string']})
             //         property_dict['value'] = new_val
             // 
@@ -695,17 +682,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 if tag in (tag_val, tag_label)
             //             ), None)
             //             if not val_tag:
-            //                 msg = _("'%(value)s' does not seem to be a valid Tag value for '%(label_property)s' (subfield of '%%(field)s' field).")
+            //                 msg = self.env._("'%(value)s' does not seem to be a valid Tag value for '%(label_property)s' (subfield of '%%(field)s' field).")
             //                 raise self._format_import_error(ValueError, msg, {'value': tag, 'label_property': property_dict['string']})
             //             new_val.append(val_tag)
             //         property_dict['value'] = new_val
             // 
             //     elif property_type == 'boolean':
-            //         new_val, warnings = self._str_to_boolean(model, field, val)
+            //         new_val, warnings = self._str_to_boolean(model, field, val, savepoint=savepoint)
             //         if not warnings:
             //             property_dict['value'] = new_val
             //         else:
-            //             msg = _("Unknown value '%(value)s' for boolean '%(label_property)s' property (subfield of '%%(field)s' field).")
+            //             msg = self.env._("Unknown value '%(value)s' for boolean '%(label_property)s' property (subfield of '%%(field)s' field).")
             //             raise self._format_import_error(ValueError, msg, {'value': val, 'label_property': property_dict['string']})
             // 
             //     elif property_type in ('many2one', 'many2many'):
@@ -721,7 +708,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ids = []
             //         fake_field = FakeField(comodel_name=property_dict['comodel'], name=property_dict['string'])
             //         for reference in references:
-            //             id_, __, ws = self.db_id_for(model, fake_field, subfield, reference)
+            //             id_, ws = self.db_id_for(model, fake_field, subfield, reference, savepoint)
             //             ids.append(id_)
             //             warnings.extend(ws)
             // 
@@ -731,14 +718,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         try:
             //             property_dict['value'] = int(val)
             //         except ValueError:
-            //             msg = _("'%(value)s' does not seem to be an integer for field '%(label_property)s' property (subfield of '%%(field)s' field).")
+            //             msg = self.env._("'%(value)s' does not seem to be an integer for field '%(label_property)s' property (subfield of '%%(field)s' field).")
             //             raise self._format_import_error(ValueError, msg, {'value': val, 'label_property': property_dict['string']})
             // 
             //     elif property_type == 'float':
             //         try:
             //             property_dict['value'] = float(val)
             //         except ValueError:
-            //             msg = _("'%(value)s' does not seem to be an float for field '%(label_property)s' property (subfield of '%%(field)s' field).")
+            //             msg = self.env._("'%(value)s' does not seem to be an float for field '%(label_property)s' property (subfield of '%%(field)s' field).")
             //             raise self._format_import_error(ValueError, msg, {'value': val, 'label_property': property_dict['string']})
             // 
             // return value, warnings
@@ -746,11 +733,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StrToSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable
+        public async Task<TEntity> StrToSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def _str_to_selection(self, model, field, value):
+            // def _str_to_selection(self, model, field, value, savepoint):
             // # get untranslated values
             // env = self.with_context(lang=None).env
             // selection = field.get_description(env)['selection']
@@ -769,13 +756,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if value.lower() == str(item).lower() or any(value.lower() == label.lower() for label in labels):
             //         return item, []
             // 
-            // if field.name in self._context.get('import_skip_records', []):
+            // if field.name in self.env.context.get('import_skip_records', []):
             //     return None, []
-            // elif field.name in self._context.get('import_set_empty_fields', []):
+            // elif field.name in self.env.context.get('import_set_empty_fields', []):
             //     return False, []
             // raise self._format_import_error(
             //     ValueError,
-            //     _(u"Value '%s' not found in selection field '%%(field)s'"),
+            //     self.env._("Value '%s' not found in selection field '%%(field)s'"),
             //     value,
             //     {'moreinfo': [_label or str(item) for item, _label in selection if _label or item]}
             // )
@@ -787,7 +774,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_fields.py) ---
-            // def to_field(self, model, field, fromtype=str):
+            // def to_field(self, model, field, fromtype=str, *, savepoint):
             // """ Fetches a converter for the provided field object, from the
             // specified type.
             // 
@@ -823,6 +810,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :type field: :class:`odoo.fields.Field`
             // :param fromtype: type to convert to something fitting for ``field``
             // :type fromtype: type | str
+            // :param savepoint: savepoint to rollback to on errors
             // :return: a function (fromtype -> field.write_type), if a converter is found
             // :rtype: Callable | None
             // """
@@ -832,7 +820,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // converter = getattr(self, '_%s_to_%s' % (typename, field.type), None)
             // if not converter:
             //     return None
-            // return functools.partial(converter, model, field)
+            // return functools.partial(converter, model, field, savepoint=savepoint)
             */
             return default;
         }

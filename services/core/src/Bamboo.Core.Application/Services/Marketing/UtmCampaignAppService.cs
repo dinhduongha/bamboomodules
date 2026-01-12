@@ -160,9 +160,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: utm_campaign.py) ---
             // def _compute_sale_invoiced_amount(self):
-            // self.env['account.move.line'].flush_model(['balance', 'move_id', 'account_id', 'display_type'])
-            // self.env['account.move'].flush_model(['state', 'campaign_id', 'move_type'])
-            // query = """SELECT move.campaign_id, -SUM(line.balance) as price_subtotal
+            // if self.ids:
+            //     self.env['account.move.line'].flush_model(['balance', 'move_id', 'account_id', 'display_type'])
+            //     self.env['account.move'].flush_model(['state', 'campaign_id', 'move_type'])
+            //     query_res = self.env.execute_query_dict(SQL(
+            //         """ SELECT move.campaign_id, -SUM(line.balance) as price_subtotal
             //             FROM account_move_line line
             //             INNER JOIN account_move move ON line.move_id = move.id
             //             WHERE move.state not in ('draft', 'cancel')
@@ -170,11 +172,11 @@ namespace Bamboo.Core.Application.Services
             //                 AND move.move_type IN ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')
             //                 AND line.account_id IS NOT NULL
             //                 AND line.display_type = 'product'
-            //             GROUP BY move.campaign_id
-            //             """
-            // 
-            // self._cr.execute(query, [tuple(self.ids)])
-            // query_res = self._cr.dictfetchall()
+            //             GROUP BY move.campaign_id """,
+            //         tuple(self.ids),
+            //     ))
+            // else:
+            //     query_res = []
             // 
             // campaigns = self.browse()
             // for datum in query_res:

@@ -40,8 +40,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'account.move':
-            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
             // return res
             */
             return default;
@@ -50,19 +49,38 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionApproveAsync<TEntity>(IEnumerable<TEntity> entities, object check_state) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_approve(self):
+            // """ Approve an expense, pops a wizard if a duplicated expense is found to confirm they are all valid expenses """
+            // self._check_can_approve()
+            // for expense in self:
+            //     expense._validate_distribution(
+            //         account=expense.account_id.id,
+            //         product=expense.product_id.id,
+            //         business_domain='expense',
+            //         company_id=expense.company_id.id,
+            //     )
+            // 
+            // duplicates = self.duplicate_expense_ids.filtered(lambda exp: exp.state in {'submitted', 'approved', 'posted', 'paid', 'in_payment'})
+            // if duplicates:
+            //     action = self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_approve_duplicate_action')
+            //     action['context'] = {'default_expense_ids': duplicates.ids}
+            //     return action
+            // self._do_approve(False)
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def action_approve(self, check_state=True):
-            // # if validation_type == 'both': this method is the first approval approval
-            // # if validation_type != 'both': this method calls action_validate() below
-            // 
-            // # Do not check the state in case we are redirected from the dashboard
-            // if check_state and any(holiday.state != 'confirm' for holiday in self):
-            //     raise UserError(_('Time off request must be confirmed ("To Approve") in order to approve it.'))
-            // 
             // current_employee = self.env.user.employee_id
-            // self.filtered(lambda hol: hol.validation_type == 'both').write({'state': 'validate1', 'first_approver_id': current_employee.id})
-            // 
-            // self.filtered(lambda hol: hol.validation_type != 'both').action_validate(check_state)
+            // leave_to_approve = self.env['hr.leave']
+            // leave_to_validate = self.env['hr.leave']
+            // for leave in self:
+            //     if check_state and leave.can_validate or not check_state and leave.validation_type != "both":
+            //         leave_to_validate += leave
+            //     elif check_state and leave.can_approve or not check_state and leave.validation_type == 'both':
+            //         leave_to_approve += leave
+            //     else:
+            //         raise UserError(self.env._('You cannot approve this leave.'))
+            // leave_to_approve.write({'state': 'validate1', 'first_approver_id': current_employee.id})
+            // leave_to_validate._action_validate(check_state)
             // if not self.env.context.get('leave_fast_create'):
             //     self.activity_update()
             // return True
@@ -85,19 +103,53 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionApproveExpenseSheetsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_approve_expense_sheets(self):
-            // self._check_can_approve()
-            // self._validate_analytic_distribution()
-            // duplicates = self.expense_line_ids.duplicate_expense_ids.filtered(lambda exp: exp.state in {'approved', 'done'})
-            // if duplicates:
-            //     action = self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_approve_duplicate_action')
-            //     action['context'] = {'default_sheet_ids': self.ids, 'default_expense_ids': duplicates.ids}
-            //     return action
-            // self._do_approve()
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_archive(self):
+            // archived_employees = self.filtered('active')
+            // res = super().action_archive()
+            // if archived_employees:
+            //     # Empty links to this employees (example: manager, coach, time off responsible, ...)
+            //     employee_fields_to_empty = self._get_employee_m2o_to_empty_on_archived_employees()
+            //     user_fields_to_empty = self._get_user_m2o_to_empty_on_archived_employees()
+            //     employee_domain = Domain.OR(Domain(field, 'in', archived_employees.ids) for field in employee_fields_to_empty)
+            //     user_domain = Domain.OR(Domain(field, 'in', archived_employees.user_id.ids) for field in user_fields_to_empty)
+            //     employees = self.env['hr.employee'].search(employee_domain | user_domain)
+            //     for employee in employees:
+            //         for field in employee_fields_to_empty:
+            //             if employee[field] in archived_employees:
+            //                 employee[field] = False
+            //         for field in user_fields_to_empty:
+            //             if employee[field] in archived_employees.user_id:
+            //                 employee[field] = False
+            // 
+            //     if len(archived_employees) == 1 and not self.env.context.get('no_wizard', False):
+            //         return {
+            //             'type': 'ir.actions.act_window',
+            //             'name': _('Register Departure'),
+            //             'res_model': 'hr.departure.wizard',
+            //             'view_mode': 'form',
+            //             'target': 'new',
+            //             'context': {'active_id': self.id},
+            //             'views': [[False, 'form']]
+            //         }
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_archive(self):
+            // return super(HrApplicant, self.with_context(just_unarchived=True)).action_archive()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionBackToApprovalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def action_back_to_approval(self):
+            // self.filtered(lambda l: l.can_back_to_approve)._move_validate_leave_to_confirm()
+            // return True
             */
             return default;
         }
@@ -124,6 +176,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'views': [[False, 'form']],
             //     'context': {
             //         'default_leave_id': self.id,
+            //         'dialog_size': "medium",
             //     }
             // }
             */
@@ -162,42 +215,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res['context'] = {
             //     'create': True,
             //     'default_applicant_id': self.id,
-            //     'default_candidate_id': self.candidate_id.id,
-            //     'default_partner_ids': partners.ids,
-            //     'default_user_id': self.env.uid,
-            //     'default_name': self.partner_name,
-            //     'attachment_ids': self.attachment_ids.ids
-            // }
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def action_create_meeting(self):
-            // """ This opens Meeting's calendar view to schedule meeting on current candidate
-            //     @return: Dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // if not self.partner_id:
-            //     if not self.partner_name:
-            //         raise UserError(_('You must define a Contact Name for this candidate.'))
-            //     self.partner_id = self.env['res.partner'].create({
-            //         'is_company': False,
-            //         'name': self.partner_name,
-            //         'email': self.email_from,
-            //     })
-            // 
-            // partners = self.partner_id
-            // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
-            //     partners |= self.env.user.partner_id
-            // else:
-            //     partners |= self.user_id.partner_id
-            // 
-            // res = self.env['ir.actions.act_window']._for_xml_id('calendar.action_calendar_event')
-            // # As we are redirected from the hr.candidate, calendar checks rules on "hr.applicant",
-            // # in order to decide whether to allow creation of a meeting.
-            // # As interviewer does not have create right on the hr.applicant, in order to allow them
-            // # to create a meeting for an applicant, we pass 'create': True to the context.
-            // res['context'] = {
-            //     'create': True,
-            //     'default_candidate_id': self.id,
             //     'default_partner_ids': partners.ids,
             //     'default_user_id': self.env.uid,
             //     'default_name': self.partner_name,
@@ -223,15 +240,119 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_mode': 'form',
             //     'view_id': self.env.ref('hr.view_users_simple_form').id,
             //     'target': 'new',
-            //     'context': dict(self._context, **{
+            //     'context': {
+            //         **self.env.context,
             //         'default_create_employee_id': self.id,
             //         'default_name': self.name,
             //         'default_phone': self.work_phone,
             //         'default_mobile': self.mobile_phone,
             //         'default_login': self.work_email,
             //         'default_partner_id': self.work_contact_id.id,
-            //     })
+            //     },
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateUsersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_users(self):
+            // def _get_user_creation_notification_action(message, message_type, next_action):
+            //     return {
+            //             'type': 'ir.actions.client',
+            //             'tag': 'display_notification',
+            //             'params': {
+            //                 'title': self.env._("User Creation Notification"),
+            //                 'type': message_type,
+            //                 'message': message,
+            //                 'next': next_action
+            //             }
+            //         }
+            // 
+            // employee_emails = [
+            //     normalized_email
+            //     for employee in self
+            //     for normalized_email in tools.mail.email_normalize_all(employee.work_email)
+            // ]
+            // conflicting_users = self.env['res.users']
+            // if employee_emails:
+            //     conflicting_users = self.env['res.users'].search([
+            //         '|', ('email_normalized', 'in', employee_emails),
+            //         ('login', 'in', employee_emails),
+            //     ])
+            // old_users = []
+            // new_users = []
+            // users_without_emails = []
+            // users_with_invalid_emails = []
+            // users_with_existing_email = []
+            // for employee in self:
+            //     if employee.user_id:
+            //         old_users.append(employee.name)
+            //         continue
+            //     if not employee.work_email:
+            //         users_without_emails.append(employee.name)
+            //         continue
+            //     if not tools.email_normalize(employee.work_email):
+            //         users_with_invalid_emails.append(employee.name)
+            //         continue
+            //     if email_normalize(employee.work_email) in conflicting_users.mapped('email_normalized'):
+            //         users_with_existing_email.append(employee.name)
+            //         continue
+            //     new_users.append({
+            //         'create_employee_id': employee.id,
+            //         'name': employee.name,
+            //         'phone': employee.work_phone,
+            //         'login': tools.email_normalize(employee.work_email),
+            //         'partner_id': employee.work_contact_id.id,
+            //     })
+            // 
+            // next_action = {'type': 'ir.actions.act_window_close'}
+            // if new_users:
+            //     self.env['res.users'].create(new_users)
+            //     message = _('Users %s creation successful', ', '.join([user['name'] for user in new_users]))
+            //     next_action = _get_user_creation_notification_action(message, 'success', {
+            //         "type": "ir.actions.client",
+            //         "tag": "soft_reload",
+            //         "params": {"next": next_action},
+            //     })
+            // 
+            // if old_users:
+            //     message = _('User already exists for Those Employees %s', ', '.join(old_users))
+            //     next_action = _get_user_creation_notification_action(message, 'warning', next_action)
+            // 
+            // if users_without_emails:
+            //     message = _("You need to set the work email address for %s", ', '.join(users_without_emails))
+            //     next_action = _get_user_creation_notification_action(message, 'danger', next_action)
+            // 
+            // if users_with_invalid_emails:
+            //     message = _("You need to set a valid work email address for %s", ', '.join(users_with_invalid_emails))
+            //     next_action = _get_user_creation_notification_action(message, 'danger', next_action)
+            // 
+            // if users_with_existing_email:
+            //     message = _('User already exists with the same email for Employees %s', ', '.join(users_with_existing_email))
+            //     next_action = _get_user_creation_notification_action(message, 'warning', next_action)
+            // 
+            // return next_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateUsersConfirmationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_users_confirmation(self):
+            // raise RedirectWarning(
+            //         message=_("You're about to invite new users. %s users will be created with the default user template's rights. "
+            //         "Adding new users may increase your subscription cost. Do you wish to continue?", len(self.ids)),
+            //         action=self.env.ref('hr.action_hr_employee_create_users').id,
+            //         button_text=_('Confirm'),
+            //         additional_context={
+            //             'selected_ids': self.ids,
+            //         },
+            //     )
             */
             return default;
         }
@@ -294,31 +415,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionGetAttachmentViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_get_attachment_view(self):
-            // self.ensure_one()
-            // res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
-            // res.update({
-            //     'domain': [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)],
-            //     'context': {'default_res_model': 'hr.expense', 'default_res_id': self.id},
-            // })
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_download_pdf(self):
+            // def action_invoice_download_pdf(self, target = "download"):
             // return {
             //     'type': 'ir.actions.act_url',
             //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
-            //     'target': 'download',
+            //     'target': target,
             // }
             */
             return default;
@@ -345,46 +450,91 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     message loaded by default
             // """
             // self.ensure_one()
-            // 
             // report_action = self.action_send_and_print()
-            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-            // 
-            // return report_action
+            // report_action['context'].update({'allow_partners_without_mail': True})
+            // return self._get_action_with_base_document_layout_configurator(report_action)
             */
             return default;
         }
 
-        public async Task<TEntity> ActionOpenAccountMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionJobAddApplicantsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_open_account_moves(self):
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_job_add_applicants(self):
+            // return {
+            //     "name": _("Create Applications"),
+            //     "type": "ir.actions.act_window",
+            //     "res_model": "job.add.applicants",
+            //     "target": "new",
+            //     "views": [[False, "form"]],
+            //     "context": {
+            //         "is_modal": True,
+            //         "dialog_size": "medium",
+            //         "default_applicant_ids": self.ids
+            //         or self.env.context.get("default_applicant_ids"),
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMoveDownloadAllAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_move_download_all(self):
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/account/download_move_attachments/{",".join(str(move_id) for move_id in self.ids)}',
+            //     'target': 'download',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAccountMoveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_open_account_move(self):
             // self.ensure_one()
             // if self.payment_mode == 'own_account':
             //     res_model = 'account.move'
-            //     record_ids = self.account_move_ids
+            //     record_id = self.account_move_id
             // else:
             //     res_model = 'account.payment'
-            //     record_ids = self.account_move_ids.origin_payment_id
+            //     record_id = self.account_move_id.origin_payment_id
             // 
-            // action = {'type': 'ir.actions.act_window', 'res_model': res_model}
-            // if len(self.account_move_ids) == 1:
-            //     action.update({
-            //         'name': record_ids.name,
-            //         'view_mode': 'form',
-            //         'res_id': record_ids.id,
-            //         'views': [(False, 'form')],
-            //     })
-            // else:
-            //     action.update({
-            //         'name': _("Journal entries"),
-            //         'view_mode': 'list',
-            //         'domain': [('id', 'in', record_ids.ids)],
-            //         'views': [(False, 'list'), (False, 'form')],
-            //     })
-            // return action
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': res_model,
+            //     'name': record_id.name,
+            //     'view_mode': 'form',
+            //     'res_id': record_id.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAllocationWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_open_allocation_wizard(self):
+            // self.ensure_one()
+            // wizard = self.env['hr.bank.account.allocation.wizard'].create({
+            //     'employee_id': self.id,
+            // })
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': self.env._('Bank Account Allocation'),
+            //     'res_model': 'hr.bank.account.allocation.wizard',
+            //     'res_id': wizard.id,
+            //     'view_mode': 'form',
+            //     'target': 'new',
+            // }
             */
             return default;
         }
@@ -392,18 +542,27 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def action_open_applications(self):
             // self.ensure_one()
+            // similar_applicants = (
+            //     self.env["hr.applicant"]
+            //     .with_context(active_test=False)
+            //     .search(
+            //         self._get_similar_applicants_domain(ignore_talent=True),
+            //     )
+            // )
             // return {
-            //     'name': _('Applications'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.applicant',
-            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
-            //     'domain': [('id', 'in', self.applicant_ids.ids)],
-            //     'context': {
-            //         'active_test': False,
-            //         'search_default_stage': 1,
+            //     "name": _("Applications"),
+            //     "type": "ir.actions.act_window",
+            //     "res_model": "hr.applicant",
+            //     "view_mode": "list,form",
+            //     "domain": [("id", "in", similar_applicants.ids)],
+            //     "context": {
+            //         "active_test": False,
+            //         "search_default_stage": 1,
+            //         "default_applicant_ids": self.ids,
+            //         "no_create_application_button": True,
             //     },
             // }
             */
@@ -431,25 +590,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ],
             //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
             //     'domain': [('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids), ],
-            // }
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def action_open_attachments(self):
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'ir.attachment',
-            //     'name': _('Documents'),
-            //     'context': {
-            //         'default_res_model': 'hr.candidate',
-            //         'default_res_id': self.ids[0],
-            //         'show_partner_name': 1,
-            //     },
-            //     'view_mode': 'list,form',
-            //     'views': [
-            //         (self.env.ref('hr_recruitment.ir_attachment_hr_recruitment_list_view').id, 'list'),
-            //         (False, 'form'),
-            //     ],
-            //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
-            //     'domain': [('res_model', '=', 'hr.candidate'), ('res_id', 'in', self.ids)],
             // }
             */
             return default;
@@ -502,10 +642,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def action_open_employee(self):
             // self.ensure_one()
-            // return self.candidate_id.action_open_employee()
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def action_open_employee(self):
-            // self.ensure_one()
             // return {
             //     'name': _('Employee'),
             //     'type': 'ir.actions.act_window',
@@ -517,98 +653,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionOpenExpenseViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionOpenSplitExpenseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_open_expense_view(self):
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_open_split_expense(self):
             // self.ensure_one()
-            // if self.nb_expense == 1:
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'view_mode': 'form',
-            //         'res_model': 'hr.expense',
-            //         'res_id': self.expense_line_ids.id,
-            //     }
+            // split_expense_ids = self.search([('split_expense_origin_id', '=', self.split_expense_origin_id.id)])
+            // return split_expense_ids._get_records_action(name=_("Split Expenses"))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenVersionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_open_versions(self):
+            // self.ensure_one()
             // return {
-            //     'name': _('Expenses'),
             //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'list,form',
-            //     'views': [[False, "list"], [False, "form"]],
-            //     'res_model': 'hr.expense',
-            //     'domain': [('id', 'in', self.expense_line_ids.ids)],
+            //     'name': self.employee_id.name + self.env._(' Records'),
+            //     'path': 'versions',
+            //     'res_model': 'hr.version',
+            //     'view_mode': 'list,graph,pivot',
+            //     'views': [(self.env.ref('hr.hr_version_list_view').id, 'list'), (False, 'graph'), (False, 'pivot')],
+            //     'domain': [('employee_id', '=', self.employee_id.id)],
+            //     'search_view_id': self.env.ref('hr.hr_version_search_view').id
             // }
             */
             return default;
         }
 
-        public async Task<TEntity> ActionOpenOtherApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionPayAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_other_applications(self):
-            // self.ensure_one()
-            // similar_candidates = (
-            //     self.env["hr.candidate"]
-            //     .with_context(active_test=False)
-            //     .search(self.candidate_id._get_similar_candidates_domain())
-            //     - self.candidate_id
-            // )
-            // return {
-            //     'name': _('Other Applications'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.applicant',
-            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
-            //     'domain': [('id', 'in', (self.candidate_id.applicant_ids + similar_candidates.applicant_ids).ids)],
-            //     'context': {
-            //         'active_test': False,
-            //         'search_default_stage': 1,
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionOpenRecordsAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> leave_ids) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_open_records(self, leave_ids):
-            // if len(leave_ids) == 1:
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'view_mode': 'form',
-            //         'res_id': leave_ids[0],
-            //         'res_model': 'hr.leave',
-            //     }
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': [[False, 'list'], [False, 'form']],
-            //     'domain': [('id', 'in', leave_ids.ids)],
-            //     'res_model': 'hr.leave',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionOpenSimilarCandidatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def action_open_similar_candidates(self):
-            // self.ensure_one()
-            // domain = self._get_similar_candidates_domain()
-            // similar_candidates = self.env['hr.candidate'].with_context(active_test=False).search(domain)
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Similar Candidates'),
-            //     'res_model': self._name,
-            //     'view_mode': 'list,kanban,form,activity',
-            //     'domain': [('id', 'in', similar_candidates.ids)],
-            //     'context': {
-            //         'active_test': False,
-            //     },
-            // }
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_pay(self):
+            // """ Register payment shortcut on the expense form view """
+            // return self.account_move_id.with_context(default_partner_bank_id=(
+            //     self.account_move_id.partner_bank_id.id if len(self.account_move_id.partner_bank_id) <= 1 else None
+            // )).action_register_payment()
             */
             return default;
         }
@@ -659,6 +744,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Avoid going back one state when clicking on the confirm action in the payment list view and having paid expenses selected
             // # We need to set values to each payment to avoid recomputation later
             // self.filtered(lambda pay: pay.state in {False, 'draft', 'in_process'}).state = 'in_process'
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_post(self):
+            // """
+            // Post the expense, following one of those two options:
+            //     - Company-paid expenses: Create and post a payment, with an accounting entry
+            //     - Employee-paid expenses: Through a wizard, create and post a receipt
+            // """
+            // # When a move has been deleted
+            // self._check_can_create_move()
+            // 
+            // company_expenses = self.filtered(lambda expense: expense.payment_mode == 'company_account')
+            // employee_expenses = self - company_expenses
+            // if len(employee_expenses.company_id) > 1:
+            //     raise UserError(_("You can't post simultaneously employee-paid expenses belonging to different companies"))
+            // 
+            // if company_expenses:
+            //     company_expenses._create_company_paid_moves()
+            //     # Post the company-paid expense through the payment, to post both at the same time
+            //     company_expenses.account_move_id.origin_payment_id.action_post()
+            // 
+            // if employee_expenses:
+            //     return employee_expenses.with_context(company_paid_move_ids=company_expenses.account_move_id.ids)._post_wizard()
             */
             return default;
         }
@@ -669,7 +776,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_print_pdf(self):
             // self.ensure_one()
-            // return self.env.ref('account.account_invoices').report_action(self.id)
+            // invoice_template = self.env['account.move.send']._get_default_pdf_report_id(self)
+            // report_action = invoice_template.report_action(self.id, config=False)
+            // return self._get_action_with_base_document_layout_configurator(report_action)
             */
             return default;
         }
@@ -677,6 +786,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionRefuseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_refuse(self):
+            // """ Refuse an expense with a reason """
+            // self._check_can_refuse()
+            // return self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_refuse_wizard_action')
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def action_refuse(self):
             // current_employee = self.env.user.employee_id
@@ -702,17 +816,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionRefuseExpenseSheetsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_refuse_expense_sheets(self):
-            // self._check_can_refuse()
-            // return self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_refuse_wizard_action')
-            */
-            return default;
-        }
-
         public async Task<TEntity> ActionRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -721,16 +824,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if any(m.state != 'posted' for m in self):
             //     raise UserError(_("You can only register payment for posted journal entries."))
             // return self.action_force_register_payment()
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_register_payment(self):
-            // ''' Open the account.payment.register wizard to pay the selected journal entries.
-            // There can be more than one bank_account_id in the expense sheet when registering payment for multiple expenses.
-            // The default_partner_bank_id is set only if there is one available, if more than one the field is left empty.
-            // :return: An action opening the account.payment.register wizard.
-            // '''
-            // return self.account_move_ids.with_context(default_partner_bank_id=(
-            //     self.account_move_ids.partner_bank_id.id if len(self.account_move_ids.partner_bank_id.ids) <= 1 else None
-            // )).action_register_payment()
             */
             return default;
         }
@@ -768,33 +861,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionResetConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionResetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_reset_confirm(self):
-            // if any(holiday.state not in ['cancel', 'refuse'] for holiday in self):
-            //     raise UserError(_('Time off request state must be "Refused" or "Cancelled" in order to be reset to "Confirmed".'))
-            // self.write({
-            //     'state': 'confirm',
-            //     'first_approver_id': False,
-            //     'second_approver_id': False,
-            // })
-            // self.activity_update()
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionResetExpenseSheetsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_reset_expense_sheets(self):
-            // self.filtered(lambda sheet: sheet.state not in {'draft', 'submit'})._check_can_reset_approval()
-            // self.sudo()._do_reverse_moves()
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_reset(self):
+            // """  Reset an expense to draft state, reversing the accounting entries if needed """
+            // self._check_can_reset_approval()
+            // self = self.with_context(clean_context(self.env.context))
+            // moves_sudo = self.sudo().account_move_id
+            // draft_moves_sudo = moves_sudo.filtered(lambda m: m.state == 'draft')
+            // non_draft_moves_sudo = moves_sudo - draft_moves_sudo
+            // non_draft_moves_sudo._reverse_moves(
+            //     default_values_list=[{'invoice_date': fields.Date.context_today(move_sudo)} for move_sudo in non_draft_moves_sudo],
+            //     cancel=True
+            // )
+            // draft_moves_sudo.unlink()
             // self._do_reset_approval()
-            // self.sudo().account_move_ids = [Command.clear()]
             */
             return default;
         }
@@ -819,9 +902,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_send_and_print(self):
-            // self.env['account.move.send']._check_move_constrains(self)
+            // self.env['account.move.send']._check_move_constraints(self)
             // return {
-            //     'name': _("Print & Send"),
+            //     'name': _("Send"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
@@ -850,38 +933,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'default_applicant_ids': self.ids,
             //     }
             // }
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def action_send_email(self):
-            // return {
-            //     'name': _('Send Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'new',
-            //     'view_mode': 'form',
-            //     'res_model': 'candidate.send.mail',
-            //     'context': {
-            //         'default_candidate_ids': self.ids,
-            //     }
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionSheetMovePostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_sheet_move_post(self):
-            // # When a move has been deleted
-            // self.filtered(lambda sheet: not sheet.account_move_ids)._do_create_moves()
-            // 
-            // company_sheets = self.filtered(lambda sheet: sheet.payment_mode == 'company_account')
-            // employee_sheets = self - company_sheets
-            // 
-            // # Post the employee-paid expenses moves
-            // employee_sheets.account_move_ids.action_post()
-            // 
-            // # Post the company-paid expense through the payment instead, to post both at the same time
-            // company_sheets.account_move_ids.origin_payment_id.action_post()
             */
             return default;
         }
@@ -905,14 +956,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def action_split_wizard(self):
             // self.ensure_one()
+            // if self.filtered(lambda expense: expense.state in {'posted', 'paid', 'in_payment'}):
+            //     raise UserError(_("You cannot split an expense that is already posted."))
+            // if not self.is_editable:
+            //     raise UserError(_("You do not have the rights to edit this expense."))
+            // 
             // splits = self.env['hr.expense.split'].create(self._get_split_values())
             // 
-            // wizard = self.env['hr.expense.split.wizard'].create({
+            // wizard = self.env['hr.expense.split.wizard'].create([{
             //     'expense_split_line_ids': splits.ids,
             //     'expense_id': self.id,
-            // })
+            // }])
             // return {
-            //     'name': _('Expense split'),
+            //     'name': _("Expense split"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'views': [[False, "form"]],
@@ -925,31 +981,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionSubmitExpensesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionSubmitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_submit_expenses(self):
-            // sheets = self._create_sheets_from_expense()
-            // return {
-            //     'name': _('New Expense Reports'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.expense.sheet',
-            //     'context': self.env.context,
-            //     'views': [[False, "list"], [False, "form"]] if len(sheets) > 1 else [[False, "form"]],
-            //     'domain': [('id', 'in', sheets.ids)],
-            //     'res_id': sheets.id if len(sheets) == 1 else False,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionSubmitSheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def action_submit_sheet(self):
-            // self._do_submit()
+            // def action_submit(self):
+            // """ Submit a draft expense to an approve, may skip to the approval step if no approver on the employee nor the expense """
+            // user = self.env.user
+            // for expense in self:
+            //     if user.employee_id != expense.employee_id and not expense.can_approve:
+            //         raise UserError(_("You do not have the required permission to submit this expense."))
+            //     if not expense.product_id:
+            //         raise UserError(_("You can not submit an expense without a category."))
+            //     if not expense.manager_id:
+            //         expense.sudo().manager_id = expense._get_default_responsible_for_approval()
+            // expenses_autovalidated = self.filtered(lambda expense: expense._can_be_autovalidated())
+            // (self - expenses_autovalidated).approval_state = 'submitted'
+            // if expenses_autovalidated:  # Note, this will and should bypass the duplicate check. May be changed later
+            //     expenses_autovalidated._do_approve(check=False)
+            // self.sudo().update_activities_and_mails()
             */
             return default;
         }
@@ -960,7 +1010,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_switch_move_type(self):
             // if any(move.posted_before for move in self):
-            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
+            //     raise ValidationError(_("Once a document has been posted once, its type is set in stone and you can't change it anymore."))
             // if any(move.move_type == "entry" for move in self):
             //     raise ValidationError(_("This action isn't available for this document."))
             // 
@@ -974,13 +1024,61 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'fiscal_position_id': move.fiscal_position_id.id,
             //     })
             //     if move.amount_total < 0:
-            //         move.write({
-            //             'line_ids': [
-            //                 Command.update(line.id, {'quantity': -line.quantity})
-            //                 for line in move.line_ids
-            //                 if line.display_type == 'product'
-            //             ]
-            //         })
+            //         line_ids_commands = []
+            //         for line in move.line_ids:
+            //             if line.display_type != 'product':
+            //                 continue
+            //             line_ids_commands.append(Command.update(line.id, {
+            //                 'quantity': -line.quantity,
+            //                 'extra_tax_data': self.env['account.tax']._reverse_quantity_base_line_extra_tax_data(line.extra_tax_data),
+            //             }))
+            //         move.write({'line_ids': line_ids_commands})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionTalentPoolAddApplicantsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_talent_pool_add_applicants(self):
+            // return {
+            //     "name": _("Add applicant(s) to the pool"),
+            //     "type": "ir.actions.act_window",
+            //     "res_model": "talent.pool.add.applicants",
+            //     "target": "new",
+            //     "views": [[False, "form"]],
+            //     "context": {
+            //         "is_modal": True,
+            //         "dialog_size": "medium",
+            //         "default_talent_pool_ids": self.env.context.get(
+            //             "default_talent_pool_ids"
+            //         )
+            //         or [],
+            //         "default_applicant_ids": self.ids,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionTalentPoolStatButtonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_talent_pool_stat_button(self):
+            // self.ensure_one()
+            // # If the applicant has other applications linked to pool but for some
+            // # reason this applicant is not linked to that account then link it
+            // if not self.pool_applicant_id:
+            //     self.link_applicant_to_talent()
+            // return {
+            //     "type": "ir.actions.act_window",
+            //     "res_model": "hr.applicant",
+            //     "view_mode": "form",
+            //     "target": "current",
+            //     "res_id": self.pool_applicant_id.id,
+            // }
             */
             return default;
         }
@@ -1002,12 +1100,60 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionTogglePrimaryBankAccountTrustAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_toggle_primary_bank_account_trust(self):
+            // self.ensure_one()
+            // current_val = self.primary_bank_account_id.allow_out_payment
+            // self.primary_bank_account_id.allow_out_payment = not current_val
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnarchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_unarchive(self):
+            // res = super().action_unarchive()
+            // self.write({
+            //     'departure_reason_id': False,
+            //     'departure_description': False,
+            //     'departure_date': False
+            // })
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_unarchive(self):
+            // res = super(HrApplicant, self.with_context(just_unarchived=True)).action_unarchive()
+            // self.reset_applicant()
+            // return res
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionUpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_update_fpos_values(self):
-            // self.invoice_line_ids._compute_price_unit()
+            // lines_to_recompute = self.env['account.move.line']
+            // for line in self.invoice_line_ids:
+            //     if line.display_type in ('line_section', 'line_note'):
+            //         continue
+            //     if not line.price_unit:
+            //         lines_to_recompute |= line
+            //         continue
+            //     new_taxes = line._get_computed_taxes()
+            //     if line.tax_ids.filtered('price_include') != new_taxes.filtered('price_include'):
+            //         line.price_unit = line.product_id._get_tax_included_unit_price_from_price(
+            //             line.price_unit,
+            //             line.tax_ids,
+            //             fiscal_position=line.move_id.fiscal_position_id,
+            //             product_taxes_after_fp=new_taxes,
+            //         )
+            // lines_to_recompute._compute_price_unit()
             // self.invoice_line_ids._compute_tax_ids()
             // self.line_ids._compute_account_id()
             */
@@ -1018,7 +1164,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _action_user_cancel(self, reason):
+            // def _action_user_cancel(self, reason=None):
             // self.ensure_one()
             // if not self.can_cancel:
             //     raise ValidationError(_('This time off cannot be cancelled.'))
@@ -1028,20 +1174,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionValidateAsync<TEntity>(IEnumerable<TEntity> entities, object check_state) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionValidateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def action_validate(self):
             // self.state = 'paid'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionValidateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object check_state) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_validate(self, check_state=True):
+            // def _action_validate(self, check_state=True):
             // current_employee = self.env.user.employee_id
             // leaves = self._get_leaves_on_public_holiday()
+            // if check_state and any(not holiday.can_validate for holiday in self):
+            //     raise UserError(_('You can\'t validate this leave.'))
             // if leaves:
             //     raise ValidationError(_('The following employees are not supposed to work during that period:\n %s') % ','.join(leaves.mapped('employee_id.name')))
-            // if check_state and any(holiday.state not in ['confirm', 'validate1'] and holiday.validation_type != 'no_validation' for holiday in self):
-            //     raise UserError(_('Time off request must be confirmed in order to approve it.'))
             // 
             // self.write({'state': 'validate'})
             // 
@@ -1065,20 +1218,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionViewSheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ActionValidateMovesWithConfirmationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_view_sheet(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [[False, "form"]],
-            //     'res_model': 'hr.expense.sheet',
-            //     'target': 'current',
-            //     'res_id': self.sheet_id.id
-            // }
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_validate_moves_with_confirmation(self):
+            // """
+            // If 'restrict_mode_hash_table' is enabled or future-dated moves, open a confirmation wizard;
+            // otherwise, validate moves directly.
+            // """
+            // draft_moves = self.filtered(lambda m: m.state == 'draft' and m.line_ids)
+            // if not draft_moves:
+            //     raise UserError(_('There are no journal items in the draft state to post.'))
+            // 
+            // need_confirmation_moves = draft_moves._get_moves_requiring_confirmation()
+            // 
+            // direct_validate_moves = draft_moves - need_confirmation_moves
+            // if direct_validate_moves:
+            //     direct_validate_moves._post(soft=False)
+            // if need_confirmation_moves:
+            //     wizard = self.env['validate.account.move'].create({
+            //         'move_ids': [Command.set(need_confirmation_moves.ids)],
+            //     })
+            //     return {
+            //         'name': _("Confirm Entries"),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'validate.account.move',
+            //         'res_id': wizard.id,
+            //         'view_mode': 'form',
+            //         'view_id': self.env.ref('account.validate_account_move_view').id,
+            //         'target': 'new',
+            //     }
+            // return False
             */
             return default;
         }
@@ -1086,27 +1257,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActivityUpdateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def activity_update(self):
-            // reports_requiring_feedback = self.env['hr.expense.sheet']
-            // reports_activity_unlink = self.env['hr.expense.sheet']
-            // for expense_report in self:
-            //     if expense_report.state == 'submit':
-            //         expense_report.activity_schedule(
-            //             'hr_expense.mail_act_expense_approval',
-            //             user_id=expense_report.sudo()._get_responsible_for_approval().id or self.env.user.id)
-            //     elif expense_report.state == 'approve':
-            //         reports_requiring_feedback |= expense_report
-            //     elif expense_report.state in {'draft', 'cancel'}:
-            //         reports_activity_unlink |= expense_report
-            // if reports_requiring_feedback:
-            //     reports_requiring_feedback.activity_feedback(['hr_expense.mail_act_expense_approval'])
-            // if reports_activity_unlink:
-            //     reports_activity_unlink.activity_unlink(['hr_expense.mail_act_expense_approval'])
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def activity_update(self):
             // if self.env.context.get('mail_activity_automation_skip'):
-            //     return False
+            //     return
             // 
             // to_clean, to_do, to_do_confirm_activity = self.env['hr.leave'], self.env['hr.leave'], self.env['hr.leave']
             // activity_vals = []
@@ -1153,7 +1307,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif holiday.state in ['refuse', 'cancel']:
             //         to_clean |= holiday
             // if to_clean:
-            //     to_clean.activity_unlink(['hr_holidays.mail_act_leave_approval', 'hr_holidays.mail_act_leave_second_approval'])
+            //     to_clean.activity_unlink(self._get_to_clean_activities(), only_automated=False)
             // if to_do_confirm_activity:
             //     to_do_confirm_activity.activity_feedback(['hr_holidays.mail_act_leave_approval'])
             // if to_do:
@@ -1209,7 +1363,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'res_model': 'applicant.get.refuse.reason',
             //     'view_mode': 'form',
             //     'target': 'new',
-            //     'context': {'default_applicant_ids': self.ids, 'active_test': False},
+            //     'context': {
+            //         'default_applicant_ids': self.ids,
+            //         'active_test': False,
+            //         'hide_mail_template_management_options': True,
+            //     },
             //     'views': [[False, 'form']]
             // }
             */
@@ -1233,32 +1391,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _auto_init(self):
             // super()._auto_init()
-            // if not index_exists(self.env.cr, 'account_move_checked_idx'):
-            //     self.env.cr.execute("""
-            //         CREATE INDEX account_move_checked_idx
-            //                   ON account_move(journal_id)
-            //                WHERE checked = false
-            //     """)
-            // if not index_exists(self.env.cr, 'account_move_payment_idx'):
-            //     self.env.cr.execute("""
-            //         CREATE INDEX account_move_payment_idx
-            //                   ON account_move(journal_id, state, payment_state, move_type, date)
-            //     """)
-            // if not index_exists(self.env.cr, 'account_move_unique_name'):
-            //     self.env.cr.execute("""
-            //         CREATE UNIQUE INDEX account_move_unique_name
-            //                          ON account_move(name, journal_id)
-            //                       WHERE (state = 'posted' AND name != '/')
-            //     """)
-            // 
             // if not column_exists(self.env.cr, "account_move", "preferred_payment_method_line_id"):
             //     create_column(self.env.cr, "account_move", "preferred_payment_method_line_id", "int4")
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _auto_init(self):
-            // res = super(HolidaysRequest, self)._auto_init()
-            // tools.create_index(self._cr, 'hr_leave_date_to_date_from_index',
-            //                    self._table, ['date_to', 'date_from'])
-            // return res
             */
             return default;
         }
@@ -1286,38 +1420,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> AutopostDraftEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> AutopostDraftEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object batch_size) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _autopost_draft_entries(self):
+            // def _autopost_draft_entries(self, batch_size=100):
             // ''' This method is called from a cron job.
             // It is used to post entries such as those created by the module
             // account_asset and recurring entries created in _post().
             // '''
-            // moves = self.search([
+            // domain = [
             //     ('state', '=', 'draft'),
             //     ('date', '<=', fields.Date.context_today(self)),
             //     ('auto_post', '!=', 'no'),
-            //     '|', ('checked', '=', True), ('journal_id.autocheck_on_post', '=', True)
-            // ], limit=100)
+            // ]
+            // moves = self.search(domain, limit=batch_size)
+            // remaining = len(moves) if len(moves) < batch_size else self.search_count(domain)
+            // self.env['ir.cron']._commit_progress(remaining=remaining)
             // 
             // try:  # try posting in batch
-            //     with self.env.cr.savepoint():
-            //         moves._post()
+            //     moves._post()
+            //     self.env['ir.cron']._commit_progress(len(moves))
+            //     return
             // except UserError:  # if at least one move cannot be posted, handle moves one by one
-            //     for move in moves:
-            //         try:
-            //             with self.env.cr.savepoint():
-            //                 move._post()
-            //         except UserError as e:
-            //             move.checked = False
-            //             move.auto_post = 'no'
-            //             msg = _('The move could not be posted for the following reason: %(error_message)s', error_message=e)
-            //             move.message_post(body=msg, message_type='comment')
+            //     self.env.cr.rollback()
             // 
-            // if len(moves) == 100:  # assumes there are more whenever search hits limit
-            //     self.env.ref('account.ir_cron_auto_post_draft_entry')._trigger()
+            // for move in moves:
+            //     try:
+            //         move = move.try_lock_for_update().filtered_domain(domain)
+            //         if not move:
+            //             continue
+            //         move._post()
+            //         self.env['ir.cron']._commit_progress(1)
+            //     except UserError as e:
+            //         self.env.cr.rollback()
+            //         msg = _('The move could not be posted for the following reason: %(error_message)s', error_message=e)
+            //         move.message_post(body=msg, message_type='comment')
+            //         self.env['ir.cron']._commit_progress()
             */
             return default;
         }
@@ -1330,16 +1469,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Build the warning message that will be displayed in a yellow banner on top of the current record
             //     if the partner exceeds a credit limit (set on the company or the partner itself).
             //     :param record:                  The record where the warning will appear (Invoice, Sales Order...).
-            //     :param current_amount (float):  The partner's outstanding credit amount from the current document.
-            //     :param exclude_current (bool):  DEPRECATED in favor of parameter `exclude_amount`:
+            //     :param float current_amount:    The partner's outstanding credit amount from the current document.
+            //     :param bool exclude_current:    DEPRECATED in favor of parameter `exclude_amount`:
             //                                     Whether to exclude `current_amount` from the credit to invoice.
-            //     :param exclude_amount (float):  The amount to subtract from the partner's `credit_to_invoice`.
+            //     :param float exclude_amount:    The amount to subtract from the partner's `credit_to_invoice`.
             //                                     Consider the warning on a draft invoice created from a sales order.
             //                                     After confirming the invoice the (partial) amount (on the invoice)
             //                                     stemming from sales orders will be substracted from the `credit_to_invoice`.
             //                                     This will reduce the total credit of the partner.
             //                                     This parameter is used to reflect this amount.
-            //     :return (str):                  The warning message to be showed.
+            //     :return:                        The warning message to be showed.
+            //     :rtype: str
             // """
             // partner_id = record.partner_id.commercial_partner_id
             // credit_to_invoice = partner_id.credit_to_invoice - exclude_amount
@@ -1390,6 +1530,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if any(move.state != 'draft' for move in self):
             //     raise UserError(_("Only draft journal entries can be cancelled."))
             // 
+            // self.line_ids.remove_move_reconcile()
             // self.payment_ids.state = "canceled"
             // self.write({'auto_post': 'no', 'state': 'cancel'})
             */
@@ -1409,8 +1550,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._check_draftable()
             // # We remove all the analytics entries for this journal
             // self.line_ids.analytic_line_ids.with_context(skip_analytic_sync=True).unlink()
-            // self.mapped('line_ids').remove_move_reconcile()
             // self.state = 'draft'
+            // self.sending_data = False
             // 
             // self._detach_attachments()
             */
@@ -1467,7 +1608,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return:    An action on account.move.
             // '''
             // self.ensure_one()
-            // return (self.invoice_ids | self.reconciled_invoice_ids).with_context(
+            // return self.reconciled_invoice_ids.with_context(
             //     create=False
             // )._get_records_action(
             //     name=_("Paid Invoices"),
@@ -1549,41 +1690,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def button_set_checked(self):
-            // for move in self:
-            //     move.checked = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CalculateDefaultAccountingDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _calculate_default_accounting_date(self):
-            // """
-            // Calculate the default accounting date for the expenses paid by employees
-            // """
-            // self.ensure_one()
-            // today = fields.Date.context_today(self)
-            // start_month = fields.Date.start_of(today, "month")
-            // end_month = fields.Date.end_of(today, "month")
-            // most_recent_expense = max(self.expense_line_ids.filtered(lambda exp: exp.date).mapped('date'), default=today)
-            // 
-            // if most_recent_expense > end_month:
-            //     return most_recent_expense
-            // 
-            // if most_recent_expense >= start_month:
-            //     return today
-            // 
-            // lock_date = self.company_id._get_user_fiscal_lock_date(self.journal_id)
-            // 
-            // return min(
-            //     max(
-            //         fields.Date.end_of(most_recent_expense, "month"),
-            //         fields.Date.end_of(fields.Date.add(lock_date, months=1), "month")
-            //     ),
-            //     today
-            // )
+            // self.set_moves_checked()
             */
             return default;
         }
@@ -1596,7 +1703,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // :return: dict of move_id: hash
             // """
-            // hash_version = self._context.get('hash_version', MAX_HASH_VERSION)
+            // hash_version = self.env.context.get('hash_version', MAX_HASH_VERSION)
             // 
             // def _getattrstring(obj, field_name):
             //     field_value = obj[field_name]
@@ -1629,6 +1736,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CanBeAutovalidatedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _can_be_autovalidated(self):
+            // """ Check whether the given expenses can be auto-validated (no approver) """
+            // self.ensure_one()
+            // return (not self.manager_id and not self.employee_id.expense_manager_id) or self.manager_id == self.employee_id.user_id
+            */
+            return default;
+        }
+
         public async Task<TEntity> CanBeUnlinkedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -1636,7 +1755,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _can_be_unlinked(self):
             // self.ensure_one()
             // lock_date = self.company_id._get_user_fiscal_lock_date(self.journal_id)
-            // return not self.inalterable_hash and self.date > lock_date
+            // posted_caba_entry = self.state == 'posted' and (self.tax_cash_basis_rec_id or self.tax_cash_basis_origin_move_id)
+            // posted_exchange_diff_entry = self.state == 'posted' and self.exchange_diff_partial_ids
+            // return not self.inalterable_hash and self.date > lock_date and not posted_caba_entry and not posted_exchange_diff_entry
             */
             return default;
         }
@@ -1650,7 +1771,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :returns: True if commit is acceptable, False otherwise.
             // """
-            // return not tools.config['test_enable'] and not modules.module.current_test
+            // return not modules.module.current_test
             */
             return default;
         }
@@ -1709,107 +1830,83 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckAmountNotZeroAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> CheckAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object operation) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def check_amount_not_zero(self, vals):
-            // error_msgs = []
-            // if 'total_amount' in vals:
-            //     if any(expense.company_currency_id.is_zero(vals['total_amount']) for expense in self):
-            //         error_msgs.append(_("You cannot set the expense total to 0 if it's linked to a report."))
-            // if 'total_amount_currency' in vals:
-            //     if any(expense.currency_id.is_zero(vals['total_amount_currency']) for expense in self):
-            //         error_msgs.append(_("You cannot set the expense total in currency to 0 if it's linked to a report."))
-            // if error_msgs:
-            //     raise UserError("\n".join(error_msgs))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckAndDecodeAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _check_and_decode_attachment(self, attachments):
-            // if not attachments or self.env.context.get('no_new_invoice'):
-            //     return False
-            // if self.state != 'draft':
-            //     self.with_user(SUPERUSER_ID).message_post(
-            //         body=_('The invoice is not a draft, it was not updated from the attachment.'),
-            //         message_type='comment',
-            //     )
-            //     return False
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _check_access(self, operation):
+            // # This method override provides read access to 'hr.employee' in some
+            // # situations, like setting a many2many field to comodel 'hr.employee'.
+            // # Since Odoo 19, one must have read access to the comodel to modify the
+            // # relation.
+            // if operation == 'read' and self.env.context.get('_allow_read_hr_employee') is _ALLOW_READ_HR_EMPLOYEE:
+            //     return None
             // 
-            // # As we are coming from the mail, we assume that ONE of the attachments
-            // # will enhance the invoice thanks to EDI / OCR / .. capabilities
-            // move_per_decodable_attachment = self._extend_with_attachments(attachments, new=bool(self._context.get('from_alias')))
-            // if self.invoice_line_ids and not move_per_decodable_attachment:
-            //     self.with_user(SUPERUSER_ID).message_post(
-            //         body=_('The invoice already contains lines, it was not updated from the attachment.'),
-            //         message_type='comment',
-            //     )
-            //     return False
-            // attachments_in_invoices = self.env['ir.attachment']
-            // for attachment in move_per_decodable_attachment:
-            //     attachments_in_invoices += attachment
-            // # Unlink the unused attachments (prevents storing marketing images sent with emails)
-            // if self._context.get('from_alias'):
-            //     (attachments - attachments_in_invoices).unlink()
-            // return move_per_decodable_attachment
+            // return super()._check_access(operation)
             */
             return default;
         }
 
-        public async Task<TEntity> CheckApprovalUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object state) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> CheckApprovalUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object state, object raise_if_not_possible) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _check_approval_update(self, state):
-            // """ Check if target state is achievable. """
-            // if self.env.is_superuser():
-            //     return
+            // def _check_approval_update(self, state, raise_if_not_possible=True):
+            //         """ Check if target state is achievable. """
+            //         if self.env.is_superuser():
+            //             return True
             // 
-            // current_employee = self.env.user.employee_id
-            // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // is_manager = self.env.user.has_group('hr_holidays.group_hr_holidays_manager')
+            //         is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
             // 
-            // for holiday in self:
-            //     val_type = holiday.validation_type
-            // 
-            //     if not is_manager:
-            //         if holiday.state == 'cancel' and state != 'confirm':
-            //             raise UserError(_('A cancelled leave cannot be modified.'))
-            //         if state == 'confirm':
-            //             if holiday.state == 'refuse':
-            //                 raise UserError(_('Only a Time Off Manager can reset a refused leave.'))
-            //             if holiday.date_from and holiday.date_from.date() <= fields.Date.today():
-            //                 raise UserError(_('Only a Time Off Manager can reset a started leave.'))
-            //             if holiday.employee_id != current_employee:
-            //                 raise UserError(_('Only a Time Off Manager can reset other people leaves.'))
-            //         else:
-            //             if val_type == 'no_validation' and current_employee == holiday.employee_id and (is_officer or is_manager):
-            //                 continue
-            //             # use ir.rule based first access check: department, members, ... (see security.xml)
-            //             holiday.check_access('write')
-            // 
-            //             # This handles states validate1 validate and refuse
-            //             if holiday.employee_id == current_employee\
-            //                     and self.env.user != holiday.employee_id.leave_manager_id\
-            //                     and not is_officer:
-            //                 raise UserError(_('Only a Time Off Officer or Manager can approve/refuse its own requests.'))
-            // 
-            //             if (state == 'validate1' and val_type == 'both'):
-            //                 if not is_officer and self.env.user != holiday.employee_id.leave_manager_id:
-            //                     raise UserError(_('You must be either %s\'s manager or Time off Manager to approve this leave') % (holiday.employee_id.name))
-            // 
-            //             if (state == 'validate' and val_type == 'manager')\
-            //                     and self.env.user != holiday.employee_id.leave_manager_id\
-            //                     and not is_officer:
-            //                 raise UserError(_("You must be %s's Manager to approve this leave", holiday.employee_id.name))
-            // 
-            //             if not is_officer and (state == 'validate' and val_type == 'hr'):
-            //                 raise UserError(_('You must either be a Time off Officer or Time off Manager to approve this leave'))
+            //         for holiday in self:
+            //             is_time_off_manager = holiday.employee_id.leave_manager_id == self.env.user
+            //             dict_all_possible_state = holiday._get_next_states_by_state()
+            //             validation_type = holiday.validation_type
+            //             error_message = ""
+            //             # Standard Check
+            //             if holiday.state == state:
+            //                 error_message = self.env._('You can\'t do the same action twice.')
+            //             elif state == 'validate1' and validation_type != 'both':
+            //                 error_message = self.env._('Not possible state. State Approve is only used for leave needed 2 approvals')
+            //             elif holiday.state == 'cancel':
+            //                 error_message = self.env._('A cancelled leave cannot be modified.')
+            //             elif state not in dict_all_possible_state.get(holiday.state, {}):
+            //                 if state == 'cancel':
+            //                     error_message = self.env._('You can only cancel your own leave. You can cancel a leave only if this leave \
+            // is approved, validated or refused.')
+            //                 elif state == 'confirm':
+            //                     error_message = self.env._('You can\'t reset a leave. Cancel/delete this one and create an other')
+            //                 elif state == 'validate1':
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can approve a leave.')
+            //                     else:
+            //                         error_message = self.env._('You can\'t approve a validated leave.')
+            //                 elif state == "validate":
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can validate a leave.')
+            //                     elif holiday.state == "refuse":
+            //                         error_message = self.env._('You can\'t approve this refused leave.')
+            //                     else:
+            //                         error_message = self.env._('You can only validate a leave with validation by Time Off Manager.')
+            //                 elif state == "refuse":
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can refuse a leave.')
+            //                     else:
+            //                         error_message = self.env._('You can\'t refuse a leave with validation by Time Off Officer.')
+            //             elif state != "cancel":
+            //                 try:
+            //                     holiday.check_access('write')
+            //                 except UserError as e:
+            //                     if raise_if_not_possible:
+            //                         raise UserError(e)
+            //                     return False
+            //                 else:
+            //                     continue
+            //             if error_message:
+            //                 if raise_if_not_possible:
+            //                     raise UserError(error_message)
+            //                 return False
+            //         return True
             */
             return default;
         }
@@ -1829,12 +1926,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if unbalanced_moves := self._get_unbalanced_moves(container):
             //     if len(unbalanced_moves) == 1:
-            //         raise UserError("The entry is not balanced.")
+            //         raise UserError(_("The entry is not balanced."))
             // 
             //     error_msg = _("The following entries are unbalanced:\n\n")
             //     for move in unbalanced_moves:
             //         error_msg += f"  - {self.browse(move[0]).name}\n"
-            //         raise UserError(error_msg)
+            // 
+            //     raise UserError(error_msg)
             */
             return default;
         }
@@ -1842,10 +1940,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckCanApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _check_can_approve(self):
             // if not all(self.mapped('can_approve')):
-            //     reasons = _("You cannot approve:\n %s", "\n".join(self.mapped('cannot_approve_reason')))
+            //     reasons_list = tuple(reason for reason in self._get_cannot_approve_reason().values() if reason)
+            //     reasons = _("You cannot approve:\n %(reasons)s", reasons="\n".join(reasons_list))
             //     raise UserError(reasons)
             */
             return default;
@@ -1854,21 +1953,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckCanCreateMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _check_can_create_move(self):
-            // if any(not sheet.expense_line_ids for sheet in self):
-            //     raise UserError(_("You cannot create accounting entries for an expense report without expenses."))
-            // 
-            // if any(sheet.state != 'submit' for sheet in self):
+            // if any(expense.state != 'approved' for expense in self):
             //     raise UserError(_("You can only generate an accounting entry for approved expense(s)."))
             // 
-            // if any(not sheet.journal_id for sheet in self):
-            //     raise UserError(_("Please specify an expense journal in order to generate accounting entries."))
-            // 
             // if False in self.mapped('payment_mode'):
-            //     raise UserError(_(
-            //         "Please specify if the expenses for this report were paid by the company, or the employee"
-            //     ))
+            //     raise UserError(_("Please specify if the expenses were paid by the company, or the employee."))
             */
             return default;
         }
@@ -1876,10 +1967,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckCanRefuseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _check_can_refuse(self):
             // if not all(self.mapped('can_approve')):
-            //     reasons = _("You cannot refuse:\n %s", "\n".join(self.mapped('cannot_approve_reason')))
+            //     reasons = _("You cannot refuse:\n %(reasons)s", reasons="\n".join(self._get_cannot_approve_reason().values()))
             //     raise UserError(reasons)
             */
             return default;
@@ -1888,10 +1979,47 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckCanResetApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _check_can_reset_approval(self):
             // if not all(self.mapped('can_reset')):
-            //     raise UserError(_("Only HR Officers or the concerned employee can reset to draft."))
+            //     raise UserError(_("Only HR Officers, accountants, or the concerned employee can reset to draft."))
+            // if any(state not in {False, 'draft'} for state in self.account_move_id.mapped('state')):
+            //     raise UserError(_("You cannot reset to draft an expense linked to a posted journal entry."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckContractsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _check_contracts(self):
+            //         """
+            //             A leave cannot be set across multiple contracts.
+            //             Note: a leave can be across multiple contracts despite this constraint.
+            //             It happens if a leave is correctly created (not across multiple contracts) but
+            //             contracts are later modifed/created in the middle of the leave.
+            //         """
+            //         for holiday in self.filtered('employee_id'):
+            //             versions = holiday._get_overlapping_contracts()
+            //             if len(versions.resource_calendar_id) > 1:
+            //                 raise ValidationError(
+            //                     self.env._("""A leave cannot be set across multiple versions with different working schedules.
+            // 
+            // Please create one time off for each version period.
+            // 
+            // Time off:
+            // %(time_off)s
+            // 
+            // Versions:
+            // %(versions)s""",
+            //                       time_off=holiday.display_name,
+            //                       versions='\n'.join(_(
+            //                           "- '%(version)s' from %(start_date)s to %(end_date)s",
+            //                           version=version.name or version.employee_id.name,
+            //                           start_date=format_date(self.env, version.date_start),
+            //                           end_date=format_date(self.env, version.date_end) if version.date_end else self.env._("undefined"),
+            //                       ) for version in versions)))
             */
             return default;
         }
@@ -1901,67 +2029,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _check_date(self):
-            //         if self.env.context.get('leave_skip_date_check', False):
-            //             return
-            // 
-            //         all_leaves = self.search([
-            //             ('date_from', '<', max(self.mapped('date_to'))),
-            //             ('date_to', '>', min(self.mapped('date_from'))),
-            //             ('employee_id', 'in', self.employee_id.ids),
-            //             ('id', 'not in', self.ids),
-            //             ('state', 'not in', ['cancel', 'refuse']),
-            //         ])
-            //         for holiday in self:
-            //             domain = [
-            //                 ('employee_id', '=', holiday.employee_id.id),
-            //                 ('date_from', '<', holiday.date_to),
-            //                 ('date_to', '>', holiday.date_from),
-            //                 ('id', '!=', holiday.id),
-            //                 ('state', 'not in', ['cancel', 'refuse']),
-            //             ]
-            //             conflicting_holidays = all_leaves.filtered_domain(domain)
-            // 
-            //             if conflicting_holidays:
-            //                 conflicting_holidays_list = []
-            //                 # Do not display the name of the employee if the conflicting holidays have an employee_id.user_id equivalent to the user id
-            //                 holidays_only_have_uid = bool(holiday.employee_id)
-            //                 holiday_states = dict(conflicting_holidays.fields_get(allfields=['state'])['state']['selection'])
-            //                 for conflicting_holiday in conflicting_holidays:
-            //                     conflicting_holiday_data = {}
-            //                     conflicting_holiday_data['employee_name'] = conflicting_holiday.employee_id.name
-            //                     conflicting_holiday_data['date_from'] = format_date(self.env, min(conflicting_holiday.mapped('date_from')))
-            //                     conflicting_holiday_data['date_to'] = format_date(self.env, min(conflicting_holiday.mapped('date_to')))
-            //                     conflicting_holiday_data['state'] = holiday_states[conflicting_holiday.state]
-            //                     if conflicting_holiday.employee_id.user_id.id != self.env.uid:
-            //                         holidays_only_have_uid = False
-            //                     if conflicting_holiday_data not in conflicting_holidays_list:
-            //                         conflicting_holidays_list.append(conflicting_holiday_data)
-            //                 if not conflicting_holidays_list:
-            //                     return
-            //                 conflicting_holidays_strings = []
-            //                 if holidays_only_have_uid:
-            //                     for conflicting_holiday_data in conflicting_holidays_list:
-            //                         conflicting_holidays_string = _('from %(date_from)s to %(date_to)s - %(state)s',
-            //                                                         date_from=conflicting_holiday_data['date_from'],
-            //                                                         date_to=conflicting_holiday_data['date_to'],
-            //                                                         state=conflicting_holiday_data['state'])
-            //                         conflicting_holidays_strings.append(conflicting_holidays_string)
-            //                     raise ValidationError(_("""\
-            // You've already booked time off which overlaps with this period:
-            // %s
-            // Attempting to double-book your time off won't magically make your vacation 2x better!
-            // """,
-            //                         "\n".join(conflicting_holidays_strings)))
-            //                 for conflicting_holiday_data in conflicting_holidays_list:
-            //                     conflicting_holidays_string = "\n" + _('%(employee_name)s - from %(date_from)s to %(date_to)s - %(state)s',
-            //                                                     employee_name=conflicting_holiday_data['employee_name'],
-            //                                                     date_from=conflicting_holiday_data['date_from'],
-            //                                                     date_to=conflicting_holiday_data['date_to'],
-            //                                                     state=conflicting_holiday_data['state'])
-            //                     conflicting_holidays_strings.append(conflicting_holidays_string)
-            //                 raise ValidationError(_(
-            //                     "An employee already booked time off which overlaps with this period:%s",
-            //                     "".join(conflicting_holidays_strings)))
+            // if self.env.context.get('leave_skip_date_check', False):
+            //     return
+            // for holiday in self:
+            //     if holiday.dashboard_warning_message:
+            //         raise ValidationError(holiday.dashboard_warning_message)
             */
             return default;
         }
@@ -2007,24 +2079,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _check_draftable(self):
             // exchange_move_ids = set()
             // if self:
-            //     self.env['account.full.reconcile'].flush_model(['exchange_move_id'])
             //     self.env['account.partial.reconcile'].flush_model(['exchange_move_id'])
             //     sql = SQL(
             //         """
-            //             SELECT DISTINCT sub.exchange_move_id
-            //             FROM (
-            //                 SELECT exchange_move_id
-            //                 FROM account_full_reconcile
-            //                 WHERE exchange_move_id IN %s
-            // 
-            //                 UNION ALL
-            // 
-            //                 SELECT exchange_move_id
-            //                 FROM account_partial_reconcile
-            //                 WHERE exchange_move_id IN %s
-            //             ) AS sub
+            //             SELECT DISTINCT exchange_move_id
+            //             FROM account_partial_reconcile
+            //             WHERE exchange_move_id IN %s
             //         """,
-            //         tuple(self.ids), tuple(self.ids),
+            //         tuple(self.ids),
             //     )
             //     exchange_move_ids = {id_ for id_, in self.env.execute_query(sql)}
             // 
@@ -2040,30 +2102,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         raise UserError(_('You cannot reset to draft a tax cash basis journal entry.'))
             //     if move.inalterable_hash:
             //         raise UserError(_('You cannot reset to draft a locked journal entry.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckEmployeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _check_employee(self):
-            // for sheet in self:
-            //     if sheet.expense_line_ids.employee_id - sheet.employee_id:
-            //         raise ValidationError(_('You cannot add expenses of another employee.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckExpenseLinesCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _check_expense_lines_company(self):
-            // for sheet in self:
-            //     if sheet.expense_line_ids.company_id - sheet.company_id:
-            //         raise ValidationError(_('An expense report must contain only lines from the same company.'))
             */
             return default;
         }
@@ -2121,10 +2159,29 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckInterviewerAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _check_interviewer_access(self):
             // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
             //     raise UserError(_('You are not allowed to perform this action.'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckInvoiceCurrencyRateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _check_invoice_currency_rate(self):
+            // """Ensure the currency rate is strictly positive when invoice currency differs from company currency."""
+            // for move in self:
+            //     if (
+            //         move.currency_id
+            //         and move.company_id
+            //         and move.currency_id != move.company_id.currency_id
+            //         and move.is_invoice(include_receipts=True)
+            //         and move.invoice_currency_rate <= 0
+            //     ):
+            //         raise ValidationError(_("The currency rate must be strictly positive."))
             */
             return default;
         }
@@ -2139,18 +2196,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         raise ValidationError(_("Cannot create a purchase document in a non purchase journal"))
             //     if move.is_sale_document(include_receipts=True) and move.journal_id.type != 'sale':
             //         raise ValidationError(_("Cannot create a sale document in a non sale journal"))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckMandatoryDayInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _check_mandatory_day(self):
-            // is_leave_user = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // if not is_leave_user and any(leave.has_mandatory_day for leave in self):
-            //     raise ValidationError(_('You are not allowed to request time off on a Mandatory Day'))
             */
             return default;
         }
@@ -2181,6 +2226,48 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckNoExistingContractAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def check_no_existing_contract(self, date):
+            // if isinstance(date, str):
+            //     date = fields.Date.from_string(date)
+            // if self._is_in_contract(date):
+            //     raise ValidationError(self.env._("The employee is already in contract on %s. "
+            //                                      "Please select a date outside existing contracts",
+            //                                      format_date_abbr(self.env, date)))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckNonZeroInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_non_zero(self):
+            // """ Helper to raise when we should ensure that an expense isn't approved  """
+            // for expense in self:
+            //     total_amount_is_zero = expense.company_currency_id.is_zero(expense.total_amount)
+            //     total_amount_currency_is_zero = expense.currency_id.is_zero(expense.total_amount_currency)
+            //     if (expense.state != 'draft' or expense.approval_state != False) and (total_amount_is_zero or total_amount_currency_is_zero):
+            //         raise ValidationError(_("Only draft expenses can have a total of 0."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckO2oPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_o2o_payment(self):
+            // for expense in self:
+            //     if len(expense.account_move_id.origin_payment_id.expense_ids) > 1:
+            //         raise ValidationError(_("Only one expense can be linked to a particular payment"))
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckPaymentMethodLineIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -2194,22 +2281,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         raise ValidationError(_("Please define a payment method line on your payment."))
             //     elif pay.payment_method_line_id.journal_id and pay.payment_method_line_id.journal_id != pay.journal_id:
             //         raise ValidationError(_("The selected payment method is not available for this payment, please select the payment method again."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckPaymentModeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _check_payment_mode(self):
-            // self.sheet_id._check_payment_mode()
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _check_payment_mode(self):
-            // for sheet in self:
-            //     expense_lines = sheet.mapped('expense_line_ids')
-            //     if expense_lines and any(expense.payment_mode != expense_lines[:1].payment_mode for expense in expense_lines):
-            //         raise ValidationError(_("All expenses in an expense report must have the same \"paid by\" criteria."))
             */
             return default;
         }
@@ -2228,14 +2299,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckSsnidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> CheckSalaryDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _check_ssnid(self):
-            // # By default, an Social Security Number is always valid, but each localization
-            // # may want to add its own constraints
-            // pass
+            // def _check_salary_distribution(self):
+            // for employee in self:
+            //     dist = employee.salary_distribution
+            //     if not dist:
+            //         continue
+            // 
+            //     total = 0
+            //     check_total = False
+            //     for ba_values in dist.values():
+            //         amount = ba_values.get('amount')
+            //         is_percentage = ba_values.get('amount_is_percentage', True)
+            //         if is_percentage and (not isinstance(amount, (float, int)) or not (0 <= amount <= 100)):
+            //             raise ValidationError(self.env._("Each amount percentage must be a number between 0 and 100."))
+            //         if is_percentage:
+            //             check_total = True
+            //             total += amount
+            // 
+            //     if check_total and not float_is_zero(total - 100.0, precision_digits=4):
+            //         raise ValidationError(self.env._("Total salary distribution on bank accounts must be exactly 100%."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckSelectedMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def check_selected_moves(self):
+            // self.env['account.move'].browse(self.env.context.get('active_ids', [])).set_moves_checked()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckTalentPoolRequiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _check_talent_pool_required(self):
+            // for talent in self:
+            //     if talent.pool_applicant_id == talent and not talent.talent_pool_ids:
+            //         raise ValidationError(self.env._("Talent must belong to at least one Talent Pool."))
             */
             return default;
         }
@@ -2277,13 +2385,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for leave in self:
             //     sorted_leaves[(leave.holiday_status_id, leave.date_from.date())] |= leave
             // for (leave_type, date_from), leaves in sorted_leaves.items():
-            //     if leave_type.requires_allocation == 'no':
+            //     if not leave_type.requires_allocation:
             //         continue
             //     employees = leaves.employee_id
             //     leave_data = leave_type.get_allocation_data(employees, date_from)
             //     if leave_type.allows_negative:
             //         max_excess = leave_type.max_allowed_negative
             //         for employee in employees:
+            //             if not leave_data[employee]:
+            //                 raise ValidationError(_("You do not have any allocation for this time off type.\n"
+            //                                         "Please request an allocation before submitting your time off request."))
             //             if leave_data[employee] and leave_data[employee][0][1]['virtual_remaining_leaves'] < -max_excess:
             //                 raise ValidationError(_("There is no valid allocation to cover that request."))
             //         continue
@@ -2294,10 +2405,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for employee in employees:
             //         previous_emp_data = previous_leave_data[employee] and previous_leave_data[employee][0][1]['virtual_excess_data']
             //         emp_data = leave_data[employee] and leave_data[employee][0][1]['virtual_excess_data']
+            //         if not leave_data[employee]:
+            //             raise ValidationError(_("You do not have any allocation for this time off type.\n"
+            //                                     "Please request an allocation before submitting your time off request."))
             //         if not previous_emp_data and not emp_data:
             //             continue
             //         if previous_emp_data != emp_data and len(emp_data) >= len(previous_emp_data):
             //             raise ValidationError(_("There is no valid allocation to cover that request."))
+            // is_leave_user = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
+            // if not is_leave_user and any(leave.has_mandatory_day for leave in self):
+            //     raise ValidationError(_('You are not allowed to request time off on a Mandatory Day'))
             */
             return default;
         }
@@ -2511,15 +2628,61 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_account_id(self):
-            // property_field = self.env['product.category']._fields['property_account_expense_categ_id']
             // for _expense in self:
             //     expense = _expense.with_company(_expense.company_id)
             //     if not expense.product_id:
-            //         expense.account_id = property_field.get_company_dependent_fallback(self.env['product.category'])
+            //         expense.account_id = _expense.company_id.expense_account_id
             //         continue
             //     account = expense.product_id.product_tmpl_id._get_product_accounts()['expense']
             //     if account:
             //         expense.account_id = account
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAdjustingEntriesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entries_count(self):
+            // for move in self:
+            //     move.adjusting_entries_count = len(move.adjusting_entries_move_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAdjustingEntryOriginLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entry_origin_label(self):
+            // for move in self:
+            //     if len(move.adjusting_entry_origin_move_ids) == 1:
+            //         move.adjusting_entry_origin_label = dict(self._fields['move_type'].selection)[move.adjusting_entry_origin_move_ids.move_type]
+            //     else:
+            //         move.adjusting_entry_origin_label = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAdjustingEntryOriginMovesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entry_origin_moves_count(self):
+            // for move in self:
+            //     move.adjusting_entry_origin_moves_count = len(move.adjusting_entry_origin_move_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAlertsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_alerts(self):
+            // for move in self:
+            //     move.alerts = move._get_alerts()
             */
             return default;
         }
@@ -2565,6 +2728,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_amount(self):
+            // self.line_ids.fetch([
+            //     'debit',
+            //     'balance',
+            //     'amount_currency',
+            //     'amount_residual',
+            //     'amount_residual_currency',
+            //     'display_type',
+            //     'tax_repartition_line_id'
+            // ])
             // for move in self:
             //     total_untaxed, total_untaxed_currency = 0.0, 0.0
             //     total_tax, total_tax_currency = 0.0, 0.0
@@ -2574,13 +2746,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for line in move.line_ids:
             //         if move.is_invoice(True):
             //             # === Invoices ===
-            //             if line.display_type == 'tax' or (line.display_type == 'rounding' and line.tax_repartition_line_id):
+            //             if line.display_type in ('tax', 'non_deductible_tax') or (line.display_type == 'rounding' and line.tax_repartition_line_id):
             //                 # Tax amount.
             //                 total_tax += line.balance
             //                 total_tax_currency += line.amount_currency
             //                 total += line.balance
             //                 total_currency += line.amount_currency
-            //             elif line.display_type in ('product', 'rounding'):
+            //             elif line.display_type in ('product', 'rounding', 'non_deductible_product', 'non_deductible_product_total'):
             //                 # Untaxed amount.
             //                 total_untaxed += line.balance
             //                 total_untaxed_currency += line.amount_currency
@@ -2607,12 +2779,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     move.amount_total_signed = abs(total) if move.move_type == 'entry' else -total
             //     move.amount_residual_signed = total_residual
             //     move.amount_total_in_currency_signed = abs(move.amount_total) if move.move_type == 'entry' else -(sign * move.amount_total)
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_amount(self):
-            // for sheet in self:
-            //     sheet.total_amount = sum(sheet.expense_line_ids.mapped('total_amount'))
-            //     sheet.total_tax_amount = sum(sheet.expense_line_ids.mapped('tax_amount'))
-            //     sheet.untaxed_amount = sheet.total_amount - sheet.total_tax_amount
             */
             return default;
         }
@@ -2664,14 +2830,66 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeApplicationCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _compute_application_count(self):
-            // read_group_res = self.env['hr.applicant'].with_context(active_test=False)._read_group(
-            //     [('candidate_id', 'in', self.ids)],
-            //     ['candidate_id'], ['__count'])
-            // application_data = dict(read_group_res)
-            // for candidate in self:
-            //     candidate.application_count = application_data.get(candidate, 0)
+            // """
+            // This method will calculate the number of applications that are either
+            // directly or indirectly linked to the current application(s)
+            // - An application is considered directly linked if it shares the same
+            //   pool_applicant_id
+            // - An application is considered indirectly_linked if it has the same
+            //   value as the current application(s) in any of the following field:
+            //   email, phone number or linkedin
+            // 
+            // Note: If self has pool_applicant_id, email, phone number or linkedin set
+            // this method will include self in the returned count
+            // """
+            // all_emails = {a.email_normalized for a in self if a.email_normalized}
+            // all_phones = {a.partner_phone_sanitized for a in self if a.partner_phone_sanitized}
+            // all_linkedins = {a.linkedin_profile for a in self if a.linkedin_profile}
+            // all_pool_applicants = {a.pool_applicant_id.id for a in self if a.pool_applicant_id}
+            // 
+            // domain = Domain.FALSE
+            // if all_emails:
+            //     domain |= Domain("email_normalized", "in", list(all_emails))
+            // if all_phones:
+            //     domain |= Domain("partner_phone_sanitized", "in", list(all_phones))
+            // if all_linkedins:
+            //     domain |= Domain("linkedin_profile", "in", list(all_linkedins))
+            // if all_pool_applicants:
+            //     domain |= Domain("pool_applicant_id", "in", list(all_pool_applicants))
+            // 
+            // domain &= Domain("talent_pool_ids", "=", False)
+            // matching_applicants = self.env["hr.applicant"].with_context(active_test=False).search(domain)
+            // 
+            // email_map = defaultdict(set)
+            // phone_map = defaultdict(set)
+            // linkedin_map = defaultdict(set)
+            // pool_applicant_map = defaultdict(set)
+            // for app in matching_applicants:
+            //     if app.email_normalized:
+            //         email_map[app.email_normalized].add(app.id)
+            //     if app.partner_phone_sanitized:
+            //         phone_map[app.partner_phone_sanitized].add(app.id)
+            //     if app.linkedin_profile:
+            //         linkedin_map[app.linkedin_profile].add(app.id)
+            //     if app.pool_applicant_id:
+            //         pool_applicant_map[app.pool_applicant_id].add(app.id)
+            // 
+            // for applicant in self:
+            //     related_ids = set()
+            //     if applicant.email_normalized:
+            //         related_ids.update(email_map.get(applicant.email_normalized, set()))
+            //     if applicant.partner_phone_sanitized:
+            //         related_ids.update(phone_map.get(applicant.partner_phone_sanitized, set()))
+            //     if applicant.linkedin_profile:
+            //         related_ids.update(linkedin_map.get(applicant.linkedin_profile, set()))
+            //     if applicant.pool_applicant_id:
+            //         related_ids.update(pool_applicant_map.get(applicant.pool_applicant_id, set()))
+            // 
+            //     count = len(related_ids)
+            // 
+            //     applicant.application_count = max(0, count)
             */
             return default;
         }
@@ -2690,41 +2908,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         applicant.application_status = 'hired'
             //     else:
             //         applicant.application_status = 'ongoing'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeApplicationsCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_applications_count(self):
-            // result = defaultdict(lambda: {"total": 0, "refused": 0, "accepted": 0})
-            // for applicant in self.with_context(active_test=False).applicant_ids:
-            //     result[applicant.candidate_id.id]["total"] += 1
-            //     if applicant.application_status == "refused":
-            //         result[applicant.candidate_id.id]["refused"] += 1
-            //     elif applicant.application_status == "hired":
-            //         result[applicant.candidate_id.id]["accepted"] += 1
-            // for candidate in self:
-            //     candidate.applications_count = result[candidate.id]['total']
-            //     candidate.refused_applications_count = result[candidate.id]['refused']
-            //     candidate.accepted_applications_count = result[candidate.id]['accepted']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeAttachmentCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_attachment_count(self):
-            // read_group_res = self.env['ir.attachment']._read_group(
-            //     [('res_model', '=', 'hr.candidate'), ('res_id', 'in', self.ids)],
-            //     ['res_id'], ['__count'])
-            // attach_data = dict(read_group_res)
-            // for candidate in self:
-            //     candidate.attachment_count = attach_data.get(candidate.id, 0)
             */
             return default;
         }
@@ -2843,7 +3026,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not avatar and employee.user_id:
             //         avatar = employee.user_id.sudo()[avatar_field]
             //     employee[avatar_field] = avatar
-            // super(HrEmployeePrivate, employee_wo_user_and_image)._compute_avatar(avatar_field, image_field)
+            // super(HrEmployee, employee_wo_user_and_image)._compute_avatar(avatar_field, image_field)
             */
             return default;
         }
@@ -2862,47 +3045,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeBirthdayPublicDisplayStringInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_birthday_public_display_string(self):
+            // for employee in self:
+            //     if employee.birthday and employee.birthday_public_display:
+            //         employee.birthday_public_display_string = datetime.strftime(employee.birthday, "%d %B")
+            //     else:
+            //         employee.birthday_public_display_string = "hidden"
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeCanApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_can_approve(self):
-            // is_team_approver = self.env.user.has_group('hr_expense.group_hr_expense_team_approver') or self.env.su
-            // is_approver = self.env.user.has_group('hr_expense.group_hr_expense_user') or self.env.su
-            // is_hr_admin = self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su
-            // 
-            // for sheet in self:
-            //     reason = False
-            //     if not is_team_approver:
-            //         reason = _("%s: Your are not a Manager or HR Officer", sheet.name)
-            // 
-            //     elif not is_hr_admin:
-            //         sheet_employee = sheet.employee_id
-            //         current_managers = sheet_employee.expense_manager_id \
-            //                            | sheet_employee.parent_id.user_id \
-            //                            | sheet_employee.department_id.manager_id.user_id \
-            //                            | sheet.user_id
-            // 
-            //         if sheet_employee.user_id == self.env.user:
-            //             reason = _("%s: It is your own expense", sheet.name)
-            // 
-            //         elif self.env.user not in current_managers and not is_approver and sheet_employee.expense_manager_id.id != self.env.user.id:
-            //             reason = _("%s: It is not from your department", sheet.name)
-            // 
-            //     sheet.can_approve = not reason
-            //     sheet.cannot_approve_reason = reason
+            // cannot_reason_per_record_id = self._get_cannot_approve_reason()
+            // for expense in self:
+            //     expense.can_approve = not cannot_reason_per_record_id[expense.id]
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_can_approve(self):
             // for holiday in self:
-            //     try:
-            //         if holiday.state == 'confirm' and holiday.validation_type == 'both':
-            //             holiday._check_approval_update('validate1')
-            //         else:
-            //             holiday._check_approval_update('validate')
-            //     except (AccessError, UserError):
-            //         holiday.can_approve = False
-            //     else:
-            //         holiday.can_approve = True
+            //     holiday.can_approve = holiday._check_approval_update('validate1', raise_if_not_possible=False)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCanBackToApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_can_back_to_approve(self):
+            // for holiday in self:
+            //     holiday.can_back_to_approve = holiday.state == 'validate' and holiday._check_approval_update('confirm', raise_if_not_possible=False)
             */
             return default;
         }
@@ -2912,9 +3091,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_can_cancel(self):
-            // now = fields.Datetime.now().date()
-            // for leave in self:
-            //     leave.can_cancel = leave.id and leave.employee_id.user_id == self.env.user and leave.state in ['validate', 'validate1'] and leave.date_from and leave.date_from.date() >= now
+            // for holiday in self:
+            //     holiday.can_cancel = holiday._check_approval_update('cancel', raise_if_not_possible=False)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCanRefuseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_can_refuse(self):
+            // for holiday in self:
+            //     holiday.can_refuse = holiday._check_approval_update('refuse', raise_if_not_possible=False)
             */
             return default;
         }
@@ -2922,31 +3111,69 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeCanResetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_can_reset(self):
-            // is_expense_user = self.env.user.has_group('hr_expense.group_hr_expense_team_approver')
-            // for sheet in self:
-            //     sheet.can_reset = is_expense_user if is_expense_user else sheet.employee_id.user_id == self.env.user
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _compute_can_reset(self):
-            // for holiday in self:
-            //     try:
-            //         holiday._check_approval_update('confirm')
-            //     except (AccessError, UserError):
-            //         holiday.can_reset = False
-            //     else:
-            //         holiday.can_reset = True
+            // user = self.env.user
+            // is_team_approver = user.has_group('hr_expense.group_hr_expense_team_approver') or self.env.su
+            // is_all_approver = user.has_groups('hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager') or self.env.su
+            // 
+            // valid_company_ids = set(self.env.companies.ids)
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:  # We don't need to search if the user has not the required rights
+            //     expenses_employee_ids_under_user_ones = set(self.env['hr.employee'].sudo().search([
+            //         ('id', 'in', self.employee_id.ids),
+            //         ('id', 'child_of', user.employee_ids.ids),
+            //         ('id', 'not in', user.employee_ids.ids),
+            //     ]).ids)
+            // 
+            // for expense in self:
+            //     expense.can_reset = (
+            //         expense.company_id.id in valid_company_ids
+            //         and (
+            //                 is_all_approver
+            //                 or expense.employee_id.id in expenses_employee_ids_under_user_ones
+            //                 or expense.employee_id.expense_manager_id == user
+            //                 or (expense.state in {'draft', 'submitted'} and expense.employee_id.user_id == user)
+            //         )
+            //     )
             */
             return default;
         }
 
-        public async Task<TEntity> ComputeCategIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ComputeCanValidateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _compute_categ_ids(self):
-            // for applicant in self:
-            //     applicant.categ_ids = applicant.candidate_id.categ_ids.ids + applicant.categ_ids.ids
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_can_validate(self):
+            // for holiday in self:
+            //     holiday.can_validate = holiday._check_approval_update('validate', raise_if_not_possible=False)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCheckedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_checked(self):
+            // for move in self:
+            //     move.checked = move.state == 'posted' and (move.journal_id.type == 'general' or move._is_user_able_to_review())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCoachInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_coach(self):
+            // for version in self:
+            //     manager = version.parent_id
+            //     previous_manager = version._origin.parent_id
+            //     if manager and (version.coach_id == previous_manager or not version.coach_id):
+            //         version.coach_id = manager
+            //     elif not version.coach_id:
+            //         version.coach_id = False
             */
             return default;
         }
@@ -3019,15 +3246,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_currency_id(self):
             // for expense in self:
-            //     if expense.product_has_cost and expense.state in {'draft', 'reported'}:
+            //     if expense.product_has_cost and expense.state == 'draft':
             //         expense.currency_id = expense.company_currency_id
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_currency_id(self):
-            // for sheet in self:
-            //     if not sheet.expense_line_ids or sheet.is_multiple_currency or sheet.payment_mode == 'own_account':
-            //         sheet.currency_id = sheet.company_currency_id
-            //     else:
-            //         sheet.currency_id = sheet.expense_line_ids[:1].currency_id
             */
             return default;
         }
@@ -3061,11 +3281,93 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         expense.label_currency_rate = False
             //         continue
             // 
+            //     company_currency = expense.company_currency_id or expense.env.company.currency_id
             //     expense.label_currency_rate = _(
             //         '1 %(exp_cur)s = %(rate)s %(comp_cur)s',
-            //         exp_cur=expense.currency_id.name,
+            //         exp_cur=(expense.currency_id or company_currency).name,
             //         rate=float_repr(expense.currency_rate, 6),
-            //         comp_cur=expense.company_currency_id.name,
+            //         comp_cur=company_currency.name,
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCurrentVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_current_version_id(self):
+            // for employee in self:
+            //     version = self.env['hr.version'].search(
+            //         [('employee_id', 'in', employee.ids), ('date_version', '<=', fields.Date.today())],
+            //         order='date_version desc',
+            //         limit=1,
+            //     )
+            //     new_current_version = False
+            //     if version:
+            //         new_current_version = version
+            //     elif employee.version_ids:
+            //         new_current_version = employee.version_ids[0]
+            //     # To not trigger computed properties if still the same version
+            //     if employee.current_version_id != new_current_version:
+            //         employee.current_version_id = new_current_version
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeDashboardWarningMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_dashboard_warning_message(self):
+            // all_leaves = self.search([
+            //     ('date_from', '<', max(self.mapped('date_to'))),
+            //     ('date_to', '>', min(self.mapped('date_from'))),
+            //     ('employee_id', 'in', self.employee_id.ids),
+            //     ('holiday_status_id.allow_request_on_top', '=', False),
+            //     ('state', 'not in', ['cancel', 'refuse']),
+            // ])
+            // self.filtered(lambda self: self.state in ['cancel', 'refuse']).dashboard_warning_message = False
+            // for holiday in self.filtered(lambda self: self.state not in ['cancel', 'refuse']):
+            //     conflicting_holidays = all_leaves.filtered_domain([
+            //         ('employee_id', 'in', holiday.employee_id.ids),
+            //         ('date_from', '<', holiday.date_to),
+            //         ('date_to', '>', holiday.date_from),
+            //         ('id', 'not in', holiday.ids),
+            //     ])
+            //     if not conflicting_holidays:
+            //         holiday.dashboard_warning_message = False
+            //         continue
+            // 
+            //     conflicting_holidays_list = []
+            //     # Do not display the name of the employee if the conflicting holidays have an employee_id.user_id equivalent to the user id
+            //     holidays_only_have_uid = bool(holiday.employee_id)
+            //     holiday_states = dict(conflicting_holidays.fields_get(allfields=['state'])['state']['selection'])
+            //     for conflicting_holiday in conflicting_holidays:
+            //         conflicting_holiday_data = {
+            //             'employee_name': conflicting_holiday.employee_id.name,
+            //             'date_from': format_date(self.env, min(conflicting_holiday.mapped('date_from'))),
+            //             'date_to': format_date(self.env, min(conflicting_holiday.mapped('date_to'))),
+            //             'state': holiday_states[conflicting_holiday.state]
+            //         }
+            //         if conflicting_holiday.employee_id.user_id.id != self.env.uid:
+            //             holidays_only_have_uid = False
+            //         if conflicting_holiday_data not in conflicting_holidays_list:
+            //             conflicting_holidays_list.append(conflicting_holiday_data)
+            // 
+            //     msg = ""
+            //     if holidays_only_have_uid:
+            //         msg = self.env._('You\'ve already booked time off which overlaps with this period:')
+            //     else:
+            //         msg = self.env._('An employee already booked time off which overlaps with this period:')
+            // 
+            //     holiday.dashboard_warning_message = msg + "".join(
+            //         ('\n\t' + self.env._('%(employee_name)s from %(date_from)s to %(date_to)s - %(state)s')) % {
+            //             'employee_name': conflicting_holiday_data['employee_name'] if not holidays_only_have_uid else "",
+            //             'date_from': conflicting_holiday_data['date_from'],
+            //             'date_to': conflicting_holiday_data['date_to'],
+            //             'state': conflicting_holiday_data['state']
+            //         } for conflicting_holiday_data in conflicting_holidays_list
             //     )
             */
             return default;
@@ -3078,7 +3380,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_date_closed(self):
             // for applicant in self:
             //     if applicant.stage_id and applicant.stage_id.hired_stage and not applicant.date_closed:
-            //         applicant.date_closed = fields.datetime.now()
+            //         applicant.date_closed = fields.Datetime.now()
             //     if not applicant.stage_id.hired_stage:
             //         applicant.date_closed = False
             */
@@ -3093,31 +3395,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for holiday in self:
             //     if not holiday.request_date_from:
             //         holiday.date_from = False
-            //     elif not holiday.request_unit_half and not holiday.request_unit_hours and not holiday.request_date_to:
+            //         continue
+            // 
+            //     if not holiday.request_date_to:
             //         holiday.date_to = False
-            //     else:
-            //         if (holiday.request_unit_half or holiday.request_unit_hours) and holiday.request_date_to != holiday.request_date_from:
-            //             holiday.request_date_to = holiday.request_date_from
+            //         continue
             // 
+            //     if holiday.request_unit_hours:
+            //         hour_from = holiday.request_hour_from
+            //         hour_to = holiday.request_hour_to
+            //         if not hour_from or not hour_to:
+            //             computed_from, computed_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to)
+            //             hour_from = hour_from or computed_from
+            //             hour_to = hour_to or computed_to
             // 
-            //         day_period = {
-            //             'am': 'morning',
-            //             'pm': 'afternoon'
-            //         }.get(holiday.request_date_from_period, None) if holiday.request_unit_half else None
-            // 
-            // 
-            //         compensated_request_date_from = holiday.request_date_from
-            //         compensated_request_date_to = holiday.request_date_to
-            // 
-            //         if holiday.request_unit_hours:
-            //             hour_from = holiday.request_hour_from
-            //             hour_to = holiday.request_hour_to
-            //         else:
+            //     elif holiday.request_unit_half:
+            //         period_map = {'am': 'morning', 'pm': 'afternoon'}
+            //         from_period = period_map.get(holiday.request_date_from_period)
+            //         to_period = period_map.get(holiday.request_date_to_period)
+            //         if holiday.request_date_from == holiday.request_date_to:
+            //             day_period = from_period if from_period == to_period else None
             //             hour_from, hour_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to,
-            //                 day_period=day_period)
+            //                 day_period)
+            //         else:
+            //             hour_from, _ = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_from, from_period)
+            //             _, hour_to = holiday._get_hour_from_to(holiday.request_date_to, holiday.request_date_to, to_period)
             // 
-            //         holiday.date_from = self._to_utc(compensated_request_date_from, hour_from, holiday.employee_id or holiday)
-            //         holiday.date_to = self._to_utc(compensated_request_date_to, hour_to, holiday.employee_id or holiday)
+            //     else:
+            //         hour_from, hour_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to)
+            // 
+            //     holiday.date_from = self._to_utc(holiday.request_date_from, hour_from, holiday.employee_id or holiday)
+            //     holiday.date_to = self._to_utc(holiday.request_date_to, hour_to, holiday.employee_id or holiday)
             */
             return default;
         }
@@ -3128,13 +3436,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_date(self):
             // for move in self:
-            //     if not move.invoice_date or not move.is_invoice(include_receipts=True):
+            //     accounting_date = move._get_accounting_date_source()
+            //     if not accounting_date or not move.is_invoice(include_receipts=True):
             //         if not move.date:
             //             move.date = fields.Date.context_today(self)
             //         continue
-            //     accounting_date = move.invoice_date
             //     if not move.is_sale_document(include_receipts=True):
-            //         accounting_date = move._get_accounting_date(move.invoice_date, move._affect_tax_report())
+            //         accounting_date = move._get_accounting_date(accounting_date, move._affect_tax_report())
             //     if accounting_date and accounting_date != move.date:
             //         move.date = accounting_date
             //         # _affect_tax_report may trigger premature recompute of line_ids.date
@@ -3246,7 +3554,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             pay.destination_account_id = self.env['account.account'].with_company(pay.company_id).search([
             //                 *self.env['account.account']._check_company_domain(pay.company_id),
             //                 ('account_type', '=', 'asset_receivable'),
-            //                 ('deprecated', '=', False),
             //             ], limit=1)
             //     elif pay.partner_type == 'supplier':
             //         # Send money to pay a bill or receive money to refund it.
@@ -3256,7 +3563,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             pay.destination_account_id = self.env['account.account'].with_company(pay.company_id).search([
             //                 *self.env['account.account']._check_company_domain(pay.company_id),
             //                 ('account_type', '=', 'liability_payable'),
-            //                 ('deprecated', '=', False),
             //             ], limit=1)
             */
             return default;
@@ -3287,6 +3593,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeDisplayLinkQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_display_link_qr_code(self):
+            // for move in self:
+            //     move.display_link_qr_code = (
+            //         move.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
+            //         and move.company_id.link_qr_code
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -3307,7 +3627,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_display_name(self):
             // for leave in self:
-            //     user_tz = timezone(leave.tz)
+            //     user_tz = pytz.timezone(leave.tz)
             //     date_from_utc = leave.date_from and leave.date_from.astimezone(user_tz).date()
             //     date_to_utc = leave.date_to and leave.date_to.astimezone(user_tz).date()
             //     time_off_type_display = leave.holiday_status_id.name
@@ -3345,11 +3665,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self.env.context.get('show_partner_name'):
             //     return super()._compute_display_name()
             // for applicant in self:
-            //     applicant.display_name = applicant.partner_name or applicant.name
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_display_name(self):
-            // for candidate in self:
-            //     candidate.display_name = candidate.partner_name or candidate.partner_id.name
+            //     applicant.display_name = applicant.partner_name
             */
             return default;
         }
@@ -3364,6 +3680,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
             //         and move.company_id.qr_code
             //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeDisplaySendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_display_send_button(self):
+            // for move in self:
+            //     move.display_send_button = move.is_sale_document() and move.state == 'posted'
             */
             return default;
         }
@@ -3501,6 +3828,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_fiscal_position_id(self):
             // for move in self:
+            //     receipt_fiscal_position = {
+            //         'in_receipt': move.company_id.account_purchase_receipt_fiscal_position_id,
+            //     }.get(move.move_type)
+            //     if receipt_fiscal_position:
+            //         move.fiscal_position_id = receipt_fiscal_position
+            //         continue
             //     delivery_partner = self.env['res.partner'].browse(
             //         move.partner_shipping_id.id
             //         or move.partner_id.address_get(['delivery'])['delivery']
@@ -3511,55 +3844,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeFromAccountMoveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_from_account_move_ids(self):
-            // for sheet in self:
-            //     if sheet.payment_mode == 'company_account':
-            //         if sheet.account_move_ids.filtered(lambda move: move.state != 'draft'):
-            //             # when the sheet is paid by the company, the state/amount of the related account_move_ids are not relevant
-            //             # unless all moves have been reversed
-            //             sheet.amount_residual = 0.
-            //             if sheet.account_move_ids - sheet.account_move_ids.filtered('reversal_move_ids'):
-            //                 sheet.payment_state = 'paid'
-            //             else:
-            //                 sheet.payment_state = 'reversed'
-            //         else:
-            //             sheet.amount_residual = sum(sheet.account_move_ids.mapped('amount_residual'))
-            //             payment_states = set(sheet.account_move_ids.mapped('payment_state'))
-            //             if len(payment_states) <= 1:  # If only 1 move or only one state
-            //                 sheet.payment_state = payment_states.pop() if payment_states else 'not_paid'
-            //             elif 'partial' in payment_states or 'paid' in payment_states:  # else if any are (partially) paid
-            //                 sheet.payment_state = 'partial'
-            //             else:
-            //                 sheet.payment_state = 'not_paid'
-            //     else:
-            //         # Only one move is created when the expenses are paid by the employee
-            //         if sheet.account_move_ids.filtered(lambda move: move.state == 'posted'):
-            //             sheet.amount_residual = sum(sheet.account_move_ids.mapped('amount_residual'))
-            //             sheet.payment_state = sheet.account_move_ids[:1].payment_state
-            //         else:
-            //             sheet.amount_residual = 0.0
-            //             sheet.payment_state = 'not_paid'
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeFromEmployeeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_from_employee_id(self):
-            // for sheet in self:
-            //     sheet.department_id = sheet.employee_id.department_id
-            //     sheet.user_id = sheet.employee_id.expense_manager_id or sheet.employee_id.parent_id.user_id
+            // for expense in self:
+            //     expense.department_id = expense.employee_id.department_id
+            //     expense.manager_id = expense._get_default_responsible_for_approval()
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_from_employee_id(self):
             // for holiday in self:
-            //     holiday.manager_id = holiday.employee_id.parent_id.id
-            //     if holiday.holiday_status_id.requires_allocation == 'no':
+            //     if not holiday.holiday_status_id.requires_allocation:
             //         continue
             //     if not holiday.employee_id:
             //         holiday.holiday_status_id = False
@@ -3589,11 +3885,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_has_mandatory_day(self):
             // date_from, date_to = min(self.mapped('date_from')), max(self.mapped('date_to'))
             // if date_from and date_to:
-            //     mandatory_days = self.employee_id._get_mandatory_days(
+            //     # Sudo to get access to version fields on employee (job_id)
+            //     mandatory_days = self.employee_id.sudo()._get_mandatory_days(
             //         date_from.date(),
             //         date_to.date())
             // 
             //     for leave in self:
+            //         department_ids = leave.employee_id.department_id.ids
             //         domain = [
             //             ('start_date', '<=', leave.date_to.date()),
             //             ('end_date', '>=', leave.date_from.date()),
@@ -3601,12 +3899,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 ('resource_calendar_id', '=', False),
             //                 ('resource_calendar_id', '=', leave.resource_calendar_id.id),
             //         ]
+            //         if department_ids:
+            //             domain += [
+            //                 '|',
+            //                 ('department_ids', '=', False),
+            //                 ('department_ids', 'parent_of', department_ids),
+            //             ]
+            //         else:
+            //             domain += [('department_ids', '=', False)]
             // 
             //         if leave.holiday_status_id.company_id:
             //             domain += [('company_id', '=', leave.holiday_status_id.company_id.id)]
             //         leave.has_mandatory_day = leave.date_from and leave.date_to and mandatory_days.filtered_domain(domain)
             // else:
             //     self.has_mandatory_day = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHasMultipleBankAccountsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_has_multiple_bank_accounts(self):
+            // for employee in self:
+            //     if employee.bank_account_ids and len(employee.bank_account_ids) > 1:
+            //         employee.has_multiple_bank_accounts = True
+            //     else:
+            //         employee.has_multiple_bank_accounts = False
             */
             return default;
         }
@@ -3642,6 +3962,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_highest_name(self):
             // for record in self:
             //     record.highest_name = record._get_last_sequence()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHighlightSendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_highlight_send_button(self):
+            // for move in self:
+            //     move.highlight_send_button = not move.is_being_sent and not move.invoice_pdf_report_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIncotermInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_incoterm(self):
+            // for move in self:
+            //     if move.move_type.startswith('out_'):
+            //         move.invoice_incoterm_id = move.company_id.incoterm_id
             */
             return default;
         }
@@ -3711,12 +4054,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_invoice_filter_type_domain(self):
             // for move in self:
-            //     if move.is_sale_document(include_receipts=True):
-            //         move.invoice_filter_type_domain = 'sale'
-            //     elif move.is_purchase_document(include_receipts=True):
-            //         move.invoice_filter_type_domain = 'purchase'
-            //     else:
-            //         move.invoice_filter_type_domain = False
+            //     move.invoice_filter_type_domain = self._get_invoice_filter_type_domain(move.move_type)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeInvoiceHasOutstandingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_invoice_has_outstanding(self):
+            // for move in self:
+            //     move.invoice_has_outstanding = bool(move.invoice_outstanding_credits_debits_widget)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeInvoiceIncotermPlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_invoice_incoterm_placeholder(self):
+            // for move in self:
+            //     move.invoice_incoterm_placeholder = move.company_id.incoterm_id.display_name if move.company_id.incoterm_id else _('Define a default in the settings')
             */
             return default;
         }
@@ -3755,6 +4115,70 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeIsApplicantInPoolInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _compute_is_applicant_in_pool(self):
+            // """
+            // Computes if an application is linked to a talent pool or not.
+            // An application can either be directly or indirectly linked to a talent pool.
+            // Direct link:
+            //     - 1. Application has talent_pool_ids set, meaning this application
+            //         is a talent pool application, or talent for short.
+            //     - 2. Application has pool_applicant_id set, meaning this application
+            //     is a copy or directly linked to a talent (scenario 1)
+            // 
+            // Indirect link:
+            //     - 3. Application shares a phone number, email, or linkedin with a
+            //         direclty linked application.
+            // 
+            // Note: While possible, linking an application to a pool through linking
+            // it to an indirect link is currently excluded from the implementation
+            // for technical reasons.
+            // """
+            // direct = self.filtered(lambda a: a.talent_pool_ids or a.pool_applicant_id)
+            // direct.is_applicant_in_pool = True
+            // indirect = self - direct
+            // 
+            // if not indirect:
+            //     return
+            // 
+            // all_emails = {a.email_normalized for a in indirect if a.email_normalized}
+            // all_phones = {a.partner_phone_sanitized for a in indirect if a.partner_phone_sanitized}
+            // all_linkedins = {a.linkedin_profile for a in indirect if a.linkedin_profile}
+            // 
+            // epl_domain = Domain.FALSE
+            // if all_emails:
+            //     epl_domain |= Domain("email_normalized", "in", list(all_emails))
+            // if all_phones:
+            //     epl_domain |= Domain("partner_phone_sanitized", "in", list(all_phones))
+            // if all_linkedins:
+            //     epl_domain |= Domain("linkedin_profile", "in", list(all_linkedins))
+            // 
+            // pool_domain = Domain(["|", ("talent_pool_ids", "!=", False), ("pool_applicant_id", "!=", False)])
+            // domain = pool_domain & epl_domain
+            // in_pool_applicants = self.env["hr.applicant"].with_context(active_test=True).search(domain)
+            // in_pool_data = {"emails": set(), "phones": set(), "linkedins": set()}
+            // 
+            // for applicant in in_pool_applicants:
+            //     if applicant.email_normalized:
+            //         in_pool_data["emails"].add(applicant.email_normalized)
+            //     if applicant.partner_phone_sanitized:
+            //         in_pool_data["phones"].add(applicant.partner_phone_sanitized)
+            //     if applicant.linkedin_profile:
+            //         in_pool_data["linkedins"].add(applicant.linkedin_profile)
+            // 
+            // for applicant in indirect:
+            //     applicant.is_applicant_in_pool = (
+            //         applicant.email_normalized in in_pool_data["emails"]
+            //         or applicant.partner_phone_sanitized in in_pool_data["phones"]
+            //         or applicant.linkedin_profile in in_pool_data["linkedins"]
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeIsBeingSentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -3771,45 +4195,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_is_editable(self):
-            // for expense in self:
-            //     if expense.sheet_id:
-            //         expense.is_editable = expense.sheet_id.is_editable
-            //     else:
-            //         expense.is_editable = True
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_is_editable(self):
             // is_hr_admin = (
-            //         self.env.user.has_group('hr_expense.group_hr_expense_manager')
-            //         or self.env.user.has_group('base.group_system')
+            //     self.env.user.has_group('hr_expense.group_hr_expense_manager')
+            //     or self.env.su
             // )
-            // is_approver = self.env.user.has_group('hr_expense.group_hr_expense_user')
-            // for sheet in self:
-            //     if sheet.state not in {'draft', 'submit', 'approve'}:
+            // is_team_approver = self.env.user.has_group('hr_expense.group_hr_expense_team_approver')
+            // is_all_approver = self.env.user.has_group('hr_expense.group_hr_expense_user')
+            // 
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:
+            //     expenses_employee_ids_under_user_ones = set(
+            //         self.env['hr.employee'].sudo().search(
+            //             [
+            //                 ('id', 'in', self.employee_id.ids),
+            //                 ('id', 'child_of', self.env.user.employee_ids.ids),
+            //                 ('id', 'not in', self.env.user.employee_ids.ids),
+            //             ]
+            //         ).ids
+            //     )
+            // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # This would lead to fields being set as editable, instead of using the env company,
+            //         # recomputing the interface just to be blocked when trying to save we choose not to recompute anything
+            //         # and wait for a proper company to be inputted.
+            //         continue
+            //     if expense.state not in {'draft', 'submitted', 'approved'} and not self.env.su:
             //         # Not editable
-            //         sheet.is_editable = False
+            //         expense.is_editable = False
             //         continue
             // 
-            //     if is_hr_admin or self.env.su:
-            //         # Administrator-level users are not restricted
-            //         sheet.is_editable = True
+            //     if is_hr_admin:
+            //         # Administrator-level users are not restricted, they can edit their own expenses
+            //         expense.is_editable = True
             //         continue
             // 
-            //     employee = sheet.employee_id
-            // 
-            //     is_own_sheet = employee.user_id == self.env.user
-            //     if is_own_sheet and sheet.state == 'draft':
-            //         # Anyone can edit their own draft sheet
-            //         sheet.is_editable = True
+            //     employee = expense.employee_id
+            //     is_own_expense = employee.user_id == self.env.user
+            //     if is_own_expense and expense.state == 'draft':
+            //         # Anyone can edit their own draft expense
+            //         expense.is_editable = True
             //         continue
             // 
-            //     managers = employee.expense_manager_id | employee.parent_id.user_id | employee.department_id.manager_id.user_id
-            //     if is_approver:
+            //     managers = (
+            //         expense.manager_id
+            //         | employee.expense_manager_id
+            //         | employee.sudo().department_id.manager_id.user_id.sudo(self.env.su)
+            //     )
+            //     if is_all_approver:
             //         managers |= self.env.user
-            //     if not is_own_sheet and self.env.user in managers:
-            //         # If Approver-level or designated manager, can edit other people sheet
-            //         sheet.is_editable = True
+            //     if expense.employee_id.id in expenses_employee_ids_under_user_ones:
+            //             managers |= self.env.user
+            //     if not is_own_expense and self.env.user in managers:
+            //         # If Approver-level or designated manager, can edit other people expense
+            //         expense.is_editable = True
             //         continue
-            //     sheet.is_editable = False
+            //     expense.is_editable = False
             */
             return default;
         }
@@ -3832,12 +4273,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_is_multiple_currency(self):
             // for expense in self:
-            //     expense.is_multiple_currency = expense.currency_id != expense.company_currency_id
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_is_multiple_currency(self):
-            // for sheet in self:
-            //     sheet.is_multiple_currency = any(sheet.expense_line_ids.mapped('is_multiple_currency')) \
-            //                                  or len(sheet.expense_line_ids.mapped('currency_id')) > 1
+            //     expense_currency = expense.currency_id or expense.company_currency_id or expense.env.company.currency_id
+            //     expense_company_currency = expense.company_currency_id or expense.env.company.currency_id
+            //     expense.is_multiple_currency = expense_currency != expense_company_currency
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIsPoolInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _compute_is_pool(self):
+            // for applicant in self:
+            //     applicant.is_pool_applicant = applicant.talent_pool_ids
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIsSaleInstalledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_is_sale_installed(self):
+            // self.is_sale_installed = 'sale_management' in self.env['ir.module.module']._installed()
             */
             return default;
         }
@@ -3848,7 +4307,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_is_storno(self):
             // for move in self:
-            //     move.is_storno = move.is_storno or (move.move_type in ('out_refund', 'in_refund') and move.company_id.account_storno)
+            //     is_refund = move.move_type in ('out_refund', 'in_refund')
+            //     move.is_storno = move.is_storno or (is_refund and move.company_id.account_storno)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIsTrustedBankAccountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_is_trusted_bank_account(self):
+            // for employee in self:
+            //     employee.is_trusted_bank_account = employee.primary_bank_account_id.allow_out_payment
             */
             return default;
         }
@@ -3880,24 +4351,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             *self.env['account.journal']._check_company_domain(company),
             //             ('type', 'in', ['bank', 'cash', 'credit']),
             //         ], limit=1)
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_journal_id(self):
-            // for sheet in self:
-            //     if sheet.payment_mode == 'company_account':
-            //         sheet.journal_id = sheet.payment_method_line_id.journal_id
-            //     else:
-            //         sheet.journal_id = sheet.employee_journal_id
             */
             return default;
         }
 
-        public async Task<TEntity> ComputeKmHomeWorkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ComputeLastActivityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _compute_km_home_work(self):
+            // def _compute_last_activity(self):
             // for employee in self:
-            //     employee.km_home_work = employee.distance_home_work * 1.609 if employee.distance_home_work_unit == "miles" else employee.distance_home_work
+            //     tz = employee.tz
+            //     # sudo: res.users - can access presence of accessible user
+            //     if last_presence := employee.user_id.sudo().presence_ids.last_presence:
+            //         last_activity_datetime = last_presence.replace(tzinfo=UTC).astimezone(timezone(tz)).replace(tzinfo=None)
+            //         employee.last_activity = last_activity_datetime.date()
+            //         if employee.last_activity == fields.Date.today():
+            //             employee.last_activity_time = format_time(self.env, last_presence, time_format='short')
+            //         else:
+            //             employee.last_activity_time = False
+            //     else:
+            //         employee.last_activity = False
+            //         employee.last_activity_time = False
             */
             return default;
         }
@@ -3921,7 +4396,45 @@ namespace Bamboo.Core.Application.Services.Mixins
             // durations = self._get_durations(check_leave_type=False)
             // for leave in self:
             //     days = durations[leave.id][0]
-            //     leave.leave_type_increases_duration = leave.leave_type_request_unit == 'day' and days < leave.number_of_days
+            //     if leave.leave_type_request_unit == 'day' and leave.holiday_status_requires_allocation and days < leave.number_of_days:
+            //         leave.leave_type_increases_duration = self.env._("According to your working schedule you are expected to work"
+            //         " %(days)s days in this period, but %(nb_days)s days will be used because this leave"
+            //         " %(leave_type_name)s can only be taken by days.",
+            //         days=days, nb_days=leave.number_of_days, leave_type_name=leave.holiday_status_id.name)
+            //     else:
+            //         leave.leave_type_increases_duration = ''
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeLeavesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_leaves(self):
+            // date_from = fields.Date.from_string(self.env.context['default_request_date_from']) if 'default_request_date_from' in self.env.context else fields.Date.today()
+            // employee_days_per_allocation = self.employee_id._get_consumed_leaves(self.holiday_status_id, date_from)[0]
+            // for leave in self:
+            //     virtual_remaining_leaves = 0
+            //     max_leaves = 0
+            //     for allocation, allocation_dict in employee_days_per_allocation[leave.employee_id][leave.holiday_status_id].items():
+            //         if allocation and (not allocation.date_to or allocation.date_to >= date_from):
+            //             max_leaves += allocation_dict['max_leaves']
+            //             virtual_remaining_leaves += allocation_dict['virtual_remaining_leaves']
+            //     leave.virtual_remaining_leaves = virtual_remaining_leaves
+            //     leave.max_leaves = max_leaves
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeLegalNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_legal_name(self):
+            // for employee in self:
+            //     if not employee.legal_name:
+            //         employee.legal_name = employee.name
             */
             return default;
         }
@@ -3967,23 +4480,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeMainAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_main_attachment(self):
-            // for sheet in self:
-            //     attachments = sheet.attachment_ids
-            //     if not sheet.message_main_attachment_id or sheet.message_main_attachment_id not in attachments:
-            //         expenses = sheet.expense_line_ids
-            //         expenses_mma_checksums = expenses.message_main_attachment_id.mapped('checksum')
-            //         sheet.message_main_attachment_id = attachments.filtered(
-            //             lambda att: att.checksum in expenses_mma_checksums
-            //         )[:1] or attachments[:1]
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeMeetingDisplayInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -4009,28 +4505,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         applicant.meeting_display_text = _('Next Meeting')
             //     else:
             //         applicant.meeting_display_text = _('Last Meeting')
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_meeting_display(self):
-            // candidate_with_meetings = self.filtered('meeting_ids')
-            // (self - candidate_with_meetings).update({
-            //     'meeting_display_text': _('No Meeting'),
-            //     'meeting_display_date': ''
-            // })
-            // today = fields.Date.today()
-            // for candidate in candidate_with_meetings:
-            //     count = len(candidate.meeting_ids)
-            //     dates = candidate.meeting_ids.mapped('start')
-            //     min_date, max_date = min(dates).date(), max(dates).date()
-            //     if min_date >= today:
-            //         candidate.meeting_display_date = min_date
-            //     else:
-            //         candidate.meeting_display_date = max_date
-            //     if count == 1:
-            //         candidate.meeting_display_text = _('1 Meeting')
-            //     elif candidate.meeting_display_date >= today:
-            //         candidate.meeting_display_text = _('Next Meeting')
-            //     else:
-            //         candidate.meeting_display_text = _('Last Meeting')
             */
             return default;
         }
@@ -4123,17 +4597,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeNbAccountMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_nb_account_move(self):
-            // for sheet in self:
-            //     sheet.nb_account_move = len(sheet.account_move_ids)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeNbAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -4147,17 +4610,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // attachment = dict(attachment_data)
             // for expense in self:
             //     expense.nb_attachment = attachment.get(expense._origin.id, 0)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeNbExpenseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_nb_expense(self):
-            // for sheet in self:
-            //     sheet.nb_expense = len(sheet.expense_line_ids)
             */
             return default;
         }
@@ -4195,7 +4647,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 base_lines, _tax_lines = invoice._get_rounded_base_and_tax_lines(round_from_tax_lines=False)
             //                 AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines, invoice.company_id, include_caba_tags=invoice.always_tax_exigible)
             //                 tax_results = AccountTax._prepare_tax_lines(base_lines, invoice.company_id)
-            //                 for base_line, to_update in tax_results['base_lines_to_update']:
+            //                 for _base_line, to_update in tax_results['base_lines_to_update']:
             //                     untaxed_amount_currency += sign * to_update['amount_currency']
             //                     untaxed_amount += sign * to_update['balance']
             //                 for tax_line_vals in tax_results['tax_lines_to_add']:
@@ -4250,6 +4702,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeNewlyHiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_newly_hired(self):
+            // new_hire_field = self._get_new_hire_field()
+            // new_hire_date = fields.Datetime.now() - timedelta(days=90)
+            // for employee in self:
+            //     if not employee[new_hire_field]:
+            //         employee.newly_hired = False
+            //     elif not isinstance(employee[new_hire_field], datetime):
+            //         employee.newly_hired = employee[new_hire_field] > new_hire_date.date()
+            //     else:
+            //         employee.newly_hired = employee[new_hire_field] > new_hire_date
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeNextPaymentDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -4261,20 +4731,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeOtherApplicationsCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ComputeNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _compute_other_applications_count(self):
-            // for applicant in self:
-            //     same_candidate_applications = max(len(applicant.with_context(active_test=False).candidate_id.applicant_ids) - 1, 0)
-            //     if applicant.candidate_id:
-            //         domain = applicant.candidate_id._get_similar_candidates_domain()
-            //         similar_candidates = self.env['hr.candidate'].with_context(active_test=False).search(domain) - applicant.candidate_id
-            //         similar_candidate_applications = sum(len(candidate.applicant_ids) for candidate in similar_candidates)
-            //         applicant.other_applications_count = similar_candidate_applications + same_candidate_applications
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_no_followup(self):
+            // for move in self:
+            //     if move.is_invoice():
+            //         lines = move.line_ids.filtered(
+            //             lambda line: line.account_type in ('asset_receivable', 'liability_payable'),
+            //         )
+            //         move.no_followup = lines[0].no_followup if lines else True
             //     else:
-            //         applicant.other_applications_count = same_candidate_applications
+            //         move.no_followup = True
             */
             return default;
         }
@@ -4295,29 +4764,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_partner_bank_id(self):
+            // def _bank_selection_key(bank):
+            //     """Sorting priority:
+            //     0. Same currency as the move or no currency
+            //     1. Different currency
+            //     Then: prefer banks allowing outgoing payments (trusted ones)
+            //     """
+            //     if bank.currency_id == move.currency_id or not bank.currency_id:
+            //         currency_priority = 0
+            //     else:
+            //         currency_priority = 1
+            //     return (currency_priority, not bank.allow_out_payment)
+            // 
             // for move in self:
-            //     # This will get the bank account from the partner in an order with the trusted first
-            //     bank_ids = move.bank_partner_id.bank_ids.filtered(
+            //     if move.is_inbound() and (
+            //         payment_method := (
+            //             move.preferred_payment_method_line_id
+            //             or move.bank_partner_id.property_inbound_payment_method_line_id
+            //         )
+            //     ) and payment_method.journal_id:
+            //         move.partner_bank_id = payment_method.journal_id.bank_account_id
+            //         continue
+            // 
+            //     move.partner_bank_id = move.bank_partner_id.bank_ids.filtered(
             //         lambda bank: not bank.company_id or bank.company_id == move.company_id
-            //     ).sorted(lambda bank: not bank.allow_out_payment)
-            //     move.partner_bank_id = bank_ids[:1]
+            //     ).sorted(key=_bank_selection_key)[:1]
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def _compute_partner_bank_id(self):
             // ''' The default partner_bank_id will be the first available on the partner. '''
             // for pay in self:
             //     if pay.partner_bank_id not in pay.available_partner_bank_ids:
             //         pay.partner_bank_id = pay.available_partner_bank_ids[:1]._origin
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePartnerCreditInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _compute_partner_credit(self):
-            // for move in self:
-            //     move.partner_credit = move.partner_id.commercial_partner_id.credit
             */
             return default;
         }
@@ -4345,42 +4822,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputePartnerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def _compute_partner_id(self):
-            // for pay in self:
-            //     if pay.partner_id == pay.journal_id.company_id.partner_id:
-            //         pay.partner_id = False
-            //     else:
-            //         pay.partner_id = pay.partner_id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePartnerNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _compute_partner_name(self):
-            // for applicant in self:
-            //     applicant.partner_name = applicant.candidate_id.partner_name
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputePartnerPhoneEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _compute_partner_phone_email(self):
-            // for candidate in self:
-            //     if not candidate.partner_id:
+            // for applicant in self:
+            //     if not applicant.partner_id:
             //         continue
-            //     candidate.email_from = candidate.partner_id.email
-            //     if not candidate.partner_phone:
-            //         candidate.partner_phone = candidate.partner_id.phone
+            //     applicant.email_from = applicant.partner_id.email
+            //     if not applicant.partner_phone:
+            //         applicant.partner_phone = applicant.partner_id.phone
             */
             return default;
         }
@@ -4388,10 +4840,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePartnerPhoneSanitizedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _compute_partner_phone_sanitized(self):
-            // for candidate in self:
-            //     candidate.partner_phone_sanitized = candidate._phone_format(fname='partner_phone') or candidate.partner_phone
+            // for applicant in self:
+            //     applicant.partner_phone_sanitized = (
+            //         applicant._phone_format(fname="partner_phone") or applicant.partner_phone
+            //     )
             */
             return default;
         }
@@ -4417,7 +4871,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payment_count(self):
             // for invoice in self:
-            //     invoice.payment_count = len(invoice.matched_payment_ids)
+            //     invoice.payment_count = len(invoice.reconciled_payment_ids)
             */
             return default;
         }
@@ -4458,10 +4912,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         pay.payment_method_line_id = available_payment_method_lines[0]._origin
             //     else:
             //         pay.payment_method_line_id = False
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_payment_method_line_id(self):
-            // for sheet in self:
-            //     sheet.payment_method_line_id = sheet.selectable_payment_method_line_ids[:1]
+            // for expense in self:
+            //     expense.payment_method_line_id = expense.selectable_payment_method_line_ids[:1]
             */
             return default;
         }
@@ -4498,16 +4952,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payment_state(self):
+            // def _invoice_qualifies(move):
+            //     currency = move.currency_id or move.company_id.currency_id or self.env.company.currency_id
+            //     return move.is_invoice(True) and (
+            //         move.state == 'posted'
+            //         or (move.state == 'draft' and not currency.is_zero(move.amount_total))
+            //     )
+            // 
             // groups = self.grouped(lambda move:
             //     'legacy' if move.payment_state == 'invoicing_legacy' else
-            //     'posted_invoice' if move.state == 'posted' and move.is_invoice(True) else
             //     'blocked' if move.payment_state == 'blocked' else
+            //     'invoices' if _invoice_qualifies(move) else
             //     'unpaid'
             // )
             // groups.get('unpaid', self.browse()).payment_state = 'not_paid'
-            // posted_invoices = groups.get('posted_invoice', self.browse())
+            // invoices = groups.get('invoices', self.browse())
             // 
-            // stored_ids = tuple(posted_invoices.ids)
+            // stored_ids = tuple(invoices.ids)
             // if stored_ids:
             //     self.env['account.partial.reconcile'].flush_model()
             //     self.env['account.payment'].flush_model(['is_matched'])
@@ -4543,9 +5004,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     payment_data = {}
             // 
-            // for invoice in posted_invoices:
-            //     currencies = invoice._get_lines_onchange_currency().currency_id
-            //     currency = currencies if len(currencies) == 1 else invoice.company_id.currency_id
+            // for invoice in invoices:
+            //     currency = invoice.currency_id or invoice.company_id.currency_id or self.env.company.currency_id
             //     reconciliation_vals = payment_data.get(invoice.id, [])
             // 
             //     # Restrict on 'receivable'/'payable' lines for invoices/expense entries.
@@ -4577,11 +5037,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                             and reverse_move_types == {'entry'})
             //             if in_reverse or out_reverse or misc_reverse:
             //                 new_pmt_state = 'reversed'
-            //     elif invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'in_process'):
+            //     elif invoice.state == 'posted' and invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'in_process'):
             //         new_pmt_state = invoice._get_invoice_in_payment_state()
             //     elif reconciliation_vals:
             //         new_pmt_state = 'partial'
-            //     elif invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'paid'):
+            //     elif invoice.state == 'posted' and invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'paid'):
             //         new_pmt_state = invoice._get_invoice_in_payment_state()
             //     invoice.payment_state = new_pmt_state
             */
@@ -4619,7 +5079,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for move in self:
             //     payments_widget_vals = {'title': _('Less Payment'), 'outstanding': False, 'content': []}
             // 
-            //     if move.state == 'posted' and move.is_invoice(include_receipts=True):
+            //     if move.state in {'draft', 'posted'} and move.is_invoice(include_receipts=True):
             //         reconciled_vals = []
             //         reconciled_partials = move.sudo()._get_all_reconciled_invoice_partials()
             //         for reconciled_partial in reconciled_partials:
@@ -4666,11 +5126,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payments_widget_to_reconcile_info(self):
+            // 
             // for move in self:
             //     move.invoice_outstanding_credits_debits_widget = False
-            //     move.invoice_has_outstanding = False
             // 
-            //     if move.state != 'posted' \
+            //     if move.state not in {'draft', 'posted'} \
             //             or move.payment_state not in ('not_paid', 'partial') \
             //             or not move.is_invoice(include_receipts=True):
             //         continue
@@ -4683,17 +5143,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ('parent_state', '=', 'posted'),
             //         ('partner_id', '=', move.commercial_partner_id.id),
             //         ('reconciled', '=', False),
+            //         ('balance', '<' if move.is_inbound() else '>', 0.0),
             //         '|', ('amount_residual', '!=', 0.0), ('amount_residual_currency', '!=', 0.0),
             //     ]
             // 
-            //     payments_widget_vals = {'outstanding': True, 'content': [], 'move_id': move.id}
-            // 
-            //     if move.is_inbound():
-            //         domain.append(('balance', '<', 0.0))
-            //         payments_widget_vals['title'] = _('Outstanding credits')
-            //     else:
-            //         domain.append(('balance', '>', 0.0))
-            //         payments_widget_vals['title'] = _('Outstanding debits')
+            //     payments_widget_vals = {
+            //         'outstanding': True,
+            //         'content': [],
+            //         'move_id': move.id,
+            //         'title': _('Outstanding credits') if move.is_inbound() else _('Outstanding debits')
+            //     }
             // 
             //     for line in self.env['account.move.line'].search(domain):
             // 
@@ -4722,11 +5181,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'account_payment_id': line.payment_id.id,
             //         })
             // 
-            //     if not payments_widget_vals['content']:
-            //         continue
-            // 
-            //     move.invoice_outstanding_credits_debits_widget = payments_widget_vals
-            //     move.invoice_has_outstanding = True
+            //     if payments_widget_vals['content']:
+            //         move.invoice_outstanding_credits_debits_widget = payments_widget_vals
             */
             return default;
         }
@@ -4746,6 +5202,52 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputePresenceIconInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_presence_icon(self):
+            // """
+            // This method compute the state defining the display icon in the kanban view.
+            // It can be overriden to add other possibilities, like time off or attendances recordings.
+            // """
+            // for employee in self:
+            //     employee.hr_icon_display = 'presence_' + employee.hr_presence_state
+            //     employee.show_hr_icon_display = bool(employee.user_id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePresenceStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_presence_state(self):
+            // """
+            // This method is overritten in several other modules which add additional
+            // presence criterions. e.g. hr_attendance, hr_holidays
+            // """
+            // # sudo: res.users - can access presence of accessible user
+            // employee_to_check_working = self.filtered(
+            //     lambda e: (e.user_id.sudo().presence_ids.status or "offline") == "offline"
+            // )
+            // working_now_list = employee_to_check_working._get_employee_working_now()
+            // for employee in self:
+            //     state = 'out_of_working_hour'
+            //     if employee.company_id.sudo().hr_presence_control_login:
+            //         # sudo: res.users - can access presence of accessible user
+            //         presence_status = employee.user_id.sudo().presence_ids.status or "offline"
+            //         if presence_status == "online":
+            //             state = 'present'
+            //         elif presence_status == "offline" and employee.id in working_now_list:
+            //             state = 'absent'
+            //     if not employee.active:
+            //         state = 'archive'
+            //     employee.hr_presence_state = state
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputePriceUnitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -4753,12 +5255,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_price_unit(self):
             // """
             //    The price_unit is the unit price of the product if no product is set and no attachment overrides it.
-            //    Otherwise it is always computed from the total_amount and the quantity else it would break the vendor bill
+            //    Otherwise it is always computed from the total_amount and the quantity else it would break the Receipt Entry
             //    when edited after creation.
             // """
             // for expense in self:
-            //     if expense.state not in {'draft', 'reported'}:
+            //     if expense.state != 'draft':
             //         continue
+            // 
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     product_id = expense.product_id
             //     if expense._needs_product_price_computation():
             //         expense.price_unit = product_id._price_compute(
@@ -4772,16 +5282,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputePriorityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ComputePrimaryBankAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_priority(self):
-            // for candidate in self:
-            //     if not candidate.applicant_ids:
-            //         candidate.priority = "0"
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_primary_bank_account_id(self):
+            // for employee in self:
+            //     if employee.bank_account_ids:
+            //         primary_account = min(
+            //             employee.bank_account_ids,
+            //             key=lambda acc: employee.salary_distribution.get(str(acc.id), {}).get("sequence", float("inf")),
+            //         )
+            //         employee.primary_bank_account_id = primary_account
             //     else:
-            //         candidate.priority = str(round(sum(int(a.priority) for a in candidate.applicant_ids) / len(candidate.applicant_ids)))
+            //         employee.primary_bank_account_id = False
             */
             return default;
         }
@@ -4793,17 +5307,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_product_description(self):
             // for expense in self:
             //     expense.product_description = not is_html_empty(expense.product_id.description) and expense.product_id.description
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeProductIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_product_ids(self):
-            // for sheet in self:
-            //     sheet.product_ids = sheet.expense_line_ids.mapped('product_id')
             */
             return default;
         }
@@ -4869,6 +5372,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeReconciledPaymentIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_reconciled_payment_ids(self):
+            // ''' Retrieve the payments reconciled to the invoices through the reconciliation (account.partial.reconcile) '''
+            // self.env['account.payment'].flush_model(fnames=['move_id'])
+            // self.env['account.move'].flush_model(fnames=['move_type'])
+            // self.env['account.move.line'].flush_model(fnames=['move_id', 'account_id'])
+            // self.env['account.partial.reconcile'].flush_model(fnames=['debit_move_id', 'credit_move_id'])
+            // self.env['account.account'].flush_model(fnames=['account_type'])
+            // 
+            // invoice_payment_links = dict(self.env.execute_query(SQL(
+            //     """
+            //     SELECT
+            //         invoice.id,
+            //         ARRAY_AGG(DISTINCT payment.id) AS payment_ids
+            //     FROM account_payment payment
+            //     JOIN account_move move ON move.id = payment.move_id
+            //     JOIN account_move_line line ON line.move_id = move.id
+            //     JOIN account_partial_reconcile part ON
+            //         part.debit_move_id = line.id
+            //         OR
+            //         part.credit_move_id = line.id
+            //     JOIN account_move_line counterpart_line ON
+            //         part.debit_move_id = counterpart_line.id
+            //         OR
+            //         part.credit_move_id = counterpart_line.id
+            //     JOIN account_move invoice ON invoice.id = counterpart_line.move_id
+            //     JOIN account_account account ON account.id = line.account_id
+            //     WHERE account.account_type IN ('asset_receivable', 'liability_payable')
+            //         AND invoice.id IN %(invoice_ids)s
+            //         AND line.id != counterpart_line.id
+            //     GROUP BY invoice.id, invoice.move_type
+            //     """,
+            //     invoice_ids=tuple(self.ids),
+            // ))) if self.ids else {}
+            // for move in self:
+            //     move.reconciled_payment_ids = self.env['account.payment'].browse(invoice_payment_links.get(move.id)) | move.matched_payment_ids
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeReconciliationStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -4915,14 +5461,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeRequestHourFromToInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_request_hour_from_to(self):
+            // env_company_calendar = self.env.company.resource_calendar_id
+            // for leave in self:
+            //     calendar = leave.resource_calendar_id or env_company_calendar
+            //     if (not leave.request_unit_hours
+            //             and leave.employee_id
+            //             and leave.request_date_from
+            //             and leave.request_date_to
+            //             and calendar):
+            //         hour_from, hour_to = leave._get_hour_from_to(leave.request_date_from, leave.request_date_to)
+            //         leave.request_hour_from = hour_from
+            //         leave.request_hour_to = hour_to
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeRequestUnitHalfInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_request_unit_half(self):
             // for holiday in self:
-            //     if holiday.holiday_status_id or holiday.request_unit_hours:
-            //         holiday.request_unit_half = False
+            //     holiday.request_unit_half = holiday.leave_type_request_unit == 'half_day'
             */
             return default;
         }
@@ -4933,8 +5498,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_request_unit_hours(self):
             // for holiday in self:
-            //     if holiday.holiday_status_id or holiday.request_unit_half:
-            //         holiday.request_unit_hours = False
+            //     holiday.request_unit_hours = holiday.leave_type_request_unit == 'hour'
             */
             return default;
         }
@@ -4944,16 +5508,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_resource_calendar_id(self):
+            // leaves_without_emp_or_date = self.filtered(
+            //     lambda leave: not (leave.employee_id and leave.request_date_from and leave.request_date_to)
+            // )
+            // valid_leaves = self - leaves_without_emp_or_date
+            // leaves_without_emp_or_date.resource_calendar_id = self.env.company.resource_calendar_id
+            // if not valid_leaves:
+            //     return
             // employees_by_dates = defaultdict(lambda: self.env['hr.employee'])
-            // for leave in self:
-            //     if leave.employee_id and leave.request_date_from:
-            //         employees_by_dates[leave.request_date_from] += leave.employee_id
+            // contracts_by_employee = dict(
+            //     self.env['hr.version']._read_group(
+            //         domain=[('employee_id', 'in', self.employee_id.ids)],
+            //         groupby=['employee_id'],
+            //         aggregates=['id:recordset']
+            //     )
+            // )
+            // for leave in valid_leaves:
+            //     employees_by_dates[leave.request_date_from] += leave.employee_id
             // calendar_by_dates = {date_from: employees._get_calendars(date_from) for date_from, employees in employees_by_dates.items()}
-            // for leave in self:
-            //     calendar = False
-            //     if leave.employee_id and leave.request_date_from:
-            //         calendar = calendar_by_dates[leave.request_date_from][leave.employee_id.id]
-            //     leave.resource_calendar_id = calendar or self.env.company.resource_calendar_id
+            // for leave in valid_leaves:
+            //     calendar = calendar_by_dates.get(leave.request_date_from, {}).get(leave.employee_id.id) \
+            //                 or self.env.company.resource_calendar_id
+            //     # We use the request dates to find the contracts, because date_from
+            //     # and date_to are not set yet at this point. Since these dates are
+            //     # used to get the contracts for which these leaves apply and
+            //     # contract start- and end-dates are just dates (and not datetimes)
+            //     # these dates are comparable.
+            //     contracts = contracts_by_employee.get(leave.employee_id, self.env['hr.version']).filtered(
+            //         lambda c: c.date_start <= leave.request_date_to and
+            //                   (not c.date_end or c.date_end >= leave.request_date_from))
+            //     if contracts:
+            //         # If there are more than one contract they should all have the
+            //         # same calendar, otherwise a constraint is violated.
+            //         calendar = contracts[:1].resource_calendar_id
+            //     leave.resource_calendar_id = calendar
             */
             return default;
         }
@@ -4965,7 +5553,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_same_receipt_expense_ids(self):
             // self.same_receipt_expense_ids = [Command.clear()]
             // 
-            // expenses_with_attachments = self.filtered(lambda expense: expense.attachment_ids)
+            // expenses_with_attachments = self.filtered(lambda expense: expense.attachment_ids and not expense.split_expense_origin_id)
             // if not expenses_with_attachments:
             //     return
             // 
@@ -5001,16 +5589,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeSelectablePaymentMethodLineIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_selectable_payment_method_line_ids(self):
-            // for sheet in self:
-            //     allowed_method_line_ids = sheet.company_id.company_expense_allowed_payment_method_line_ids
+            // for expense in self:
+            //     allowed_method_line_ids = expense.company_id.company_expense_allowed_payment_method_line_ids
             //     if allowed_method_line_ids:
-            //         sheet.selectable_payment_method_line_ids = allowed_method_line_ids
+            //         expense.selectable_payment_method_line_ids = allowed_method_line_ids
             //     else:
-            //         sheet.selectable_payment_method_line_ids = self.env['account.payment.method.line'].search([
+            //         expense.selectable_payment_method_line_ids = self.env['account.payment.method.line'].search([
+            //             # The journal is the source of the payment method line company
+            //             *self.env['account.journal']._check_company_domain(expense.company_id),
             //             ('payment_type', '=', 'outbound'),
-            //             ('company_id', 'parent_of', sheet.company_id.id)
             //         ])
             */
             return default;
@@ -5027,6 +5616,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeShowJournalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_show_journal(self):
+            // for move in self:
+            //     move.show_journal = len(move.suitable_journal_ids) > 1
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeShowPaymentTermDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -5038,7 +5638,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // - whether or not there is an early pay discount in this invoice that should be displayed
             // '''
             // for invoice in self:
-            //     if invoice.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt') and invoice.payment_state in ('not_paid', 'partial'):
+            //     if invoice.move_type in self._early_payment_discount_move_types() and invoice.payment_state in ('not_paid', 'partial'):
             //         payment_term_lines = invoice.line_ids.filtered(lambda l: l.display_type == 'payment_term')
             //         invoice.show_discount_details = invoice.invoice_payment_term_id.early_discount
             //         invoice.show_payment_term_details = len(payment_term_lines) > 1 or invoice.show_discount_details
@@ -5081,43 +5681,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeSimilarCandidatesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ComputeShowTaxableSupplyDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _compute_similar_candidates_count(self):
-            // """
-            //     The field similar_candidates_count is only used on the form view.
-            //     Thus, using ORM rather then querying, should not make much
-            //     difference in terms of performance, while being more readable and secure.
-            // """
-            // if not any(self._ids):
-            //     for candidate in self:
-            //         domain = candidate._get_similar_candidates_domain()
-            //         if domain:
-            //             candidate.similar_candidates_count = max(0, self.env["hr.candidate"].with_context(active_test=False).search_count(domain) - 1)
-            //         else:
-            //             candidate.similar_candidates_count = 0
-            //     return
-            // self.flush_recordset(['email_normalized', 'partner_phone_sanitized'])
-            // self.env.cr.execute("""
-            //     SELECT
-            //         id,
-            //         (
-            //             SELECT COUNT(*)
-            //             FROM hr_candidate AS sub
-            //             WHERE c.id != sub.id
-            //              AND ((coalesce(c.email_normalized, '') <> '' AND sub.email_normalized = c.email_normalized)
-            //                OR (coalesce(c.partner_phone_sanitized, '') <> '' AND c.partner_phone_sanitized = sub.partner_phone_sanitized))
-            //               AND c.company_id = sub.company_id
-            //         ) AS similar_candidates
-            //     FROM hr_candidate AS c
-            //     WHERE id IN %(ids)s
-            // """, {'ids': tuple(self._origin.ids)})
-            // query_results = self.env.cr.dictfetchall()
-            // mapped_data = {result['id']: result['similar_candidates'] for result in query_results}
-            // for candidate in self:
-            //     candidate.similar_candidates_count = mapped_data.get(candidate.id, 0)
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_show_taxable_supply_date(self):
+            // for move in self:
+            //     move.show_taxable_supply_date = False
             */
             return default;
         }
@@ -5165,7 +5735,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.env['account.move.line'].flush_model(fnames=['move_id', 'account_id', 'statement_line_id'])
             // self.env['account.partial.reconcile'].flush_model(fnames=['debit_move_id', 'credit_move_id'])
             // 
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT
             //         payment.id,
             //         ARRAY_AGG(DISTINCT invoice.id) AS invoice_ids,
@@ -5191,7 +5761,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ''', {
             //     'payment_ids': tuple(stored_payments.ids)
             // })
-            // query_res = self._cr.dictfetchall()
+            // query_res = self.env.cr.dictfetchall()
             // 
             // for pay in self:
             //     pay.reconciled_invoice_ids = pay.invoice_ids.filtered(lambda m: m.is_sale_document(True))
@@ -5208,7 +5778,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     pay.reconciled_invoices_count = len(pay.reconciled_invoice_ids)
             //     pay.reconciled_bills_count = len(pay.reconciled_bill_ids)
             // 
-            // self._cr.execute('''
+            // query_res = dict(self.env.execute_query(SQL('''
             //     SELECT
             //         payment.id,
             //         ARRAY_AGG(DISTINCT counterpart_line.statement_line_id) AS statement_line_ids
@@ -5229,10 +5799,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         AND line.id != counterpart_line.id
             //         AND counterpart_line.statement_line_id IS NOT NULL
             //     GROUP BY payment.id
-            // ''', {
-            //     'payment_ids': tuple(stored_payments.ids)
-            // })
-            // query_res = dict((payment_id, statement_line_ids) for payment_id, statement_line_ids in self._cr.fetchall())
+            // ''', payment_ids=tuple(stored_payments.ids)
+            // )))
             // 
             // for pay in self:
             //     statement_line_ids = query_res.get(pay.id, [])
@@ -5262,40 +5830,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if move.company_currency_id.is_zero(sum(liquidity.mapped('amount_residual'))) or not any(liquidity.account_id.mapped('reconcile')) else
             //             'in_process'
             //         )
-            //     if payment.state == 'in_process' and payment.invoice_ids and all(invoice.payment_state == 'paid' for invoice in payment.invoice_ids):
+            //     if payment.state == 'in_process' and payment.reconciled_invoice_ids and all(invoice.payment_state == 'paid' for invoice in payment.reconciled_invoice_ids):
             //         payment.state = 'paid'
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_state(self):
+            // """
+            // Compute the states of the expense as such (priority is given to the last matching state of the list):
+            //     - draft: By default
+            //     - submitted: When the approval_state is 'submitted'
+            //     - approved: When the approval_state is 'approved'
+            //     - refused: When the approval_state is 'refused'
+            //     - paid: When it is a company paid expense or the move state is neither 'draft' nor 'posted'
+            //     - in_payment (or paid): When the move state is 'posted' and it's 'payment_state' is 'in_payment' or 'paid'
+            //                             or ('partial' and there is a residual amount)
+            //     - posted: When the linked move state is 'draft', or if it is 'posted' and it's 'payment_state' is 'not_paid'
+            // """
             // for expense in self:
-            //     if not expense.sheet_id:
-            //         expense.state = 'draft'
-            //     elif expense.sheet_id.state == 'draft':
-            //         expense.state = 'reported'
-            //     elif expense.sheet_id.state == 'cancel':
-            //         expense.state = 'refused'
-            //     elif expense.sheet_id.state in {'approve', 'post'}:
-            //         expense.state = 'approved'
-            //     elif not expense.sheet_id.account_move_ids:
-            //         expense.state = 'submitted'
-            //     else:
-            //         expense.state = 'done'
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _compute_state(self):
-            // for sheet in self:
-            //     move_ids = sheet.account_move_ids
-            //     if not sheet.approval_state:
-            //         sheet.state = 'draft'
-            //     elif sheet.approval_state == 'cancel':
-            //         sheet.state = 'cancel'
-            //     elif move_ids:
-            //         if sheet.payment_state != 'not_paid':
-            //             sheet.state = 'done'
-            //         elif all(move_ids.mapped(lambda move: move.state == 'draft')):
-            //             sheet.state = 'approve'
-            //         else:
-            //             sheet.state = 'post'
-            //     else:
-            //         sheet.state = sheet.approval_state
+            //     move = expense.account_move_id
+            //     if move.state == 'cancel':
+            //         expense.state = 'paid'
+            //         continue
+            //     if move:
+            //         if expense.payment_mode == 'company_account':
+            //             # Shortcut to paid, as it's already paid, but we may not have the bank statement yet
+            //             expense.state = 'paid'
+            //         elif move.state == 'draft':
+            //             expense.state = 'posted'
+            //         elif move.payment_state == 'not_paid':
+            //             expense.state = 'posted'
+            //         elif (
+            //                 move.payment_state == 'in_payment'
+            //                 or (move.payment_state == 'partial' and not expense.company_currency_id.is_zero(expense.amount_residual))
+            //         ):
+            //             expense.state = self.env['account.move']._get_invoice_in_payment_state()
+            //         else:  # Partial, reversed or in_payment
+            //             expense.state = 'paid'
+            //         continue
+            //     expense.state = expense.approval_state or 'draft'
             */
             return default;
         }
@@ -5306,7 +5877,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_status_in_payment(self):
             // for move in self:
-            //     move.status_in_payment = move.state if move.state in ('draft', 'cancel') else move.payment_state
+            //     if move.state == 'posted':
+            //         if move.payment_state in ('partial', 'in_payment', 'paid', 'reversed'):
+            //             move.status_in_payment = move.payment_state
+            //         elif move.is_move_sent:
+            //             move.status_in_payment = 'sent'
+            //     elif move.state == 'draft':
+            //         if move.payment_state in ('partial', 'in_payment', 'paid'):
+            //             move.status_in_payment = move.payment_state
+            // 
+            //     if not move.status_in_payment:
+            //         move.status_in_payment = move.state
             */
             return default;
         }
@@ -5317,12 +5898,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_suitable_journal_ids(self):
             // for m in self:
-            //     journal_type = m.invoice_filter_type_domain or 'general'
-            //     company = m.company_id or self.env.company
-            //     m.suitable_journal_ids = self.env['account.journal'].search([
-            //         *self.env['account.journal']._check_company_domain(company),
-            //         ('type', '=', journal_type),
-            //     ])
+            //     m.suitable_journal_ids = self._get_suitable_journal_ids(m.move_type, m.company_id)
             */
             return default;
         }
@@ -5339,6 +5915,76 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeTalentPoolCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _compute_talent_pool_count(self):
+            // """
+            // This method will find the amount of talent pools the current application is associated with.
+            // An application can either be associated directly with a talent pool through talent_pool_ids
+            // and/or pool_applicant_id.talent_pool_ids or indirectly by having the same email, phone
+            // number or linkedin as a directly linked application.
+            // """
+            // pool_applicants = self.filtered("is_applicant_in_pool")
+            // (self - pool_applicants).talent_pool_count = 0
+            // 
+            // if not pool_applicants:
+            //     return
+            // 
+            // directly_linked = pool_applicants.filtered("pool_applicant_id")
+            // for applicant in directly_linked:
+            //     # All talents(applications with talent_pool_ids set) have a pool_applicant_id set to
+            //     # themselves which is the reason we only look for that instead of searching for all
+            //     # applications with talent_pool_ids and all applications with pool_applicant_id seperately
+            //     applicant.talent_pool_count = len(applicant.pool_applicant_id.talent_pool_ids)
+            // 
+            // indirectly_linked = pool_applicants - directly_linked
+            // if not indirectly_linked:
+            //     return
+            // 
+            // all_emails = {a.email_normalized for a in indirectly_linked if a.email_normalized}
+            // all_phones = {a.partner_phone_sanitized for a in indirectly_linked if a.partner_phone_sanitized}
+            // all_linkedins = {a.linkedin_profile for a in indirectly_linked if a.linkedin_profile}
+            // 
+            // epl_domain = Domain.FALSE
+            // if all_emails:
+            //     epl_domain |= Domain("email_normalized", "in", list(all_emails))
+            // if all_phones:
+            //     epl_domain |= Domain("partner_phone_sanitized", "in", list(all_phones))
+            // if all_linkedins:
+            //     epl_domain |= Domain("linkedin_profile", "in", list(all_linkedins))
+            // 
+            // pool_domain = Domain(["|", ("talent_pool_ids", "!=", False), ("pool_applicant_id", "!=", False)])
+            // domain = pool_domain & epl_domain
+            // in_pool_applicants = self.env["hr.applicant"].with_context(active_test=True).search(domain)
+            // 
+            // in_pool_emails = defaultdict(int)
+            // in_pool_phones = defaultdict(int)
+            // in_pool_linkedins = defaultdict(int)
+            // 
+            // for applicant in in_pool_applicants:
+            //     talent_pool_count = len(applicant.pool_applicant_id.talent_pool_ids)
+            //     if applicant.email_normalized:
+            //         in_pool_emails[applicant.email_normalized] = talent_pool_count
+            //     if applicant.partner_phone_sanitized:
+            //         in_pool_phones[applicant.partner_phone_sanitized] = talent_pool_count
+            //     if applicant.linkedin_profile:
+            //         in_pool_linkedins[applicant.linkedin_profile] = talent_pool_count
+            // 
+            // for applicant in indirectly_linked:
+            //     if applicant.email_from and in_pool_emails[applicant.email_normalized]:
+            //         applicant.talent_pool_count = in_pool_emails[applicant.email_normalized]
+            //     elif applicant.partner_phone_sanitized and in_pool_phones[applicant.partner_phone_sanitized]:
+            //         applicant.talent_pool_count = in_pool_phones[applicant.partner_phone_sanitized]
+            //     elif applicant.linkedin_profile and in_pool_linkedins[applicant.linkedin_profile]:
+            //         applicant.talent_pool_count = in_pool_linkedins[applicant.linkedin_profile]
+            //     else:
+            //         applicant.talent_pool_count = 0
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeTaxAmountCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -5350,6 +5996,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     base_line = expense._prepare_base_line_for_taxes_computation(
             //         price_unit=expense.total_amount_currency,
             //         quantity=1.0,
@@ -5369,11 +6022,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_tax_amount(self):
             // """
-            //      Note: as total_amount can be set directly by the user when the currency_rate is overriden,
+            //      Note: as total_amount can be set directly by the user when the currency_rate is overridden,
             //      the tax must be computed after the total_amount.
             // """
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     if expense.is_multiple_currency:
             //         base_line = expense._prepare_base_line_for_taxes_computation(
             //             price_unit=expense.total_amount,
@@ -5384,8 +6044,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         AccountTax._round_base_lines_tax_details([base_line], expense.company_id)
             //         tax_details = base_line['tax_details']
             //         expense.tax_amount = tax_details['total_included_currency'] - tax_details['total_excluded_currency']
+            //         expense.untaxed_amount = tax_details['total_excluded_currency']
             //     else:  # Mono-currency case computation shortcut
             //         expense.tax_amount = expense.tax_amount_currency
+            //         expense.untaxed_amount = expense.untaxed_amount_currency
             */
             return default;
         }
@@ -5406,6 +6068,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_tax_country_id(self):
+            // self.fetch(['fiscal_position_id', 'company_id'])
             // foreign_vat_records = self.filtered(lambda r: r.fiscal_position_id.foreign_vat)
             // for fiscal_position_id, record_group in groupby(foreign_vat_records, key=lambda r: r.fiscal_position_id):
             //     self.env['account.move'].concat(*record_group).tax_country_id = fiscal_position_id.country_id
@@ -5420,7 +6083,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_tax_ids(self):
-            // for _expense in self:
+            // for _expense in self.filtered('company_id'):   # Avoid a traceback, the field is required anyway
             //     expense = _expense.with_company(_expense.company_id)
             //     # taxes only from the same company
             //     expense.tax_ids = expense.product_id.supplier_taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(expense.company_id))
@@ -5471,6 +6134,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeTaxableSupplyDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_taxable_supply_date(self):
+            // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTaxableSupplyDatePlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_taxable_supply_date_placeholder(self):
+            // for move in self:
+            //     move.taxable_supply_date_placeholder = ''
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeTaxesLegalNotesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -5508,6 +6192,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_total_amount(self):
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     if expense.is_multiple_currency:
             //         base_line = expense._prepare_base_line_for_taxes_computation(
             //             price_unit=expense.total_amount_currency * expense.currency_rate,
@@ -5585,6 +6276,78 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_version_id(self):
+            // context_version_id = self.env.context.get('version_id', False)
+            // context_version = self.env['hr.version'].browse(context_version_id).exists() if context_version_id else self.env['hr.version']
+            // 
+            // for employee in self:
+            //     if context_version.employee_id == self:
+            //         version = context_version
+            //     else:
+            //         version = employee.current_version_id
+            //     employee.version_id = version
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeVersionsCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_versions_count(self):
+            // version_count_per_employee = dict(
+            //     self.env['hr.version']._read_group(
+            //         [('employee_id', 'in', self.ids)],
+            //         ['employee_id'],
+            //         ['id:count'],
+            //     ),
+            // )
+            // for employee in self:
+            //     employee.versions_count = version_count_per_employee.get(employee, 0)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkContactDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_contact_details(self):
+            // for employee in self:
+            //     if employee.work_contact_id:
+            //         if len(employee.work_contact_id.employee_ids) <= 1:
+            //             employee.work_phone = employee.work_contact_id.phone
+            //             employee.work_email = employee.work_contact_id.email
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkLocationNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_location_name(self):
+            // for employee in self:
+            //     employee.work_location_name = employee.version_id.work_location_id.name or None
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkLocationTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_location_type(self):
+            // for employee in self:
+            //     employee.work_location_type = employee.version_id.work_location_id.location_type or 'other'
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeWorkPermitNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -5626,7 +6389,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for old_move, new_move in zip(self, new_moves):
             //     message_origin = '' if not new_move.auto_post_origin_id else \
             //         (Markup('<br/>') + _('This recurring entry originated from %s', new_move.auto_post_origin_id._get_html_link()))
-            //     message_content = _('This entry has been reversed from %s', old_move._get_html_link()) if default.get('reversed_entry_id') else _('This entry has been duplicated from %s', old_move._get_html_link())
+            //     message_content = old_move._get_copy_message_content(default)
             //     bodies[new_move.id] = message_content + message_origin
             // new_moves._message_log_batch(bodies=bodies)
             // return new_moves
@@ -5667,7 +6430,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if command == Command.CREATE
             //         ]
             //     elif move.move_type == 'entry':
-            //         if 'partner_id' not in vals:
+            //         if 'partner_id' not in vals or not self.env.context.get('move_reverse_cancel', False):
             //             vals['partner_id'] = False
             //     user_fiscal_lock_date = move.company_id._get_user_fiscal_lock_date(move.journal_id)
             //     if (default_date or move.date) <= user_fiscal_lock_date:
@@ -5689,11 +6452,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def copy_data(self, default=None):
             // vals_list = super().copy_data(default=default)
-            // if default and 'request_date_from' in default and 'request_date_to' in default:
+            // if self.env.context.get('skip_copy_check'):
             //     return vals_list
             // if all(leave.state in ['cancel', 'refuse'] for leave in self):  # No overlap constraint in these cases
             //     return vals_list
             // raise UserError(_('A time off cannot be duplicated.'))
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def copy_data(self, default=None):
+            // vals_list = super().copy_data(default=default)
+            // 
+            // # Avoid adding `(copy)` to partner_name when an applicant is created trough the talent pool mechanism
+            // if not self.env.context.get("no_copy_in_partner_name"):
+            //     vals_list = [
+            //         dict(vals, partner_name=self.env._("%s (copy)", applicant.partner_name))
+            //         for applicant, vals in zip(self, vals_list)
+            //     ]
+            // return vals_list
             */
             return default;
         }
@@ -5763,7 +6537,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // accounting_installed = self.env['account.move']._get_invoice_in_payment_state() == 'in_payment'
             // 
             // for i, (pay, vals) in enumerate(zip(payments, vals_list)):
-            //     if not accounting_installed and not pay.outstanding_account_id:
+            //     if (not accounting_installed and not pay.outstanding_account_id) or self.env.context.get('force_payment_move'):
             //         outstanding_account = pay._get_outstanding_account(pay.payment_type)
             //         pay.outstanding_account_id = outstanding_account.id
             // 
@@ -5787,13 +6561,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return payments
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def create(self, vals_list):
-            // for vals in vals_list:
+            // vals_per_company = defaultdict(list)
+            // for idx, vals in enumerate(vals_list):
             //     if vals.get('user_id'):
             //         user = self.env['res.users'].browse(vals['user_id'])
             //         vals.update(self._sync_user(user, bool(vals.get('image_1920'))))
             //         vals['name'] = vals.get('name', user.name)
             //         self._remove_work_contact_id(user, vals.get('company_id'))
-            // employees = super().create(vals_list)
+            //     # Having one create per company is necessary to pass the company in the context to correctly set it in
+            //     # the underlying version created by the framework
+            //     vals_per_company[vals.get('company_id', self.env.company)].append((idx, vals))
+            // index_per_employee = {}
+            // employees = self.env['hr.employee']
+            // for company, vals_list in vals_per_company.items():
+            //     idxs, vals_list = zip(*vals_list)
+            //     new_employees = super(HrEmployee, self.with_company(company)).create(vals_list)
+            //     index_per_employee.update(dict(zip(new_employees, idxs)))
+            //     employees |= new_employees
+            // # As we do a custom batch by company, we must reorder the records to respect the original order.
+            // employees = employees.sorted(key=lambda employee: index_per_employee[employee])
             // # Sudo in case HR officer doesn't have the Contact Creation group
             // employees.filtered(lambda e: not e.work_contact_id).sudo()._create_work_contacts()
             // for employee_sudo in employees.sudo():
@@ -5817,28 +6603,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         '<b>Congratulations!</b> May I recommend you to setup an <a href="%s">onboarding plan?</a>',
             //     )) % url
             // employees._message_log_batch(onboarding_notes_bodies)
+            // employees.invalidate_recordset()
             // return employees
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def create(self, vals_list):
             // expenses = super().create(vals_list)
-            // if self.env.context.get('check_total_amount_not_zero'):
-            //     for expense, vals in zip(expenses, vals_list):
-            //         expense.check_amount_not_zero(vals)
+            // expenses.update_activities_and_mails()
             // return expenses
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def create(self, vals_list):
-            // context = clean_context(self.env.context)
-            // context.update({
-            //     'mail_create_nosubscribe': True,
-            //     'mail_auto_subscribe_no_notify': True,
-            // })
-            // sheets = super(HrExpenseSheet, self.with_context(context)).create(vals_list)
-            // sheets.activity_update()
-            // return sheets
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def create(self, vals_list):
             // # Override to avoid automatic logging of creation
-            // if not self._context.get('leave_fast_create'):
+            // if not self.env.context.get('leave_fast_create'):
             //     leave_types = self.env['hr.leave.type'].browse([values.get('holiday_status_id') for values in vals_list if values.get('holiday_status_id')])
             //     mapped_validation_type = {leave_type.id: leave_type.leave_validation_type for leave_type in leave_types}
             // 
@@ -5852,11 +6627,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if any(not vals.get('employee_id') for vals in vals_list):
             //     raise UserError(_("There is no employee set on the time off. Please make sure you're logged in the correct company."))
-            // holidays = super(HolidaysRequest, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // holidays = super(HrLeave, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             // holidays._check_validity()
+            // self.env['hr.leave.allocation'].invalidate_model(['leaves_taken', 'max_leaves'])  # missing dependency on compute
             // 
             // for holiday in holidays:
-            //     if not self._context.get('leave_fast_create'):
+            //     if not self.env.context.get('leave_fast_create'):
             //         # Everything that is done here must be done using sudo because we might
             //         # have different create and write rights
             //         # eg : holidays_user can create a leave request with validation_type = 'manager' for someone else
@@ -5867,10 +6643,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             holiday_sudo.message_subscribe(partner_ids=holiday.employee_id.leave_manager_id.partner_id.ids)
             //         if holiday.validation_type == 'no_validation':
             //             # Automatic validation should be done in sudo, because user might not have the rights to do it by himself
-            //             holiday_sudo.action_validate()
+            //             holiday_sudo.action_approve()
             //             holiday_sudo.message_subscribe(partner_ids=holiday._get_responsible_for_approval().partner_id.ids)
             //             holiday_sudo.message_post(body=_("The time off has been automatically approved"), subtype_xmlid="mail.mt_comment") # Message from OdooBot (sudo)
-            //         elif not self._context.get('import_file'):
+            //         elif not self.env.context.get('import_file'):
             //             holiday_sudo.activity_update()
             // return holidays
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
@@ -5882,6 +6658,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         vals['email_from'] = vals['email_from'].strip()
             // applicants = super().create(vals_list)
             // applicants.sudo().interviewer_ids._create_recruitment_interviewers()
+            // 
+            // for applicant in applicants:
+            //     if applicant.talent_pool_ids and not applicant.pool_applicant_id:
+            //         applicant.pool_applicant_id = applicant
             // 
             // if (applicants.interviewer_ids.partner_id - self.env.user.partner_id):
             //     for applicant in applicants:
@@ -5897,26 +6677,77 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             subject=notification_subject,
             //             body=notification_body,
             //             email_layout_xmlid="mail.mail_notification_layout",
-            //             record_name=applicant.display_name,
             //             model_description="Applicant",
             //         )
-            // # Copy CV from candidate to applicant at record creation
-            // attachments_result = self.env['ir.attachment'].read_group([
-            //     ('res_id', 'in', applicants.candidate_id.ids),
-            //     ('res_model', '=', "hr.candidate")
-            // ], ['ids:array_agg(id)'], groupby=['res_id'])
-            // attachments_by_candidate = {e['res_id']: e['ids'] for e in attachments_result}
-            // for applicant in applicants:
-            //     if applicant.candidate_id.company_id and applicant.company_id != applicant.candidate_id.company_id:
-            //         raise ValidationError(_("You cannot create an applicant in a different company than the candidate"))
-            //     candidate_id = applicant.candidate_id.id
-            //     if candidate_id not in attachments_by_candidate:
-            //         continue
-            //     self.env['ir.attachment'].browse(attachments_by_candidate[candidate_id]).copy({
-            //         'res_id': applicant.id,
-            //         'res_model': 'hr.applicant'
-            //     })
             // return applicants
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateCompanyPaidMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _create_company_paid_moves(self):
+            // """
+            // Creation of the account moves for the company paid expenses.
+            // -> Create an account payment (we only "log" the already paid expense so it can be reconciled)
+            // """
+            // self = self.with_context(clean_context(self.env.context))  # remove default_*
+            // company_account_expenses = self.filtered(lambda expense: expense.payment_mode == 'company_account')
+            // moves_sudo = self.env['account.move'].sudo()
+            // 
+            // if company_account_expenses:
+            //     move_vals_list, payment_vals_list = zip(*[expense._prepare_payments_vals() for expense in company_account_expenses])
+            // 
+            //     payment_moves_sudo = self.env['account.move'].sudo().create(move_vals_list)
+            //     for payment_vals, move in zip(payment_vals_list, payment_moves_sudo):
+            //         payment_vals['move_id'] = move.id
+            // 
+            //     payments_sudo = self.env['account.payment'].sudo().create(payment_vals_list)
+            //     for payment_sudo, move_sudo in zip(payments_sudo, payment_moves_sudo):
+            //         move_sudo.update({
+            //             'origin_payment_id': payment_sudo.id,
+            //             # We need to put the journal_id because editing origin_payment_id triggers a re-computation chain
+            //             # that voids the company_currency_id of the lines
+            //             'journal_id': move_sudo.journal_id.id,
+            //         })
+            // 
+            //     moves_sudo |= payment_moves_sudo
+            // 
+            // # returning the move with the superuser flag set back as it was at the origin of the call
+            // return moves_sudo.sudo(self.env.su)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateContractAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def create_contract(self, date):
+            // # Here we can assume that there is no existing contract on the date given
+            // self.ensure_one()
+            // if date and isinstance(date, str):
+            //     date = fields.Date.to_date(date)
+            // 
+            // contracts = self._get_contract_versions(date)[self.id]
+            // future_contract_dates = [d for d in list(contracts.keys()) if d > date]
+            // new_contract_date_end = min(future_contract_dates) + relativedelta(days=-1) if future_contract_dates else False
+            // 
+            // # There is already a version but with no contract defined on it so we simply write on it the dates
+            // if version_same_date := self.version_ids.filtered(lambda v: v.date_version == date):
+            //     version_same_date.write({
+            //         'contract_date_start': date,
+            //         'contract_date_end': new_contract_date_end
+            //     })
+            //     return version_same_date
+            // 
+            // return self.create_version({
+            //     'date_version': date,
+            //     'contract_date_start': date,
+            //     'contract_date_end': new_contract_date_end
+            // })
             */
             return default;
         }
@@ -5926,32 +6757,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def create_employee_from_applicant(self):
-            // self.ensure_one()
-            // action = self.candidate_id.with_context(clean_context(self.env.context)).create_employee_from_candidate()
-            // employee = self.env['hr.employee'].browse(action['res_id'])
-            // employee.write({
-            //     'job_id': self.job_id.id,
-            //     'job_title': self.job_id.name,
-            //     'department_id': self.department_id.id,
-            //     'work_email': self.department_id.company_id.email or self.email_from, # To have a valid email address by default
-            //     'work_phone': self.department_id.company_id.phone,
-            // })
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateEmployeeFromCandidateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def create_employee_from_candidate(self):
+            // """ Create an employee from applicant """
             // self.ensure_one()
             // self._check_interviewer_access()
             // 
             // if not self.partner_id:
             //     if not self.partner_name:
-            //         raise UserError(_('Please provide an candidate name.'))
+            //         raise UserError(_('Please provide an applicant name.'))
             //     self.partner_id = self.env['res.partner'].create({
             //         'is_company': False,
             //         'name': self.partner_name,
@@ -5959,8 +6771,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     })
             // 
             // action = self.env['ir.actions.act_window']._for_xml_id('hr.open_view_employee_list')
-            // employee = self.env['hr.employee'].create(self._get_employee_create_vals())
+            // employee = self.env['hr.employee'].with_context(clean_context(self.env.context)).create(self._get_employee_create_vals())
             // action['res_id'] = employee.id
+            // employee_attachments = self.env['ir.attachment'].search([('res_model', '=','hr.employee'), ('res_id', '=', employee.id)])
+            // unique_attachments = self.attachment_ids.filtered(
+            //     lambda attachment: attachment.datas not in employee_attachments.mapped('datas')
+            // )
+            // unique_attachments.copy({'res_model': 'hr.employee', 'res_id': employee.id})
+            // employee.write({
+            //     'job_id': self.job_id.id,
+            //     'job_title': self.job_id.name,
+            //     'department_id': self.department_id.id,
+            //     'work_email': self.department_id.company_id.email or self.email_from, # To have a valid email address by default
+            //     'work_phone': self.department_id.company_id.phone,
+            // })
             // return action
             */
             return default;
@@ -5991,9 +6815,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_("You need to have at least one category that can be expensed in your database to proceed!"))
             // 
             // for attachment in attachments:
-            //     attachment_name = '.'.join(attachment.name.split('.')[:-1])
             //     vals = {
-            //         'name': attachment_name,
+            //         'name': self._get_untitled_expense_name(format_date(self.env, fields.Date.context_today(self))),
             //         'price_unit': 0,
             //         'product_id': product.id,
             //     }
@@ -6004,14 +6827,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     expense._message_set_main_attachment_id(attachment, force=True)
             //     expenses += expense
-            // return {
-            //     'name': _('Generate Expenses'),
-            //     'res_model': 'hr.expense',
-            //     'type': 'ir.actions.act_window',
-            //     'views': [[False, view_type], [False, "form"]],
-            //     'domain': [('id', 'in', expenses.ids)],
-            //     'context': self.env.context,
-            // }
+            // return expenses.ids
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data_list) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _create(self, data_list):
+            // versions = [vals['stored'].pop('version_id', None) for vals in data_list]
+            // result = super()._create(data_list)
+            // for (employee, version_id, vals) in zip(result, versions, data_list):
+            //     version = self.env['hr.version'].browse(version_id)
+            //     version.employee_id = employee.id
+            //     version.write({**vals.get('inherited', {})['hr.version'], 'employee_id': employee.id})
+            // return result
             */
             return default;
         }
@@ -6030,15 +6862,103 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateSheetsFromExpenseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> CreateVersionAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _create_sheets_from_expense(self):
-            // if self.filtered(lambda expense: not expense.is_editable):
-            //     raise UserError(_('You are not authorized to edit this expense.'))
-            // sheets = self.env['hr.expense.sheet'].create(self._get_default_expense_sheet_values())
-            // return sheets
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def create_version(self, values):
+            // self.ensure_one()
+            // 
+            // date = values.get('date_version', False)
+            // if not date:
+            //     raise ValueError("date_version is required")
+            // 
+            // if isinstance(date, str):
+            //     date = fields.Date.to_date(date)
+            // elif isinstance(date, datetime):
+            //     date = date.date()
+            // 
+            // version_to_copy = self._get_version(date)
+            // if not version_to_copy:
+            //     version_to_copy = self.env['hr.version'].search([('employee_id', '=', self.id)], limit=1)
+            // if version_to_copy.date_version == date:
+            //     return version_to_copy
+            // 
+            // date_from, date_to = self.sudo()._get_contract_dates(date)
+            // contract_date_start = values.get('contract_date_start', date_from)
+            // contract_date_end = values.get('contract_date_end', date_to)
+            // employee_id = values.get('employee_id', self.id)
+            // 
+            // if isinstance(contract_date_start, str):
+            //     contract_date_start = fields.Date.to_date(contract_date_start)
+            // if isinstance(contract_date_end, str):
+            //     contract_date_end = fields.Date.to_date(contract_date_end)
+            // 
+            // if contract_date_start == date_from and contract_date_end != date_to:
+            //     versions_sudo_to_sync = self.env['hr.version'].with_context(sync_contract_dates=True).sudo().search([
+            //         ('employee_id', '=', employee_id),
+            //         ('contract_date_start', '=', date_from),
+            //     ])
+            //     if versions_sudo_to_sync:
+            //         versions_sudo_to_sync.write({
+            //             'contract_date_end': contract_date_end,
+            //         })
+            // self.check_access('write')
+            // version_to_copy.check_access('write')
+            // # to be sure even if the user has no access to certain fields, we can still copy the verison without any issues.
+            // copy_vals = {
+            //     'date_version': date,
+            //     'employee_id': employee_id,
+            //     'contract_date_start': contract_date_start,
+            //     'contract_date_end': contract_date_end,
+            // }
+            // if 'active' in values:
+            //     copy_vals['active'] = values['active']
+            // if calendar_id := values.get('resource_calendar_id'):
+            //     copy_vals['resource_calendar_id'] = calendar_id
+            // # apply the changes on the new versions.
+            // new_version_vals = {
+            //     field_name: field_value
+            //     for field_name, field_value in values.items()
+            //     if field_name not in copy_vals
+            // }
+            // version_fields = self.env['hr.version']._fields
+            // copy_vals = {
+            //     k: v
+            //     for k, v in version_to_copy.sudo().copy_data()[0].items()
+            //     if not (k in new_version_vals and version_fields[k].type in ['one2many', 'many2many'])
+            // } | copy_vals
+            // new_version = self.env['hr.version'].sudo().create(copy_vals).sudo(False)
+            // with self.env.protecting([f for f_name, f in version_fields.items() if f_name not in new_version_vals and f.copy], new_version):
+            //     properties_fields_vals = {
+            //         field_name: field_value
+            //         for field_name, field_value in copy_vals.items()
+            //         if version_fields[field_name].type == 'properties' and field_name not in new_version_vals
+            //     }
+            //     if properties_fields_vals:  # make sure properties vals are correctly copied.
+            //         new_version.sudo().write(properties_fields_vals)
+            //     new_version.write(new_version_vals)
+            // return new_version
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateWorkContactsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _create_work_contacts(self):
+            // if any(employee.work_contact_id for employee in self):
+            //     raise UserError(_('Some employee already have a work contact'))
+            // work_contacts = self.env['res.partner'].create([{
+            //     'email': employee.work_email,
+            //     'phone': employee.work_phone,
+            //     'name': employee.name,
+            //     'image_1920': employee.image_1920,
+            //     'company_id': employee.company_id.id
+            // } for employee in self])
+            // for employee, work_contact in zip(self, work_contacts):
+            //     employee.work_contact_id = work_contact
             */
             return default;
         }
@@ -6059,6 +6979,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'out_receipt': _('Sales Receipt Created'),
             //     'in_receipt': _('Purchase Receipt Created'),
             // }[self.move_type]
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _creation_message(self):
+            // if self.env.context.get('from_split_wizard'):
+            //     return _("Expense created from a split.")
+            // return super()._creation_message()
             */
             return default;
         }
@@ -6075,6 +7000,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return super()._creation_subtype()
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _creation_subtype(self):
+            // self.ensure_one()
+            // if self.is_pool_applicant:
+            //     return self.env.ref('hr_recruitment.mt_talent_new', raise_if_not_found=False)
             // return self.env.ref('hr_recruitment.mt_applicant_new')
             */
             return default;
@@ -6088,91 +7016,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Process invoices generation and sending asynchronously.
             // :param job_count: maximum number of jobs to process if specified.
             // """
-            // def get_account_notification(moves, is_success: bool):
-            //     _ = self.env._
-            //     return [
-            //         'account_notification',
-            //         {
-            //             'type': 'success' if is_success else 'warning',
-            //             'title': _('Invoices sent') if is_success else _('Invoices in error'),
-            //             'message': _('Invoices sent successfully.') if is_success else _(
-            //                 "One or more invoices couldn't be processed."),
-            //             'action_button': {
-            //                 'name': _('Open'),
-            //                 'action_name': _('Sent invoices') if is_success else _('Invoices in error'),
-            //                 'model': 'account.move',
-            //                 'res_ids': moves.ids,
-            //             },
-            //         },
-            //     ]
-            // 
-            // limit = job_count + 1
-            // to_process = self.env['account.move'].search(
-            //     [('sending_data', '!=', False)],
-            //     limit=limit,
-            // )
-            // total_to_process = self.env['account.move'].search_count(
-            //     [('sending_data', '!=', False)],
-            // )
-            // 
-            // need_retrigger = len(to_process) > job_count
+            // domain = [
+            //     ('sending_data', '!=', False),
+            //     ('state', '=', 'posted'),
+            // ]
+            // to_process = self.search(
+            //     domain,
+            //     order='date asc, invoice_date asc, sequence_number asc, id asc',
+            //     limit=job_count)
+            // to_process.try_lock_for_update()
             // if not to_process:
             //     return
-            // 
-            // to_process = to_process[:job_count]
-            // if not self.env['res.company']._with_locked_records(to_process, allow_raising=False):
-            //     return
-            // 
-            // # Collect moves by res.partner that executed the Send & Print wizard, must be done before the _process
-            // # that modify sending_data.
-            // moves_by_partner = to_process.grouped(lambda m: m.sending_data['author_partner_id'])
             // 
             // self.env['account.move.send']._generate_and_send_invoices(
             //     to_process,
             //     from_cron=True,
             // )
-            // self.env['ir.cron']._notify_progress(done=len(to_process),
-            //                                      remaining=total_to_process - len(to_process))
-            // 
-            // for partner_id, partner_moves in moves_by_partner.items():
-            //     partner = self.env['res.partner'].browse(partner_id)
-            //     partner_moves_error = partner_moves.filtered(lambda m: m.sending_data and m.sending_data.get('error'))
-            //     if partner_moves_error:
-            //         partner._bus_send(*get_account_notification(partner_moves_error, False))
-            //     partner_moves_success = partner_moves - partner_moves_error
-            //     if partner_moves_success:
-            //         partner._bus_send(*get_account_notification(partner_moves_success, True))
-            //     partner_moves_error.sending_data = False
-            // 
-            // if need_retrigger:
-            //     self.env.ref('account.ir_cron_account_move_send')._trigger()
+            // self.env['ir.cron']._commit_progress(len(to_process), remaining=self.search_count(domain))
             */
             return default;
         }
 
-        public async Task<TEntity> CronCheckWorkPermitValidityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> CronUpdateCurrentVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _cron_check_work_permit_validity(self):
-            // # Called by a cron
-            // # Schedule an activity 1 month before the work permit expires
-            // outdated_days = fields.Date.today() + relativedelta(months=+1)
-            // nearly_expired_work_permits = self.search([('work_permit_scheduled_activity', '=', False), ('work_permit_expiration_date', '<', outdated_days)])
-            // employees_scheduled = self.env['hr.employee']
-            // for employee in nearly_expired_work_permits.filtered(lambda employee: employee.parent_id):
-            //     responsible_user_id = employee.parent_id.user_id.id
-            //     if responsible_user_id:
-            //         employees_scheduled |= employee
-            //         lang = self.env['res.users'].browse(responsible_user_id).lang
-            //         formated_date = format_date(employee.env, employee.work_permit_expiration_date, date_format="dd MMMM y", lang_code=lang)
-            //         employee.activity_schedule(
-            //             'mail.mail_activity_data_todo',
-            //             note=_('The work permit of %(employee)s expires at %(date)s.',
-            //                 employee=employee.name,
-            //                 date=formated_date),
-            //             user_id=responsible_user_id)
-            // employees_scheduled.write({'work_permit_scheduled_activity': True})
+            // def _cron_update_current_version_id(self):
+            // self.search([])._compute_current_version_id()
             */
             return default;
         }
@@ -6186,32 +7056,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not employee and not self.env.user.has_group('hr_expense.group_hr_expense_team_approver'):
             //     raise ValidationError(_('The current user has no related employee. Please, create one.'))
             // return employee
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _default_employee_id(self):
-            // return self.env.user.employee_id
             */
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def default_get(self, fields_list):
-            // defaults = super(HolidaysRequest, self).default_get(fields_list)
+            // def default_get(self, fields):
+            // defaults = super().default_get(fields)
             // defaults = self._default_get_request_dates(defaults)
+            // if self.env.context.get('holiday_status_display_name', True) and 'holiday_status_id' in fields and not defaults.get('holiday_status_id'):
+            //     domain = ['|', ('requires_allocation', '=', False), ('has_valid_allocation', '=', True)]
+            //     defaults['holiday_status_id'] = False
+            //     leave_types = self.env['hr.leave.type'].search(domain, order='sequence')
+            //     selected_leave_type = next(
+            //         (
+            //             leave_type for leave_type in leave_types
+            //             if (defaults.get('request_unit_hours') and leave_type['request_unit'] == 'hour') or (not defaults.get('request_unit_hours'))
+            //         ),
+            //         leave_types[0] if leave_types else None,
+            //     )
+            //     if selected_leave_type:
+            //         defaults['holiday_status_id'] = selected_leave_type.id
+            //         defaults['request_unit_hours'] = (selected_leave_type.request_unit == 'hour')
             // 
-            // lt = self.env['hr.leave.type']
-            // if self.env.context.get('holiday_status_display_name', True) and 'holiday_status_id' in fields_list and not defaults.get('holiday_status_id'):
-            //     lt = self.env['hr.leave.type'].search(['|', ('requires_allocation', '=', 'no'), ('has_valid_allocation', '=', True)], limit=1, order='sequence')
-            //     if lt:
-            //         defaults['holiday_status_id'] = lt.id
-            //         defaults['request_unit_custom'] = False
-            // 
-            // if 'request_date_from' in fields_list and 'request_date_from' not in defaults:
-            //     defaults['request_date_from'] = fields.Date.today()
-            // if 'request_date_to' in fields_list and 'request_date_to' not in defaults:
-            //     defaults['request_date_to'] = fields.Date.today()
+            // if 'request_date_from' in fields and 'request_date_from' not in defaults:
+            //     defaults['request_date_from'] = Date.today()
+            // if 'request_date_to' in fields and 'request_date_to' not in defaults:
+            //     defaults['request_date_to'] = Date.today()
             // 
             // return defaults
             */
@@ -6236,7 +7110,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Note:
             // # Without the application of the timezone, days based on UTC datetimes
             // # will be returned (and will therefore not be correct for the client).
-            // client_tz = timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
+            // client_tz = self.env.tz
             // if values.get('date_from'):
             //     if not values.get('request_date_from'):
             //         values['request_date_from'] = pytz.utc.localize(values['date_from']).astimezone(client_tz)
@@ -6246,28 +7120,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         values['request_date_to'] = pytz.utc.localize(values['date_to']).astimezone(client_tz)
             //     del values['date_to']
             // return values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DefaultJournalIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _default_journal_id(self):
-            // """
-            //      The journal is determining the company of the accounting entries generated from expense.
-            //      We need to force journal company and expense sheet company to be the same.
-            // """
-            // company_journal_id = self.env.company.expense_journal_id
-            // if company_journal_id:
-            //     return company_journal_id.id
-            // default_company_id = self.default_get(['company_id'])['company_id']
-            // journal = self.env['account.journal'].search([
-            //     *self.env['account.journal']._check_company_domain(default_company_id),
-            //     ('type', '=', 'purchase'),
-            // ], limit=1)
-            // return journal.id
             */
             return default;
         }
@@ -6365,69 +7217,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DoApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> DoApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object check) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _do_approve(self):
-            // sheets_to_approve = self.filtered(lambda s: s.state in {'submit', 'draft'})
-            // sheets_to_approve._check_can_create_move()
-            // sheets_to_approve._do_create_moves()
-            // for sheet in sheets_to_approve:
-            //     sheet.write({
-            //         'approval_state': 'approve',
-            //         'user_id': sheet.user_id.id or self.env.user.id,
-            //         'approval_date': fields.Date.context_today(sheet),
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _do_approve(self, check=True):
+            // if check:
+            //     self._check_can_approve()
+            // expenses_to_approve = self.filtered(lambda s: s.state in {'submitted', 'draft'})
+            // for expense in expenses_to_approve:
+            //     expense.write({
+            //         'approval_state': 'approved',
+            //         'manager_id': self.env.user.id,
+            //         'approval_date': fields.Datetime().now(),
             //     })
-            // self.activity_update()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DoCreateMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _do_create_moves(self):
-            // """
-            // Creation of the account moves for the expenses report. Sudo-ed as they are created in draft and the manager may not have
-            // the accounting rights (and there is no reason to give them those rights).
-            // There are two main flows at play:
-            //     - Expense paid by the company -> Create an account payment (we only "log" the already paid expense so it can be reconciled)
-            //     - Expense paid by he employee's own account -> As it should be reimbursed to them, it creates a vendor bill.
-            // """
-            // self = self.with_context(clean_context(self.env.context))  # remove default_*
-            // own_account_sheets = self.filtered(lambda sheet: sheet.payment_mode == 'own_account')
-            // company_account_sheets = self - own_account_sheets
-            // 
-            // for sheet in own_account_sheets:
-            //     sheet.accounting_date = sheet.accounting_date or sheet._calculate_default_accounting_date()
-            // moves_sudo = self.env['account.move'].sudo().create([sheet._prepare_bills_vals() for sheet in own_account_sheets])
-            // for move_sudo in moves_sudo:
-            //     move_sudo._message_set_main_attachment_id(move_sudo.attachment_ids, force=True, filter_xml=False)
-            // if company_account_sheets:
-            //     move_vals_list, payment_vals_list = zip(*[
-            //         expense._prepare_payments_vals()
-            //         for expense in company_account_sheets.expense_line_ids
-            //     ])
-            // 
-            //     payment_moves_sudo = self.env['account.move'].sudo().create(move_vals_list)
-            //     for payment_vals, move in zip(payment_vals_list, payment_moves_sudo):
-            //         payment_vals['move_id'] = move.id
-            // 
-            //     payments_sudo = self.env['account.payment'].sudo().create(payment_vals_list)
-            //     for payment_sudo, move_sudo in zip(payments_sudo, payment_moves_sudo):
-            //         move_sudo.update({
-            //             'origin_payment_id': payment_sudo.id,
-            //             # We need to put the journal_id because editing origin_payment_id triggers a re-computation chain
-            //             # that voids the company_currency_id of the lines
-            //             'journal_id': move_sudo.journal_id.id,
-            //         })
-            // 
-            //     moves_sudo |= payment_moves_sudo
-            // 
-            // # returning the move with the super user flag set back as it was at the origin of the call
-            // return moves_sudo.sudo(self.env.su)
+            // self.update_activities_and_mails()
             */
             return default;
         }
@@ -6435,25 +7239,25 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DoRefuseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reason) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _do_refuse(self, reason):
             // # Sudoed as approvers may not be accountants
-            // draft_moves_sudo = self.sudo().account_move_ids.filtered(lambda move: move.state == 'draft')
-            // if self.sudo().account_move_ids - draft_moves_sudo:
-            //     raise UserError(_("You cannot cancel an expense sheet linked to a posted journal entry"))
+            // draft_moves_sudo = self.sudo().account_move_id.filtered(lambda move: move.state == 'draft')
+            // if self.sudo().account_move_id - draft_moves_sudo:
+            //     raise UserError(_("You cannot cancel an expense linked to a posted journal entry"))
             // 
             // if draft_moves_sudo:
             //     draft_moves_sudo.unlink()  # Else we have lingering moves
             // 
-            // self.approval_state = 'cancel'
+            // self.approval_state = 'refused'
             // subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
-            // for sheet in self:
-            //     sheet.message_post_with_source(
+            // for expense in self:
+            //     expense.message_post_with_source(
             //         'hr_expense.hr_expense_template_refuse_reason',
             //         subtype_id=subtype_id,
-            //         render_values={'reason': reason, 'name': sheet.name},
+            //         render_values={'reason': reason, 'name': expense.name},
             //     )
-            // self.activity_update()
+            // self.update_activities_and_mails()
             */
             return default;
         }
@@ -6461,40 +7265,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DoResetApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _do_reset_approval(self):
-            // self.sudo().write({'approval_state': False, 'approval_date': False, 'accounting_date': False})
-            // self.activity_update()
+            // self.sudo().write({'approval_state': False, 'approval_date': False, 'account_move_id': False})
+            // self.update_activities_and_mails()
             */
             return default;
         }
 
-        public async Task<TEntity> DoReverseMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> EarlyPaymentDiscountMoveTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _do_reverse_moves(self):
-            // self = self.with_context(clean_context(self.env.context))
-            // moves_sudo = self.sudo().account_move_ids
-            // if moves_sudo:
-            //     draft_moves_sudo = moves_sudo.filtered(lambda m: m.state == 'draft')
-            //     non_draft_moves_sudo = moves_sudo - draft_moves_sudo
-            //     non_draft_moves_sudo._reverse_moves(
-            //         default_values_list=[{'invoice_date': fields.Date.context_today(move), 'ref': False} for move in non_draft_moves_sudo],
-            //         cancel=True
-            //     )
-            //     draft_moves_sudo.unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DoSubmitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _do_submit(self):
-            // self.approval_state = 'submit'
-            // self.sudo().activity_update()
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _early_payment_discount_move_types(self):
+            // return ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
             */
             return default;
         }
@@ -6505,135 +7289,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _employee_attendance_intervals(self, start, stop, lunch=False):
             // self.ensure_one()
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
             // if not lunch:
             //     return self._get_expected_attendances(start, stop)
             // else:
-            //     return calendar._attendance_intervals_batch(start, stop, self.resource_id, lunch=True)[self.resource_id.id]
+            //     valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(start.date(), stop.date())
+            //     if not valid_versions:
+            //         calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //         return calendar._attendance_intervals_batch(start, stop, self.resource_id, lunch=True)[self.resource_id.id]
+            //     employee_tz = timezone(self.tz) if self.tz else None
+            //     duration_data = Intervals()
+            //     for version in valid_versions:
+            //         version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //         version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //         calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //         lunch_intervals = calendar._attendance_intervals_batch(
+            //             max(start, version_start),
+            //             min(stop, version_end),
+            //             resources=self.resource_id,
+            //             lunch=True)[self.resource_id.id]
+            //         duration_data = duration_data | lunch_intervals
+            //     return duration_data
             */
             return default;
         }
 
-        public async Task<TEntity> ExtendWithAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments, object @new) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> ExtendWithAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object files_data, object @new) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _extend_with_attachments(self, attachments, new=False):
-            // """Main entry point to extend/enhance invoices with attachments.
+            // def _extend_with_attachments(self, files_data, new=False):
+            // existing_lines = self.invoice_line_ids
+            // res = super()._extend_with_attachments(files_data, new)
             // 
-            // Either coming from:
-            // - The chatter when the user drops an attachment on an existing invoice.
-            // - The journal when the user drops one or multiple attachments from the dashboard.
-            // - The server mail alias when an alias is configured on the journal.
+            // if new_lines := (self.invoice_line_ids - existing_lines):
+            //     new_lines.is_imported = True
+            //     if not existing_lines:
+            //         self.with_context(default_move_type=self.move_type)._link_bill_origin_to_purchase_orders(timeout=4)
             // 
-            // It will unwrap all attachments by priority then try to decode until it succeed.
+            // if new and res:
+            //     try:
+            //         attachments = self._from_files_data(files_data + self._unwrap_attachments(files_data))
+            //         self.journal_id._notify_invoice_subscribers(
+            //             invoice=self,
+            //             mail_params={
+            //                 'attachment_ids': [
+            //                     Command.create({
+            //                         'name': f"MAIL_{attachment['name']}",
+            //                         'mimetype': attachment['mimetype'],
+            //                         'raw': attachment['raw'],
+            //                     }) for attachment in attachments
+            //                 ]
+            //             },
+            //         )
+            //     except Exception:
+            //         _logger.exception("Failed to notify invoice subscribers after EDI import.")
             // 
-            // :param attachments: A recordset of ir.attachment.
-            // :param new:         Indicate if the current invoice is a fresh one or an existing one.
-            // :returns:           True if at least one document is successfully imported
-            // """
-            // def close_file(file_data):
-            //     if file_data.get('on_close'):
-            //         file_data['on_close']()
-            // 
-            // def add_file_data_results(file_data, invoice):
-            //     passed_file_data_list.append(file_data)
-            //     attachment = file_data.get('attachment') or file_data.get('originator_pdf')
-            //     if attachment:
-            //         if attachments_by_invoice.get(attachment):
-            //             attachments_by_invoice[attachment] |= invoice
-            //         else:
-            //             attachments_by_invoice[attachment] = invoice
-            //         if not attachment.res_id:
-            //             attachment.write({
-            //                 'res_id': invoice.id,
-            //                 'res_model': invoice._name,
-            //             })
-            // 
-            // file_data_list = attachments._unwrap_edi_attachments()
-            // attachments_by_invoice = {}
-            // invoices = self
-            // current_invoice = self
-            // passed_file_data_list = []
-            // for file_data in file_data_list:
-            // 
-            //     # Rogue binaries from mail alias are skipped and unlinked.
-            //     if (
-            //         file_data['type'] == 'binary'
-            //         and self._context.get('from_alias')
-            //         and not attachments_by_invoice.get(file_data['attachment'])
-            //         and file_data['attachment'].mimetype not in ALLOWED_MIMETYPES
-            //     ):
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     # The invoice has already been decoded by an embedded file.
-            //     if attachments_by_invoice.get(file_data['attachment']):
-            //         add_file_data_results(file_data, attachments_by_invoice[file_data['attachment']])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     # When receiving multiple files, if they have a different type, we supposed they are all linked
-            //     # to the same invoice.
-            //     if (
-            //         passed_file_data_list
-            //         and passed_file_data_list[-1]['filename'] != file_data['filename']
-            //         and passed_file_data_list[-1]['sort_weight'] != file_data['sort_weight']
-            //     ):
-            //         add_file_data_results(file_data, invoices[-1])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     if passed_file_data_list and not new:
-            //         add_file_data_results(file_data, invoices[-1])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     extend_with_existing_lines = file_data.get('process_if_existing_lines', False)
-            //     if current_invoice.invoice_line_ids and not extend_with_existing_lines:
-            //         continue
-            // 
-            //     decoder = (current_invoice or current_invoice.new(self.default_get(['move_type', 'journal_id'])))._get_edi_decoder(file_data, new=new)
-            //     current_invoice.flush_recordset()
-            //     if decoder or file_data['type'] in ('pdf', 'binary'):
-            //         try:
-            //             with self.env.cr.savepoint():
-            //                 invoice = current_invoice or self.create({})
-            //                 existing_lines = invoice.invoice_line_ids
-            //                 if not decoder and file_data['type'] in ('pdf', 'binary'):
-            //                     success = False
-            //                 else:
-            //                     success = decoder(invoice, file_data, new)
-            // 
-            //                 if success or file_data['type'] == 'pdf' or file_data['attachment'].mimetype in ALLOWED_MIMETYPES:
-            //                     (invoice.invoice_line_ids - existing_lines).is_imported = True
-            //                     if not extend_with_existing_lines:
-            //                         invoice._link_bill_origin_to_purchase_orders(timeout=4)
-            //                     invoices |= invoice
-            //                     current_invoice = self.env['account.move']
-            //                     add_file_data_results(file_data, invoice)
-            // 
-            //         except RedirectWarning:
-            //             raise
-            //         except Exception as e:
-            //             message = _(
-            //                 "Error importing attachment '%(file_name)s' as invoice (decoder=%(decoder)s)",
-            //                 file_name=file_data['filename'],
-            //                 decoder=decoder.__name__,
-            //             )
-            //             _logger.exception(message)
-            //             if isinstance(e, UserError):
-            //                 message = Markup("%s<br/><br/>%s<br/>%s") % (
-            //                     message,
-            //                     _("This specific error occurred during the import:"),
-            //                     str(e),
-            //                 )
-            //             current_invoice.sudo().message_post(body=message)
-            // 
-            //     passed_file_data_list.append(file_data)
-            //     close_file(file_data)
-            // 
-            // return attachments_by_invoice
+            // return res
             */
             return default;
         }
@@ -6642,17 +7353,27 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def fetch(self, field_names):
+            // def fetch(self, field_names=None):
             // if self.browse().has_access('read'):
             //     return super().fetch(field_names)
             // 
             // # HACK: retrieve publicly available values from hr.employee.public and
             // # copy them to the cache of self; non-public data will be missing from
             // # cache, and interpreted as an access error
+            // if field_names is None:
+            //     field_names = [field.name for field in self._determine_fields_to_fetch()]
+            // field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
             // self._check_private_fields(field_names)
             // self.flush_recordset(field_names)
             // public = self.env['hr.employee.public'].browse(self._ids)
             // public.fetch(field_names)
+            // # make sure all related fields from employee are in cache
+            // for field_name in field_names:
+            //     public_field = self.env['hr.employee.public']._fields[field_name]
+            //     private_field = self.env['hr.employee']._fields[field_name]
+            //     if (public_field.related and public_field.related_field.model_name == 'hr.employee'
+            //             or private_field.inherited and private_field.inherited_field.model_name == 'hr.version'):
+            //         public.mapped(field_name)
             // self._copy_cache_from(public, field_names)
             */
             return default;
@@ -6673,23 +7394,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.env["account.move"].flush_model(used_fields)
             // 
             // move_table_and_alias = SQL("account_move AS move")
-            // if not moves[0].id:  # check if record is under creation/edition in UI
+            // if not all(move.id for move in moves):  # check if record is under creation/edition in UI
             //     # New record aren't searchable in the DB and record in edition aren't up to date yet
             //     # Replace the table by safely injecting the values in the query
-            //     values = {
-            //         field_name: moves._fields[field_name].convert_to_write(moves[field_name], moves) or None
-            //         for field_name in used_fields
-            //     }
-            //     values["id"] = moves._origin.id or 0
-            //     # The amount total depends on the field line_ids and is calculated upon saving, we needed a way to get it even when the
-            //     # invoices has not been saved yet.
-            //     values['amount_total'] = self.tax_totals.get('total_amount_currency', 0)
-            //     casted_values = SQL(', ').join(
-            //         SQL("%s::%s", value, SQL.identifier(moves._fields[field_name].column_type[0]))
-            //         for field_name, value in values.items()
-            //     )
-            //     column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in values)
-            //     move_table_and_alias = SQL("(VALUES (%s)) AS move(%s)", casted_values, column_names)
+            //     all_values = []
+            //     for move in moves:
+            //         values = {
+            //             field_name: move._fields[field_name].convert_to_write(move[field_name], move) or None
+            //             for field_name in used_fields
+            //         }
+            //         values["id"] = move._origin.id or 0
+            //         # The amount total depends on the field line_ids and is calculated upon saving,
+            //         # we needed a way to get it even when the invoices has not been saved yet.
+            //         values['amount_total'] = move.tax_totals.get('total_amount_currency', 0)
+            //         casted_values = SQL(', ').join(
+            //             SQL("%s::%s", value, SQL.identifier(move._fields[field_name].column_type[0]))
+            //             for field_name, value in values.items()
+            //         )
+            //         all_values.append(SQL("(%s)", casted_values))
+            //     column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in used_fields + ("id",))
+            //     move_table_and_alias = SQL("(VALUES %s) AS move(%s)", SQL(', ').join(all_values), column_names)
             // 
             // to_query = []
             // out_moves = moves.filtered(lambda m: m.move_type in ('out_invoice', 'out_refund'))
@@ -6813,6 +7537,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string field_expr, object query) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _field_to_sql(self, alias: str, fname: str, query=None) -> SQL:
+            // if fname == 'status_in_payment':
+            //     return SQL(
+            //         "CASE "
+            //         f"WHEN {alias}.state = 'draft' THEN 'draft' "
+            //         f"WHEN {alias}.state = 'cancel' THEN 'cancel' "
+            //         f"ELSE {alias}.payment_state "
+            //         "END"
+            //     )
+            // elif fname == 'move_sent_values':
+            //     return SQL(
+            //         "CASE "
+            //         f"WHEN {alias}.is_move_sent THEN 'sent' "
+            //         f"ELSE 'not_sent' "
+            //         "END"
+            //     )
+            // return super()._field_to_sql(alias, fname, query=query)
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _field_to_sql(self, alias: str, field_expr: str, query: (Query | None) = None) -> SQL:
+            // """This is required to search for the related fields of version_id as version_id is not stored"""
+            // if field_expr == 'version_id':
+            //     field_expr = 'current_version_id'
+            // return super()._field_to_sql(alias, field_expr, query)
+            */
+            return default;
+        }
+
         public async Task<TEntity> FieldWillChangeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object vals, object field_name) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -6855,43 +7610,51 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _force_cancel(self, reason, msg_subtype='mail.mt_comment', notify_responsibles=True):
-            // recs = self.browse() if self.env.context.get(MODULE_UNINSTALL_FLAG) else self
-            // for leave in recs:
-            //     leave.message_post(
-            //         body=_('The time off has been cancelled: %s', reason),
-            //         subtype_xmlid=msg_subtype
-            //     )
-            // 
-            //     if not notify_responsibles:
-            //         continue
-            // 
-            //     responsibles = self.env['res.partner']
-            //     # manager
-            //     if (leave.holiday_status_id.leave_validation_type == 'manager' and leave.state == 'validate') or (leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate1'):
-            //         responsibles = leave.employee_id.leave_manager_id.partner_id
-            //     # officer
-            //     elif leave.holiday_status_id.leave_validation_type == 'hr' and leave.state == 'validate':
-            //         responsibles = leave.holiday_status_id.responsible_ids.partner_id
-            //     # both
-            //     elif leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate':
-            //         responsibles = leave.employee_id.leave_manager_id.partner_id
-            //         responsibles |= leave.holiday_status_id.responsible_ids.partner_id
-            // 
-            //     if responsibles:
-            //         self.env['mail.thread'].sudo().message_notify(
-            //             partner_ids=responsibles.ids,
-            //             model_description='Time Off',
-            //             subject=_('Cancelled Time Off'),
-            //             body=_(
-            //                 "%(leave_name)s has been cancelled with the justification: <br/> %(reason)s.",
-            //                 leave_name=leave.display_name,
-            //                 reason=reason
-            //             ),
-            //             email_layout_xmlid='mail.mail_notification_light',
+            // def _force_cancel(self, reason=None, msg_subtype='mail.mt_comment', notify_responsibles=True):
+            // leaves = self.browse() if self.env.context.get(MODULE_UNINSTALL_FLAG) else self
+            // if reason:
+            //     model_description = self.env['ir.model']._get('hr.holidays').display_name
+            //     for leave in leaves:
+            //         body = self.env._(
+            //             "The time off request has been cancelled for the following reason:%(reason)s",
+            //             reason=Markup("<p>{reason}</p>").format(reason=reason)
             //         )
+            //         leave.message_post(
+            //             body=body,
+            //             subtype_xmlid=msg_subtype
+            //         )
+            // 
+            //         if not notify_responsibles:
+            //             continue
+            // 
+            //         responsibles = self.env['res.partner']
+            //         # manager
+            //         if (leave.holiday_status_id.leave_validation_type == 'manager' and leave.state == 'validate') or (leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate1'):
+            //             responsibles = leave.employee_id.leave_manager_id.partner_id
+            //         # officer
+            //         elif leave.holiday_status_id.leave_validation_type == 'hr' and leave.state == 'validate':
+            //             responsibles = leave.holiday_status_id.responsible_ids.partner_id
+            //         # both
+            //         elif leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate':
+            //             responsibles = leave.employee_id.leave_manager_id.partner_id
+            //             responsibles |= leave.holiday_status_id.responsible_ids.partner_id
+            // 
+            //         if responsibles:
+            //             body = self.env._(
+            //                 "%(leave_name)s has been cancelled for the following reason: %(reason)s",
+            //                 leave_name=leave.display_name,
+            //                 reason=Markup("<blockquote>{reason}</blockquote>").format(reason=reason),
+            //             )
+            //             leave.message_notify(
+            //                 partner_ids=responsibles.ids,
+            //                 model_description=model_description,
+            //                 subject=self.env._('Cancelled Time Off'),
+            //                 body=body,
+            //                 email_layout_xmlid="mail.mail_notification_layout",
+            //                 subtitles=[leave.display_name],
+            //             )
             // leave_sudo = self.sudo()
-            // leave_sudo.state = 'cancel'
+            // leave_sudo.state = "cancel"
             // leave_sudo.activity_update()
             // leave_sudo._post_leave_cancel()
             */
@@ -6979,6 +7742,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GeneratePortalPaymentQrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _generate_portal_payment_qr(self):
+            // # This method is designed to prevent traceback.
+            // # Scenario: A traceback occurs when `account.payment` is not installed, and the user attempts to
+            // # preview or print the invoice.
+            // self.ensure_one()
+            // return None
+            */
+            return default;
+        }
+
         public async Task<TEntity> GenerateQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object silent_errors) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7015,7 +7792,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # No eligible method could be found; we can't generate the QR-code
             //     return None
             // 
-            // unstruct_ref = self.ref if self.ref else self.name
+            // unstruct_ref = self.payment_reference or self.name
             // rslt = self.partner_bank_id.build_qr_code_base64(self.amount_residual, unstruct_ref, self.payment_reference, self.currency_id, self.partner_id, qr_code_method, silent_errors=silent_errors)
             // 
             // # We only set qr_code_method after generating the url; otherwise, it
@@ -7054,7 +7831,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param has_tax (bool): Iff any taxes are involved in the lines of the invoice
             // :param lock_dates: Like result from `_get_violated_lock_dates`;
             //                    Can be used to avoid recomputing them in case they are already known.
-            // :return (datetime.date):
+            // :rtype: datetime.date
             // """
             // self.ensure_one()
             // lock_dates = lock_dates or self._get_violated_lock_dates(invoice_date, has_tax)
@@ -7085,6 +7862,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAccountingDateSourceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_accounting_date_source(self):
+            // self.ensure_one()
+            // return self.invoice_date or self.date
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAccountsWithFixedAllocationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_accounts_with_fixed_allocations(self):
+            // self.ensure_one()
+            // return self.bank_account_ids.filtered(
+            //     lambda a: not self.salary_distribution.get(str(a.id), {}).get('amount_is_percentage', True)
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetActionAddFromCatalogExtraContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7096,7 +7897,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // res['product_catalog_currency_id'] = self.currency_id.id
             // res['product_catalog_digits'] = self.line_ids._fields['price_unit'].get_digits(self.env)
+            // res['show_sections'] = bool(self.id)
             // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetActionWithBaseDocumentLayoutConfiguratorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_action) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_action_with_base_document_layout_configurator(self, report_action):
+            // if (
+            //     self.env.is_admin()
+            //     and not self.env.company.external_report_layout_id
+            //     and not self.env.context.get('discard_logo_check')
+            // ):
+            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+            //         report_action,
+            //         "account.action_base_document_layout_configurator",
+            //     )
+            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+            // return report_action
             */
             return default;
         }
@@ -7114,6 +7936,94 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAlertsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_alerts(self):
+            // self.ensure_one()
+            // alerts = {}
+            // has_account_group = self.env.user.has_groups('account.group_account_readonly,account.group_account_invoice')
+            // 
+            // if self.state == 'draft':
+            //     if has_account_group and self.tax_lock_date_message:
+            //         alerts['account_tax_lock_date'] = {
+            //             'level': 'warning',
+            //             'message': self.tax_lock_date_message,
+            //         }
+            //     if self.auto_post == 'at_date':
+            //         alerts['account_auto_post_at_date'] = {
+            //             'level': 'info',
+            //             'message': _("This move is configured to be posted automatically at the accounting date: %s.", self.date),
+            //         }
+            //     if self.auto_post in ('yearly', 'quarterly', 'monthly'):
+            //         message = _(
+            //             "%(auto_post_name)s auto-posting enabled. Next accounting date: %(move_date)s.",
+            //             auto_post_name=self.auto_post,
+            //             move_date=self.date,
+            //         )
+            //         if self.auto_post_until:
+            //             message += " "
+            //             message += _("The recurrence will end on %s (included).", self.auto_post_until)
+            //         alerts['account_auto_post_on_period'] = {
+            //             'level': 'info',
+            //             'message': message,
+            //         }
+            //     if (
+            //         self.is_purchase_document(include_receipts=True)
+            //         and (zero_lines := self.invoice_line_ids.filtered(lambda line: line.price_total == 0))
+            //         and len(zero_lines) >= 2
+            //     ):
+            //         alerts['account_remove_empty_lines'] = {
+            //             'level': 'info',
+            //             'message': _("We've noticed some empty lines on your invoice."),
+            //             'action_text': _("Remove empty lines"),
+            //             'action_call': ('account.move.line', 'unlink', zero_lines.ids),
+            //         }
+            // 
+            // if self.is_being_sent:
+            //     alerts['account_is_being_sent'] = {
+            //         'level': 'info',
+            //         'message': _("This invoice is being sent in the background."),
+            //     }
+            // if has_account_group and self.partner_credit_warning:
+            //     alerts['account_partner_credit_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.partner_credit_warning,
+            //     }
+            // if self.abnormal_amount_warning:
+            //     alerts['account_abnormal_amount_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.abnormal_amount_warning,
+            //     }
+            // if self.abnormal_date_warning:
+            //     alerts['account_abnormal_date_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.abnormal_date_warning,
+            //     }
+            // 
+            // return alerts
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAllContractDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_all_contract_dates(self):
+            // """
+            // Return a list of intervals (date_from, date_to) where the employee is in contract.
+            // For a permanent contract, the interval is (date_from, False).
+            // """
+            // self.ensure_one()
+            // return self.env['hr.version']._read_group(
+            //     [('employee_id', '=', self.id), ('contract_date_start', '!=', False)],
+            //     ['contract_date_start:day', 'contract_date_end:day'])
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAllReconciledInvoicePartialsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7121,7 +8031,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_all_reconciled_invoice_partials(self):
             // self.ensure_one()
             // reconciled_lines = self.line_ids.filtered(lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable'))
-            // if not reconciled_lines:
+            // if not reconciled_lines.ids:
             //     return {}
             // 
             // self.env['account.partial.reconcile'].flush_model([
@@ -7202,6 +8112,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAllVersionsWithContractOverlapWithPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_all_versions_with_contract_overlap_with_period(self, date_from, date_to):
+            // """
+            // Returns the versions of all employees between date_from and date_to
+            // that have at least 1 day in contract during that period
+            // """
+            // all_employees = self.search(['|', ('active', '=', True), ('active', '=', False)])
+            // return all_employees._get_versions_with_contract_overlap_with_period(date_from, date_to)
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAmlDefaultDisplayNameListInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7261,6 +8186,71 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAvailableActionReportsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object is_invoice_report) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_available_action_reports(self, is_invoice_report=True):
+            // domain = [('model', '=', 'account.move')]
+            // 
+            // if is_invoice_report:
+            //     domain += [('is_invoice_report', '=', 'True')]
+            // 
+            // model_reports = self.env['ir.actions.report'].search(domain)
+            // 
+            // available_reports = model_reports.filtered(
+            //     lambda model_template: len(self.filtered_domain(ast.literal_eval(model_template.domain or '[]'))) == len(self)
+            // )
+            // 
+            // return available_reports
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvailableInvoiceTemplatePdfReportIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_available_invoice_template_pdf_report_ids(self):
+            // """
+            // Helper to get available invoice template pdf reports
+            // """
+            // moves = self
+            // 
+            // for move_type in ['out_invoice', 'out_refund', 'out_receipt']:
+            //     moves += self.new({'move_type': move_type})
+            // 
+            // available_reports = moves._get_available_action_reports()
+            // 
+            // if not available_reports:
+            //     raise UserError(_("There is no template that applies to invoices."))
+            // 
+            // return available_reports
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvatarCardDataAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_avatar_card_data(self, fields):
+            // return self.read(fields)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetBankAccountSalaryAllocationAsync<TEntity>(IEnumerable<TEntity> entities, Guid account_id) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_bank_account_salary_allocation(self, account_id):
+            // ba_info = self.salary_distribution.get(str(account_id), {})
+            // return ba_info.get('amount', 0), ba_info.get('amount_is_percentage')
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetBaseAccountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7272,13 +8262,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // Returned expense accounts are the first expense account encountered in the following list:
             // 1. expense account of the expense itself
             // 2. expense account of the product
-            // 3. expense account of the product category
+            // 3. expense account of the company
             // 4. expense account on the purchase journal for employee expense
             // """
             // 
             // # expense account of the expense itself
             // account = self.account_id
-            // 
             // if account:
             //     return account
             // 
@@ -7286,17 +8275,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.product_id:
             //     account = self.product_id.product_tmpl_id._get_product_accounts()['expense']
             // else:
-            //     field = self.env['product.category']._fields['property_account_expense_categ_id']
-            //     account = field.get_company_dependent_fallback(self.env['product.category'])
+            //     account = self.env.company.expense_account_id
             // 
             // if account:
             //     return account
             // 
             // # expense account on the purchase journal for employee expense
-            // journal = self.sheet_id.journal_id
+            // journal = self.journal_id
             // if journal.type == 'purchase':
             //     account = journal.default_account_id
             // 
+            // if not account:
+            //     raise UserError(self.env._(
+            //         "Odoo had a look at your expense, its product, your company and the journal but came back with empty hands.\n"
+            //         "Give Odoo a hand to find an account by setting up an expense account.\n"
+            //         "%(expense)s %(expense_name)s.\n",
+            //         expense=self,
+            //         expense_name=self.name,
+            //     ))
             // return account
             */
             return default;
@@ -7308,14 +8304,166 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_calendar_attendances(self, date_from, date_to):
             // self.ensure_one()
-            // employee_timezone = timezone(self.tz) if self.tz else None
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
-            // return calendar\
-            //     .with_context(employee_timezone=employee_timezone)\
-            //     .get_work_duration_data(
+            // valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(date_from.date(), date_to.date())
+            // employee_tz = timezone(self.tz) if self.tz else None
+            // if not valid_versions:
+            //     calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //     return calendar.with_context(employee_timezone=employee_tz).get_work_duration_data(
             //         date_from,
             //         date_to,
             //         domain=[('company_id', 'in', [False, self.company_id.id])])
+            // duration_data = {'days': 0, 'hours': 0}
+            // for version in valid_versions:
+            //     version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //     version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //     calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //     version_duration_data = calendar\
+            //         .with_context(employee_timezone=employee_tz)\
+            //         .get_work_duration_data(
+            //             max(date_from, version_start),
+            //             min(date_to, version_end),
+            //             domain=[('company_id', 'in', [False, version.company_id.id])])
+            //     duration_data['days'] += version_duration_data['days']
+            //     duration_data['hours'] += version_duration_data['hours']
+            // return duration_data
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarPeriodsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object check_contract) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendar_periods(self, start, stop, check_contract=True):
+            // """
+            // :param datetime start: the start of the period
+            // :param datetime stop: the stop of the period
+            // """
+            // return self.sudo()._get_version_periods(start, stop, 'resource_calendar_id', check_contract)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarTzBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object dt) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendar_tz_batch(self, dt=None):
+            // """ Return a mapping { employee id : employee's effective schedule's (at dt) timezone }
+            // """
+            // employees_by_id = self.grouped('id')
+            // if not dt:
+            //     calendars = self._get_calendars()
+            //     return {
+            //         emp_id: calendar.sudo().tz or employees_by_id[emp_id].tz \
+            //             for emp_id, calendar in calendars.items()
+            //     }
+            // 
+            // employees_by_tz = self.grouped(lambda emp: emp._get_tz())
+            // 
+            // employee_timezones = {}
+            // for tz, employee_ids in employees_by_tz.items():
+            //     date_at = timezone(tz).localize(dt).date()
+            //     calendars = self._get_calendars(date_at)
+            //     employee_timezones |= {
+            //         emp_id: cal.sudo().tz or employees_by_id[emp_id].tz \
+            //             for emp_id, cal in calendars.items()
+            //     }
+            // return employee_timezones
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendars(self, date_from=None):
+            // res = super()._get_calendars(date_from=date_from)
+            // if not date_from:
+            //     return res
+            // 
+            // date_from = fields.Date.to_date(date_from)
+            // for employee in self:
+            //     employee_versions_sudo = employee.sudo().version_ids.filtered(lambda v: v._is_in_contract(date_from))
+            //     if employee_versions_sudo:
+            //         res[employee.id] = employee_versions_sudo[0].resource_calendar_id.sudo(False)
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCannotApproveReasonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_cannot_approve_reason(self):
+            // """ Returns the reason why the user cannot approve the expense """
+            // is_team_approver = self.env.user.has_group('hr_expense.group_hr_expense_team_approver') or self.env.su
+            // is_approver = self.env.user.has_group('hr_expense.group_hr_expense_user') or self.env.su
+            // is_hr_admin = self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su
+            // 
+            // valid_company_ids = set(self.env.companies.ids)
+            // 
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:  # We don't need to search if the user has not the required rights
+            //     expenses_employee_ids_under_user_ones = set(
+            //         self.env['hr.employee'].sudo().search([
+            //             ('id', 'in', self.employee_id.ids),
+            //             ('id', 'child_of', self.env.user.employee_ids.ids),
+            //             ('id', 'not in', self.env.user.employee_ids.ids),
+            //         ]).ids
+            //     )
+            // reasons_per_record_id = {}
+            // for expense in self:
+            //     reason = False
+            //     expense_employee = expense.employee_id
+            //     is_expense_team_approver = (
+            //             is_team_approver  # Admins are team approvers, not necessarily direct parents
+            //             or expense_employee.id in expenses_employee_ids_under_user_ones
+            //             or (expense_employee.expense_manager_id == self.env.user)
+            //     )
+            //     if expense.company_id.id not in valid_company_ids:
+            //         reason = _(
+            //             "%(expense_name)s: Your are neither a Manager nor a HR Officer of this expense's company",
+            //             expense_name=expense.name,
+            //         )
+            // 
+            //     elif not is_expense_team_approver:
+            //         reason = _("%(expense_name)s: You are neither a Manager nor a HR Officer", expense_name=expense.name)
+            // 
+            //     elif not is_hr_admin:
+            //         current_managers = (
+            //                 expense_employee.expense_manager_id
+            //                 | expense_employee.sudo().department_id.manager_id.user_id.sudo(self.env.su)
+            //                 | expense.manager_id
+            //         )
+            //         if expense_employee.id in expenses_employee_ids_under_user_ones:
+            //             current_managers |= self.env.user
+            // 
+            //         if expense_employee.user_id == self.env.user:
+            //             reason = _("%(expense_name)s: It is your own expense", expense_name=expense.name)
+            // 
+            //         elif self.env.user not in current_managers and not is_approver:
+            //             reason = _("%(expense_name)s: It is not from your department", expense_name=expense.name)
+            //     reasons_per_record_id[expense.id] = reason
+            // return reasons_per_record_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCertificateSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_certificate_selection(self):
+            // return [
+            //     ('graduate', self.env._('Graduate')),
+            //     ('bachelor', self.env._('Bachelor')),
+            //     ('master', self.env._('Master')),
+            //     ('doctor', self.env._('Doctor')),
+            //     ('other', self.env._('Other')),
+            // ]
             */
             return default;
         }
@@ -7329,7 +8477,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // if not self:
             //     return False
-            // last_move_in_chain = max(self, key=lambda m: m.sequence_number)
+            // 
+            // # Delegate to the database, instead of max(self, key=lambda m: m.sequence_number)
+            // last_move_in_chain = (
+            //     self.env['account.move']
+            //     .sudo()
+            //     .search_fetch(
+            //         domain=[('id', 'in', self.ids)],
+            //         field_names=[
+            //             'sequence_prefix',
+            //             'sequence_number',
+            //             'journal_id',
+            //             # Pre-emptive fetching for `_is_move_restricted`
+            //             'state',
+            //             'restrict_mode_hash_table',
+            //         ],
+            //         order='sequence_number desc',
+            //         limit=1,
+            //     )
+            // )
             // journal = last_move_in_chain.journal_id
             // if not self._is_move_restricted(last_move_in_chain, force_hash=force_hash):
             //     return False
@@ -7338,10 +8504,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ('journal_id', '=', journal.id),
             //     ('sequence_prefix', '=', last_move_in_chain.sequence_prefix),
             // ]
-            // last_move_hashed = self.env['account.move'].search([
+            // last_move_hashed = self.env['account.move'].search_fetch([
             //     *common_domain,
             //     ('inalterable_hash', '!=', False),
-            // ], order='sequence_number desc', limit=1)
+            // ], ['sequence_number', 'inalterable_hash'], order='sequence_number desc', limit=1)
             // 
             // domain = self.env['account.move']._get_move_hash_domain([
             //     *common_domain,
@@ -7350,40 +8516,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ], force_hash=True)
             // if last_move_hashed and not include_pre_last_hash:
             //     # Hash moves only after the last hashed move, not the ones that may have been posted before the journal was set on restrict mode
-            //     domain.extend([('sequence_number', '>', last_move_hashed.sequence_number)])
+            //     domain &= Domain('sequence_number', '>', last_move_hashed.sequence_number)
             // 
             // # On the accounting dashboard, we are only interested on whether there are documents to hash or not
             // # so we can stop the computation early if we find at least one document to hash
             // if early_stop:
             //     return self.env['account.move'].sudo().search_count(domain, limit=1)
-            // moves_to_hash = self.env['account.move'].sudo().search(domain, order='sequence_number')
-            // warnings = set()
-            // if moves_to_hash:
-            //     # gap warning
-            //     if last_move_hashed:
-            //         first = last_move_hashed.sequence_number
-            //         difference = len(moves_to_hash)
-            //     else:
-            //         first = moves_to_hash[0].sequence_number
-            //         difference = len(moves_to_hash) - 1
-            //     last = moves_to_hash[-1].sequence_number
-            //     if first + difference != last:
-            //         warnings.add('gap')
-            // 
-            //     # unreconciled warning
-            //     unreconciled = False in moves_to_hash.statement_line_ids.mapped('is_reconciled')
-            //     if unreconciled:
-            //         warnings.add('unreconciled')
-            // else:
-            //     warnings.add('no_document')
-            // moves = moves_to_hash.sudo(False)
-            // return {
+            // moves_to_hash = self.env['account.move'].sudo().search_fetch(domain, ['sequence_number'], order='sequence_number')
+            // info = {
             //     'previous_hash': last_move_hashed.inalterable_hash,
             //     'last_move_hashed': last_move_hashed,
+            // }
+            // if self.env.context.get('chain_info_warnings', True):
+            //     warnings = set()
+            //     if moves_to_hash:
+            //         # gap warning
+            //         if last_move_hashed:
+            //             first = last_move_hashed.sequence_number
+            //             difference = len(moves_to_hash)
+            //         else:
+            //             first = moves_to_hash[0].sequence_number
+            //             difference = len(moves_to_hash) - 1
+            //         last = moves_to_hash[-1].sequence_number
+            //         if first + difference != last:
+            //             warnings.add('gap')
+            // 
+            //         # unreconciled warning
+            //         has_unreconciled = bool(self.env['account.bank.statement.line'].search_count([
+            //             ('move_id', 'in', moves_to_hash.ids),
+            //             ('is_reconciled', '=', False),
+            //         ], limit=1))
+            //         if has_unreconciled:
+            //             warnings.add('unreconciled')
+            //     else:
+            //         warnings.add('no_document')
+            // 
+            //     info['warnings'] = warnings
+            // 
+            // moves = moves_to_hash.sudo(False)
+            // info.update({
             //     'moves': moves,
             //     'remaining_moves': self - moves,
-            //     'warnings': warnings,
-            // }
+            // })
+            // return info
             */
             return default;
         }
@@ -7439,6 +8614,136 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetContractDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contract_dates(self, date):
+            // """
+            // Return a tuple (date_from, date_to) of the contract at the date given.
+            // (False, False) if the employee is not in contract at that date.
+            // """
+            // self.ensure_one()
+            // for date_from, date_to in self._get_all_contract_dates():
+            //     if date_from <= date and (date_to is False or date_to >= date):
+            //         return date_from, date_to
+            // return False, False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContractVersionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end, object domain) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contract_versions(self, date_start=None, date_end=None, domain=None):
+            // """
+            // Retrieves contract versions for employees within the specified date range and
+            // domain. The function constructs a dynamic domain to filter contracts based on
+            // the provided arguments and retrieves grouped results. The grouping ensures
+            // organization by employee and date, and the results are stored in a structured
+            // format for ease of use.
+            // 
+            // Args:
+            //     date_start (datetime.date | None): The start date for filtering contracts.
+            //     date_end (datetime.date | None): The end date for filtering contracts.
+            //     domain (list | None): Additional domain constraints for filtering.
+            // 
+            // Returns:
+            //     dict: A dictionary where keys are employee IDs and values are lists of
+            //           contract version records organized by contract date start and date
+            //           range.
+            // """
+            // version_domain = Domain('contract_date_start', '!=', False)
+            // if self.ids:
+            //     version_domain &= Domain('employee_id', 'in', self.ids)
+            // elif not any(self._ids):  # onchange
+            //     version_domain &= Domain('employee_id', 'in', self._origin.ids)
+            // if date_start:
+            //     version_domain &= Domain('contract_date_end', '=', False) | Domain('contract_date_end', '>=', date_start)
+            // if date_end:
+            //     version_domain &= Domain('contract_date_start', '<=', date_end)
+            // if domain:
+            //     version_domain &= domain
+            // all_versions = self.env['hr.version']._read_group(
+            //     domain=version_domain,
+            //     groupby=['employee_id', 'date_version:day'],
+            //     aggregates=['id:recordset'],
+            // )
+            // contract_versions_by_employee = defaultdict(lambda: defaultdict(lambda: self.env["hr.version"]))
+            // for employee, _date_version, version in all_versions:
+            //     first_version = next(iter(version), version)
+            //     contract_versions_by_employee[employee.id][first_version.contract_date_start] |= version
+            // return contract_versions_by_employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContractsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end, object use_latest_version, object domain) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contracts(self, date_start=None, date_end=None, use_latest_version=True, domain=None):
+            // """
+            // Retrieve the contracts for employees within a specified date range and based
+            // on specified criteria, such as domain filtering and version selection.
+            // 
+            // This method is used to collect and organize employee contracts based on their
+            // versions, date ranges, and other specified options. The resulting contracts are
+            // grouped by employee, and their selection logic depends on whether the latest
+            // version should be used or not. It supports flexibility in contract retrieval by
+            // allowing optional filters for date range and domain.
+            // 
+            // Args:
+            //     date_start (Optional[datetime.date]): The start date to filter the contracts
+            //         by. If provided, only contract versions <= this date are considered
+            //         based on the selection logic.
+            //     date_end (Optional[datetime.date]): The end date to filter the contracts by.
+            //         Only contract versions within the range will be retrieved. Defaults to
+            //         None if not specified.
+            //     domain (Optional[dict]): A dictionary representing additional filters or
+            //         constraints to apply to the contract versions retrieved. Defaults to
+            //         None.
+            //     use_latest_version (bool): Indicates whether to retrieve the version
+            //     effective at the end of the contract (or before the date_end) for each employee (True) or
+            //     at the start of the contract (before the date_start) (False). Defaults to True.
+            // 
+            // Returns:
+            //     collections.defaultdict: A dictionary mapping each employee's identifier
+            //     (employee.id) to a set of their corresponding contracts. Each set contains
+            //     version records retrieved and filtered based on the specified criteria.
+            // """
+            // contract_versions_by_employee = self._get_contract_versions(date_start, date_end, domain)
+            // contracts_by_employee = defaultdict(lambda: self.env["hr.version"])
+            // for employee_id in contract_versions_by_employee:
+            //     for contract_versions in contract_versions_by_employee[employee_id].values():
+            //         effective_date = date_end if use_latest_version else date_start
+            //         if use_latest_version:
+            //             if effective_date:
+            //                 correct_versions = contract_versions.filtered(lambda v: v.date_version <= effective_date)
+            //                 contracts_by_employee[employee_id] |= correct_versions[-1] if correct_versions else contract_versions[0]
+            //             else:
+            //                 contracts_by_employee[employee_id] |= contract_versions[-1] if use_latest_version else contract_versions[0]
+            // return contracts_by_employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCopyMessageContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_copy_message_content(self, default):
+            // """Hook method to customize the message content when copying a move.
+            // This method can be overridden by other modules to add custom logic.
+            // :param default: The default values dict passed to copy method
+            // :return: The message content string
+            // """
+            // return _('This entry has been reversed from %s', self._get_html_link()) if default.get('reversed_entry_id') else _('This entry has been duplicated from %s', self._get_html_link())
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetCurrencyRateAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid to_currency_id, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7457,75 +8762,75 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDefaultExpenseSheetValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> GetCustomerInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _get_default_expense_sheet_values(self):
-            // # If there is an expense with total_amount == 0, it means that expense has not been processed by OCR yet
-            // expenses_with_amount = self.filtered(lambda expense: not (
-            //     expense.currency_id.is_zero(expense.total_amount_currency)
-            //     or expense.company_currency_id.is_zero(expense.total_amount)
-            //     or (expense.product_id and not float_round(expense.quantity, precision_rounding=expense.product_uom_id.rounding))
-            // ))
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _get_customer_information(self):
+            // email_keys_to_values = super()._get_customer_information()
             // 
-            // if any(expense.state != 'draft' or expense.sheet_id for expense in expenses_with_amount):
-            //     raise UserError(_("You cannot report twice the same line!"))
-            // if not expenses_with_amount:
-            //     raise UserError(_("You cannot report the expenses without amount!"))
-            // if len(expenses_with_amount.mapped('employee_id')) != 1:
-            //     raise UserError(_("You cannot report expenses for different employees in the same report."))
-            // if any(not expense.product_id for expense in expenses_with_amount):
-            //     raise UserError(_("You can not create report without category."))
-            // if len(self.company_id) != 1:
-            //     raise UserError(_("You cannot report expenses for different companies in the same report."))
-            // 
-            // # Check if two reports should be created
-            // own_expenses = expenses_with_amount.filtered(lambda x: x.payment_mode == 'own_account')
-            // company_expenses = expenses_with_amount - own_expenses
-            // create_two_reports = own_expenses and company_expenses
-            // 
-            // sheets = (own_expenses, company_expenses) if create_two_reports else (expenses_with_amount,)
-            // values = []
-            // 
-            // # We use a fallback name only when several expense sheets are created,
-            // # else we use the form view required name to force the user to set a name
-            // for todo in sheets:
-            //     paid_by = 'company' if todo[0].payment_mode == 'company_account' else 'employee'
-            //     sheet_name = self.env['hr.expense.sheet']._get_default_sheet_name(todo)
-            //     if not sheet_name and len(sheets) > 1:
-            //         sheet_name = _("New Expense Report, paid by %(paid_by)s", paid_by=paid_by)
-            //     values.append({
-            //         'company_id': self.company_id.id,
-            //         'employee_id': self[0].employee_id.id,
-            //         'name': sheet_name,
-            //         'expense_line_ids': [Command.set(todo.ids)],
-            //         'state': 'draft',
+            // for applicant in self:
+            //     email_key = tools.email_normalize(applicant.email_from) or applicant.email_from
+            //     # do not fill Falsy with random data, unless monorecord (= always correct)
+            //     if not email_key and len(self) > 1:
+            //         continue
+            //     email_keys_to_values.setdefault(email_key, {}).update({
+            //         'name': applicant.partner_name or tools.parse_contact_from_email(applicant.email_from)[0] or applicant.email_from,
+            //         'phone': applicant.partner_phone,
             //     })
-            // return values
+            // return email_keys_to_values
             */
             return default;
         }
 
-        public async Task<TEntity> GetDefaultSheetNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object expenses_to_report) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> GetDefaultReadFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _get_default_sheet_name(self, expenses_to_report):
-            // """ Computes the default name for a new expense sheet from the expenses name or dates """
-            // if len(expenses_to_report) == 1:
-            //     sheet_name = expenses_to_report.name
-            // else:
-            //     dates = expenses_to_report.mapped('date')
-            //     if False in dates:  # If at least one date isn't set, we don't set a default name
-            //         return False
-            //     min_date = format_date(self.env, min(dates))
-            //     max_date = format_date(self.env, max(dates))
-            //     if min_date == max_date:
-            //         sheet_name = min_date
-            //     else:
-            //         sheet_name = _("%(date_from)s - %(date_to)s", date_from=min_date, date_to=max_date)
-            // return sheet_name
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_default_read_fields(self):
+            // weirdos = {'needed_terms', 'quick_encoding_vals', 'payment_term_details'}
+            // return [fname for fname in self.fields_get(attributes=()) if fname not in weirdos]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDefaultResponsibleForApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_default_responsible_for_approval(self):
+            // self.ensure_one()
+            // approver_group = 'hr_expense.group_hr_expense_team_approver'
+            // 
+            // employee = self.employee_id.sudo()
+            // expense_manager = employee.expense_manager_id - employee.user_id
+            // if expense_manager:
+            //     return expense_manager.sudo(False)
+            // 
+            // department_manager = employee.department_id.manager_id.user_id - employee.user_id
+            // if department_manager and department_manager.has_groups(approver_group):
+            //     return department_manager.sudo(False)
+            // 
+            // employee_team_leader = employee.parent_id.user_id
+            // if employee_team_leader:
+            //     return employee_team_leader.sudo(False)
+            // 
+            // return self.env['res.users']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDepartureDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_departure_date(self):
+            // # Primarily used in the archive wizard
+            // # to pick a good default for the departure date
+            // self.ensure_one()
+            // if self.date_end and self.date_end < fields.Date.today():
+            //     return self.departure_date
+            // return False
             */
             return default;
         }
@@ -7585,34 +8890,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             //           '|', ('holiday_id', '=', False), ('holiday_id', 'not in', employee_leaves.ids)]
             // # Precompute values in batch for performance purposes
             // work_time_per_day_mapped = {
-            //     (date_from, date_to, calendar): employees.with_context(
+            //     (date_from, date_to, include_public_holidays_in_duration, calendar): employees.with_context(
             //             compute_leaves=not include_public_holidays_in_duration)._list_work_time_per_day(date_from, date_to, domain=domain, calendar=calendar)
             //     for (date_from, date_to, include_public_holidays_in_duration, calendar), employees in employees_by_dates_calendar.items()
             // }
             // work_days_data_mapped = {
-            //     (date_from, date_to, calendar): employees._get_work_days_data_batch(date_from, date_to, compute_leaves=not include_public_holidays_in_duration, domain=domain, calendar=calendar)
+            //     (date_from, date_to, include_public_holidays_in_duration, calendar): employees._get_work_days_data_batch(date_from, date_to, compute_leaves=not include_public_holidays_in_duration, domain=domain, calendar=calendar)
             //     for (date_from, date_to, include_public_holidays_in_duration, calendar), employees in employees_by_dates_calendar.items()
             // }
             // for leave in self:
             //     calendar = resource_calendar or leave.resource_calendar_id
-            //     if not leave.date_from or not leave.date_to or not calendar:
+            //     if not leave.date_from or not leave.date_to or (not calendar and not leave.employee_id):
             //         result[leave.id] = (0, 0)
             //         continue
+            //     hours, days = (0, 0)
             //     if leave.employee_id:
             //         # For flexible employees, if it's a single day leave, we force it to the real duration since the virtual intervals might not match reality on that day, especially for custom hours
-            //         if leave.employee_id.is_flexible and leave.date_to.date() == leave.date_from.date():
-            //             hours = (leave.date_to - leave.date_from).total_seconds() / 3600
-            //             if not leave.request_unit_hours:
-            //                 days = 1 if not leave.request_unit_half else 0.5
+            //         # sudo as is_flexible is on version model and employee does not have access to it.
+            //         if leave.employee_id.sudo().is_flexible and leave.request_date_to == leave.request_date_from:
+            //             public_holidays = self.env['resource.calendar.leaves'].search([
+            //                 ('resource_id', '=', False),
+            //                 ('date_from', '<', leave.date_to),
+            //                 ('date_to', '>', leave.date_from),
+            //                 ('calendar_id', 'in', [False, calendar.id]),
+            //                 ('company_id', '=', leave.company_id.id)
+            //             ])
+            //             if public_holidays:
+            //                 public_holidays_intervals = Intervals([(ph.date_from, ph.date_to, ph) for ph in public_holidays])
+            //                 leave_intervals = Intervals([(leave.date_from, leave.date_to, leave)])
+            //                 real_leave_intervals = leave_intervals - public_holidays_intervals
+            //                 hours = 0
+            //                 for start, stop, meta in real_leave_intervals:
+            //                     hours += (stop - start).total_seconds() / 3600
             //             else:
-            //                 days = (leave.date_to - leave.date_from).total_seconds() / 3600 / 24
+            //                 hours = (leave.date_to - leave.date_from).total_seconds() / 3600
+            //             if not leave.request_unit_hours and not public_holidays:
+            //                 days = 1 if not leave.request_unit_half or leave.request_date_from_period != leave.request_date_to_period else 0.5
+            //             else:
+            //                 days = hours / 24
             //         elif leave.leave_type_request_unit == 'day' and check_leave_type:
             //             # list of tuples (day, hours)
-            //             work_time_per_day_list = work_time_per_day_mapped[(leave.date_from, leave.date_to, calendar)][leave.employee_id.id]
+            //             work_time_per_day_list = work_time_per_day_mapped[leave.date_from, leave.date_to, leave.holiday_status_id.include_public_holidays_in_duration, calendar][leave.employee_id.id]
             //             days = len(work_time_per_day_list)
             //             hours = sum(map(lambda t: t[1], work_time_per_day_list))
             //         else:
-            //             work_days_data = work_days_data_mapped[(leave.date_from, leave.date_to, calendar)][leave.employee_id.id]
+            //             work_days_data = work_days_data_mapped[leave.date_from, leave.date_to, leave.holiday_status_id.include_public_holidays_in_duration, calendar][leave.employee_id.id]
             //             hours, days = work_days_data['hours'], work_days_data['days']
             //     else:
             //         today_hours = calendar.get_work_hours_count(
@@ -7651,28 +8973,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetEdiDecoderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data, object @new) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_edi_decoder(self, file_data, new=False):
-            // """To be extended with decoding capabilities.
-            // :returns:  Function to be later used to import the file.
-            //            Function' args:
-            //            - invoice: account.move
-            //            - file_data: attachemnt information / value
-            //            - new: whether the invoice is newly created
-            //            returns True if was able to process the invoice
-            // """
-            // return None
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetEmployeeCreateValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _get_employee_create_vals(self):
             // self.ensure_one()
             // address_id = self.partner_id.address_get(['contact'])['contact']
@@ -7680,6 +8984,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return {
             //     'name': self.partner_name or self.partner_id.display_name,
             //     'work_contact_id': self.partner_id.id,
+            //     'job_id': self.job_id.id,
+            //     'job_title': self.job_id.name,
             //     'private_street': address_sudo.street,
             //     'private_street2': address_sudo.street2,
             //     'private_city': address_sudo.city,
@@ -7689,8 +8995,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'private_phone': address_sudo.phone,
             //     'private_email': address_sudo.email,
             //     'lang': address_sudo.lang,
+            //     'department_id': self.department_id.id,
             //     'address_id': self.company_id.partner_id.id,
-            //     'candidate_id': self.ids,
+            //     'work_email': self.department_id.company_id.email or self.email_from,  # To have a valid email address by default
+            //     'work_phone': self.department_id.company_id.phone,
+            //     'applicant_ids': self.ids,
             //     'phone': self.partner_phone
             // }
             */
@@ -7722,11 +9031,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _get_employee_from_email(self, email_address):
+            // if not email_address:
+            //     return self.env['hr.employee']
             // employee = self.env['hr.employee'].search([
-            //     ('user_id', '!=', False),
-            //     '|',
-            //     ('work_email', 'ilike', email_address),
-            //     ('user_id.email', 'ilike', email_address),
+            //     ('user_id', '!=', False), '|', ('work_email', 'ilike', email_address), ('user_id.email', 'ilike', email_address),
             // ])
             // 
             // if len(employee) > 1:
@@ -7756,6 +9064,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetEmployeeWorkingNowInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_employee_working_now(self):
+            // """ Sudo needed to get resource_calendar_id as its normally only accessible by hr_users on version model
+            // (accessible on employee by inherits)."""
+            // working_now = []
+            // # We loop over all the employee tz and the resource calendar_id to detect working hours in batch.
+            // all_employee_tz = set(self.mapped('tz'))
+            // for tz in all_employee_tz:
+            //     employee_ids = self.filtered(lambda e: e.tz == tz)
+            //     resource_calendar_ids = employee_ids.sudo().mapped('resource_calendar_id')
+            //     for calendar_id in resource_calendar_ids:
+            //         res_employee_ids = employee_ids.sudo().filtered(lambda e: e.resource_calendar_id.id == calendar_id.id)
+            //         start_dt = fields.Datetime.now()
+            //         stop_dt = start_dt + timedelta(hours=1)
+            //         from_datetime = utc.localize(start_dt).astimezone(timezone(tz or 'UTC'))
+            //         to_datetime = utc.localize(stop_dt).astimezone(timezone(tz or 'UTC'))
+            //         # Getting work interval of the first is working. Functions called on resource_calendar_id
+            //         # are waiting for singleton
+            //         work_interval = res_employee_ids[0].resource_calendar_id._work_intervals_batch(from_datetime, to_datetime)[False]
+            //         # Employee that is not supposed to work have empty items.
+            //         if len(work_interval._items) > 0:
+            //             # The employees should be working now according to their work schedule
+            //             working_now += res_employee_ids.ids
+            // return working_now
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, object help_message) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -7774,23 +9113,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         nocontent_body = Markup("""
             // <p class="o_view_nocontent_smiling_face">%(help_title)s</p>
             // """) % {
-            //             'help_title': _("No application found. Let's create one !"),
-            //         }
-            // 
-            //         if hr_job:
-            //             pattern = r'(.*)<a>(.*?)<\/a>(.*)'
-            //             match = re.fullmatch(pattern, _('Have you tried to <a>add skills to your job position</a> and search into the Reserve ?'))
-            //             nocontent_body += Markup("""
-            // <p>%(para_1)s<a href="%(link)s">%(para_2)s</a>%(para_3)s</p>""") % {
-            //             'para_1': match[1],
-            //             'para_2': match[2],
-            //             'para_3': match[3],
-            //             'link': f'/odoo/recruitment/{hr_job.id}',
+            //             'help_title': _("No applications found."),
             //         }
             // 
             //         if hr_job.alias_email:
             //             nocontent_body += Markup('<p class="o_copy_paste_email oe_view_nocontent_alias">%(helper_email)s <a href="mailto:%(email)s">%(email)s</a></p>') % {
-            //                 'helper_email': _("Try creating an application by sending an email to"),
+            //                 'helper_email': _("Send applications to"),
             //                 'email': hr_job.alias_email,
             //             }
             // 
@@ -7827,16 +9155,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_expected_attendances(self, date_from, date_to):
             // self.ensure_one()
-            // employee_timezone = timezone(self.tz) if self.tz else None
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
-            // calendar_intervals = calendar._work_intervals_batch(
-            //                         date_from,
-            //                         date_to,
-            //                         tz=employee_timezone,
-            //                         resources=self.resource_id,
-            //                         compute_leaves=True,
-            //                         domain=[('company_id', 'in', [False, self.company_id.id])])[self.resource_id.id]
-            // return calendar_intervals
+            // valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(date_from.date(), date_to.date())
+            // employee_tz = timezone(self.tz) if self.tz else None
+            // if not valid_versions:
+            //     calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //     calendar_intervals = calendar._work_intervals_batch(
+            //         date_from,
+            //         date_to,
+            //         tz=employee_tz,
+            //         resources=self.resource_id,
+            //         compute_leaves=True,
+            //         domain=[('company_id', 'in', [False, self.company_id.id])])[self.resource_id.id]
+            //     return calendar_intervals
+            // duration_data = Intervals()
+            // version_prev = datetime.combine(valid_versions[0].date_start, time.min, employee_tz)
+            // for version in valid_versions:
+            //     version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //     contract_start = datetime.combine(version.contract_date_start, time.min, employee_tz)
+            //     version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //     calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //     start_date = version_start if version_prev < version_start else contract_start
+            //     version_intervals = calendar._work_intervals_batch(
+            //                             max(date_from, start_date),
+            //                             min(date_to, version_end),
+            //                             tz=employee_tz,
+            //                             resources=self.resource_id,
+            //                             compute_leaves=True,
+            //                             domain=[('company_id', 'in', [False, self.company_id.id]), ('time_type', '=', 'leave')])[self.resource_id.id]
+            //     duration_data = duration_data | version_intervals
+            // return duration_data
             */
             return default;
         }
@@ -7844,42 +9191,33 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetExpenseAccountDestinationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _get_expense_account_destination(self):
-            // self.ensure_one()
-            // if self.payment_mode == 'company_account':
-            //     journal = self.payment_method_line_id.journal_id
-            //     account_dest = (
-            //         self.payment_method_line_id.payment_account_id
-            //         or journal.company_id.expense_outstanding_account_id
-            //     )
-            //     if not account_dest:
-            //         error_msg = _(
-            //             "A default outstanding account must be defined in the settings for company-paid expenses. "
-            //             "Or specify one in the Journal for the %(method)s payment method.",
-            //             method=self.payment_method_line_id.display_name,
-            //         )
-            //         if self.env['res.config.settings'].has_access('write'):
-            //             action = self.env.ref('hr_expense.action_hr_expense_configuration')
-            //             raise RedirectWarning(error_msg, action=action.id, button_text=_("Go to settings"))
-            //         else:
-            //             raise UserError(error_msg)
-            // else:
-            //     if not self.employee_id.sudo().work_contact_id:
-            //         raise UserError(_("No work contact found for the employee %s, please configure one.", self.employee_id.name))
-            //     partner = self.employee_id.sudo().work_contact_id.with_company(self.company_id)
-            //     account_dest = partner.property_account_payable_id or partner.parent_id.property_account_payable_id
-            // return account_dest.id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetExpenseAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def get_expense_attachments(self):
-            // return self.attachment_ids.mapped('image_src')
+            // def _get_expense_account_destination(self):
+            // # account.move used to allow having several expenses with payment_mode = 'company_account'.
+            // # This method needs to support processing several expenses to allow reconciliation of old account.move.line
+            // ids = set()
+            // for expense in self:
+            //     if expense.payment_mode == 'company_account':
+            //         account_dest = expense.payment_method_line_id.payment_account_id or expense._get_outstanding_account_id()
+            //     elif not expense.employee_id.sudo().work_contact_id:
+            //         raise UserError(self.env._(
+            //             "No work contact found for the employee %(name)s, please configure one.",
+            //             name=expense.employee_id.name,
+            //         ))
+            //     else:
+            //         partner = expense.employee_id.sudo().work_contact_id.with_company(expense.company_id)
+            //         account_dest = partner.property_account_payable_id or partner.parent_id.property_account_payable_id
+            //     ids.add(account_dest.id)
+            // 
+            // # mimics <account.account>.id
+            // if not ids:
+            //     return False
+            // if len(ids) > 1:
+            //     raise UserError(self.env._(
+            //         "The following expenses payment method leads to several accounts payable and this isn't supported:\n%(expenses)s",
+            //         expenses=self.browse(ids),
+            //     ))
+            // return ids.pop()
             */
             return default;
         }
@@ -7890,62 +9228,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def get_expense_dashboard(self):
             // expense_state = {
-            //     'to_submit': {
-            //         'description': _('to submit'),
+            //     'draft': {
+            //         'description': _("To Submit"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     },
             //     'submitted': {
-            //         'description': _('under validation'),
+            //         'description': _("Waiting Approval"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     },
             //     'approved': {
-            //         'description': _('to be reimbursed'),
+            //         'description': _("Waiting Reimbursement"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     }
             // }
             // if not self.env.user.employee_ids:
             //     return expense_state
-            // target_currency = self.env.company.currency_id
             // # Counting the expenses to display in the dashboard:
-            // # - To submit: contains the expenses paid either by the employee or by the company, and that are draft or reported
-            // # - Under validation: contains expenses paid by the employee or paid by the company, and that have been submitted but still need to be approved/refused
+            // # - To Submit: contains the expenses paid either by the employee or by the company, and that are draft or reported
+            // # - Waiting approval: contains expenses paid by the employee or paid by the company, and that have been submitted but still need to be approved/refused
             // # - To be reimbursed: contains ONLY expenses paid by the employee that are approved, the payment has not yet been made
-            // expenses = self._read_group(
+            // fetched_expenses = self._read_group(
             //     [
             //         ('employee_id', 'in', self.env.user.employee_ids.ids),
-            //         '|', '&', ('payment_mode', 'in', ('own_account', 'company_account')), ('state', 'in', ('draft', 'reported', 'submitted')),
+            //         '|', ('state', 'in', ('draft', 'submitted')),
             //              '&', ('payment_mode', '=', 'own_account'), ('state', '=', 'approved')
             //     ], ['state'], ['total_amount:sum'])
-            // for state, total_amount_sum in expenses:
-            //     if state in {'draft', 'reported'}:  # Fuse the two states into only one "To Submit" state
-            //         state = 'to_submit'
+            // for state, total_amount_sum in fetched_expenses:
             //     expense_state[state]['amount'] += total_amount_sum
             // return expense_state
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetExpensesToSubmitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def get_expenses_to_submit(self):
-            // # if there ere no records selected, then select all draft expenses for the user
-            // if self:
-            //     expenses = self.filtered(lambda expense: expense.state == 'draft' and not expense.sheet_id and expense.is_editable)
-            // else:
-            //     expenses = self.env['hr.expense'].search([
-            //         ('state', '=', 'draft'),
-            //         ('sheet_id', '=', False),
-            //         ('employee_id', '=', self.env.user.employee_id.id),
-            //     ]).filtered(lambda expense: expense.is_editable)
-            // 
-            // if not expenses:
-            //     raise UserError(_('You have no expense to report'))
-            // return expenses.action_submit_expenses()
             */
             return default;
         }
@@ -7956,14 +9269,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_extra_print_items(self):
             // """ Helper to dynamically add items in the 'Print' menu of list and form of account.move.
-            // This is necessary to avoid the re-generation of the PDF through the action_report.
-            // Indeed, once a legal PDF is generated, it should be used and not re-generated.
             // """
-            // return [{
-            //     'key': 'download_pdf',
-            //     'description': _('PDF'),
-            //     **self.action_invoice_download_pdf()
-            // }]
+            // if moves_to_export := self.filtered(lambda m: m._get_move_zip_export_docs()):
+            //     return [
+            //         {
+            //             'key': 'download_all',
+            //             'description': _("Export ZIP"),
+            //             **moves_to_export.action_move_download_all(),
+            //         },
+            //     ]
+            // return []
             */
             return default;
         }
@@ -8007,13 +9322,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetFirstVersionDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object no_gap) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_first_version_date(self, no_gap=True):
+            // self.ensure_one()
+            // if not self.env.su and not self.env.user.has_group("hr.group_hr_user"):
+            //     raise AccessError(_("Only HR users can access first version date on an employee."))
+            // 
+            // def remove_gap(versions):
+            //     # We do not consider a gap of more than 4 days to be a same occupation
+            //     # versions are considered to be ordered correctly
+            //     if not versions:
+            //         return self.env['hr.version']
+            //     if len(versions) == 1:
+            //         return versions
+            //     current_version = versions[0]
+            //     older_versions = versions[1:]
+            //     current_date = current_version.date_start
+            //     for i, other_version in enumerate(older_versions):
+            //         # Consider current_version.date_end being false as an error and cut the loop
+            //         gap = (current_date - (other_version.date_end or date(2100, 1, 1))).days
+            //         current_date = other_version.date_start
+            //         if gap >= 4:
+            //             return older_versions[0:i] + current_version
+            //     return older_versions + current_version
+            // 
+            // versions = self._get_first_versions().sorted('date_start', reverse=True)
+            // if no_gap:
+            //     versions = remove_gap(versions)
+            // return min(versions.mapped('date_start')) if versions else False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetFirstVersionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_first_versions(self):
+            // self.ensure_one()
+            // versions = self.version_ids
+            // if self.env.context.get('before_date'):
+            //     versions = versions.filtered(lambda c: c.date_start <= self.env.context['before_date'])
+            // return versions
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetFormviewActionAsync<TEntity>(IEnumerable<TEntity> entities, object access_uid) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_formview_action(self, access_uid=None):
             // """ Override this method in order to redirect many2one towards the right model depending on access_uid """
-            // res = super(HrEmployeePrivate, self).get_formview_action(access_uid=access_uid)
+            // res = super().get_formview_action(access_uid=access_uid)
             // user = self.env.user
             // if access_uid:
             //     user = self.env['res.users'].browse(access_uid).sudo()
@@ -8037,7 +9401,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     user = self.env['res.users'].browse(access_uid).sudo()
             // 
             // if user.has_group('hr.group_hr_user'):
-            //     return super(HrEmployeePrivate, self).get_formview_id(access_uid=access_uid)
+            //     return super().get_formview_id(access_uid=access_uid)
             // # Hardcode the form view for public employee
             // return self.env.ref('hr.hr_employee_public_view_form').id
             */
@@ -8058,7 +9422,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // domain = [
             //     *self.env['account.move.line']._check_company_domain(company_id),
             //     ('partner_id', '=', partner_id),
-            //     ('account_id.deprecated', '=', False),
             //     ('date', '>=', date.today() - timedelta(days=365 * 2)),
             // ]
             // if move_type in self.env['account.move'].get_inbound_types(include_receipts=True):
@@ -8066,7 +9429,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif move_type in self.env['account.move'].get_outbound_types(include_receipts=True):
             //     domain.append(('account_id.internal_group', '=', 'expense'))
             // 
-            // query = self.env['account.move.line']._where_calc(domain)
+            // query = self.env['account.move.line']._search(domain, bypass_access=True)
             // account_code = self.env['account.account']._field_to_sql('account_move_line__account_id', 'code', query)
             // rows = self.env.execute_query(SQL("""
             //     SELECT COUNT(foo.id), foo.account_id, foo.taxes
@@ -8107,51 +9470,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // If there are no attendances on the exact days of the request, return
             // the earliest hour_from and latest hour_to that exist in the schedule.
             // """
-            // self.ensure_one()
+            // calendar = self.resource_calendar_id
+            // if not calendar:
+            //     return (0, 24)
+            // calendar.ensure_one()
             // 
-            // domain = [
-            //     ('calendar_id', '=', self.resource_calendar_id.id),
-            //     ('display_type', '=', False),
-            //     ('day_period', '!=', 'lunch'),
-            // ]
-            // # In the case of flexible hours, we resort to centering the holiday hours around 12pm
-            // if self.resource_calendar_id.flexible_hours:
-            //     hours_per_day = self.resource_calendar_id.hours_per_day
-            //     attendances = []
-            //     default_start = 12.0 - (hours_per_day / 2)
-            //     default_end = 12.0 + (hours_per_day / 2)
-            //     for week_type in [0, 1]:
-            //         for day in range(7):
-            //             if day_period:
-            //                 attendances.append(DummyAttendance(default_start if day_period == 'morning' else 12, 12 if day_period == 'morning' else default_end, day, day_period, week_type))
-            //             else:
-            //                 attendances.append(DummyAttendance(default_start, default_end, day, None, week_type))
-            //     attendances = sorted(attendances, key=lambda att: att.dayofweek)
-            // else:
-            //     if day_period:
-            //         domain.append(('day_period', '=', day_period))
-            //     # Must be sorted by dayofweek ASC and day_period DESC
-            //     attendances = self.env['resource.calendar.attendance']._read_group(domain,
-            //         ['week_type', 'dayofweek'],
-            //         ['hour_from:min', 'hour_to:max'], order="dayofweek ASC")
-            // 
-            //     attendances = [DummyAttendance(hour_from, hour_to, dayofweek, None, week_type) for week_type, dayofweek, hour_from, hour_to in attendances]
-            // 
-            //     # If we can't find any attendances on the exact days of the request,
-            //     # we default to the widest possible range that exists in the schedule.
-            //     default_start = min((attendance.hour_from for attendance in attendances), default=0)
-            //     default_end = max((attendance.hour_to for attendance in attendances), default=0)
-            // 
-            // start_week_type = 0
-            // end_week_type = 0
-            // if self.resource_calendar_id.two_weeks_calendar:
-            //     start_week_type = self.env['resource.calendar.attendance'].get_week_type(request_date_from)
-            //     end_week_type = self.env['resource.calendar.attendance'].get_week_type(request_date_to)
-            // 
-            // hour_from = next((att.hour_from for att in attendances if int(att.dayofweek) == request_date_from.weekday() and (int(att.week_type) == start_week_type)),
-            //                  default_start)
-            // hour_to = next((att.hour_to for att in attendances if int(att.dayofweek) == request_date_to.weekday() and (int(att.week_type) == end_week_type)),
-            //                default_end)
+            // hour_from, _ = calendar._get_hours_for_date(request_date_from, day_period)
+            // _, hour_to = calendar._get_hours_for_date(request_date_to, day_period)
             // 
             // return (hour_from, hour_to)
             */
@@ -8161,6 +9486,37 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def get_import_templates(self):
+            // move_type = self.env.context.get('default_move_type')
+            // match move_type:
+            //     case 'entry':
+            //         return [{
+            //             'label': _('Import Template for Misc. Operations'),
+            //             'template': '/account/static/xls/misc_operations_import_template.xlsx',
+            //         }]
+            //     case 'out_invoice':
+            //         return [{
+            //             'label': _('Import Template for Invoices'),
+            //             'template': '/account/static/xls/customer_invoices_credit_notes_import_template.xlsx',
+            //         }]
+            //     case 'out_refund':
+            //         return [{
+            //             'label': _('Import Template for Credit Notes'),
+            //             'template': '/account/static/xls/customer_invoices_credit_notes_import_template.xlsx',
+            //         }]
+            //     case 'in_invoice':
+            //         return [{
+            //             'label': _('Import Template for Bills'),
+            //             'template': '/account/static/xls/vendor_bills_refunds_import_template.xlsx',
+            //         }]
+            //     case 'in_refund':
+            //         return [{
+            //             'label': _('Import Template for Refunds'),
+            //             'template': '/account/static/xls/vendor_bills_refunds_import_template.xlsx',
+            //         }]
+            //     case _:
+            //         return []
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_import_templates(self):
             // return [{
@@ -8209,7 +9565,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_integrity_hash_fields(self):
             // # Use the latest hash version by default, but keep the old one for backward compatibility when generating the integrity report.
-            // hash_version = self._context.get('hash_version', MAX_HASH_VERSION)
+            // hash_version = self.env.context.get('hash_version', MAX_HASH_VERSION)
             // if hash_version == 1:
             //     return ['date', 'journal_id', 'company_id']
             // elif hash_version in (2, 3, 4):
@@ -8225,8 +9581,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_computed_reference(self):
             // self.ensure_one()
-            // if self.journal_id.invoice_reference_type == 'none':
-            //     return ''
             // ref_function = getattr(self, f'_get_invoice_reference_{self.journal_id.invoice_reference_model}_{self.journal_id.invoice_reference_type}', None)
             // if ref_function is None:
             //     raise UserError(_("The combination of reference model and reference type on the journal is not implemented"))
@@ -8277,7 +9631,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 **vals,
             //                 'amount_currency': 0.0,
             //                 'balance': 0.0,
-            //                 'display_type': 'epd',  # Used to compute tax_tag_invert for early payment discount lines
             //             })
             //             line_vals['amount_currency'] += vals['amount_currency']
             //             line_vals['balance'] += vals['balance']
@@ -8391,6 +9744,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     cash_discount_account = company.account_journal_early_pay_discount_gain_account_id
             // 
+            // epd_analytic_distribution = self.env['account.analytic.distribution.model']._get_distribution({
+            //     'account_prefix': cash_discount_account.code,
+            //     'company_id': self.company_id.id,
+            //     'partner_id': self.commercial_partner_id.id,
+            //     'partner_category_id': self.partner_id.category_id.ids,
+            // })
+            // 
             // bases_details = {}
             // 
             // term_amount_currency = payment_term_line.amount_currency - payment_term_line.discount_amount_currency
@@ -8409,7 +9769,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'partner_id': base_line['partner_id'].id,
             //             'currency_id': base_line['currency_id'].id,
             //             'account_id': cash_discount_account.id,
-            //             'analytic_distribution': base_line['analytic_distribution'],
+            //             'analytic_distribution': base_line['analytic_distribution'] or epd_analytic_distribution,
             //         }
             //         base_detail = resulting_delta_base_details.setdefault(frozendict(grouping_dict), {
             //             'balance': 0.0,
@@ -8488,6 +9848,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'currency_id': payment_term_line.currency_id.id,
             //         'amount_currency': term_amount_currency,
             //         'balance': term_balance,
+            //         'analytic_distribution': epd_analytic_distribution,
             //     }
             // 
             // return res
@@ -8502,6 +9863,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_invoice_currency_rate_date(self):
             // self.ensure_one()
             // return self.invoice_date or fields.Date.context_today(self)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetInvoiceFilterTypeDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_filter_type_domain(self, move_type):
+            // if self.is_sale_document(include_receipts=True, move_type=move_type):
+            //     return 'sale'
+            // elif self.is_purchase_document(include_receipts=True, move_type=move_type):
+            //     return 'purchase'
+            // else:
+            //     return False
             */
             return default;
         }
@@ -8552,7 +9928,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_legal_documents(self, filetype, allow_fallback=False):
             // """ Retrieve the invoice legal document of type filetype.
-            // :param filetype: the type of legal document to retrieve. Example: 'pdf', 'all'.
+            // :param filetype: the type of legal document to retrieve. Example: 'pdf'.
             // :param bool allow_fallback: if True, returns a Proforma if the PDF invoice doesn't exist.
             // :return dict: the invoice PDF data such as
             // {'filename': 'INV_2024_0001.pdf', 'filetype': 'pdf', 'content':...}
@@ -8568,8 +9944,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         }
             //     elif allow_fallback:
             //         return self._get_invoice_pdf_proforma()
-            // elif filetype == 'all':
-            //     return self._get_invoice_legal_documents_all(allow_fallback=allow_fallback)
             */
             return default;
         }
@@ -8738,12 +10112,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_reference_euro_invoice(self):
             // """ This computes the reference based on the RF Creditor Reference.
-            //     The data of the reference is the database id number of the invoice.
-            //     For instance, if an invoice is issued with id 43, the check number
-            //     is 07 so the reference will be 'RF07 43'.
+            //     The data of the reference is the journal short code and the database
+            //     id number of the invoice. For instance, if a journal code is INV and
+            //     an invoice is issued with id 37, the check number is 67 so the
+            //     reference will be 'RF67 INV0 0003 7'.
             // """
             // self.ensure_one()
-            // return format_structured_reference_iso(self.id)
+            // journal_identifier = self.journal_id.code if self.journal_id.code.isascii() and self.journal_id.code.isalnum() else self.journal_id.id
+            // return format_structured_reference_iso(f'{journal_identifier}{str(self.id).zfill(6)}')
             */
             return default;
         }
@@ -8764,10 +10140,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     be used.
             // """
             // self.ensure_one()
+            // journal_identifier = self.journal_id.code if self.journal_id.code.isascii() and self.journal_id.code.isalnum() else self.journal_id.id
             // partner_ref = self.partner_id.ref
             // partner_ref_nr = re.sub(r'\D', '', partner_ref or '')[-21:] or str(self.partner_id.id)[-21:]
-            // partner_ref_nr = partner_ref_nr[-21:]
+            // partner_ref_nr = f'{journal_identifier}{partner_ref_nr}'[-21:]
             // return format_structured_reference_iso(partner_ref_nr)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetInvoiceReferenceNumberInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_reference_number_invoice(self):
+            // """ This computes the reference based on the Number format.
+            //     Return the number of the invoice, defined on the journal sequence.
+            // """
+            // ref = self._get_invoice_reference_odoo_invoice() or ''
+            // return ''.join(char for char in ref if char.isdigit())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetInvoiceReferenceNumberPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_reference_number_partner(self):
+            // """ This computes the reference based on the Number format.
+            //     The data used is the reference set on the partner or its database
+            //     id otherwise. For instance if the reference of the customer is
+            //     'customer 97', the reference will be '97'.
+            // """
+            // ref = self._get_invoice_reference_odoo_partner()
+            // return ''.join(char for char in ref if char.isdigit())
             */
             return default;
         }
@@ -8804,14 +10211,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoiceReportFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extension) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> GetInvoiceReportFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extension, object report) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_invoice_report_filename(self, extension='pdf'):
+            // def _get_invoice_report_filename(self, extension='pdf', report=None):
             // """ Get the filename of the generated invoice report with extension file. """
             // self.ensure_one()
-            // return f"{self.name.replace('/', '_')}.{extension}"
+            // if not report:
+            //     report = self.partner_id.invoice_template_pdf_report_id or self.env.ref('account.account_invoices')
+            // if report.print_report_name and isinstance(report.print_report_name, str):
+            //     file_name = safe_eval(report.print_report_name, {'object': self})
+            // else:
+            //     file_name = self.name
+            // return f"{file_name.replace('/', '_')}.{extension}"
             */
             return default;
         }
@@ -8847,6 +10260,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         domain += [('move_type', 'in' if self.move_type in refund_types else 'not in', refund_types)]
             //     if self.journal_id.payment_sequence:
             //         domain += [('origin_payment_id', '!=' if is_payment else '=', False)]
+            //     if self.journal_id.is_self_billing:
+            //         if self.partner_id:
+            //             domain += [('commercial_partner_id', '=', self.partner_id.commercial_partner_id.id)]
+            //         else:
+            //             # If the partner id is not set, we can't compute the sequence, so we force a sequence reset.
+            //             domain += [(0, '=', 1)]
             //     reference_move_name = self.sudo().search(domain + [('date', '<=', self.date)], order='date desc', limit=1).name
             //     if not reference_move_name:
             //         reference_move_name = self.sudo().search(domain, order='date asc', limit=1).name
@@ -8888,6 +10307,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         where_string += " AND origin_payment_id IS NULL "
             // 
+            // if self.journal_id.is_self_billing:
+            //     if self.partner_id:
+            //         where_string += " AND commercial_partner_id = %(partner_id)s "
+            //         param['partner_id'] = self.partner_id.commercial_partner_id.id
+            //     else:
+            //         where_string += " AND false "
             // return where_string, param
             */
             return default;
@@ -8947,11 +10372,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // :return: the correct mail template based on the current move type
             // """
-            // return self.env.ref(
-            //     'account.email_template_edi_credit_note'
-            //     if all(move.move_type == 'out_refund' for move in self)
-            //     else 'account.email_template_edi_invoice'
-            // )
+            // template_xmlid = 'account.email_template_edi_invoice'
+            // if all(move.move_type == 'out_refund' for move in self):
+            //     template_xmlid = 'account.email_template_edi_credit_note'
+            // elif all(move.move_type == 'in_invoice' and move.journal_id.is_self_billing for move in self):
+            //     template_xmlid = 'account.email_template_edi_self_billing_invoice'
+            // elif all(move.move_type == 'in_refund' and move.journal_id.is_self_billing for move in self):
+            //     template_xmlid = 'account.email_template_edi_self_billing_credit_note'
+            // return self.env.ref(template_xmlid)
             */
             return default;
         }
@@ -8964,22 +10392,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res = super()._get_mail_thread_data_attachments()
             // # else, attachments with 'res_field' get excluded
             // return res | self.env['account.move.send']._get_invoice_extra_attachments(self)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetMaritalStatusSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _get_marital_status_selection(self):
-            // return [
-            //     ('single', _('Single')),
-            //     ('married', _('Married')),
-            //     ('cohabitant', _('Legal Cohabitant')),
-            //     ('widower', _('Widower')),
-            //     ('divorced', _('Divorced')),
-            // ]
             */
             return default;
         }
@@ -9053,16 +10465,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param common_domain: a search domain that will be included in the returned domain in any case
             // :param force_hash: if True, we'll check all moves posted, independently of journal settings
             // """
-            // common_domain = expression.AND([
-            //     common_domain or [],
-            //     [('state', '=', 'posted')],
-            // ])
+            // domain = Domain(common_domain or Domain.TRUE) & Domain('state', '=', 'posted')
             // if force_hash:
-            //     return common_domain
-            // return expression.AND([
-            //     common_domain,
-            //     [('restrict_mode_hash_table', '=', True)],
-            // ])
+            //     return domain
+            // return domain & Domain('restrict_mode_hash_table', '=', True)
             */
             return default;
         }
@@ -9080,6 +10486,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetMoveLinesToReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_move_lines_to_report(self):
+            // def show_line(line):
+            //     return (
+            //         line.display_type == 'line_section'
+            //         or (
+            //             not any([line.parent_id.collapse_composition, line.parent_id.parent_id.collapse_composition]) and
+            //             not any([line.parent_id.collapse_prices, line.parent_id.parent_id.collapse_prices])
+            //         )
+            //     )
+            // 
+            // return self.invoice_line_ids.filtered(show_line).sorted('sequence')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetMoveZipExportDocsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_move_zip_export_docs(self):
+            // self.ensure_one()
+            // 
+            // if self.state != 'posted':
+            //     return []
+            // 
+            // if self.is_purchase_document(include_receipts=True):
+            //     attachment = self.message_main_attachment_id
+            //     return [{
+            //         'filename': attachment.name,
+            //         'filetype': attachment.mimetype,
+            //         'content': attachment.raw,
+            //     }] if attachment else []
+            // 
+            // return self._get_invoice_legal_documents_all()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetMovesRequiringConfirmationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_moves_requiring_confirmation(self):
+            // """Return the subset of moves that require confirmation before validation."""
+            // return self.filtered(
+            //     lambda move: (move.date or move.invoice_date) > fields.Date.context_today(self)
+            //     or move.restrict_mode_hash_table,
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetNameInvoiceReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -9093,12 +10555,100 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetNewHireFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_new_hire_field(self):
+            // return 'create_date'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetNextStatesByStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_next_states_by_state(self):
+            // self.ensure_one()
+            // state_result = {
+            //     'confirm': set(),
+            //     'validate1': set(),
+            //     'validate': set(),
+            //     'refuse': set(),
+            //     'cancel': set()
+            // }
+            // validation_type = self.validation_type
+            // 
+            // user_employees = self.env.user.employee_ids
+            // is_own_leave = self.employee_id in user_employees
+            // is_in_past = self.date_from and self.date_from.date() < fields.Date.today()
+            // 
+            // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
+            // is_time_off_manager = self.employee_id.leave_manager_id == self.env.user
+            // 
+            // if is_own_leave and (not is_in_past or is_officer):
+            //     state_result['validate1'].add('cancel')
+            //     state_result['validate'].add('cancel')
+            //     state_result['refuse'].add('cancel')
+            // 
+            // if is_officer:
+            //     if validation_type == 'both':
+            //         state_result['confirm'].add('validate1')
+            //         state_result['refuse'].add('validate1')
+            //         state_result['cancel'].add('validate1')
+            //     state_result['confirm'].update({'validate', 'refuse'})
+            //     state_result['validate1'].update({'confirm', 'validate', 'refuse'})
+            //     state_result['validate'].update({'confirm', 'refuse'})
+            //     state_result['refuse'].update({'confirm', 'validate'})
+            //     state_result['cancel'].update({'confirm', 'validate', 'refuse'})
+            // elif is_time_off_manager:
+            //     if validation_type != 'hr':
+            //         state_result['confirm'].add('refuse')
+            //         state_result['validate'].add('refuse')
+            //     if validation_type == 'both':
+            //         state_result['confirm'].add('validate1')
+            //         state_result['validate1'].add('refuse')
+            //     elif validation_type == 'manager':
+            //         state_result['confirm'].add('validate')
+            //         state_result['refuse'].add('validate')
+            // 
+            // return state_result
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetOutboundTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_outbound_types(self, include_receipts=True):
             // return ['in_invoice', 'out_refund'] + (include_receipts and ['in_receipt'] or [])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetOutstandingAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_outstanding_account_id(self):
+            // account_ref = 'account_journal_payment_debit_account_id' if self.payment_method_line_id.payment_type == 'inbound' else 'account_journal_payment_credit_account_id'
+            // chart_template = self.with_context(allowed_company_ids=self.company_id.root_id.ids).env['account.chart.template']
+            // outstanding_account = chart_template.ref(account_ref, raise_if_not_found=False)
+            // if not outstanding_account:
+            //     bank_prefix = self.company_id.bank_account_code_prefix
+            //     first_account = self.env['account.account'].search([('company_ids', 'in', self.company_id.id)], limit=1)
+            //     code_digits = len(first_account.code or '') or 6
+            //     chart_template._create_outstanding_accounts(self.company_id, bank_prefix, code_digits)
+            //     outstanding_account = chart_template.ref(account_ref, raise_if_not_found=False)
+            // if not outstanding_account.active:
+            //     raise RedirectWarning(
+            //         message=_("The account %(name)s (%(code)s) is archived. Activate it to continue", name=outstanding_account.name, code=outstanding_account.code),
+            //         action=outstanding_account._get_records_action(),
+            //         button_text=_("Go to Account"),
+            //     )
+            // return outstanding_account
             */
             return default;
         }
@@ -9117,6 +10667,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not outstanding_account:
             //     raise UserError(_("No outstanding account could be found to make the payment"))
             // return outstanding_account
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetOverlappingContractsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_overlapping_contracts(self):
+            // self.ensure_one()
+            // domain = Domain.AND([
+            //     Domain('employee_id', '=', self.employee_id.id),
+            //     Domain('contract_date_start', '<=', self.date_to),
+            //     Domain.OR([
+            //         Domain('contract_date_end', '>=', self.date_from),
+            //         Domain('contract_date_end', '=', False),
+            //     ])
+            // ])
+            // versions = self.env['hr.version'].sudo().search(domain)
+            // return versions.filtered(lambda v: v._is_overlapping_period(self.date_from.date(), self.date_to.date()))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetParentFieldOnChildModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'move_id'
             */
             return default;
         }
@@ -9175,17 +10755,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetPortalPaymentLinkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_portal_payment_link(self):
+            // # This method is designed to prevent traceback.
+            // # Scenario: A traceback occurs when `account.payment` is not installed, and the user attempts to
+            // # preview or print the invoice.
+            // self.ensure_one()
+            // return None
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetProductCatalogDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_product_catalog_domain(self):
+            // domain = super()._get_product_catalog_domain()
             // if self.is_sale_document():
-            //     return expression.AND([super()._get_product_catalog_domain(), [('sale_ok', '=', True)]])
+            //     return domain & Domain('sale_ok', '=', True)
             // elif self.is_purchase_document():
-            //     return expression.AND([super()._get_product_catalog_domain(), [('purchase_ok', '=', True)]])
+            //     return domain & Domain('purchase_ok', '=', True)
             // else:  # In case of an entry
-            //     return super()._get_product_catalog_domain()
+            //     return domain
             */
             return default;
         }
@@ -9203,14 +10798,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetProductCatalogRecordLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> product_ids, object child_field) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> GetProductCatalogRecordLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> product_ids) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['account.move.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.line_ids[:1].id
+            //         if self.line_ids[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.line_ids:
-            //     if line.display_type == 'product' and line.product_id.id in product_ids:
+            //     if (
+            //         line.get_parent_section_line().id == section_id
+            //         and line.display_type == 'product'
+            //         and line.product_id.id in product_ids
+            //     ):
             //         grouped_lines[line.product_id] |= line
             // return grouped_lines
             */
@@ -9430,6 +11035,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetRemainingPercentageAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_remaining_percentage(self):
+            // self.ensure_one()
+            // distribution = self.salary_distribution or {}
+            // allocated = 0.0
+            // 
+            // for ba_id, vals in distribution.items():
+            //     if vals.get('amount_is_percentage'):
+            //         allocated += vals.get('amount', 0.0)
+            // 
+            // remaining = 100.0 - allocated
+            // return max(0.0, remaining)
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetReportBaseFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -9443,15 +11067,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetResponsibleForApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _get_responsible_for_approval(self):
-            // if self.user_id:
-            //     return self.user_id
-            // if self.employee_id.parent_id.user_id:
-            //     return self.employee_id.parent_id.user_id
-            // if self.employee_id.department_id.manager_id.user_id:
-            //     return self.employee_id.department_id.manager_id.user_id
-            // return self.env['res.users']
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _get_responsible_for_approval(self):
             // self.ensure_one()
@@ -9466,6 +11081,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if self.holiday_status_id.responsible_ids:
             //         responsible = self.holiday_status_id.responsible_ids
             // return responsible
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetRottingDependsFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _get_rotting_depends_fields(self):
+            // return super()._get_rotting_depends_fields() + ['application_status', 'date_closed']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetRottingDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _get_rotting_domain(self):
+            // return super()._get_rotting_domain() & Domain([
+            //     ('application_status', '=', 'ongoing'),
+            //     ('date_closed', '=', False),
+            // ])
             */
             return default;
         }
@@ -9502,13 +11140,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     cash_rounding_amls = self.line_ids \
             //         .filtered(lambda line: line.display_type == 'rounding' and not line.tax_repartition_line_id)
             //     base_lines += [self._prepare_cash_rounding_base_line_for_taxes_computation(line) for line in cash_rounding_amls]
+            //     non_deductible_base_lines = self.line_ids.filtered(lambda line: line.display_type in ('non_deductible_product', 'non_deductible_product_total'))
+            //     base_lines += [self._prepare_non_deductible_base_line_for_taxes_computation(line) for line in non_deductible_base_lines]
             //     AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
             //     tax_amls = self.line_ids.filtered('tax_repartition_line_id')
             //     tax_lines = [self._prepare_tax_line_for_taxes_computation(tax_line) for tax_line in tax_amls]
+            //     if round_from_tax_lines == 'reapply_currency_rate':
+            //         for tax_line in tax_lines:
+            //             rate = tax_line['record'].currency_rate
+            //             if rate:
+            //                 tax_line['balance'] = self.company_currency_id.round(tax_line['amount_currency'] / rate)
             //     AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines if round_from_tax_lines else [])
             // else:
             //     # The move is not stored yet so the only thing we have is the invoice lines.
             //     base_lines += self._prepare_epd_base_lines_for_taxes_computation_from_base_lines(base_amls)
+            //     base_lines += self._prepare_non_deductible_base_lines_for_taxes_computation_from_base_lines(base_amls)
             //     AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
             //     AccountTax._round_base_lines_tax_details(base_lines, self.company_id)
             // return base_lines, tax_lines
@@ -9561,26 +11207,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetSimilarCandidatesDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> GetSimilarApplicantsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object ignore_talent, object only_talent) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _get_similar_candidates_domain(self):
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _get_similar_applicants_domain(self, ignore_talent=False, only_talent=False):
             // """
-            //     This method returns a domain for the applicants whitch match with the
-            //     current candidate according to email_from, partner_phone.
-            //     Thus, search on the domain will return the current candidate as well if any of
-            //     the following fields are filled.
+            // This method returns a domain for the applicants whitch match with the
+            // current applicant according to email_from, partner_phone or linkedin_profile.
+            // Thus, search on the domain will return the current applicant as well
+            // if any of the following fields are filled.
+            // 
+            // Args:
+            //     ignore_talent: if you want the domain to only include applicants not belonging to a talent pool
+            //     only_talent: if you want the domain to only include applicants belonging to a talent pool
+            // 
+            // Returns:
+            //     Domain()
             // """
-            // self.ensure_one()
-            // if not self:
-            //     return []
-            // domain = [('id', 'in', self.ids)]
-            // if self.email_normalized:
-            //     domain = expression.OR([domain, [('email_normalized', '=', self.email_normalized)]])
-            // if self.partner_phone_sanitized:
-            //     domain = expression.OR([domain, [('partner_phone_sanitized', '=', self.partner_phone_sanitized)]])
-            // domain = expression.AND([domain, [('company_id', '=', self.company_id.id)]])
+            // domain = Domain.AND([
+            //     Domain('company_id', 'in', self.mapped('company_id.id')),
+            //     Domain.OR([
+            //         Domain("id", "in", self.ids),
+            //         Domain("email_normalized", "in", [email for email in self.mapped("email_normalized") if email]),
+            //         Domain("partner_phone_sanitized", "in", [phone for phone in self.mapped("partner_phone_sanitized") if phone]),
+            //         Domain("linkedin_profile", "in", [linkedin_profile for linkedin_profile in self.mapped("linkedin_profile") if linkedin_profile]),
+            //         Domain("pool_applicant_id", "in", [pool_applicant.id for pool_applicant in self.mapped("pool_applicant_id") if pool_applicant]),
+            //     ])
+            // ])
+            // if ignore_talent:
+            //     domain &= Domain("talent_pool_ids", "=", False)
+            // if only_talent:
+            //     domain &= Domain("talent_pool_ids", "!=", False)
             // return domain
             */
             return default;
@@ -9605,6 +11263,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'company_id': self.company_id.id,
             //     'analytic_distribution': self.analytic_distribution,
             //     'employee_id': self.employee_id.id,
+            //     'approval_state': self.approval_state,
+            //     'approval_date': self.approval_date,
+            //     'manager_id': self.manager_id.id,
             //     'expense_id': self.id,
             // } for price in (price_round_up, price_round_down)]
             */
@@ -9638,12 +11299,125 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # example). Note that it's already the case for monthly sequences.
             //     starting_sequence = "%s/%s/%s" % (self.journal_id.code, year_part, '0000' if is_staggered_year else '00000')
             // else:
-            //     starting_sequence = "%s/%s/%02d/0000" % (self.journal_id.code, year_part, move_date.month)
+            //     if self.journal_id.is_self_billing:
+            //         partner_identifier = str(self.partner_id.commercial_partner_id.id) if self.partner_id else _('[Partner id]')
+            //         starting_sequence = "%s%s/%s/%02d/0000" % (
+            //             self.journal_id.code,
+            //             partner_identifier.zfill(5),
+            //             year_part,
+            //             move_date.month,
+            //         )
+            //     else:
+            //         starting_sequence = "%s/%s/%02d/0000" % (self.journal_id.code, year_part, move_date.month)
+            // 
             // if self.journal_id.refund_sequence and self.move_type in ('out_refund', 'in_refund'):
             //     starting_sequence = "R" + starting_sequence
             // if self.journal_id.payment_sequence and self.origin_payment_id or self.env.context.get('is_payment'):
             //     starting_sequence = "P" + starting_sequence
             // return starting_sequence
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetStoreAvatarCardFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // employee_fields = [
+            //     "company_id",
+            //     Store.One("department_id", ["name"]),
+            //     "work_email",
+            //     Store.One("work_location_id", ["location_type", "name"]),
+            //     "work_phone",
+            // ]
+            // user = target.get_user(self.env)
+            // if user.has_group("hr.group_hr_user"):
+            //     # job_title is not a field of hr.employee.public, but it is a field of hr.employee
+            //     employee_fields.append("job_title")
+            // # HACK: fetch the employee fields from employees to retrieve hr.employee.public fields if no access to hr.employee
+            // if len(self) > 0:
+            //     self.fetch([
+            //         field.field_name if isinstance(field, Store.Attr) else field
+            //         for field in employee_fields
+            //     ])
+            // return employee_fields
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSuitableJournalIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type, object company) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_suitable_journal_ids(self, move_type, company=False):
+            // """Return the suitable journals for the given move type and company (current company if False)."""
+            // journal_type = self._get_invoice_filter_type_domain(move_type) or 'general'
+            // return self.env['account.journal'].search([
+            //     *self.env['account.journal']._check_company_domain(company or self.env.company),
+            //     ('type', '=', journal_type),
+            // ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSyncStackInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_sync_stack(self, container):
+            // tax_container, invoice_container, misc_container = ({} for _ in range(3))
+            // 
+            // def update_containers():
+            //     # Only invoice-like and journal entries in "auto tax mode" are synced
+            //     tax_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True) or m.line_ids.tax_ids or m.line_ids.tax_repartition_line_id)
+            //     invoice_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True))
+            //     misc_container['records'] = container['records'].filtered(lambda m: m.is_entry() and not m.tax_cash_basis_origin_move_id)
+            // 
+            //     return tax_container, invoice_container, misc_container
+            // 
+            // update_containers()
+            // 
+            // stack = [
+            //     (10, self._sync_dynamic_line(
+            //             existing_key_fname='term_key',
+            //             needed_vals_fname='needed_terms',
+            //             needed_dirty_fname='needed_terms_dirty',
+            //             line_type='payment_term',
+            //             container=invoice_container,
+            //         )),
+            //     (20, self._sync_unbalanced_lines(misc_container)),
+            //     (30, self._sync_rounding_lines(invoice_container)),
+            //     (40, self._sync_dynamic_line(
+            //             existing_key_fname='discount_allocation_key',
+            //             needed_vals_fname='line_ids.discount_allocation_needed',
+            //             needed_dirty_fname='line_ids.discount_allocation_dirty',
+            //             line_type='discount',
+            //             container=invoice_container,
+            //         )),
+            //     (50, self._sync_tax_lines(tax_container)),
+            //     (60, self._sync_non_deductible_base_lines(invoice_container)),
+            //     (70, self._sync_dynamic_line(
+            //             existing_key_fname='epd_key',
+            //             needed_vals_fname='line_ids.epd_needed',
+            //             needed_dirty_fname='line_ids.epd_dirty',
+            //             line_type='epd',
+            //             container=invoice_container,
+            //         )),
+            //     (80, self._sync_invoice(invoice_container)),
+            // ]
+            // 
+            // return stack, update_containers
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetToCleanActivitiesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_to_clean_activities(self):
+            // return ['hr_holidays.mail_act_leave_approval', 'hr_holidays.mail_act_leave_second_approval']
             */
             return default;
         }
@@ -9679,11 +11453,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_tz(self):
-            // # Finds the first valid timezone in his tz, his work hours tz,
-            // #  the company calendar tz or UTC and returns it as a string
             // self.ensure_one()
-            // return self.tz or\
-            //        self.resource_calendar_id.tz or\
+            // return self.resource_calendar_id.tz or\
+            //        self.tz or\
             //        self.company_id.resource_calendar_id.tz or\
             //        'UTC'
             */
@@ -9724,13 +11496,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_unlink_logger_message(self):
-            // """ Before unlink, get a log message for audit trail if it's enabled.
+            // """ Before unlink, get a log message for audit trail if restricted.
             // Logger is added here because in api ondelete, account.move.line is deleted, and we can't get total amount """
-            // if not self._context.get('force_delete'):
+            // if not self.env.context.get('force_delete'):
             //     pass
             // 
             // moves_details = []
-            // for move in self.filtered(lambda m: m.posted_before and m.company_id.check_account_audit_trail):
+            // for move in self.filtered(lambda m: m.posted_before and m.company_id.restrictive_audit_trail):
             //     entry_details = f"{move.name} ({move.id}) amount {move.amount_total} {move.currency_id.name} and partner {move.partner_id.display_name}"
             //     account_balances_per_account = defaultdict(float)
             //     for line in move.line_ids:
@@ -9747,6 +11519,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         user_id=self.env.user.id,
             //         moves_details="\n".join(moves_details),
             //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetUntitledExpenseNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_untitled_expense_name(self, *args):
+            // """ Done in a specific function to be called by hr_expense_extract to keep the same translation """
+            // return _("Untitled Expense %s", *args)
             */
             return default;
         }
@@ -9768,13 +11551,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_unusual_days(self, date_from, date_to=None):
-            // # Checking the calendar directly allows to not grey out the leaves taken
-            // # by the employee or fallback to the company calendar
-            // return (self.resource_calendar_id or self.env.company.resource_calendar_id)._get_unusual_days(
-            //     datetime.combine(fields.Date.from_string(date_from), time.min).replace(tzinfo=UTC),
-            //     datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=UTC),
-            //     self.company_id,
-            // )
+            // date_from_date = datetime.strptime(date_from, '%Y-%m-%d %H:%M:%S').date()
+            // date_to_date = datetime.strptime(date_to, '%Y-%m-%d %H:%M:%S').date() if date_to else None
+            // employee_versions = self.env['hr.version'].sudo().search([('employee_id', '=', self.id)]).filtered(
+            //     lambda v: v._is_overlapping_period(date_from_date, date_to_date))
+            // if not employee_versions:
+            //     # Checking the calendar directly allows to not grey out the leaves taken
+            //     # by the employee or fallback to the company calendar
+            //     return (self.resource_calendar_id or self.env.company.resource_calendar_id)._get_unusual_days(
+            //         datetime.combine(fields.Date.from_string(date_from), time.min).replace(tzinfo=UTC),
+            //         datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=UTC),
+            //         self.company_id,
+            //     )
+            // unusual_days = {}
+            // for version in employee_versions:
+            //     tmp_date_from = max(date_from_date, version.date_start)
+            //     tmp_date_to = min(date_to_date, version.date_end) if version.date_end else date_to_date
+            //     unusual_days.update(version.resource_calendar_id.sudo(False)._get_unusual_days(
+            //         datetime.combine(fields.Date.from_string(tmp_date_from), time.min).replace(tzinfo=UTC),
+            //         datetime.combine(fields.Date.from_string(tmp_date_to), time.max).replace(tzinfo=UTC),
+            //         self.company_id,
+            //     ))
+            // return unusual_days
             */
             return default;
         }
@@ -9831,6 +11629,78 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetVersionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_version(self, date=fields.Date.today()):
+            // """
+            // Return the version that should be used for the given date.
+            // If no valid version is found, we return the very first version of the employee.
+            // """
+            // self.ensure_one()
+            // versions = self.version_ids.filtered_domain([('date_version', '<=', date)])
+            // return max(versions, key=lambda v: v.date_version) if versions else self.version_ids[0]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetVersionPeriodsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object field, object check_contract) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_version_periods(self, start, stop, field=None, check_contract=False):
+            // if field and field not in self:
+            //     raise UserError(self.env._(
+            //         "This field %(field_name)s doesn't exist on this model (hr.version).",
+            //         field_name=field
+            //     ))
+            // version_periods_by_employee = defaultdict(list)
+            // if check_contract:
+            //     versions = self._get_versions_with_contract_overlap_with_period(start.date(), stop.date())
+            // else:
+            //     versions = self.version_ids.filtered_domain([
+            //         ('date_start', '<=', stop),
+            //         '|',
+            //             ('date_end', '=', False),
+            //             ('date_end', '>=', start)
+            //     ])
+            // for version in versions:
+            //     # if employee is under fully flexible contract, use timezone of the employee
+            //     calendar_tz = timezone(version.resource_calendar_id.tz) if version.resource_calendar_id else timezone(version.employee_id.resource_id.tz)
+            //     date_start = datetime.combine(version.date_start, time.min).replace(tzinfo=calendar_tz).astimezone(utc)
+            //     end_date = version.date_end
+            //     if end_date:
+            //         date_end = datetime.combine(
+            //             end_date + relativedelta(days=1),
+            //             time.min,
+            //         ).replace(tzinfo=calendar_tz).astimezone(utc)
+            //     else:
+            //         date_end = stop
+            //     version_periods_by_employee[version.employee_id].append(
+            //         (max(date_start, start), min(date_end, stop), version[field] if field else version))
+            // return version_periods_by_employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetVersionsWithContractOverlapWithPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_versions_with_contract_overlap_with_period(self, date_from, date_to):
+            // """
+            // Returns the versions of the employee between date_from and date_to
+            // that have at least 1 day in contract during that period
+            // """
+            // return self.version_ids.filtered_domain([
+            //     ('contract_date_start', '!=', False), ('contract_date_start', '<=', date_to),
+            //     '|', ('contract_date_end', '>=', date_from), ('contract_date_end', '=', False),
+            // ])
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -9849,32 +11719,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_view(self, view_id=None, view_type='form', **options):
-            // arch, view = super()._get_view(view_id, view_type, **options)
-            // if view_type == 'form':
-            //     if name_node := arch.xpath("""//field[@name="name"][@invisible="name == '/' and not posted_before and not quick_edit_mode"]"""):
-            //         name_node[0].set('invisible', "not (name or name_placeholder or quick_edit_mode)")
-            //     if draft_node := arch.xpath("""//span[@invisible="name == '/' and not posted_before and not quick_edit_mode"]"""):
-            //         draft_node[0].set('invisible', "name or name_placeholder or quick_edit_mode")
-            // return arch, view
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_views(self, views, options=None):
-            // if self.browse().has_access('read'):
-            //     return super().get_views(views, options)
-            // res = self.env['hr.employee.public'].get_views(views, options)
-            // res['models'].update({'hr.employee': res['models']['hr.employee.public']})
-            // return res
+            //         if self.browse().has_access('read'):
+            //             return super().get_views(views, options)
+            //         # returning public employee data would cause a traceback when building
+            //         # the private employee xml view
+            //         raise RedirectWarning(
+            //             message=_(
+            //             """You are not allowed to access "Employee" (hr.employee) records.
+            // We can redirect you to the public employee list."""
+            //             ),
+            //             action=self.env.ref('hr.hr_employee_public_action').id,
+            //             button_text=_("Employees profile"),
+            //         )
             */
             return default;
         }
@@ -9895,6 +11756,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> HasFieldAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, object operation) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _has_field_access(self, field, operation):
+            // # DISCLAIMER: Dirty hack to avoid having to create a bridge module to override only a
+            // # groups on a field which is not prefetched (because not stored) but would crash anyway
+            // # if we try to read them directly (very uncommon use case). Don't add your field on this
+            // # list if you can specify the group on the field directly (as all the other fields).
+            // return super()._has_field_access(field, operation) and (
+            //     self.env.su
+            //     or self.env.user.has_group("hr.group_hr_user")
+            //     or field.name not in ('activity_calendar_event_id', 'rating_ids', 'website_message_ids', 'message_has_sms_error')
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> HashMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -9903,7 +11782,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // chains_to_hash = self._get_chains_to_hash(**kwargs)
             // grant_secure_group_access = False
             // for chain in chains_to_hash:
-            //     move_hashes = chain['moves']._calculate_hashes(chain['previous_hash'])
+            //     move_hashes = chain['moves'].sudo()._calculate_hashes(chain['previous_hash'])
             //     for move, move_hash in move_hashes.items():
             //         move.inalterable_hash = move_hash
             //     # If any secured entries belong to journals without 'hash on post', the user should be granted access rights
@@ -9912,64 +11791,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     chain['moves']._message_log_batch(bodies={m.id: self.env._("This journal entry has been secured.") for m in chain['moves']})
             // if grant_secure_group_access:
             //     self.env['res.groups']._activate_group_account_secured()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(self.env.cr,
-            //              indexname='account_move_journal_id_company_id_idx',
-            //              tablename='account_move',
-            //              expressions=['journal_id', 'company_id', 'date'])
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_move_made_gaps',
-            //     tablename='account_move',
-            //     expressions=['journal_id', 'company_id', 'date'],
-            //     where="made_sequence_gap = TRUE",
-            // )  # used in <account.journal>._query_has_sequence_holes
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_move_duplicate_bills_idx',
-            //     tablename='account_move',
-            //     expressions=['ref'],
-            //     where="move_type IN ('in_invoice', 'in_refund')",
-            // )
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_payment_journal_id_company_id_idx',
-            //     tablename='account_payment',
-            //     expressions=['journal_id', 'company_id']
-            // )
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_payment_unmatched_idx',
-            //     tablename='account_payment',
-            //     expressions=['journal_id', 'company_id'],
-            //     where="NOT is_matched OR is_matched IS NULL"
-            // )
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def init(self):
-            // super().init()
-            // self.env.cr.execute("""
-            //     CREATE INDEX IF NOT EXISTS hr_applicant_job_id_stage_id_idx
-            //     ON hr_applicant(job_id, stage_id)
-            //     WHERE active IS TRUE
-            // """)
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def init(self):
-            // self.env.cr.execute("""
-            //     CREATE INDEX IF NOT EXISTS hr_candidate_email_partner_phone_mobile
-            //     ON hr_candidate(email_normalized, partner_phone_sanitized);
-            // """)
             */
             return default;
         }
@@ -10074,13 +11895,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> InverseKmHomeWorkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> InverseMemoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _inverse_km_home_work(self):
-            // for employee in self:
-            //     employee.distance_home_work = employee.km_home_work / 1.609 if employee.distance_home_work_unit == "miles" else employee.km_home_work
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
+            // def _inverse_memo(self):
+            // for payment in self:
+            //     move = payment.move_id
+            //     if move:
+            //         move.ref = payment.memo
             */
             return default;
         }
@@ -10094,13 +11917,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     move.name and move.name != '/'
             // ))
             // self._set_next_made_sequence_gap(False)
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _inverse_name(self):
-            // for applicant in self:
-            //     if applicant.partner_name and not applicant.candidate_id:
-            //         applicant.candidate_id = self.env['hr.candidate'].create({'partner_name': applicant.partner_name})
-            //     else:
-            //         applicant.candidate_id.partner_name = applicant.partner_name
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _inverse_no_followup(self):
+            // for move in self:
+            //     if move.is_invoice():
+            //         move.line_ids.filtered(
+            //             lambda line: line.account_type in ('asset_receivable', 'liability_payable'),
+            //         ).no_followup = move.no_followup
             */
             return default;
         }
@@ -10108,23 +11938,27 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> InversePartnerEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _inverse_partner_email(self):
-            // for candidate in self:
-            //     if not candidate.email_from:
+            // for applicant in self:
+            //     email_normalized = tools.email_normalize(applicant.email_from or '')
+            //     if not email_normalized:
             //         continue
-            //     if not candidate.partner_id:
-            //         if not candidate.partner_name:
-            //             raise UserError(_('You must define a Contact Name for this candidate.'))
-            //         candidate.partner_id = self.env['res.partner'].with_context(default_lang=self.env.lang).find_or_create(candidate.email_from)
-            //     if candidate.partner_name and not candidate.partner_id.name:
-            //         candidate.partner_id.name = candidate.partner_name
-            //     if tools.email_normalize(candidate.email_from) != tools.email_normalize(candidate.partner_id.email):
-            //         # change email on a partner will trigger other heavy code, so avoid to change the email when
-            //         # it is the same. E.g. "email@example.com" vs "My Email" <email@example.com>""
-            //         candidate.partner_id.email = candidate.email_from
-            //     if candidate.partner_phone:
-            //         candidate.partner_id.phone = candidate.partner_phone
+            //     if not applicant.partner_id:
+            //         if not applicant.partner_name:
+            //             raise UserError(_("You must define a Contact Name for this applicant."))
+            //         applicant.partner_id = applicant._partner_find_from_emails_single(
+            //             [applicant.email_from], no_create=False,
+            //             additional_values={
+            //                 email_normalized: {'lang': self.env.lang}
+            //             },
+            //         )
+            //     if applicant.partner_name and applicant.partner_name != applicant.partner_id.name:
+            //         applicant.partner_id.name = applicant.partner_name
+            //     if email_normalized and email_normalized != applicant.partner_id.email:
+            //         applicant.partner_id.email = applicant.email_from
+            //     if applicant.partner_phone and applicant.partner_phone != applicant.partner_id.phone:
+            //         applicant.partner_id.phone = applicant.partner_phone
             */
             return default;
         }
@@ -10140,10 +11974,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if line.partner_id != invoice.commercial_partner_id:
             //                 line.partner_id = invoice.commercial_partner_id
             //                 line._inverse_partner_id()
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def _inverse_partner_id(self):
-            // # todo: remove in master
-            // pass
             */
             return default;
         }
@@ -10167,6 +11997,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _inverse_supported_attachment_ids(self):
             // for holiday in self:
             //     holiday.attachment_ids = holiday.supported_attachment_ids
+            // self.invalidate_recordset(['attachment_ids'])
             */
             return default;
         }
@@ -10199,7 +12030,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                     first_tax_line = tax_lines[0]
             //                     tax_group_old_amount = sum(tax_lines.mapped('amount_currency'))
             //                     sign = -1 if move.is_inbound() else 1
-            //                     delta_amount = tax_group_old_amount * sign - tax_group['tax_amount_currency']
+            //                     delta_amount = (tax_group_old_amount - tax_group.get('non_deductible_tax_amount_currency', 0.0)) * sign - tax_group['tax_amount_currency']
             // 
             //                     if not move.currency_id.is_zero(delta_amount):
             //                         first_tax_line.amount_currency -= delta_amount * sign
@@ -10215,7 +12046,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _inverse_total_amount_currency(self):
             // for expense in self:
             //     if not expense.is_editable:
-            //         raise UserError(_('You are not authorized to edit this expense.'))
+            //         raise UserError(_(
+            //             "Uh-oh! You can’t edit this expense.\n\n"
+            //             "Reach out to the administrators, flash your best smile, and see if they'll grant you the magical access you seek."
+            //         ))
             //     expense.price_unit = (expense.total_amount / expense.quantity) if expense.quantity != 0 else 0.
             */
             return default;
@@ -10239,11 +12073,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         AccountTax._round_base_lines_tax_details([base_line], expense.company_id)
             //         tax_details = base_line['tax_details']
             //         expense.tax_amount = tax_details['total_included_currency'] - tax_details['total_excluded_currency']
+            //         expense.untaxed_amount =  tax_details['total_excluded_currency']
             //     else:
             //         expense.total_amount_currency = expense.total_amount
             //         expense.tax_amount = expense.tax_amount_currency
+            //         expense.untaxed_amount = expense.untaxed_amount_currency
             //     expense.currency_rate = expense.total_amount / expense.total_amount_currency if expense.total_amount_currency else 1.0
             //     expense.price_unit = expense.total_amount / expense.quantity if expense.quantity else expense.total_amount
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseWorkContactDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _inverse_work_contact_details(self):
+            // employees_without_work_contact = self.env['hr.employee']
+            // for employee in self:
+            //     if not employee.work_contact_id:
+            //         employees_without_work_contact += employee
+            //     else:
+            //         if len(employee.work_contact_id.employee_ids) <= 1:
+            //             employee.work_contact_id.sudo().write({
+            //                 'email': employee.work_email,
+            //                 'phone': employee.work_phone,
+            //             })
+            // if employees_without_work_contact:
+            //     employees_without_work_contact.sudo()._create_work_contacts()
             */
             return default;
         }
@@ -10254,6 +12111,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _invoice_paid_hook(self):
             // ''' Hook to be overrided called when the invoice moves to the paid state. '''
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsActionReportAvailableInternalAsync<TEntity>(IEnumerable<TEntity> entities, object action_report, object is_invoice_report) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_action_report_available(self, action_report, is_invoice_report=True):
+            // assert len(action_report) == 1
+            // 
+            // self.ensure_one()
+            // 
+            // if available_report := action_report.filtered(lambda available_report: not (is_invoice_report^available_report.is_invoice_report)):
+            //     return bool(self.filtered_domain(ast.literal_eval(available_report.domain or '[]')))
+            // 
+            // return False
             */
             return default;
         }
@@ -10279,12 +12153,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // payment_terms = self.line_ids.filtered(lambda line: line.display_type == 'payment_term')
             // return self.currency_id == currency \
-            //     and self.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt') \
+            //     and self.move_type in self._early_payment_discount_move_types() \
             //     and self.invoice_payment_term_id.early_discount \
             //     and (
             //         not reference_date
             //         or not self.invoice_date
-            //         or reference_date <= self.invoice_payment_term_id._get_last_discount_date(self.invoice_date)
+            //         or (
+            //             (existing_discount_date := next(iter(payment_terms)).discount_date)
+            //             and
+            //             reference_date <= existing_discount_date
+            //         )
             //     ) \
             //     and not (payment_terms.sudo().matched_debit_ids + payment_terms.sudo().matched_credit_ids)
             */
@@ -10297,6 +12175,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def is_entry(self):
             // return self.move_type == 'entry'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsInContractInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _is_in_contract(self, date):
+            // return self._get_contract_dates(date) != (False, False)
             */
             return default;
         }
@@ -10317,6 +12205,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def is_invoice(self, include_receipts=False):
             // return self.is_sale_document(include_receipts) or self.is_purchase_document(include_receipts)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsLineValidForSectionLineCountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_line_valid_for_section_line_count(self, line):
+            // """Check if a line is valid for inclusion in the section's line count.
+            // 
+            // :param recordset line: A record of a move line.
+            // :return: True if this line is a valid, else False.
+            // :rtype: bool
+            // """
+            // return (
+            //     line.product_id
+            //     and line.product_id.product_tmpl_id.type != 'combo'
+            //     and line.quantity > 0
+            // )
             */
             return default;
         }
@@ -10351,17 +12259,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _is_protected_by_audit_trail(self):
-            // return any(move.posted_before and move.company_id.check_account_audit_trail for move in self)
+            // return any(move.posted_before and move.company_id.restrictive_audit_trail for move in self)
             */
             return default;
         }
 
-        public async Task<TEntity> IsPurchaseDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> IsPurchaseDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts, object move_type) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def is_purchase_document(self, include_receipts=False):
-            // return self.move_type in self.get_purchase_types(include_receipts)
+            // def is_purchase_document(self, include_receipts=False, move_type=False):
+            // return (move_type or self.move_type) in self.get_purchase_types(include_receipts)
             */
             return default;
         }
@@ -10395,12 +12303,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsSaleDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> IsReceiptAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def is_sale_document(self, include_receipts=False):
-            // return self.move_type in self.get_sale_types(include_receipts)
+            // def is_receipt(self):
+            // return self.move_type in ['out_receipt', 'in_receipt']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsSaleDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts, object move_type) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def is_sale_document(self, include_receipts=False, move_type=False):
+            // return (move_type or self.move_type) in self.get_sale_types(include_receipts)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsUserAbleToReviewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_user_able_to_review(self):
+            // # If only account is installed, we don't check user access rights.
+            // return True
             */
             return default;
         }
@@ -10449,15 +12378,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> LinkApplicantToTalentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def link_applicant_to_talent(self):
+            // talent = self.env["hr.applicant"].search(domain=self._get_similar_applicants_domain(only_talent=True))
+            // self.pool_applicant_id = talent
+            */
+            return default;
+        }
+
         public async Task<TEntity> LinkBillOriginToPurchaseOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object timeout) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _link_bill_origin_to_purchase_orders(self, timeout=10):
             // for move in self.filtered(lambda m: m.move_type in self.get_purchase_types()):
-            //     references = [move.invoice_origin] if move.invoice_origin else []
+            //     references = [ref.strip() for ref in re.split(r"[ ,]+", move.invoice_origin)] if move.invoice_origin else []
             //     move._find_and_set_purchase_orders(references, move.partner_id.id, move.amount_total, timeout=timeout)
             // return self
+            */
+            return default;
+        }
+
+        public async Task<TEntity> LoadDemoDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _load_demo_data(self):
+            // dep_rd = self.env.ref('hr.dep_rd', raise_if_not_found=False)
+            // action_reload = {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'reload',
+            // }
+            // if dep_rd:
+            //     return action_reload
+            // convert.convert_file(env=self.sudo().env, module='hr', filename='data/scenarios/hr_scenario.xml', idref=None, mode='init')
+            // if 'resume_line_ids' in self:
+            //     convert.convert_file(env=self.env, module='hr_skills', filename='data/scenarios/hr_skills_scenario.xml', idref=None, mode='init')
+            // return action_reload
             */
             return default;
         }
@@ -10470,7 +12430,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // demo_tag = self.env.ref('hr.employee_category_demo', raise_if_not_found=False)
             // if demo_tag:
             //     return
-            // convert.convert_file(self.env, 'hr', 'data/scenarios/hr_scenario.xml', None, mode='init', kind='data')
+            // convert.convert_file(self.env, 'hr', 'data/scenarios/hr_scenario.xml', None, mode='init')
             */
             return default;
         }
@@ -10480,7 +12440,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _mail_get_partner_fields(self, introspect_fields=False):
-            // return ['user_partner_id']
+            // return ['work_contact_id', 'user_partner_id']
             */
             return default;
         }
@@ -10508,7 +12468,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> MessageAutoSubscribeFollowersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object updated_values, List<Guid> subtype_ids) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _message_auto_subscribe_followers(self, updated_values, subtype_ids):
             // res = super()._message_auto_subscribe_followers(updated_values, subtype_ids)
             // if updated_values.get('employee_id'):
@@ -10516,24 +12476,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if employee_user:
             //         res.append((employee_user.partner_id.id, subtype_ids, False))
             // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MessageGetSuggestedRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // if self.partner_id:
-            //     self._message_add_suggested_recipient(recipients, partner=self.partner_id.sudo(), reason=_('Contact'))
-            // elif self.email_from:
-            //     email_from = tools.email_normalize(self.email_from)
-            //     if email_from and self.partner_name:
-            //         email_from = tools.formataddr((self.partner_name, email_from))
-            //         self._message_add_suggested_recipient(recipients, email=email_from, reason=_('Contact Email'))
-            // return recipients
             */
             return default;
         }
@@ -10554,14 +12496,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg, object custom_values) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict, object custom_values) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def message_new(self, msg_dict, custom_values=None):
             // # EXTENDS mail mail.thread
+            // custom_values = custom_values or {}
             // # Add custom behavior when receiving a new invoice through the mail's gateway.
-            // if (custom_values or {}).get('move_type', 'entry') not in ('out_invoice', 'in_invoice', 'entry'):
+            // if custom_values.get('move_type', 'entry') not in ('out_invoice', 'in_invoice', 'entry'):
             //     return super().message_new(msg_dict, custom_values=custom_values)
             // 
             // self = self.with_context(skip_is_manually_modified=True)  # noqa: PLW0642
@@ -10575,32 +12518,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             or (partner.user_ids and all(user._is_internal() for user in partner.user_ids))
             //     )
             // 
-            // extra_domain = False
-            // if custom_values.get('company_id'):
-            //     extra_domain = ['|', ('company_id', '=', custom_values['company_id']), ('company_id', '=', False)]
-            // 
-            // # Search for partners in copy.
-            // cc_mail_addresses = email_split(msg_dict.get('cc', ''))
-            // followers = [partner for partner in self._mail_find_partner_from_emails(cc_mail_addresses, extra_domain=extra_domain) if partner]
+            // def is_right_company(partner):
+            //     if company:
+            //         return partner.company_id.id in [False, company.id]
+            //     return True
             // 
             // # Search for partner that sent the mail.
             // from_mail_addresses = email_split(msg_dict.get('from', ''))
-            // senders = partners = [partner for partner in self._mail_find_partner_from_emails(from_mail_addresses, extra_domain=extra_domain) if partner]
+            // partners = self._partner_find_from_emails_single(
+            //     from_mail_addresses, filter_found=lambda p: is_right_company(p) or not p.partner_share, no_create=True,
+            // )
+            // # if we are in the case when an internal user forwarded the mail manually
+            // # search for partners in mail's body
+            // if partners and is_internal_partner(partners[0]):
+            //     # Search for partners in the mail's body.
+            //     body_mail_addresses = set(email_re.findall(msg_dict.get('body')))
+            //     partners = self._partner_find_from_emails_single(
+            //         body_mail_addresses, filter_found=lambda p: is_right_company(p) or p.partner_share, no_create=True,
+            //     ) if body_mail_addresses else self.env['res.partner']
             // 
-            // # Search for partners using the user.
-            // if not senders:
-            //     senders = partners = list(self._mail_search_on_user(from_mail_addresses))
-            // 
-            // if partners:
-            //     # Check we are not in the case when an internal user forwarded the mail manually.
-            //     if is_internal_partner(partners[0]):
-            //         # Search for partners in the mail's body.
-            //         body_mail_addresses = set(email_re.findall(msg_dict.get('body')))
-            //         partners = [
-            //             partner
-            //             for partner in self._mail_find_partner_from_emails(body_mail_addresses, extra_domain=extra_domain)
-            //             if not is_internal_partner(partner) and partner.company_id.id in (False, company.id)
-            //         ]
             // # Little hack: Inject the mail's subject in the body.
             // if msg_dict.get('subject') and msg_dict.get('body'):
             //     msg_dict['body'] = Markup('<div><div><h3>%s</h3></div>%s</div>') % (msg_dict['subject'], msg_dict['body'])
@@ -10609,19 +12545,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // values = {
             //     'name': '/',  # we have to give the name otherwise it will be set to the mail's subject
             //     'invoice_source_email': from_mail_addresses[0],
-            //     'partner_id': partners and partners[0].id or False,
+            //     'partner_id': partners[0].id if partners else False,
             // }
-            // move_ctx = self.with_context(default_move_type=custom_values['move_type'], default_journal_id=custom_values['journal_id'])
+            // move_ctx = self.with_context(
+            //     from_alias=True,
+            //     default_move_type=custom_values.get('move_type', 'entry'),
+            //     default_journal_id=custom_values.get('journal_id'),
+            //     default_company_id=company.id,
+            // )
             // move = super(AccountMove, move_ctx).message_new(msg_dict, custom_values=values)
             // move._compute_name()  # because the name is given, we need to recompute in case it is the first invoice of the journal
             // 
-            // # Assign followers.
-            // all_followers_ids = set(partner.id for partner in followers + senders + partners if is_internal_partner(partner))
-            // move.message_subscribe(list(all_followers_ids))
             // return move
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def message_new(self, msg_dict, custom_values=None):
-            // email_address = email_split(msg_dict.get('email_from', False))[0]
+            // email_address = email_normalize(msg_dict.get('email_from'))
             // employee = self._get_employee_from_email(email_address)
             // 
             // if not employee:
@@ -10664,56 +12602,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._send_expense_success_mail(msg_dict, expense)
             // return expense
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def message_new(self, msg, custom_values=None):
-            // """ Overrides mail_thread message_new that is called by the mailgateway
-            //     through message_process.
-            //     This override updates the document according to the email.
-            // """
+            // def message_new(self, msg_dict, custom_values=None):
             // # Remove default author when going through the mail gateway. Indeed, we
             // # do not want to explicitly set user_id to False; however we do not
             // # want the gateway user to be responsible if no other responsible is
             // # found.
-            // self = self.with_context(default_user_id=False, mail_notify_author=True)  # Allows sending stage updates to the author
+            // self = self.with_context(default_user_id=False)
             // stage = False
-            // candidate_defaults = {}
-            // partner_name, email_from_normalized = tools.parse_contact_from_email(msg.get('from'))
-            // candidate_domain = [
-            //     ("email_from", "=", email_from_normalized),
-            // ]
             // if custom_values and 'job_id' in custom_values:
             //     job = self.env['hr.job'].browse(custom_values['job_id'])
             //     stage = job._get_first_stage()
-            //     candidate_defaults['company_id'] = job.company_id.id
-            //     candidate_domain = expression.AND([candidate_domain, [("company_id", "in", [job.company_id.id, False])]])
             // 
-            // candidate = self.env["hr.candidate"].search(candidate_domain, limit=1)\
-            //     or self.env["hr.candidate"].create({
-            //         "partner_name": partner_name or email_from_normalized,
-            //         **candidate_defaults,
-            //     })
+            // partner_name, email_from_normalized = tools.parse_contact_from_email(msg_dict.get('from'))
             // 
             // defaults = {
-            //     'candidate_id': candidate.id,
             //     'partner_name': partner_name,
             // }
             // job_platform = self.env['hr.job.platform'].search([('email', '=', email_from_normalized)], limit=1)
-            // if msg.get('from') and not job_platform:
-            //     candidate.email_from = msg.get('from')
-            //     candidate.partner_id = msg.get('author_id', False)
-            // if msg.get('email_from') and job_platform:
+            // 
+            // if msg_dict.get('from') and not job_platform:
+            //     defaults['email_from'] = msg_dict.get('from')
+            //     defaults['partner_id'] = msg_dict.get('author_id', False)
+            // if msg_dict.get('email_from') and job_platform:
             //     subject_pattern = re.compile(job_platform.regex or '')
-            //     regex_results = re.findall(subject_pattern, msg.get('subject')) + re.findall(subject_pattern, msg.get('body'))
-            //     candidate.partner_name = regex_results[0] if regex_results else partner_name
-            //     defaults["partner_name"] = candidate.partner_name
-            //     del msg['email_from']
-            // if msg.get('priority'):
-            //     defaults['priority'] = msg.get('priority')
+            //     regex_results = re.findall(subject_pattern, msg_dict.get('subject')) + re.findall(subject_pattern, msg_dict.get('body'))
+            //     defaults['partner_name'] = regex_results[0] if regex_results else partner_name
+            //     del msg_dict['email_from']
+            // if msg_dict.get('priority'):
+            //     defaults['priority'] = msg_dict.get('priority')
             // if stage and stage.id:
             //     defaults['stage_id'] = stage.id
             // if custom_values:
             //     defaults.update(custom_values)
-            // res = super().message_new(msg, custom_values=defaults)
-            // candidate._compute_partner_phone_email()
+            // res = super().message_new(msg_dict, custom_values=defaults)
+            // res._compute_partner_phone_email()
             // return res
             */
             return default;
@@ -10724,42 +12646,84 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _message_post_after_hook(self, new_message, message_values):
+            // """ This method processes the attachments of a new mail.message. It handles the 3 following situations:
+            //     (1) receiving an e-mail from a mail alias. In that case, we potentially want to split the attachments into several invoices.
+            //     (2) receiving an e-mail / posting a message on an existing invoice via the webclient:
+            //         (2)(a): If the poster is an internal user, we enhance the invoice with the attachments.
+            //         (2)(b): Otherwise, we don't do any further processing.
+            //     (3) posting a message on an invoice in application code. In that case, don't do anything.
+            // 
+            //     Furthermore, in cases (1) and (2), we decide for each attachment whether to add it as an attachment on the invoice,
+            //     based on its mimetype.
+            // """
             // # EXTENDS mail mail.thread
-            // # When posting a message, check the attachment to see if it's an invoice and update with the imported data.
-            // res = super()._message_post_after_hook(new_message, message_values)
-            // if not self.env.user._is_internal():
-            //     return res
-            // 
             // attachments = new_message.attachment_ids
-            // attachments_per_invoice = defaultdict(lambda: self.env['ir.attachment'])
             // 
-            // checked_attachment = self._check_and_decode_attachment(attachments)
-            // if not checked_attachment:
+            // if not attachments or new_message.message_type not in {'email', 'comment'} or self.env.context.get('disable_attachment_import'):
+            //     # No attachments, or the message was created in application code, so don't do anything.
+            //     return super()._message_post_after_hook(new_message, message_values)
+            // 
+            // files_data = self._to_files_data(attachments)
+            // 
+            // # Extract embedded files. Note that `_unwrap_attachments` may create ir.attachment records - for example
+            // # see l10n_{es,it}_edi, so to retrieve those attachments you should use the `_from_files_data` method.
+            // files_data.extend(self._unwrap_attachments(files_data))
+            // 
+            // if self.env.context.get('from_alias'):
+            //     # This is a newly-created invoice from a mail alias.
+            //     # So dispatch the attachments into groups, and create a new invoice for each group beyond the first.
+            //     valid_files_data = []
+            //     extra_files_data = []
+            //     for file_data in files_data:
+            //         if self._should_attach_to_record(file_data['attachment']) or file_data['xml_tree'] is not None:
+            //             valid_files_data.append(file_data)
+            //         else:
+            //             extra_files_data.append(file_data)
+            // 
+            //     file_data_groups = self._group_files_data_into_groups_of_mixed_types(valid_files_data) or [[]]
+            //     invoices = self
+            //     if len(file_data_groups) > 1:
+            //         create_vals = (len(file_data_groups) - 1) * self.copy_data()
+            //         invoices |= self.with_context(skip_is_manually_modified=True).create(create_vals)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         attachment_records = self._from_files_data(file_data_group)
+            //         if invoice == self:
+            //             attachment_records |= self._from_files_data(extra_files_data)
+            //             new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //             message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //             res = super()._message_post_after_hook(new_message, message_values)
+            //         else:
+            //             sub_new_message = new_message.copy({
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.set(attachment_records.ids)],
+            //             })
+            //             sub_message_values = {
+            //                 **message_values,
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.link(attachment.id) for attachment in attachment_records],
+            //             }
+            //             super(AccountMove, invoice)._message_post_after_hook(sub_new_message, sub_message_values)
+            //         invoice._fix_attachments_on_record(attachment_records)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         if file_data_group:
+            //             invoice._extend_with_attachments(file_data_group, new=True)
+            // 
             //     return res
             // 
-            // for attachment_in_res, invoices in checked_attachment.items():
-            //     invoices = invoices or self
-            //     for invoice in invoices:
-            //         attachments_per_invoice[invoice] |= attachment_in_res
+            // else:
+            //     # This is an existing invoice on which a message was posted either by e-mail or via the webclient.
+            //     attachment_records = self._from_files_data(files_data)
+            //     self._fix_attachments_on_record(attachment_records)
             // 
-            // for invoice, attachments in attachments_per_invoice.items():
-            //     if invoice == self:
-            //         invoice.attachment_ids |= attachments
-            //         new_message.attachment_ids = attachments.ids
-            //         message_values.update({'res_id': self.id, 'attachment_ids': [Command.link(attachment.id) for attachment in attachments]})
-            //         super(AccountMove, invoice)._message_post_after_hook(new_message, message_values)
-            //     else:
-            //         sub_new_message = new_message.copy({'attachment_ids': attachments.ids})
-            //         sub_message_values = {
-            //             **message_values,
-            //             'res_id': invoice.id,
-            //             'attachment_ids': [Command.link(attachment.id) for attachment in attachments],
-            //         }
-            //         invoice.attachment_ids |= attachments
-            //         invoice.message_ids = [Command.set(sub_new_message.id)]
-            //         super(AccountMove, invoice)._message_post_after_hook(sub_new_message, sub_message_values)
+            //     # Only trigger decoding if the message was sent by an active internal user (note OdooBot is always inactive).
+            //     if self.env.user.active and self.env.user._is_internal():
+            //         self._extend_with_attachments(files_data)
             // 
-            // return res
+            //     new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //     message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //     return super()._message_post_after_hook(new_message, message_values)
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _message_post_after_hook(self, message, msg_vals):
             // if self.email_from and not self.partner_id:
@@ -10782,7 +12746,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.search([
             //             ('partner_id', '=', False), email_domain, ('stage_id.fold', '=', False)
             //         ]).write({'partner_id': new_partner[0].id})
-            // return super(Applicant, self)._message_post_after_hook(message, msg_vals)
+            // return super()._message_post_after_hook(message, msg_vals)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_thread_main_attachment.py) ---
             // def _message_post_after_hook(self, message, msg_values):
             // """ Set main attachment field if necessary """
@@ -10837,8 +12801,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # due to record rule can not allow to add follower and mention on validated leave so subscribe through sudo
             // if any(holiday.state in ['validate', 'validate1'] for holiday in self):
             //     self.check_access('read')
-            //     return super(HolidaysRequest, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
-            // return super(HolidaysRequest, self).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            //     return super(HrLeave, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            // return super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             */
             return default;
         }
@@ -10860,6 +12824,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     line[2]['debit'] = currency_id and formatLang(self.env, line[2]['debit'], currency_obj=currency_id) or line[2]['debit']
             //     line[2]['credit'] = currency_id and formatLang(self.env, line[2]['credit'], currency_obj=currency_id) or line[2]['debit']
             // return preview_vals
+            */
+            return default;
+        }
+
+        public async Task<TEntity> MoveValidateLeaveToConfirmInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _move_validate_leave_to_confirm(self):
+            // self.write({'state': 'confirm'})
+            // self.activity_update()
+            // self._post_leave_cancel()
             */
             return default;
         }
@@ -10903,19 +12879,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> NotifyByEmailPrepareRenderingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals, object model_description, object force_email_company, object force_email_lang) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> NewAsync<TEntity>(IEnumerable<TEntity> entities, object values, object origin, object @ref) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def new(self, values=None, origin=None, ref=None):
+            // if not values:
+            //     values = {}
+            // new_vals = values.copy()
+            // version_vals = {val: new_vals.pop(val) for val in values if val in self._fields and self._fields[val].inherited}
+            // 
+            // employee = super().new(new_vals, origin, ref)
+            // version_vals['employee_id'] = employee
+            // self.env['hr.version'].new({
+            //     f_name: value
+            //     for f_name, value in version_vals.items()
+            //     if self.env['hr.version']._has_field_access(self.env['hr.version']._fields[f_name], 'read')
+            // })
+            // return employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> NotifyByEmailPrepareRenderingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // # EXTENDS mail mail.thread
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // record = render_context['record']
-            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id else record.name]
+            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
             // if self.is_invoice(include_receipts=True):
             //     # Only show the amount in emails for non-miscellaneous moves. It might confuse recipients otherwise.
             //     if self.invoice_date_due and self.payment_state not in ('in_payment', 'paid'):
@@ -10956,11 +12956,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> NotifyExpiringContractWorkPermitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def notify_expiring_contract_work_permit(self):
+            // companies = self.env['res.company'].search([])
+            // employees_contract_expiring = self.env['hr.employee']
+            // employees_work_permit_expiring = self.env['hr.employee']
+            // 
+            // for company in companies:
+            //     employees_contract_expiring += self.env['hr.employee'].search([
+            //         ('company_id', '=', company.id),
+            //         ('contract_date_start', '!=', False),
+            //         ('contract_date_start', '<', fields.Date.today()),
+            //         ('contract_date_end', '=', fields.Date.today() + relativedelta(days=company.contract_expiration_notice_period)),
+            //     ])
+            // 
+            //     employees_work_permit_expiring += self.env['hr.employee'].search([
+            //         ('company_id', '=', company.id),
+            //         ('work_permit_expiration_date', '!=', False),
+            //         ('work_permit_expiration_date', '=', fields.Date.today() + relativedelta(days=company.work_permit_expiration_notice_period)),
+            //     ])
+            // 
+            // for employee in employees_contract_expiring:
+            //     employee.with_context(mail_activity_quick_update=True).activity_schedule(
+            //         'mail.mail_activity_data_todo', employee.contract_date_end,
+            //         _("The contract of %s is about to expire.", employee.name),
+            //         user_id=employee.hr_responsible_id.id or self.env.uid)
+            // 
+            // for employee in employees_work_permit_expiring:
+            //     employee.with_context(mail_activity_quick_update=True).activity_schedule(
+            //         'mail.mail_activity_data_todo', employee.work_permit_expiration_date,
+            //         _("The work permit of %s is about to expire.", employee.name),
+            //         user_id=employee.hr_responsible_id.id or self.env.uid)
+            // 
+            // return True
+            */
+            return default;
+        }
+
         public async Task<TEntity> NotifyGetRecipientsGroupsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object model_description, object msg_vals) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals=msg_vals)
             // self.ensure_one()
             // 
@@ -10984,57 +13024,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     groups.insert(0, recipient_group)
             // 
             // return groups
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Handle HR users and officers recipients that can validate or refuse holidays
-            // directly from email. """
-            // groups = super()._notify_get_recipients_groups(
-            //     message, model_description, msg_vals=msg_vals
-            // )
-            // if not self:
-            //     return groups
-            // 
-            // local_msg_vals = dict(msg_vals or {})
-            // 
-            // self.ensure_one()
-            // hr_actions = []
-            // if self.state == 'confirm':
-            //     app_action = self._notify_get_action_link('controller', controller='/leave/approve', **local_msg_vals)
-            //     hr_actions += [{'url': app_action, 'title': _('Approve')}]
-            // if self.state == 'validate1':
-            //     app_action = self._notify_get_action_link('controller', controller='/leave/validate', **local_msg_vals)
-            //     hr_actions += [{'url': app_action, 'title': _('Validate')}]
-            // if self.state in ['confirm', 'validate', 'validate1']:
-            //     ref_action = self._notify_get_action_link('controller', controller='/leave/refuse', **local_msg_vals)
-            //     hr_actions += [{'url': ref_action, 'title': _('Refuse')}]
-            // 
-            // holiday_user_group_id = self.env.ref('hr_holidays.group_hr_holidays_user').id
-            // new_group = (
-            //     'group_hr_holidays_user',
-            //     lambda pdata: pdata['type'] == 'user' and holiday_user_group_id in pdata['groups'],
-            //     {
-            //         'actions': hr_actions,
-            //         'active': True,
-            //         'has_button_access': True,
-            //     }
-            // )
-            // 
-            // return [new_group] + groups
             */
             return default;
         }
 
-        public async Task<TEntity> NotifyGetReplyToInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> NotifyGetReplyToInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @default, Guid author_id) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _notify_get_reply_to(self, default=None):
+            // def _notify_get_reply_to(self, default=None, author_id=False):
             // """ Override to set alias of applicants to their job definition if any. """
-            // aliases = self.mapped('job_id')._notify_get_reply_to(default=default)
+            // aliases = self.mapped('job_id')._notify_get_reply_to(default=default, author_id=author_id)
             // res = {app.id: aliases.get(app.job_id.id) for app in self}
             // leftover = self.filtered(lambda rec: not rec.job_id)
             // if leftover:
-            //     res.update(super(Applicant, leftover)._notify_get_reply_to(default=default))
+            //     res.update(super(HrApplicant, leftover)._notify_get_reply_to(default=default, author_id=author_id))
             // return res
             */
             return default;
@@ -11046,18 +13050,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _notify_manager(self):
             // leaves = self.filtered(lambda hol: (hol.validation_type == 'both' and hol.state in ['validate1', 'validate']) or (hol.validation_type == 'manager' and hol.state == 'validate'))
+            // model_description = self.env['ir.model']._get('hr.holidays').name
             // for holiday in leaves:
             //     responsible = holiday.employee_id.leave_manager_id.partner_id.ids
             //     if responsible:
-            //         self.env['mail.thread'].sudo().message_notify(
+            //         holiday.sudo().message_notify(
             //             partner_ids=responsible,
-            //             model_description='Time Off',
+            //             model_description=model_description,
             //             subject=_('Refused Time Off'),
             //             body=_(
             //                 '%(holiday_name)s has been refused.',
             //                 holiday_name=holiday.display_name,
             //             ),
-            //             email_layout_xmlid='mail.mail_notification_light',
+            //             email_layout_xmlid="mail.mail_notification_layout",
+            //             subtitles=[holiday.display_name],
             //         )
             */
             return default;
@@ -11077,14 +13083,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif 'invoice_line_ids' in field_names:
             //     values = {key: val for key, val in values.items() if key != 'line_ids'}
             //     fields_spec = {key: val for key, val in fields_spec.items() if key != 'line_ids'}
+            //     # When product_id and price_unit are in values, values is reordered to make sure
+            //     # that product_id is before price_unit because product_id is triggering an onchange
+            //     # of price_unit that could override the one defined here if the product_id is set
+            //     # after price_unit
+            //     invoice_line_ids = values.get('invoice_line_ids')
+            //     for invoice_line_idx, invoice_line in enumerate(invoice_line_ids):
+            //         if (len(invoice_line) == 3 and invoice_line[0] == 1 and isinstance(invoice_line[2], dict) and
+            //             'product_id' in invoice_line[2] and 'price_unit' in invoice_line[2]
+            //         ):
+            //             if isinstance(invoice_line, tuple):
+            //                 invoice_line_ids[invoice_line_idx] = invoice_line = list(invoice_line)
+            //             invoice_line[2] = dict(sorted(invoice_line[2].items(), key=lambda item: item[0] != 'product_id'))
             // return super().onchange(values, field_names, fields_spec)
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def onchange(self, values, field_names, fields_spec):
             // # Try to force the leave_type display_name when creating new records
             // # This is called right after pressing create and returns the display_name for
             // # most fields in the view.
-            // if values and 'employee_id' in fields_spec and 'employee_id' not in self._context:
-            //     employee_id = get_employee_from_context(values, self._context, self.env.user.employee_id.id)
+            // if values and 'employee_id' in fields_spec and 'employee_id' not in self.env.context:
+            //     employee_id = get_employee_from_context(values, self.env.context, self.env.user.employee_id.id)
             //     self = self.with_context(employee_id=employee_id)
             // return super().onchange(values, field_names, fields_spec)
             */
@@ -11101,6 +13119,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'title': _("Warning"),
             //         'message': _("To avoid multi company issues (losing the access to your previous contracts, leaves, ...), you should create another employee in the new company instead.")
             //     }}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeContractDateStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_contract_date_start(self):
+            // if not self.contract_date_start:
+            //     self.contract_date_end = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeContractTemplateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_contract_template_id(self):
+            // if self.contract_template_id:
+            //     whitelist = self.env['hr.version']._get_whitelist_fields_from_template()
+            //     for field in self.contract_template_id._fields:
+            //         if field in whitelist and not self.env['hr.version']._fields[field].related:
+            //             self[field] = self.contract_template_id[field]
             */
             return default;
         }
@@ -11132,13 +13175,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _onchange_hours(self):
             // # avoid negative or after midnight
-            // self.request_hour_from = min(self.request_hour_from, 23.99)
-            // self.request_hour_from = max(self.request_hour_from, 0.0)
-            // self.request_hour_to = min(self.request_hour_to, 24)
-            // self.request_hour_to = max(self.request_hour_to, 0.0)
-            // 
-            // # avoid wrong order
-            // self.request_hour_to = max(self.request_hour_to, self.request_hour_from)
+            // self.request_hour_from = min(max(self.request_hour_from, 0.0), 23.99)
+            // self.request_hour_to = min(max(self.request_hour_to, 0.0), 24)
             */
             return default;
         }
@@ -11271,7 +13309,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _onchange_partner_id(self):
             // self = self.with_company((self.journal_id.company_id or self.env.company)._accessible_branches()[:1])
             // 
-            // warning = {}
             // if self.partner_id:
             //     rec_account = self.partner_id.property_account_receivable_id
             //     pay_account = self.partner_id.property_account_payable_id
@@ -11279,20 +13316,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         action = self.env.ref('account.action_account_config')
             //         msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')
             //         raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
-            //     p = self.partner_id
-            //     if p.invoice_warn == 'no-message' and p.parent_id:
-            //         p = p.parent_id
-            //     if p.invoice_warn and p.invoice_warn != 'no-message':
-            //         # Block if partner only has warning but parent company is blocked
-            //         if p.invoice_warn != 'block' and p.parent_id and p.parent_id.invoice_warn == 'block':
-            //             p = p.parent_id
-            //         warning = {
-            //             'title': _("Warning for %s", p.name),
-            //             'message': p.invoice_warn_msg
-            //         }
-            //         if p.invoice_warn == 'block':
-            //             self.partner_id = False
-            //         return {'warning': warning}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangePhoneValidationEmployeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_phone_validation_employee(self):
+            // if self.work_phone:
+            //     self.work_phone = self._phone_format(number=self.work_phone, force_format='INTERNATIONAL') or self.work_phone
+            // if self.mobile_phone:
+            //     self.mobile_phone = self._phone_format(number=self.mobile_phone, force_format='INTERNATIONAL') or self.mobile_phone
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangePrivateStateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_private_state_id(self):
+            // if self.private_state_id:
+            //     self.private_country_id = self.private_state_id.country_id
             */
             return default;
         }
@@ -11303,7 +13350,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _onchange_product_has_cost(self):
             // """ Reset quantity to 1, in case of 0-cost product. To make sure switching non-0-cost to 0-cost doesn't keep the quantity."""
-            // if not self.product_has_cost and self.state in {'draft', 'reported'}:
+            // if not self.product_has_cost and self.state == 'draft':
             //     self.quantity = 1
             */
             return default;
@@ -11380,6 +13427,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> OpenAdjustingEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def open_adjusting_entries(self):
+            // self.ensure_one()
+            // return self.adjusting_entries_move_ids._get_records_action(name="Adjusting Entries")
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OpenAdjustingEntryOriginMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def open_adjusting_entry_origin_moves(self):
+            // self.ensure_one()
+            // label = self.adjusting_entry_origin_label if len(self.adjusting_entries_move_ids) == 1 else 'Invoices'
+            // return self.adjusting_entry_origin_move_ids._get_records_action(name=label)
+            */
+            return default;
+        }
+
         public async Task<TEntity> OpenCreatedCabaEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -11403,7 +13473,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def open_payments(self):
-            // return self.matched_payment_ids._get_records_action(name=_("Payments"))
+            // payments = self.reconciled_payment_ids
+            // return payments._get_records_action(name=_("Payments"))
             */
             return default;
         }
@@ -11535,9 +13606,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ This method returns the fields to use to find the number to use to
             // send an SMS on a record. """
             // return ['partner_phone']
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _phone_get_number_fields(self):
-            // return ['partner_phone']
             */
             return default;
         }
@@ -11555,10 +13623,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // If the journal is locked with a hash table, it will be impossible to change
             // some fields afterwards.
             // 
-            // :param soft (bool): if True, future documents are not immediately posted,
+            // :param bool soft: if True, future documents are not immediately posted,
             //     but are set to be auto posted automatically at the set accounting date.
             //     Nothing will be performed on those documents before the accounting date.
-            // :return Model<account.move>: the documents that have been posted
+            // :returns: the Model<account.move> documents that have been posted
             // """
             // if not self.env.su and not self.env.user.has_group('account.group_account_invoice'):
             //     raise AccessError(_("You don't have the access rights to post an invoice."))
@@ -11594,23 +13662,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     if not invoice.partner_id:
             //         if invoice.is_sale_document():
-            //             validation_msgs.add(_("The field 'Customer' is required, please complete it to validate the Customer Invoice."))
+            //             validation_msgs.add(_(
+            //                 "The 'Customer' field is required to validate the invoice.\n"
+            //                 "You probably don't want to explain to your auditor that you invoiced an invisible man :)"
+            //             ))
             //         elif invoice.is_purchase_document():
             //             validation_msgs.add(_("The field 'Vendor' is required, please complete it to validate the Vendor Bill."))
             // 
             //     # Handle case when the invoice_date is not set. In that case, the invoice_date is set at today and then,
-            //     # lines are recomputed accordingly.
+            //     # lines are recomputed accordingly (if the user didnt' change the rate manually)
             //     if not invoice.invoice_date:
             //         if invoice.is_sale_document(include_receipts=True):
-            //             invoice.invoice_date = fields.Date.context_today(self)
+            //             is_manual_rate = invoice.invoice_currency_rate != invoice.expected_currency_rate
+            //             # keep the rate set by the user
+            //             with self.env.protecting([self._fields['invoice_currency_rate']], invoice) if is_manual_rate else nullcontext():
+            //                 invoice.invoice_date = fields.Date.context_today(self)
             //         elif invoice.is_purchase_document(include_receipts=True):
             //             validation_msgs.add(_("The Bill/Refund date is required to validate this document."))
             // 
             // for move in self:
             //     if move.state in ['posted', 'cancel']:
             //         validation_msgs.add(_('The entry %(name)s (id %(id)s) must be in draft.', name=move.name, id=move.id))
-            //     if not move.line_ids.filtered(lambda line: line.display_type not in ('line_section', 'line_note')):
-            //         validation_msgs.add(_('You need to add a line before posting.'))
+            //     if not move.line_ids.filtered(lambda line: line.display_type not in ('line_section', 'line_subsection', 'line_note')):
+            //         validation_msgs.add(_("Even magicians can't post nothing!"))
             //     if not soft and move.auto_post != 'no' and move.date > fields.Date.context_today(self):
             //         date_msg = move.date.strftime(get_lang(self.env).date_format)
             //         validation_msgs.add(_("This move is configured to be auto-posted on %(date)s", date=date_msg))
@@ -11625,12 +13699,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             move.currency_id.name
             //         ))
             // 
-            //     if move.line_ids.account_id.filtered(lambda account: account.deprecated) and not self._context.get('skip_account_deprecation_check'):
-            //         validation_msgs.add(_("A line of this move is using a deprecated account, you cannot post it."))
-            // 
-            //     # If the field autocheck_on_post is set, we want the checked field on the move to be checked
-            //     if move.journal_id.autocheck_on_post:
-            //         move.checked = move.journal_id.autocheck_on_post
+            //     if move.line_ids.account_id.filtered(lambda account: not account.active) and not self.env.context.get('skip_account_deprecation_check'):
+            //         validation_msgs.add(_("A line of this move is using a archived account, you cannot post it."))
             // 
             // if validation_msgs:
             //     msg = "\n".join([line for line in validation_msgs])
@@ -11651,7 +13721,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     affects_tax_report = move._affect_tax_report()
             //     lock_dates = move._get_violated_lock_dates(move.date, affects_tax_report)
             //     if lock_dates:
-            //         move.date = move._get_accounting_date(move.invoice_date or move.date, affects_tax_report, lock_dates=lock_dates)
+            //         move.date = move._get_accounting_date(move._get_accounting_date_source(), affects_tax_report, lock_dates=lock_dates)
             // 
             // # Create the analytic lines in batch is faster as it leads to less cache invalidation.
             // to_post.line_ids._create_analytic_lines()
@@ -11664,7 +13734,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # partner on the lines to be the same as the one on the move, because that's the only one the user can see/edit.
             //     wrong_lines = invoice.is_invoice() and invoice.line_ids.filtered(lambda aml:
             //         aml.partner_id != invoice.commercial_partner_id
-            //         and aml.display_type not in ('line_note', 'line_section')
+            //         and aml.display_type not in ('line_section', 'line_subsection', 'line_note')
             //     )
             //     if wrong_lines:
             //         wrong_lines.write({'partner_id': invoice.commercial_partner_id.id})
@@ -11672,18 +13742,55 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # reconcile if state is in draft and move has reversal_entry_id set
             // draft_reverse_moves = to_post.filtered(lambda move: move.reversed_entry_id and move.reversed_entry_id.state == 'posted')
             // 
+            // # deal with the eventually related draft moves to the ones we want to post
+            // partials_to_unlink = self.env['account.partial.reconcile']
+            // 
+            // for aml in self.line_ids:
+            //     for partials, counterpart_field in [(aml.matched_debit_ids, 'debit_move_id'), (aml.matched_credit_ids, 'credit_move_id')]:
+            //         for partial in partials:
+            //             counterpart_move =  partial[counterpart_field].move_id
+            //             if counterpart_move.state == 'posted' or counterpart_move in to_post:
+            //                 if partial.exchange_move_id:
+            //                     to_post |= partial.exchange_move_id
+            //                     # If the draft invoice changed since it was reconciled, in a way that would affect the exchange diff,
+            //                     # any existing reconcilation and draft exchange move would be deleted already (to force the user to
+            //                     # re-do the reconciliation).
+            //                     # This is ensured by the the checks in env['account.move.line'].write():
+            //                     #     see env[account.move.line]._get_lock_date_protected_fields()['reconciliation']
+            // 
+            //                 if partial._get_draft_caba_move_vals() != partial.draft_caba_move_vals:
+            //                     # draft invoice changed since it was reconciled, the cash basis entry isn't correct anymore
+            //                     # and the user has to re-do the reconciliation. Existing draft cash basis move will be unlinked
+            //                     partials_to_unlink |= partial
+            // 
+            //                 elif move.tax_cash_basis_created_move_ids:
+            //                     to_post |= move.tax_cash_basis_created_move_ids.filtered(lambda m: m.tax_cash_basis_rec_id == partial)
+            //                 elif counterpart_move.tax_cash_basis_created_move_ids:
+            //                     to_post |= counterpart_move.tax_cash_basis_created_move_ids.filtered(lambda m: m.tax_cash_basis_rec_id == partial)
+            // 
+            // if partials_to_unlink:
+            //     partials_to_unlink.unlink()
+            // 
             // to_post.write({
             //     'state': 'posted',
             //     'posted_before': True,
             // })
             // 
-            // draft_reverse_moves.reversed_entry_id._reconcile_reversed_moves(draft_reverse_moves, self._context.get('move_reverse_cancel', False))
-            // to_post.line_ids._reconcile_marked()
+            // if not self.env.user.has_group('account.group_partial_purchase_deductibility') and \
+            //         self.filtered(lambda move: move.move_type == 'in_invoice' and move.invoice_line_ids.filtered(lambda l: l.deductible_amount != 100)):
+            //     self.env.user.sudo().group_ids = [Command.link(self.env.ref('account.group_partial_purchase_deductibility').id)]
             // 
-            // for invoice in to_post:
-            //     partner_id = invoice.partner_id
-            //     subscribers = [partner_id.id] if partner_id and partner_id not in invoice.sudo().message_partner_ids else None
-            //     invoice.message_subscribe(subscribers)
+            // # Add the move number to the non_deductible lines for easier auditing
+            // if non_deductible_lines := self.line_ids.filtered(lambda line: (line.display_type in ('non_deductible_product_total', 'non_deductible_tax'))):
+            //     for line in non_deductible_lines:
+            //         line.name = (
+            //             _('%s - private part', line.move_id.name)
+            //             if line.display_type == 'non_deductible_product_total'
+            //             else _('%s - private part (taxes)', line.move_id.name)
+            //         )
+            // 
+            // draft_reverse_moves.reversed_entry_id._reconcile_reversed_moves(draft_reverse_moves, self.env.context.get('move_reverse_cancel', False))
+            // to_post.line_ids._reconcile_marked()
             // 
             // customer_count, supplier_count = defaultdict(int), defaultdict(int)
             // for invoice in to_post:
@@ -11724,6 +13831,66 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> PostWithoutWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _post_without_wizard(self):
+            // """ Post an employee expense without any direct call for the wizard, should never be called unless in very specific flows """
+            // # When a move has been deleted
+            // self._check_can_create_move()
+            // today = fields.Date.context_today(self)
+            // employee_expenses = self.filtered(lambda expense: expense.payment_mode == 'own_account')
+            // 
+            // for company, expenses in employee_expenses.grouped('company_id').items():
+            //     expenses = expenses.with_company(company)
+            //     company_domain = self.env['account.journal']._check_company_domain(company)
+            //     journal = (
+            //             company.expense_journal_id
+            //             or expenses.env['account.journal'].search([*company_domain, ('type', '=', 'purchase')], limit=1))
+            //     expense_receipt_vals_list = [
+            //         {
+            //             **new_receipt_vals,
+            //             'journal_id': journal.id,
+            //             'invoice_date': today,
+            //         }
+            //         for new_receipt_vals in expenses._prepare_receipts_vals()
+            //     ]
+            //     moves = self.env['account.move'].sudo().create(expense_receipt_vals_list)
+            //     for move in moves:
+            //         move._message_set_main_attachment_id(move.attachment_ids, force=True, filter_xml=False)
+            //     moves.action_post()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PostWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _post_wizard(self):
+            // if 'company_account' in set(self.mapped('payment_mode')):
+            //     raise UserError(_("Only expense paid by the employee can be posted with the wizard"))
+            // 
+            // wizard_name = (
+            //     _("Post expenses paid by the employee")
+            //     if self.env.context.get('company_paid_move_ids')
+            //     else _("Post expenses")
+            // )
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': wizard_name,
+            //     'view_mode': 'form',
+            //     'views': [(False, "form")],
+            //     'res_model': 'hr.expense.post.wizard',
+            //     'res_id': self.env['hr.expense.post.wizard'].create({}).id,
+            //     'target': 'new',
+            //     'context': self.with_context(active_ids=self.ids).env.context,
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> PrepareBaseLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -11732,40 +13899,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //     self,
-            //     **{
-            //         'partner_id': self.vendor_id,
-            //         'special_mode': 'total_included',
-            //         'rate': self.currency_rate,
-            //         **kwargs,
-            //     },
+            //     **{'partner_id': self.vendor_id, 'special_mode': 'total_included', 'rate': self.currency_rate, **kwargs},
             // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrepareBillsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _prepare_bills_vals(self):
-            // self.ensure_one()
-            // move_vals = self._prepare_move_vals()
-            // if self.employee_id.sudo().bank_account_id:
-            //     move_vals['partner_bank_id'] = self.employee_id.sudo().bank_account_id.id
-            // return {
-            //     **move_vals,
-            //     'journal_id': self.journal_id.id,
-            //     'ref': self.name,
-            //     'move_type': 'in_invoice',
-            //     'partner_id': self.employee_id.sudo().work_contact_id.id,
-            //     'commercial_partner_id': self.employee_id.user_partner_id.id,
-            //     'currency_id': self.currency_id.id,
-            //     'line_ids': [Command.create(expense._prepare_move_lines_vals()) for expense in self.expense_line_ids],
-            //     'attachment_ids': [
-            //         Command.create(attachment.copy_data({'res_model': 'account.move', 'res_id': False, 'raw': attachment.raw})[0])
-            //         for attachment in self.expense_line_ids.message_main_attachment_id
-            //     ],
-            // }
             */
             return default;
         }
@@ -11795,6 +13930,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     is_refund=self.move_type in ('out_refund', 'in_refund'),
             //     rate=rate,
             // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareCreateValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _prepare_create_values(self, vals_list):
+            // result = super()._prepare_create_values(vals_list)
+            // new_vals_list = []
+            // Version = self.env['hr.version']
+            // version_fields = [fname for fname, field in Version._fields.items() if Version._has_field_access(field, 'write')]
+            // for vals in result:
+            //     employee_vals = {}
+            //     version_vals = {}
+            //     for fname, value in vals.items():
+            //         employee_field = self._fields.get(fname)
+            //         if not (employee_field and employee_field.inherited and employee_field.related_field.model_name == 'hr.version'):
+            //             employee_vals[fname] = value
+            //         else:
+            //             version_vals[fname] = value
+            //     new_vals_list.append({
+            //         **employee_vals,
+            //         **{k: v for k, v in version_vals.items() if k in version_fields},
+            //     })
+            // return new_vals_list
             */
             return default;
         }
@@ -11919,13 +14081,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     allday_value = not holiday.request_unit_half
             //     if holiday.leave_type_request_unit == 'hour':
             //         allday_value = float_compare(holiday.number_of_days, 1.0, 1) >= 0
+            // 
+            //     leave_tz = pytz.timezone(holiday.tz) if holiday.tz else pytz.UTC
+            //     start_value = pytz.UTC.localize(holiday.date_from).astimezone(leave_tz).replace(tzinfo=None)
+            //     stop_value = pytz.UTC.localize(holiday.date_to).astimezone(leave_tz).replace(tzinfo=None)
+            // 
             //     meeting_values = {
             //         'name': meeting_name,
             //         'duration': holiday.number_of_days * (holiday.resource_calendar_id.hours_per_day or HOURS_PER_DAY),
             //         'description': holiday.notes,
             //         'user_id': user.id,
-            //         'start': holiday.date_from,
-            //         'stop': holiday.date_to,
+            //         'start': start_value,
+            //         'stop': stop_value,
             //         'allday': allday_value,
             //         'privacy': 'confidential',
             //         'event_tz': user.tz,
@@ -12144,11 +14311,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _prepare_move_lines_vals(self):
             // self.ensure_one()
-            // account = self._get_base_account()
-            // 
             // return {
             //     'name': self._get_move_line_name(),
-            //     'account_id': account.id,
+            //     'account_id': self._get_base_account().id,
             //     'quantity': self.quantity or 1,
             //     'price_unit': self.price_unit,
             //     'product_id': self.product_id.id,
@@ -12165,25 +14330,99 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> PrepareMoveValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _prepare_move_vals(self):
-            // self.ensure_one()
-            // to_return = {
+            // return {
             //     # force the name to the default value, to avoid an eventual 'default_name' in the context
-            //     # to set it to '' which cause no number to be given to the account.move when posted.
+            //     # that would set it to '' which would then cause no number to be given to the account.move
+            //     # when it is posted.
             //     'name': '/',
-            //     'expense_sheet_id': self.id,
+            //     'expense_ids': [Command.set(self.ids)],
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareNonDeductibleBaseLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object non_deductible_line) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _prepare_non_deductible_base_line_for_taxes_computation(self, non_deductible_line):
+            // """ Convert an account.move.line having display_type='non_deductible' into a base line for the taxes computation.
             // 
-            // today = fields.Date.context_today(self)
-            // most_recent_expense = max(self.expense_line_ids.filtered(lambda exp: exp.date).mapped('date'), default=today)
+            // :param non_deductible_line: An account.move.line.
+            // :return: A base line returned by '_prepare_base_line_for_taxes_computation'.
+            // """
+            // self.ensure_one()
+            // sign = self.direction_sign
+            // rate = self.invoice_currency_rate
+            // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //     non_deductible_line,
+            //     price_unit=sign * non_deductible_line.amount_currency,
+            //     quantity=1.0,
+            //     sign=sign,
+            //     special_mode='total_excluded',
+            //     special_type='non_deductible',
             // 
-            // if self.payment_mode == 'company_account':
-            //     to_return['date'] = most_recent_expense
-            // else:
-            //     to_return['invoice_date'] = self.accounting_date
+            //     is_refund=self.move_type in ('out_refund', 'in_refund'),
+            //     rate=rate,
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareNonDeductibleBaseLinesForTaxesComputationFromBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _prepare_non_deductible_base_lines_for_taxes_computation_from_base_lines(self, base_lines):
+            // """ Anticipate the non deductible lines to be generated from the base lines passed as parameter.
+            // When the record is in draft (not saved), the accounting items are not there so we can't
+            // call '_prepare_non_deductible_base_line_for_taxes_computation'.
             // 
-            // return to_return
+            // :param base_lines: The base lines generated by '_prepare_product_base_line_for_taxes_computation'.
+            // :return: A list of base lines representing the non deductible lines.
+            // """
+            // self.ensure_one()
+            // non_deductible_product_lines = base_lines.filtered(lambda line: line.display_type == 'product' and float_compare(line.deductible_amount, 100, precision_digits=2))
+            // if not non_deductible_product_lines:
+            //     return []
+            // 
+            // sign = self.direction_sign
+            // rate = self.invoice_currency_rate
+            // 
+            // non_deductible_lines_base_total_currency = 0.0
+            // non_deductible_lines = []
+            // for line in non_deductible_product_lines:
+            //     percentage = 1 - line.deductible_amount / 100
+            //     non_deductible_subtotal = line.currency_id.round(line.price_subtotal * percentage)
+            //     non_deductible_base_currency = line.company_currency_id.round(sign * non_deductible_subtotal / rate) if rate else 0.0
+            //     non_deductible_lines_base_total_currency += non_deductible_base_currency
+            // 
+            //     non_deductible_lines += [
+            //         self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //             None,
+            //             price_unit=-non_deductible_base_currency,
+            //             quantity=1.0,
+            //             sign=1,
+            //             special_mode='total_excluded',
+            //             special_type='non_deductible',
+            //             tax_ids=line.tax_ids.filtered(lambda tax: tax.amount_type != 'fixed'),
+            //             currency_id=self.currency_id,
+            //         )
+            //     ]
+            // non_deductible_lines += [
+            //     self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //         None,
+            //         price_unit=non_deductible_lines_base_total_currency,
+            //         quantity=1.0,
+            //         sign=1,
+            //         special_mode='total_excluded',
+            //         special_type=False,
+            //         currency_id=self.currency_id,
+            //     )
+            // ]
+            // return non_deductible_lines
             */
             return default;
         }
@@ -12195,8 +14434,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _prepare_payments_vals(self):
             // self.ensure_one()
             // 
-            // journal = self.sheet_id.journal_id
-            // payment_method_line = self.sheet_id.payment_method_line_id
+            // journal = self.journal_id
+            // payment_method_line = self.payment_method_line_id
             // if not payment_method_line:
             //     raise UserError(_("You need to add a manual payment method on the journal (%s)", journal.name))
             // 
@@ -12216,6 +14455,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Base line.
             // move_lines = []
+            // base_move_line = {}
             // for base_line, to_update in tax_results['base_lines_to_update']:
             //     base_move_line = {
             //         'name': self._get_move_line_name(),
@@ -12229,7 +14469,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'balance': to_update['balance'],
             //         'currency_id': base_line['currency_id'].id,
             //         'partner_id': self.vendor_id.id,
-            //         'quantity': self.quantity,
             //     }
             //     move_lines.append(base_move_line)
             // 
@@ -12243,7 +14482,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Outstanding payment line.
             // move_lines.append({
             //     'name': self._get_move_line_name(),
-            //     'account_id': self.sheet_id._get_expense_account_destination(),
+            //     'account_id': self._get_expense_account_destination(),
             //     'balance': -self.total_amount,
             //     'amount_currency': self.currency_id.round(-self.total_amount_currency),
             //     'currency_id': self.currency_id.id,
@@ -12262,9 +14501,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'company_id': self.company_id.id,
             // }
             // move_vals = {
-            //     **self.sheet_id._prepare_move_vals(),
+            //     **self._prepare_move_vals(),
+            //     'date': self.date or fields.Date.context_today(self),
             //     'ref': self.name,
-            //     'date': self.date,  # Overidden from self.sheet_id._prepare_move_vals() so we can use the expense date for the account move date
             //     'journal_id': journal.id,
             //     'partner_id': self.vendor_id.id,
             //     'currency_id': self.currency_id.id,
@@ -12304,7 +14543,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     rate=rate,
             //     sign=sign,
             //     special_mode=False if is_invoice else 'total_excluded',
+            //     name=product_line.name,
             // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareReceiptsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _prepare_receipts_vals(self):
+            // attachments_data = []
+            // for attachment in self.message_main_attachment_id:
+            //     attachments_data.append(
+            //         Command.create(attachment.copy_data({'res_model': 'account.move', 'res_id': False, 'raw': attachment.raw})[0])
+            //     )
+            // 
+            // return_vals = []
+            // for employee_sudo, expenses_sudo in self.sudo().grouped('employee_id').items():
+            //     multiple_expenses_name = _("Expenses of %(employee)s", employee=employee_sudo.name)
+            //     move_ref = expenses_sudo.name if len(expenses_sudo) == 1 else multiple_expenses_name
+            //     return_vals.append({
+            //     **expenses_sudo._prepare_move_vals(),
+            //         'ref': move_ref,
+            //         'move_type': 'in_receipt',
+            //         'partner_id': employee_sudo.work_contact_id.id,
+            //         'commercial_partner_id': employee_sudo.user_partner_id.id,
+            //         'currency_id': expenses_sudo.company_currency_id.id,
+            //         'line_ids': [Command.create(expense_sudo._prepare_move_lines_vals()) for expense_sudo in expenses_sudo],
+            //         'partner_bank_id': employee_sudo.primary_bank_account_id.id,
+            //         'attachment_ids': attachments_data,
+            //     })
+            // return return_vals
             */
             return default;
         }
@@ -12325,6 +14596,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'resource_id': self.employee_id.resource_id.id,
             //     'calendar_id': self.resource_calendar_id.id,
             //     'time_type': self.holiday_status_id.time_type,
+            //     'elligible_for_accrual_rate': self.holiday_status_id.elligible_for_accrual_rate,
             // }
             */
             return default;
@@ -12417,13 +14689,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ReadAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object load) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def read(self, fields=None, load='_classic_read'):
+            // fields = fields or self._get_default_read_fields()
+            // return super().read(fields, load)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ReadGroupStageIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object stages, object domain) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _read_group_stage_ids(self, stages, domain):
             // # retrieve job_id from the context and write the domain: ids + contextual columns (job or default)
-            // job_id = self._context.get('default_job_id')
+            // job_id = self.env.context.get('default_job_id')
             // search_domain = [('job_ids', '=', False)]
             // if job_id:
             //     search_domain = ['|', ('job_ids', '=', job_id)] + search_domain
@@ -12432,6 +14715,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // stage_ids = stages.sudo()._search(search_domain, order=stages._order)
             // return stages.browse(stage_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ReasonCannotDecodeHasInvoiceLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _reason_cannot_decode_has_invoice_lines(self):
+            // """ Helper to get a reason why an invoice cannot be decoded if it has invoice lines. """
+            // if self.invoice_line_ids:
+            //     return self.env._("The invoice already contains lines.")
             */
             return default;
         }
@@ -12713,6 +15008,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     Command.update(line.id, {
             //         'balance': -line.balance,
             //         'amount_currency': -line.amount_currency,
+            //         **({'is_storno': not line.is_storno} if line.company_id.account_storno else {}),
             //     })
             //     for line in reverse_moves.line_ids
             //     if line.move_id.move_type == 'entry' or line.display_type == 'cogs'
@@ -12734,9 +15030,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _routing_check_route(self, message, message_dict, route, raise_exception=True):
             // if route[0] == 'account.move' and len(message_dict['attachments']) < 1:
             //     # Don't create the move if no attachment.
+            //     company_id = route[2].get('company_id', self.env.company.id)
+            //     if not isinstance(company_id, int):
+            //         raise ValueError(_("Default value for 'company_id' for %(record)s is not an integer",
+            //                           record=route[4]))
+            //     journal_alias_company = self.env['res.company'].search([['id', '=', company_id]])
             //     body = self.env['ir.qweb']._render('account.email_template_mail_gateway_failed', {
-            //         'company_email': self.env.company.email,
-            //         'company_name': self.env.company.name,
+            //         'company_email': journal_alias_company.email or self.env.company.email,
+            //         'company_name': journal_alias_company.name or self.env.company.name,
             //     })
             //     self._routing_create_bounce_email(
             //         message_dict['from'], body, message,
@@ -12781,35 +15082,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _search_application_status(self, operator, value):
-            // supported_operators = ['=', '!=', 'in', 'not in']
-            // if operator not in supported_operators:
-            //     raise UserError(_('Operation not supported'))
+            // if operator != 'in':
+            //     return NotImplemented
             // 
-            // # Normalize value to be a list to simplify processing
-            // if isinstance(value, (str, bool)):
-            //     value = [value]
-            // 
-            // # Ensure all values are either correct strings or False
-            // valid_statuses = ['ongoing', 'hired', 'refused', 'archived']
-            // if not all(v in valid_statuses or v is False for v in value):
-            //     raise UserError(_('Some values do not exist in the application status'))
-            // 
+            // domains = []
             // # Map statuses to domain filters
-            // for status in value:
-            //     if status == 'refused':
-            //         domain = [('refuse_reason_id', '!=', None)]
-            //     elif status == 'hired':
-            //         domain = [('date_closed', '!=', False)]
-            //     elif status == 'archived' or status is False:
-            //         domain = [('active', '=', False)]
-            //     elif status == 'ongoing':
-            //         domain = ['&', ('active', '=', True), ('date_closed', '=', False)]
+            // if 'refused' in value:
+            //     domains.append([('active', '=', True), ('refuse_reason_id', '!=', None)])
+            // if 'hired' in value:
+            //     domains.append([('active', '=', True), ('date_closed', '!=', False)])
+            // if 'archived' in value or False in value:
+            //     domains.append([('active', '=', False)])
+            // if 'ongoing' in value:
+            //     domains.append([('active', '=', True), ('date_closed', '=', False)])
             // 
-            // # Invert the domain for '!=' and 'not in' operators
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     domain.insert(0, expression.NOT_OPERATOR)
-            //     domain = expression.distribute_not(domain)
-            // return domain
+            // return Domain.OR(domains)
             */
             return default;
         }
@@ -12833,7 +15120,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # the currency is not a hard dependence, it triggers via manual add_to_compute
             // # avoid computing the currency before all it's dependences are set (like the journal...)
             // if self.env.cache.contains(self, self._fields['currency_id']):
-            //     currency_id = self.currency_id.id or self._context.get('default_currency_id')
+            //     currency_id = self.currency_id.id or self.env.context.get('default_currency_id')
             //     if currency_id and currency_id != company.currency_id.id:
             //         currency_domain = domain + [('currency_id', '=', currency_id)]
             //         journal = self.env['account.journal'].search(currency_domain, limit=1)
@@ -12856,12 +15143,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _search_description(self, operator, value):
             // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // domain = [('private_name', operator, value)]
+            // domain = Domain('private_name', operator, value)
             // 
             // if not is_officer:
-            //     domain = expression.AND([domain, [('user_id', '=', self.env.user.id)]])
+            //     domain &= Domain('user_id', '=', self.env.user.id)
             // query = self.sudo()._search(domain)
-            // return [('id', 'in', query)]
+            // return Domain('id', 'in', query)
             */
             return default;
         }
@@ -12870,13 +15157,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+            // def search_fetch(self, domain, field_names=None, offset=0, limit=None, order=None):
             // if self.browse().has_access('read'):
             //     return super().search_fetch(domain, field_names, offset, limit, order)
             // 
             // # HACK: retrieve publicly available values from hr.employee.public and
             // # copy them to the cache of self; non-public data will be missing from
             // # cache, and interpreted as an access error
+            // if field_names is None:
+            //     field_names = [field.name for field in self._determine_fields_to_fetch()]
+            // field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
             // self._check_private_fields(field_names)
             // self.flush_model(field_names)
             // public = self.env['hr.employee.public'].search_fetch(domain, field_names, offset, limit, order)
@@ -12891,7 +15181,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, *, bypass_access=False, **kwargs):
             // """
             //     We override the _search because it is the method that checks the access rights
             //     This is correct to override the _search. That way we enforce the fact that calling
@@ -12900,14 +15190,85 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     browsed on the hr.employee model. This can be trusted as the ids of the public
             //     employees exactly match the ids of the related hr.employee.
             // """
-            // if self.browse().has_access('read'):
-            //     return super()._search(domain, offset, limit, order)
+            // if self.browse().has_access('read') or bypass_access:
+            //     return super()._search(domain, offset, limit, order, bypass_access=bypass_access, **kwargs)
+            // domain = Domain(domain)
+            // # HACK Some fields are inherited from the `current_version_id` and may have been already
+            // # optimized, showing current_version_id in the domain, but public employee does not have
+            // # that field and may have fields directly on the model, just change the condition to `id` in
+            // # that case.
+            // domain = domain.map_conditions(lambda cond: Domain('id', cond.operator, cond.value) if cond.field_expr == 'current_version_id' else cond)
             // try:
-            //     ids = self.env['hr.employee.public']._search(domain, offset, limit, order)
-            // except ValueError:
-            //     raise AccessError(_('You do not have access to this document.'))
+            //     ids = self.env['hr.employee.public']._search(domain, offset, limit, order, **kwargs)
+            // except ValueError as e:
+            //     raise AccessError(self.env._('You do not have access to this document.')) from e
             // # the result is expected from this table, so we should link tables
-            // return super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)], order=order)
+            // return super(HrEmployee, self.sudo())._search([('id', 'in', ids)], order=order)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchIsApplicantInPoolInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def _search_is_applicant_in_pool(self, operator, value):
+            // """
+            // This function is needed to hide duplicates when adding applicants/talents to a talent pool.
+            // All applications that have either talent_pool_ids or pool_applicant_id set are considered
+            // directly in a pool. Furthermore, any application with the same phone number, email or linkedin
+            // as the first applications, that are directly in the pool, are also considered to belong to
+            // the same talent pool.
+            // 
+            // Returns:
+            //     returns a domain with ids of applications that are either directly or indirectly linked to a pool
+            // """
+            // if operator != 'in':
+            //     return NotImplemented
+            // 
+            // return [('id', 'in', SQL("""
+            //         WITH talent_pool_applicants AS (
+            //             SELECT
+            //                    a.id as id,
+            //                    email_normalized,
+            //                    partner_phone_sanitized,
+            //                    linkedin_profile
+            //               FROM hr_applicant a
+            //          LEFT JOIN hr_applicant_hr_talent_pool_rel rel
+            //                 ON a.id = rel.hr_applicant_id
+            //              WHERE pool_applicant_id IS NOT NULL
+            //                 OR hr_talent_pool_id IS NOT NULL
+            //         )
+            //         SELECT a.id
+            //         FROM hr_applicant a
+            //         WHERE
+            //             -- Check if directly linked to a pool
+            //             (a.id IN (
+            //                 SELECT DISTINCT id
+            //                 from talent_pool_applicants
+            //             ))
+            //             OR
+            //             -- Check if email matches any talent pool applicant
+            //             (a.email_normalized IN (
+            //                 SELECT DISTINCT email_normalized
+            //                 FROM talent_pool_applicants
+            //                 WHERE email_normalized IS NOT NULL
+            //             ))
+            //             OR
+            //             -- Check if phone matches any talent pool applicant
+            //             (a.partner_phone_sanitized IN (
+            //                 SELECT DISTINCT partner_phone_sanitized
+            //                 FROM talent_pool_applicants
+            //                 WHERE partner_phone_sanitized IS NOT NULL
+            //             ))
+            //             OR
+            //             -- Check if LinkedIn profile matches any talent pool applicant
+            //             (a.linkedin_profile IN (
+            //                 SELECT DISTINCT linkedin_profile
+            //                 FROM talent_pool_applicants
+            //                 WHERE linkedin_profile IS NOT NULL
+            //             ))
+            // """))]
             */
             return default;
         }
@@ -12919,7 +15280,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _search_journal_group_id(self, operator, value):
             // field = 'name' if 'like' in operator else 'id'
             // journal_groups = self.env['account.journal.group'].search([(field, operator, value)])
-            // return [('journal_id', 'not in', journal_groups.excluded_journal_ids.ids)]
+            // return Domain.OR([
+            //     Domain('journal_id', 'not in', group.excluded_journal_ids.ids)
+            //     & Domain('journal_id.company_id', '=?', group.company_id.id)
+            //     for group in journal_groups
+            // ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchMoveSentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _search_move_sent_values(self, operator, value):
+            // if operator != 'in' or value - {'sent', 'not_sent'}:
+            //     return NotImplemented
+            // return [('is_move_sent', 'in', [elem == 'sent' for elem in value])]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchNewlyHiredInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _search_newly_hired(self, operator, value):
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // new_hire_field = self._get_new_hire_field()
+            // new_hires = self.env['hr.employee'].sudo().search([
+            //     (new_hire_field, '>', fields.Datetime.now() - timedelta(days=90))
+            // ])
+            // return [('id', operator, new_hires.ids)]
             */
             return default;
         }
@@ -12929,31 +15322,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _search_next_payment_date(self, operator, value):
-            // if operator not in ('=', '<', '<='):
-            //     raise UserError(self.env._('Operation not supported'))
+            // if operator not in ('in', '<', '<='):
+            //     return NotImplemented
             // return [('line_ids', 'any', [('reconciled', '=', False), ('payment_date', operator, value)])]
             */
             return default;
         }
 
-        public async Task<TEntity> SearchPartnerNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> SearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object offset, object limit, object order) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def _search_partner_name(self, operator, value):
-            // return [('candidate_id.partner_name', operator, value)]
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+            // fields = fields or self._get_default_read_fields()
+            // return super().search_read(domain, fields, offset, limit, order, **read_kwargs)
             */
             return default;
         }
 
-        public async Task<TEntity> SearchProductIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> SearchReconciledInvoiceIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _search_product_ids(self, operator, value):
-            // if operator == 'in' and not isinstance(value, list):
-            //     value = [value]
-            // return [('expense_line_ids.product_id', operator, value)]
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
+            // def _search_reconciled_invoice_ids(self, operator, value):
+            // if operator not in ('in', '='):
+            //     return NotImplemented
+            // move_ids = self.env['account.move'].browse(value).reconciled_payment_ids.ids
+            // return [('id', 'in', move_ids)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchReconciledPaymentIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _search_reconciled_payment_ids(self, operator, value):
+            // if operator not in ('in', '='):
+            //     return NotImplemented
+            // payment_ids = self.env['account.payment'].browse(value).reconciled_invoice_ids.ids
+            // return [('id', 'in', payment_ids)]
             */
             return default;
         }
@@ -12963,11 +15371,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _search_secured(self, operator, value):
-            // if operator not in ['=', '!='] or value not in [True, False]:
-            //     raise UserError(_('Operation not supported'))
-            // 
-            // want_secured = (operator == '=') == value
-            // return [('inalterable_hash', '!=' if want_secured else '=', False)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // assert list(value) == [True]
+            // return [('inalterable_hash', '!=', False)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _search_version_id(self, operator, value):
+            // if operator in ('any', 'any!'):
+            //     return Domain('current_version_id', operator, value)
+            // domain = Domain('id', operator, value)
+            // return Domain('id', 'in', self.env['hr.version']._search(domain).select('employee_id'))
             */
             return default;
         }
@@ -13014,6 +15434,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _send_expense_success_mail(self, msg_dict, expense):
+            // """ Send a confirmation mail to the employee that an expense has been created by their previous mail """
             // if expense.employee_id.user_id:
             //     mail_template_id = 'hr_expense.hr_expense_template_register'
             // else:
@@ -13115,12 +15536,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _set_expense_currency_rate(self, date_today):
             // for expense in self:
+            //     company_currency = expense.company_currency_id or self.env.company.currency_id
             //     expense.currency_rate = expense.env['res.currency']._get_conversion_rate(
-            //         from_currency=expense.currency_id,
-            //         to_currency=expense.company_currency_id,
+            //         from_currency=expense.currency_id or company_currency,
+            //         to_currency=company_currency,
             //         company=expense.company_id,
             //         date=expense.date or date_today,
             //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SetMovesCheckedAsync<TEntity>(IEnumerable<TEntity> entities, object is_checked) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def set_moves_checked(self, is_checked=True):
+            // for move in self.filtered(lambda m: m.state == 'posted'):
+            //     move.checked = is_checked
             */
             return default;
         }
@@ -13163,28 +15596,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                                  and credit_note.invoice_line_ids.sale_line_ids in inv.invoice_line_ids.sale_line_ids)
             // if len(original_invoice) == 1 and original_invoice._refunds_origin_required():
             //     credit_note.reversed_entry_id = original_invoice.id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetToPaidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def set_to_paid(self):
-            // # hook used in other modules to bypass payment registration
-            // self.write({'state': 'done'})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetToPostedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def set_to_posted(self):
-            // # hook used in other modules to bypass move creation
-            // self.write({'state': 'post'})
             */
             return default;
         }
@@ -13239,89 +15650,64 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _split_leaves(self, split_date_from, split_date_to):
+            // def _split_leaves(self, split_date_from, split_date_to=False):
             // """
-            // Split leaves on the given full-day interval. The leaves will be split
-            // into two new leaves: the period up until (but not including)
-            // split_date_from and the period starting at (and including)
-            // split_date_to.
+            // This method splits an original leave in two leaves and returns the new one for each leave in self.
+            // E.g. (start, stop) -> (start, split_date_from - 1day), (split_date_to, stop)
+            // :param split_date_from: The starting date of the splicing interval (includes)
+            // :param split_date_to: The ending date of the splicing interval. (not includes)
+            // :param changes_message: The message will be translated and posted in the first leave's chatter
             // 
-            // This means that the period in between split_date_from and split_date_to
-            // will no longer be covered by the new leaves. In order to split a leave
-            // without losing any leave coverage, split_date_from and split_date_to
-            // should therefore be the same.
-            // 
-            // Another important note to make is that this method only splits leaves
-            // on full-day intervals. Logic to split leaves on partial days or hours
-            // is not straightforward as you have to take into account working hours
-            // and timezones. It's also not clear that we would want to handle this
-            // automatically. The method will therefore also only work on leaves that
-            // are taken in full or half days (Though a half day leave in the interval
-            // will simply be refused - there are no multi-day spanning half-day
-            // leaves)
-            // 
-            // The method creates one or two new leaves per leave that needs to be
-            // split and refuses the original leave.
+            // If split_date_to is not set; the splicing interval will be equals to [split_date_form, split_date_from -1]
+            // to avoid one day leave.
             // """
-            // # Keep track of the original states before refusing the leaves and creating new ones
-            // original_states = {l.id: l.state for l in self}
-            // 
-            // # Refuse all original leaves
-            // self.action_refuse()
-            // split_leaves_vals = []
+            // new_leaves_vals = []
+            // if not split_date_to:
+            //     split_date_to = split_date_from
             // 
             // # Only leaves that span a period outside of the split interval need
             // # to be split.
             // multi_day_leaves = self.filtered(lambda l: l.request_date_from < split_date_from or l.request_date_to >= split_date_to)
-            // 
             // for leave in multi_day_leaves:
-            //     # Leaves in days
             //     new_leave_vals = []
-            // 
-            //     # Get the values to create the leave before the split
+            //     target_leave_vals = []
             //     if leave.request_date_from < split_date_from:
-            //         new_leave_vals.append(leave.copy_data({
-            //             'request_date_from': leave.request_date_from,
+            //         new_leave_vals.append(leave.with_context(skip_copy_check=True).copy_data({
             //             'request_date_to': split_date_from + timedelta(days=-1),
-            //             'state': original_states[leave.id],
+            //             'state': leave.state
             //         })[0])
             // 
             //     # Do the same for the new leave after the split
             //     if leave.request_date_to >= split_date_to:
-            //         new_leave_vals.append(leave.copy_data({
+            //         new_leave_vals.append(leave.with_context(skip_copy_check=True).copy_data({
             //             'request_date_from': split_date_to,
-            //             'request_date_to': leave.request_date_to,
-            //             'state': original_states[leave.id],
+            //             'state': leave.state
             //         })[0])
             // 
-            //     # For those two new leaves, only create them if they actually
-            //     # have a non-zero duration.
+            //     # For those two new leaves, only create them if they actually have a non-zero duration.
             //     for leave_vals in new_leave_vals:
             //         new_leave = self.env['hr.leave'].new(leave_vals)
             //         new_leave._compute_date_from_to()
-            //         # Could happen for part-time contract, that time off is not necessary
-            //         # anymore.
-            //         # Imagine you work on monday-wednesday-friday only.
-            //         # You take a time off on friday.
-            //         # We create a company time off on friday.
-            //         # By looking at the last attendance before the company time off
-            //         # start date to compute the date_to, you would have a date_from > date_to.
-            //         # Just don't create the leave at that time. That's the reason why we use
-            //         # new instead of create. As the leave is not actually created yet, the sql
-            //         # constraint didn't check date_from < date_to yet.
             //         if new_leave.date_from < new_leave.date_to:
-            //             split_leaves_vals.append(new_leave._convert_to_write(new_leave._cache))
+            //             target_leave_vals.append(new_leave._convert_to_write(new_leave._cache))
             // 
-            // split_leaves = self.env['hr.leave'].with_context(
+            //     if target_leave_vals:
+            //         vals = target_leave_vals.pop(0)
+            //         leave.with_context(leave_skip_state_check=True).write({
+            //             'request_date_from': vals['request_date_from'],
+            //             'request_date_to': vals['request_date_to'],
+            //         })
+            //         if target_leave_vals:
+            //             new_leaves_vals.extend(target_leave_vals)
+            // 
+            // if not new_leaves_vals:
+            //     return self.env['hr.leave']
+            // return self.env['hr.leave'].with_context(
             //     tracking_disable=True,
             //     mail_activity_automation_skip=True,
             //     leave_fast_create=True,
             //     leave_skip_state_check=True
-            // ).create(split_leaves_vals)
-            // 
-            // split_leaves.filtered(lambda l: l.state in 'validate')._validate_leave_request()
-            // 
-            // return split_leaves
+            // ).create(new_leaves_vals)
             */
             return default;
         }
@@ -13491,40 +15877,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if disabled:
             //         yield
             //         return
-            //     def update_containers():
-            //         # Only invoice-like and journal entries in "auto tax mode" are synced
-            //         tax_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True) or m.line_ids.tax_ids or m.line_ids.tax_repartition_line_id)
-            //         invoice_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True))
-            //         misc_container['records'] = container['records'].filtered(lambda m: m.is_entry() and not m.tax_cash_basis_origin_move_id)
             // 
-            //     tax_container, invoice_container, misc_container = ({} for __ in range(3))
+            //     stack_list, update_containers = self._get_sync_stack(container)
             //     update_containers()
             //     with ExitStack() as stack:
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='term_key',
-            //             needed_vals_fname='needed_terms',
-            //             needed_dirty_fname='needed_terms_dirty',
-            //             line_type='payment_term',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_unbalanced_lines(misc_container))
-            //         stack.enter_context(self._sync_rounding_lines(invoice_container))
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='discount_allocation_key',
-            //             needed_vals_fname='line_ids.discount_allocation_needed',
-            //             needed_dirty_fname='line_ids.discount_allocation_dirty',
-            //             line_type='discount',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_tax_lines(tax_container))
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='epd_key',
-            //             needed_vals_fname='line_ids.epd_needed',
-            //             needed_dirty_fname='line_ids.epd_dirty',
-            //             line_type='epd',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_invoice(invoice_container))
+            //         stack_list.sort()
+            //         for _seq, contextmgr in stack_list:
+            //             stack.enter_context(contextmgr)
+            // 
             //         line_container = {'records': self.line_ids}
             //         with self.line_ids._sync_invoice(line_container):
             //             yield
@@ -13561,6 +15921,107 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SyncNonDeductibleBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _sync_non_deductible_base_lines(self, container):
+            // def has_non_deductible_lines(move):
+            //     return (
+            //         move.state == 'draft'
+            //         and move.is_purchase_document()
+            //         and any(move.line_ids.filtered(lambda line: line.display_type == 'product' and line.deductible_amount < 100))
+            //     )
+            // 
+            // # Collect data to avoid recomputing value unecessarily
+            // product_lines_before = {
+            //     move: Counter(
+            //         (line.name, line.price_subtotal, line.tax_ids, line.deductible_amount, line.account_id)
+            //         for line in move.line_ids
+            //         if line.display_type == 'product'
+            //     )
+            //     for move in container['records']
+            // }
+            // 
+            // yield
+            // 
+            // to_delete = []
+            // to_create = []
+            // for move in container['records']:
+            //     product_lines_now = Counter(
+            //         (line.name, line.price_subtotal, line.tax_ids, line.deductible_amount, line.account_id)
+            //         for line in move.line_ids
+            //         if line.display_type == 'product'
+            //     )
+            // 
+            //     has_changed_product_lines = bool(
+            //         product_lines_before.get(move, Counter()) - product_lines_now
+            //         or product_lines_now - product_lines_before.get(move, Counter())
+            //     )
+            //     if not has_changed_product_lines:
+            //         # No difference between before and now, then nothing to do
+            //         continue
+            // 
+            //     non_deductible_base_lines = move.line_ids.filtered(lambda line: line.display_type in ('non_deductible_product', 'non_deductible_product_total'))
+            //     to_delete += non_deductible_base_lines.ids
+            // 
+            //     if not has_non_deductible_lines(move):
+            //         continue
+            // 
+            //     non_deductible_base_total = 0.0
+            //     non_deductible_base_currency_total = 0.0
+            // 
+            //     sign = move.direction_sign
+            //     rate = move.invoice_currency_rate
+            // 
+            //     for line in move.line_ids.filtered(lambda line: line.display_type == 'product'):
+            //         if float_compare(line.deductible_amount, 100, precision_rounding=2) == 0:
+            //             continue
+            // 
+            //         percentage = (1 - line.deductible_amount / 100)
+            //         non_deductible_subtotal = line.currency_id.round(line.price_subtotal * percentage)
+            //         non_deductible_base = line.currency_id.round(sign * non_deductible_subtotal)
+            //         non_deductible_base_currency = line.company_currency_id.round(sign * non_deductible_subtotal / rate) if rate else 0.0
+            //         non_deductible_base_total += non_deductible_base
+            //         non_deductible_base_currency_total += non_deductible_base_currency
+            // 
+            //         to_create.append({
+            //             'move_id': move.id,
+            //             'account_id': line.account_id.id,
+            //             'display_type': 'non_deductible_product',
+            //             'name': line.name,
+            //             'balance': -1 * non_deductible_base,
+            //             'amount_currency': -1 * non_deductible_base_currency,
+            //             'tax_ids': [Command.set(line.tax_ids.filtered(lambda tax: tax.amount_type != 'fixed').ids)],
+            //             'sequence': line.sequence + 1,
+            //         })
+            // 
+            //     to_create.append({
+            //         'move_id': move.id,
+            //         'account_id': (
+            //             move.journal_id.non_deductible_account_id
+            //             or move.journal_id.default_account_id
+            //         ).id,
+            //         'display_type': 'non_deductible_product_total',
+            //         'name': _('private part'),
+            //         'balance': non_deductible_base_total,
+            //         'amount_currency': non_deductible_base_currency_total,
+            //         'tax_ids': [Command.clear()],
+            //         'sequence': max(move.line_ids.mapped('sequence')) + 1,
+            //     })
+            // 
+            // while to_create and to_delete:
+            //     line_data = to_create.pop()
+            //     line_id = to_delete.pop()
+            //     self.env['account.move.line'].browse(line_id).write(line_data)
+            // if to_create:
+            //     self.env['account.move.line'].create(to_create)
+            // if to_delete:
+            //     self.env['account.move.line'].browse(to_delete).with_context(dynamic_unlink=True).unlink()
+            */
+            return default;
+        }
+
         public async Task<TEntity> SyncRoundingLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -13574,6 +16035,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SyncSalaryDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _sync_salary_distribution(self):
+            // for employee in self:
+            //     current_salary_distribution = employee.salary_distribution or {}
+            //     current_ids = set(map(int, current_salary_distribution.keys()))
+            //     account_ids = set(employee.bank_account_ids.ids)
+            // 
+            //     added_ids = account_ids - current_ids
+            //     removed_ids = current_ids - account_ids
+            //     unchanged_ids = account_ids & current_ids
+            // 
+            //     # Preserve existing data and order
+            //     ordered = sorted([
+            //         (int(i), data) for i, data in current_salary_distribution.items()
+            //         if int(i) in unchanged_ids
+            //     ], key=lambda x: (not x[1].get('amount_is_percentage'), x[1].get('sequence', float('inf'))))
+            // 
+            //     new_salary_distribution = {str(i): data for i, data in ordered}
+            // 
+            //     # Redistribute removed % to first item
+            //     removed_percentage = sum(current_salary_distribution[str(i)]['amount']
+            //         for i in removed_ids if str(i) in current_salary_distribution and current_salary_distribution[str(i)]['amount_is_percentage'])
+            //     if removed_percentage and ordered:
+            //         first_id = str(ordered[0][0])
+            //         if new_salary_distribution[first_id]['amount_is_percentage']:
+            //             new_salary_distribution[first_id]['amount'] += removed_percentage
+            // 
+            //     # Add new entries with remaining %
+            //     total_allocated = sum(d['amount'] for d in new_salary_distribution.values() if d['amount_is_percentage'])
+            //     remaining = max(0.0, 100.0 - total_allocated)
+            //     seq = max((d.get('sequence', 0) for d in new_salary_distribution.values()), default=0)
+            //     amount = employee.currency_id.round(remaining / len(added_ids)) if added_ids else 0.0
+            //     for i, new_id in enumerate(added_ids):
+            //         seq += 1
+            //         if i == len(added_ids) - 1:
+            //             amount = remaining
+            //         new_salary_distribution[str(new_id)] = {
+            //             'amount': amount,
+            //             'amount_is_percentage': True,
+            //             'sequence': seq,
+            //         }
+            //         remaining -= amount
+            // 
+            //     employee.salary_distribution = new_salary_distribution
+            */
+            return default;
+        }
+
         public async Task<TEntity> SyncTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
@@ -13583,13 +16095,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // fake_base_line = AccountTax._prepare_base_line_for_taxes_computation(None)
             // 
             // def get_base_lines(move):
-            //     return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs'))
+            //     return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs', 'non_deductible_product'))
             // 
             // def get_tax_lines(move):
             //     return move.line_ids.filtered('tax_repartition_line_id')
             // 
             // def get_value(record, field):
-            //     return self.env['account.move.line']._fields[field].convert_to_write(record[field], record)
+            //     return record._fields[field].convert_to_write(record[field], record)
             // 
             // def get_tax_line_tracked_fields(line):
             //     return ('amount_currency', 'balance', 'analytic_distribution')
@@ -13625,7 +16137,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // moves_values_before = {
             //     move: {
             //         field: get_value(move, field)
-            //         for field in ('currency_id', 'partner_id', 'move_type')
+            //         for field in ('currency_id', 'partner_id', 'move_type', 'invoice_currency_rate', 'invoice_date')
             //     }
             //     for move in container['records']
             //     if move.state == 'draft'
@@ -13671,6 +16183,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ):
             //         # Changing the type of an invoice using 'switch to refund' feature or just changing the currency.
             //         round_from_tax_lines = False
+            //     elif any(line not in base_lines for line, values in move_base_lines_values_before.items() if values['tax_ids']):
+            //         # Removed a base line affecting the taxes.
+            //         round_from_tax_lines = any_field_has_changed(move_tax_lines_values_before, tax_lines)
+            //     elif field_has_changed(moves_values_before, move, 'invoice_currency_rate') and not field_has_changed(moves_values_before, move, 'invoice_date'):
+            //         # Changing the rate should preserve the tax amounts in foreign currency but reapply the currency rate.
+            //         round_from_tax_lines = 'reapply_currency_rate'
             //     elif changed_lines := list(get_changed_lines(move_base_lines_values_before, base_lines)):
             //         # A base line has been modified.
             //         round_from_tax_lines = (
@@ -13697,15 +16215,58 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             and any(line[field] for line in changed_lines for field in ('amount_currency', 'balance'))
             //         ):
             //             continue
-            //     elif any(line not in base_lines for line, values in move_base_lines_values_before.items() if values['tax_ids']):
-            //         # Removed a base line affecting the taxes.
-            //         round_from_tax_lines = any_field_has_changed(move_tax_lines_values_before, tax_lines)
             //     else:
             //         continue
             // 
             //     base_lines_values, tax_lines_values = move._get_rounded_base_and_tax_lines(round_from_tax_lines=round_from_tax_lines)
             //     AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines_values, move.company_id, include_caba_tags=move.always_tax_exigible)
             //     tax_results = AccountTax._prepare_tax_lines(base_lines_values, move.company_id, tax_lines=tax_lines_values)
+            // 
+            //     non_deductible_tax_line = move.line_ids.filtered(lambda line: line.display_type == 'non_deductible_tax')
+            //     non_deductible_lines_values = [
+            //         line_values
+            //         for line_values in base_lines_values
+            //         if line_values['special_type'] == 'non_deductible'
+            //         and line_values['tax_ids']
+            //     ]
+            // 
+            //     if not non_deductible_lines_values and non_deductible_tax_line:
+            //         to_delete.append(non_deductible_tax_line.id)
+            // 
+            //     elif non_deductible_lines_values:
+            //         non_deductible_tax_values = {
+            //             'tax_amount': 0.0,
+            //             'tax_amount_currency': 0.0,
+            //         }
+            //         for line_values in non_deductible_lines_values:
+            //             non_deductible_tax_values['tax_amount'] += -line_values['sign'] * (line_values['tax_details']['total_included'] - line_values['tax_details']['total_excluded'])
+            //             non_deductible_tax_values['tax_amount_currency'] += -line_values['sign'] * (line_values['tax_details']['total_included_currency'] - line_values['tax_details']['total_excluded_currency'])
+            // 
+            //         # Update the non-deductible tax lines values
+            //         non_deductable_tax_line_values = {
+            //             'move_id': move.id,
+            //             'account_id': (
+            //                 non_deductible_tax_line.account_id
+            //                 or move.journal_id.non_deductible_account_id
+            //                 or move.journal_id.default_account_id
+            //             ).id,
+            //             'display_type': 'non_deductible_tax',
+            //             'name': _('private part (taxes)'),
+            //             'balance': non_deductible_tax_values['tax_amount'],
+            //             'amount_currency': non_deductible_tax_values['tax_amount_currency'],
+            //             'sequence': max(move.line_ids.mapped('sequence')) + 1,
+            //         }
+            //         if non_deductible_tax_line:
+            //             tax_results['tax_lines_to_update'].append((
+            //                 {'record': non_deductible_tax_line},
+            //                 'unused_grouping_key',
+            //                 {
+            //                     'amount_currency': non_deductable_tax_line_values['amount_currency'],
+            //                     'balance': non_deductable_tax_line_values['balance'],
+            //                 }
+            //             ))
+            //         else:
+            //             to_create.append(non_deductable_tax_line_values)
             // 
             //     for base_line, to_update in tax_results['base_lines_to_update']:
             //         line = base_line['record']
@@ -13722,7 +16283,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'move_id': move.id,
             //         })
             // 
-            //     for tax_line_vals, grouping_key, to_update in tax_results['tax_lines_to_update']:
+            //     for tax_line_vals, _grouping_key, to_update in tax_results['tax_lines_to_update']:
             //         line = tax_line_vals['record']
             //         if is_write_needed(line, to_update):
             //             line.write(to_update)
@@ -13817,7 +16378,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :param changed_fields: A set containing all modified fields on account.move.
             // '''
-            // if self._context.get('skip_account_move_synchronization'):
+            // if self.env.context.get('skip_account_move_synchronization'):
             //     return
             // 
             // self_sudo = self.sudo()
@@ -13839,6 +16400,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // 
             // for pay in self:
+            //     if pay.move_id.state == 'posted':
+            //         continue
             //     liquidity_lines, counterpart_lines, writeoff_lines = pay._seek_for_lines()
             //     # Make sure to preserve the write-off amount.
             //     # This allows to create a new payment with custom 'line_ids'.
@@ -13880,16 +16443,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        protected async Task<object> ThreadToStoreInternalAsync()
+        public async Task<TEntity> ThreadToStoreInternalAsync<TEntity>(IEnumerable<TEntity> entities, object store, object fields) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_thread_main_attachment.py) ---
-            // def _thread_to_store(self, store: Store, /, *, request_list=None, **kwargs):
-            // super()._thread_to_store(store, request_list=request_list, **kwargs)
+            // def _thread_to_store(self, store: Store, fields, *, request_list=None):
+            // super()._thread_to_store(store, fields, request_list=request_list)
             // if request_list and "attachments" in request_list:
             //     store.add(
             //         self,
-            //         {"mainAttachment": Store.one(self.message_main_attachment_id, only_id=True)},
+            //         Store.One("message_main_attachment_id", []),
             //         as_thread=True,
             //     )
             */
@@ -13902,60 +16465,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _to_utc(self, date, hour, resource):
             // hour = float_to_time(float(hour))
-            // holiday_tz = timezone(resource.tz or self.env.user.tz or 'UTC')
-            // return holiday_tz.localize(datetime.combine(date, hour)).astimezone(UTC).replace(tzinfo=None)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def toggle_active(self):
-            // res = super(HrEmployeePrivate, self).toggle_active()
-            // unarchived_employees = self.filtered(lambda employee: employee.active)
-            // unarchived_employees.write({
-            //     'departure_reason_id': False,
-            //     'departure_description': False,
-            //     'departure_date': False
-            // })
-            // 
-            // archived_employees = self.filtered(lambda e: not e.active)
-            // if archived_employees:
-            //     # Empty links to this employees (example: manager, coach, time off responsible, ...)
-            //     employee_fields_to_empty = self._get_employee_m2o_to_empty_on_archived_employees()
-            //     user_fields_to_empty = self._get_user_m2o_to_empty_on_archived_employees()
-            //     employee_domain = [[(field, 'in', archived_employees.ids)] for field in employee_fields_to_empty]
-            //     user_domain = [[(field, 'in', archived_employees.user_id.ids)] for field in user_fields_to_empty]
-            //     employees = self.env['hr.employee'].search(expression.OR(employee_domain + user_domain))
-            //     for employee in employees:
-            //         for field in employee_fields_to_empty:
-            //             if employee[field] in archived_employees:
-            //                 employee[field] = False
-            //         for field in user_fields_to_empty:
-            //             if employee[field] in archived_employees.user_id:
-            //                 employee[field] = False
-            // 
-            // if len(self) == 1 and not self.active and not self.env.context.get('no_wizard', False):
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'name': _('Register Departure'),
-            //         'res_model': 'hr.departure.wizard',
-            //         'view_mode': 'form',
-            //         'target': 'new',
-            //         'context': {'active_id': self.id},
-            //         'views': [[False, 'form']]
-            //     }
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def toggle_active(self):
-            // self = self.with_context(just_unarchived=True)
-            // res = super(Applicant, self).toggle_active()
-            // active_applicants = self.filtered(lambda applicant: applicant.active)
-            // if active_applicants:
-            //     active_applicants.reset_applicant()
-            // return res
+            // holiday_tz = pytz.timezone(resource.tz or self.env.user.tz or 'UTC')
+            // return holiday_tz.localize(datetime.combine(date, hour)).astimezone(pytz.UTC).replace(tzinfo=None)
             */
             return default;
         }
@@ -13979,7 +16490,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif 'state' in init_values and self.state == 'posted' and self.is_sale_document(include_receipts=True):
             //     return self.env.ref('account.mt_invoice_validated')
             // return super()._track_subtype(init_values)
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _track_subtype(self, init_values):
             // self.ensure_one()
             // if 'state' not in init_values:
@@ -13990,11 +16501,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return self.env.ref('hr_expense.mt_expense_reset')
             //     case 'cancel':
             //         return self.env.ref('hr_expense.mt_expense_refused')
-            //     case 'done':
+            //     case 'paid':
             //         return self.env.ref('hr_expense.mt_expense_paid')
-            //     case 'approve':
-            //         if init_values['state'] in {'post', 'done'}:  # Reverting state
-            //             subtype = 'hr_expense.mt_expense_entry_draft' if self.account_move_ids else 'hr_expense.mt_expense_entry_delete'
+            //     case 'approved':
+            //         if init_values['state'] in {'posted', 'in_payment', 'paid'}:  # Reverting state
+            //             subtype = 'hr_expense.mt_expense_entry_draft' if self.account_move_id else 'hr_expense.mt_expense_entry_delete'
             //             return self.env.ref(subtype)
             //         return self.env.ref('hr_expense.mt_expense_approved')
             //     case _:
@@ -14004,13 +16515,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if 'state' in init_values and self.state == 'validate':
             //     leave_notif_subtype = self.holiday_status_id.leave_notif_subtype_id
             //     return leave_notif_subtype or self.env.ref('hr_holidays.mt_leave')
-            // return super(HolidaysRequest, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _track_subtype(self, init_values):
             // record = self[0]
             // if 'stage_id' in init_values and record.stage_id:
             //     return self.env.ref('hr_recruitment.mt_applicant_stage_changed')
-            // return super(Applicant, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             */
             return default;
         }
@@ -14020,14 +16531,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
             // def _track_template(self, changes):
-            // res = super(Applicant, self)._track_template(changes)
+            // res = super()._track_template(changes)
             // applicant = self[0]
             // # When applcant is unarchived, they are put back to the default stage automatically. In this case,
             // # don't post automated message related to the stage change.
             // if 'stage_id' in changes and applicant.exists()\
             //     and applicant.stage_id.template_id\
-            //     and not applicant._context.get('just_moved')\
-            //     and not applicant._context.get('just_unarchived'):
+            //     and not applicant.env.context.get('just_moved')\
+            //     and not applicant.env.context.get('just_unarchived'):
             //     res['stage_id'] = (applicant.stage_id.template_id, {
             //         'auto_delete_keep_log': False,
             //         'subtype_id': self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note'),
@@ -14043,12 +16554,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _unlink_account_audit_trail_except_once_post(self):
-            // if not self._context.get('force_delete') and any(
-            //         move.posted_before and move.company_id.check_account_audit_trail
+            // if not self.env.context.get('force_delete') and any(
+            //         move.posted_before and move.company_id.restrictive_audit_trail
             //         for move in self
             // ):
             //     raise UserError(_(
-            //         "To keep the audit trail, you can not delete journal entries once they have been posted.\n"
+            //         "To keep the restrictive audit trail, you can not delete journal entries once they have been posted.\n"
             //         "Instead, you can cancel the journal entry."
             //     ))
             */
@@ -14063,6 +16574,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._set_next_made_sequence_gap(True)
             // self = self.with_context(skip_invoice_sync=True, dynamic_unlink=True)  # no need to sync to delete everything
             // logger_message = self._get_unlink_logger_message()
+            // self.line_ids.remove_move_reconcile()
             // self.line_ids.unlink()
             // res = super().unlink()
             // if logger_message:
@@ -14073,62 +16585,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.move_id.filtered(lambda m: m.state != 'draft').button_draft()
             // self.move_id.unlink()
             // 
-            // linked_invoices = self.invoice_ids
+            // linked_invoices = self.reconciled_invoice_ids
             // res = super().unlink()
             // self.env.add_to_compute(linked_invoices._fields['payment_state'], linked_invoices)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def unlink(self):
             // resources = self.mapped('resource_id')
-            // super(HrEmployeePrivate, self).unlink()
+            // super().unlink()
             // return resources.unlink()
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def unlink(self):
-            // attachments_to_unlink = self.env['ir.attachment']
-            // for sheet in self.sheet_id:
-            //     checksums = set((sheet.expense_line_ids.attachment_ids & self.attachment_ids).mapped('checksum'))
-            //     attachments_to_unlink += sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            // attachments_to_unlink.with_context(sync_attachment=False).unlink()
-            // return super().unlink()
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def unlink(self):
             // self.sudo()._post_leave_cancel()
-            // return super(HolidaysRequest, self.with_context(leave_skip_date_check=True)).unlink()
+            // self.env['hr.leave.allocation'].invalidate_model(['leaves_taken', 'max_leaves'])  # missing dependency on compute
+            // return super(HrLeave, self.with_context(leave_skip_date_check=True)).unlink()
             */
             return default;
         }
 
-        public async Task<TEntity> UnlinkExceptLinkedEmployeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def _unlink_except_linked_employee(self):
-            // if self.employee_id:
-            //     raise UserError(_("The candidate is linked to an employee, to avoid losing information, archive it instead."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkExceptPostedOrApprovedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        public async Task<TEntity> UnlinkExceptApprovedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _unlink_except_posted_or_approved(self):
+            // def _unlink_except_approved(self):
             // for expense in self:
-            //     if expense.state in {'done', 'approved'}:
+            //     if expense.state in {'approved', 'posted', 'in_payment', 'paid'}:
             //         raise UserError(_('You cannot delete a posted or approved expense.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkExceptPostedOrPaidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _unlink_except_posted_or_paid(self):
-            // for expense in self:
-            //     if expense.state in {'post', 'done'}:
-            //         raise UserError(_('You cannot delete a posted or paid expense.'))
             */
             return default;
         }
@@ -14148,7 +16630,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not (
             //     self.env.user.has_group('account.group_account_manager')
             //     or any(self.company_id.mapped('quick_edit_mode'))
-            //     or self._context.get('force_delete')
+            //     or self.env.context.get('force_delete')
             //     or self.check_move_sequence_chain()
             // ):
             //     raise UserError(_(
@@ -14164,19 +16646,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _unlink_if_correct_states(self):
-            // error_message = _('You cannot delete a time off which is in %s state')
+            // error_message = self.env._('Oops! %(state)s Time-Off requests can only be deleted by Administrators.')
             // state_description_values = {elem[0]: elem[1] for elem in self._fields['state']._description_selection(self.env)}
             // now = fields.Datetime.now().date()
             // 
             // if not self.env.user.has_group('hr_holidays.group_hr_holidays_user'):
             //     for hol in self:
             //         if hol.state not in ['confirm', 'validate1', 'cancel']:
-            //             raise UserError(error_message % state_description_values.get(self[:1].state))
+            //             raise UserError(error_message % {'state': state_description_values.get(self[:1].state)})
             //         if hol.date_from.date() < now:
-            //             raise UserError(_('You cannot delete a time off which is in the past'))
-            // else:
+            //             raise UserError(_("You can't delete a time off request that is in the past."))
+            // elif not self.env.user.has_group('hr_holidays.group_hr_holidays_manager'):
             //     for holiday in self.filtered(lambda holiday: holiday.state not in ['cancel', 'confirm']):
-            //         raise UserError(error_message % (state_description_values.get(holiday.state),))
+            //         error_message = self.env._('Oops! %(state)s Time-Off requests can only be deleted by Administrators.')
+            //         raise UserError(error_message % {'state': state_description_values.get(holiday.state)})
             */
             return default;
         }
@@ -14200,7 +16683,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         to_unlink += move
             // to_unlink.filtered(lambda m: m.state in ('posted', 'cancel')).button_draft()
             // to_unlink.filtered(lambda m: m.state == 'draft').unlink()
-            // to_cancel.button_cancel()
+            // to_cancel.filtered(lambda m: m.state != 'cancel').button_cancel()
             // return to_reverse._reverse_moves(cancel=True)
             */
             return default;
@@ -14216,63 +16699,125 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> UpdateActivitiesAndMailsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def update_activities_and_mails(self):
+            // """ Update the "Review this expense" activity with the new state of the expense, also sends mail to approver to ask them to act """
+            // expenses_activity_done = self.env['hr.expense']
+            // expenses_activity_unlink = self.env['hr.expense']
+            // expenses_submitted_to_review = self.env['hr.expense']
+            // for expense in self:
+            //     if expense.state == 'submitted':
+            //         expense.activity_schedule(
+            //             'hr_expense.mail_act_expense_approval',
+            //             user_id=expense.manager_id.id or
+            //             expense.sudo()._get_default_responsible_for_approval().id or
+            //             self.env.user.id
+            //         )
+            //         expenses_submitted_to_review |= expense
+            //     elif expense.state == 'approved':
+            //         expenses_activity_done |= expense
+            //     elif expense.state in {'draft', 'refused'}:
+            //         expenses_activity_unlink |= expense
+            // 
+            // # Batched actions
+            // if expenses_activity_done:
+            //     expenses_activity_done.activity_feedback(['hr_expense.mail_act_expense_approval'])
+            // if expenses_activity_unlink:
+            //     expenses_activity_unlink.activity_unlink(['hr_expense.mail_act_expense_approval'])
+            // # Avoid sending yourself mails
+            // expenses_submitted_to_review = expenses_submitted_to_review.filtered(lambda expense: expense.manager_id != self.env.user)
+            // if expenses_submitted_to_review:
+            //     new_mails = []
+            //     for company, expenses_submitted_per_company in expenses_submitted_to_review.grouped('company_id').items():
+            //         parent_company_mails = company.parent_ids[::-1].mapped('email_formatted')
+            //         mail_from = (
+            //                 self.env.user.email
+            //                 or company.email_formatted
+            //                 or (parent_company_mails and parent_company_mails[0])
+            //         )
+            // 
+            //         if not mail_from:  # We can't send a mail without sender
+            //             _logger.warning(_("Failed to send mails for submitted expenses. No valid email was found for the company"))
+            //             continue
+            // 
+            //         for manager, expenses_submitted in expenses_submitted_per_company.grouped('manager_id').items():
+            //             manager_langs = tuple(lang for lang in manager.partner_id.mapped('lang') if lang)
+            //             mail_lang = (manager_langs and manager_langs[0]) or self.env.lang or 'en_US'
+            //             body = self.env['ir.qweb']._render(
+            //                 template='hr_expense.hr_expense_template_submitted_expenses',
+            //                 values={'manager_name': manager.name, 'url': '/expenses-to-approve'},
+            //                 lang=mail_lang,
+            //             )
+            //             new_mails.append({
+            //                 'author_id': self.env.user.partner_id.id,
+            //                 'auto_delete': True,
+            //                 'body_html': body,
+            //                 'email_from': mail_from,
+            //                 'email_to': manager.employee_id.work_email or manager.email,
+            //                 'subject': _("New expenses waiting for your approval"),
+            //             })
+            //         if new_mails:
+            //             self.env['mail.mail'].sudo().create(new_mails).send()
+            */
+            return default;
+        }
+
         public async Task<TEntity> UpdateOrderLineInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid product_id, object quantity) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update account_move_line information for a given product or create a
-            // new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :param int quantity: The quantity selected in the catalog
-            // :return: The unit price of the product, based on the pricelist of the
-            //          sale order and the quantity selected.
-            // :rtype: float
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='line_ids', **kwargs
+            // ):
+            //     """ Update account_move_line information for a given product or create a
+            //     new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              sale order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     move_line = self.line_ids.filtered(
+            //         lambda line: line.product_id.id == product_id
+            //         and line.get_parent_section_line().id == section_id,
+            //     )
+            //     if move_line:
+            //         if quantity != 0:
+            //             move_line.quantity = quantity
+            //         elif self.state in {'draft', 'sent'}:
+            //             price_unit = self._get_product_price_and_data(move_line.product_id)['price']
+            //             # The catalog is designed to allow the user to select products quickly.
+            //             # Therefore, sometimes they may select the wrong product or decide to remove
+            //             # some of them from the quotation. The unlink is there for that reason.
+            //             move_line.unlink()
+            //             return price_unit
+            //         else:
+            //             move_line.quantity = 0
+            //     elif quantity > 0:
+            //         move_line = self.env['account.move.line'].create({
+            //             'move_id': self.id,
+            //             'quantity': quantity,
+            //             'product_id': product_id,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //     return move_line.price_unit
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ValidPaymentStatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
+            // def _valid_payment_states(self):
+            // """ This method is used to know in which edition we are: Community or Enterprise
+            //     and fetch the payment states accordingly.
             // """
-            // move_line = self.line_ids.filtered(lambda line: line.product_id.id == product_id)
-            // if move_line:
-            //     if quantity != 0:
-            //         move_line.quantity = quantity
-            //     elif self.state in {'draft', 'sent'}:
-            //         price_unit = self._get_product_price_and_data(move_line.product_id)['price']
-            //         # The catalog is designed to allow the user to select products quickly.
-            //         # Therefore, sometimes they may select the wrong product or decide to remove
-            //         # some of them from the quotation. The unlink is there for that reason.
-            //         move_line.unlink()
-            //         return price_unit
-            //     else:
-            //         move_line.quantity = 0
-            // elif quantity > 0:
-            //     move_line = self.env['account.move.line'].create({
-            //         'move_id': self.id,
-            //         'quantity': quantity,
-            //         'product_id': product_id,
-            //     })
-            // return move_line.price_unit
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateSheetNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _update_sheet_name(self):
-            // """ Set the sheet name to the computed default sheet name when no name is specified. """
-            // expense_lines = self.expense_line_ids
-            // if not self.name and expense_lines:
-            //     self.name = self._get_default_sheet_name(expense_lines)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ValidateAnalyticDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadMainAttachmentable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def _validate_analytic_distribution(self):
-            // for line in self.expense_line_ids:
-            //     line._validate_distribution(account=line.account_id.id, product=line.product_id.id, business_domain='expense', company_id=line.company_id.id)
+            // return ['in_process', 'paid'] if self.env['account.move']._get_invoice_in_payment_state() == 'paid' else ['in_process']
             */
             return default;
         }
@@ -14289,21 +16834,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // meeting_holidays = holidays.filtered(lambda l: l.holiday_status_id.create_calendar_meeting)
             // meetings = self.env['calendar.event']
             // if meeting_holidays:
+            //     Meeting = self.env['calendar.event']
+            //     Meeting.check_access('create')
             //     meeting_values_for_user_id = meeting_holidays._prepare_holidays_meeting_values()
             //     Meeting = self.env['calendar.event']
             //     for user_id, meeting_values in meeting_values_for_user_id.items():
-            //         meetings += Meeting.with_user(user_id or self.env.uid).with_context(
+            //         meetings += Meeting.with_user(user_id or self.env.uid).sudo().with_context(clean_context({**self.env.context, **dict(
             //                         allowed_company_ids=[],
             //                         no_mail_to_attendees=True,
             //                         calendar_no_videocall=True,
             //                         active_model=self._name
-            //                     ).create(meeting_values)
+            //                     )})).create(meeting_values)
             // Holiday = self.env['hr.leave']
             // for meeting in meetings:
             //     Holiday.browse(meeting.res_id).meeting_id = meeting
             // 
             // for holiday in holidays:
-            //     user_tz = timezone(holiday.tz)
+            //     user_tz = pytz.timezone(holiday.tz)
             //     utc_tz = pytz.utc.localize(holiday.date_from).astimezone(user_tz)
             //     notify_partner_ids = holiday.employee_id.user_id.partner_id.ids
             //     holiday.message_post(
@@ -14373,6 +16920,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._sanitize_vals(vals)
             // 
             // for move in self:
+            //     if vals.get('checked') and not move._is_user_able_to_review():
+            //         raise AccessError(_("You don't have the access rights to perform this action."))
+            //     if vals.get('state') == 'draft' and move.checked and not move._is_user_able_to_review():
+            //         raise ValidationError(_("Validated entries can only be changed by your accountant."))
+            // 
             //     violated_fields = set(vals).intersection(move._get_integrity_hash_fields() + ['inalterable_hash'])
             //     if move.inalterable_hash and violated_fields:
             //         raise UserError(_(
@@ -14414,7 +16966,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'invoice_line_ids', 'line_ids', 'invoice_date', 'date', 'partner_id',
             //         'invoice_payment_term_id', 'currency_id', 'fiscal_position_id', 'invoice_cash_rounding_id')
             //     readonly_fields = [val for val in vals if val in unmodifiable_fields]
-            //     if not self._context.get('skip_readonly_check') and move_state == "posted" and readonly_fields:
+            //     if not self.env.context.get('skip_readonly_check') and move_state == "posted" and readonly_fields:
             //         raise UserError(_("You cannot modify the following readonly fields on a posted move: %s", ', '.join(readonly_fields)))
             // 
             //     if move.journal_id.sequence_override_regex and vals.get('name') and vals['name'] != '/' and not re.match(move.journal_id.sequence_override_regex, vals['name']):
@@ -14478,26 +17030,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def write(self, vals):
             // if 'work_contact_id' in vals:
-            //     account_ids = vals.get('bank_account_id') or self.bank_account_id.ids
-            //     if account_ids:
-            //         bank_accounts = self.env['res.partner.bank'].sudo().browse(account_ids)
-            //         for bank_account in bank_accounts:
-            //             if vals['work_contact_id'] != bank_account.partner_id.id:
-            //                 if bank_account.allow_out_payment:
-            //                     bank_account.allow_out_payment = False
-            //                 if vals['work_contact_id']:
-            //                     bank_account.partner_id = vals['work_contact_id']
             //     self.message_unsubscribe(self.work_contact_id.ids)
-            //     if vals['work_contact_id']:
-            //         self._message_subscribe([vals['work_contact_id']])
-            // if vals.get('user_id'):
+            // if 'user_id' in vals:
             //     # Update the profile pictures with user, except if provided
             //     user = self.env['res.users'].browse(vals['user_id'])
             //     vals.update(self._sync_user(user, (bool(all(emp.image_1920 for emp in self)))))
             //     self._remove_work_contact_id(user, vals.get('company_id'))
             // if 'work_permit_expiration_date' in vals:
             //     vals['work_permit_scheduled_activity'] = False
-            // res = super(HrEmployeePrivate, self).write(vals)
+            // if vals.get('tz'):
+            //     users_to_update = self.env['res.users']
+            //     for employee in self:
+            //         if employee.user_id and employee.company_id == employee.user_id.company_id and vals['tz'] != employee.user_id.tz:
+            //             users_to_update |= employee.user_id
+            //     if users_to_update:
+            //         users_to_update.write({'tz': vals['tz']})
             // if vals.get('department_id') or vals.get('user_id'):
             //     department_id = vals['department_id'] if vals.get('department_id') else self[:1].department_id.id
             //     # When added to a department or changing user, subscribe to the channels auto-subscribed by department
@@ -14509,113 +17056,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         employee.message_post(body=_(
             //             'Additional Information: \n %(description)s',
             //             description=vals.get('departure_description')))
+            // # Only one write call for all the fields from hr.version
+            // new_vals = vals.copy()
+            // version_vals = {val: new_vals.pop(val) for val in vals if val in self._fields and self._fields[val].inherited}
+            // res = super().write(new_vals)
+            // if 'work_contact_id' in vals:
+            //     account_ids = self.bank_account_ids.ids
+            //     if account_ids:
+            //         bank_accounts = self.env['res.partner.bank'].sudo().browse(account_ids)
+            //         for bank_account in bank_accounts:
+            //             if vals['work_contact_id'] != bank_account.partner_id.id:
+            //                 if bank_account.allow_out_payment:
+            //                     bank_account.allow_out_payment = False
+            //                 if vals['work_contact_id']:
+            //                     bank_account.partner_id = vals['work_contact_id']
+            // if version_vals:
+            //     version_vals['last_modified_date'] = fields.Datetime.now()
+            //     version_vals['last_modified_uid'] = self.env.uid
+            //     self.version_id.write(version_vals)
+            // 
+            //     for employee in self:
+            //         employee._track_set_log_message(Markup("<b>Modified on the Version '%s'</b>") % employee.version_id.display_name)
+            // if res and 'resource_calendar_id' in vals:
+            //     resources_per_calendar_id = defaultdict(lambda: self.env['resource.resource'])
+            //     for employee in self:
+            //         if employee.version_id == employee.current_version_id:
+            //             resources_per_calendar_id[employee.resource_calendar_id.id] += employee.resource_id
+            //     for calendar_id, resources in resources_per_calendar_id.items():
+            //         resources.write({'calendar_id': calendar_id})
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def write(self, vals):
-            // if (
-            //         'state' in vals
-            //         and vals['state'] != 'submitted'
-            //         and not (self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su)
-            //         and any(state == 'draft' for state in self.mapped('state'))
-            // ):
-            //     raise UserError(_("You don't have the rights to bypass the validation process of this expense."))
-            // expense_to_previous_sheet = {}
-            // if 'sheet_id' in vals:
-            //     # Check access rights on the sheet
-            //     self.env['hr.expense.sheet'].browse(vals['sheet_id']).check_access('write')
+            // if any(field in vals for field in {'is_editable', 'can_approve', 'can_refuse'}):
+            //     raise UserError(_("You cannot edit the security fields of an expense manually"))
             // 
-            //     # Store the previous sheet of the expenses to unlink the attachments later if needed
-            //     for expense in self:
-            //         expense_to_previous_sheet[expense] = expense.sheet_id
-            // 
-            //     # If the sheet_id is modified, we need to check that the expenses are not set to 0,
-            //     # unless it's to unlink the sheet
-            //     enforced_non_zero_expenses = self.env['hr.expense']
-            //     if vals.get('sheet_id'):  # If sheet is linked, we need to check all the newly linked expenses in self
-            //         enforced_non_zero_expenses = self
-            // else:  # If sheet_id is not modified, we need to check all the expenses in self linked to a sheet
-            //     enforced_non_zero_expenses = self.filtered('sheet_id')
-            // 
-            // if 'tax_ids' in vals or 'analytic_distribution' in vals or 'account_id' in vals:
-            //     if any(not expense.is_editable for expense in self):
-            //         raise UserError(_('You are not authorized to edit this expense report.'))
-            // 
-            // if enforced_non_zero_expenses:
-            //     enforced_non_zero_expenses.check_amount_not_zero(vals)
+            // if any(field in vals for field in {'tax_ids', 'analytic_distribution', 'account_id', 'manager_id'}):
+            //     if any((not expense.is_editable and not self.env.su) for expense in self):
+            //         raise UserError(_(
+            //             "Uh-oh! You can’t edit this expense.\n\n"
+            //             "Reach out to the administrators, flash your best smile, and see if they'll grant you the magical access you seek."
+            //         ))
             // 
             // res = super().write(vals)
+            // 
+            // if vals.get('state') == 'approved' or vals.get('approval_state') == 'approved':
+            //     self._check_can_approve()
+            // elif vals.get('state') == 'refused' or vals.get('approval_state') == 'refused':
+            //     self._check_can_refuse()
             // 
             // if 'currency_id' in vals:
             //     self._set_expense_currency_rate(date_today=fields.Date.context_today(self))
             //     for expense in self:
             //         expense.total_amount = expense.total_amount_currency * expense.currency_rate
-            // 
-            // if 'employee_id' in vals:
-            //     # In case expense has sheet which has only one expense_line_ids,
-            //     # then changing the expense.employee_id triggers changing the sheet.employee_id too.
-            //     # Otherwise we unlink the expense line from sheet, (so that the user can create a new report).
-            //     if self.sheet_id:
-            //         employees = self.sheet_id.expense_line_ids.mapped('employee_id')
-            //         if len(employees) == 1:
-            //             self.sheet_id.write({'employee_id': vals['employee_id']})
-            //         elif len(employees) > 1:
-            //             self.sheet_id = False
-            // if 'sheet_id' in vals:
-            //     # The sheet_id has been modified, either by an explicit write on sheet_id of the expense,
-            //     # or by processing a command on the sheet's expense_line_ids.
-            //     # We need to delete the attachments on the previous sheet coming from the expenses that were modified,
-            //     # and copy the attachments of the expenses to the new sheet,
-            //     # if it's a no-op (writing same sheet_id as the current sheet_id of the expense),
-            //     # nothing should be done (no unlink then copy of the same attachments)
-            //     attachments_to_unlink = self.env['ir.attachment']
-            //     for expense in self:
-            //         previous_sheet = expense_to_previous_sheet[expense]
-            //         checksums = set((expense.attachment_ids - previous_sheet.expense_line_ids.attachment_ids).mapped('checksum'))
-            //         attachments_to_unlink += previous_sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            //         if vals['sheet_id'] and expense.sheet_id != previous_sheet:
-            //             for attachment in expense.attachment_ids.with_context(sync_attachment=False):
-            //                 attachment.copy({
-            //                     'res_model': 'hr.expense.sheet',
-            //                     'res_id': vals['sheet_id'],
-            //                 })
-            //     attachments_to_unlink.with_context(sync_attachment=False).unlink()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
-            // def write(self, values):
-            // # Avoid user with write access on expense sheet in draft state to bypass the validation process
-            // is_editing_states = 'state' in values or 'approval_state' in values
-            // if is_editing_states:
-            //     valid_states = {'submit', None}
-            //     if (
-            //             not (self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su)
-            //             and any(state == 'draft' for state in self.mapped('state'))
-            //             and (values.get('state') not in valid_states or values.get('approval_state') not in valid_states)
-            //     ):
-            //         raise UserError(_("You don't have the rights to bypass the validation process of this expense report."))
-            //     elif values.get('state') == 'approve' or values.get('approval_state') == 'approve':
-            //         self._check_can_approve()
-            //     elif values.get('state') == 'cancel' or values.get('approval_state') == 'cancel':
-            //         self._check_can_refuse()
-            // res = super().write(values)
-            // 
-            // user_is_accountant = self.env.user.has_group('account.group_account_user')
-            // edit_lines = 'expense_line_ids' in values
-            // edit_states = 'state' in values or 'approval_state' in values
-            // # Forbids (un)linking expenses from an approved sheet if you're not an accountant
-            // if edit_lines and not user_is_accountant and set(self.mapped('state')) - {'draft', 'submit'}:
-            //     raise AccessError(_("You do not have the rights to add or remove any expenses on an approved or paid expense report."))
-            // 
-            // # Ensures there is no empty expense report in a state different from draft or cancel
-            // if edit_states or edit_lines:
-            //     for sheet in self.filtered(lambda sheet: not sheet.expense_line_ids):
-            //         if sheet.state in {'submit', 'approve', 'post', 'done'}:  # Empty expense report in a state different from draft or cancel
-            //             if edit_lines and not sheet.expense_line_ids:  # If you try to remove all expenses from the sheet
-            //                 raise UserError(_("You cannot remove all expenses from a submitted, approved or paid expense report."))
-            //             else:  # If you try to submit, approve, post or pay an empty sheet
-            //                 raise UserError(_("This expense report is empty. You cannot submit or approve an empty expense report."))
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user') or self.env.is_superuser()
             // if not is_officer and values.keys() - {'attachment_ids', 'supported_attachment_ids', 'message_main_attachment_id'}:
             //     if any(hol.date_from.date() < fields.Date.today() and hol.employee_id.leave_manager_id != self.env.user
@@ -14643,9 +17139,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         values['request_date_from'] = values['date_from']
             //     if 'date_to' in values:
             //         values['request_date_to'] = values['date_to']
-            // result = super(HolidaysRequest, self).write(values)
+            // result = super().write(values)
             // if any(field in values for field in ['request_date_from', 'date_from', 'request_date_from', 'date_to', 'holiday_status_id', 'employee_id', 'state']):
             //     self._check_validity()
+            //     self.env['hr.leave.allocation'].invalidate_model(['leaves_taken', 'max_leaves'])  # missing dependency on compute
             // if not self.env.context.get('leave_fast_create'):
             //     for holiday in self:
             //         if employee_id:
@@ -14665,14 +17162,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         vals['kanban_state'] = 'normal'
             //     for applicant in self:
             //         vals['last_stage_id'] = applicant.stage_id.id
-            //         res = super().write(vals)
-            // else:
-            //     res = super().write(vals)
+            //         new_stage = self.env['hr.recruitment.stage'].browse(vals['stage_id'])
+            //         if new_stage.hired_stage and not applicant.stage_id.hired_stage:
+            //             if applicant.job_id.no_of_recruitment > 0:
+            //                 applicant.job_id.no_of_recruitment -= 1
+            //         elif not new_stage.hired_stage and applicant.stage_id.hired_stage:
+            //             applicant.job_id.no_of_recruitment += 1
+            // # kanban_state: also set date_last_stage_update
+            // if 'kanban_state' in vals:
+            //     vals['date_last_stage_update'] = fields.Datetime.now()
+            // res = super().write(vals)
+            // 
+            // for applicant in self:
+            //     if applicant.pool_applicant_id and applicant != applicant.pool_applicant_id and (not applicant.is_pool_applicant):
+            //         if 'email_from' in vals:
+            //             applicant.pool_applicant_id.email_from = vals['email_from']
+            //         if 'partner_phone' in vals:
+            //             applicant.pool_applicant_id.partner_phone = vals['partner_phone']
+            //         if 'linkedin_profile' in vals:
+            //             applicant.pool_applicant_id.linkedin_profile = vals['linkedin_profile']
+            //         if 'type_id' in vals:
+            //             applicant.pool_applicant_id.type_id = vals['type_id']
+            // 
             // if 'interviewer_ids' in vals:
             //     interviewers_to_clean = old_interviewers - self.interviewer_ids
             //     interviewers_to_clean._remove_recruitment_interviewers()
             //     self.sudo().interviewer_ids._create_recruitment_interviewers()
-            //     self.message_unsubscribe(partner_ids=interviewers_to_clean.partner_id.ids)
             // 
             //     new_interviewers = self.interviewer_ids - old_interviewers - self.env.user
             //     if new_interviewers:
@@ -14688,25 +17203,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 subject=notification_subject,
             //                 body=notification_body,
             //                 email_layout_xmlid="mail.mail_notification_layout",
-            //                 record_name=applicant.display_name,
             //                 model_description="Applicant",
             //             )
-            // if vals.get('date_closed'):
-            //     for applicant in self:
-            //         if applicant.job_id.date_to:
-            //             applicant.candidate_id.availability = applicant.job_id.date_to + relativedelta(days=1)
-            // 
-            // if vals.get("company_id") and not self.env.context.get('do_not_propagate_company', False):
-            //     self.candidate_id.with_context(do_not_propagate_company=True).write({"company_id": vals["company_id"]})
-            //     self.candidate_id.applicant_ids.with_context(do_not_propagate_company=True).write({"company_id": vals["company_id"]})
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
-            // def write(self, vals):
-            // res = super().write(vals)
-            // 
-            // if vals.get("company_id") and not self.env.context.get('do_not_propagate_company', False):
-            //     self.applicant_ids.with_context(do_not_propagate_company=True).write({"company_id": vals["company_id"]})
             // return res
             */
             return default;

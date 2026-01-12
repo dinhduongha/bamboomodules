@@ -35,6 +35,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-odometer-report")]
+        public async Task<IActionResult> ActionOpenOdometerReportAsync(Guid id)
+        {
+            var result = await _appService.OpenOdometerReportAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-send-email")]
         public async Task<IActionResult> ActionSendEmailAsync(Guid id)
         {

@@ -30,26 +30,31 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        protected async Task<EventRegistration> ApplyLeadGenerationRulesInternalAsync()
+        protected async Task<EventRegistration> ApplyLeadGenerationRulesInternalAsync(object event_lead_rules)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_registration.py) ---
-            // def _apply_lead_generation_rules(self):
+            // def _apply_lead_generation_rules(self, event_lead_rules=False):
             // leads = self.env['crm.lead']
             // open_registrations = self.filtered(lambda reg: reg.state == 'open')
             // done_registrations = self.filtered(lambda reg: reg.state == 'done')
             // 
-            // leads += self.env['event.lead.rule'].search(
-            //     [('lead_creation_trigger', '=', 'create')]
-            // ).sudo()._run_on_registrations(self)
+            // if not event_lead_rules:
+            //     search_triggers = ['create']
+            //     if open_registrations:
+            //         search_triggers.append('confirm')
+            //     if done_registrations:
+            //         search_triggers.append('done')
+            //     event_lead_rules = self.env['event.lead.rule'].search([('lead_creation_trigger', 'in', search_triggers)])
+            // 
+            // create_lead_rules = event_lead_rules.filtered(lambda rule: rule.lead_creation_trigger == 'create')
+            // leads += create_lead_rules.sudo()._run_on_registrations(self)
             // if open_registrations:
-            //     leads += self.env['event.lead.rule'].search(
-            //         [('lead_creation_trigger', '=', 'confirm')]
-            //     ).sudo()._run_on_registrations(open_registrations)
+            //     confirm_lead_rules = event_lead_rules.filtered(lambda rule: rule.lead_creation_trigger == 'confirm')
+            //     leads += confirm_lead_rules.sudo()._run_on_registrations(open_registrations)
             // if done_registrations:
-            //     leads += self.env['event.lead.rule'].search(
-            //         [('lead_creation_trigger', '=', 'done')]
-            //     ).sudo()._run_on_registrations(done_registrations)
+            //     done_lead_rules = event_lead_rules.filtered(lambda rule: rule.lead_creation_trigger == 'done')
+            //     leads += done_lead_rules.sudo()._run_on_registrations(done_registrations)
             // return leads
             */
             return default;
@@ -63,6 +68,19 @@ namespace Bamboo.Core.Application.Services
             // self.write({'state': 'cancel'})
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<EventRegistration> CheckEventSlotInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _check_event_slot(self):
+            // if any(registration.event_id != registration.event_slot_id.event_id for registration in self if registration.event_slot_id):
+            //     raise ValidationError(_('Invalid event / slot choice'))
+            // if any(not registration.event_slot_id for registration in self if registration.is_multi_slots):
+            //     raise ValidationError(_('Slot choice is mandatory on multi-slots events.'))
+            */
+            return default;
         }
 
         protected async Task<EventRegistration> CheckEventTicketInternalAsync()
@@ -81,9 +99,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def _check_seats_availability(self):
-            // registrations_confirmed = self.filtered(lambda registration: registration.state in ('open', 'done'))
-            // registrations_confirmed.event_id._check_seats_availability()
-            // registrations_confirmed.event_ticket_id._check_seats_availability()
+            // tocheck = self.filtered(lambda registration: registration.state in ('open', 'done') and registration.active)
+            // for event, registrations in tocheck.grouped('event_id').items():
+            //     event._verify_seats_availability([
+            //         (slot, ticket, 0)
+            //         for slot, ticket in self.env['event.registration']._read_group(
+            //             [('id', 'in', registrations.ids)],
+            //             ['event_slot_id', 'event_ticket_id']
+            //         )
+            //     ])
             */
             return default;
         }
@@ -124,7 +148,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def _compute_date_range(self):
             // for registration in self:
-            //     registration.event_date_range = registration.event_id._get_date_range_str(registration.partner_id.lang)
+            //     registration.event_date_range = registration.event_id._get_date_range_str(
+            //         start_datetime=registration.event_slot_id.start_datetime,
+            //         lang_code=registration.partner_id.lang,
+            //     )
             */
             return default;
         }
@@ -153,6 +180,46 @@ namespace Bamboo.Core.Application.Services
             //             registration.partner_id,
             //             fnames={'email'},
             //         ).get('email') or False
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> ComputeEventBeginDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _compute_event_begin_date(self):
+            // for registration in self:
+            //     registration.event_begin_date = registration.event_slot_id.start_datetime or registration.event_id.date_begin
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> ComputeEventEndDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _compute_event_end_date(self):
+            // for registration in self:
+            //     registration.event_end_date = registration.event_slot_id.end_datetime or registration.event_id.date_end
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> ComputeFieldValueInternalAsync(object field)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
+            // def _compute_field_value(self, field):
+            // if field.name != 'state':
+            //     return super()._compute_field_value(field)
+            // 
+            // unconfirmed = self.filtered(lambda reg: reg.ids and reg.state in {'draft', 'cancel'})
+            // res = super()._compute_field_value(field)
+            // confirmed = unconfirmed.filtered(lambda reg: reg.state == 'open')
+            // if confirmed:
+            //     confirmed._update_mail_schedulers()
+            // return res
             */
             return default;
         }
@@ -192,9 +259,9 @@ namespace Bamboo.Core.Application.Services
             //     if not registration.phone and registration.partner_id:
             //         partner_values = registration._synchronize_partner_values(
             //             registration.partner_id,
-            //             fnames={'phone', 'mobile'},
+            //             fnames={'phone'},
             //         )
-            //         registration.phone = partner_values.get('phone') or partner_values.get('mobile') or False
+            //         registration.phone = partner_values.get('phone') or False
             */
             return default;
         }
@@ -202,6 +269,14 @@ namespace Bamboo.Core.Application.Services
         protected async Task<EventRegistration> ComputeRegistrationStatusInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: event_product, FILE: event_registration.py) ---
+            // def _compute_registration_status(self):
+            // if not self._has_order():
+            //     for reg in self:
+            //         if not reg.sale_status:
+            //             reg.sale_status = 'free'
+            //         if not reg.state:
+            //             reg.state = 'open'
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
             // def _compute_registration_status(self):
             // for sale_order, registrations in self.filtered('sale_order_id').grouped('sale_order_id').items():
@@ -217,6 +292,7 @@ namespace Bamboo.Core.Application.Services
             //         (registrations - sold_registrations).sale_status = 'to_pay'
             //         sold_registrations.filtered(lambda reg: not reg.state or reg.state in {'draft', 'cancel'}).state = "open"
             //         (registrations - sold_registrations - cancelled_registrations).state = 'draft'
+            // super()._compute_registration_status()
             // 
             // # set default value to free and open if none was set yet
             // for registration in self:
@@ -224,13 +300,27 @@ namespace Bamboo.Core.Application.Services
             //         registration.sale_status = 'free'
             //     if not registration.state:
             //         registration.state = 'open'
+            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
+            // def _compute_registration_status(self):
+            // if self.pos_order_id:
+            //     for registration in self:
+            //         if registration.pos_order_id.state == 'cancel':
+            //             registration.state = 'cancel'
+            //         elif float_is_zero(registration.pos_order_id.amount_total, precision_rounding=registration.pos_order_id.currency_id.rounding):
+            //             registration.sale_status = 'free'
+            //             registration.state = 'open'
+            //         else:
+            //             registration.sale_status = 'sold'
+            //             registration.state = 'open'
+            // 
+            // super()._compute_registration_status()
             --- ODOO METHOD SOURCE (MODULE: pos_event_sale, FILE: event_registration.py) ---
             // def _compute_registration_status(self):
             // super()._compute_registration_status()
             // for record in self.filtered("pos_order_id.id"):
             //     if record.pos_order_id.state in ['paid', 'done', 'invoiced']:
             //         record.sale_status = 'sold'
-            //         record.state = 'done'
+            //         record.state = 'open'
             //     else:
             //         record.sale_status = 'to_pay'
             //         record.state = 'draft'
@@ -326,7 +416,7 @@ namespace Bamboo.Core.Application.Services
             //         related_country = self.env.company.country_id
             //     values['phone'] = self._phone_format(number=values['phone'], country=related_country) or values['phone']
             // 
-            // registrations = super(EventRegistration, self).create(vals_list)
+            // registrations = super().create(vals_list)
             // registrations._update_mail_schedulers()
             // return registrations
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_registration.py) ---
@@ -380,24 +470,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventRegistration> GenerateEscLabelBadgesInternalAsync(bool is_small_badge)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
-            // def _generate_esc_label_badges(self, is_small_badge: bool):
-            // badge_layout = layout_96x82 if is_small_badge else layout_96x134
-            // command = setup_printer(badge_layout)
-            // 
-            // attendees_per_event = self.grouped("event_id").items()
-            // for (event, attendees) in attendees_per_event:
-            //     attendees_details = attendees.mapped(lambda attendee: attendee._get_registration_print_details())
-            //     command.concat(print_event_attendees(event._get_event_print_details(), attendees_details, badge_layout))
-            // 
-            // return command.to_string()
-            */
-            return default;
-        }
-
         protected async Task<EventRegistration> GetEventRegistrationIdsFromOrderInternalAsync()
         {
             /*
@@ -438,7 +510,8 @@ namespace Bamboo.Core.Application.Services
             //   * in batch mode: if a customer is found use it as main contact. Registrations
             //     details are included in lead description;
             // 
-            // :return dict: values used for create / write on a lead
+            // :returns: values used for create / write on a lead
+            // :rtype: dict
             // """
             // sorted_self = self.sorted("id")
             // valid_partner = next(
@@ -487,11 +560,6 @@ namespace Bamboo.Core.Application.Services
             //     'name': f'{self.event_id[:1].name} - {contact_name}',
             //     'partner_id': valid_partner.id,
             // })
-            // # try to avoid copying registration_phone on both phone and mobile fields
-            // # as would be noise; pay attention partner.hone is propagated through compute
-            // mobile = valid_partner.mobile or registration_phone
-            // if mobile != contact_vals.get('phone', valid_partner.phone):
-            //     contact_vals['mobile'] = valid_partner.mobile or registration_phone
             // 
             // return contact_vals
             */
@@ -525,8 +593,9 @@ namespace Bamboo.Core.Application.Services
             // lines. For example to enumerate participants or inform of an update in
             // the information of a participant.
             // 
-            // :return string description: complete description for a lead taking into
+            // :returns: complete description for a lead taking into
             //   account all registrations contained in self
+            // :rtype: str
             // """
             // reg_lines = [
             //     registration._get_lead_description_registration(
@@ -593,13 +662,14 @@ namespace Bamboo.Core.Application.Services
             // :param rule_to_new_regs: dict: for each rule, subset of self matching
             //   rule conditions. Used to speedup batch computation;
             // 
-            // :return dict: for each rule, rule (key of dict) gives a list of groups.
+            // :returns: for each rule, rule (key of dict) gives a list of groups.
             //   Each group is a tuple (
             //     existing_lead: existing lead to update;
             //     group_record: record used to group;
             //     registrations: sub record set of self, containing registrations
             //                    belonging to the same group;
             //   )
+            // :rtype: dict
             // """
             // grouped_registrations = {
             //     (create_date, event): sub_registrations
@@ -691,7 +761,8 @@ namespace Bamboo.Core.Application.Services
             // in which case first found non void value is taken. Note that all
             // registrations should belong to the same event.
             // 
-            // :return dict lead_values: values used for create / write on a lead
+            // :returns: values used for create / write on a lead
+            // :rtype: dict
             // """
             // sorted_self = self.sorted("id")
             // lead_values = {
@@ -744,52 +815,33 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventRegistration> GetRegistrationPrintDetailsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
-            // def _get_registration_print_details(self):
-            // return {
-            //     'name': self.name,
-            //     'ticket_name': self.event_ticket_id.name if self.event_ticket_id else None,
-            //     'ticket_color': self.event_ticket_id.color if self.event_ticket_id else None,
-            //     'ticket_text_color': self.event_ticket_id._get_ticket_printing_color() if self.event_ticket_id else None,
-            //     'registration_answers': self.registration_answer_choice_ids.mapped('display_name'),
-            //     'company_name': self.company_name
-            // }
-            */
-            return default;
-        }
-
         protected async Task<EventRegistration> GetRegistrationSummaryInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def _get_registration_summary(self):
             // self.ensure_one()
-            // if self.event_id.badge_format in ["96x82", "96x134"] and self.env.get("iot.device") is not None:
-            //     badge_printers = self.env["iot.device"].search([("subtype", "=", "label_printer")])
-            //     iot_printers = badge_printers.mapped(lambda printer: {
-            //         "id": printer.id,
-            //         "name": printer.name,
-            //         "identifier": printer.identifier,
-            //         "iotIdentifier": printer.iot_id.identifier,
-            //         "ip": printer.iot_id.ip,
-            //         "ipUrl": printer.iot_id.ip_url
-            //     })
-            // else:
-            //     iot_printers = []
+            // 
+            // is_date_closed_today = False
+            // if self.date_closed:
+            //     event_tz = pytz.timezone(self.event_id.date_tz)
+            //     now = fields.Datetime.now(pytz.UTC).astimezone(event_tz)
+            //     closed_date = self.date_closed.astimezone(event_tz)
+            //     is_date_closed_today = now.date() == closed_date.date()
+            // 
             // return {
             //     'id': self.id,
             //     'name': self.name,
             //     'partner_id': self.partner_id.id,
+            //     'slot_name': self.event_slot_id.display_name,
             //     'ticket_name': self.event_ticket_id.name,
             //     'event_id': self.event_id.id,
             //     'event_display_name': self.event_id.display_name,
             //     'registration_answers': self.registration_answer_ids.filtered('value_answer_id').mapped('display_name'),
             //     'company_name': self.company_name,
-            //     'iot_printers': iot_printers,
-            //     'badge_format': self.event_id.badge_format
+            //     'badge_format': self.event_id.badge_format,
+            //     'date_closed_formatted': format_date(env=self.env, value=self.date_closed, date_format='short') if self.date_closed else False,
+            //     'is_date_closed_today': is_date_closed_today,
             // }
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
             // def _get_registration_summary(self):
@@ -809,28 +861,44 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_registration.py) ---
             // def _get_website_registration_allowed_fields(self):
-            // return {'name', 'phone', 'email', 'company_name', 'event_id', 'partner_id', 'event_ticket_id'}
+            // return {'name', 'phone', 'email', 'company_name', 'event_id', 'partner_id', 'event_slot_id', 'event_ticket_id'}
             */
             return default;
         }
 
-        protected async Task<EventRegistration> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<EventRegistration> HasOrderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_product, FILE: event_registration.py) ---
+            // def _has_order(self):
+            // return False
+            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
+            // def _has_order(self):
+            // return super()._has_order() or self.sale_order_id
+            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
+            // def _has_order(self):
+            // return super()._has_order() or self.pos_order_id
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
-            // def _load_pos_data_domain(self, data):
+            // def _load_pos_data_domain(self, data, config):
             // return False
             */
             return default;
         }
 
-        protected async Task<EventRegistration> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<EventRegistration> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['id', 'event_id', 'event_ticket_id', 'pos_order_line_id', 'pos_order_id', 'phone', 'email', 'name',
-            //         'registration_answer_ids', 'registration_answer_choice_ids', 'write_date']
+            // def _load_pos_data_fields(self, config):
+            // return ['id', 'event_id', 'event_ticket_id', 'event_slot_id', 'pos_order_line_id', 'pos_order_id', 'phone',
+            //         'company_name', 'email', 'name', 'registration_answer_ids', 'registration_answer_choice_ids', 'write_date']
             */
             return default;
         }
@@ -859,6 +927,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<EventRegistration> MailTemplateDefaultValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _mail_template_default_values(self):
+            // return {
+            //     "email_from": "{{ (object.event_id.organizer_id.email_formatted or object.event_id.company_id.email_formatted or user.email_formatted or '') }}",
+            //     "lang": "{{ object.event_id.lang or object.partner_id.lang }}",
+            //     "use_default_to": True,
+            // }
+            */
+            return default;
+        }
+
         protected async Task<EventRegistration> MailingGetDefaultDomainInternalAsync(object mailing)
         {
             /*
@@ -869,6 +951,25 @@ namespace Bamboo.Core.Application.Services
             // if default_mailing_model_id and mailing.mailing_model_id.id == default_mailing_model_id and default_mailing_domain:
             //     return ast.literal_eval(default_mailing_domain)
             // return [('state', 'not in', ['cancel', 'draft'])]
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> MessageAddDefaultRecipientsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _message_add_default_recipients(self):
+            // # Prioritize registration email over partner_id, which may be shared when a single
+            // # partner booked multiple seats
+            // results = super()._message_add_default_recipients()
+            // for record in self:
+            //     email_to_lst = results[record.id]['email_to_lst']
+            //     if len(email_to_lst) == 1:
+            //         email_normalized = email_normalize(email_to_lst[0])
+            //         if email_normalized and email_normalized == email_normalize(record.email):
+            //             results[record.id]['email_to_lst'] = [formataddr((record.name or "", email_normalized))]
+            // return results
             */
             return default;
         }
@@ -889,47 +990,6 @@ namespace Bamboo.Core.Application.Services
             //     event_name=self.event_id.name,
             //     registration_id=self.id,
             // )
-            */
-            return default;
-        }
-
-        protected async Task<EventRegistration> MessageGetDefaultRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
-            // def _message_get_default_recipients(self):
-            // # Prioritize registration email over partner_id, which may be shared when a single
-            // # partner booked multiple seats
-            // return {r.id:
-            //     {
-            //         'partner_ids': [],
-            //         'email_to': ','.join(email_normalize_all(r.email)) or r.email,
-            //         'email_cc': False,
-            //     } for r in self
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<EventRegistration> MessageGetSuggestedRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // public_users = self.env['res.users'].sudo()
-            // public_groups = self.env.ref("base.group_public", raise_if_not_found=False)
-            // if public_groups:
-            //     public_users = public_groups.sudo().with_context(active_test=False).mapped("users")
-            // try:
-            //     is_public = self.sudo().with_context(active_test=False).partner_id.user_ids in public_users if public_users else False
-            //     if self.partner_id and not is_public:
-            //         self._message_add_suggested_recipient(recipients, partner=self.partner_id, reason=_('Customer'))
-            //     elif self.email:
-            //         self._message_add_suggested_recipient(recipients, email=self.email, reason=_('Customer Email'))
-            // except AccessError:     # no read access rights -> ignore suggested recipients
-            //     pass
-            // return recipients
             */
             return default;
         }
@@ -956,6 +1016,19 @@ namespace Bamboo.Core.Application.Services
             //             ('partner_id', '=', False), email_domain, ('state', 'not in', ['cancel']),
             //         ]).write({'partner_id': new_partner[0].id})
             // return super(EventRegistration, self)._message_post_after_hook(message, msg_vals)
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> OnchangeEventInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _onchange_event(self):
+            // if self.event_slot_id and self.event_id != self.event_slot_id.event_id:
+            //     self.event_slot_id = False
+            // if self.event_ticket_id and self.event_id != self.event_ticket_id.event_id:
+            //     self.event_ticket_id = False
             */
             return default;
         }
@@ -1001,24 +1074,51 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<EventRegistration> SaleOrderTicketTypeChangeNotifyInternalAsync(object new_event_ticket)
+        protected async Task<EventRegistration> SaleOrderRegistrationDataChangeNotifyInternalAsync(object new_record_field, object new_record)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
-            // def _sale_order_ticket_type_change_notify(self, new_event_ticket):
+            // def _sale_order_registration_data_change_notify(self, new_record_field, new_record):
             // fallback_user_id = self.env.user.id if not self.env.user._is_public() else self.env.ref("base.user_admin").id
             // for registration in self:
             //     render_context = {
             //         'registration': registration,
-            //         'old_ticket_name': registration.event_ticket_id.name,
-            //         'new_ticket_name': new_event_ticket.name
+            //         'record_type': _('Ticket') if new_record_field == 'event_ticket_id' else _('Slot'),
+            //         'old_name': registration[new_record_field].display_name,
+            //         'new_name': new_record.display_name,
             //     }
             //     user_id = registration.event_id.user_id.id or registration.sale_order_id.user_id.id or fallback_user_id
             //     registration.sale_order_id._activity_schedule_with_view(
             //         'mail.mail_activity_data_warning',
             //         user_id=user_id,
-            //         views_or_xmlid='event_sale.event_ticket_id_change_exception',
+            //         views_or_xmlid='event_sale.event_registration_change_exception',
             //         render_context=render_context)
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> SearchEventBeginDateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _search_event_begin_date(self, operator, value):
+            // return Domain.OR([
+            //     ["&", ("event_slot_id", "!=", False), ("event_slot_id.start_datetime", operator, value)],
+            //     ["&", ("event_slot_id", "=", False), ("event_id.date_begin", operator, value)],
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<EventRegistration> SearchEventEndDateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
+            // def _search_event_end_date(self, operator, value):
+            // return Domain.OR([
+            //     ["&", ("event_slot_id", "!=", False), ("event_slot_id.end_datetime", operator, value)],
+            //     ["&", ("event_slot_id", "=", False), ("event_id.date_end", operator, value)],
+            // ])
             */
             return default;
         }
@@ -1082,7 +1182,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def _synchronize_partner_values(self, partner, fnames=None):
             // if fnames is None:
-            //     fnames = {'name', 'email', 'phone', 'mobile'}
+            //     fnames = {'name', 'email', 'phone'}
             // if partner:
             //     contact_id = partner.address_get().get('contact', False)
             //     if contact_id:
@@ -1103,6 +1203,7 @@ namespace Bamboo.Core.Application.Services
             //         # Avoid registering public users but respect the portal workflows
             //         'partner_id': False if self.env.user._is_public() and self.env.user.partner_id == so_line.order_id.partner_id else so_line.order_id.partner_id.id,
             //         'event_id': so_line.event_id.id,
+            //         'event_slot_id': so_line.event_slot_id.id,
             //         'event_ticket_id': so_line.event_ticket_id.id,
             //         'sale_order_id': so_line.order_id.id,
             //         'sale_order_line_id': so_line.id,
@@ -1110,22 +1211,6 @@ namespace Bamboo.Core.Application.Services
             // return {}
             */
             return default;
-        }
-
-        public async Task<EventRegistration> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
-            // def toggle_active(self):
-            // pre_inactive = self - self.filtered(self._active_name)
-            // super().toggle_active()
-            // # Necessary triggers as changing registration states cannot be used as triggers for the
-            // # Event(Ticket) models constraints.
-            // if pre_inactive:
-            //     pre_inactive.event_id._check_seats_availability()
-            //     pre_inactive.event_ticket_id._check_seats_availability()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<EventRegistration> UpdateAvailableSeatInternalAsync()
@@ -1255,9 +1340,22 @@ namespace Bamboo.Core.Application.Services
             //             ).with_user(SUPERUSER_ID).execute()
             //         except Exception as e:
             //             _logger.exception("Failed to run scheduler %s", scheduler.id)
-            //             self.env["event.mail"]._warn_template_error(scheduler, e)
+            //             scheduler._warn_error(e)
             */
             return default;
+        }
+
+        public async Task<EventRegistration> ViewPosOrderAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
+            // def action_view_pos_order(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("point_of_sale.action_pos_pos_form")
+            // action['views'] = [(False, 'form')]
+            // action['res_id'] = self.pos_order_id.id
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<EventRegistration> ViewSaleOrderAsync(Guid id)
@@ -1281,9 +1379,13 @@ namespace Bamboo.Core.Application.Services
             // confirming = vals.get('state') in {'open', 'done'}
             // to_confirm = (self.filtered(lambda registration: registration.state in {'draft', 'cancel'})
             //               if confirming else None)
-            // ret = super(EventRegistration, self).write(vals)
+            // ret = super().write(vals)
             // if confirming:
             //     to_confirm._update_mail_schedulers()
+            // 
+            // if vals.get('state') == 'done':
+            //     message = _("Attended on %(attended_date)s", attended_date=format_date(env=self.env, value=fields.Datetime.now(), date_format='short'))
+            //     self._message_log_batch(bodies={registration.id: message for registration in self})
             // 
             // return ret
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_registration.py) ---
@@ -1328,10 +1430,15 @@ namespace Bamboo.Core.Application.Services
             //     )
             //     vals.update(so_line_vals)
             // 
+            // updated_fields_to_notify = []
+            // if vals.get('event_slot_id'):
+            //     updated_fields_to_notify.append(('event.slot', 'event_slot_id'))
             // if vals.get('event_ticket_id'):
+            //     updated_fields_to_notify.append(('event.event.ticket', 'event_ticket_id'))
+            // for model, field in updated_fields_to_notify:
             //     self.filtered(
-            //         lambda registration: registration.event_ticket_id and registration.event_ticket_id.id != vals['event_ticket_id']
-            //     )._sale_order_ticket_type_change_notify(self.env['event.event.ticket'].browse(vals['event_ticket_id']))
+            //         lambda registration: registration[field] and registration[field].id != vals[field]
+            //     )._sale_order_registration_data_change_notify(field, self.env[model].browse(vals[field]))
             // 
             // return super(EventRegistration, self).write(vals)
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---

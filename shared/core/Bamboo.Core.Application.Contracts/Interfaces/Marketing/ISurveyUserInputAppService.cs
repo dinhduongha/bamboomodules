@@ -13,6 +13,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<SurveyUserInput> GetPrintUrlAsync(Guid id);
         Task<SurveyUserInput> GetStartUrlAsync(Guid id);
         Task<SurveyUserInput> PrintAnswersAsync(Guid id);
+        Task<SurveyUserInput> RedirectLeadAsync(Guid id);
         Task<SurveyUserInput> RedirectToAttemptsAsync(Guid id);
         Task<SurveyUserInput> ResendAsync(Guid id);
     }

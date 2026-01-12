@@ -17,23 +17,13 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "utm", "link_tracker", "web_editor", "social_media", "web_tour", "digest" })]
+    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
     public class MailingListAppService : GenericApplicationService<MailingList>, IMailingListAppService
     {
 
         public MailingListAppService(IRepository<MailingList, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
-        }
-
-        public async Task<MailingList> CloseDialogAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
-            // def close_dialog(self):
-            // return {'type': 'ir.actions.act_window_close'}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<MailingList> ComputeDisplayNameInternalAsync()
@@ -289,7 +279,8 @@ namespace Bamboo.Core.Application.Services
             // on one list but not on another, one opted in and the other one opted out,
             // send mailing anyway.
             // 
-            // :return list: opt-outed record IDs
+            // :return: opt-outed record IDs
+            // :rtype: list
             // """
             // subscriptions = self.subscription_ids if self else mailing.contact_list_ids.subscription_ids
             // opt_out_contacts = subscriptions.filtered(lambda sub: sub.opt_out).mapped('contact_id')
@@ -514,7 +505,7 @@ namespace Bamboo.Core.Application.Services
             //             _('%(contact_name)s subscribed to the following mailing list(s)', contact_name=contact.display_name),
             //             Markup().join(Markup('<li>%s</li>') % name for name in updated.mapped('name')),
             //         )
-            //     contact.with_context(mail_create_nosubscribe=True).message_post(
+            //     contact.with_context(mail_post_autofollow_author_skip=True).message_post(
             //         body=body,
             //         subtype_id=self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note'),
             //     )

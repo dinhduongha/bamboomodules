@@ -78,22 +78,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductTemplateAttributeLine> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ProductTemplateAttributeLine> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_domain(self, data):
-            // loaded_product_tmpl_ids = list({p['product_tmpl_id'] for p in data['product.product']['data']})
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_attribute.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // loaded_product_tmpl_ids = list({p['id'] for p in data['product.template']})
             // return [('product_tmpl_id', 'in', loaded_product_tmpl_ids)]
             */
             return default;
         }
 
-        protected async Task<ProductTemplateAttributeLine> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ProductTemplateAttributeLine> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_attribute.py) ---
+            // def _load_pos_data_fields(self, config):
             // return ['display_name', 'attribute_id', 'product_template_value_ids']
             */
             return default;

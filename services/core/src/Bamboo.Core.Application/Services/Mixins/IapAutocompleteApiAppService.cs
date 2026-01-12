@@ -29,16 +29,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: iap_autocomplete_api.py) ---
             // def _contact_iap(self, local_endpoint, action, params, timeout=15):
-            // if self.env.registry.in_test_mode():
+            // if modules.module.current_test:
             //     raise exceptions.ValidationError(_('Test mode'))
             // account = self.env['iap.account'].get('partner_autocomplete')
-            // if not account.account_token:
+            // if not account.sudo().account_token:
             //     raise ValueError(_('No account token'))
             // params.update({
             //     'db_uuid': self.env['ir.config_parameter'].sudo().get_param('database.uuid'),
             //     'db_version': release.version,
             //     'db_lang': self.env.lang,
-            //     'account_token': account.account_token,
+            //     'account_token': account.sudo().account_token,
             //     'country_code': self.env.company.country_id.code,
             //     'zip': self.env.company.zip,
             // })
@@ -55,7 +55,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _request_partner_autocomplete(self, action, params, timeout=15):
             // """ Contact endpoint to get autocomplete data.
             // 
-            // :return tuple: results, error code
+            // :returns: a 2-element tuple (results, error code)
+            // :rtype: tuple[dict, Literal[False]] | tuple[Literal[False], str]
             // """
             // try:
             //     results = self._contact_iap('/api/dnb/1', action, params, timeout=timeout)

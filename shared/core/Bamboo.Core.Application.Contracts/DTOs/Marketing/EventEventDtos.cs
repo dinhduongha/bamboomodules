@@ -9,16 +9,24 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Default { get; set; }
     }
     
+    public class EventEventCopyEventMenusRequestDto
+    {
+        public object OldEvents { get; set; }
+    }
+    
+    public class EventEventGenerateLeadsRequestDto
+    {
+        public object EventLeadRules { get; set; }
+    }
+    
+    public class EventEventGetSlotTicketsAvailabilityPosRequestDto
+    {
+        public List<Guid> SlotTicketIds { get; set; }
+    }
+    
     public class EventEventGoogleMapLinkRequestDto
     {
         public object Zoom { get; set; }
-    }
-    
-    public class EventEventMailAttendeesRequestDto
-    {
-        public Guid TemplateId { get; set; }
-        public object ForceSend { get; set; }
-        public object FilterFunc { get; set; }
     }
     
     public class EventEventToggleBoothMenuRequestDto

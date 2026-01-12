@@ -67,18 +67,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-revaluation")]
-        public async Task<IActionResult> ActionRevaluationAsync(Guid id)
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
         {
-            var result = await _appService.RevaluationAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-update-quantity-on-hand")]
-        public async Task<IActionResult> ActionUpdateQuantityOnHandAsync(Guid id)
-        {
-            var result = await _appService.UpdateQuantityOnHandAsync(id);
+            var result = await _appService.UnarchiveAsync(id);
             return Ok(result);
         }
         
@@ -203,14 +195,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-product-info-pos")]
-        public async Task<IActionResult> GetProductInfoPosAsync(Guid id, [FromBody] ProductProductGetProductInfoPosRequestDto input)
-        {
-            var result = await _appService.GetProductInfoPosAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/get-product-multiline-description-sale")]
         public async Task<IActionResult> GetProductMultilineDescriptionSaleAsync(Guid id)
         {
@@ -219,26 +203,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/has-optional-product-in-pos")]
-        public async Task<IActionResult> HasOptionalProductInPosAsync(Guid id)
+        [Route("{id}/get-total-routes")]
+        public async Task<IActionResult> GetTotalRoutesAsync(Guid id)
         {
-            var result = await _appService.HasOptionalProductInPosAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/open-pricelist-rules")]
-        public async Task<IActionResult> OpenPricelistRulesAsync(Guid id)
-        {
-            var result = await _appService.OpenPricelistRulesAsync(id);
+            var result = await _appService.GetTotalRoutesAsync(id);
             return Ok(result);
         }
         
@@ -255,14 +223,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
         {
             var result = await _appService.OpenWebsiteUrlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
         

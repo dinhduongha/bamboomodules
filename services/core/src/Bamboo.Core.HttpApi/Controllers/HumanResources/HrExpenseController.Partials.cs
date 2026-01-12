@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-approve")]
+        public async Task<IActionResult> ActionApproveAsync(Guid id)
+        {
+            var result = await _appService.ApproveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-approve-duplicates")]
         public async Task<IActionResult> ActionApproveDuplicatesAsync(Guid id)
         {
@@ -19,10 +27,58 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-get-attachment-view")]
-        public async Task<IActionResult> ActionGetAttachmentViewAsync(Guid id)
+        [Route("{id}/action-open-account-move")]
+        public async Task<IActionResult> ActionOpenAccountMoveAsync(Guid id)
         {
-            var result = await _appService.GetAttachmentViewAsync(id);
+            var result = await _appService.OpenAccountMoveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-sale-order")]
+        public async Task<IActionResult> ActionOpenSaleOrderAsync(Guid id)
+        {
+            var result = await _appService.OpenSaleOrderAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-split-expense")]
+        public async Task<IActionResult> ActionOpenSplitExpenseAsync(Guid id)
+        {
+            var result = await _appService.OpenSplitExpenseAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-pay")]
+        public async Task<IActionResult> ActionPayAsync(Guid id)
+        {
+            var result = await _appService.PayAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-post")]
+        public async Task<IActionResult> ActionPostAsync(Guid id)
+        {
+            var result = await _appService.PostAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-refuse")]
+        public async Task<IActionResult> ActionRefuseAsync(Guid id)
+        {
+            var result = await _appService.RefuseAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-reset")]
+        public async Task<IActionResult> ActionResetAsync(Guid id)
+        {
+            var result = await _appService.ResetAsync(id);
             return Ok(result);
         }
         
@@ -43,18 +99,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-submit-expenses")]
-        public async Task<IActionResult> ActionSubmitExpensesAsync(Guid id)
+        [Route("{id}/action-submit")]
+        public async Task<IActionResult> ActionSubmitAsync(Guid id)
         {
-            var result = await _appService.SubmitExpensesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-view-sheet")]
-        public async Task<IActionResult> ActionViewSheetAsync(Guid id)
-        {
-            var result = await _appService.ViewSheetAsync(id);
+            var result = await _appService.SubmitAsync(id);
             return Ok(result);
         }
         
@@ -63,14 +111,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> AttachDocumentAsync(Guid id)
         {
             var result = await _appService.AttachDocumentAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/check-amount-not-zero")]
-        public async Task<IActionResult> CheckAmountNotZeroAsync(Guid id, [FromBody] HrExpenseCheckAmountNotZeroRequestDto input)
-        {
-            var result = await _appService.CheckAmountNotZeroAsync(id, input);
             return Ok(result);
         }
         
@@ -91,14 +131,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-expense-attachments")]
-        public async Task<IActionResult> GetExpenseAttachmentsAsync(Guid id)
-        {
-            var result = await _appService.GetExpenseAttachmentsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/get-expense-dashboard")]
         public async Task<IActionResult> GetExpenseDashboardAsync(Guid id)
         {
@@ -107,18 +139,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-expenses-to-submit")]
-        public async Task<IActionResult> GetExpensesToSubmitAsync(Guid id)
-        {
-            var result = await _appService.GetExpensesToSubmitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] HrExpenseMessageNewRequestDto input)
         {
             var result = await _appService.MessageNewAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/update-activities-and-mails")]
+        public async Task<IActionResult> UpdateActivitiesAndMailsAsync(Guid id)
+        {
+            var result = await _appService.UpdateActivitiesAndMailsAsync(id);
             return Ok(result);
         }
     }

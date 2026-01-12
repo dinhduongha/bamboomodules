@@ -22,7 +22,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MailActivity> GetActivityDataAsync(Guid id, MailActivityGetActivityDataRequestDto input);
         Task<MailActivity> NotifyAsync(Guid id);
         Task<MailActivity> OpenDocumentAsync(Guid id);
-        Task<MailActivity> SnoozeAsync(Guid id);
+        Task<MailActivity> RescheduleNextweekAsync(Guid id);
+        Task<MailActivity> RescheduleTodayAsync(Guid id);
+        Task<MailActivity> RescheduleTomorrowAsync(Guid id);
         Task<MailActivity> UnlinkWMeetingAsync(Guid id);
     }
 }

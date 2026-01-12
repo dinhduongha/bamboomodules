@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py) ---
             // def _compute_display_name(self):
             // for cashmove in self:
-            //     cashmove.display_name = '{} {}'.format(_('Lunch Cashmove'), '#%d' % cashmove.id)
+            //     cashmove.display_name = '{} {}'.format(_('Lunch Cashmove'), '#%s' % (cashmove.id or "_"))
             */
             return default;
         }

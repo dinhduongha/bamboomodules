@@ -35,26 +35,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/channel-create")]
-        public async Task<IActionResult> ChannelCreateAsync(Guid id, [FromBody] DiscussChannelChannelCreateRequestDto input)
-        {
-            var result = await _appService.ChannelCreateAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/channel-fetched")]
         public async Task<IActionResult> ChannelFetchedAsync(Guid id)
         {
             var result = await _appService.ChannelFetchedAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/channel-get")]
-        public async Task<IActionResult> ChannelGetAsync(Guid id, [FromBody] DiscussChannelChannelGetRequestDto input)
-        {
-            var result = await _appService.ChannelGetAsync(id, input);
             return Ok(result);
         }
         
@@ -87,14 +71,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ChannelSetCustomNameAsync(Guid id, [FromBody] DiscussChannelChannelSetCustomNameRequestDto input)
         {
             var result = await _appService.ChannelSetCustomNameAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/create-group")]
-        public async Task<IActionResult> CreateGroupAsync(Guid id, [FromBody] DiscussChannelCreateGroupRequestDto input)
-        {
-            var result = await _appService.CreateGroupAsync(id, input);
             return Ok(result);
         }
         
@@ -147,10 +123,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/invite-by-email")]
+        public async Task<IActionResult> InviteByEmailAsync(Guid id, [FromBody] DiscussChannelInviteByEmailRequestDto input)
         {
-            var result = await _appService.InitAsync(id);
+            var result = await _appService.InviteByEmailAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/livechat-join-channel-needing-help")]
+        public async Task<IActionResult> LivechatJoinChannelNeedingHelpAsync(Guid id)
+        {
+            var result = await _appService.LivechatJoinChannelNeedingHelpAsync(id);
             return Ok(result);
         }
         

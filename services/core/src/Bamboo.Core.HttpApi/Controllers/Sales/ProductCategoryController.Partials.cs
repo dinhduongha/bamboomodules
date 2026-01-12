@@ -11,10 +11,10 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/onchange-property-cost")]
-        public async Task<IActionResult> OnchangePropertyCostAsync(Guid id)
+        [Route("{id}/copy-data")]
+        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProductCategoryCopyDataRequestDto input)
         {
-            var result = await _appService.OnchangePropertyCostAsync(id);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
     }

@@ -37,11 +37,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object HelpMessage { get; set; }
     }
     
-    public class CrmLeadIapEnrichRequestDto
-    {
-        public object FromCron { get; set; }
-    }
-    
     public class CrmLeadLogMeetingRequestDto
     {
         public object Meeting { get; set; }

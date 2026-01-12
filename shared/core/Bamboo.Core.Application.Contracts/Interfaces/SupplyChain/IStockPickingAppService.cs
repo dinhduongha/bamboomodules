@@ -10,6 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPickingAppService : IGenericApplicationService<StockPicking>
     {
+        Task<StockPicking> AddEntirePacksAsync(Guid id, StockPickingAddEntirePacksRequestDto input);
         Task<StockPicking> AddOperationsAsync(Guid id);
         Task<StockPicking> AssignAsync(Guid id);
         Task<StockPicking> AssignBatchUserAsync(Guid id, StockPickingAssignBatchUserRequestDto input);
@@ -35,21 +36,21 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<StockPicking> OpenWebsiteUrlAsync(Guid id);
         Task<StockPicking> PickingMoveTreeAsync(Guid id);
         Task<StockPicking> PrintReturnLabelAsync(Guid id);
-        Task<StockPicking> PutInPackAsync(Guid id, StockPickingPutInPackRequestDto input);
-        Task<StockPicking> RecordComponentsAsync(Guid id);
+        Task<StockPicking> PutInPackAsync(Guid id);
         Task<StockPicking> RepairReturnAsync(Guid id);
         Task<StockPicking> SeeMoveScrapAsync(Guid id);
+        Task<StockPicking> SeePackageHistoriesAsync(Guid id);
         Task<StockPicking> SeePackagesAsync(Guid id);
         Task<StockPicking> SeeReturnsAsync(Guid id);
         Task<StockPicking> SendToShipperAsync(Guid id);
         Task<StockPicking> ShouldPrintDeliveryAddressAsync(Guid id);
+        Task<StockPicking> ShowSubcontractDetailsAsync(Guid id);
         Task<StockPicking> SplitTransferAsync(Guid id);
         Task<StockPicking> ToggleIsLockedAsync(Guid id);
         Task<StockPicking> ViewBatchAsync(Guid id);
         Task<StockPicking> ViewMrpProductionAsync(Guid id);
         Task<StockPicking> ViewReceptionReportAsync(Guid id);
         Task<StockPicking> ViewRepairsAsync(Guid id);
-        Task<StockPicking> ViewStockValuationLayersAsync(Guid id);
         Task<StockPicking> ViewSubcontractingSourcePurchaseAsync(Guid id);
     }
 }

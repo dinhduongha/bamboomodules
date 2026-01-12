@@ -26,33 +26,61 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        protected async Task<EventQuestion> ConstrainsEventInternalAsync()
+        protected async Task<EventQuestion> ComputeEventCountInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
-            // def _constrains_event(self):
-            // if any(question.event_type_id and question.event_id for question in self):
-            //     raise UserError(_("Question cannot be linked to both an Event and an Event Type."))
+            // def _compute_event_count(self):
+            // event_count_per_question = dict(self.env['event.event']._read_group(
+            //     domain=[('question_ids', 'in', self.ids)],
+            //     groupby=['question_ids'],
+            //     aggregates=['__count']
+            // ))
+            // for question in self:
+            //     question.event_count = event_count_per_question.get(question, 0)
             */
             return default;
         }
 
-        protected async Task<EventQuestion> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<EventQuestion> ComputeIsReusableInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_question.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('event_id', 'in', [event['id'] for event in data['event.event']['data']])]
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
+            // def _compute_is_reusable(self):
+            // self.filtered('is_default').is_reusable = True
             */
             return default;
         }
 
-        protected async Task<EventQuestion> LoadPosDataFieldsInternalAsync(Guid config_id)
+        public async Task<EventQuestion> EventViewAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
+            // def action_event_view(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("event.action_event_view")
+            // action['domain'] = [('question_ids', 'in', self.ids)]
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<EventQuestion> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_question.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['title', 'question_type', 'event_type_id', 'event_id', 'sequence', 'once_per_order', 'is_mandatory_answer', 'answer_ids']
+            // def _load_pos_data_domain(self, data, config):
+            // return [('event_ids', 'in', [event['id'] for event in data['event.event']])]
+            */
+            return default;
+        }
+
+        protected async Task<EventQuestion> LoadPosDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_question.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return ['title', 'question_type', 'event_type_ids', 'event_ids', 'sequence', 'once_per_order', 'is_mandatory_answer', 'answer_ids']
             */
             return default;
         }
@@ -63,7 +91,18 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
             // def _unlink_except_answered_question(self):
             // if self.env['event.registration.answer'].search_count([('question_id', 'in', self.ids)]):
-            //     raise UserError(_('You cannot delete a question that has already been answered by attendees.'))
+            //     raise UserError(_('You cannot delete a question that has already been answered by attendees. You can archive it instead.'))
+            */
+            return default;
+        }
+
+        protected async Task<EventQuestion> UnlinkExceptDefaultQuestionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
+            // def _unlink_except_default_question(self):
+            // if set(self.ids) & set(self.env['event.type']._default_question_ids()):
+            //     raise UserError(_('You cannot delete a default question.'))
             */
             return default;
         }
@@ -74,12 +113,19 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
             // def action_view_question_answers(self):
             // """ Allow analyzing the attendees answers to event questions in a convenient way:
-            // - A graph view showing counts of each suggestions for simple_choice questions
+            // 
+            // - A graph view showing counts of each suggestion for simple_choice questions
             //   (Along with secondary pivot and list views)
-            // - A list view showing textual answers values for text_box questions. """
+            // - A list view showing textual answers values for text_box questions.
+            // """
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("event.action_event_registration_report")
-            // action['domain'] = [('question_id', '=', self.id)]
+            // action['context'] = {'search_default_question_id': self.id}
+            // if event_id := self.env.context.get('search_default_event_id'):
+            //     action['context'].update(search_default_event_id=event_id)
+            // # Fetch attendee answers for which the event is still linked to the question.
+            // action['domain'] = [('event_id.question_ids', 'in', self.ids)]
+            // 
             // if self.question_type == 'simple_choice':
             //     action['views'] = [(False, 'graph'), (False, 'pivot'), (False, 'list')]
             // elif self.question_type == 'text_box':

@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-preview-attachment")]
+        public async Task<IActionResult> ActionPreviewAttachmentAsync(Guid id)
+        {
+            var result = await _appService.PreviewAttachmentAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/check")]
         public async Task<IActionResult> CheckAsync(Guid id, [FromBody] IrAttachmentCheckRequestDto input)
         {
@@ -67,6 +75,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/init")]
+        public async Task<IActionResult> InitAsync(Guid id)
+        {
+            var result = await _appService.InitAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/regenerate-assets-bundles")]
         public async Task<IActionResult> RegenerateAssetsBundlesAsync(Guid id)
         {
@@ -79,14 +95,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> RegisterAsMainAttachmentAsync(Guid id, [FromBody] IrAttachmentRegisterAsMainAttachmentRequestDto input)
         {
             var result = await _appService.RegisterAsMainAttachmentAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/validate-access")]
-        public async Task<IActionResult> ValidateAccessAsync(Guid id, [FromBody] IrAttachmentValidateAccessRequestDto input)
-        {
-            var result = await _appService.ValidateAccessAsync(id, input);
             return Ok(result);
         }
     }

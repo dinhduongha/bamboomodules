@@ -35,10 +35,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-expense-report")]
-        public async Task<IActionResult> ActionOpenExpenseReportAsync(Guid id)
+        [Route("{id}/action-open-expense")]
+        public async Task<IActionResult> ActionOpenExpenseAsync(Guid id)
         {
-            var result = await _appService.OpenExpenseReportAsync(id);
+            var result = await _appService.OpenExpenseAsync(id);
             return Ok(result);
         }
         
@@ -151,14 +151,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> DoPrintChecksAsync(Guid id)
         {
             var result = await _appService.DoPrintChecksAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
             return Ok(result);
         }
         

@@ -87,6 +87,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_plan.py) ---
             // def _compute_all_analytic_account_count(self):
             // # Get all children_ids from each plan
+            // if not self.ids:
+            //     self.all_account_count = 0
+            //     return
             // self.env.cr.execute("""
             //     SELECT parent.id,
             //            array_agg(child.id) as children_ids
@@ -376,7 +379,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_plan.py) ---
             // def _sync_plan_column(self, model):
             // # Create/delete a new field/column on related models for this plan, and keep the name in sync.
-            // for plan in self:
+            // # Sort by parent_path to ensure parents are processed before children
+            // for plan in self.sorted('parent_path'):
             //     prev_stored = plan._find_plan_column(model)
             //     depth, name_related = plan._hierarchy_name()
             //     prev_related = plan._find_related_field(model)

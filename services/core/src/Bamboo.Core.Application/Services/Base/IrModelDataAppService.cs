@@ -26,23 +26,6 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<IrModelData> AutoInitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _auto_init(self):
-            // res = super(IrModelData, self)._auto_init()
-            // sql.create_unique_index(
-            //     self._cr, 'ir_model_data_module_name_uniq_index',
-            //     self._table, ['module', 'name'])
-            // sql.create_index(
-            //     self._cr, 'ir_model_data_model_res_id_index',
-            //     self._table, ['model', 'res_id'])
-            // return res
-            */
-            return default;
-        }
-
         protected async Task<IrModelData> BuildInsertXmlidsValuesInternalAsync()
         {
             /*
@@ -198,7 +181,7 @@ namespace Bamboo.Core.Application.Services
             //         FROM ir_model_data d LEFT JOIN "{}" r on d.res_id=r.id
             //         WHERE d.module=%s AND d.name IN %s
             //     """.format(model._table)
-            //     for subsuffixes in cr.split_for_in_conditions(suffixes):
+            //     for subsuffixes in split_every(cr.IN_MAX, suffixes):
             //         cr.execute(query, (prefix, subsuffixes))
             //         result.extend(cr.fetchall())
             // 
@@ -221,6 +204,8 @@ namespace Bamboo.Core.Application.Services
             // the chance of gracefully deleting all records.
             // This step is performed as part of the full uninstallation of a module.
             // """
+            // from odoo.orm.model_classes import add_field
+            // 
             // if not self.env.is_system():
             //     raise AccessError(_('Administrator access is required to uninstall a module'))
             // 
@@ -266,12 +251,12 @@ namespace Bamboo.Core.Application.Services
             //             else:
             //                 # the field is shared across registries; don't modify it
             //                 Field = type(field)
-            //                 field_ = Field(_base_fields=(field, Field(prefetch=False)))
-            //                 self.env[ir_field.model]._add_field(ir_field.name, field_)
+            //                 field_ = Field(_base_fields__=(field, Field(prefetch=False)))
+            //                 add_field(self.env.registry[ir_field.model], ir_field.name, field_)
             //                 field_.setup(model)
             //                 has_shared_field = True
             // if has_shared_field:
-            //     lazy_property.reset_all(self.env.registry)
+            //     reset_cached_properties(self.env.registry)
             // 
             // # to collect external ids of records that cannot be deleted
             // undeletable_ids = []
@@ -312,7 +297,7 @@ namespace Bamboo.Core.Application.Services
             //     # now delete the records
             //     _logger.info('Deleting %s', records)
             //     try:
-            //         with self._cr.savepoint():
+            //         with self.env.cr.savepoint():
             //             cloc_exclude_data.unlink()
             //             records.unlink()
             //     except Exception:
@@ -326,7 +311,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // # remove non-model records first, grouped by batches of the same model
             // for model, items in itertools.groupby(unique(records_items), itemgetter(0)):
-            //     delete(self.env[model].browse(item[1] for item in items))
+            //     ids = [item[1] for item in items]
+            //     # we cannot guarantee that the ir.model.data points to an existing model
+            //     if model in self.env:
+            //         delete(self.env[model].browse(ids))
+            //     else:
+            //         _logger.info("Orphan ir.model.data records %s refer to unavailable model '%s'", ids, model)
             // 
             // # Remove copied views. This must happen after removing all records from
             // # the modules to remove, otherwise ondelete='restrict' may prevent the
@@ -399,8 +389,8 @@ namespace Bamboo.Core.Application.Services
             // query = """ SELECT id, module || '.' || name, model, res_id FROM ir_model_data
             //             WHERE module IN %s AND res_id IS NOT NULL AND COALESCE(noupdate, false) != %s ORDER BY id DESC
             //         """
-            // self._cr.execute(query, (tuple(modules), True))
-            // for (id, xmlid, model, res_id) in self._cr.fetchall():
+            // self.env.cr.execute(query, (tuple(modules), True))
+            // for (id, xmlid, model, res_id) in self.env.cr.fetchall():
             //     if xmlid in loaded_xmlids:
             //         continue
             // 
@@ -468,7 +458,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_model_data.py) ---
             // def _process_end_unlink_record(self, record):
-            // if record._context['module'].startswith('theme_'):
+            // if record.env.context['module'].startswith('theme_'):
             //     theme_records = self.env['ir.module.module']._theme_model_names.values()
             //     if record._name in theme_records:
             //         # use active_test to also unlink archived models
@@ -529,7 +519,7 @@ namespace Bamboo.Core.Application.Services
             //     noupdate = bool(data.get('noupdate'))
             //     rows.add((prefix, suffix, record._name, record.id, noupdate))
             // 
-            // for sub_rows in self.env.cr.split_for_in_conditions(rows):
+            // for sub_rows in split_every(self.env.cr.IN_MAX, rows):
             //     # insert rows or update them
             //     query = self._build_update_xmlids_query(sub_rows, update)
             //     try:
@@ -561,11 +551,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<object> XmlidLookupInternalAsync(string xmlid)
+        protected async Task<IrModelData> XmlidLookupInternalAsync(string xmlid)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _xmlid_lookup(self, xmlid: str) -> tuple:
+            // def _xmlid_lookup(self, xmlid: str) -> tuple[str, int]:
             // """Low level xmlid lookup
             // Return (res_model, res_id) or raise ValueError if not found
             // """
@@ -591,11 +581,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrModelData> XmlidToResModelResIdInternalAsync(object xmlid, object raise_if_not_found)
+        protected async Task<IrModelData> XmlidToResModelResIdInternalAsync(string xmlid, bool raise_if_not_found)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _xmlid_to_res_model_res_id(self, xmlid, raise_if_not_found=False):
+            // def _xmlid_to_res_model_res_id(self, xmlid: str, raise_if_not_found: bool = False) -> tuple[str, int] | tuple[typing.Literal[False], typing.Literal[False]]:
             // """ Return (res_model, res_id)"""
             // try:
             //     return self._xmlid_lookup(xmlid)

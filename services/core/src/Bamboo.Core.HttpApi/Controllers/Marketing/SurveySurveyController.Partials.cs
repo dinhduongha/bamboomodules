@@ -11,18 +11,18 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-end-session")]
-        public async Task<IActionResult> ActionEndSessionAsync(Guid id)
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
         {
-            var result = await _appService.EndSessionAsync(id);
+            var result = await _appService.ArchiveAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-load-sample-assessment")]
-        public async Task<IActionResult> ActionLoadSampleAssessmentAsync(Guid id)
+        [Route("{id}/action-end-session")]
+        public async Task<IActionResult> ActionEndSessionAsync(Guid id)
         {
-            var result = await _appService.LoadSampleAssessmentAsync(id);
+            var result = await _appService.EndSessionAsync(id);
             return Ok(result);
         }
         
@@ -35,18 +35,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-load-sample-live-session")]
-        public async Task<IActionResult> ActionLoadSampleLiveSessionAsync(Guid id)
+        [Route("{id}/action-load-survey-template-sample")]
+        public async Task<IActionResult> ActionLoadSurveyTemplateSampleAsync(Guid id, [FromBody] SurveySurveyLoadSurveyTemplateSampleRequestDto input)
         {
-            var result = await _appService.LoadSampleLiveSessionAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-load-sample-survey")]
-        public async Task<IActionResult> ActionLoadSampleSurveyAsync(Guid id)
-        {
-            var result = await _appService.LoadSampleSurveyAsync(id);
+            var result = await _appService.LoadSurveyTemplateSampleAsync(id, input);
             return Ok(result);
         }
         
@@ -115,6 +107,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-survey-see-leads")]
+        public async Task<IActionResult> ActionSurveySeeLeadsAsync(Guid id)
+        {
+            var result = await _appService.SurveySeeLeadsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-survey-user-input")]
         public async Task<IActionResult> ActionSurveyUserInputAsync(Guid id)
         {
@@ -151,6 +151,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionTestSurveyAsync(Guid id)
         {
             var result = await _appService.TestSurveyAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
             return Ok(result);
         }
         
@@ -203,10 +211,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
+        [Route("{id}/get-survey-templates-data")]
+        public async Task<IActionResult> GetSurveyTemplatesDataAsync(Guid id)
         {
-            var result = await _appService.ToggleActiveAsync(id);
+            var result = await _appService.GetSurveyTemplatesDataAsync(id);
             return Ok(result);
         }
     }

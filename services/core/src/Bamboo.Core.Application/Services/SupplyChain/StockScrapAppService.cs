@@ -34,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             // if not self._should_check_available_qty():
             //     return True
             // 
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // available_qty = self.with_context(
             //     location=self.location_id.id,
             //     lot_id=self.lot_id.id,
@@ -46,6 +46,17 @@ namespace Bamboo.Core.Application.Services
             // return float_compare(available_qty, scrap_qty, precision_digits=precision) >= 0
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<StockScrap> ComputeAllowedUomIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for scrap in self:
+            //     scrap.allowed_uom_ids = scrap.product_id.uom_id | scrap.product_id.uom_ids | scrap.product_id.seller_ids.product_uom_id
+            */
+            return default;
         }
 
         protected async Task<StockScrap> ComputeLocationIdInternalAsync()
@@ -105,7 +116,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
             // def _compute_scrap_location_id(self):
             // groups = self.env['stock.location']._read_group(
-            //     [('company_id', 'in', self.company_id.ids), ('scrap_location', '=', True)], ['company_id'], ['id:min'])
+            //     [('company_id', 'in', self.company_id.ids), ('usage', '=', 'inventory')], ['company_id'], ['id:min'])
             // locations_per_company = {
             //     company.id: stock_warehouse_id
             //     for company, stock_warehouse_id in groups
@@ -149,16 +160,16 @@ namespace Bamboo.Core.Application.Services
             // def do_replenish(self, values=False):
             // self.ensure_one()
             // values = values or {}
-            // if self.production_id and self.production_id.procurement_group_id:
+            // if self.production_id and self.production_id.production_group_id:
             //     values.update({
-            //         'group_id': self.production_id.procurement_group_id,
+            //         'production_group_id': self.production_id.production_group_id.id,
             //     })
             // super().do_replenish(values)
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
             // def do_replenish(self, values=False):
             // self.ensure_one()
             // values = values or {}
-            // self.with_context(clean_context(self.env.context)).env['procurement.group'].run([self.env['procurement.group'].Procurement(
+            // self.with_context(clean_context(self.env.context)).env['stock.rule'].run([self.env['stock.rule'].Procurement(
             //     self.product_id,
             //     self.scrap_qty,
             //     self.product_uom_id,
@@ -216,6 +227,19 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<StockScrap> OnchangeProductIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_scrap.py) ---
+            // def _onchange_product_id(self):
+            // if self.product_is_kit:
+            //     self.bom_id = self.env['mrp.bom']._bom_find(self.product_id, company_id=self.company_id.id, bom_type='phantom')[self.product_id]
+            // else:
+            //     self.bom_id = False
+            */
+            return default;
+        }
+
         protected async Task<StockScrap> OnchangeSerialNumberInternalAsync()
         {
             /*
@@ -267,7 +291,6 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_move_values(self):
             // self.ensure_one()
             // return {
-            //     'name': self.name,
             //     'origin': self.origin or self.picking_id.name or self.name,
             //     'company_id': self.company_id.id,
             //     'product_id': self.product_id.id,
@@ -275,7 +298,6 @@ namespace Bamboo.Core.Application.Services
             //     'state': 'draft',
             //     'product_uom_qty': self.scrap_qty,
             //     'location_id': self.location_id.id,
-            //     'scrapped': True,
             //     'scrap_id': self.id,
             //     'location_dest_id': self.scrap_location_id.id,
             //     'move_line_ids': [(0, 0, {
@@ -326,8 +348,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
             // def action_validate(self):
             // self.ensure_one()
-            // if float_is_zero(self.scrap_qty,
-            //                  precision_rounding=self.product_uom_id.rounding):
+            // if self.product_uom_id.is_zero(self.scrap_qty):
             //     raise UserError(_('You can only enter positive quantities.'))
             // if self.check_available_qty():
             //     return self.do_scrap()

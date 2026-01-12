@@ -19,10 +19,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-create-from-template")]
+        public async Task<IActionResult> ActionCreateFromTemplateAsync(Guid id, [FromBody] ProjectProjectCreateFromTemplateRequestDto input)
+        {
+            var result = await _appService.CreateFromTemplateAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-create-invoice")]
         public async Task<IActionResult> ActionCreateInvoiceAsync(Guid id)
         {
             var result = await _appService.CreateInvoiceAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-create-template-from-project")]
+        public async Task<IActionResult> ActionCreateTemplateFromProjectAsync(Guid id)
+        {
+            var result = await _appService.CreateTemplateFromProjectAsync(id);
             return Ok(result);
         }
         
@@ -139,6 +155,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-toggle-project-template-mode")]
+        public async Task<IActionResult> ActionToggleProjectTemplateModeAsync(Guid id)
+        {
+            var result = await _appService.ToggleProjectTemplateModeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-undo-convert-to-template")]
+        public async Task<IActionResult> ActionUndoConvertToTemplateAsync(Guid id)
+        {
+            var result = await _appService.UndoConvertToTemplateAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-all-rating")]
         public async Task<IActionResult> ActionViewAllRatingAsync(Guid id)
         {
@@ -195,6 +227,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-view-tasks-from-project-milestone")]
+        public async Task<IActionResult> ActionViewTasksFromProjectMilestoneAsync(Guid id)
+        {
+            var result = await _appService.ViewTasksFromProjectMilestoneAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-timesheet")]
         public async Task<IActionResult> ActionViewTimesheetAsync(Guid id)
         {
@@ -203,10 +243,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/check-features-enabled")]
+        public async Task<IActionResult> CheckFeaturesEnabledAsync(Guid id, [FromBody] ProjectProjectCheckFeaturesEnabledRequestDto input)
+        {
+            var result = await _appService.CheckFeaturesEnabledAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectProjectCopyDataRequestDto input)
         {
             var result = await _appService.CopyDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/create-template-from-project-undo-callback")]
+        public async Task<IActionResult> CreateTemplateFromProjectUndoCallbackAsync(Guid id, [FromBody] ProjectProjectCreateTemplateFromProjectUndoCallbackRequestDto input)
+        {
+            var result = await _appService.CreateTemplateFromProjectUndoCallbackAsync(id, input);
             return Ok(result);
         }
         
@@ -251,6 +307,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-template-tasks")]
+        public async Task<IActionResult> GetTemplateTasksAsync(Guid id)
+        {
+            var result = await _appService.GetTemplateTasksAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/map-tasks")]
         public async Task<IActionResult> MapTasksAsync(Guid id, [FromBody] ProjectProjectMapTasksRequestDto input)
         {
@@ -279,6 +343,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ProjectUpdateAllActionAsync(Guid id)
         {
             var result = await _appService.ProjectUpdateAllActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/template-to-project-confirmation-callback")]
+        public async Task<IActionResult> TemplateToProjectConfirmationCallbackAsync(Guid id, [FromBody] ProjectProjectTemplateToProjectConfirmationCallbackRequestDto input)
+        {
+            var result = await _appService.TemplateToProjectConfirmationCallbackAsync(id, input);
             return Ok(result);
         }
         

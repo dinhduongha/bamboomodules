@@ -17,11 +17,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<OnboardingOnboardingStep> OpenStepCompanyDataAsync(Guid id);
         Task<OnboardingOnboardingStep> OpenStepCreateInvoiceAsync(Guid id);
         Task<OnboardingOnboardingStep> OpenStepFiscalYearAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepPaymentProviderAsync(Guid id);
         Task<OnboardingOnboardingStep> OpenStepSalesTaxAsync(Guid id);
         Task<OnboardingOnboardingStep> SetJustDoneAsync(Guid id);
         Task<OnboardingOnboardingStep> ValidateStepAsync(Guid id, OnboardingOnboardingStepValidateStepRequestDto input);
         Task<OnboardingOnboardingStep> ValidateStepBaseDocumentLayoutAsync(Guid id);
-        Task<OnboardingOnboardingStep> ValidateStepPaymentProviderAsync(Guid id);
     }
 }

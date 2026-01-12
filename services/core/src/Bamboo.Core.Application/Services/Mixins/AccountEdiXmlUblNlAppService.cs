@@ -24,15 +24,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ExportInvoiceEcosioSchematronsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        public async Task<TEntity> AddInvoicePaymentMeansNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _export_invoice_ecosio_schematrons(self):
-            // return {
-            //     'invoice': 'org.simplerinvoicing:invoice:2.0.3.3',
-            //     'credit_note': 'org.simplerinvoicing:creditnote:2.0.3.3',
-            // }
+            // def _add_invoice_payment_means_nodes(self, document_node, vals):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // super()._add_invoice_payment_means_nodes(document_node, vals)
+            // # [BR-NL-29] The use of a payment means text (cac:PaymentMeans/cbc:PaymentMeansCode/@name) is not recommended
+            // payment_means_node = document_node['cac:PaymentMeans']
+            // if 'name' in payment_means_node['cbc:PaymentMeansCode']:
+            //     payment_means_node['cbc:PaymentMeansCode']['name'] = None
+            // if 'listID' in payment_means_node['cbc:PaymentMeansCode']:
+            //     payment_means_node['cbc:PaymentMeansCode']['listID'] = None
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddInvoiceTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
+            // def _add_invoice_tax_total_nodes(self, document_node, vals):
+            // # OVERRIDE
+            // document_node['cac:TaxTotal'] = [
+            //     self._ubl_get_tax_total_node(vals, tax_total)
+            //     for tax_total in vals['_ubl_values']['tax_totals_currency'].values()
+            // ]
             */
             return default;
         }
@@ -47,85 +65,70 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ExportInvoiceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        public async Task<TEntity> GetAddressNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _export_invoice_vals(self, invoice):
+            // def _get_address_node(self, vals):
             // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._export_invoice_vals(invoice)
-            // 
-            // vals['vals']['customization_id'] = self._get_customization_ids()['nlcius']
-            // 
-            // # [BR-NL-24] Use of previous invoice date ( IssueDate ) is not recommended.
-            // # vals['vals'].pop('issue_date')  # careful, this causes other errors from the validator...
-            // 
-            // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineAllowanceValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object tax_values_list) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _get_invoice_line_allowance_vals_list(self, line, tax_values_list=None):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals_list = super()._get_invoice_line_allowance_vals_list(line, tax_values_list=tax_values_list)
-            // # [BR-NL-32] Use of Discount reason code ( AllowanceChargeReasonCode ) is not recommended.
-            // # [BR-EN-34] Use of Charge reason code ( AllowanceChargeReasonCode ) is not recommended.
-            // # Careful! [BR-42]-Each Invoice line allowance (BG-27) shall have an Invoice line allowance reason (BT-139)
-            // # or an Invoice line allowance reason code (BT-140).
-            // for vals in vals_list:
-            //     if vals.get('allowance_charge_reason'):
-            //         vals.pop('allowance_charge_reason_code')
-            // return vals_list
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoicePaymentMeansValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _get_invoice_payment_means_vals_list(self, invoice):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals_list = super()._get_invoice_payment_means_vals_list(invoice)
-            // # [BR-NL-29] The use of a payment means text (cac:PaymentMeans/cbc:PaymentMeansCode/@name) is not recommended
-            // for vals in vals_list:
-            //     vals.pop('payment_means_code_attrs', None)
-            // return vals_list
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _get_partner_address_vals(self, partner):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._get_partner_address_vals(partner)
+            // address_node = super()._get_address_node(vals)
             // # [BR-NL-28] The use of a country subdivision (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress
             // # /cbc:CountrySubentity) is not recommended
-            // vals.pop('country_subentity', None)
-            // return vals
+            // address_node['cbc:CountrySubentity'] = None
+            // return address_node
             */
             return default;
         }
 
-        public async Task<TEntity> GetTaxCategoryListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object taxes) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        public async Task<TEntity> GetCustomizationIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object process_type) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
-            // def _get_tax_category_list(self, customer, supplier, taxes):
+            // def _get_customization_id(self, process_type='billing'):
+            // if process_type == 'billing':
+            //     return 'urn:cen.eu:en16931:2017#compliant#urn:fdc:nen.nl:nlcius:v1.0'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
+            // def _ubl_add_values_tax_currency_code(self, vals):
+            // # OVERRIDE account.edi.xml.ubl_bis3
+            // self._ubl_add_values_tax_currency_code_empty(vals)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblDefaultTaxCategoryGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data, object vals, object currency) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
+            // def _ubl_default_tax_category_grouping_key(self, base_line, tax_data, vals, currency):
             // # EXTENDS account.edi.xml.ubl_bis3
-            // vals_list = super()._get_tax_category_list(customer, supplier, taxes)
-            // for tax in vals_list:
-            //     # [BR-NL-35] The use of a tax exemption reason code (cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory
-            //     # /cbc:TaxExemptionReasonCode) is not recommended
-            //     tax.pop('tax_exemption_reason_code', None)
-            // return vals_list
+            // grouping_key = super()._ubl_default_tax_category_grouping_key(base_line, tax_data, vals, currency)
+            // if not grouping_key:
+            //     return
+            // 
+            // grouping_key['tax_exemption_reason_code'] = None
+            // return grouping_key
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IAccountEdiXmlUblNlable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_nlcius.py) ---
+            // def _ubl_get_line_allowance_charge_discount_node(self, vals, discount_values):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // discount_node = super()._ubl_get_line_allowance_charge_discount_node(vals, discount_values)
+            // discount_node['cbc:AllowanceChargeReasonCode'] = None
+            // discount_node['cbc:MultiplierFactorNumeric'] = None
+            // discount_node['cbc:BaseAmount'] = None
+            // return discount_node
             */
             return default;
         }

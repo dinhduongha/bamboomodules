@@ -75,14 +75,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/is-running-test-suite")]
-        public async Task<IActionResult> IsRunningTestSuiteAsync(Guid id)
-        {
-            var result = await _appService.IsRunningTestSuiteAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/validate-warning-alerts")]
         public async Task<IActionResult> ValidateWarningAlertsAsync(Guid id)
         {

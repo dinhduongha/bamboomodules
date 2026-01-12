@@ -78,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
             // def action_clear_quantities(self):
-            // zeroed_lines = self.filtered(lambda l: l.state not in ['cancel', 'purchase', 'done'])
+            // zeroed_lines = self.filtered(lambda l: l.state not in ['cancel', 'purchase'])
             // zeroed_lines.write({'product_qty': 0})
             // if len(self) > len(zeroed_lines):
             //     return {
@@ -95,17 +95,42 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<PurchaseOrderLine> ComputeAllowedUomIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for line in self:
+            //     line.allowed_uom_ids = line.product_id.uom_id | line.product_id.uom_ids | line.product_id.seller_ids.product_uom_id
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrderLine> ComputeAmountInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_amount(self):
+            // AccountTax = self.env['account.tax']
             // for line in self:
+            //     company = line.company_id or self.env.company
             //     base_line = line._prepare_base_line_for_taxes_computation()
-            //     self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
-            //     line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            //     line.price_total = base_line['tax_details']['raw_total_included_currency']
+            //     AccountTax._add_tax_details_in_base_line(base_line, company)
+            //     AccountTax._round_base_lines_tax_details([base_line], company)
+            //     line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            //     line.price_total = base_line['tax_details']['total_included_currency']
             //     line.price_tax = line.price_total - line.price_subtotal
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> ComputeAmountToInvoiceAtDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_amount_to_invoice_at_date(self):
+            // for line in self:
+            //     line.amount_to_invoice_at_date = (line.qty_received_at_date - line.qty_invoiced_at_date) * line.price_unit
             */
             return default;
         }
@@ -118,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             // super()._compute_analytic_distribution()
             // ProjectProject = self.env['project.project']
             // for line in self:
-            //     project_id = line._context.get('project_id')
+            //     project_id = line.env.context.get('project_id')
             //     project = ProjectProject.browse(project_id) if project_id else line.order_id.project_id
             //     if line.display_type or not project:
             //         continue
@@ -169,6 +194,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrderLine> ComputeParentIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_parent_id(self):
+            // purchase_order_lines = set(self)
+            // for order, lines in self.grouped('order_id').items():
+            //     if not order:
+            //         lines.parent_id = False
+            //         continue
+            //     last_section = False
+            //     last_sub = False
+            //     for line in order.order_line.sorted('sequence'):
+            //         if line.display_type == 'line_section':
+            //             last_section = line
+            //             if line in purchase_order_lines:
+            //                 line.parent_id = False
+            //             last_sub = False
+            //         elif line.display_type == 'line_subsection':
+            //             if line in purchase_order_lines:
+            //                 line.parent_id = last_section
+            //             last_sub = line
+            //         elif line in purchase_order_lines:
+            //             line.parent_id = last_sub or last_section
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrderLine> ComputePriceTotalCcInternalAsync()
         {
             /*
@@ -186,33 +239,27 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_price_unit_and_date_planned_and_name(self):
             // for line in self:
-            //     if not line.product_id or line.invoice_lines or not line.company_id:
+            //     if not line.product_id or line.invoice_lines or not line.company_id or self.env.context.get('skip_uom_conversion') or (line.technical_price_unit != line.price_unit):
             //         continue
             //     params = line._get_select_sellers_params()
-            //     seller = line.product_id._select_seller(
-            //         partner_id=line.partner_id,
-            //         quantity=line.product_qty,
-            //         date=line.order_id.date_order and line.order_id.date_order.date() or fields.Date.context_today(line),
-            //         uom_id=line.product_uom,
-            //         params=params)
             // 
-            //     if seller or not line.date_planned:
-            //         line.date_planned = line._get_date_planned(seller).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            //     if line.selected_seller_id or not line.date_planned:
+            //         line.date_planned = line._get_date_planned(line.selected_seller_id).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             // 
             //     # If not seller, use the standard price. It needs a proper currency conversion.
-            //     if not seller:
-            //         line.discount = 0
+            //     if not line.selected_seller_id:
             //         unavailable_seller = line.product_id.seller_ids.filtered(
             //             lambda s: s.partner_id == line.order_id.partner_id)
-            //         if not unavailable_seller and line.price_unit and line.product_uom == line._origin.product_uom:
+            //         if not unavailable_seller and line.price_unit and line.product_uom_id == line._origin.product_uom_id:
             //             # Avoid to modify the price unit if there is no price list for this partner and
             //             # the line has already one to avoid to override unit price set manually.
             //             continue
-            //         po_line_uom = line.product_uom or line.product_id.uom_po_id
+            //         line.discount = 0
+            //         po_line_uom = line.product_uom_id or line.product_id.uom_id
             //         price_unit = line.env['account.tax']._fix_tax_included_price_company(
             //             line.product_id.uom_id._compute_price(line.product_id.standard_price, po_line_uom),
             //             line.product_id.supplier_taxes_id,
-            //             line.taxes_id,
+            //             line.tax_ids,
             //             line.company_id,
             //         )
             //         price_unit = line.product_id.cost_currency_id._convert(
@@ -222,14 +269,14 @@ namespace Bamboo.Core.Application.Services
             //             line.date_order or fields.Date.context_today(line),
             //             False
             //         )
-            //         line.price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
+            //         line.price_unit = line.technical_price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
             // 
-            //     elif seller:
-            //         price_unit = line.env['account.tax']._fix_tax_included_price_company(seller.price, line.product_id.supplier_taxes_id, line.taxes_id, line.company_id) if seller else 0.0
-            //         price_unit = seller.currency_id._convert(price_unit, line.currency_id, line.company_id, line.date_order or fields.Date.context_today(line), False)
+            //     elif line.selected_seller_id:
+            //         price_unit = line.env['account.tax']._fix_tax_included_price_company(line.selected_seller_id.price, line.product_id.supplier_taxes_id, line.tax_ids, line.company_id) if line.selected_seller_id else 0.0
+            //         price_unit = line.selected_seller_id.currency_id._convert(price_unit, line.currency_id, line.company_id, line.date_order or fields.Date.context_today(line), False)
             //         price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
-            //         line.price_unit = seller.product_uom._compute_price(price_unit, line.product_uom)
-            //         line.discount = seller.discount or 0.0
+            //         line.price_unit = line.technical_price_unit = line.selected_seller_id.product_uom_id._compute_price(price_unit, line.product_uom_id)
+            //         line.discount = line.selected_seller_id.discount or 0.0
             // 
             //     # record product names to avoid resetting custom descriptions
             //     default_names = []
@@ -240,7 +287,7 @@ namespace Bamboo.Core.Application.Services
             //         product_ctx = {'seller_id': vendor.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
             //         default_names.append(line._get_product_purchase_description(line.product_id.with_context(product_ctx)))
             //     if not line.name or line.name in default_names:
-            //         product_ctx = {'seller_id': seller.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
+            //         product_ctx = {'seller_id': line.selected_seller_id.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
             //         line.name = line._get_product_purchase_description(line.product_id.with_context(product_ctx))
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
             // def _compute_price_unit_and_date_planned_and_name(self):
@@ -249,27 +296,31 @@ namespace Bamboo.Core.Application.Services
             //     if pol.product_id.id not in pol.order_id.requisition_id.line_ids.product_id.ids:
             //         po_lines_without_requisition |= pol
             //         continue
-            //     for line in pol.order_id.requisition_id.line_ids:
-            //         if line.product_id == pol.product_id:
-            //             pol.price_unit = line.product_uom_id._compute_price(line.price_unit, pol.product_uom)
-            //             partner = pol.order_id.partner_id or pol.order_id.requisition_id.vendor_id
-            //             params = {'order_id': pol.order_id}
-            //             seller = pol.product_id._select_seller(
-            //                 partner_id=partner,
-            //                 quantity=pol.product_qty,
-            //                 date=pol.order_id.date_order and pol.order_id.date_order.date(),
-            //                 uom_id=line.product_uom_id,
-            //                 params=params)
             // 
-            //             if not pol.date_planned:
-            //                 pol.date_planned = pol._get_date_planned(seller).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            //     line = None
+            //     # Match the requisition line with exact UoM first, then product-only as fallback.
+            //     for req_line in pol.order_id.requisition_id.line_ids:
+            //         if req_line.product_id == pol.product_id:
+            //             line = req_line
+            //             if req_line.product_uom_id == pol.product_uom_id:
+            //                 break
             // 
-            //             product_ctx = {'seller_id': seller.id, 'lang': get_lang(pol.env, partner.lang).code}
-            //             name = pol._get_product_purchase_description(pol.product_id.with_context(product_ctx))
-            //             if line.product_description_variants:
-            //                 name += '\n' + line.product_description_variants
-            //             pol.name = name
-            //             break
+            //     pol.price_unit = line.product_uom_id._compute_price(line.price_unit, pol.product_uom_id)
+            //     partner = pol.order_id.partner_id or pol.order_id.requisition_id.vendor_id
+            //     params = {'order_id': pol.order_id}
+            //     seller = pol.product_id._select_seller(
+            //         partner_id=partner,
+            //         quantity=pol.product_qty,
+            //         date=pol.order_id.date_order and pol.order_id.date_order.date(),
+            //         uom_id=line.product_uom_id,
+            //         params=params)
+            //     if not pol.date_planned:
+            //         pol.date_planned = pol._get_date_planned(seller).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            //     product_ctx = {'seller_id': seller.id, 'lang': get_lang(pol.env, partner.lang).code}
+            //     name = pol._get_product_purchase_description(pol.product_id.with_context(product_ctx))
+            //     if line.product_description_variants:
+            //         name += '\n' + line.product_description_variants
+            //     pol.name = name
             // super(PurchaseOrderLine, po_lines_without_requisition)._compute_price_unit_and_date_planned_and_name()
             */
             return default;
@@ -286,51 +337,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrderLine> ComputeProductPackagingIdInternalAsync()
+        protected async Task<PurchaseOrderLine> ComputePriceUnitProductUomInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_packaging_id(self):
+            // def _compute_price_unit_product_uom(self):
             // for line in self:
-            //     # remove packaging if not match the product
-            //     if line.product_packaging_id.product_id != line.product_id:
-            //         line.product_packaging_id = False
-            //     # suggest biggest suitable packaging matching the PO's company
-            //     if line.product_id and line.product_qty and line.product_uom:
-            //         suggested_packaging = line.product_id.packaging_ids\
-            //                 .filtered(lambda p: p.purchase and (p.product_id.company_id <= p.company_id <= line.company_id))\
-            //                 ._find_suitable_product_packaging(line.product_qty, line.product_uom)
-            //         line.product_packaging_id = suggested_packaging or line.product_packaging_id
-            */
-            return default;
-        }
-
-        protected async Task<PurchaseOrderLine> ComputeProductPackagingQtyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_packaging_qty(self):
-            // self.product_packaging_qty = 0
-            // for line in self:
-            //     if not line.product_packaging_id:
-            //         continue
-            //     line.product_packaging_qty = line.product_packaging_id._compute_qty(line.product_qty, line.product_uom)
-            */
-            return default;
-        }
-
-        protected async Task<PurchaseOrderLine> ComputeProductQtyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_qty(self):
-            // for line in self:
-            //     if line.product_packaging_id:
-            //         packaging_uom = line.product_packaging_id.product_uom_id
-            //         qty_per_packaging = line.product_packaging_id.qty
-            //         product_qty = packaging_uom._compute_quantity(line.product_packaging_qty * qty_per_packaging, line.product_uom)
-            //         if float_compare(product_qty, line.product_qty, precision_rounding=line.product_uom.rounding) != 0:
-            //             line.product_qty = product_qty
+            //     line.price_unit_product_uom = not line.display_type and line.product_uom_id._compute_price(line.price_unit, line.product_id.uom_id)
             */
             return default;
         }
@@ -341,10 +354,38 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_product_uom_qty(self):
             // for line in self:
-            //     if line.product_id and line.product_id.uom_id != line.product_uom:
-            //         line.product_uom_qty = line.product_uom._compute_quantity(line.product_qty, line.product_id.uom_id)
+            //     if line.product_id and line.product_id.uom_id != line.product_uom_id:
+            //         line.product_uom_qty = line.product_uom_id._compute_quantity(line.product_qty, line.product_id.uom_id)
             //     else:
             //         line.product_uom_qty = line.product_qty
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> ComputePurchaseLineWarnMsgInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_purchase_line_warn_msg(self):
+            // has_warning_group = self.env.user.has_group('purchase.group_warning_purchase')
+            // for line in self:
+            //     line.purchase_line_warn_msg = line.product_id.purchase_line_warn_msg if has_warning_group else ""
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> ComputeQtyInvoicedAtDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_qty_invoiced_at_date(self):
+            // if not self._date_in_the_past():
+            //     for line in self:
+            //         line.qty_invoiced_at_date = line.qty_invoiced
+            //     return
+            // invoiced_quantities = self._prepare_qty_invoiced()
+            // for line in self:
+            //     line.qty_invoiced_at_date = invoiced_quantities[line]
             */
             return default;
         }
@@ -354,19 +395,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_qty_invoiced(self):
+            // invoiced_quantities = self._prepare_qty_invoiced()
             // for line in self:
-            //     # compute qty_invoiced
-            //     qty = 0.0
-            //     for inv_line in line._get_invoice_lines():
-            //         if inv_line.move_id.state not in ['cancel'] or inv_line.move_id.payment_state == 'invoicing_legacy':
-            //             if inv_line.move_id.move_type == 'in_invoice':
-            //                 qty += inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom)
-            //             elif inv_line.move_id.move_type == 'in_refund':
-            //                 qty -= inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom)
-            //     line.qty_invoiced = qty
+            //     line.qty_invoiced = invoiced_quantities[line]
             // 
             //     # compute qty_to_invoice
-            //     if line.order_id.state in ['purchase', 'done']:
+            //     if line.order_id.state == 'purchase':
             //         if line.product_id.purchase_method == 'purchase':
             //             line.qty_to_invoice = line.product_qty - line.qty_invoiced
             //         else:
@@ -377,68 +411,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrderLine> ComputeQtyReceivedAtDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_qty_received_at_date(self):
+            // if not self._date_in_the_past():
+            //     for line in self:
+            //         line.qty_received_at_date = line.qty_received
+            //     return
+            // received_quantities = self._prepare_qty_received()
+            // for line in self:
+            //     line.qty_received_at_date = received_quantities[line]
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrderLine> ComputeQtyReceivedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_qty_received(self):
+            // received_qties = self._prepare_qty_received()
             // for line in self:
-            //     if line.qty_received_method == 'manual':
-            //         line.qty_received = line.qty_received_manual or 0.0
-            //     else:
-            //         line.qty_received = 0.0
-            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
-            // def _compute_qty_received(self):
-            // kit_lines = self.env['purchase.order.line']
-            // lines_stock = self.filtered(lambda l: l.qty_received_method == 'stock_moves' and l.move_ids and l.state != 'cancel')
-            // product_by_company = defaultdict(OrderedSet)
-            // for line in lines_stock:
-            //     product_by_company[line.company_id].add(line.product_id.id)
-            // kits_by_company = {
-            //     company: self.env['mrp.bom']._bom_find(self.env['product.product'].browse(product_ids), company_id=company.id, bom_type='phantom')
-            //     for company, product_ids in product_by_company.items()
-            // }
-            // for line in lines_stock:
-            //     kit_bom = kits_by_company[line.company_id].get(line.product_id)
-            //     if kit_bom:
-            //         moves = line.move_ids.filtered(lambda m: m.state == 'done' and not m.scrapped)
-            //         order_qty = line.product_uom._compute_quantity(line.product_uom_qty, kit_bom.product_uom_id)
-            //         filters = {
-            //             'incoming_moves': lambda m:
-            //                 m._is_incoming() and
-            //                 (not m.origin_returned_move_id or (m.origin_returned_move_id and m.to_refund)),
-            //             'outgoing_moves': lambda m:
-            //                 m._is_outgoing() and m.to_refund,
-            //         }
-            //         line.qty_received = moves._compute_kit_quantities(line.product_id, order_qty, kit_bom, filters)
-            //         kit_lines += line
-            // super(PurchaseOrderLine, self - kit_lines)._compute_qty_received()
+            //     if not line.qty_received or line in received_qties:
+            //         line.qty_received = received_qties[line]
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
             // def _compute_qty_received(self):
-            // from_stock_lines = self.filtered(lambda order_line: order_line.qty_received_method == 'stock_moves')
-            // super(PurchaseOrderLine, self - from_stock_lines)._compute_qty_received()
-            // for line in self:
-            //     if line.qty_received_method == 'stock_moves':
-            //         total = 0.0
-            //         # In case of a BOM in kit, the products delivered do not correspond to the products in
-            //         # the PO. Therefore, we can skip them since they will be handled later on.
-            //         for move in line._get_po_line_moves():
-            //             if move.state == 'done':
-            //                 if move._is_purchase_return():
-            //                     if not move.origin_returned_move_id or move.to_refund:
-            //                         total -= move.product_uom._compute_quantity(move.quantity, line.product_uom, rounding_method='HALF-UP')
-            //                 elif move.origin_returned_move_id and move.origin_returned_move_id._is_dropshipped() and not move._is_dropshipped_returned():
-            //                     # Edge case: the dropship is returned to the stock, no to the supplier.
-            //                     # In this case, the received quantity on the PO is set although we didn't
-            //                     # receive the product physically in our stock. To avoid counting the
-            //                     # quantity twice, we do nothing.
-            //                     pass
-            //                 elif move.origin_returned_move_id and move.origin_returned_move_id._is_purchase_return() and not move.to_refund:
-            //                     pass
-            //                 else:
-            //                     total += move.product_uom._compute_quantity(move.quantity, line.product_uom, rounding_method='HALF-UP')
-            //         line._track_qty_received(total)
-            //         line.qty_received = total
+            // super()._compute_qty_received()
             */
             return default;
         }
@@ -463,6 +463,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrderLine> ComputeSelectedSellerIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_selected_seller_id(self):
+            // for line in self:
+            //     if line.product_id:
+            //         params = line._get_select_sellers_params()
+            //         seller = line.product_id._select_seller(
+            //             partner_id=line.partner_id,
+            //             quantity=abs(line.product_qty),
+            //             date=line.order_id.date_order and line.order_id.date_order.date() or fields.Date.context_today(line),
+            //             uom_id=line.product_uom_id,
+            //             params=params)
+            //         line.selected_seller_id = seller.id if seller else False
+            //     else:
+            //         line.selected_seller_id = False
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrderLine> ComputeTaxIdInternalAsync()
         {
             /*
@@ -473,7 +494,7 @@ namespace Bamboo.Core.Application.Services
             //     fpos = line.order_id.fiscal_position_id or line.order_id.fiscal_position_id._get_fiscal_position(line.order_id.partner_id)
             //     # filter taxes by company
             //     taxes = line.product_id.supplier_taxes_id._filter_taxes_by_company(line.company_id)
-            //     line.taxes_id = fpos.map_tax(taxes)
+            //     line.tax_ids = fpos.map_tax(taxes)
             */
             return default;
         }
@@ -503,9 +524,11 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // for values in vals_list:
             //     if values.get('display_type', self.default_get(['display_type'])['display_type']):
-            //         values.update(product_id=False, price_unit=0, product_uom_qty=0, product_uom=False, date_planned=False)
+            //         values.update(product_id=False, price_unit=0, product_uom_qty=0, product_uom_id=False, date_planned=False)
             //     else:
             //         values.update(self._prepare_add_missing_fields(values))
+            //     if values.get('price_unit') and not values.get('technical_price_unit'):
+            //         values['technical_price_unit'] = values['price_unit']
             // 
             // lines = super().create(vals_list)
             // for line in lines:
@@ -515,7 +538,7 @@ namespace Bamboo.Core.Application.Services
             // return lines
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
             // def create(self, vals_list):
-            // lines = super(PurchaseOrderLine, self).create(vals_list)
+            // lines = super().create(vals_list)
             // lines.filtered(lambda l: l.order_id.state == 'purchase')._create_or_update_picking()
             // return lines
             */
@@ -529,21 +552,20 @@ namespace Bamboo.Core.Application.Services
             // def _create_or_update_picking(self):
             // for line in self:
             //     if line.product_id and line.product_id.type == 'consu':
-            //         rounding = line.product_uom.rounding
-            //         # Prevent decreasing below received quantity
-            //         if float_compare(line.product_qty, line.qty_received, precision_rounding=rounding) < 0:
-            //             raise UserError(_('You cannot decrease the ordered quantity below the received quantity.\n'
-            //                               'Create a return first.'))
-            // 
+            //         rounding = line.product_uom_id.rounding
             //         if float_compare(line.product_qty, line.qty_invoiced, precision_rounding=rounding) < 0 and line.invoice_lines:
             //             # If the quantity is now below the invoiced quantity, create an activity on the vendor bill
             //             # inviting the user to create a refund.
             //             line.invoice_lines[0].move_id.activity_schedule(
             //                 'mail.mail_activity_data_warning',
-            //                 note=_('The quantities on your purchase order indicate less than billed. You should ask for a refund.'))
+            //                 note=_('The quantities on your purchase order indicate less than billed. You should ask for a refund.'),
+            //                 user_id=self.env.uid,
+            //             )
             // 
             //         # If the user increased quantity of existing line or created a new line
             //         # Give priority to the pickings related to the line
+            //         moves_to_assign = line.order_id.picking_ids.move_ids.filtered(lambda m: not m.purchase_line_id and line.product_id == m.product_id)
+            //         moves_to_assign.purchase_line_id = line.id
             //         line_pickings = line.move_ids.picking_id.filtered(lambda p: p.state not in ('done', 'cancel') and p.location_dest_id.usage in ('internal', 'transit', 'customer'))
             //         if line_pickings:
             //             picking = line_pickings[0]
@@ -571,9 +593,21 @@ namespace Bamboo.Core.Application.Services
             // for line in self.filtered(lambda l: not l.display_type):
             //     for val in line._prepare_stock_moves(picking):
             //         values.append(val)
-            //     line.move_dest_ids.created_purchase_line_ids = [Command.clear()]
             // 
             // return self.env['stock.move'].create(values)
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> DateInThePastInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _date_in_the_past(self):
+            // if not 'accrual_entry_date' in self.env.context:
+            //     return False
+            // accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
+            // return accrual_date < fields.Date.today()
             */
             return default;
         }
@@ -592,7 +626,8 @@ namespace Bamboo.Core.Application.Services
             //     description_picking = values['product_description_variants']
             // lines = self.filtered(
             //     lambda l: l.propagate_cancel == values['propagate_cancel']
-            //     and (l.orderpoint_id == values['orderpoint_id'] if values['orderpoint_id'] and not values['move_dest_ids'] else True)
+            //     and (l.orderpoint_id in [values['orderpoint_id'], False] if values['orderpoint_id'] and not values['move_dest_ids'] else True)
+            //     and (l.product_uom_id == product_uom if values.get('force_uom') else True)
             // )
             // 
             // # In case 'product_description_variants' is in the values, we also filter on the PO line
@@ -608,16 +643,15 @@ namespace Bamboo.Core.Application.Services
             //     if product_lang.description_purchase:
             //         name += '\n' + product_lang.description_purchase
             //     lines = lines.filtered(lambda l: (l.name == name + '\n' + description_picking) or (values.get('product_description_variants') in (product_lang.name, product_id.with_user(SUPERUSER_ID).name) and l.name == name))
-            //     if lines:
-            //         return lines[0]
-            // 
-            // return lines and lines[0] or self.env['purchase.order.line']
+            // return lines and lines.sorted(lambda l: l.orderpoint_id)[0] or self.env['purchase.order.line']
             --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: purchase_order.py) ---
             // def _find_candidate(self, product_id, product_qty, product_uom, location_id, name, origin, company_id, values):
             // # if this is defined, this is a dropshipping line, so no
             // # this is to correctly map delivered quantities to the so lines
-            // lines = self.filtered(lambda po_line: po_line.sale_line_id.id == values['sale_line_id']) if values.get('sale_line_id') else self
-            // return super(PurchaseOrderLine, lines)._find_candidate(product_id, product_qty, product_uom, location_id, name, origin, company_id, values)
+            // if not values.get('move_dest_ids') and values.get('sale_line_id'):
+            //     lines = self.filtered(lambda po_line: po_line.sale_line_id.id == values['sale_line_id'])
+            //     return super(PurchaseOrderLine, lines)._find_candidate(product_id, product_qty, product_uom, location_id, name, origin, company_id, values)
+            // return super()._find_candidate(product_id, product_qty, product_uom, location_id, name, origin, company_id, values)
             */
             return default;
         }
@@ -656,17 +690,17 @@ namespace Bamboo.Core.Application.Services
             // price_unit = self.price_unit
             // if self.discount:
             //     price_unit = price_unit * (1 - self.discount / 100)
-            // if self.taxes_id:
+            // if self.tax_ids:
             //     qty = self.product_qty or 1
-            //     price_unit = self.taxes_id.compute_all(
+            //     price_unit = self.tax_ids.compute_all(
             //         price_unit,
             //         currency=self.order_id.currency_id,
             //         quantity=qty,
             //         rounding_method='round_globally',
             //     )['total_void']
             //     price_unit = price_unit / qty
-            // if self.product_uom.id != self.product_id.uom_id.id:
-            //     price_unit *= self.product_uom.factor / self.product_id.uom_id.factor
+            // if self.product_uom_id.id != self.product_id.uom_id.id:
+            //     price_unit *= self.product_id.uom_id.factor / self.product_uom_id.factor
             // return price_unit
             */
             return default;
@@ -678,9 +712,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _get_invoice_lines(self):
             // self.ensure_one()
-            // if self._context.get('accrual_entry_date'):
+            // if self.env.context.get('accrual_entry_date'):
+            //     accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
             //     return self.invoice_lines.filtered(
-            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= self._context['accrual_entry_date']
+            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= accrual_date
             //     )
             // else:
             //     return self.invoice_lines
@@ -702,7 +737,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_move_dests_initial_demand(self, move_dests):
             // return self.product_id.uom_id._compute_quantity(
             //     sum(move_dests.filtered(lambda m: m.state != 'cancel' and m.location_dest_id.usage != 'supplier').mapped('product_qty')),
-            //     self.product_uom, rounding_method='HALF-UP')
+            //     self.product_uom_id, rounding_method='HALF-UP')
             */
             return default;
         }
@@ -715,7 +750,7 @@ namespace Bamboo.Core.Application.Services
             // outgoing_moves = self.env['stock.move']
             // incoming_moves = self.env['stock.move']
             // 
-            // for move in self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and self.product_id == r.product_id):
+            // for move in self.move_ids.filtered(lambda r: r.state != 'cancel' and r.location_dest_usage != 'inventory' and self.product_id == r.product_id):
             //     if move._is_purchase_return() and (move.to_refund or not move.origin_returned_move_id):
             //         outgoing_moves |= move
             //     elif move.location_dest_id.usage != "supplier":
@@ -727,23 +762,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrderLine> GetPoLineInvoiceLinesSuInternalAsync()
+        public async Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
-            // def _get_po_line_invoice_lines_su(self):
-            // #TODO remove in master: un-used
-            // return self.sudo().invoice_lines
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: purchase.py) ---
-            // def _get_po_line_invoice_lines_su(self):
-            // #TODO remove in master: un-used
-            // po_line_invoices_lines = super()._get_po_line_invoice_lines_su()
-            // move = self.sudo().invoice_lines.move_id
-            // if move.landed_costs_ids.filtered(lambda lc: lc.state == 'done'):
-            //     return po_line_invoices_lines | move.line_ids.filtered('is_landed_costs_line')
-            // return po_line_invoices_lines
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def get_parent_section_line(self):
+            // if not self.display_type and self.parent_id.display_type == 'line_subsection':
+            //     return self.parent_id.parent_id
+            // 
+            // return self.parent_id
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseOrderLine> GetPoLineMovesInternalAsync()
@@ -753,8 +782,9 @@ namespace Bamboo.Core.Application.Services
             // def _get_po_line_moves(self):
             // self.ensure_one()
             // moves = self.move_ids.filtered(lambda m: m.product_id == self.product_id)
-            // if self._context.get('accrual_entry_date'):
-            //     moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= self._context['accrual_entry_date'])
+            // if self.env.context.get('accrual_entry_date'):
+            //     accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
+            //     moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= accrual_date)
             // return moves
             */
             return default;
@@ -774,8 +804,7 @@ namespace Bamboo.Core.Application.Services
             // the product is read-only or not.
             // 
             // A product is considered read-only if the order is considered read-only (see
-            // ``PurchaseOrder._is_readonly`` for more details) or if `self` contains multiple records
-            // or if it has purchase_line_warn == "block".
+            // ``PurchaseOrder._is_readonly`` for more details) or if `self` contains multiple records.
             // 
             // Note: This method cannot be called with multiple records that have different products linked.
             // 
@@ -786,43 +815,27 @@ namespace Bamboo.Core.Application.Services
             //         'quantity': float,
             //         'price': float,
             //         'readOnly': bool,
-            //         'uom': dict,
-            //         'purchase_uom': dict,
+            //         'uomDisplayName': String,
             //         'packaging': dict,
             //         'warning': String,
             //     }
             // """
             // if len(self) == 1:
             //     catalog_info = self.order_id._get_product_price_and_data(self.product_id)
-            //     uom = {
-            //         'display_name': self.product_id.uom_id.display_name,
-            //         'id': self.product_id.uom_id.id,
-            //     }
             //     catalog_info.update(
             //         quantity=self.product_qty,
             //         price=self.price_unit * (1 - self.discount / 100),
             //         readOnly=self.order_id._is_readonly(),
-            //         uom=uom,
             //     )
-            //     if self.product_id.uom_id != self.product_uom:
-            //         catalog_info['purchase_uom'] = {
-            //         'display_name': self.product_uom.display_name,
-            //         'id': self.product_uom.id,
-            //     }
-            //     if self.product_packaging_id:
-            //         packaging = self.product_packaging_id
-            //         catalog_info['packaging'] = {
-            //             'id': packaging.id,
-            //             'name': packaging.display_name,
-            //             'qty': packaging.product_uom_id._compute_quantity(packaging.qty, self.product_uom),
-            //         }
+            //     if self.product_id.uom_id != self.product_uom_id:
+            //         catalog_info['uomDisplayName'] = self.product_uom_id.display_name
             //     return catalog_info
             // elif self:
             //     self.product_id.ensure_one()
             //     order_line = self[0]
             //     catalog_info = order_line.order_id._get_product_price_and_data(order_line.product_id)
             //     catalog_info['quantity'] = sum(self.mapped(
-            //         lambda line: line.product_uom._compute_quantity(
+            //         lambda line: line.product_uom_id._compute_quantity(
             //             qty=line.product_qty,
             //             to_unit=line.product_id.uom_id,
             //     )))
@@ -876,11 +889,24 @@ namespace Bamboo.Core.Application.Services
             // outgoing_moves, incoming_moves = self._get_outgoing_incoming_moves()
             // for move in outgoing_moves:
             //     qty_to_compute = move.quantity if move.state == 'done' else move.product_uom_qty
-            //     qty -= move.product_uom._compute_quantity(qty_to_compute, self.product_uom, rounding_method='HALF-UP')
+            //     qty -= move.product_uom._compute_quantity(qty_to_compute, self.product_uom_id, rounding_method='HALF-UP')
             // for move in incoming_moves:
             //     qty_to_compute = move.quantity if move.state == 'done' else move.product_uom_qty
-            //     qty += move.product_uom._compute_quantity(qty_to_compute, self.product_uom, rounding_method='HALF-UP')
+            //     qty += move.product_uom._compute_quantity(qty_to_compute, self.product_uom_id, rounding_method='HALF-UP')
             // return qty
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> GetSaleOrderLineProductInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
+            // def _get_sale_order_line_product(self):
+            // return False
+            --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: purchase_order.py) ---
+            // def _get_sale_order_line_product(self):
+            // return self.sale_line_id.product_id
             */
             return default;
         }
@@ -893,6 +919,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return {
             //     "order_id": self.order_id,
+            //     "force_uom": True,
             // }
             */
             return default;
@@ -905,11 +932,11 @@ namespace Bamboo.Core.Application.Services
             // def _get_stock_move_price_unit(self):
             // self.ensure_one()
             // order = self.order_id
-            // price_unit = self.price_unit
+            // price_unit = self.price_unit_discounted
             // price_unit_prec = self.env['decimal.precision'].precision_get('Product Price')
-            // if self.taxes_id:
+            // if self.tax_ids:
             //     qty = self.product_qty or 1
-            //     price_unit = self.taxes_id.compute_all(
+            //     price_unit = self.tax_ids.compute_all(
             //         price_unit,
             //         currency=self.order_id.currency_id,
             //         quantity=qty,
@@ -918,11 +945,13 @@ namespace Bamboo.Core.Application.Services
             //         rounding_method="round_globally",
             //     )['total_void']
             //     price_unit = price_unit / qty
-            // if self.product_uom.id != self.product_id.uom_id.id:
-            //     price_unit *= self.product_uom.factor / self.product_id.uom_id.factor
+            // if self.product_uom_id.id != self.product_id.uom_id.id:
+            //     price_unit /= self.product_uom_id.factor
+            //     price_unit *= self.product_id.uom_id.factor
             // if order.currency_id != order.company_id.currency_id:
+            //     conversion_date = self.env.context.get('conversion_date', self.date_order) or fields.Date.today()
             //     price_unit = order.currency_id._convert(
-            //         price_unit, order.company_id.currency_id, self.company_id, self.date_order or fields.Date.today(), round=False)
+            //         price_unit, order.company_id.currency_id, self.company_id, conversion_date, round=False)
             // return float_round(price_unit, precision_digits=price_unit_prec)
             */
             return default;
@@ -956,6 +985,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrderLine> IsDropshippedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: purchase.py) ---
+            // def _is_dropshipped(self):
+            // return self.order_id._is_dropshipped()
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrderLine> MergePoLineInternalAsync(object rfq_line)
         {
             /*
@@ -981,63 +1020,13 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // # Reset date, price and quantity since _onchange_quantity will provide default values
-            // self.price_unit = self.product_qty = 0.0
+            // self.price_unit = self.product_qty = self.technical_price_unit = 0.0
             // 
             // self._product_id_change()
             // 
             // self._suggest_quantity()
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<PurchaseOrderLine> OnchangeProductIdWarningAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def onchange_product_id_warning(self):
-            // if not self.product_id or not self.env.user.has_group('purchase.group_warning_purchase'):
-            //     return
-            // warning = {}
-            // title = False
-            // message = False
-            // 
-            // product_info = self.product_id
-            // 
-            // if product_info.purchase_line_warn != 'no-message':
-            //     title = _("Warning for %s", product_info.name)
-            //     message = product_info.purchase_line_warn_msg
-            //     warning['title'] = title
-            //     warning['message'] = message
-            //     if product_info.purchase_line_warn == 'block':
-            //         self.product_id = False
-            //     return {'warning': warning}
-            // return {}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<PurchaseOrderLine> OnchangeProductPackagingIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _onchange_product_packaging_id(self):
-            // if self.product_packaging_id and self.product_qty:
-            //     newqty = self.product_packaging_id._check_qty(self.product_qty, self.product_uom, "UP")
-            //     if float_compare(newqty, self.product_qty, precision_rounding=self.product_uom.rounding) != 0:
-            //         return {
-            //             'warning': {
-            //                 'title': _('Warning'),
-            //                 'message': _(
-            //                     "This product is packaged by %(pack_size).2f %(pack_name)s. You should purchase %(quantity).2f %(unit)s.",
-            //                     pack_size=self.product_packaging_id.qty,
-            //                     pack_name=self.product_id.uom_id.name,
-            //                     quantity=newqty,
-            //                     unit=self.product_uom.name
-            //                 ),
-            //             },
-            //         }
-            */
-            return default;
         }
 
         protected async Task<PurchaseOrderLine> OndeleteStockMovesInternalAsync()
@@ -1088,11 +1077,11 @@ namespace Bamboo.Core.Application.Services
             //     'display_type': self.display_type or 'product',
             //     'name': self.env['account.move.line']._get_journal_items_full_name(self.name, self.product_id.display_name),
             //     'product_id': self.product_id.id,
-            //     'product_uom_id': self.product_uom.id,
-            //     'quantity': self.qty_to_invoice,
+            //     'product_uom_id': self.product_uom_id.id,
+            //     'quantity': -self.qty_to_invoice if move and move.move_type == 'in_refund' else self.qty_to_invoice,
             //     'discount': self.discount,
             //     'price_unit': self.currency_id._convert(self.price_unit, aml_currency, self.company_id, date, round=False),
-            //     'tax_ids': [(6, 0, self.taxes_id.ids)],
+            //     'tax_ids': [(6, 0, self.tax_ids.ids)],
             //     'purchase_line_id': self.id,
             //     'is_downpayment': self.is_downpayment,
             // }
@@ -1101,8 +1090,14 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_account_move_line(self, move=False):
             // res = super()._prepare_account_move_line(move=move)
             // if 'balance' not in res:
+            //     total_wo_tax = self.tax_ids.with_context(round=False, round_base=False).compute_all(
+            //         self.price_unit_discounted,
+            //         currency=self.order_id.currency_id,
+            //         quantity=self.qty_to_invoice,
+            //         product=self.product_id
+            //     )['total_excluded']
             //     res['balance'] = self.currency_id._convert(
-            //         self.price_unit_discounted * self.qty_to_invoice,
+            //         total_wo_tax,
             //         self.company_id.currency_id,
             //         round=False,
             //     )
@@ -1123,7 +1118,7 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_add_missing_fields(self, values):
             // """ Deduce missing required fields from the onchange """
             // res = {}
-            // onchange_fields = ['name', 'price_unit', 'product_qty', 'product_uom', 'taxes_id', 'date_planned']
+            // onchange_fields = ['name', 'price_unit', 'product_qty', 'product_uom_id', 'tax_ids', 'date_planned']
             // if values.get('order_id') and values.get('product_id') and any(f not in values for f in onchange_fields):
             //     line = self.new(values)
             //     line.onchange_product_id()
@@ -1146,13 +1141,15 @@ namespace Bamboo.Core.Application.Services
             // :return: A python dictionary.
             // """
             // self.ensure_one()
+            // company = self.order_id.company_id or self.env.company
             // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //     self,
-            //     tax_ids=self.taxes_id,
+            //     tax_ids=self.tax_ids,
             //     quantity=self.product_qty,
             //     partner_id=self.order_id.partner_id,
-            //     currency_id=self.order_id.currency_id or self.order_id.company_id.currency_id,
+            //     currency_id=self.order_id.currency_id or company.currency_id,
             //     rate=self.order_id.currency_rate,
+            //     name=self.name,
             // )
             */
             return default;
@@ -1167,62 +1164,79 @@ namespace Bamboo.Core.Application.Services
             // if values.get('product_description_variants'):
             //     line_description = values['product_description_variants']
             // supplier = values.get('supplier')
-            // res = self._prepare_purchase_order_line(product_id, product_qty, product_uom, company_id, supplier, po)
+            // if not values.get('force_uom') and supplier.product_uom_id != product_uom:
+            //     product_qty = product_uom._compute_quantity(product_qty, supplier.product_uom_id)
+            //     product_uom = supplier.product_uom_id
+            // res = self.with_context(procurement_values=values)._prepare_purchase_order_line(product_id, product_qty, product_uom, company_id, supplier.partner_id, po)
             // # We need to keep the vendor name set in _prepare_purchase_order_line. To avoid redundancy
             // # in the line name, we add the line_description only if different from the product name.
             // # This way, we shoud not lose any valuable information.
             // if line_description and product_id.name != line_description:
-            //     res['name'] += '\n' + line_description
+            //     res['name'] = (res['name'] + '\n' + line_description).strip()
             // res['date_planned'] = values.get('date_planned')
+            // # The date must be day before or equal at the supplier target day
+            // if po.partner_id.group_rfq == 'week' and po.partner_id.group_on != 'default':
+            //     delta_days = (7 + int(po.partner_id.group_on) - res['date_planned'].isoweekday()) % 7
+            //     res['date_planned'] = fields.Datetime.to_datetime(res['date_planned']) + relativedelta(days=delta_days)
+            //     if not po.date_planned or po.date_planned >= res['date_planned']:
+            //         # date_order was computed based on procurement date_planned. If the PO date_planned is
+            //         # shifted, we also need to shift the date_order.
+            //         po.date_order = fields.Datetime.to_datetime(po.date_order) + relativedelta(days=delta_days)
             // res['move_dest_ids'] = [(4, x.id) for x in values.get('move_dest_ids', [])]
             // res['location_final_id'] = location_dest_id.id
             // res['orderpoint_id'] = values.get('orderpoint_id', False) and values.get('orderpoint_id').id
             // res['propagate_cancel'] = values.get('propagate_cancel')
             // res['product_description_variants'] = values.get('product_description_variants')
             // res['product_no_variant_attribute_value_ids'] = values.get('never_product_template_attribute_value_ids')
-            // 
-            // # Need to attach purchase order to procurement group for mtso
-            // group = values.get('group_id')
-            // if group and not res['move_dest_ids']:
-            //     res['group_id'] = values['group_id'].id
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: purchase_order.py) ---
             // def _prepare_purchase_order_line_from_procurement(self, product_id, product_qty, product_uom, location_dest_id, name, origin, company_id, values, po):
             // res = super()._prepare_purchase_order_line_from_procurement(product_id, product_qty, product_uom, location_dest_id, name, origin, company_id, values, po)
-            // res['sale_line_id'] = values.get('sale_line_id', False)
+            // # only set the sale line id in case of a dropshipping
+            // if not values.get('move_dest_ids'):
+            //     res['sale_line_id'] = values.get('sale_line_id', False)
             // return res
             */
             return default;
         }
 
-        protected async Task<PurchaseOrderLine> PreparePurchaseOrderLineInternalAsync(Guid product_id, object product_qty, object product_uom, Guid company_id, object supplier, object po)
+        protected async Task<PurchaseOrderLine> PreparePurchaseOrderLineInternalAsync(Guid product_id, object product_qty, object product_uom, Guid company_id, Guid partner_id, object po)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
-            // partner = supplier.partner_id
-            // uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id, rounding_method='HALF-UP')
+            // def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, partner_id, po):
+            // values = self.env.context.get('procurement_values', {})
+            // uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_id, rounding_method='HALF-UP')
             // # _select_seller is used if the supplier have different price depending
             // # the quantities ordered.
             // today = fields.Date.today()
             // seller = product_id.with_company(company_id)._select_seller(
-            //     partner_id=partner,
-            //     quantity=uom_po_qty,
+            //     partner_id=partner_id,
+            //     quantity=product_qty if values.get('force_uom') else uom_po_qty,
             //     date=po.date_order and max(po.date_order.date(), today) or today,
-            //     uom_id=product_id.uom_po_id)
+            //     uom_id=product_uom if values.get('force_uom') else product_id.uom_id,
+            //     params={'force_uom': values.get('force_uom')}
+            // )
+            // if seller and (seller.product_uom_id or seller.product_tmpl_id.uom_id) != product_uom:
+            //     uom_po_qty = product_id.uom_id._compute_quantity(uom_po_qty, seller.product_uom_id, rounding_method='HALF-UP')
             // 
-            // product_taxes = product_id.supplier_taxes_id.filtered(lambda x: x.company_id in company_id.parent_ids)
+            // tax_domain = self.env['account.tax']._check_company_domain(company_id)
+            // product_taxes = product_id.supplier_taxes_id.filtered_domain(tax_domain)
             // taxes = po.fiscal_position_id.map_tax(product_taxes)
             // 
-            // price_unit = self.env['account.tax']._fix_tax_included_price_company(
-            //     seller.price, product_taxes, taxes, company_id) if seller else 0
+            // if seller:
+            //     price_unit = (seller.product_uom_id._compute_price(seller.price, product_uom) if product_uom else seller.price)
+            //     price_unit = self.env['account.tax']._fix_tax_included_price_company(
+            //     price_unit, product_taxes, taxes, company_id)
+            // else:
+            //     price_unit = 0
             // if price_unit and seller and po.currency_id and seller.currency_id != po.currency_id:
             //     price_unit = seller.currency_id._convert(
             //         price_unit, po.currency_id, po.company_id, po.date_order or fields.Date.today())
             // 
             // product_lang = product_id.with_prefetch().with_context(
-            //     lang=partner.lang,
-            //     partner_id=partner.id,
+            //     lang=partner_id.lang,
+            //     partner_id=partner_id.id,
             // )
             // name = product_lang.with_context(seller_id=seller.id).display_name
             // if product_lang.description_purchase:
@@ -1233,15 +1247,106 @@ namespace Bamboo.Core.Application.Services
             // 
             // return {
             //     'name': name,
-            //     'product_qty': uom_po_qty,
+            //     'product_qty': product_qty if product_uom else uom_po_qty,
             //     'product_id': product_id.id,
-            //     'product_uom': product_id.uom_po_id.id,
+            //     'product_uom_id': product_uom.id or seller.product_uom_id.id,
             //     'price_unit': price_unit,
             //     'date_planned': date_planned,
-            //     'taxes_id': [(6, 0, taxes.ids)],
+            //     'tax_ids': [(6, 0, taxes.ids)],
             //     'order_id': po.id,
             //     'discount': discount,
             // }
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> PrepareQtyInvoicedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _prepare_qty_invoiced(self):
+            // # Compute qty_invoiced
+            // invoiced_qties = defaultdict(float)
+            // for line in self:
+            //     for inv_line in line._get_invoice_lines():
+            //         if inv_line.move_id.state not in ['cancel'] or inv_line.move_id.payment_state == 'invoicing_legacy':
+            //             if inv_line.move_id.move_type == 'in_invoice':
+            //                 invoiced_qties[line] += inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom_id)
+            //             elif inv_line.move_id.move_type == 'in_refund':
+            //                 invoiced_qties[line] -= inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom_id)
+            // return invoiced_qties
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrderLine> PrepareQtyReceivedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _prepare_qty_received(self):
+            // received_qties = defaultdict(float)
+            // for line in self:
+            //     if line.qty_received_method == 'manual':
+            //         received_qties[line] = line.qty_received_manual or 0.0
+            //     else:
+            //         received_qties[line] = 0.0
+            // return received_qties
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
+            // def _prepare_qty_received(self):
+            // kit_invoiced_qties = defaultdict(float)
+            // kit_lines = self.env['purchase.order.line']
+            // lines_stock = self.filtered(lambda l: l.qty_received_method == 'stock_moves' and l.move_ids and l.state != 'cancel')
+            // product_by_company = defaultdict(OrderedSet)
+            // for line in lines_stock:
+            //     product_by_company[line.company_id].add(line.product_id.id)
+            // kits_by_company = {
+            //     company: self.env['mrp.bom']._bom_find(self.env['product.product'].browse(product_ids), company_id=company.id, bom_type='phantom')
+            //     for company, product_ids in product_by_company.items()
+            // }
+            // for line in lines_stock:
+            //     kit_bom = kits_by_company[line.company_id].get(line.product_id)
+            //     if kit_bom:
+            //         moves = line.move_ids.filtered(lambda m: m.state == 'done' and m.location_dest_usage != 'inventory')
+            //         order_qty = line.product_uom_id._compute_quantity(line.product_uom_qty, kit_bom.product_uom_id)
+            //         filters = {
+            //             'incoming_moves': lambda m:
+            //                 m._is_incoming() and
+            //                 (not m.origin_returned_move_id or (m.origin_returned_move_id and m.to_refund)),
+            //             'outgoing_moves': lambda m:
+            //                 m._is_outgoing() and m.to_refund,
+            //         }
+            //         kit_invoiced_qties[line] = moves._compute_kit_quantities(line.product_id, order_qty, kit_bom, filters)
+            //         kit_lines += line
+            // invoiced_qties = super(PurchaseOrderLine, self - kit_lines)._prepare_qty_received()
+            // invoiced_qties.update(kit_invoiced_qties)
+            // return invoiced_qties
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
+            // def _prepare_qty_received(self):
+            // from_stock_lines = self.filtered(lambda order_line: order_line.qty_received_method == 'stock_moves')
+            // received_qties = super(PurchaseOrderLine, self - from_stock_lines)._prepare_qty_received()
+            // for line in self:
+            //     if line.qty_received_method == 'stock_moves':
+            //         total = 0.0
+            //         # In case of a BOM in kit, the products delivered do not correspond to the products in
+            //         # the PO. Therefore, we can skip them since they will be handled later on.
+            //         for move in line._get_po_line_moves():
+            //             if move.state == 'done':
+            //                 if move._is_purchase_return():
+            //                     if not move.origin_returned_move_id or move.to_refund:
+            //                         total -= move.product_uom._compute_quantity(move.quantity, line.product_uom_id, rounding_method='HALF-UP')
+            //                 elif move.origin_returned_move_id and move.origin_returned_move_id._is_dropshipped() and not move._is_dropshipped_returned():
+            //                     # Edge case: the dropship is returned to the stock, no to the supplier.
+            //                     # In this case, the received quantity on the PO is set although we didn't
+            //                     # receive the product physically in our stock. To avoid counting the
+            //                     # quantity twice, we do nothing.
+            //                     pass
+            //                 elif move.origin_returned_move_id and move.origin_returned_move_id._is_purchase_return() and not move.to_refund:
+            //                     pass
+            //                 else:
+            //                     total += move.product_uom._compute_quantity(move.quantity, line.product_uom_id, rounding_method='HALF-UP')
+            //         line._track_qty_received(total)
+            //         received_qties[line] = total
+            // return received_qties
             */
             return default;
         }
@@ -1260,9 +1365,6 @@ namespace Bamboo.Core.Application.Services
             //     location_dest = location_final
             // date_planned = self.date_planned or self.order_id.date_planned
             // return {
-            //     # truncate to 2000 to avoid triggering index limit error
-            //     # TODO: remove index in master?
-            //     'name': (self.product_id.display_name or '')[:2000],
             //     'product_id': self.product_id.id,
             //     'date': date_planned,
             //     'date_deadline': date_planned,
@@ -1277,14 +1379,12 @@ namespace Bamboo.Core.Application.Services
             //     'company_id': self.order_id.company_id.id,
             //     'price_unit': price_unit,
             //     'picking_type_id': self.order_id.picking_type_id.id,
-            //     'group_id': self.order_id.group_id.id,
+            //     'reference_ids': [Command.set(self.order_id.reference_ids.ids)],
             //     'origin': self.order_id.name,
-            //     'description_picking': product.description_pickingin or self.name,
             //     'propagate_cancel': self.propagate_cancel,
             //     'warehouse_id': self.order_id.picking_type_id.warehouse_id.id,
             //     'product_uom_qty': product_uom_qty,
             //     'product_uom': product_uom.id,
-            //     'product_packaging_id': self.product_packaging_id.id,
             //     'sequence': self.sequence,
             // }
             */
@@ -1294,6 +1394,25 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PurchaseOrderLine> PrepareStockMovesInternalAsync(object picking)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
+            // def _prepare_stock_moves(self, picking):
+            // res = super()._prepare_stock_moves(picking)
+            // if len(self.order_id.reference_ids.move_ids.production_group_id) == 1:
+            //     for re in res:
+            //         re['production_group_id'] = self.order_id.reference_ids.move_ids.production_group_id.id
+            // sale_line_product = self._get_sale_order_line_product()
+            // if sale_line_product:
+            //     bom = self.env['mrp.bom']._bom_find(self.env['product.product'].browse(sale_line_product.id), company_id=picking.company_id.id, bom_type='phantom')
+            //     # Was a kit sold?
+            //     bom_kit = bom.get(sale_line_product)
+            //     if bom_kit:
+            //         _dummy, bom_sub_lines = bom_kit.explode(sale_line_product, self.sale_line_id.product_uom_qty)
+            //         bom_kit_component = {line['product_id'].id: line.id for line, _ in bom_sub_lines}
+            //         # Find the sml for the kit component
+            //         for vals in res:
+            //             if vals['product_id'] in bom_kit_component:
+            //                 vals['bom_line_id'] = bom_kit_component[vals['product_id']]
+            // return res
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
             // def _prepare_stock_moves(self, picking):
             // """ Prepare the stock moves data for one order line. This function returns a list of
@@ -1318,11 +1437,11 @@ namespace Bamboo.Core.Application.Services
             //     qty_to_attach = move_dests_initial_demand - qty
             //     qty_to_push = self.product_qty - move_dests_initial_demand
             // 
-            // if float_compare(qty_to_attach, 0.0, precision_rounding=self.product_uom.rounding) > 0:
-            //     product_uom_qty, product_uom = self.product_uom._adjust_uom_quantities(qty_to_attach, self.product_id.uom_id)
+            // if self.product_uom_id.compare(qty_to_attach, 0.0) > 0:
+            //     product_uom_qty, product_uom = self.product_uom_id._adjust_uom_quantities(qty_to_attach, self.product_id.uom_id)
             //     res.append(self._prepare_stock_move_vals(picking, price_unit, product_uom_qty, product_uom))
-            // if not float_is_zero(qty_to_push, precision_rounding=self.product_uom.rounding):
-            //     product_uom_qty, product_uom = self.product_uom._adjust_uom_quantities(qty_to_push, self.product_id.uom_id)
+            // if not self.product_uom_id.is_zero(qty_to_push):
+            //     product_uom_qty, product_uom = self.product_uom_id._adjust_uom_quantities(qty_to_push, self.product_id.uom_id)
             //     extra_move_vals = self._prepare_stock_move_vals(picking, price_unit, product_uom_qty, product_uom)
             //     extra_move_vals['move_dest_ids'] = False  # don't attach
             //     res.append(extra_move_vals)
@@ -1331,16 +1450,12 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_stock_moves(self, picking):
             // res = super()._prepare_stock_moves(picking)
             // for re in res:
-            //     re['sale_line_id'] = self.sale_line_id.id
-            //     if self.sale_line_id.route_id:
-            //        re['route_ids'] = [Command.link(self.sale_line_id.route_id.id)]
-            //     if self.order_id.dest_address_id:
-            //         # In a dropshipping context we do not need the description of the purchase order or it will be displayed
-            //         # in Delivery slip report and it may be confusing for the customer to see several times the same text (product name + description_picking).
-            //         product = self.product_id.with_context(lang=self.order_id.dest_address_id.lang or self.env.user.lang)
-            //         re['description_picking'] = product._get_description(
-            //             self.env['stock.picking.type'].browse(re['picking_type_id'])
-            //         )
+            //     if self.sale_line_id and re.get('location_final_id'):
+            //         final_loc = self.env['stock.location'].browse(re.get('location_final_id'))
+            //         if final_loc.usage == 'customer' or final_loc.usage == 'transit':
+            //             re['sale_line_id'] = self.sale_line_id.id
+            //     if self.sale_line_id.route_ids:
+            //         re['route_ids'] = [Command.link(route_id) for route_id in self.sale_line_id.route_ids.ids]
             // return res
             */
             return default;
@@ -1375,7 +1490,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.product_id:
             //     return
             // 
-            // self.product_uom = self.product_id.uom_po_id or self.product_id.uom_id
+            // self.product_uom_id = self.product_id.uom_id
             // product_lang = self.product_id.with_context(
             //     lang=get_lang(self.env, self.partner_id.lang).code,
             //     partner_id=None,
@@ -1388,43 +1503,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> PurchaseHistoryAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def action_purchase_history(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
-            // action['domain'] = [('state', 'in', ['purchase', 'done']), ('product_id', '=', self.product_id.id)]
-            // action['display_name'] = _("Purchase History for %s", self.product_id.display_name)
-            // action['context'] = {
-            //     'search_default_partner_id': self.partner_id.id
-            // }
-            // 
-            // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<PurchaseOrderLine> SuggestQuantityInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _suggest_quantity(self):
-            // '''
-            // Suggest a minimal quantity based on the seller
+            // ''' Suggest a minimal quantity based on the seller
             // '''
             // if not self.product_id:
             //     return
-            // seller_min_qty = self.product_id._select_seller(
-            //     partner_id=self.order_id.partner_id,
-            //     quantity=None,
-            //     date=self.order_id.date_order and self.order_id.date_order.date() or fields.Date.context_today(self),
-            //     params=self._get_select_sellers_params(),
-            // )
+            // date = self.order_id.date_order and self.order_id.date_order.date() or fields.Date.context_today(self)
+            // seller_min_qty = self.product_id.seller_ids\
+            //     .filtered(lambda r: r.partner_id == self.order_id.partner_id and
+            //               (not r.product_id or r.product_id == self.product_id) and
+            //               (not r.date_start or r.date_start <= date) and
+            //               (not r.date_end or r.date_end >= date))\
+            //     .sorted(key=lambda r: r.min_qty)
             // if seller_min_qty:
             //     self.product_qty = seller_min_qty[0].min_qty or 1.0
-            //     self.product_uom = seller_min_qty[0].product_uom
+            //     self.product_uom_id = seller_min_qty[0].product_uom_id
             // else:
             //     self.product_qty = 1.0
             */
@@ -1476,13 +1573,13 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        protected async Task<PurchaseOrderLine> UnlinkExceptPurchaseOrDoneInternalAsync()
+        protected async Task<PurchaseOrderLine> UnlinkExceptPurchaseInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _unlink_except_purchase_or_done(self):
+            // def _unlink_except_purchase(self):
             // for line in self:
-            //     if line.order_id.state in ['purchase', 'done'] and line.display_type not in ['line_note', 'line_section']:
+            //     if line.order_id.state == 'purchase' and line.display_type not in ['line_section', 'line_subsection', 'line_note']:
             //         state_description = {state_desc[0]: state_desc[1] for state_desc in self._fields['state']._description_selection(self.env)}
             //         raise UserError(_('Cannot delete a purchase order line which is in state “%s”.', state_description.get(line.state)))
             */
@@ -1527,7 +1624,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
             // def _update_qty_received_method(self):
             // """Update qty_received_method for old PO before install this module."""
-            // self.search(['!', ('state', 'in', ['purchase', 'done'])])._compute_qty_received_method()
+            // self.search(['!', ('state', '=', 'purchase')])._compute_qty_received_method()
             */
             return default;
         }
@@ -1553,12 +1650,13 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
             //     raise UserError(_("You cannot change the type of a purchase order line. Instead you should delete the current line and create a new line of the proper type."))
             // 
             // if 'product_qty' in values:
-            //     precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            //     precision = self.env['decimal.precision'].precision_get('Product Unit')
             //     for line in self:
             //         if (
             //             line.order_id.state == "purchase"
@@ -1573,31 +1671,30 @@ namespace Bamboo.Core.Application.Services
             // if 'qty_received' in values:
             //     for line in self:
             //         line._track_qty_received(values['qty_received'])
-            // return super(PurchaseOrderLine, self).write(values)
+            // return super().write(values)
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if values.get('date_planned'):
             //     new_date = fields.Datetime.to_datetime(values['date_planned'])
             //     self.filtered(lambda l: not l.display_type)._update_move_date_deadline(new_date)
             // lines = self.filtered(lambda l: l.order_id.state == 'purchase'
             //                                 and not l.display_type)
             // 
-            // if 'product_packaging_id' in values:
-            //     self.move_ids.filtered(
-            //         lambda m: m.state not in ['cancel', 'done']
-            //     ).product_packaging_id = values['product_packaging_id']
-            // 
             // previous_product_uom_qty = {line.id: line.product_uom_qty for line in lines}
             // previous_product_qty = {line.id: line.product_qty for line in lines}
-            // result = super(PurchaseOrderLine, self).write(values)
+            // result = super().write(values)
             // if 'price_unit' in values:
             //     for line in lines:
             //         # Avoid updating kit components' stock.move
             //         moves = line.move_ids.filtered(lambda s: s.state not in ('cancel', 'done') and s.product_id == line.product_id)
             //         moves.write({'price_unit': line._get_stock_move_price_unit()})
             // if 'product_qty' in values:
-            //     lines = lines.filtered(lambda l: float_compare(previous_product_qty[l.id], l.product_qty, precision_rounding=l.product_uom.rounding) != 0)
+            //     lines = lines.filtered(lambda l: l.product_uom_id.compare(previous_product_qty[l.id], l.product_qty) != 0)
             //     lines.with_context(previous_product_qty=previous_product_uom_qty)._create_or_update_picking()
+            // valuation_trigger = ['price_unit', 'product_qty', 'product_uom']
+            // if any(field in valuation_trigger for field in values):
+            //     self.move_ids.filtered(lambda m: m.is_valued)._set_value()
             // return result
             */
             return await base.WriteAsync(ids, entity, fields);

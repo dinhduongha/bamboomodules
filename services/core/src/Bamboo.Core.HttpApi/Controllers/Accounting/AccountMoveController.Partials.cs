@@ -68,9 +68,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-invoice-download-pdf")]
-        public async Task<IActionResult> ActionInvoiceDownloadPdfAsync(Guid id)
+        public async Task<IActionResult> ActionInvoiceDownloadPdfAsync(Guid id, [FromBody] AccountMoveInvoiceDownloadPdfRequestDto input)
         {
-            var result = await _appService.InvoiceDownloadPdfAsync(id);
+            var result = await _appService.InvoiceDownloadPdfAsync(id, input);
             return Ok(result);
         }
         
@@ -91,6 +91,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-move-download-all")]
+        public async Task<IActionResult> ActionMoveDownloadAllAsync(Guid id)
+        {
+            var result = await _appService.MoveDownloadAllAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-open-business-doc")]
         public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
         {
@@ -99,10 +107,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-expense-report")]
-        public async Task<IActionResult> ActionOpenExpenseReportAsync(Guid id)
+        [Route("{id}/action-open-expense")]
+        public async Task<IActionResult> ActionOpenExpenseAsync(Guid id)
         {
-            var result = await _appService.OpenExpenseReportAsync(id);
+            var result = await _appService.OpenExpenseAsync(id);
             return Ok(result);
         }
         
@@ -195,6 +203,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-validate-moves-with-confirmation")]
+        public async Task<IActionResult> ActionValidateMovesWithConfirmationAsync(Guid id)
+        {
+            var result = await _appService.ValidateMovesWithConfirmationAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-debit-notes")]
         public async Task<IActionResult> ActionViewDebitNotesAsync(Guid id)
         {
@@ -215,6 +231,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionViewPaymentTransactionsAsync(Guid id)
         {
             var result = await _appService.ViewPaymentTransactionsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-view-source-pos-orders")]
+        public async Task<IActionResult> ActionViewSourcePosOrdersAsync(Guid id)
+        {
+            var result = await _appService.ViewSourcePosOrdersAsync(id);
             return Ok(result);
         }
         
@@ -339,6 +363,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/check-selected-moves")]
+        public async Task<IActionResult> CheckSelectedMovesAsync(Guid id)
+        {
+            var result = await _appService.CheckSelectedMovesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/compute-move-sent-values")]
         public async Task<IActionResult> ComputeMoveSentValuesAsync(Guid id)
         {
@@ -367,6 +399,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetExtraPrintItemsAsync(Guid id)
         {
             var result = await _appService.GetExtraPrintItemsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
             return Ok(result);
         }
         
@@ -427,14 +467,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/invoice-validate-send-email")]
         public async Task<IActionResult> InvoiceValidateSendEmailAsync(Guid id)
         {
@@ -483,6 +515,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/is-receipt")]
+        public async Task<IActionResult> IsReceiptAsync(Guid id)
+        {
+            var result = await _appService.IsReceiptAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/is-sale-document")]
         public async Task<IActionResult> IsSaleDocumentAsync(Guid id, [FromBody] AccountMoveIsSaleDocumentRequestDto input)
         {
@@ -511,6 +551,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] AccountMoveMessageNewRequestDto input)
         {
             var result = await _appService.MessageNewAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-adjusting-entries")]
+        public async Task<IActionResult> OpenAdjustingEntriesAsync(Guid id)
+        {
+            var result = await _appService.OpenAdjustingEntriesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-adjusting-entry-origin-moves")]
+        public async Task<IActionResult> OpenAdjustingEntryOriginMovesAsync(Guid id)
+        {
+            var result = await _appService.OpenAdjustingEntryOriginMovesAsync(id);
             return Ok(result);
         }
         
@@ -563,10 +619,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/reflect-cancelled-sol")]
+        public async Task<IActionResult> ReflectCancelledSolAsync(Guid id, [FromBody] AccountMoveReflectCancelledSolRequestDto input)
+        {
+            var result = await _appService.ReflectCancelledSolAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/refresh-invoice-currency-rate")]
         public async Task<IActionResult> RefreshInvoiceCurrencyRateAsync(Guid id)
         {
             var result = await _appService.RefreshInvoiceCurrencyRateAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/set-moves-checked")]
+        public async Task<IActionResult> SetMovesCheckedAsync(Guid id, [FromBody] AccountMoveSetMovesCheckedRequestDto input)
+        {
+            var result = await _appService.SetMovesCheckedAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/unlink-snailmail-letters")]
+        public async Task<IActionResult> UnlinkSnailmailLettersAsync(Guid id)
+        {
+            var result = await _appService.UnlinkSnailmailLettersAsync(id);
             return Ok(result);
         }
     }

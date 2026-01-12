@@ -63,84 +63,29 @@ namespace Bamboo.Core.Application.Services
             //         'line_ids': [],
             //         'move_type': 'entry',
             //     }
-            //     valuation_layer_ids = []
-            //     cost_to_add_byproduct = defaultdict(lambda: 0.0)
-            //     cost_to_add_bylot = defaultdict(lambda: defaultdict(float))
             //     for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
-            //         remaining_qty = sum(line.move_id._get_stock_valuation_layer_ids().mapped('remaining_qty'))
-            //         linked_layer = line.move_id._get_stock_valuation_layer_ids()
-            // 
-            //         # Prorate the value at what's still in stock
-            //         move_qty = line.move_id.product_uom._compute_quantity(line.move_id.quantity, line.move_id.product_id.uom_id)
-            //         cost_to_add = (remaining_qty / move_qty) * line.additional_landed_cost
             //         product = line.move_id.product_id
-            //         if not cost.company_id.currency_id.is_zero(cost_to_add):
-            //             vals_list = []
-            //             if line.move_id.product_id.lot_valuated:
-            //                 for lot_id, sml in line.move_id.move_line_ids.grouped('lot_id').items():
-            //                     if not lot_id.quantity_svl:
-            //                         continue
-            //                     lot_layer = linked_layer.filtered(lambda l: l.lot_id == lot_id)[:1]
-            //                     value = cost_to_add * lot_id.quantity_svl / remaining_qty
-            //                     if product.cost_method in ['average', 'fifo']:
-            //                         cost_to_add_bylot[product][lot_id] += value
-            //                     vals_list.append({
-            //                         'value': value,
-            //                         'unit_cost': 0,
-            //                         'quantity': 0,
-            //                         'remaining_qty': 0,
-            //                         'stock_valuation_layer_id': lot_layer.id,
-            //                         'description': cost.name,
-            //                         'stock_move_id': line.move_id.id,
-            //                         'product_id': line.move_id.product_id.id,
-            //                         'stock_landed_cost_id': cost.id,
-            //                         'company_id': cost.company_id.id,
-            //                         'lot_id': lot_id.id,
-            //                     })
-            //                     lot_layer.remaining_value += value
-            //             else:
-            //                 vals_list.append({
-            //                     'value': cost_to_add,
-            //                     'unit_cost': 0,
-            //                     'quantity': 0,
-            //                     'remaining_qty': 0,
-            //                     'stock_valuation_layer_id': linked_layer[:1].id,
-            //                     'description': cost.name,
-            //                     'stock_move_id': line.move_id.id,
-            //                     'product_id': line.move_id.product_id.id,
-            //                     'stock_landed_cost_id': cost.id,
-            //                     'company_id': cost.company_id.id,
-            //                 })
-            //                 linked_layer[:1].remaining_value += cost_to_add
-            //             valuation_layer = self.env['stock.valuation.layer'].create(vals_list)
-            //             valuation_layer_ids += valuation_layer.ids
-            //         # Update the AVCO/FIFO
-            //         if product.cost_method in ['average', 'fifo']:
-            //             cost_to_add_byproduct[product] += cost_to_add
             //         # Products with manual inventory valuation are ignored because they do not need to create journal entries.
             //         if product.valuation != "real_time":
             //             continue
             //         # `remaining_qty` is negative if the move is out and delivered proudcts that were not
             //         # in stock.
-            //         qty_out = 0
-            //         if line.move_id._is_in():
-            //             qty_out = line.move_id.quantity - remaining_qty
-            //         elif line.move_id._is_out():
-            //             qty_out = line.move_id.quantity
-            //         move_vals['line_ids'] += line._create_accounting_entries(move, qty_out)
+            // 
+            //         remaining_qty = line.move_id.remaining_qty
+            //         move_vals['line_ids'] += line._create_accounting_entries(remaining_qty)
             // 
             //     # batch standard price computation avoid recompute quantity_svl at each iteration
-            //     products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys()).with_company(cost.company_id)
-            //     for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
-            //         if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
-            //             product.sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
-            //         if product.lot_valuated:
-            //             for lot, value in cost_to_add_bylot[product].items():
-            //                 if float_is_zero(lot.quantity_svl, precision_rounding=product.uom_id.rounding):
-            //                     continue
-            //                 lot.sudo().with_context(disable_auto_svl=True).standard_price += value / lot.quantity_svl
             // 
-            //     move_vals['stock_valuation_layer_ids'] = [(6, None, valuation_layer_ids)]
+            //     # products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys()).with_company(cost.company_id)
+            //     # for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
+            //     #     if not product.uom_id.is_zero(product.quantity_svl):
+            //     #         product.sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
+            //     #     if product.lot_valuated:
+            //     #         for lot, value in cost_to_add_bylot[product].items():
+            //     #             if product.uom_id.is_zero(lot.quantity_svl):
+            //     #                 continue
+            //     #             lot.sudo().with_context(disable_auto_svl=True).standard_price += value / lot.quantity_svl
+            // 
             //     # We will only create the accounting entry when there are defined lines (the lines will be those linked to products of real_time valuation category).
             //     cost_vals = {'state': 'done'}
             //     if move_vals.get("line_ids"):
@@ -149,7 +94,7 @@ namespace Bamboo.Core.Application.Services
             //     cost.write(cost_vals)
             //     if cost.account_move_id:
             //         move._post()
-            //     cost.reconcile_landed_cost()
+            //     cost.valuation_adjustment_lines.move_id._set_value()
             // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -293,7 +238,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_landed_costs, FILE: stock_landed_cost.py) ---
             // def _get_targeted_move_ids(self):
-            // return super()._get_targeted_move_ids() | self.mrp_production_ids.move_finished_ids
+            // return (
+            //     super()._get_targeted_move_ids()
+            //     | self.mrp_production_ids.move_finished_ids
+            //     - self.mrp_production_ids.move_byproduct_ids.filtered(lambda move: not move.cost_share)
+            // )
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
             // def _get_targeted_move_ids(self):
             // return self.picking_ids.move_ids
@@ -314,11 +263,12 @@ namespace Bamboo.Core.Application.Services
             //     if move.product_id.cost_method not in ('fifo', 'average') or move.state == 'cancel' or not move.quantity:
             //         continue
             //     qty = move.product_uom._compute_quantity(move.quantity, move.product_id.uom_id)
+            // 
             //     vals = {
             //         'product_id': move.product_id.id,
             //         'move_id': move.id,
             //         'quantity': qty,
-            //         'former_cost': sum(move._get_stock_valuation_layer_ids().mapped('value')),
+            //         'former_cost': move._get_value(),
             //         'weight': move.product_id.weight * qty,
             //         'volume': move.product_id.volume * qty
             //     }
@@ -348,23 +298,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLandedCost> ReconcileLandedCostAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def reconcile_landed_cost(self):
-            // for cost in self:
-            //     if cost.vendor_bill_id and cost.vendor_bill_id.state == 'posted' and cost.company_id.anglo_saxon_accounting:
-            //         all_amls = cost.vendor_bill_id.line_ids | cost.account_move_id.line_ids
-            //         for product in cost.cost_lines.product_id:
-            //             accounts = product.product_tmpl_id.get_product_accounts()
-            //             input_account = accounts['stock_input']
-            //             all_amls.filtered(lambda aml: aml.account_id == input_account and not aml.reconciled\
-            //                  and not aml.display_type in ('line_section', 'line_note')).reconcile()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<StockLandedCost> TrackSubtypeInternalAsync(object init_values)
         {
             /*
@@ -375,19 +308,6 @@ namespace Bamboo.Core.Application.Services
             // return super()._track_subtype(init_values)
             */
             return default;
-        }
-
-        public async Task<StockLandedCost> ViewStockValuationLayersAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def action_view_stock_valuation_layers(self):
-            // self.ensure_one()
-            // domain = [('id', 'in', self.stock_valuation_layer_ids.ids)]
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock_account.stock_valuation_layer_action")
-            // return dict(action, domain=domain)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

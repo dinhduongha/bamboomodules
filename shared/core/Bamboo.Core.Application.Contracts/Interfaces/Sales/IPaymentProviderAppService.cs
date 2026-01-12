@@ -14,12 +14,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<PaymentProvider> GetBaseUrlAsync(Guid id);
         Task<PaymentProvider> PaypalCreateWebhookAsync(Guid id);
         Task<PaymentProvider> RazorpayCreateWebhookAsync(Guid id);
-        Task<PaymentProvider> RazorpayRedirectToOauthUrlAsync(Guid id);
-        Task<PaymentProvider> RazorpayResetOauthAccountAsync(Guid id);
         Task<PaymentProvider> RecomputePendingMsgAsync(Guid id);
-        Task<PaymentProvider> StripeConnectAccountAsync(Guid id, PaymentProviderStripeConnectAccountRequestDto input);
+        Task<PaymentProvider> ResetCredentialsAsync(Guid id);
+        Task<PaymentProvider> StartOnboardingAsync(Guid id, PaymentProviderStartOnboardingRequestDto input);
         Task<PaymentProvider> StripeCreateWebhookAsync(Guid id);
         Task<PaymentProvider> StripeVerifyApplePayDomainAsync(Guid id);
+        Task<PaymentProvider> SyncPaymobPaymentMethodsAsync(Guid id);
         Task<PaymentProvider> ToggleIsPublishedAsync(Guid id);
         Task<PaymentProvider> UpdateMerchantDetailsAsync(Guid id);
         Task<PaymentProvider> ViewPaymentMethodsAsync(Guid id);

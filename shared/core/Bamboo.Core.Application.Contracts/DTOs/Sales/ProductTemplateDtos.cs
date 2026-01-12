@@ -14,6 +14,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public List<Guid> ProductTemplateAttributeValueIds { get; set; }
     }
     
+    public class ProductTemplateCreateProductVariantFromPosRequestDto
+    {
+        public List<Guid> AttributeValueIds { get; set; }
+        public Guid ConfigId { get; set; }
+    }
+    
     public class ProductTemplateGetContextualPriceRequestDto
     {
         public object Product { get; set; }
@@ -27,5 +33,21 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class ProductTemplateGetProductAccountsRequestDto
     {
         public object FiscalPos { get; set; }
+    }
+    
+    public class ProductTemplateGetProductInfoPosRequestDto
+    {
+        public object Price { get; set; }
+        public object Quantity { get; set; }
+        public Guid PosConfigId { get; set; }
+        public Guid ProductVariantId { get; set; }
+    }
+    
+    public class ProductTemplateLoadProductFromPosRequestDto
+    {
+        public Guid ConfigId { get; set; }
+        public object Domain { get; set; }
+        public object Offset { get; set; }
+        public object Limit { get; set; }
     }
 }

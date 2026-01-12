@@ -12,7 +12,6 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
@@ -75,6 +74,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MailScheduledMessage> MessageCreatedHookInternalAsync(object message)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_scheduled_message.py) ---
+            // def _message_created_hook(self, message):
+            // """Hook called after scheduled messages have been posted."""
+            // self.ensure_one()
+            */
+            return default;
+        }
+
         protected async Task<MailScheduledMessage> NotificationParametersWhitelistInternalAsync()
         {
             /*
@@ -96,9 +106,6 @@ namespace Bamboo.Core.Application.Services
             //     'reply_to_force_new',
             //     'subtype_id',
             // }
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: mail_scheduled_message.py) ---
-            // def _notification_parameters_whitelist(self):
-            // return super()._notification_parameters_whitelist() | {'mark_so_as_sent'}
             */
             return default;
         }
@@ -150,12 +157,14 @@ namespace Bamboo.Core.Application.Services
             //     This is useful when scheduled messages are sent from the _post_messages_cron.
             // """
             // notification_parameters_whitelist = self._notification_parameters_whitelist()
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // for scheduled_message in self:
             //     message_creator = scheduled_message.create_uid
             //     try:
             //         scheduled_message.with_user(message_creator)._check()
-            //         self.env[scheduled_message.model].browse(scheduled_message.res_id).with_user(message_creator).message_post(
+            //         message = self.env[scheduled_message.model].browse(scheduled_message.res_id).with_context(
+            //                 clean_context(scheduled_message.send_context or {})
+            //             ).with_user(message_creator).message_post(
             //             attachment_ids=list(scheduled_message.attachment_ids.ids),
             //             author_id=scheduled_message.author_id.id,
             //             subject=scheduled_message.subject,
@@ -164,6 +173,7 @@ namespace Bamboo.Core.Application.Services
             //             subtype_xmlid='mail.mt_note' if scheduled_message.is_note else 'mail.mt_comment',
             //             **{k: v for k, v in json.loads(scheduled_message.notification_parameters or '{}').items() if k in notification_parameters_whitelist},
             //         )
+            //         scheduled_message._message_created_hook(message)
             //         if auto_commit:
             //             self.env.cr.commit()
             //     except Exception:
@@ -192,20 +202,6 @@ namespace Bamboo.Core.Application.Services
             //             if auto_commit:
             //                 self.env.cr.rollback()
             // self.unlink()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: mail_scheduled_message.py) ---
-            // def _post_message(self, raise_exception=True):
-            // order_messages = self.env['mail.scheduled.message'].with_context(mark_so_as_sent=True)
-            // for scheduled_message in self:
-            //     notification_parameters = json.loads(scheduled_message.notification_parameters or '{}')
-            //     if 'mark_so_as_sent' not in notification_parameters:
-            //         continue
-            //     if notification_parameters.pop('mark_so_as_sent'):
-            //         order_messages += scheduled_message
-            //     scheduled_message.notification_parameters = json.dumps(notification_parameters)
-            // if order_messages:
-            //     super(ScheduledMessage, order_messages)._post_message(raise_exception=raise_exception)
-            // if remaining := self - order_messages:
-            //     super(ScheduledMessage, remaining)._post_message(raise_exception=raise_exception)
             */
             return default;
         }
@@ -233,15 +229,15 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_scheduled_message.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, *, bypass_access=False, **kwargs):
             // """ Override that add specific access rights to only get the ids of the messages
             // that are scheduled on the records on which the user has mail_post (or read) access
             // """
-            // if self.env.is_superuser():
-            //     return super()._search(domain, offset, limit, order)
+            // if self.env.is_superuser() or bypass_access:
+            //     return super()._search(domain, offset, limit, order, bypass_access=True, **kwargs)
             // 
             // # don't use the ORM to avoid cache pollution
-            // query = super()._search(domain, offset, limit, order)
+            // query = super()._search(domain, offset, limit, order, **kwargs)
             // fnames_to_read = ['id', 'model', 'res_id']
             // rows = self.env.execute_query(query.select(
             //     *[self._field_to_sql(self._table, fname) for fname in fnames_to_read],
@@ -270,16 +266,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailScheduledMessage> ToStoreInternalAsync(object store)
+        protected async Task<MailScheduledMessage> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_scheduled_message.py) ---
-            // def _to_store(self, store: Store):
-            // for scheduled_message in self:
-            //     data = scheduled_message._read_format(['body', 'is_note', 'scheduled_date', 'subject'])[0]
-            //     data['attachment_ids'] = Store.many(scheduled_message.attachment_ids)
-            //     data['author'] = Store.one(scheduled_message.author_id)
-            //     store.add(scheduled_message, data)
+            // def _to_store_defaults(self, target):
+            // return [
+            //     Store.Many("attachment_ids"),
+            //     Store.One("author_id"),
+            //     "body",
+            //     "is_note",
+            //     "scheduled_date",
+            //     "subject",
+            // ]
             */
             return default;
         }

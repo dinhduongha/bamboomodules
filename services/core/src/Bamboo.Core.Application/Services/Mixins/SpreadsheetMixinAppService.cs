@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("spreadsheet", Category = "Misc", Depends = new[] { "bus", "web", "portal" })]
+    [Module("spreadsheet", Category = "Productivity", Depends = new[] { "bus", "web", "portal" })]
     public class SpreadsheetMixinAppService : ApplicationService, ISpreadsheetMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -36,6 +36,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     del vals["excel_files"]
             //     vals["excel_export"] = base64.b64encode(excel_zip)
             // return self.create(vals).full_url
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionToggleFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def action_toggle_favorite(self):
+            // self.ensure_one()
+            // current_user_id = self.env.uid
+            // if current_user_id in self.favorite_user_ids.ids:
+            //     self.sudo().favorite_user_ids = [Command.unlink(current_user_id)]
+            // else:
+            //     self.sudo().favorite_user_ids = [Command.link(current_user_id)]
             */
             return default;
         }
@@ -129,6 +144,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeIsFavoriteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def _compute_is_favorite(self):
+            // for dashboard in self:
+            //     dashboard.is_favorite = self.env.uid in dashboard.favorite_user_ids.ids
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeSpreadsheetDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
         {
             /*
@@ -180,7 +206,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
             // def _dashboard_is_empty(self):
-            // return any(self.env[model].search_count([], limit=1) == 0 for model in self.main_data_model_ids.sudo().mapped("model"))
+            // return any(self.env[model].search_count([], limit=1) == 0 for model in self.sudo().main_data_model_ids.mapped("model"))
             */
             return default;
         }
@@ -211,7 +237,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // lang = self.env["res.lang"]._lang_get(self.env.user.lang)
             // locale = lang._odoo_lang_to_spreadsheet_locale()
             // return {
-            //     "version": 1,
             //     "sheets": [
             //         {
             //             "id": "sheet1",
@@ -223,6 +248,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     },
             //     "revisionId": "START_REVISION",
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDashboardTranslationNamespaceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def _get_dashboard_translation_namespace(self):
+            // data = self.env['ir.model.data'].sudo().search([
+            //     ('model', '=', self._name),
+            //     ('res_id', 'in', self.ids),
+            // ], limit=1)
+            // return data.module
             */
             return default;
         }
@@ -267,32 +306,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetReadonlyDashboardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
-            // def get_readonly_dashboard(self):
-            // self.ensure_one()
-            // snapshot = json.loads(self.spreadsheet_data)
-            // if self._dashboard_is_empty() and self.sample_dashboard_file_path:
-            //     sample_data = self._get_sample_dashboard()
-            //     if sample_data:
-            //         return {
-            //             "snapshot": sample_data,
-            //             "is_sample": True,
-            //         }
-            // user_locale = self.env['res.lang']._get_user_spreadsheet_locale()
-            // snapshot.setdefault('settings', {})['locale'] = user_locale
-            // default_currency = self.env['res.currency'].get_company_currency_for_spreadsheet()
-            // return {
-            //     'snapshot': snapshot,
-            //     'revisions': [],
-            //     'default_currency': default_currency,
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetSampleDashboardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
         {
             /*
@@ -303,6 +316,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return json.load(f)
             // except FileNotFoundError:
             //     return
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSerializedReadonlyDashboardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def _get_serialized_readonly_dashboard(self):
+            // snapshot = json.loads(self.spreadsheet_data)
+            // user_locale = self.env['res.lang']._get_user_spreadsheet_locale()
+            // snapshot.setdefault('settings', {})['locale'] = user_locale
+            // default_currency = self.env['res.currency'].get_company_currency_for_spreadsheet()
+            // return json.dumps({
+            //     'snapshot': snapshot,
+            //     'revisions': [],
+            //     'default_currency': default_currency,
+            //     'translation_namespace': self._get_dashboard_translation_namespace(),
+            // })
             */
             return default;
         }

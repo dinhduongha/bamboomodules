@@ -11,10 +11,26 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-view-equipments-records")]
+        public async Task<IActionResult> ActionViewEquipmentsRecordsAsync(Guid id)
+        {
+            var result = await _appService.ViewEquipmentsRecordsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockLocationCopyDataRequestDto input)
         {
             var result = await _appService.CopyDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/is-subcontract")]
+        public async Task<IActionResult> IsSubcontractAsync(Guid id)
+        {
+            var result = await _appService.IsSubcontractAsync(id);
             return Ok(result);
         }
         

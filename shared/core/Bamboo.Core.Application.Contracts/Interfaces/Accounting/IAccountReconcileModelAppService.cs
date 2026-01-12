@@ -12,5 +12,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     {
         Task<AccountReconcileModel> CopyDataAsync(Guid id, AccountReconcileModelCopyDataRequestDto input);
         Task<AccountReconcileModel> ReconcileStatAsync(Guid id);
+        Task<AccountReconcileModel> SetAutoReconcileAsync(Guid id);
+        Task<AccountReconcileModel> SetManualAsync(Guid id);
     }
 }

@@ -8,7 +8,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object UnlinkFailed { get; set; }
         public object UnlinkSent { get; set; }
-        public object AutoCommit { get; set; }
         public object RaiseException { get; set; }
     }
     

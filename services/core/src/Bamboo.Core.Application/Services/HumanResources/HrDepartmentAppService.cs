@@ -66,15 +66,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrDepartment> ComputeExpenseSheetsToApproveInternalAsync()
+        protected async Task<HrDepartment> ComputeExpensesToApproveCountInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_department.py) ---
-            // def _compute_expense_sheets_to_approve(self):
-            // expense_sheet_data = self.env['hr.expense.sheet']._read_group([('department_id', 'in', self.ids), ('state', '=', 'submit')], ['department_id'], ['__count'])
-            // result = {department.id: count for department, count in expense_sheet_data}
+            // def _compute_expenses_to_approve_count(self):
+            // expense_data = self.env['hr.expense']._read_group([('department_id', 'in', self.ids), ('state', '=', 'submitted')], ['department_id'], ['__count'])
+            // result = {department.id: count for department, count in expense_data}
             // for department in self:
-            //     department.expense_sheets_to_approve_count = result.get(department.id, 0)
+            //     department.expenses_to_approve_count = result.get(department.id, 0)
             */
             return default;
         }
@@ -314,7 +314,7 @@ namespace Bamboo.Core.Application.Services
             // action = self.env["ir.actions.actions"]._for_xml_id("hr_holidays.hr_leave_allocation_action_approve_department")
             // action['context'] = self._get_action_context()
             // action['context']['search_default_second_approval'] = 3
-            // action['domain'] = expression.AND([ast.literal_eval(action['domain']), [('state', '=', 'confirm')]])
+            // action['domain'] = Domain.AND([ast.literal_eval(action['domain']), [('state', '=', 'confirm')]])
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -367,7 +367,7 @@ namespace Bamboo.Core.Application.Services
             // ]
             // if 'domain' in action:
             //     allowed_company_ids = self.env.context.get('allowed_company_ids', [])
-            //     action['domain'] = expression.AND([
+            //     action['domain'] = Domain.AND([
             //         ast.literal_eval(action['domain'].replace('allowed_company_ids', str(allowed_company_ids))), domain
             //     ])
             // else:
@@ -379,16 +379,42 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<HrDepartment> SearchCompleteNameInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
+            // def _search_complete_name(self, operator, value):
+            // supported_operators = ["=", "!=", "ilike", "not ilike", "in", "not in", "=ilike"]
+            // if operator not in supported_operators or not isinstance(value, (str, list)):
+            //     raise NotImplementedError(_('Operation not Supported.'))
+            // department = self.env['hr.department'].search([])
+            // if operator == '=':
+            //     department = department.filtered(lambda m: m.complete_name == value)
+            // elif operator == '!=':
+            //     department = department.filtered(lambda m: m.complete_name != value)
+            // elif operator == 'ilike':
+            //     department = department.filtered(lambda m: value.lower() in m.complete_name.lower())
+            // elif operator == 'not ilike':
+            //     department = department.filtered(lambda m: value.lower() not in m.complete_name.lower())
+            // elif operator == 'in':
+            //     department = department.filtered(lambda m: m.complete_name in value)
+            // elif operator == 'not in':
+            //     department = department.filtered(lambda m: m.complete_name not in value)
+            // elif operator == '=ilike':
+            //     pattern = re.compile(re.escape(value).replace('%', '.*').replace('_', '.'), flags=re.IGNORECASE)
+            //     department = department.filtered(lambda m: pattern.fullmatch(m.complete_name))
+            // return [('id', 'in', department.ids)]
+            */
+            return default;
+        }
+
         protected async Task<HrDepartment> SearchHasReadAccessInternalAsync(object @operator, object @value)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
             // def _search_has_read_access(self, operator, value):
-            // supported_operators = ["="]
-            // if operator not in supported_operators or not isinstance(value, bool):
-            //     raise NotImplementedError()
-            // if not value:
-            //     return [(1, "=", 0)]
+            // if operator != 'in':
+            //     return NotImplemented
             // if self.env['hr.employee'].has_access('read'):
             //     return [(1, "=", 1)]
             // departments_ids = self.env['hr.department'].sudo().search([('manager_id', 'in', self.env.user.employee_ids.ids)]).ids

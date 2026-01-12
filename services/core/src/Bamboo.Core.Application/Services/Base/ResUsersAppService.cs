@@ -21,9 +21,11 @@ namespace Bamboo.Core.Application.Services
     public class ResUsersAppService : GenericApplicationService<ResUsers>, IResUsersAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
-        public ResUsersAppService(IRepository<ResUsers, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public ResUsersAppService(IRepository<ResUsers, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _busListenerMixinAppService = busListenerMixinAppService;
+            _posLoadMixinAppService = posLoadMixinAppService;
         }
 
         protected async Task<ResUsers> ActionResetPasswordInternalAsync(object signup_type)
@@ -42,12 +44,20 @@ namespace Bamboo.Core.Application.Services
             // self.mapped('partner_id').signup_prepare(signup_type=signup_type)
             // 
             // # send email to users with their signup url
-            // account_created_template = None
+            // internal_account_created_template = None
+            // portal_account_created_template = None
             // if create_mode:
-            //     account_created_template = self.env.ref('auth_signup.set_password_email', raise_if_not_found=False)
-            //     if account_created_template and account_created_template._name != 'mail.template':
-            //         _logger.error("Wrong set password template %r", account_created_template)
-            //         return
+            //     if any(user._is_internal() for user in self):
+            //         internal_account_created_template = self.env.ref('auth_signup.set_password_email', raise_if_not_found=False)
+            //         if internal_account_created_template and internal_account_created_template._name != 'mail.template':
+            //             _logger.error("Wrong set password template %r", internal_account_created_template)
+            //             return
+            // 
+            //     if any(not user._is_internal() for user in self):
+            //         portal_account_created_template = self.env.ref('auth_signup.portal_set_password_email', raise_if_not_found=False)
+            //         if portal_account_created_template and portal_account_created_template._name != 'mail.template':
+            //             _logger.error("Wrong set password template %r", portal_account_created_template)
+            //             return
             // 
             // email_values = {
             //     'email_cc': False,
@@ -63,6 +73,8 @@ namespace Bamboo.Core.Application.Services
             //         raise UserError(_("Cannot send email: user %s has no email address.", user.name))
             //     email_values['email_to'] = user.email
             //     with contextlib.closing(self.env.cr.savepoint()):
+            //         is_internal = user._is_internal()
+            //         account_created_template = internal_account_created_template if is_internal else portal_account_created_template
             //         if account_created_template:
             //             account_created_template.send_mail(
             //                 user.id, force_send=True,
@@ -82,10 +94,10 @@ namespace Bamboo.Core.Application.Services
             //             mail.send()
             //     if signup_type == 'reset':
             //         _logger.info("Password reset email sent for user <%s> to <%s>", user.login, user.email)
-            //         message = _('A reset password link was send by email')
+            //         message = _('A reset password link was sent by email')
             //     else:
             //         _logger.info("Signup email sent for user <%s> to <%s>", user.login, user.email)
-            //         message = _('A signup link was send by email')
+            //         message = _('A signup link was sent by email')
             // return {
             //     'type': 'ir.actions.client',
             //     'tag': 'display_notification',
@@ -182,67 +194,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> AddReifiedGroupsInternalAsync(object fields, object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _add_reified_groups(self, fields, values):
-            // """ add the given reified group fields into `values` """
-            // gids = set(parse_m2m(values.get('groups_id') or []))
-            // for f in fields:
-            //     if is_boolean_group(f):
-            //         values[f] = get_boolean_group(f) in gids
-            //     elif is_selection_groups(f):
-            //         # determine selection groups, in order
-            //         sel_groups = self.env['res.groups'].sudo().browse(get_selection_groups(f))
-            //         sel_order = {g: len(g.trans_implied_ids & sel_groups) for g in sel_groups}
-            //         sel_groups = sel_groups.sorted(key=sel_order.get)
-            //         # determine which ones are in gids
-            //         selected = [gid for gid in sel_groups.ids if gid in gids]
-            //         # if 'Internal User' is in the group, this is the "User Type" group
-            //         # and we need to show 'Internal User' selected, not Public/Portal.
-            //         if self.env.ref('base.group_user').id in selected:
-            //             values[f] = self.env.ref('base.group_user').id
-            //         else:
-            //             values[f] = selected and selected[-1] or False
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> AlertNewDeviceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
-            // def _alert_new_device(self):
-            // self.ensure_one()
-            // if self.email:
-            //     email_values = {
-            //         'email_cc': False,
-            //         'auto_delete': True,
-            //         'message_type': 'user_notification',
-            //         'recipient_ids': [],
-            //         'partner_ids': [],
-            //         'scheduled_date': False,
-            //         'email_to': self.email
-            //     }
-            // 
-            //     body = self.env['mail.render.mixin']._render_template(
-            //             'auth_signup.alert_login_new_device',
-            //             model='res.users', res_ids=self.ids,
-            //             engine='qweb_view', options={'post_process': True},
-            //             add_context=self._prepare_new_device_notice_values())[self.id]
-            //     mail = self.env['mail.mail'].sudo().create({
-            //         'subject': _('New Connection to your Account'),
-            //         'email_from': self.company_id.email_formatted or self.email_formatted,
-            //         'body_html': body,
-            //         **email_values,
-            //     })
-            //     mail.send()
-            //     _logger.info("New device alert email sent for user <%s> to <%s>", self.login, self.email)
-            */
-            return default;
-        }
-
         public async Task<ResUsers> ApiKeyWizardAsync(Guid id)
         {
             /*
@@ -259,38 +210,14 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResUsers> ApplyGroupsToExistingEmployeesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_users.py) ---
-            // def _apply_groups_to_existing_employees(self):
-            // """
-            // If base_setup.default_user_rights is set, do not apply any new groups to existing employees
-            // """
-            // if not str2bool(self.env['ir.config_parameter'].sudo().get_param("base_setup.default_user_rights"), default=False):
-            //     return False
-            // return super()._apply_groups_to_existing_employees()
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _apply_groups_to_existing_employees(self):
-            // """ Should new groups be added to existing employees?
-            // 
-            // If the template user is being modified, the groups should be applied to
-            // every other base_user users
-            // """
-            // default_user = self.env.ref('base.default_user', raise_if_not_found=False)
-            // return default_user and default_user in self
-            */
-            return default;
-        }
-
         public async Task<ResUsers> ArchiveAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def action_archive(self):
-            // activities_to_delete = self.env['mail.activity'].search([('user_id', 'in', self.ids)])
+            // activities_to_delete = self.env['mail.activity'].sudo().search([('user_id', 'in', self.ids)])
             // activities_to_delete.unlink()
-            // return super(Users, self).action_archive()
+            // return super().action_archive()
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: res_users.py) ---
             // def action_archive(self):
             // self.env['crm.team.member'].search([('user_id', 'in', self.ids)]).action_archive()
@@ -357,7 +284,7 @@ namespace Bamboo.Core.Application.Services
             //             "and *might* be a proxy. If your Odoo is behind a proxy, "
             //             "it may be mis-configured. Check that you are running "
             //             "Odoo in Proxy Mode and that the proxy is properly configured, see "
-            //             "https://www.odoo.com/documentation/master/administration/install/deploy.html#https for details.",
+            //             "https://www.odoo.com/documentation/latest/administration/install/deploy.html#https for details.",
             //             source
             //         )
             //     raise AccessDenied(_("Too many login failures, please wait a bit before trying again."))
@@ -481,7 +408,7 @@ namespace Bamboo.Core.Application.Services
             //     ]
             // ]), None)
             // if not subject:
-            //     raise AccessDenied('Missing subject identity')
+            //     raise AccessDenied(self.env._('Missing subject identity'))
             // validation['user_id'] = subject
             // 
             // return validation
@@ -492,19 +419,18 @@ namespace Bamboo.Core.Application.Services
         public async Task<ResUsers> AuthenticateAsync(Guid id, ResUsersAuthenticateRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
-            // def authenticate(cls, db, credential, user_agent_env):
-            // auth_info = super().authenticate(db, credential, user_agent_env)
-            // try:
-            //     with cls.pool.cursor() as cr:
-            //         env = api.Environment(cr, auth_info['uid'], {})
-            //         if env.user._should_alert_new_device():
-            //             env.user._alert_new_device()
-            // except MailDeliveryException:
-            //     pass
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
+            // def authenticate(self, credential, user_agent_env):
+            // """Send an alert on new connection.
+            // 
+            // - 2FA enabled -> only for new device
+            // - Not enabled -> no alert
+            // """
+            // auth_info = super().authenticate(credential, user_agent_env)
+            // self._notify_security_new_connection(auth_info)
             // return auth_info
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
-            // def authenticate(cls, db, credential, user_agent_env):
+            // def authenticate(self, credential, user_agent_env):
             // """ Override to link the logged in user's res.partner to website.visitor.
             // If a visitor already exists for that user, assign it data from the
             // current anonymous visitor (if exists).
@@ -513,13 +439,9 @@ namespace Bamboo.Core.Application.Services
             // visitor_pre_authenticate_sudo = None
             // if request and request.env:
             //     visitor_pre_authenticate_sudo = request.env['website.visitor']._get_visitor_from_request()
-            // auth_info = super().authenticate(db, credential, user_agent_env)
+            // auth_info = super().authenticate(credential, user_agent_env)
             // if auth_info.get('uid') and visitor_pre_authenticate_sudo:
-            //     env = api.Environment(request.env.cr, auth_info['uid'], {})
-            //     # user may not always exist in request cursor for auto-provisioning modules like LDAP
-            //     if not env.user.exists():
-            //         return auth_info
-            // 
+            //     env = self.env(user=auth_info['uid'])
             //     user_partner = env.user.partner_id
             //     visitor_current_user_sudo = env['website.visitor'].sudo().search([
             //         ('partner_id', '=', user_partner.id)
@@ -535,11 +457,10 @@ namespace Bamboo.Core.Application.Services
             //         visitor_pre_authenticate_sudo._update_visitor_last_visit()
             // return auth_info
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def authenticate(cls, db, credential, user_agent_env):
+            // def authenticate(self, credential, user_agent_env):
             // """Verifies and returns the user ID corresponding to the given
             // ``credential``, or False if there was no matching user.
             // 
-            // :param str db: the database on which user is trying to authenticate
             // :param dict credential: a dictionary where the `type` key defines the authentication method and
             //     additional keys are passed as required per authentication method.
             //     For example:
@@ -550,20 +471,19 @@ namespace Bamboo.Core.Application.Services
             // :return: auth_info
             // :rtype: dict
             // """
-            // auth_info = cls._login(db, credential, user_agent_env=user_agent_env)
+            // auth_info = self._login(credential, user_agent_env=user_agent_env)
             // if user_agent_env and user_agent_env.get('base_location'):
-            //     with cls.pool.cursor() as cr:
-            //         env = api.Environment(cr, auth_info['uid'], {})
-            //         if env.user.has_group('base.group_system'):
-            //             # Successfully logged in as system user!
-            //             # Attempt to guess the web base url...
-            //             try:
-            //                 base = user_agent_env['base_location']
-            //                 ICP = env['ir.config_parameter']
-            //                 if not ICP.get_param('web.base.url.freeze'):
-            //                     ICP.set_param('web.base.url', base)
-            //             except Exception:
-            //                 _logger.exception("Failed to update web.base.url configuration parameter")
+            //     env = self.env(user=auth_info['uid'])
+            //     if env.user.has_group('base.group_system'):
+            //         # Successfully logged in as system user!
+            //         # Attempt to guess the web base url...
+            //         try:
+            //             base = user_agent_env['base_location']
+            //             ICP = env['ir.config_parameter']
+            //             if not ICP.get_param('web.base.url.freeze'):
+            //                 ICP.set_param('web.base.url', base)
+            //         except Exception:
+            //             _logger.exception("Failed to update web.base.url configuration parameter")
             // return auth_info
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -574,7 +494,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: res_users.py) ---
             // def _bus_channel(self):
-            // return self.partner_id._bus_channel()
+            // return self.partner_id
             */
             return default;
         }
@@ -624,7 +544,7 @@ namespace Bamboo.Core.Application.Services
             //         if changed:
             //             self.env.user._set_empty_password()
             //             return True
-            // return super(Users, self).change_password(old_passwd, new_passwd)
+            // return super().change_password(old_passwd, new_passwd)
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def change_password(self, old_passwd, new_passwd):
             // self.env.user._revoke_all_devices()
@@ -675,6 +595,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<ResUsers> ChangePasswordWizardAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def action_change_password_wizard(self):
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'res_model': 'change.password.wizard',
+            //     'view_mode': 'form',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<ResUsers> CheckActionIdInternalAsync()
         {
             /*
@@ -704,26 +639,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> CheckAsync(Guid id, ResUsersCheckRequestDto input)
+        protected async Task<ResUsers> CheckAtLeastOneAdministratorInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def check(cls, db, uid, passwd):
-            // """Verifies that the given (uid, password) is authorized for the database ``db`` and
-            //    raise an exception if it is not."""
-            // if not passwd:
-            //     # empty passwords disallowed for obvious security reasons
-            //     raise AccessDenied()
-            // 
-            // with contextlib.closing(cls.pool.cursor()) as cr:
-            //     self = api.Environment(cr, uid, {})[cls._name]
-            //     with self._assert_can_auth(user=uid):
-            //         if not self.env.user.active:
-            //             raise AccessDenied()
-            //         credential = {'login': self.env.user.login, 'password': passwd, 'type': 'password'}
-            //         self._check_credentials(credential, {'interactive': False})
+            // def _check_at_least_one_administrator(self):
+            // if not self.env.registry._init_modules:
+            //     return  # ignore the constraint when updating the module 'base'
+            // if not self.env.ref('base.group_system').user_ids:
+            //     raise ValidationError(_("You must have at least an administrator user."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<ResUsers> CheckCalendarCredentialsAsync(Guid id)
@@ -752,30 +678,14 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _check_company_domain(self, companies):
             // if not companies:
-            //     return []
-            // return [('company_ids', 'in', models.to_company_ids(companies))]
+            //     return Domain.TRUE
+            // company_ids = companies if isinstance(companies, str) else models.to_record_ids(companies)
+            // return Domain('company_ids', 'in', company_ids)
             */
             return default;
         }
 
-        protected async Task<ResUsers> CheckCompanyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_company(self):
-            // for user in self.filtered(lambda u: u.active):
-            //     if user.company_id not in user.company_ids:
-            //         raise ValidationError(
-            //             _('Company %(company_name)s is not in the allowed companies for user %(user_name)s (%(company_allowed)s).',
-            //               company_name=user.company_id.name,
-            //               user_name=user.name,
-            //               company_allowed=', '.join(user.mapped('company_ids.name')))
-            //         )
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> CheckCredentialsInternalAsync(object credential, object user_agent_env)
+        protected async Task<ResUsers> CheckCredentialsInternalAsync(object credential, object env)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_ldap, FILE: res_users.py) ---
@@ -839,6 +749,50 @@ namespace Bamboo.Core.Application.Services
             //     }
             // else:
             //     return super()._check_credentials(credential, env)
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
+            // def _check_credentials(self, credentials, env):
+            // if credentials['type'] == 'totp':
+            //     self._totp_rate_limit('code_check')
+            //     sudo = self.sudo()
+            //     key = base64.b32decode(sudo.totp_secret)
+            //     match = TOTP(key).match(credentials['token'])
+            //     if match is None:
+            //         _logger.info("2FA check: FAIL for %s %r", self, sudo.login)
+            //         raise AccessDenied(_("Verification failed, please double-check the 6-digit code"))
+            // 
+            //     if sudo.totp_last_counter and match <= sudo.totp_last_counter:
+            //         _logger.warning("2FA check: REUSE for %s %r", self, sudo.login)
+            //         raise AccessDenied(_("Verification failed, please use the latest 6-digit code"))
+            // 
+            //     sudo.totp_last_counter = match
+            //     _logger.info("2FA check: SUCCESS for %s %r", self, sudo.login)
+            //     self._totp_rate_limit_purge('code_check')
+            //     return {
+            //         'uid': self.env.user.id,
+            //         'auth_method': 'totp',
+            //         'mfa': 'default',
+            //     }
+            // return super()._check_credentials(credentials, env)
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
+            // def _check_credentials(self, credentials, env):
+            // if credentials['type'] == 'totp_mail':
+            //     self._totp_rate_limit('code_check')
+            //     user = self.sudo()
+            //     key = user._get_totp_mail_key()
+            //     match = TOTP(key).match(credentials['token'], window=3600, timestep=3600)
+            //     if match is None:
+            //         _logger.info("2FA check (mail): FAIL for %s %r", user, user.login)
+            //         raise AccessDenied(_("Verification failed, please double-check the 6-digit code"))
+            //     _logger.info("2FA check(mail): SUCCESS for %s %r", user, user.login)
+            //     self._totp_rate_limit_purge('code_check')
+            //     self._totp_rate_limit_purge('send_email')
+            //     return {
+            //         'uid': self.env.user.id,
+            //         'auth_method': 'totp_mail',
+            //         'mfa': 'default',
+            //     }
+            // else:
+            //     return super()._check_credentials(credentials, env)
             --- ODOO METHOD SOURCE (MODULE: website_sale_wishlist, FILE: res_users.py) ---
             // def _check_credentials(self, credential, env):
             // """Make all wishlists from session belong to its owner user."""
@@ -854,88 +808,117 @@ namespace Bamboo.Core.Application.Services
             // 
             // Overrides should:
             // 
-            // * call `super` to delegate to parents for credentials-checking
-            // * catch AccessDenied and perform their own checking
-            // * (re)raise AccessDenied if the credentials are still invalid
-            //   according to their own validation method
-            // * return the auth_info
+            // * call ``super`` to delegate to parents for credentials-checking
+            // * catch :class:`~odoo.exceptions.AccessDenied` and perform their
+            //   own checking
+            // * (re)raise :class:`~odoo.exceptions.AccessDenied` if the
+            //   credentials are still invalid according to their own
+            //   validation method
+            // * return the ``auth_info``
             // 
-            // When trying to check for credentials validity, call _check_credentials
-            // instead.
+            // When trying to check for credentials validity, call
+            // :meth:`_check_credentials` instead.
             // 
-            // Credentials are considered to be untrusted user input, for more information please check :func:`~.authenticate`
+            // Credentials are considered to be untrusted user input, for more
+            // information please check :meth:`authenticate`
             // 
-            // :returns: auth_info dictionary containing:
+            // :returns: ``auth_info`` dictionary containing:
+            // 
             //   - uid: the uid of the authenticated user
             //   - auth_method: which method was used during authentication
             //   - mfa: whether mfa should be skipped or not, possible values:
+            // 
             //     - enforce: enforce mfa no matter what (not yet implemented)
             //     - default: delegate to auth_totp
             //     - skip: skip mfa no matter what
+            // 
             //   Examples:
-            //   - { 'uid': 20, 'auth_method': 'password',      'mfa': 'default' }
-            //   - { 'uid': 17, 'auth_method': 'impersonation', 'mfa': 'enforce' }
-            //   - { 'uid': 32, 'auth_method': 'webauthn',      'mfa': 'skip'    }
+            // 
+            //   - ``{ 'uid': 20, 'auth_method': 'password',      'mfa': 'default' }``
+            //   - ``{ 'uid': 17, 'auth_method': 'impersonation', 'mfa': 'enforce' }``
+            //   - ``{ 'uid': 32, 'auth_method': 'webauthn',      'mfa': 'skip'    }``
             // :rtype: dict
             // """
             // if not (credential['type'] == 'password' and credential.get('password')):
             //     raise AccessDenied()
-            // self.env.cr.execute(
-            //     "SELECT COALESCE(password, '') FROM res_users WHERE id=%s",
-            //     [self.env.user.id]
-            // )
-            // [hashed] = self.env.cr.fetchone()
-            // valid, replacement = self._crypt_context()\
-            //     .verify_and_update(credential['password'], hashed)
-            // if replacement is not None:
-            //     self._set_encrypted_password(self.env.user.id, replacement)
-            //     if request and self == self.env.user:
-            //         self.env.flush_all()
-            //         self.env.registry.clear_cache()
-            //         # update session token so the user does not get logged out
-            //         new_token = self.env.user._compute_session_token(request.session.sid)
-            //         request.session.session_token = new_token
             // 
-            // if not valid:
-            //     raise AccessDenied()
-            // return {
-            //     'uid': self.env.user.id,
-            //     'auth_method': 'password',
-            //     'mfa': 'default',
-            // }
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_credentials(self, credential, user_agent_env):
-            // user_agent_env = user_agent_env or {}
-            // if user_agent_env.get('interactive', True):
-            //     if 'interactive' not in user_agent_env:
+            // env = env or {}
+            // interactive = env.get('interactive', True)
+            // 
+            // if interactive or not self.env.user._rpc_api_keys_only():
+            //     if 'interactive' not in env:
             //         _logger.warning(
             //             "_check_credentials without 'interactive' env key, assuming interactive login. \
             //             Check calls and overrides to ensure the 'interactive' key is properly set in \
             //             all _check_credentials environments"
             //         )
-            //     return super()._check_credentials(credential, user_agent_env)
             // 
-            // if not self.env.user._rpc_api_keys_only():
-            //     try:
-            //         return super()._check_credentials(credential, user_agent_env)
-            //     except AccessDenied:
-            //         pass
-            // 
-            // # 'rpc' scope does not really exist, we basically require a global key (scope NULL)
-            // if self.env['res.users.apikeys']._check_credentials(scope='rpc', key=credential['password']) == self.env.uid:
-            //     return {
-            //         'uid': self.env.user.id,
-            //         'auth_method': 'apikey',
-            //         'mfa': 'default',
-            //     }
-            // 
-            // if not user_agent_env.get('interactive', True) and self.env.user._rpc_api_keys_only():
-            //     _logger.info(
-            //         "Invalid API key or password-based authentication attempted for a non-interactive (API) "
-            //         "context that requires API key authentication only."
+            //     self.env.cr.execute(
+            //         "SELECT COALESCE(password, '') FROM res_users WHERE id=%s",
+            //         [self.env.user.id]
             //     )
+            //     [hashed] = self.env.cr.fetchone()
+            //     valid, replacement = self._crypt_context()\
+            //         .verify_and_update(credential['password'], hashed)
+            //     if replacement is not None:
+            //         self._set_encrypted_password(self.env.user.id, replacement)
+            //         if request and self == self.env.user:
+            //             self.env.flush_all()
+            //             self.env.registry.clear_cache()
+            //             # update session token so the user does not get logged out
+            //             new_token = self.env.user._compute_session_token(request.session.sid)
+            //             request.session.session_token = new_token
+            // 
+            //     if valid:
+            //         return {
+            //             'uid': self.env.user.id,
+            //             'auth_method': 'password',
+            //             'mfa': 'default',
+            //         }
+            // 
+            // if not interactive:
+            //     # 'rpc' scope does not really exist, we basically require a global key (scope NULL)
+            //     if self.env['res.users.apikeys']._check_credentials(scope='rpc', key=credential['password']) == self.env.uid:
+            //         return {
+            //             'uid': self.env.user.id,
+            //             'auth_method': 'apikey',
+            //             'mfa': 'default',
+            //         }
+            // 
+            //     if self.env.user._rpc_api_keys_only():
+            //         _logger.info(
+            //             "Invalid API key or password-based authentication attempted for a non-interactive (API) "
+            //             "context that requires API key authentication only."
+            //         )
             // 
             // raise AccessDenied()
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> CheckDisjointGroupsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
+            // def _check_disjoint_groups(self):
+            // super()._check_disjoint_groups()
+            // internal_users = self.env.ref('base.group_user').all_user_ids & self
+            // if any(user.website_id for user in internal_users):
+            //     raise ValidationError(_("Remove website on related partner before they become internal user."))
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _check_disjoint_groups(self):
+            // """We check that no users are both portal and users (same with public).
+            //    This could typically happen because of implied groups.
+            // """
+            // user_type_groups = self.env['res.groups']._get_user_type_groups()
+            // for user in self:
+            //     disjoint_groups = user.all_group_ids & user_type_groups
+            //     if len(disjoint_groups) > 1:
+            //         raise ValidationError(_(
+            //             "User %(user)s cannot be at the same time in exclusive groups %(groups)s.",
+            //             user=repr(user.name),
+            //             groups=", ".join(repr(g.display_name) for g in disjoint_groups),
+            //         ))
             */
             return default;
         }
@@ -959,30 +942,6 @@ namespace Bamboo.Core.Application.Services
             // )
             // if self.env.cr.rowcount:
             //     raise ValidationError(_('You can not have two users with the same login!'))
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> CheckOneUserTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
-            // def _check_one_user_type(self):
-            // super()._check_one_user_type()
-            // internal_users = self.env.ref('base.group_user').users & self
-            // if any(user.website_id for user in internal_users):
-            //     raise ValidationError(_("Remove website on related partner before they become internal user."))
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_one_user_type(self):
-            // """We check that no users are both portal and users (same with public).
-            //    This could typically happen because of implied groups.
-            // """
-            // user_types_category = self.env.ref('base.module_category_user_type', raise_if_not_found=False)
-            // user_types_groups = self.env['res.groups'].search(
-            //     [('category_id', '=', user_types_category.id)]) if user_types_category else False
-            // if user_types_groups:  # needed at install
-            //     if self._has_multiple_groups(user_types_groups.ids):
-            //         raise ValidationError(_('The user cannot have more than one user types.'))
             */
             return default;
         }
@@ -1055,6 +1014,44 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResUsers> CheckUidPasswdInternalAsync(object uid, object passwd)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _check_uid_passwd(self, uid, passwd):
+            // """Verifies that the given (uid, password) is authorized and
+            //    raise an exception if it is not."""
+            // if not passwd:
+            //     # empty passwords disallowed for obvious security reasons
+            //     raise AccessDenied()
+            // 
+            // with self._assert_can_auth(user=uid):
+            //     user = self.with_user(uid).env.user
+            //     if not user.active:
+            //         raise AccessDenied()
+            //     credential = {'login': user.login, 'password': passwd, 'type': 'password'}
+            //     user._check_credentials(credential, {'interactive': False})
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> CheckUserCompanyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _check_user_company(self):
+            // for user in self.filtered(lambda u: u.active):
+            //     if user.company_id not in user.company_ids:
+            //         raise ValidationError(
+            //             _('Company %(company_name)s is not in the allowed companies for user %(user_name)s (%(company_allowed)s).',
+            //               company_name=user.company_id.name,
+            //               user_name=user.name,
+            //               company_allowed=', '.join(user.mapped('company_ids.name')))
+            //         )
+            */
+            return default;
+        }
+
         protected async Task<ResUsers> CleanAttendanceOfficersInternalAsync()
         {
             /*
@@ -1064,7 +1061,7 @@ namespace Bamboo.Core.Application.Services
             //     [('attendance_manager_id', 'in', self.ids)]).attendance_manager_id
             // officers_to_remove_ids = self - attendance_officers
             // if officers_to_remove_ids:
-            //     self.env.ref('hr_attendance.group_hr_attendance_officer').users = [(3, user.id) for user in
+            //     self.env.ref('hr_attendance.group_hr_attendance_officer').user_ids = [(3, user.id) for user in
             //                                                                        officers_to_remove_ids]
             */
             return default;
@@ -1089,7 +1086,7 @@ namespace Bamboo.Core.Application.Services
             // responsibles_to_remove_ids = set(self.ids) - {leave_manager.id for [leave_manager] in res}
             // if responsibles_to_remove_ids:
             //     self.browse(responsibles_to_remove_ids).write({
-            //         'groups_id': [Command.unlink(self.env.ref(approver_group).id)],
+            //         'group_ids': [Command.unlink(self.env.ref(approver_group).id)],
             //     })
             */
             return default;
@@ -1101,10 +1098,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _compute_accesses_count(self):
             // for user in self:
-            //     groups = user.groups_id
+            //     groups = user.all_group_ids
             //     user.accesses_count = len(groups.model_access)
             //     user.rules_count = len(groups.rule_groups)
             //     user.groups_count = len(groups)
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeAllGroupIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _compute_all_group_ids(self):
+            // for user in self:
+            //     user.all_group_ids = user.group_ids.all_implied_ids
             */
             return default;
         }
@@ -1119,23 +1127,22 @@ namespace Bamboo.Core.Application.Services
             // When any user doesn't have its setting from ResUsersSettings defined, fallback to Default User Template's.
             // """
             // fallback_default_privacy = 'public'
-            // if any(not user.res_users_settings_id.calendar_default_privacy for user in self):
+            // # sudo: any user has access to other users calendar_default_privacy setting
+            // if any(not user.sudo().res_users_settings_id.calendar_default_privacy for user in self):
             //     fallback_default_privacy = self._default_user_calendar_default_privacy()
             // 
             // for user in self:
-            //     user.calendar_default_privacy = user.res_users_settings_id.calendar_default_privacy or fallback_default_privacy
+            //     user.calendar_default_privacy = user.sudo().res_users_settings_id.calendar_default_privacy or fallback_default_privacy
             */
             return default;
         }
 
-        protected async Task<ResUsers> ComputeCanEditInternalAsync()
+        protected async Task<ResUsers> ComputeCanEditRoleInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
-            // def _compute_can_edit(self):
-            // can_edit = self.env['ir.config_parameter'].sudo().get_param('hr.hr_employee_self_edit') or self.env.user.has_group('hr.group_hr_user')
-            // for user in self:
-            //     user.can_edit = can_edit
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _compute_can_edit_role(self):
+            // self.can_edit_role = self.env["res.role"].sudo(False).has_access("write")
             */
             return default;
         }
@@ -1176,6 +1183,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResUsers> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_users.py) ---
+            // def _compute_display_name(self):
+            // super()._compute_display_name()
+            // formatted_display_name = self.env.context.get('formatted_display_name')
+            // team_id = self.env.context.get('crm_formatted_display_name_team', 0)
+            // if formatted_display_name and team_id:
+            //     leader_id = self.env['crm.team'].browse(team_id).user_id
+            //     for user in self.filtered(lambda u: u == leader_id):
+            //         user.display_name += " --%s--" % _("(Team Leader)")
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_users.py) ---
+            // def _compute_display_name(self):
+            // super()._compute_display_name()
+            // for user in self:
+            //     if user.env.context.get("formatted_display_name") and user.leave_date_to:
+            //         name = "%s \t ✈ --%s %s--" % (user.display_name or user.name, _("Back on"), format_date(self.env, user.leave_date_to, self.env.user.lang, "medium"))
+            //         user.display_name = name.strip()
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeEmailDomainPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _compute_email_domain_placeholder(self):
+            // domain = email_domain_extract(self.env.user.email)
+            // self.email_domain_placeholder = _('e.g. %(placeholder)s', placeholder=f'email@{domain}') if domain else _('Email')
+            */
+            return default;
+        }
+
         protected async Task<ResUsers> ComputeEmployeeCountInternalAsync()
         {
             /*
@@ -1198,21 +1239,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResUsers> ComputeHasExternalMailServerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _compute_has_external_mail_server(self):
+            // self.has_external_mail_server = self.env['ir.config_parameter'].sudo().get_param(
+            //     'base_setup.default_external_email_server')
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeHasOauthAccessTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
+            // def _compute_has_oauth_access_token(self):
+            // for user in self:
+            //     user.has_oauth_access_token = bool(user.sudo().oauth_access_token)
+            */
+            return default;
+        }
+
         protected async Task<ResUsers> ComputeImStatusInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: res_users.py) ---
-            // def _compute_im_status(self):
-            // """Compute the im_status of the users"""
-            // presence_by_user = {
-            //     presence.user_id: presence.status
-            //     for presence in self.env["bus.presence"].search([("user_id", "in", self.ids)])
-            // }
-            // for user in self:
-            //     user.im_status = presence_by_user.get(user, "offline")
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_users.py) ---
             // def _compute_im_status(self):
-            // super(User, self)._compute_im_status()
+            // super()._compute_im_status()
             // on_leave_user_ids = self._get_on_leave_ids()
             // for user in self:
             //     if user.id in on_leave_user_ids:
@@ -1220,6 +1274,8 @@ namespace Bamboo.Core.Application.Services
             //             user.im_status = 'leave_online'
             //         elif user.im_status == 'away':
             //             user.im_status = 'leave_away'
+            //         elif user.im_status == 'busy':
+            //             user.im_status = 'leave_busy'
             //         elif user.im_status == 'offline':
             //             user.im_status = 'leave_offline'
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking, FILE: res_users.py) ---
@@ -1231,8 +1287,48 @@ namespace Bamboo.Core.Application.Services
             //     if not location_type:
             //         continue
             //     im_status = user.im_status
-            //     if im_status == "online" or im_status == "away" or im_status == "offline":
+            //     if im_status in ["online", "away", "busy", "offline"]:
             //         user.im_status = "presence_" + location_type + "_" + im_status
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _compute_im_status(self):
+            // for user in self:
+            //     user.im_status = (
+            //         "offline"
+            //         if user.presence_ids.status in ["offline", False]
+            //         else user.manual_im_status or user.presence_ids.status
+            //     )
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeIsHrUserInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            // def _compute_is_hr_user(self):
+            // is_hr_user = self.env.user.has_group('hr.group_hr_user')
+            // for user in self:
+            //     user.is_hr_user = is_hr_user
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeIsOutOfOfficeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _compute_is_out_of_office(self):
+            // """ Out-of-office is considered as activated once out_of_office_from is
+            // set in the past. "To" is not mandatory, as users could simply deactivate
+            // it when coming back if the leave timerange is unknown. """
+            // now = self.env.cr.now()
+            // todo = self.filtered(lambda u: u.out_of_office_from and u._is_internal())
+            // for user in todo:
+            //     if user.out_of_office_to:
+            //         user.is_out_of_office = (user.out_of_office_from <= now <= user.out_of_office_to)
+            //     else:
+            //         user.is_out_of_office = (user.out_of_office_from <= now)
+            // (self - todo).is_out_of_office = False
             */
             return default;
         }
@@ -1280,13 +1376,62 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResUsers> ComputeLivechatExpertiseIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def _compute_livechat_expertise_ids(self):
+            // for user in self:
+            //     # sudo: livechat user can see the livechat expertise of any other user
+            //     user.livechat_expertise_ids = user.sudo().res_users_settings_id.livechat_expertise_ids
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeLivechatIsInCallInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def _compute_livechat_is_in_call(self):
+            // for user in self:
+            //     # sudo - res.users: checking if user is in call is allowed if the user is member of a live chat channel.
+            //     user.livechat_is_in_call = user.sudo().is_in_call if user.livechat_channel_ids else None
+            */
+            return default;
+        }
+
         protected async Task<ResUsers> ComputeLivechatLangIdsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
             // def _compute_livechat_lang_ids(self):
             // for user in self:
-            //     user.livechat_lang_ids = user.res_users_settings_id.livechat_lang_ids
+            //     # sudo: livechat user can see the livechat languages of any other user
+            //     user.livechat_lang_ids = user.sudo().res_users_settings_id.livechat_lang_ids
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeLivechatOngoingSessionCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def _compute_livechat_ongoing_session_count(self):
+            // domain = [
+            //     ("channel_id.livechat_end_dt", "=", False),
+            //     ("member_id", "!=", False),
+            //     ("partner_id", "in", self.partner_id.ids),
+            //     ("channel_id.last_interest_dt", ">=", "-15M"),
+            // ]
+            // if channel_id := self.env.context.get('im_livechat_channel_id'):
+            //     domain.append(("session_livechat_channel_id", "=", channel_id))
+            // count_by_partner = dict(
+            //     self.env["im_livechat.channel.member.history"]._read_group(
+            //         domain, ["partner_id"], ["__count"],
+            //     ),
+            // )
+            // for user in self:
+            //     user.livechat_ongoing_session_count = count_by_partner.get(user.partner_id, 0)
             */
             return default;
         }
@@ -1297,7 +1442,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
             // def _compute_livechat_username(self):
             // for user in self:
-            //     user.livechat_username = user.res_users_settings_id.livechat_username
+            //     # sudo: livechat user can see the livechat username of any other user
+            //     user.livechat_username = user.sudo().res_users_settings_id.livechat_username
             */
             return default;
         }
@@ -1307,7 +1453,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def _compute_notification_type(self):
-            // # Because of the `groups_id` in the `api.depends`,
+            // # Because of the `group_ids` in the `api.depends`,
             // # this code will be called for any change of group on a user,
             // # even unrelated to the group_mail_notification_type_inbox or share flag.
             // # e.g. if you add HR > Manager to a user, this method will be called.
@@ -1316,14 +1462,43 @@ namespace Bamboo.Core.Application.Services
             // inbox_group_id = self.env['ir.model.data']._xmlid_to_res_id('mail.group_mail_notification_type_inbox')
             // 
             // self.filtered_domain([
-            //     ('groups_id', 'in', inbox_group_id), ('notification_type', '!=', 'inbox')
+            //     ('group_ids', 'in', inbox_group_id), ('notification_type', '!=', 'inbox')
             // ]).notification_type = 'inbox'
             // self.filtered_domain([
-            //     ('groups_id', 'not in', inbox_group_id), ('notification_type', '=', 'inbox')
+            //     ('group_ids', 'not in', inbox_group_id), ('notification_type', '=', 'inbox')
             // ]).notification_type = 'email'
             // 
             // # Special case: internal users with inbox notifications converted to portal must be converted to email users
-            // self.filtered_domain([('share', '=', True), ('notification_type', '=', 'inbox')]).notification_type = 'email'
+            // new_portal_users = self.filtered_domain([('share', '=', True), ('notification_type', '=', 'inbox')])
+            // new_portal_users.notification_type = 'email'
+            // new_portal_users.write({"group_ids": [Command.unlink(inbox_group_id)]})
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeOutgoingMailServerIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _compute_outgoing_mail_server_id(self):
+            // mail_servers = self.env['ir.mail_server'].sudo().search(fields.Domain.AND([
+            //     [('from_filter', 'ilike', '_@_')],
+            //     fields.Domain.OR([[
+            //         ('from_filter', '=', user.email_normalized),
+            //         ('smtp_user', '=', user.email),
+            //         ('owner_user_id', '=', user._origin.id),
+            //     ] for user in self]),
+            // ]))
+            // mail_servers = {m.owner_user_id: m for m in mail_servers}
+            // for user in self:
+            //     server = mail_servers.get(user) or self.env['ir.mail_server']
+            //     user.outgoing_mail_server_id = server.id
+            //     type_options = self._fields['outgoing_mail_server_type']._selection
+            //     user.outgoing_mail_server_type = (
+            //         server.smtp_authentication
+            //         if server.smtp_authentication in type_options
+            //         else 'default'
+            //     )
             */
             return default;
         }
@@ -1340,29 +1515,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> ComputeRequestOvertimeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: res_users.py) ---
-            // def _compute_request_overtime(self):
-            // is_holiday_user = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // time_off_types = self.env['hr.leave.type'].search_count([
-            //     ('requires_allocation', '=', 'yes'),
-            //     ('employee_requests', '=', 'yes'),
-            //     ('overtime_deductible', '=', True)
-            // ])
-            // for user in self:
-            //     if user.total_overtime >= 1:
-            //         if is_holiday_user:
-            //             user.request_overtime = True
-            //         else:
-            //             user.request_overtime = time_off_types
-            //     else:
-            //         user.request_overtime = False
-            */
-            return default;
-        }
-
         protected async Task<ResUsers> ComputeResUsersSettingsIdInternalAsync()
         {
             /*
@@ -1370,6 +1522,21 @@ namespace Bamboo.Core.Application.Services
             // def _compute_res_users_settings_id(self):
             // for user in self:
             //     user.res_users_settings_id = user.res_users_settings_ids and user.res_users_settings_ids[0]
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> ComputeRoleInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _compute_role(self):
+            // for user in self:
+            //     user.role = (
+            //         'group_system' if user.has_group('base.group_system') else
+            //         'group_user' if user.has_group('base.group_user') else
+            //         False
+            //     )
             */
             return default;
         }
@@ -1396,21 +1563,8 @@ namespace Bamboo.Core.Application.Services
             // def _compute_session_token(self, sid):
             // """ Compute a session token given a session id and a user id """
             // # retrieve the fields used to generate the session token
-            // self.env.cr.execute(SQL(
-            //     "SELECT %(select)s FROM %(from)s %(joins)s WHERE %(where)s GROUP BY %(group_by)s",
-            //     **self._get_session_token_query_params(),
-            // ))
-            // if self.env.cr.rowcount != 1:
-            //     self.env.registry.clear_cache()
-            //     return False
-            // data_fields = self.env.cr.fetchone()
-            // # generate hmac key
-            // key = (u'%s' % (data_fields,)).encode('utf-8')
-            // # hmac the session id
-            // data = sid.encode('utf-8')
-            // h = hmac.new(key, data, sha256)
-            // # keep in the cache the token
-            // return h.hexdigest()
+            // field_values = self._session_token_get_values()
+            // return self._session_token_hash_compute(sid, field_values)
             */
             return default;
         }
@@ -1421,7 +1575,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _compute_share(self):
             // user_group_id = self.env['ir.model.data']._xmlid_to_res_id('base.group_user')
-            // internal_users = self.filtered_domain([('groups_id', 'in', [user_group_id])])
+            // internal_users = self.filtered_domain([('all_group_ids', 'in', [user_group_id])])
             // internal_users.share = False
             // (self - internal_users).share = True
             */
@@ -1434,7 +1588,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _compute_signature(self):
             // for user in self.filtered(lambda user: user.name and is_html_empty(user.signature)):
-            //     user.signature = Markup('<p>--<br />%s</p>') % user['name']
+            //     user.signature = Markup('<div>%s</div>') % user['name']
             */
             return default;
         }
@@ -1467,6 +1621,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def _compute_totp_secret(self):
             // for user in self:
+            //     if not user.id:
+            //         user.totp_secret = user._origin.totp_secret
+            //         continue
             //     self.env.cr.execute('SELECT totp_secret FROM res_users WHERE id=%s', (user.id,))
             //     user.totp_secret = self.env.cr.fetchone()[0]
             */
@@ -1480,7 +1637,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_tour_enabled(self):
             // demo_modules_count = self.env['ir.module.module'].sudo().search_count([('demo', '=', True)])
             // for user in self:
-            //     user.tour_enabled = user._is_admin() and demo_modules_count == 0
+            //     user.tour_enabled = user._is_admin() and demo_modules_count == 0 and not modules.module.current_test
             */
             return default;
         }
@@ -1496,45 +1653,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> ComputeUserGroupWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _compute_user_group_warning(self):
-            // self.user_group_warning = False
-            // if self._context.get('show_user_group_warning'):
-            //     for user in self.filtered_domain([('share', '=', False)]):
-            //         group_inheritance_warnings = self._prepare_warning_for_group_inheritance(user)
-            //         if group_inheritance_warnings:
-            //             user.user_group_warning = group_inheritance_warnings
-            */
-            return default;
-        }
-
         public async Task<ResUsers> ContextGetAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def context_get(self):
-            // user = self.env.user
-            // # determine field names to read
-            // name_to_key = {
-            //     name: name[8:] if name.startswith('context_') else name
-            //     for name in self._fields
-            //     if name.startswith('context_') or name in ('lang', 'tz')
-            // }
             // # use read() to not read other fields: this must work while modifying
             // # the schema of models res.users or res.partner
             // try:
-            //     values = user.read(list(name_to_key), load=False)[0]
+            //     context = self.env.user.read(['lang', 'tz'], load=False)[0]
             // except IndexError:
             //     # user not found, no context information
             //     return frozendict()
-            // 
-            // context = {
-            //     key: values[name]
-            //     for name, key in name_to_key.items()
-            // }
+            // context.pop('id')
             // 
             // # ensure lang is set and available
             // # context > request > company > english > any lang installed
@@ -1626,8 +1757,8 @@ namespace Bamboo.Core.Application.Services
             //     digest.user_ids |= users_to_subscribe
             // return users
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: res_users.py) ---
-            // def create(self, values_list):
-            // res = super(Users, self).create(values_list)
+            // def create(self, vals_list):
+            // res = super().create(vals_list)
             // 
             // self._add_karma_batch({
             //     user: {
@@ -1636,7 +1767,7 @@ namespace Bamboo.Core.Application.Services
             //         'origin_ref': f'res.users,{self.env.uid}',
             //         'reason': _('User Creation'),
             //     }
-            //     for user, vals in zip(res, values_list)
+            //     for user, vals in zip(res, vals_list)
             //     if vals.get('karma')
             // })
             // 
@@ -1667,15 +1798,15 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def create(self, vals_list):
             // users = super().create(vals_list)
-            // self.env["discuss.channel"].search([("group_ids", "in", users.groups_id.ids)])._subscribe_users_automatically()
+            // self.env["discuss.channel"].search([("group_ids", "in", users.all_group_ids.ids)])._subscribe_users_automatically()
             // return users
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def create(self, vals_list):
             // 
-            // users = super(Users, self).create(vals_list)
+            // users = super().create(vals_list)
             // 
             // # log a portal status change (manual tracking)
-            // log_portal_access = not self._context.get('mail_create_nolog') and not self._context.get('mail_notrack')
+            // log_portal_access = not self.env.context.get('mail_create_nolog') and not self.env.context.get('mail_notrack')
             // if log_portal_access:
             //     for user in users:
             //         if user._is_portal():
@@ -1686,18 +1817,23 @@ namespace Bamboo.Core.Application.Services
             //                 subtype_xmlid='mail.mt_note'
             //             )
             // return users
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: res_users.py) ---
+            // def create(self, vals_list):
+            // res = super().create(vals_list)
+            // self._onboard_users_into_project(res)
+            // return res
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_users.py) ---
             // def create(self, vals_list):
             // """ Trigger automatic subscription based on user groups """
-            // users = super(Users, self).create(vals_list)
+            // users = super().create(vals_list)
             // for user in users:
             //     self.env['slide.channel'].sudo().search([
-            //         ('enroll_group_ids', 'in', user.groups_id.ids)
+            //         ('enroll_group_ids', 'in', user.all_group_ids.ids)
             //     ])._action_add_members(user.partner_id)
             // return users
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def create(self, vals_list):
-            // users = super(Users, self).create(vals_list)
+            // users = super().create(vals_list)
             // setting_vals = []
             // for user in users:
             //     if not user.res_users_settings_ids and user._is_internal():
@@ -1714,28 +1850,15 @@ namespace Bamboo.Core.Application.Services
             // return users
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def create(self, vals_list):
-            // for values in vals_list:
-            //     if 'groups_id' in values:
-            //         # complete 'groups_id' with implied groups
-            //         user = self.new(values)
-            //         gs = user.groups_id._origin
-            //         gs = gs | gs.trans_implied_ids
-            //         values['groups_id'] = self._fields['groups_id'].convert_to_write(gs, user)
-            // return super(UsersImplied, self).create(vals_list)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def create(self, vals_list):
-            // new_vals_list = []
-            // for values in vals_list:
-            //     new_vals_list.append(self._remove_reified_groups(values))
-            // users = super(UsersView, self).create(new_vals_list)
+            // users = super().create(vals_list)
             // group_multi_company_id = self.env['ir.model.data']._xmlid_to_res_id(
             //     'base.group_multi_company', raise_if_not_found=False)
             // if group_multi_company_id:
             //     for user in users:
-            //         if len(user.company_ids) <= 1 and group_multi_company_id in user.groups_id.ids:
-            //             user.write({'groups_id': [Command.unlink(group_multi_company_id)]})
-            //         elif len(user.company_ids) > 1 and group_multi_company_id not in user.groups_id.ids:
-            //             user.write({'groups_id': [Command.link(group_multi_company_id)]})
+            //         if len(user.company_ids) <= 1 and group_multi_company_id in user.group_ids.ids:
+            //             user.write({'group_ids': [Command.unlink(group_multi_company_id)]})
+            //         elif len(user.company_ids) > 1 and group_multi_company_id not in user.group_ids.ids:
+            //             user.write({'group_ids': [Command.link(group_multi_company_id)]})
             // return users
             */
             return await base.CreateAsync(entity, fields);
@@ -1788,9 +1911,9 @@ namespace Bamboo.Core.Application.Services
             // interviewer_group = self.env.ref('hr_recruitment.group_hr_recruitment_interviewer')
             // recruitment_group = self.env.ref('hr_recruitment.group_hr_recruitment_user')
             // 
-            // interviewers = self - recruitment_group.users
+            // interviewers = self - recruitment_group.all_user_ids
             // interviewers.sudo().write({
-            //     'groups_id': [(4, interviewer_group.id)]
+            //     'group_ids': [(4, interviewer_group.id)]
             // })
             */
             return default;
@@ -1872,7 +1995,7 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     users_to_blacklist = []
             // 
-            // super(Users, self)._deactivate_portal_user(**post)
+            // super()._deactivate_portal_user(**post)
             // 
             // for user, user_email in users_to_blacklist:
             //     self.env['mail.blacklist']._add(
@@ -1892,7 +2015,7 @@ namespace Bamboo.Core.Application.Services
             //             if number:
             //                 numbers_to_blacklist[number] = user
             // 
-            // super(Users, self)._deactivate_portal_user(**post)
+            // super()._deactivate_portal_user(**post)
             // 
             // if numbers_to_blacklist:
             //     current_user = self.env.user
@@ -1967,25 +2090,17 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> DefaultGroupsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_users.py) ---
-            // def _default_groups(self):
-            // """Default groups for employees
-            // 
-            // If base_setup.default_user_rights is set, only the "Employee" group is used
-            // """
-            // if not str2bool(self.env['ir.config_parameter'].sudo().get_param("base_setup.default_user_rights"), default=False):
-            //     employee_group = self.env.ref("base.group_user")
-            //     # force the trans_implied_ids during default for consistency in the interface
-            //     return employee_group | employee_group.trans_implied_ids
-            // return super()._default_groups()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _default_groups(self):
             // """Default groups for employees
             // 
-            // All the groups of the Template User
+            // All the groups of the Default User Group
             // """
-            // default_user = self.env.ref('base.default_user', raise_if_not_found=False)
-            // return default_user.sudo().groups_id if default_user else []
+            // groups = self.env.ref('base.group_user')
+            // default_group = self.env.ref('base.default_user_group', raise_if_not_found=False)
+            // if default_group:
+            //     groups += default_group.implied_ids
+            // return groups
             */
             return default;
         }
@@ -1996,20 +2111,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
             // def _default_user_calendar_default_privacy(self):
             // """ Get the calendar default privacy from the Default User Template, set public as default. """
-            // if default_user := self.env.ref('base.default_user', raise_if_not_found=False):
-            //     return default_user.sudo().calendar_default_privacy or 'public'
-            // return 'public'
+            // return self.env['ir.config_parameter'].sudo().get_param('calendar.default_privacy', 'public')
             */
             return default;
         }
 
-        protected async Task<ResUsers> DetermineFieldsToFetchInternalAsync(object field_names, object ignore_when_in_cache)
+        protected async Task<ResUsers> DefaultViewGroupHierarchyInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _determine_fields_to_fetch(self, field_names, ignore_when_in_cache=False):
-            // valid_fields = partition(is_reified_group, field_names)[1]
-            // return super()._determine_fields_to_fetch(valid_fields, ignore_when_in_cache)
+            // def _default_view_group_hierarchy(self):
+            // return self.env['res.groups']._get_view_group_hierarchy()
             */
             return default;
         }
@@ -2026,18 +2138,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> FetchQueryInternalAsync(object query, object fields)
+        protected async Task<ResUsers> GcPersonalMailServersInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _fetch_query(self, query, fields):
-            // records = super()._fetch_query(query, fields)
-            // if not set(USER_PRIVATE_FIELDS).isdisjoint(field.name for field in fields):
-            //     if self.browse().has_access('write'):
-            //         return records
-            //     for fname in USER_PRIVATE_FIELDS:
-            //         self.env.cache.update(records, self._fields[fname], repeat('********'))
-            // return records
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _gc_personal_mail_servers(self):
+            // """In case the user change their email, we need to delete the old personal servers."""
+            // self.env['ir.mail_server'].with_context(active_test=False) \
+            //     .search([('owner_user_id', '!=', False)]) \
+            //     .filtered(lambda s: s.owner_user_id.outgoing_mail_server_id != s or not s.active) \
+            //     .unlink()
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> GenerateOnboardingTodoInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project_todo, FILE: res_users.py) ---
+            // def _generate_onboarding_todo(self):
+            // create_vals = []
+            // for user in self:
+            //     self_lang = self.with_context(lang=user.lang or self.env.user.lang)
+            //     body = self_lang.env["ir.qweb"]._render(
+            //         "project_todo.todo_user_onboarding",
+            //         {"object": user},
+            //         minimal_qcontext=True,
+            //         raise_if_not_found=False
+            //     )
+            //     if not body:
+            //         continue
+            //     title = self_lang.env._("Welcome %s!", user.name)
+            //     create_vals.append({
+            //         "user_ids": user.ids,
+            //         "description": body,
+            //         "name": title,
+            //     })
+            // if create_vals:
+            //     self.env["project.task"].with_user(SUPERUSER_ID).with_context({'mail_auto_subscribe_no_notify': True}).create(create_vals)
             */
             return default;
         }
@@ -2104,6 +2242,7 @@ namespace Bamboo.Core.Application.Services
             //         'name': meeting_label,
             //         'model': 'calendar.event',
             //         'icon': modules.module.get_module_icon(EventModel._original_module),
+            //         'domain': [('active', 'in', [True, False])],
             //         'meetings': meetings_lines,
             //         "view_type": EventModel._systray_view,
             //     }
@@ -2117,65 +2256,86 @@ namespace Bamboo.Core.Application.Services
             // for activity in activities:
             //     if activity['model'] != 'res.partner':
             //         continue
-            //     activity['icon'] = modules.module.get_module_icon('contacts')
+            //     activity['icon'] = modules.module.Manifest.for_addon('contacts').icon
             // return activities
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def _get_activity_groups(self):
             // search_limit = int(self.env['ir.config_parameter'].sudo().get_param('mail.activity.systray.limit', 1000))
             // activities = self.env["mail.activity"].search(
-            //     [("user_id", "=", self.env.uid)], order='id desc', limit=search_limit)
-            // activities_by_record_by_model_name = defaultdict(lambda: defaultdict(lambda: self.env["mail.activity"]))
-            // for activity in activities:
-            //     record = self.env[activity.res_model].browse(activity.res_id)
-            //     activities_by_record_by_model_name[activity.res_model][record] += activity
-            // activities_by_model_name = defaultdict(lambda: self.env["mail.activity"])
+            //     [("user_id", "=", self.env.uid)],
+            //     order='id desc', limit=search_limit,
+            // )
+            // 
             // user_company_ids = self.env.user.company_ids.ids
             // is_all_user_companies_allowed = set(user_company_ids) == set(self.env.context.get('allowed_company_ids') or [])
-            // for model_name, activities_by_record in activities_by_record_by_model_name.items():
-            //     res_ids = [r.id for r in activities_by_record]
-            //     Model = self.env[model_name].with_context(**self.env.context)
-            //     has_model_access_right = self.env[model_name].has_access('read')
+            // 
+            // activities_model_groups = defaultdict(lambda: self.env["mail.activity"])
+            // activities_rec_groups = defaultdict(lambda: defaultdict(lambda: self.env["mail.activity"]))
+            // 
+            // for activity in activities:
+            //     if activity.res_model:
+            //         activities_rec_groups[activity.res_model][activity.res_id] += activity
+            //     else:
+            //         activities_rec_groups["mail.activity"][activity.id] += activity
+            // model_activity_states = {
+            //     'mail.activity': {'overdue_count': 0, 'today_count': 0, 'planned_count': 0, 'total_count': 0}
+            // }
+            // for model_name, activities_by_record in activities_rec_groups.items():
+            //     res_ids = activities_by_record.keys()
+            //     Model = self.env[model_name]
+            //     has_model_access_right = Model.has_access('read')
             //     if has_model_access_right:
             //         allowed_records = Model.browse(res_ids)._filtered_access('read')
             //     else:
-            //         allowed_records = self.env[model_name]
+            //         allowed_records = Model
             //     unallowed_records = Model.browse(res_ids) - allowed_records
             //     # We remove from not allowed records, records that the user has access to through others of his companies
             //     if has_model_access_right and unallowed_records and not is_all_user_companies_allowed:
             //         unallowed_records -= unallowed_records.with_context(
             //             allowed_company_ids=user_company_ids)._filtered_access('read')
-            //     for record, activities in activities_by_record.items():
-            //         if record in unallowed_records:
-            //             activities_by_model_name['mail.activity'] += activities
-            //         elif record in allowed_records:
-            //             activities_by_model_name[model_name] += activities
-            // model_ids = [self.env["ir.model"]._get_id(name) for name in activities_by_model_name]
+            //     model_activity_states[model_name] = {'overdue_count': 0, 'today_count': 0, 'planned_count': 0, 'total_count': 0}
+            //     for record_id, activities in activities_by_record.items():
+            //         if record_id in unallowed_records.ids:
+            //             model_key = 'mail.activity'
+            //             activities_model_groups['mail.activity'] += activities
+            //         elif record_id in allowed_records.ids:
+            //             model_key = model_name
+            //             activities_model_groups[model_name] += activities
+            //         elif record_id:
+            //             continue
+            // 
+            //         if 'overdue' in activities.mapped('state'):
+            //             model_activity_states[model_key]['overdue_count'] += 1
+            //             model_activity_states[model_key]['total_count'] += 1
+            //         elif 'today' in activities.mapped('state'):
+            //             model_activity_states[model_key]['today_count'] += 1
+            //             model_activity_states[model_key]['total_count'] += 1
+            //         else:
+            //             model_activity_states[model_key]['planned_count'] += 1
+            // 
+            // model_ids = [self.env["ir.model"]._get_id(name) for name in activities_model_groups]
             // user_activities = {}
-            // for model_name, activities in activities_by_model_name.items():
+            // for model_name, activities in activities_model_groups.items():
             //     Model = self.env[model_name]
             //     module = Model._original_module
             //     icon = module and modules.module.get_module_icon(module)
             //     model = self.env["ir.model"]._get(model_name).with_prefetch(model_ids)
             //     user_activities[model_name] = {
             //         "id": model.id,
-            //         "name": model.name,
+            //         "name": model.name if model_name != "mail.activity" else _("Other activities"),
             //         "model": model_name,
             //         "type": "activity",
             //         "icon": icon,
-            //         "total_count": 0,
-            //         "today_count": 0,
-            //         "overdue_count": 0,
-            //         "planned_count": 0,
+            //         # activity more important than archived status, active_test is too broad
+            //         "domain": [('active', 'in', [True, False])] if model_name != "mail.activity" and "active" in Model else [],
+            //         "total_count": model_activity_states[model_name]['total_count'],
+            //         "today_count": model_activity_states[model_name]['today_count'],
+            //         "overdue_count": model_activity_states[model_name]['overdue_count'],
+            //         "planned_count": model_activity_states[model_name]['planned_count'],
             //         "view_type": getattr(Model, '_systray_view', 'list'),
             //     }
             //     if model_name == 'mail.activity':
             //         user_activities[model_name]['activity_ids'] = activities.ids
-            //     for activity in activities:
-            //         user_activities[model_name]["%s_count" % activity.state] += 1
-            //         if activity.state in ("today", "overdue"):
-            //             user_activities[model_name]["total_count"] += 1
-            // if "mail.activity" in user_activities:
-            //     user_activities["mail.activity"]["name"] = _("Other activities")
             // return list(user_activities.values())
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: res_users.py) ---
             // def _get_activity_groups(self):
@@ -2199,33 +2359,40 @@ namespace Bamboo.Core.Application.Services
             // for activity in activities:
             //     if activity.get('model') == 'mailing.mailing':
             //         activities.remove(activity)
-            //         query = """SELECT m.mailing_type, count(*), act.res_model as model, act.res_id,
-            //                     CASE
-            //                         WHEN %(today)s::date - act.date_deadline::date = 0 Then 'today'
-            //                         WHEN %(today)s::date - act.date_deadline::date > 0 Then 'overdue'
-            //                         WHEN %(today)s::date - act.date_deadline::date < 0 Then 'planned'
-            //                     END AS states
-            //                 FROM mail_activity AS act
-            //                 JOIN mailing_mailing AS m ON act.res_id = m.id
-            //                 WHERE act.res_model = 'mailing.mailing' AND act.user_id = %(user_id)s  
-            //                 GROUP BY m.mailing_type, states, act.res_model, act.res_id;
+            //         query = """
+            //                 WITH mailing_states AS (
+            //                     SELECT m.mailing_type, act.res_id,
+            //                         CASE
+            //                             WHEN %(today)s::date - MIN(act.date_deadline)::date = 0 Then 'today'
+            //                             WHEN %(today)s::date - MIN(act.date_deadline)::date > 0 Then 'overdue'
+            //                             WHEN %(today)s::date - MIN(act.date_deadline)::date < 0 Then 'planned'
+            //                         END AS states
+            //                     FROM mail_activity AS act
+            //                     JOIN mailing_mailing AS m ON act.res_id = m.id
+            //                     WHERE act.res_model = 'mailing.mailing' AND act.user_id = %(user_id)s AND act.active in (TRUE, %(active)s)
+            //                     GROUP BY m.mailing_type, act.res_id
+            //                 )
+            //                 SELECT mailing_type, states, array_agg(res_id) AS res_ids, COUNT(res_id) AS count
+            //                 FROM mailing_states
+            //                 GROUP BY mailing_type, states
             //                 """
             //         self.env.cr.execute(query, {
             //             'today': fields.Date.context_today(self),
             //             'user_id': self.env.uid,
+            //             'active': self.env.context.get('active_test', True),
             //         })
             //         activity_data = self.env.cr.dictfetchall()
-            //         
+            // 
             //         user_activities = {}
             //         for act in activity_data:
             //             if not user_activities.get(act['mailing_type']):
             //                 if act['mailing_type'] == 'sms':
-            //                     module = 'mass_mailing_sms'
+            //                     module_name = 'mass_mailing_sms'
             //                     name = _('SMS Marketing')
             //                 else:
-            //                     module = 'mass_mailing'
+            //                     module_name = 'mass_mailing'
             //                     name = _('Email Marketing')
-            //                 icon = module and modules.module.get_module_icon(module)
+            //                 icon = modules.Manifest.for_addon(module_name).icon
             //                 res_ids = set()
             //                 user_activities[act['mailing_type']] = {
             //                     'id': self.env['ir.model']._get('mailing.mailing').id,
@@ -2233,18 +2400,22 @@ namespace Bamboo.Core.Application.Services
             //                     'model': 'mailing.mailing',
             //                     'type': 'activity',
             //                     'icon': icon,
+            //                     'domain': [('active', 'in', [True, False])],
             //                     'total_count': 0, 'today_count': 0, 'overdue_count': 0, 'planned_count': 0,
             //                     'res_ids': res_ids,
             //                     "view_type": view_type,
             //                 }
-            //             user_activities[act['mailing_type']]['res_ids'].add(act['res_id'])
+            //             user_activities[act['mailing_type']]['res_ids'].update(act['res_ids'])
             //             user_activities[act['mailing_type']]['%s_count' % act['states']] += act['count']
             //             if act['states'] in ('today', 'overdue'):
             //                 user_activities[act['mailing_type']]['total_count'] += act['count']
             // 
             //         for mailing_type in user_activities.keys():
             //             user_activities[mailing_type].update({
-            //                 'domain': json.dumps([['activity_ids.res_id', 'in', list(user_activities[mailing_type]['res_ids'])]])
+            //                 'domain': json.dumps([
+            //                     ['active', 'in', [True, False]],
+            //                     ['activity_ids.res_id', 'in', list(user_activities[mailing_type]['res_ids'])],
+            //                 ])
             //             })
             //         activities.extend(list(user_activities.values()))
             //         break
@@ -2262,22 +2433,30 @@ namespace Bamboo.Core.Application.Services
             // if to_remove:
             //     activity_groups.remove(to_remove)
             // 
-            // # 2. creating groups for todo and task seperately
-            // query = """SELECT BOOL(t.project_id) as is_task, count(*), act.res_model, act.res_id,
-            //                CASE
-            //                    WHEN %(date)s - act.date_deadline::date = 0 THEN 'today'
-            //                    WHEN %(date)s - act.date_deadline::date > 0 THEN 'overdue'
-            //                    WHEN %(date)s - act.date_deadline::date < 0 THEN 'planned'
-            //                 END AS states
-            //              FROM mail_activity AS act
-            //              JOIN project_task AS t ON act.res_id = t.id
-            //             WHERE act.res_model = 'project.task' AND act.user_id = %(user_id)s AND act.active in (TRUE, %(active)s)
-            //          GROUP BY is_task, states, act.res_model, act.res_id
-            //         """
+            // # 2. Splitting tasks in 'regular-task' (is_task=TRUE) and 'to-do' (is_task=False)
+            // #    Counting max 1 activity per task
+            // query = """
+            //     WITH task_states AS (
+            //         SELECT BOOL(t.project_id) AS is_task, act.res_id,
+            //             CASE
+            //                 WHEN %(date)s - MIN(act.date_deadline)::date = 0 THEN 'today'
+            //                 WHEN %(date)s - MIN(act.date_deadline)::date > 0 THEN 'overdue'
+            //                 WHEN %(date)s - MIN(act.date_deadline)::date < 0 THEN 'planned'
+            //             END AS states
+            //         FROM mail_activity AS act
+            //         JOIN project_task AS t ON act.res_id = t.id
+            //         WHERE act.res_model = 'project.task' AND act.user_id = %(user_id)s AND act.active in (TRUE, %(active)s)
+            //         GROUP BY is_task, act.res_id
+            //     )
+            //     SELECT is_task, states, array_agg(res_id) AS res_ids, COUNT(res_id) AS count
+            //     FROM task_states
+            //     GROUP BY is_task, states
+            // """
+            // 
             // self.env.cr.execute(query, {
             //     'date': str(fields.Date.context_today(self)),
             //     'user_id': self.env.uid,
-            //     'active': self._context.get('active_test', True),
+            //     'active': self.env.context.get('active_test', True),
             // })
             // activity_data = self.env.cr.dictfetchall()
             // view_type = self.env['project.task']._systray_view
@@ -2287,12 +2466,12 @@ namespace Bamboo.Core.Application.Services
             //     is_task = activity['is_task']
             //     if is_task not in user_activities:
             //         if not is_task:
-            //             module = 'project_todo'
+            //             module_name = 'project_todo'
             //             name = _('To-Do')
             //         else:
-            //             module = 'project'
+            //             module_name = 'project'
             //             name = _('Task')
-            //         icon = modules.module.get_module_icon(module)
+            //         icon = modules.Manifest.for_addon(module_name).icon
             //         user_activities[is_task] = {
             //             'id': self.env['ir.model']._get('project.task').id,
             //             'name': name,
@@ -2300,18 +2479,22 @@ namespace Bamboo.Core.Application.Services
             //             'model': 'project.task',
             //             'type': 'activity',
             //             'icon': icon,
+            //             'domain': [('active', 'in', [True, False])],
             //             'total_count': 0, 'today_count': 0, 'overdue_count': 0, 'planned_count': 0,
             //             'res_ids': set(),
             //             'view_type': view_type,
             //         }
-            //     user_activities[is_task]['res_ids'].add(activity['res_id'])
+            //     user_activities[is_task]['res_ids'].update(activity['res_ids'])
             //     user_activities[is_task][f"{activity['states']}_count"] += activity['count']
             //     if activity['states'] in ('today', 'overdue'):
             //         user_activities[is_task]['total_count'] += activity['count']
             // 
             // for group in user_activities.values():
             //     group.update({
-            //         'domain': json.dumps([['activity_ids.res_id', 'in', list(group['res_ids'])]])
+            //         'domain': json.dumps([
+            //             ['active', 'in', [True, False]],
+            //             ['activity_ids.res_id', 'in', list(group['res_ids'])]
+            //         ])
             //     })
             // activity_groups.extend(list(user_activities.values()))
             // 
@@ -2326,13 +2509,48 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def action_get(self):
             // if self.env.user.employee_id:
-            //     return self.env['ir.actions.act_window']._for_xml_id('hr.res_users_action_my')
-            // return super(User, self).action_get()
+            //     action = self.env['ir.actions.act_window']._for_xml_id('hr.res_users_action_my')
+            //     groups = {
+            //         group_xml_id[0]: True
+            //         for group_xml_id in self.env.user.all_group_ids._get_external_ids().values()
+            //         if group_xml_id
+            //     }
+            //     action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            //     action_context.update(groups)
+            //     action['context'] = str(action_context)
+            //     return action
+            // return super().action_get()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def action_get(self):
             // return self.sudo().env.ref('base.action_res_users_my').read()[0]
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResUsers> GetAuthMethodsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_users.py) ---
+            // def _get_auth_methods(self):
+            // """
+            // Return the list of authentication methods available to the user.
+            // 
+            // This includes passkeys (WebAuthn), TOTP (app or mail), and password,
+            // depending on the user's configured credentials and MFA policy.
+            // 
+            // :return: A list of enabled authentication method types (e.g., ["webauthn", "totp", "password"]).
+            // :rtype: list[str]
+            // """
+            // self.ensure_one()
+            // auth_methods = []
+            // if self.auth_passkey_key_ids:
+            //     auth_methods.append("webauthn")
+            // if mfa_type := self._mfa_type():
+            //     auth_methods.append(mfa_type)
+            // auth_methods.append("password")
+            // return auth_methods
+            */
+            return default;
         }
 
         public async Task<ResUsers> GetCompanyCurrencyIdAsync(Guid id)
@@ -2380,10 +2598,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
             // def _get_email_domain(self, email):
             // website = self.env['website'].get_current_website()
-            // return super()._get_email_domain(email) + website.website_domain()
+            // return super()._get_email_domain(email) & website.website_domain()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _get_email_domain(self, email):
-            // return [('email', '=', email)]
+            // return Domain('email', '=', email)
             */
             return default;
         }
@@ -2401,6 +2619,27 @@ namespace Bamboo.Core.Application.Services
             // return super()._get_employee_fields_to_sync() + DAYS
             */
             return default;
+        }
+
+        public async Task<ResUsers> GetFormviewActionAsync(Guid id, ResUsersGetFormviewActionRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            // def get_formview_action(self, access_uid=None):
+            // """ Override this method in order to redirect many2one towards the full user form view
+            // incase the user is ERP manager and the request coming from employee form."""
+            // 
+            // res = super().get_formview_action(access_uid=access_uid)
+            // user = self.env.user
+            // if access_uid:
+            //     user = self.env['res.users'].browse(access_uid).sudo()
+            // 
+            // if self.env.context.get('default_create_employee_id') and user.has_group('base.group_erp_manager'):
+            //     res['views'] = [(self.env.ref('base.view_users_form').id, 'form')]
+            // 
+            // return res
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResUsers> GetGamificationRedirectionDataAsync(Guid id)
@@ -2425,7 +2664,7 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_users.py) ---
             // def get_gamification_redirection_data(self):
-            // res = super(Users, self).get_gamification_redirection_data()
+            // res = super().get_gamification_redirection_data()
             // res.append({
             //     'url': '/slides',
             //     'label': _('See our eLearning')
@@ -2473,7 +2712,9 @@ namespace Bamboo.Core.Application.Services
             // def _get_group_ids(self):
             // """ Return ``self``'s group ids (as a tuple)."""
             // self.ensure_one()
-            // return self.groups_id._ids
+            // # `with_context({})` because this method is decorated with `@ormcache('self._ids')`,
+            // # it cannot depend on the context (e.g. `active_test`, `lang`, ...)
+            // return self.with_context({}).all_group_ids._ids
             */
             return default;
         }
@@ -2484,8 +2725,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _get_invalidation_fields(self):
             // return {
-            //     'groups_id', 'active', 'lang', 'tz', 'company_id', 'company_ids',
-            //     *USER_PRIVATE_FIELDS,
+            //     'group_ids', 'active', 'lang', 'tz', 'company_id', 'company_ids',
             //     *self._get_session_token_fields()
             // }
             */
@@ -2509,15 +2749,20 @@ namespace Bamboo.Core.Application.Services
             //         :param user_domain: general domain (i.e. active, karma > 1, website, ...)
             //           to compute the absolute position of the current record set
             // 
-            //         :return list: [{
-            //             'user_id': user_id (belonging to current record set),
-            //             'karma_position': integer, ranking position
-            //         }, {..}] ordered by karma_position desc
+            //         :rtype: list[dict]
+            //         :return:
+            // 
+            //             ::
+            // 
+            //                 [{
+            //                     'user_id': user_id (belonging to current record set),
+            //                     'karma_position': integer, ranking position
+            //                 }, {..}] ordered by karma_position desc
             //         """
             //         if not self:
             //             return {}
             // 
-            //         where_query = self.env['res.users']._where_calc(user_domain)
+            //         where_query = self.env['res.users']._search(user_domain, bypass_access=True)
             // 
             //         # we search on every user in the DB to get the real positioning (not the one inside the subset)
             //         # then, we filter to get only the subset.
@@ -2539,16 +2784,57 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResUsers> GetLockTimeoutInactivityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_users.py) ---
+            // def _get_lock_timeout_inactivity(self):
+            // """
+            // Return the shortest applicable inactivity timeout for the user.
+            // 
+            // Extracts the first (i.e., shortest) timeout from the "lock_timeout_inactivity"
+            // entry in the user's timeout configuration, if present.
+            // 
+            // :return: Inactivity timeout in seconds, or None if not configured.
+            // :rtype: float or None
+            // """
+            // timeouts = self._get_lock_timeouts()
+            // return timeouts.get("lock_timeout_inactivity")[0][0] if timeouts.get("lock_timeout_inactivity") else None
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> GetLockTimeoutsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_users.py) ---
+            // def _get_lock_timeouts(self):
+            // """
+            // Return the user's configured session and inactivity timeouts.
+            // 
+            // Delegates to the group-level `_get_lock_timeouts`, using the user's group membership
+            // to determine applicable timeout settings.
+            // 
+            // :return: A dictionary of timeout types and values, as defined by `_get_lock_timeouts` on groups.
+            // :rtype: dict
+            // """
+            // self.ensure_one()
+            // # Take advantage of the ormcache of `self._get_group_ids()` to get the user groups and avoid queries
+            // return self.env["res.groups"].browse(self._get_group_ids())._get_lock_timeouts()
+            */
+            return default;
+        }
+
         protected async Task<ResUsers> GetLoginDomainInternalAsync(object login)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
             // def _get_login_domain(self, login):
             // website = self.env['website'].get_current_website()
-            // return super(ResUsers, self)._get_login_domain(login) + website.website_domain()
+            // return super()._get_login_domain(login) & website.website_domain()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _get_login_domain(self, login):
-            // return [('login', '=', login)]
+            // return Domain('login', '=', login)
             */
             return default;
         }
@@ -2562,6 +2848,54 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _get_login_order(self):
             // return self._order
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> GetMailServerSetupEndActionInternalAsync(object smtp_server)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: res_users.py) ---
+            // def _get_mail_server_setup_end_action(self, smtp_server):
+            // if smtp_server.smtp_authentication == "gmail":
+            //     return smtp_server.sudo().open_google_gmail_uri()
+            // return super()._get_mail_server_setup_end_action(smtp_server)
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _get_mail_server_setup_end_action(self, smtp_server):
+            // raise NotImplementedError()
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: res_users.py) ---
+            // def _get_mail_server_setup_end_action(self, smtp_server):
+            // if smtp_server.smtp_authentication == 'outlook':
+            //     return smtp_server.sudo().open_microsoft_outlook_uri()
+            // return super()._get_mail_server_setup_end_action(smtp_server)
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> GetMailServerValuesInternalAsync(object server_type)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: res_users.py) ---
+            // def _get_mail_server_values(self, server_type):
+            // values = super()._get_mail_server_values(server_type)
+            // if server_type == "gmail":
+            //     values |= {
+            //         "smtp_host": "smtp.gmail.com",
+            //         "smtp_authentication": "gmail",
+            //     }
+            // return values
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _get_mail_server_values(self, server_type):
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: res_users.py) ---
+            // def _get_mail_server_values(self, server_type):
+            // values = super()._get_mail_server_values(server_type)
+            // if server_type == "outlook":
+            //     values |= {
+            //         "smtp_host": "smtp-mail.outlook.com",
+            //         "smtp_authentication": "outlook",
+            //     }
+            // return values
             */
             return default;
         }
@@ -2633,7 +2967,9 @@ namespace Bamboo.Core.Application.Services
             //                     JOIN hr_leave ON hr_leave.user_id = res_users.id
             //                     AND hr_leave.state = 'validate'
             //                     AND res_users.active = 't'
-            //                     AND hr_leave.date_from <= %%s AND hr_leave.date_to >= %%s''' % field, (now, now))
+            //                     AND hr_leave.date_from <= %%s AND hr_leave.date_to >= %%s
+            //                     RIGHT JOIN hr_leave_type ON hr_leave.holiday_status_id = hr_leave_type.id
+            //                     AND hr_leave_type.time_type = 'leave';''' % field, (now, now))
             // return [r[0] for r in self.env.cr.fetchall()]
             */
             return default;
@@ -2657,7 +2993,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def _get_personal_info_partner_ids_to_notify(self, employee):
-            // # To override in appropriate module
+            // if employee.version_id.hr_responsible_id:
+            //     return (
+            //         _("You are receiving this message because you are the HR Responsible of this employee."),
+            //         employee.version_id.hr_responsible_id.partner_id.ids,
+            //     )
             // return ('', [])
             */
             return default;
@@ -2707,7 +3047,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
             // def _get_session_token_fields(self):
-            // return super(ResUsers, self)._get_session_token_fields() | {'oauth_access_token'}
+            // return super()._get_session_token_fields() | {'oauth_access_token'}
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users.py) ---
             // def _get_session_token_fields(self):
             // return super()._get_session_token_fields() | {'auth_passkey_key_ids'}
@@ -2727,7 +3067,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users.py) ---
             // def _get_session_token_query_params(self):
             // params = super()._get_session_token_query_params()
-            // params['select'] = SQL("%s, ARRAY_AGG(key.id ORDER BY key.id DESC)", params['select'])
+            // params['select'] = SQL(
+            //     "%s, ARRAY_AGG(key.id ORDER BY key.id DESC) FILTER (WHERE key.id IS NOT NULL) as auth_passkey_key_ids",
+            //     params['select']
+            // )
             // params['joins'] = SQL("%s LEFT JOIN auth_passkey_key key ON res_users.id = key.create_uid", params['joins'])
             // return params
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -2743,7 +3086,7 @@ namespace Bamboo.Core.Application.Services
             //     if not self._fields[fname].relational
             // )
             // return {
-            //     "select": SQL("(%s), %s", database_secret, fields),
+            //     "select": SQL("(%s) as database_secret, %s", database_secret, fields),
             //     "from": SQL("res_users"),
             //     "joins": SQL(""),
             //     "where": SQL("res_users.id = %s", self.id),
@@ -2767,6 +3110,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResUsers> GetStoreAvatarCardFieldsInternalAsync(object target)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // return ["share", Store.One("partner_id", self.partner_id._get_store_avatar_card_fields(target))]
+            */
+            return default;
+        }
+
         public async Task<ResUsers> GetTotpInviteUrlAsync(Guid id)
         {
             /*
@@ -2778,7 +3131,7 @@ namespace Bamboo.Core.Application.Services
             // if not self._is_internal():
             //     return '/my/security'
             // else:
-            //     return super(Users, self).get_totp_invite_url()
+            //     return super().get_totp_invite_url()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2786,7 +3139,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> GetTotpMailCodeInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _get_totp_mail_code(self):
             // self.ensure_one()
             // 
@@ -2808,7 +3161,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> GetTotpMailKeyInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _get_totp_mail_key(self):
             // self.ensure_one()
             // return hmac(self.env(su=True), 'auth_totp_mail-code', (self.id, self.login, self.login_date)).encode()
@@ -2837,16 +3190,22 @@ namespace Bamboo.Core.Application.Services
             //         :param to_date: compute karma gained before this date (included) or until
             //           end of time;
             // 
-            //         :return list: [{
-            //             'user_id': user_id (belonging to current record set),
-            //             'karma_gain_total': integer, karma gained in the given timeframe,
-            //             'karma_position': integer, ranking position
-            //         }, {..}] ordered by karma_position desc
+            //         :rtype: list[dict]
+            //         :return:
+            //           ::
+            // 
+            //             [{
+            //                 'user_id': user_id (belonging to current record set),
+            //                 'karma_gain_total': integer, karma gained in the given timeframe,
+            //                 'karma_position': integer, ranking position
+            //             }, {..}]
+            // 
+            //           ordered by descending karma position
             //         """
             //         if not self:
             //             return []
             // 
-            //         where_query = self.env['res.users']._where_calc(user_domain)
+            //         where_query = self.env['res.users']._search(user_domain, bypass_access=True)
             // 
             //         sql = SQL("""
             // SELECT final.user_id, final.karma_gain_total, final.karma_position
@@ -2856,7 +3215,7 @@ namespace Bamboo.Core.Application.Services
             //         SELECT "res_users".id as user_id, COALESCE(SUM("tracking".new_value - "tracking".old_value), 0) as karma_gain_total
             //         FROM %s
             //         LEFT JOIN "gamification_karma_tracking" as "tracking"
-            //         ON "res_users".id = "tracking".user_id AND "res_users"."active" = TRUE
+            //         ON "res_users".id = "tracking".user_id AND "res_users"."active" IS TRUE
             //         WHERE %s %s %s
             //         GROUP BY "res_users".id
             //         ORDER BY karma_gain_total DESC
@@ -2927,12 +3286,12 @@ namespace Bamboo.Core.Application.Services
             // # However, in this case, we want the user to be able to read/write its own data,
             // # even if they are protected by groups.
             // # We make the front-end aware of those fields by sending all field definitions.
-            // # Note: limit the `sudo` to the only action of "editing own profile" action in order to
+            // # Note: limit the `sudo` to the only action of "editing own preferences" action in order to
             // # avoid breaking `groups` mecanism on res.users form view.
-            // profile_view = self.env.ref("hr.res_users_view_form_profile")
-            // if profile_view and view_id == profile_view.id:
+            // preferences_view = self.env.ref("hr.res_users_view_form_preferences")
+            // if preferences_view and view_id == preferences_view.id:
             //     self = self.with_user(SUPERUSER_ID)
-            // result = super(User, self).get_view(view_id, view_type, **options)
+            // result = super().get_view(view_id, view_type, **options)
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2960,19 +3319,76 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def get_views(self, views, options=None):
-            // # Requests the My Profile form view as last.
+            // # Requests the My Preferences form view as last.
             // # Otherwise the fields of the 'search' view will take precedence
             // # and will omit the fields that are requested as SUPERUSER
             // # in `get_view()`.
-            // profile_view = self.env.ref("hr.res_users_view_form_profile")
-            // profile_form = profile_view and [profile_view.id, 'form']
-            // if profile_form and profile_form in views:
-            //     views.remove(profile_form)
-            //     views.append(profile_form)
+            // preferences_view = self.env.ref("hr.res_users_view_form_preferences")
+            // preferences_form = preferences_view and [preferences_view.id, 'form']
+            // if preferences_form and preferences_form in views:
+            //     views.remove(preferences_form)
+            //     views.append(preferences_form)
             // result = super().get_views(views, options)
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResUsers> HasAnyActiveSynchronizationInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
+            // def _has_any_active_synchronization(self):
+            // """
+            // Overridable method for checking if user has any synchronization active in inherited modules.
+            // 
+            // :return: boolean indicating if any synchronization is active.
+            // """
+            // return False
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
+            // def _has_any_active_synchronization(self):
+            // """
+            // Check if synchronization is active for Google Calendar.
+            // This function retrieves the synchronization status from the user's environment
+            // and checks if the Google Calendar synchronization is active.
+            // 
+            // :return: Action to delete the event
+            // """
+            // sync_status = self.check_synchronization_status()
+            // res = super()._has_any_active_synchronization()
+            // if sync_status.get('google_calendar') == 'sync_active':
+            //     return True
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
+            // def _has_any_active_synchronization(self):
+            // """
+            // Check if synchronization is active for Microsoft Calendar.
+            // This function retrieves the synchronization status from the user's environment
+            // and checks if the Microsoft Calendar synchronization is active.
+            // 
+            // :return: Action to delete the event
+            // """
+            // sync_status = self.check_synchronization_status()
+            // res = super()._has_any_active_synchronization()
+            // if sync_status.get('microsoft_calendar') == 'sync_active':
+            //     return True
+            // return res
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> HasFieldAccessInternalAsync(object field, object operation)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _has_field_access(self, field, operation):
+            // return super()._has_field_access(field, operation) or (
+            //     operation == 'read'
+            //     and self._origin == self.env.user
+            //     and field.name in self._self_accessible_fields()[0]
+            // )
+            */
+            return default;
         }
 
         public async Task<bool> HasGroupAsync(Guid id, ResUsersHasGroupRequestDto input)
@@ -2998,7 +3414,7 @@ namespace Bamboo.Core.Application.Services
             //     result = result and bool(request and request.session.debug)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<bool> HasGroupInternalAsync(Guid group_ext_id)
@@ -3016,7 +3432,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // group_id = self.env['res.groups']._get_group_definitions().get_id(group_ext_id)
             // # for new record don't fill the ormcache
-            // return group_id in (self._get_group_ids() if self.id else self.groups_id._origin._ids)
+            // return group_id in (self._get_group_ids() if self.id else self.all_group_ids._origin._ids)
             */
             return default;
         }
@@ -3056,36 +3472,7 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return not positives
             */
-            var entity = await Repository.GetAsync(id); return default;
-        }
-
-        protected async Task<ResUsers> HasMultipleGroupsInternalAsync(List<Guid> group_ids)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _has_multiple_groups(self, group_ids):
-            // """The method is not fast if the list of ids is very long;
-            //    so we rather check all users than limit to the size of the group
-            // :param group_ids: list of group ids
-            // :return: boolean: is there at least a user in at least 2 of the provided groups
-            // """
-            // if not group_ids:
-            //     return False
-            // if len(self.ids) == 1:
-            //     user_condition = SQL(" AND r.uid = %s", self.id)
-            // else:
-            //     # default; we check ALL users (actually pretty efficient)
-            //     user_condition = SQL()
-            // return bool(self.env.execute_query(SQL("""
-            // SELECT r.uid
-            // FROM res_groups_users_rel r
-            // WHERE r.gid IN %s %s
-            // GROUP BY r.uid
-            // HAVING COUNT(r.gid) > 1
-            // LIMIT 1
-            // """, tuple(group_ids), user_condition)))
-            */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResUsers> HasSetupCredentialsInternalAsync()
@@ -3138,9 +3525,9 @@ namespace Bamboo.Core.Application.Services
             //   AND password !~ '^\$[^$]+\$[^$]+\$.'
             // """)
             // if self.env.cr.rowcount:
-            //     Users = self.sudo()
+            //     ResUsers = self.sudo()
             //     for uid, pw in cr.fetchall():
-            //         Users.browse(uid).password = pw
+            //         ResUsers.browse(uid).password = pw
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3149,7 +3536,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
-            // def _init_messaging(self, store):
+            // def _init_messaging(self, store: Store):
             // self = self.with_user(self)
             // channels = self.env["discuss.channel"]._get_channels_as_member()
             // domain = [("channel_id", "in", channels.ids), ("is_self", "=", True)]
@@ -3158,30 +3545,28 @@ namespace Bamboo.Core.Application.Services
             // # fetch channels data before calling super to benefit from prefetching (channel info might
             // # prefetch a lot of data that super could use, about the current user in particular)
             // super()._init_messaging(store)
-            // store.add({"initChannelsUnreadCounter": len(members_with_unread)})
+            // store.add_global_values(initChannelsUnreadCounter=len(members_with_unread))
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
-            // def _init_messaging(self, store):
+            // def _init_messaging(self, store: Store):
             // self.ensure_one()
             // self = self.with_user(self)
             // # sudo: bus.bus: reading non-sensitive last id
             // bus_last_id = self.env["bus.bus"].sudo()._bus_last_id()
-            // store.add(
-            //     {
-            //         "inbox": {
-            //             "counter": self.partner_id._get_needaction_count(),
-            //             "counter_bus_id": bus_last_id,
-            //             "id": "inbox",
-            //             "model": "mail.box",
-            //         },
-            //         "starred": {
-            //             "counter": self.env["mail.message"].search_count(
-            //                 [("starred_partner_ids", "in", self.partner_id.ids)]
-            //             ),
-            //             "counter_bus_id": bus_last_id,
-            //             "id": "starred",
-            //             "model": "mail.box",
-            //         },
-            //     }
+            // store.add_global_values(
+            //     inbox={
+            //         "counter": self.partner_id._get_needaction_count(),
+            //         "counter_bus_id": bus_last_id,
+            //         "id": "inbox",
+            //         "model": "mail.box",
+            //     },
+            //     starred={
+            //         "counter": self.env["mail.message"].search_count(
+            //             [("starred_partner_ids", "in", self.partner_id.ids)]
+            //         ),
+            //         "counter_bus_id": bus_last_id,
+            //         "id": "starred",
+            //         "model": "mail.box",
+            //     },
             // )
             */
             return default;
@@ -3194,7 +3579,7 @@ namespace Bamboo.Core.Application.Services
             // def _init_odoobot(self):
             // self.ensure_one()
             // odoobot_id = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
-            // channel = self.env['discuss.channel'].channel_get([odoobot_id, self.partner_id.id])
+            // channel = self.env['discuss.channel']._get_or_create_chat([odoobot_id, self.partner_id.id])
             // message = Markup("%s<br/>%s<br/><b>%s</b> <span class=\"o_odoobot_command\">:)</span>") % (
             //     _("Hello,"),
             //     _("Odoo's chat helps employees collaborate efficiently. I'm here to help you discover its features."),
@@ -3213,60 +3598,87 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> InitStoreDataInternalAsync()
+        protected async Task<ResUsers> InitStoreDataInternalAsync(object store)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
-            // def _init_store_data(self, store):
+            --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: res_users.py) ---
+            // def _init_store_data(self, store: Store):
             // super()._init_store_data(store)
-            // store.add({"has_access_livechat": self.env.user.has_access_livechat})
+            // store.add_global_values(has_access_create_lead=self.env.user.has_group("sales_team.group_sale_salesman"))
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def _init_store_data(self, store: Store):
+            // super()._init_store_data(store)
+            // store.add_global_values(has_access_livechat=self.env.user.has_access_livechat)
+            // if not self.env.user._is_public():
+            //     store.add(
+            //         self.env.user,
+            //         Store.Attr(
+            //             "is_livechat_manager",
+            //             lambda u: u.has_group("im_livechat.im_livechat_group_manager"),
+            //         ),
+            //     )
+            // if self.env.user.has_access_livechat:
+            //     store.add(self.env.user, Store.Many("livechat_expertise_ids", ["name"]))
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
-            // def _init_store_data(self, store):
+            // def _init_store_data(self, store: Store):
             // super()._init_store_data(store)
             // # sudo: ir.config_parameter - reading hard-coded keys to check their existence, safe to
             // # return whether the features are enabled
             // get_param = self.env["ir.config_parameter"].sudo().get_param
-            // store.add({
-            //     "hasGifPickerFeature": bool(get_param("discuss.tenor_api_key")),
-            //     "hasMessageTranslationFeature": bool(get_param("mail.google_translate_api_key")),
-            //     "channel_types_with_seen_infos": sorted(self.env["discuss.channel"]._types_allowing_seen_infos()),
-            // })
+            // store.add_global_values(
+            //     hasGifPickerFeature=bool(get_param("discuss.tenor_api_key")),
+            //     hasMessageTranslationFeature=bool(get_param("mail.google_translate_api_key")),
+            //     hasCannedResponses=bool(self.env["mail.canned.response"].sudo().search([
+            //         "|",
+            //         ("create_uid", "=", self.env.user.id),
+            //         ("group_ids", "in", self.env.user.all_group_ids.ids),
+            //     ], limit=1)) if self.env.user else False,
+            //     channel_types_with_seen_infos=sorted(
+            //         self.env["discuss.channel"]._types_allowing_seen_infos()
+            //     ),
+            // )
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
-            // def _init_store_data(self, store: Store, /):
+            // def _init_store_data(self, store: Store):
             // """Initialize the store of the user."""
             // xmlid_to_res_id = self.env["ir.model.data"]._xmlid_to_res_id
-            // store.add(
-            //     {
-            //         "action_discuss_id": xmlid_to_res_id("mail.action_discuss"),
-            //         "hasLinkPreviewFeature": self.env["mail.link.preview"]._is_link_preview_enabled(),
-            //         "internalUserGroupId": self.env.ref("base.group_user").id,
-            //         "mt_comment_id": xmlid_to_res_id("mail.mt_comment"),
-            //         # sudo: res.partner - exposing OdooBot data is considered acceptable
-            //         "odoobot": Store.one(self.env.ref("base.partner_root").sudo()),
-            //     }
+            // # sudo: res.partner - exposing OdooBot data is considered acceptable
+            // odoobot = self.env.ref("base.partner_root").sudo()
+            // if not self.env.user._is_public():
+            //     odoobot = odoobot.with_prefetch((odoobot + self.env.user.partner_id).ids)
+            // store.add_global_values(
+            //     action_discuss_id=xmlid_to_res_id("mail.action_discuss"),
+            //     hasLinkPreviewFeature=self.env["mail.link.preview"]._is_link_preview_enabled(),
+            //     internalUserGroupId=self.env.ref("base.group_user").id,
+            //     mt_comment=xmlid_to_res_id("mail.mt_comment"),
+            //     mt_note=xmlid_to_res_id("mail.mt_note"),
+            //     odoobot=Store.One(odoobot),
             // )
             // if not self.env.user._is_public():
             //     settings = self.env["res.users.settings"]._find_or_create_for_user(self.env.user)
-            //     store.add(
-            //         {
-            //             "self": Store.one(
-            //                 self.env.user.partner_id,
-            //                 fields=[
-            //                     "active",
-            //                     "avatar_128",
-            //                     "isAdmin",
-            //                     "name",
-            //                     "notification_type",
-            //                     "signature",
-            //                     "user",
-            //                 ],
-            //                 main_user_by_partner={self.env.user.partner_id: self.env.user},
-            //             ),
-            //             "settings": settings._res_users_settings_format(),
-            //         }
+            //     store.add_global_values(
+            //         self_partner=Store.One(
+            //             self.env.user.partner_id,
+            //             [
+            //                 "active",
+            //                 "avatar_128",
+            //                 "im_status",
+            //                 Store.One(
+            //                     "main_user_id",
+            //                     [
+            //                         Store.Attr("is_admin", lambda u: u._is_admin()),
+            //                         "notification_type",
+            //                         "share",
+            //                         "signature",
+            //                     ],
+            //                 ),
+            //                 "name",
+            //             ],
+            //         ),
+            //         settings=settings._res_users_settings_format(),
             //     )
-            // elif guest := self.env["mail.guest"]._get_guest_from_context():
-            //     store.add({"self": Store.one(guest, fields=["avatar_128", "name"])})
+            // if guest := self.env["mail.guest"]._get_guest_from_context():
+            //     # sudo() => adding current guest data is acceptable
+            //     store.add_global_values(self_guest=Store.One(guest.sudo(), ["avatar_128", "name"]))
             */
             return default;
         }
@@ -3284,6 +3696,18 @@ namespace Bamboo.Core.Application.Services
             //     settings = self.env["res.users.settings"].sudo()._find_or_create_for_user(user)
             //     configuration = {field: user[field] for field in self._get_user_calendar_configuration_fields()}
             //     settings.sudo().update(configuration)
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> InverseLivechatExpertiseIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def _inverse_livechat_expertise_ids(self):
+            // for user in self:
+            //     settings = self.env["res.users.settings"]._find_or_create_for_user(user)
+            //     settings.livechat_expertise_ids = user.livechat_expertise_ids
             */
             return default;
         }
@@ -3319,8 +3743,8 @@ namespace Bamboo.Core.Application.Services
             // def _inverse_notification_type(self):
             // inbox_group = self.env.ref('mail.group_mail_notification_type_inbox')
             // inbox_users = self.filtered(lambda user: user.notification_type == 'inbox')
-            // inbox_users.write({"groups_id": [Command.link(inbox_group.id)]})
-            // (self - inbox_users).write({"groups_id": [Command.unlink(inbox_group.id)]})
+            // inbox_users.write({"group_ids": [Command.link(inbox_group.id)]})
+            // (self - inbox_users).write({"group_ids": [Command.unlink(inbox_group.id)]})
             */
             return default;
         }
@@ -3330,6 +3754,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def _inverse_token(self):
+            // self.sudo().totp_last_counter = False
             // for user in self:
             //     secret = user.totp_secret if user.totp_secret else None
             //     self.env.cr.execute('UPDATE res_users SET totp_secret = %s WHERE id=%s', (secret, user.id))
@@ -3426,20 +3851,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> IsUserAvailableInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: res_users.py) ---
-            // def _is_user_available(self):
-            // return self.im_status == 'online'
-            --- ODOO METHOD SOURCE (MODULE: hr_homeworking, FILE: res_users.py) ---
-            // def _is_user_available(self):
-            // location_types = self.env['hr.work.location']._fields['location_type'].get_values(self.env)
-            // return self.im_status in ['online'] + [f'presence_{location_type}_online' for location_type in location_types]
-            */
-            return default;
-        }
-
         public async Task<ResUsers> KarmaReportAsync(Guid id)
         {
             /*
@@ -3462,109 +3873,120 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResUsers> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ResUsers> LegacySessionTokenHashComputeInternalAsync(object sid)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _legacy_session_token_hash_compute(self, sid):
+            // field_values = self._session_token_get_values()
+            // if not field_values:
+            //     return False
+            // # generate hmac key
+            // key = ('%s' % (tuple(f[1] for f in field_values),)).encode()
+            // # hmac the session id
+            // data = sid.encode()
+            // h = hmac.new(key, data, sha256)
+            // # keep in the cache the token
+            // return h.hexdigest()
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
-            // def _load_pos_data_domain(self, data):
+            // def _load_pos_data_domain(self, data, config):
             // return [('id', '=', self.env.uid)]
             */
             return default;
         }
 
-        protected async Task<ResUsers> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResUsers> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['id', 'name', 'partner_id', 'groups_id']
+            // def _load_pos_data_fields(self, config):
+            // return ['id', 'name', 'partner_id', 'all_group_ids']
             */
             return default;
         }
 
-        protected async Task<ResUsers> LoadPosDataInternalAsync(object data)
+        protected async Task<ResUsers> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(data['pos.config']['data'][0]['id'])
-            // user = self.search_read(domain, fields, load=False)
-            // user[0]['role'] = 'manager' if data['pos.config']['data'][0]['group_pos_manager_id'] in user[0]['groups_id'] else 'cashier'
-            // del user[0]['groups_id']
-            // return {
-            //     'data': user,
-            //     'fields': fields,
-            // }
+            // def _load_pos_data_read(self, records, config):
+            // read_records = super()._load_pos_data_read(records, config)
+            // if read_records:
+            //     read_records[0]['role'] = 'manager' if config.group_pos_manager_id.id in read_records[0]['all_group_ids'] else 'cashier'
+            //     del read_records[0]['all_group_ids']
+            // return read_records
             */
             return default;
         }
 
-        protected async Task<ResUsers> LoginInternalAsync(object db, object credential, object user_agent_env)
+        protected async Task<ResUsers> LoginInternalAsync(object credential, object user_agent_env)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_ldap, FILE: res_users.py) ---
-            // def _login(cls, db, credential, user_agent_env):
+            // def _login(self, credential, user_agent_env):
             // try:
-            //     return super()._login(db, credential, user_agent_env=user_agent_env)
-            // except AccessDenied as e:
-            //     with Registry(db).cursor() as cr:
-            //         login = credential['login']
-            //         cr.execute("SELECT id FROM res_users WHERE lower(login)=%s", (login,))
-            //         res = cr.fetchone()
-            //         if res:
-            //             raise e
+            //     return super()._login(credential, user_agent_env=user_agent_env)
+            // except AccessDenied:
+            //     login = credential['login']
+            //     self.env.cr.execute("SELECT id FROM res_users WHERE lower(login)=%s", (login,))
+            //     res = self.env.cr.fetchone()
+            //     if res:
+            //         raise
             // 
-            //         env = api.Environment(cr, SUPERUSER_ID, {})
-            //         Ldap = env['res.company.ldap']
-            //         for conf in Ldap._get_ldap_dicts():
-            //             entry = Ldap._authenticate(conf, login, credential['password'])
-            //             if entry:
-            //                 return {
-            //                     'uid': Ldap._get_or_create_user(conf, login, entry),
-            //                     'auth_method': 'ldap',
-            //                     'mfa': 'default',
-            //                 }
-            //         raise e
+            //     Ldap = self.env['res.company.ldap'].sudo()
+            //     for conf in Ldap._get_ldap_dicts():
+            //         entry = Ldap._authenticate(conf, login, credential['password'])
+            //         if entry:
+            //             return {
+            //                 'uid': Ldap._get_or_create_user(conf, login, entry),
+            //                 'auth_method': 'ldap',
+            //                 'mfa': 'default',
+            //             }
+            //     raise
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users.py) ---
-            // def _login(cls, db, credential, user_agent_env):
+            // def _login(self, credential, user_agent_env):
             // if credential['type'] == 'webauthn':
             //     webauthn = json.loads(credential['webauthn_response'])
-            //     with Registry(db).cursor() as cr:
-            //         cr.execute(SQL("""
-            //             SELECT login
-            //               FROM auth_passkey_key key
-            //               JOIN res_users usr ON usr.id = key.create_uid
-            //              WHERE credential_identifier=%s
-            //         """, webauthn['id']))
-            //         res = cr.fetchone()
-            //         if not res:
-            //             raise AccessDenied(_('Unknown passkey'))
-            //         credential['login'] = res[0]
-            // return super()._login(db, credential, user_agent_env=user_agent_env)
+            //     self.env.cr.execute(SQL("""
+            //         SELECT login
+            //             FROM auth_passkey_key key
+            //             JOIN res_users usr ON usr.id = key.create_uid
+            //             WHERE credential_identifier=%s
+            //     """, webauthn['id']))
+            //     res = self.env.cr.fetchone()
+            //     if not res:
+            //         raise AccessDenied(_('Unknown passkey'))
+            //     credential['login'] = res[0]
+            // return super()._login(credential, user_agent_env=user_agent_env)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _login(cls, db, credential, user_agent_env):
+            // def _login(self, credential, user_agent_env):
             // login = credential['login']
             // ip = request.httprequest.environ['REMOTE_ADDR'] if request else 'n/a'
             // try:
-            //     with cls.pool.cursor() as cr:
-            //         self = api.Environment(cr, SUPERUSER_ID, {})[cls._name]
-            //         with self._assert_can_auth(user=login):
-            //             user = self.search(self._get_login_domain(login), order=self._get_login_order(), limit=1)
-            //             if not user:
-            //                 raise AccessDenied()
-            //             user = user.with_user(user)
-            //             auth_info = user._check_credentials(credential, user_agent_env)
-            //             tz = request.cookies.get('tz') if request else None
-            //             if tz in pytz.all_timezones and (not user.tz or not user.login_date):
-            //                 # first login or missing tz -> set tz to browser tz
-            //                 user.tz = tz
-            //             user._update_last_login()
+            //     with self._assert_can_auth(user=login):
+            //         user = self.sudo().search(self._get_login_domain(login), order=self._get_login_order(), limit=1)
+            //         if not user:
+            //             # ruff: noqa: TRY301
+            //             raise AccessDenied()
+            //         user = user.with_user(user).sudo()
+            //         auth_info = user._check_credentials(credential, user_agent_env)
+            //         tz = request.cookies.get('tz') if request else None
+            //         if tz in pytz.all_timezones and (not user.tz or not user.login_date):
+            //             # first login or missing tz -> set tz to browser tz
+            //             user.tz = tz
+            //         user._update_last_login()
             // except AccessDenied:
-            //     _logger.info("Login failed for db:%s login:%s from %s", db, login, ip)
+            //     _logger.info("Login failed for login:%s from %s", login, ip)
             //     raise
             // 
-            // _logger.info("Login successful for db:%s login:%s from %s", db, login, ip)
+            // _logger.info("Login successful for login:%s from %s", login, ip)
             // 
             // return auth_info
             */
@@ -3581,16 +4003,15 @@ namespace Bamboo.Core.Application.Services
             //     return r
             // if self.totp_enabled:
             //     return 'totp'
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _mfa_type(self):
             // r = super()._mfa_type()
             // if r is not None:
             //     return r
             // ICP = self.env['ir.config_parameter'].sudo()
             // otp_required = False
-            // if ICP.get_param('auth_totp.policy') == 'all_required':
-            //     otp_required = True
-            // elif ICP.get_param('auth_totp.policy') == 'employee_required' and self._is_internal():
+            // if ICP.get_param('auth_totp.policy') == 'all_required' or \
+            //         (ICP.get_param('auth_totp.policy') == 'employee_required' and self._is_internal()):
             //     otp_required = True
             // if otp_required:
             //     return 'totp_mail'
@@ -3612,7 +4033,7 @@ namespace Bamboo.Core.Application.Services
             //     return r
             // if self._mfa_type() == 'totp':
             //     return '/web/login/totp'
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _mfa_url(self):
             // r = super()._mfa_url()
             // if r is not None:
@@ -3641,10 +4062,11 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users.py) ---
-            // def name_search(self, name='', args=None, operator='ilike', limit=100):
+            // def name_search(self, name='', domain=None, operator='ilike', limit=100):
             // # if we have a search with a limit, move current user as the first result
-            // user_list = super().name_search(name, args, operator, limit)
-            // uid = self._uid
+            // domain = Domain(domain or Domain.TRUE)
+            // user_list = super().name_search(name, domain, operator, limit)
+            // uid = self.env.uid
             // # index 0 is correct not Falsy in this case, use None to avoid ignoring it
             // if (index := next((i for i, (user_id, _name) in enumerate(user_list) if user_id == uid), None)) is not None:
             //     # move found user first
@@ -3652,16 +4074,16 @@ namespace Bamboo.Core.Application.Services
             //     user_list.insert(0, user_tuple)
             // elif limit is not None and len(user_list) == limit:
             //     # user not found and limit reached, try to find the user again
-            //     if user_tuple := super().name_search(name, expression.AND([args or [], [('id', '=', uid)]]), operator, limit=1):
+            //     if user_tuple := super().name_search(name, domain & Domain('id', '=', uid), operator, limit=1):
             //         user_list = [user_tuple[0], *user_list[:-1]]
             // return user_list
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def name_search(self, name='', args=None, operator='ilike', limit=100):
-            // domain = args or []
+            // def name_search(self, name='', domain=None, operator='ilike', limit=100):
+            // domain = Domain(domain or Domain.TRUE)
             // # first search only by login, then the normal search
             // if (
-            //     name and operator not in expression.NEGATIVE_TERM_OPERATORS
-            //     and (user := self.search_fetch(expression.AND([[('login', '=', name)], domain]), ['display_name']))
+            //     name and not operator in Domain.NEGATIVE_OPERATORS
+            //     and (user := self.search_fetch(Domain('login', '=', name) & domain, ['display_name']))
             // ):
             //     return [(user.id, user.display_name)]
             // return super().name_search(name, domain, operator, limit)
@@ -3676,14 +4098,14 @@ namespace Bamboo.Core.Application.Services
             // def new(self, values=None, origin=None, ref=None):
             // if values is None:
             //     values = {}
-            // values = self._remove_reified_groups(values)
             // user = super().new(values=values, origin=origin, ref=ref)
-            // group_multi_company = self.env.ref('base.group_multi_company', False)
-            // if group_multi_company and 'company_ids' in values:
-            //     if len(user.company_ids) <= 1 and user.id in group_multi_company.users.ids:
-            //         user.update({'groups_id': [Command.unlink(group_multi_company.id)]})
-            //     elif len(user.company_ids) > 1 and user.id not in group_multi_company.users.ids:
-            //         user.update({'groups_id': [Command.link(group_multi_company.id)]})
+            // group_multi_company_id = self.env['ir.model.data']._xmlid_to_res_id(
+            //     'base.group_multi_company', raise_if_not_found=False)
+            // if group_multi_company_id:
+            //     if len(user.company_ids) <= 1 and group_multi_company_id in user.group_ids.ids:
+            //         user.update({'group_ids': [Command.unlink(group_multi_company_id)]})
+            //     elif len(user.company_ids) > 1 and group_multi_company_id not in user.group_ids.ids:
+            //         user.update({'group_ids': [Command.link(group_multi_company_id)]})
             // return user
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -3699,6 +4121,31 @@ namespace Bamboo.Core.Application.Services
             //     user.create_uid._bus_send(
             //         "res.users/connection", {"username": user.name, "partnerId": user.partner_id.id}
             //     )
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> NotifySecurityNewConnectionInternalAsync(object auth_info)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
+            // def _notify_security_new_connection(self, auth_info):
+            // user = self.env(user=auth_info['uid']).user
+            // 
+            // if request and user.email and user._mfa_type():
+            //     # Check the `request` object to ensure that we will be able to get the
+            //     # user information (like IP, user-agent, etc) and the cookie `td_id`.
+            //     # (Can be unbounded if executed from a server action or a unit test.)
+            // 
+            //     key = request.cookies.get('td_id')
+            //     if not key or not request.env['auth_totp.device']._check_credentials_for_uid(
+            //             scope="browser", key=key, uid=user.id):
+            //         # 2FA enabled but not a trusted device
+            //         user._notify_security_setting_update(
+            //             subject=_('New Connection to your Account'),
+            //             content=_('A new device was used to sign in to your account.'),
+            //         )
+            //         _logger.info("New device alert email sent for user <%s> to <%s>", user.login, user.email)
             */
             return default;
         }
@@ -3720,21 +4167,22 @@ namespace Bamboo.Core.Application.Services
             // 
             // mail_create_values = []
             // for user in self:
-            //     body_html = self.env['ir.qweb']._render(
-            //         'mail.account_security_setting_update',
-            //         user._notify_security_setting_update_prepare_values(content, **kwargs),
-            //         minimal_qcontext=True,
-            //     )
+            //     body_html = self.env['mail.render.mixin']._render_template(
+            //         'mail.account_security_alert',
+            //         model='res.users',
+            //         res_ids=user.ids,
+            //         engine='qweb_view',
+            //         options={'post_process': True},
+            //         add_context=user._notify_security_setting_update_prepare_values(content, **kwargs),
+            //     )[user.id]
             // 
             //     body_html = self.env['mail.render.mixin']._render_encapsulate(
             //         'mail.mail_notification_light',
             //         body_html,
             //         add_context={
-            //             # the 'mail_notification_light' expects a mail.message 'message' context, let's give it one
-            //             'message': self.env['mail.message'].sudo().new(dict(body=body_html, record_name=user.name)),
             //             'model_description': _('Account'),
-            //             'company': user.company_id,
             //         },
+            //         context_record=user,
             //     )
             // 
             //     vals = {
@@ -3755,7 +4203,10 @@ namespace Bamboo.Core.Application.Services
             // 
             //     mail_create_values.append(vals)
             // 
-            // self.env['mail.mail'].sudo().create(mail_create_values)
+            // mails = self.env['mail.mail'].sudo().create(mail_create_values)
+            // with contextlib.suppress(Exception):
+            //     mails.send()
+            // return mails
             */
             return default;
         }
@@ -3764,8 +4215,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
-            // def _notify_security_setting_update_prepare_values(self, content, suggest_2fa=True, **kwargs):
-            // """" Prepare rendering values for the 'mail.account_security_setting_update' qweb template
+            // def _notify_security_setting_update_prepare_values(self, content, *, suggest_2fa=True, **kwargs):
+            // """" Prepare rendering values for the 'mail.account_security_alert' qweb template
             // 
             //   :param bool suggest_2fa:
             //     Whether or not to suggest the end-user to turn on 2FA authentication in the email sent.
@@ -3776,17 +4227,39 @@ namespace Bamboo.Core.Application.Services
             // return values
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def _notify_security_setting_update_prepare_values(self, content, **kwargs):
-            // """" Prepare rendering values for the 'mail.account_security_setting_update' qweb template """
+            // """"Prepare rendering values for the 'mail.account_security_alert' qweb template."""
+            // reset_password_enabled = str2bool(self.env['ir.config_parameter'].sudo().get_param("auth_signup.reset_password", True))
             // 
-            // reset_password_enabled = self.env['ir.config_parameter'].sudo().get_param("auth_signup.reset_password", True)
-            // return {
-            //     'company': self.company_id,
-            //     'password_reset_url': f"{self.get_base_url()}/web/reset_password",
-            //     'security_update_text': content,
+            // values = {
+            //     'browser': False,
+            //     'content': content,
+            //     'event_datetime': fields.Datetime.now(),
+            //     'ip_address': False,
+            //     'location_address': False,
             //     'suggest_password_reset': kwargs.get('suggest_password_reset', True) and reset_password_enabled,
             //     'user': self,
-            //     'update_datetime': fields.Datetime.now(),
+            //     'useros': False,
             // }
+            // if not request:
+            //     return values
+            // 
+            // city = request.geoip.get('city') or False
+            // region = request.geoip.get('region_name') or False
+            // country = request.geoip.get('country') or False
+            // if country:
+            //     if region and city:
+            //         values['location_address'] = _("Near %(city)s, %(region)s, %(country)s", city=city, region=region, country=country)
+            //     elif region:
+            //         values['location_address'] = _("Near %(region)s, %(country)s", region=region, country=country)
+            //     else:
+            //         values['location_address'] = _("In %(country)s", country=country)
+            // values['ip_address'] = request.httprequest.environ['REMOTE_ADDR']
+            // if request.httprequest.user_agent:
+            //     if request.httprequest.user_agent.browser:
+            //         values['browser'] = request.httprequest.user_agent.browser.capitalize()
+            //     if request.httprequest.user_agent.platform:
+            //         values['useros'] = request.httprequest.user_agent.platform.capitalize()
+            // return values
             */
             return default;
         }
@@ -3850,43 +4323,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<object> OnchangeAsync(Guid id, object values, object field_names, object fields_spec)
+        protected async Task<ResUsers> OnboardUsersIntoProjectInternalAsync(object users)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def onchange(self, values, field_names, fields_spec):
-            // # Hacky fix to access fields in `SELF_READABLE_FIELDS` in the onchange logic.
-            // # Put field values in the cache.
-            // if self == self.env.user:
-            //     [self.sudo()[field_name] for field_name in self.SELF_READABLE_FIELDS]
-            // return super().onchange(values, field_names, fields_spec)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def onchange(self, values, field_names, fields_spec):
-            // reified_fnames = [fname for fname in fields_spec if is_reified_group(fname)]
-            // if reified_fnames:
-            //     values = {key: val for key, val in values.items() if key != 'groups_id'}
-            //     values = self._remove_reified_groups(values)
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: res_users.py) ---
+            // def _onboard_users_into_project(self, users):
+            // if (internal_users := users.filtered(lambda u: not u.share)):
+            //     ProjectTaskTypeSudo = self.env["project.task.type"].sudo()
+            //     create_vals = []
+            //     for user in internal_users:
+            //         vals = self.env["project.task"].with_context(lang=user.lang)._get_default_personal_stage_create_vals(user.id)
+            //         create_vals.extend(vals)
             // 
-            //     if any(is_reified_group(fname) for fname in field_names):
-            //         field_names = [fname for fname in field_names if not is_reified_group(fname)]
-            //         field_names.append('groups_id')
+            //     if create_vals:
+            //         ProjectTaskTypeSudo.with_context(default_project_id=False).create(create_vals)
             // 
-            //     fields_spec = {
-            //         field_name: field_spec
-            //         for field_name, field_spec in fields_spec.items()
-            //         if not is_reified_group(field_name)
-            //     }
-            //     fields_spec['groups_id'] = {}
-            // 
-            // result = super().onchange(values, field_names, fields_spec)
-            // 
-            // if reified_fnames and 'groups_id' in result.get('value', {}):
-            //     self._add_reified_groups(reified_fnames, result['value'])
-            //     result['value'].pop('groups_id', None)
-            // 
-            // return result
+            //     return internal_users
+            --- ODOO METHOD SOURCE (MODULE: project_todo, FILE: res_users.py) ---
+            // def _onboard_users_into_project(self, users):
+            // res = super()._onboard_users_into_project(users)
+            // if res:
+            //     res._generate_onboarding_todo()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<ResUsers> OnchangeParentIdAsync(Guid id)
@@ -3899,14 +4358,43 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> OpenEmployeeCarsAsync(Guid id)
+        protected async Task<ResUsers> OnchangePrivateStateIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: res_users.py) ---
-            // def action_open_employee_cars(self):
-            // return self.employee_id.action_open_employee_cars()
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            // def _onchange_private_state_id(self):
+            // if self.private_state_id:
+            //     self.private_country_id = self.private_state_id.country_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<ResUsers> OnchangeRoleInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _onchange_role(self):
+            // group_admin = self.env['res.groups'].new(origin=self.env.ref('base.group_system'))
+            // group_user = self.env['res.groups'].new(origin=self.env.ref('base.group_user'))
+            // for user in self:
+            //     if user.role and user.has_group('base.group_user'):
+            //         groups = user.group_ids - (group_admin + group_user)
+            //         user.group_ids = groups + (group_admin if user.role == 'group_system' else group_user)
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> OndeleteSignupCancelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
+            // def _ondelete_signup_cancel(self):
+            // # Cancel pending partner signup when the user is deleted.
+            // for user in self:
+            //     if user.partner_id:
+            //         user.partner_id.signup_cancel()
+            */
+            return default;
         }
 
         public async Task<ResUsers> OpenEmployeesAsync(Guid id)
@@ -3936,54 +4424,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> OpenLastMonthAttendancesAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_users.py) ---
-            // def action_open_last_month_attendances(self):
-            // self.ensure_one()
-            // return {
-            //     "type": "ir.actions.act_window",
-            //     "name": _("Attendances This Month"),
-            //     "res_model": "hr.attendance",
-            //     "views": [[self.env.ref('hr_attendance.hr_attendance_employee_simple_tree_view').id, "list"]],
-            //     "context": {
-            //         "create": 0
-            //     },
-            //     "domain": [('employee_id', '=', self.employee_id.id),
-            //                ('check_in', ">=", fields.datetime.today().replace(day=1, hour=0, minute=0))]
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResUsers> OpenLastMonthOvertimeAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_users.py) ---
-            // def action_open_last_month_overtime(self):
-            // self.ensure_one()
-            // return {
-            //     "type": "ir.actions.act_window",
-            //     "name": _("Overtime"),
-            //     "res_model": "hr.attendance.overtime",
-            //     "views": [[False, "list"]],
-            //     "context": {
-            //         "create": 0
-            //     },
-            //     "domain": [('employee_id', '=', self.employee_id.id)]
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResUsers> OpenMyAccountSettingsAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def action_open_my_account_settings(self):
             // action = {
-            //     "name": _("Account Security"),
+            //     "name": _("Security"),
             //     "type": "ir.actions.act_window",
             //     "res_model": "res.users",
             //     "views": [[self.env.ref('auth_totp_mail.res_users_view_form').id, "form"]],
@@ -4052,98 +4499,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResUsers> PrepareNewDeviceNoticeValuesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
-            // def _prepare_new_device_notice_values(self):
-            // values = {
-            //     'login_date': fields.Datetime.now(),
-            //     'location_address': False,
-            //     'ip_address': False,
-            //     'browser': False,
-            //     'useros': False,
-            // }
-            // 
-            // if not request:
-            //     return values
-            // 
-            // city = request.geoip.get('city') or False
-            // region = request.geoip.get('region_name') or False
-            // country = request.geoip.get('country') or False
-            // if country:
-            //     if region and city:
-            //         values['location_address'] = _("Near %(city)s, %(region)s, %(country)s", city=city, region=region, country=country)
-            //     elif region:
-            //         values['location_address'] = _("Near %(region)s, %(country)s", region=region, country=country)
-            //     else:
-            //         values['location_address'] = _("In %(country)s", country=country)
-            // else:
-            //     values['location_address'] = False
-            // values['ip_address'] = request.httprequest.environ['REMOTE_ADDR']
-            // if request.httprequest.user_agent:
-            //     if request.httprequest.user_agent.browser:
-            //         values['browser'] = request.httprequest.user_agent.browser.capitalize()
-            //     if request.httprequest.user_agent.platform:
-            //         values['useros'] = request.httprequest.user_agent.platform.capitalize()
-            // return values
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> PrepareWarningForGroupInheritanceInternalAsync(object user)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _prepare_warning_for_group_inheritance(self, user):
-            // """ Check (updated) groups configuration for user. If implieds groups
-            // will be added back due to inheritance and hierarchy in groups return
-            // a message explaining the missing groups.
-            // 
-            // :param res.users user: target user
-            // 
-            // :return: string to display in a warning
-            // """
-            // # Current groups of the user
-            // current_groups = user.groups_id.filtered('trans_implied_ids')
-            // current_groups_by_category = defaultdict(lambda: self.env['res.groups'])
-            // for group in current_groups:
-            //     current_groups_by_category[group.category_id] |= group.trans_implied_ids.filtered(lambda grp: grp.category_id == group.category_id)
-            // 
-            // missing_groups = {}
-            // # We don't want to show warning for "Technical" and "Extra Rights" groups
-            // categories_to_ignore = self.env.ref('base.module_category_hidden') + self.env.ref('base.module_category_usability')
-            // for group in current_groups:
-            //     # Get the updated group from current groups
-            //     missing_implied_groups = group.implied_ids - user.groups_id
-            //     # Get the missing group needed in updated group's category (For example, someone changes
-            //     # Sales: Admin to Sales: User, but Field Service is already set to Admin, so here in the
-            //     # 'Sales' category, we will at the minimum need Admin group)
-            //     missing_implied_groups = missing_implied_groups.filtered(
-            //         lambda g:
-            //         g.category_id not in (group.category_id | categories_to_ignore) and
-            //         g not in current_groups_by_category[g.category_id] and
-            //         (self.env.user.has_group('base.group_no_one') or g.category_id)
-            //     )
-            //     if missing_implied_groups:
-            //         # prepare missing group message, by categories
-            //         missing_groups[group] = ", ".join(
-            //             f'"{missing_group.category_id.name or self.env._("Other")}: {missing_group.name}"'
-            //             for missing_group in missing_implied_groups
-            //         )
-            // return "\n".join(
-            //     self.env._(
-            //         'Since %(user)s is a/an "%(category)s: %(group)s", they will at least obtain the right %(missing_group_message)s',
-            //         user=user.name,
-            //         category=group.category_id.name or self.env._('Other'),
-            //         group=group.name,
-            //         missing_group_message=missing_group_message,
-            //     ) for group, missing_group_message in missing_groups.items()
-            // )
-            */
-            return default;
-        }
-
         protected async Task<ResUsers> ProcessProfileValidationTokenInternalAsync(object token, object email)
         {
             /*
@@ -4175,85 +4530,6 @@ namespace Bamboo.Core.Application.Services
             //     for u in self:
             //         if u.rank_id.karma_min > 0:
             //             template.send_mail(u.id, force_send=False, email_layout_xmlid='mail.mail_notification_light')
-            */
-            return default;
-        }
-
-        public async Task<object> ReadAsync(Guid id, object fields, object load)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def read(self, fields=None, load='_classic_read'):
-            // readable = self.SELF_READABLE_FIELDS
-            // if fields and self == self.env.user and all(key in readable or key.startswith('context_') for key in fields):
-            //     # safe fields only, so we read as super-user to bypass access rights
-            //     self = self.sudo()
-            // return super(Users, self).read(fields=fields, load=load)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def read(self, fields=None, load='_classic_read'):
-            // # determine whether reified groups fields are required, and which ones
-            // fields1 = fields or list(self.fields_get())
-            // group_fields, other_fields = partition(is_reified_group, fields1)
-            // 
-            // # read regular fields (other_fields); add 'groups_id' if necessary
-            // drop_groups_id = False
-            // if group_fields and fields:
-            //     if 'groups_id' not in other_fields:
-            //         other_fields.append('groups_id')
-            //         drop_groups_id = True
-            // else:
-            //     other_fields = fields
-            // 
-            // res = super(UsersView, self).read(other_fields, load=load)
-            // 
-            // # post-process result to add reified group fields
-            // if group_fields:
-            //     for values in res:
-            //         self._add_reified_groups(group_fields, values)
-            //         if drop_groups_id:
-            //             values.pop('groups_id', None)
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResUsers> ReadFormatInternalAsync(object fnames, object load)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _read_format(self, fnames, load='_classic_read'):
-            // valid_fields = partition(is_reified_group, fnames)[1]
-            // return super()._read_format(valid_fields, load)
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> ReadGroupGroupbyInternalAsync(object groupby_spec, object query)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _read_group_groupby(self, groupby_spec, query):
-            // fname, __, __ = models.parse_read_group_spec(groupby_spec)
-            // if fname in USER_PRIVATE_FIELDS:
-            //     raise AccessError(_("Cannot groupby on %s parameter", fname))
-            // return super()._read_group_groupby(groupby_spec, query)
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> ReadGroupSelectInternalAsync(object aggregate_spec, object query)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _read_group_select(self, aggregate_spec, query):
-            // try:
-            //     fname, __, __ = models.parse_read_group_spec(aggregate_spec)
-            // except Exception:
-            //     # may happen if aggregate_spec == '__count', for instance
-            //     fname = None
-            // if fname in USER_PRIVATE_FIELDS:
-            //     raise AccessError(_("Cannot aggregate on %s parameter", fname))
-            // return super()._read_group_select(aggregate_spec, query)
             */
             return default;
         }
@@ -4409,6 +4685,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<ResUsers> RelatedContactAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            // def action_related_contact(self):
+            // return {
+            //     'name': _("Related Contact"),
+            //     'res_id': self.partner_id.id,
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.partner',
+            //     'view_mode': 'form',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResUsers> RemoveOauthAccessTokenAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
+            // def remove_oauth_access_token(self):
+            // user = self.env.user
+            // if not (user.has_group('base.group_erp_manager') or self == user):
+            //     raise AccessError(self.env._('You do not have permissions to remove the access token'))
+            // self.sudo().oauth_access_token = False
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<ResUsers> RemoveRecruitmentInterviewersInternalAsync()
         {
             /*
@@ -4426,45 +4731,10 @@ namespace Bamboo.Core.Application.Services
             // user_ids |= {interviewer.id for [interviewer] in application_interviewers}
             // 
             // # Remove users that are no longer interviewers on at least a job or an application
-            // users_to_remove = set(self.ids) - (user_ids | set(recruitment_group.users.ids))
+            // users_to_remove = set(self.ids) - (user_ids | set(recruitment_group.all_user_ids.ids))
             // self.env['res.users'].browse(users_to_remove).sudo().write({
-            //     'groups_id': [(3, interviewer_group.id)]
+            //     'group_ids': [(3, interviewer_group.id)]
             // })
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> RemoveReifiedGroupsInternalAsync(object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _remove_reified_groups(self, values):
-            // """ return `values` without reified group fields """
-            // add, rem = [], []
-            // values1 = {}
-            // 
-            // for key, val in values.items():
-            //     if is_boolean_group(key):
-            //         (add if val else rem).append(get_boolean_group(key))
-            //     elif is_selection_groups(key):
-            //         rem += get_selection_groups(key)
-            //         if val:
-            //             add.append(val)
-            //     else:
-            //         values1[key] = val
-            // 
-            // if 'groups_id' not in values and (add or rem):
-            //     added = self.env['res.groups'].sudo().browse(add)
-            //     added |= added.mapped('trans_implied_ids')
-            //     added_ids = added._ids
-            //     # remove group ids in `rem` and add group ids in `add`
-            //     # do not remove groups that are added by implied
-            //     values1['groups_id'] = list(itertools.chain(
-            //         zip(repeat(3), [gid for gid in rem if gid not in added_ids]),
-            //         zip(repeat(4), add)
-            //     ))
-            // 
-            // return values1
             */
             return default;
         }
@@ -4527,7 +4797,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
             // def restart_microsoft_synchronization(self):
             // self.ensure_one()
-            // self.sudo().microsoft_last_sync_date = fields.datetime.now()
+            // self.sudo().microsoft_last_sync_date = datetime.now()
             // self.sudo().microsoft_synchronization_stopped = False
             // self.env['calendar.recurrence']._restart_microsoft_sync()
             // self.env['calendar.event']._restart_microsoft_sync()
@@ -4535,7 +4805,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> RevokeAllDevicesActionAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
@@ -4575,7 +4845,7 @@ namespace Bamboo.Core.Application.Services
             // # 2FA enabled means we can't allow password-based RPC
             // self.ensure_one()
             // return self.totp_enabled or super()._rpc_api_keys_only()
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _rpc_api_keys_only(self):
             // return self._mfa_type() == 'totp_mail' or super()._rpc_api_keys_only()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4589,6 +4859,9 @@ namespace Bamboo.Core.Application.Services
         public async Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
+            // def SELF_READABLE_FIELDS(self):
+            // return super().SELF_READABLE_FIELDS + ['has_oauth_access_token']
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
             // return super().SELF_READABLE_FIELDS + ['auth_passkey_key_ids']
@@ -4601,61 +4874,36 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
             // return super().SELF_READABLE_FIELDS + HR_READABLE_FIELDS + HR_WRITABLE_FIELDS
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + [
-            //     'hours_last_month',
-            //     'hours_last_month_display',
-            //     'attendance_state',
-            //     'last_check_in',
-            //     'last_check_out',
-            //     'total_overtime',
-            //     'attendance_manager_id',
-            //     'display_extra_hours',
-            // ]
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['vehicle', 'bank_account_id']
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_employee.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['expense_manager_id']
-            --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['employee_cars_count']
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
             // return super().SELF_READABLE_FIELDS + [
-            //     'leave_manager_id',
-            //     'show_leaves',
-            //     'allocation_count',
             //     'leave_date_to',
-            //     'current_leave_state',
-            //     'is_absent',
-            //     'allocation_remaining_display',
-            //     'allocation_display',
-            //     'hr_icon_display',
             // ]
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['request_overtime']
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
             // return super().SELF_READABLE_FIELDS + DAYS
-            --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['equipment_count']
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + [
-            //     'resume_line_ids',
-            //     'employee_skill_ids',
-            // ]
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['livechat_username', 'livechat_lang_ids', 'has_access_livechat']
+            // return super().SELF_READABLE_FIELDS + [
+            //     "has_access_livechat",
+            //     "livechat_expertise_ids",
+            //     "livechat_lang_ids",
+            //     "livechat_username",
+            // ]
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['notification_type']
+            // return super().SELF_READABLE_FIELDS + [
+            //     "can_edit_role",
+            //     "is_out_of_office",
+            //     "notification_type",
+            //     "out_of_office_from",
+            //     "out_of_office_message",
+            //     "out_of_office_to",
+            //     "role_ids",
+            //     "has_external_mail_server",
+            //     "outgoing_mail_server_id",
+            //     "outgoing_mail_server_type",
+            // ]
             --- ODOO METHOD SOURCE (MODULE: mail_bot, FILE: res_users.py) ---
             // def SELF_READABLE_FIELDS(self):
             // return super().SELF_READABLE_FIELDS + ['odoobot_state']
@@ -4673,13 +4921,10 @@ namespace Bamboo.Core.Application.Services
             // return [
             //     'signature', 'company_id', 'login', 'email', 'name', 'image_1920',
             //     'image_1024', 'image_512', 'image_256', 'image_128', 'lang', 'tz',
-            //     'tz_offset', 'groups_id', 'partner_id', 'write_date', 'action_id',
+            //     'tz_offset', 'group_ids', 'partner_id', 'write_date', 'action_id',
             //     'avatar_1920', 'avatar_1024', 'avatar_512', 'avatar_256', 'avatar_128',
-            //     'share', 'device_ids', 'display_name',
+            //     'share', 'device_ids', 'api_key_ids', 'phone', 'display_name',
             // ]
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def SELF_READABLE_FIELDS(self):
-            // return super().SELF_READABLE_FIELDS + ['api_key_ids']
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -4696,18 +4941,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking, FILE: res_users.py) ---
             // def SELF_WRITEABLE_FIELDS(self):
             // return super().SELF_WRITEABLE_FIELDS + DAYS
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: res_users.py) ---
-            // def SELF_WRITEABLE_FIELDS(self):
-            // return super().SELF_WRITEABLE_FIELDS + [
-            //     'resume_line_ids',
-            //     'employee_skill_ids',
-            // ]
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
             // def SELF_WRITEABLE_FIELDS(self):
-            // return super().SELF_WRITEABLE_FIELDS + ['livechat_username', 'livechat_lang_ids']
+            // return super().SELF_WRITEABLE_FIELDS + [
+            //     "livechat_expertise_ids",
+            //     "livechat_lang_ids",
+            //     "livechat_username",
+            // ]
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def SELF_WRITEABLE_FIELDS(self):
-            // return super().SELF_WRITEABLE_FIELDS + ['notification_type']
+            // return super().SELF_WRITEABLE_FIELDS + [
+            //     "notification_type",
+            //     "out_of_office_from",
+            //     "out_of_office_message",
+            //     "out_of_office_to",
+            // ]
             --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: res_users.py) ---
             // def SELF_WRITEABLE_FIELDS(self):
             // return super().SELF_WRITEABLE_FIELDS + ['property_warehouse_id']
@@ -4721,12 +4969,19 @@ namespace Bamboo.Core.Application.Services
             // """ The list of fields a user can write on their own user record.
             // In order to add fields, please override this property on model extensions.
             // """
-            // return ['signature', 'action_id', 'company_id', 'email', 'name', 'image_1920', 'lang', 'tz']
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def SELF_WRITEABLE_FIELDS(self):
-            // return super().SELF_WRITEABLE_FIELDS + ['api_key_ids']
+            // return ['signature', 'action_id', 'company_id', 'email', 'name', 'image_1920', 'lang', 'tz', 'api_key_ids', 'phone']
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResUsers> SearchAllGroupIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _search_all_group_ids(self, operator, value):
+            // return [('group_ids.all_implied_ids', operator, value)]
+            */
+            return default;
         }
 
         protected async Task<ResUsers> SearchCompanyEmployeeInternalAsync(object @operator, object @value)
@@ -4734,7 +4989,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def _search_company_employee(self, operator, value):
-            // return [('employee_ids', operator, value)]
+            // # Equivalent to `[('employee_ids', operator, value)]`,
+            // # but we inline the ids directly to simplify final queries and improve performance,
+            // # as it's part of a few ir.rules.
+            // # If we're going to inject too many `ids`, we fall back on the default behavior
+            // # to avoid a performance regression.
+            // IN_MAX = 10_000
+            // domain = Domain('employee_ids', operator, value)
+            // user_ids = self.env['res.users'].with_context(active_test=False)._search(domain, limit=IN_MAX).get_result_ids()
+            // if len(user_ids) < IN_MAX:
+            //     return Domain('id', 'in', user_ids)
+            // 
+            // return domain
             */
             return default;
         }
@@ -4744,7 +5010,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: res_users.py) ---
             // def _search_crm_team_ids(self, operator, value):
-            // return [('crm_team_member_ids.crm_team_id', operator, value)]
+            // # Equivalent to `[('crm_team_member_ids.crm_team_id', operator, value)]`,
+            // # but we inline the ids directly to simplify final queries and improve performance,
+            // # as it's part of a few ir.rules.
+            // # If we're going to inject too many `ids`, we fall back on the default behavior
+            // # to avoid a performance regression.
+            // IN_MAX = 10_000
+            // domain = [('crm_team_member_ids.crm_team_id', operator, value)]
+            // user_ids = self.env['res.users'].with_context(active_test=False)._search(domain, limit=IN_MAX).get_result_ids()
+            // if len(user_ids) < IN_MAX:
+            //     return [('id', 'in', user_ids)]
+            // 
+            // return domain
             */
             return default;
         }
@@ -4755,25 +5032,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _search_display_name(self, operator, value):
             // domain = super()._search_display_name(operator, value)
-            // if operator in ('=', 'ilike') and value:
-            //     name_domain = [('login', '=', value)]
+            // if operator in ('in', 'ilike') and value:
+            //     name_domain = [('login', 'in', [value] if isinstance(value, str) else value)]
+            //     # avoid searching both by login and name because they reside in two different tables
+            //     # doing so prevents from using indexes and introduces a performance issue
             //     if users := self.search(name_domain):
             //         domain = [('id', 'in', users.ids)]
             // return domain
-            */
-            return default;
-        }
-
-        protected async Task<ResUsers> SearchInternalAsync(object domain, object offset, object limit, object order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
-            // if not self.env.su and domain:
-            //     domain_fields = {term[0] for term in domain if isinstance(term, (tuple, list))}
-            //     if domain_fields.intersection(USER_PRIVATE_FIELDS):
-            //         raise AccessError(_('Invalid search criterion'))
-            // return super()._search(domain, offset, limit, order)
             */
             return default;
         }
@@ -4783,7 +5048,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _search_res_users_settings_id(self, operator, operand):
-            // return [('res_users_settings_ids', operator, operand)]
+            // return Domain('res_users_settings_ids', operator, operand)
             */
             return default;
         }
@@ -4793,29 +5058,25 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
             // def _search_state(self, operator, value):
-            // negative = operator in expression.NEGATIVE_TERM_OPERATORS
-            // 
-            // # In case we have no value
-            // if not value:
-            //     return expression.TRUE_DOMAIN if negative else expression.FALSE_DOMAIN
-            // 
-            // if operator in ['in', 'not in']:
-            //     if len(value) > 1:
-            //         return expression.FALSE_DOMAIN if negative else expression.TRUE_DOMAIN
-            //     if value[0] == 'new':
-            //         comp = '!=' if negative else '='
-            //     if value[0] == 'active':
-            //         comp = '=' if negative else '!='
-            //     return [('log_ids', comp, False)]
-            // 
-            // if operator in ['=', '!=']:
-            //     # In case we search against anything else than new, we have to invert the operator
-            //     if value != 'new':
-            //         operator = expression.TERM_OPERATORS_NEGATION[operator]
-            // 
-            //     return [('log_ids', operator, False)]
-            // 
-            // return expression.TRUE_DOMAIN
+            // if operator != 'in':
+            //     return NotImplemented
+            // if len(value) > 1:
+            //     return Domain.TRUE
+            // in_log = 'active' in value
+            // return Domain('log_ids', '!=' if in_log else '=', False)
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> SelfAccessibleFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _self_accessible_fields(self) -> tuple[frozenset[str], frozenset[str]]:
+            // """Readable and writable fields by portal users."""
+            // readable = frozenset(self.SELF_READABLE_FIELDS)
+            // writeable = frozenset(self.SELF_WRITEABLE_FIELDS)
+            // return readable, writeable
             */
             return default;
         }
@@ -4837,9 +5098,8 @@ namespace Bamboo.Core.Application.Services
             //     }
             //     params.update(kwargs)
             //     token_url = self.get_base_url() + '/profile/validate_email?%s' % urls.url_encode(params)
-            //     with self._cr.savepoint():
-            //         activation_template.sudo().with_context(token_url=token_url).send_mail(
-            //             self.id, force_send=True, raise_exception=True)
+            //     activation_template.sudo().with_context(token_url=token_url).send_mail(
+            //         self.id, force_send=True, raise_exception=True)
             // return True
             */
             return default;
@@ -4848,7 +5108,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> SendTotpMailCodeInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def _send_totp_mail_code(self):
             // self.ensure_one()
             // self._totp_rate_limit('send_email')
@@ -4856,7 +5116,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.email:
             //     raise UserError(_("Cannot send email: user %s has no email address.", self.name))
             // 
-            // template = self.env.ref('auth_totp_mail_enforce.mail_template_totp_mail_code').sudo()
+            // template = self.env.ref('auth_totp_mail.mail_template_totp_mail_code').sudo()
             // context = {}
             // if request:
             //     device = request.httprequest.user_agent.platform
@@ -4878,10 +5138,11 @@ namespace Bamboo.Core.Application.Services
             //     'partner_ids': [],
             //     'scheduled_date': False,
             // }
-            // with self.env.cr.savepoint():
-            //     template.with_context(**context).send_mail(
-            //         self.id, force_send=True, raise_exception=True, email_values=email_values, email_layout_xmlid='mail.mail_notification_light'
-            //     )
+            // template.with_context(**context).send_mail(
+            //     self.id, force_send=True, raise_exception=True,
+            //     email_values=email_values,
+            //     email_layout_xmlid='mail.mail_notification_light'
+            // )
             */
             return default;
         }
@@ -4910,17 +5171,57 @@ namespace Bamboo.Core.Application.Services
             // # Do not use progress since we have no way of knowing to whom we have
             // # already sent e-mails.
             // 
-            // done = 0
             // for user, invited_users in invited_by_users.items():
             //     invited_user_emails = [f"{u.name} ({u.login})" for u in invited_users]
             //     template = email_template.with_context(dbname=self.env.cr.dbname, invited_users=invited_user_emails)
             //     template.send_mail(user.id, email_layout_xmlid='mail.mail_notification_light', force_send=False)
-            //     done += len(invited_users)
-            //     # do not set remaining and the search will return always the same users!
-            //     self.env['ir.cron']._notify_progress(done=done, remaining=0)
-            //     self.env.cr.commit()
+            //     if not self.env['ir.cron']._commit_progress(len(invited_users)):
+            //         _logger.info("send_unregistered_user_reminder: timeout reached, stopping")
+            //         break
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResUsers> SessionTokenGetValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _session_token_get_values(self):
+            // self.env.cr.execute(SQL(
+            //     "SELECT %(select)s FROM %(from)s %(joins)s WHERE %(where)s GROUP BY %(group_by)s",
+            //     **self._get_session_token_query_params(),
+            // ))
+            // if self.env.cr.rowcount != 1:
+            //     self.env.registry.clear_cache()
+            //     return False
+            // data_fields = self.env.cr.fetchone()
+            // # create tuple with column name and value, allowing for overrides to manipulate the values
+            // cr_description = self.env.cr.description
+            // return tuple((column.name, data_fields[index]) for index, column in enumerate(cr_description))
+            */
+            return default;
+        }
+
+        protected async Task<ResUsers> SessionTokenHashComputeInternalAsync(object sid, object field_values)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def _session_token_hash_compute(self, sid, field_values):
+            // if not field_values:
+            //     return False
+            // # Generate hmac key using the column name and its value, only if the value is not None
+            // # To avoid invalidating sessions when installing a new feature modifying the session token computation
+            // # while not still being used.
+            // key_tuple = tuple((k, v) for k, v in field_values if v is not None)
+            // # encode the key tuple to a bytestring
+            // key = str(key_tuple).encode()
+            // # hmac the session id
+            // data = sid.encode()
+            // h = hmac.new(key, data, sha256)
+            // # return the session token with a prefix version
+            // return h.hexdigest()
+            */
+            return default;
         }
 
         protected async Task<ResUsers> SetEmptyPasswordInternalAsync()
@@ -5034,34 +5335,99 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResUsers> ShouldAlertNewDeviceInternalAsync()
+        public async Task<ResUsers> SetupOutgoingMailServerAsync(Guid id, ResUsersSetupOutgoingMailServerRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
-            // def _should_alert_new_device(self):
-            // """ Determine if an alert should be sent to the user regarding a new device
-            // - 2FA enabled -> only for new device
-            // - Not enabled -> no alert
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def action_setup_outgoing_mail_server(self, server_type):
+            // """Configure the outgoing mail servers."""
+            // user = self.env.user
+            // if not user.has_external_mail_server:
+            //     raise UserError(_('You are not allowed to create a personal mail server.'))
             // 
-            // To be overriden if needs to be disabled for other 2FA providers
-            // """
-            // if request and self._mfa_type():
-            //     key = request.cookies.get('td_id')
-            //     if key:
-            //         if request.env['auth_totp.device']._check_credentials_for_uid(
-            //             scope="browser", key=key, uid=self.id):
-            //             # the device is known
-            //             return False
-            //     # 2FA enabled but not a trusted device
-            //     return True
-            // return super()._should_alert_new_device()
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _should_alert_new_device(self):
-            // """ Determine if an alert should be sent to the user regarding a new device
+            // if not user._is_internal():
+            //     raise UserError(_('Only internal users can configure a personal mail server.'))
             // 
-            // To be overriden in 2FA modules implementing known devices
-            // """
-            // return False
+            // existing_mail_server = self.env["ir.mail_server"].sudo() \
+            //     .with_context(active_test=False).search([("owner_user_id", "=", user.id)])
+            // 
+            // if server_type == 'default':
+            //     # Use the default server
+            //     if existing_mail_server:
+            //         existing_mail_server.unlink()
+            // 
+            //     return {
+            //         "type": "ir.actions.client",
+            //         "tag": "display_notification",
+            //         "params": {
+            //             "message": _("Switching back to the default server."),
+            //             "type": "warning",
+            //         },
+            //     }
+            // 
+            // email = user.email
+            // if not email:
+            //     raise UserError(_("Please set your email before connecting your mail server."))
+            // 
+            // normalized_email = tools.email_normalize(email)
+            // if (
+            //     not normalized_email
+            //     or "@" not in normalized_email
+            //     # Be sure it's well parsed by `ir.mail_server`
+            //     or self.env["ir.mail_server"]._parse_from_filter(normalized_email)
+            //     != [normalized_email]
+            // ):
+            //     raise UserError(_("Wrong email address %s.", email))
+            // 
+            // # Check that the user's email is not used by `mail.alias.domain` to avoid leaking the outgoing emails
+            // alias_domain = self.env["mail.alias.domain"].sudo().search([])
+            // cli_default_from = tools.config.get("email_from")
+            // match_from_filter = self.env["ir.mail_server"]._match_from_filter
+            // if (
+            //     any(match_from_filter(e, normalized_email) for e in alias_domain.mapped("default_from_email"))
+            //     or (cli_default_from and match_from_filter(cli_default_from, normalized_email))
+            // ):
+            //     raise UserError(_("Your email address is used by an alias domain, and so you can not create a mail server for it."))
+            // 
+            // if (
+            //     server_type == user.outgoing_mail_server_type
+            //     and user.outgoing_mail_server_id.from_filter == normalized_email
+            //     and user.outgoing_mail_server_id.smtp_user == normalized_email
+            // ):
+            //     # Re-connect the account
+            //     return self._get_mail_server_setup_end_action(user.outgoing_mail_server_id)
+            // 
+            // if existing_mail_server:
+            //     existing_mail_server.unlink()
+            // 
+            // values = {
+            //     # Will be un-archived once logged in
+            //     # Archived personal server will be deleted in GC CRON
+            //     # to clean pending connection that didn't finish
+            //     "active": False,
+            //     "name": _("%s's outgoing email", user.name),
+            //     "smtp_user": normalized_email,
+            //     "smtp_pass": False,
+            //     "from_filter": normalized_email,
+            //     "smtp_port": 587,
+            //     "smtp_encryption": "starttls",
+            //     "owner_user_id": user.id,
+            //     **self._get_mail_server_values(server_type),
+            // }
+            // smtp_server = self.env["ir.mail_server"].sudo().create(values)
+            // return self._get_mail_server_setup_end_action(smtp_server)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResUsers> ShouldCaptchaLoginInternalAsync(object credential)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users.py) ---
+            // def _should_captcha_login(self, credential):
+            // if request and request.env.context.get('skip_captcha_login') is SKIP_CAPTCHA_LOGIN:
+            //     return False
+            // return credential['type'] == 'password'
             */
             return default;
         }
@@ -5078,7 +5444,7 @@ namespace Bamboo.Core.Application.Services
             //     'res_model': 'ir.model.access',
             //     'type': 'ir.actions.act_window',
             //     'context': {'create': False, 'delete': False},
-            //     'domain': [('id', 'in', self.groups_id.model_access.ids)],
+            //     'domain': [('id', 'in', self.all_group_ids.model_access.ids)],
             //     'target': 'current',
             // }
             */
@@ -5097,7 +5463,7 @@ namespace Bamboo.Core.Application.Services
             //     'res_model': 'res.groups',
             //     'type': 'ir.actions.act_window',
             //     'context': {'create': False, 'delete': False},
-            //     'domain': [('id','in', self.groups_id.ids)],
+            //     'domain': [('id', 'in', self.all_group_ids.ids)],
             //     'target': 'current',
             // }
             */
@@ -5116,7 +5482,7 @@ namespace Bamboo.Core.Application.Services
             //     'res_model': 'ir.rule',
             //     'type': 'ir.actions.act_window',
             //     'context': {'create': False, 'delete': False},
-            //     'domain': [('id', 'in', self.groups_id.rule_groups.ids)],
+            //     'domain': [('id', 'in', self.all_group_ids.rule_groups.ids)],
             //     'target': 'current',
             // }
             */
@@ -5327,7 +5693,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
             // def _sync_microsoft_calendar(self):
             // self.ensure_one()
-            // self.sudo().microsoft_last_sync_date = fields.datetime.now()
+            // self.sudo().microsoft_last_sync_date = datetime.now()
             // if self._get_microsoft_sync_status() != "sync_active":
             //     return False
             // 
@@ -5356,7 +5722,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // events = self.env['calendar.event']._get_microsoft_records_to_sync(full_sync=full_sync)
             // (events - synced_events)._sync_odoo2microsoft()
-            // self.sudo().microsoft_last_sync_date = fields.datetime.now()
+            // self.sudo().microsoft_last_sync_date = datetime.now()
             // 
             // return bool(events | synced_events) or bool(recurrences | synced_recurrences)
             */
@@ -5372,8 +5738,10 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // # don't attempt to sync when another sync is already in progress, as we wouldn't be
             // # able to commit the transaction anyway (row is locked)
-            // self.env.cr.execute("""SELECT id FROM res_users WHERE id = %s FOR NO KEY UPDATE SKIP LOCKED""", [self.id])
-            // if not self.env.cr.rowcount:
+            // self.ensure_one()
+            // try:
+            //     self.lock_for_update(allow_referencing=True)
+            // except LockError:
             //     _logger.info("skipping calendar sync, locked user %s", self.login)
             //     return False
             // 
@@ -5483,49 +5851,32 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ToggleActiveAsync(Guid id)
+        public async Task<ResUsers> TestOutgoingMailServerAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def toggle_active(self):
-            // for user in self:
-            //     if not user.active and not user.partner_id.active:
-            //         user.partner_id.toggle_active()
-            // super(Users, self).toggle_active()
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            // def action_test_outgoing_mail_server(self):
+            // user = self.env.user
+            // if not user.has_external_mail_server:
+            //     raise UserError(_('You are not allowed to test personal mail servers.'))
+            // 
+            // if not user.has_group('base.group_user'):
+            //     raise UserError(_('Only internal users can configure personal mail servers.'))
+            // 
+            // server_sudo = user.outgoing_mail_server_id.sudo()
+            // if not server_sudo:
+            //     raise UserError(_('No mail server configured'))
+            // server_sudo.test_smtp_connection()
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'message': _('Connection Test Successful!'),
+            //         'type': 'success',
+            //     },
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResUsers> TotpCheckInternalAsync(object code)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
-            // def _totp_check(self, code):
-            // sudo = self.sudo()
-            // key = base64.b32decode(sudo.totp_secret)
-            // match = TOTP(key).match(code)
-            // if match is None:
-            //     _logger.info("2FA check: FAIL for %s %r", self, sudo.login)
-            //     raise AccessDenied(_("Verification failed, please double-check the 6-digit code"))
-            // _logger.info("2FA check: SUCCESS for %s %r", self, sudo.login)
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
-            // def _totp_check(self, code):
-            // self._totp_rate_limit('code_check')
-            // user = self.sudo()
-            // if user._mfa_type() != 'totp_mail':
-            //     return super()._totp_check(code)
-            // 
-            // key = user._get_totp_mail_key()
-            // match = TOTP(key).match(code, window=3600, timestep=3600)
-            // if match is None:
-            //     _logger.info("2FA check (mail): FAIL for %s %r", user, user.login)
-            //     raise AccessDenied(_("Verification failed, please double-check the 6-digit code"))
-            // _logger.info("2FA check(mail): SUCCESS for %s %r", user, user.login)
-            // self._totp_rate_limit_purge('code_check')
-            // self._totp_rate_limit_purge('send_email')
-            // return True
-            */
-            return default;
         }
 
         public async Task<ResUsers> TotpDisableAsync(Guid id)
@@ -5603,7 +5954,7 @@ namespace Bamboo.Core.Application.Services
             //     'name': _("Two-Factor Authentication Activation"),
             //     'res_id': w.id,
             //     'views': [(False, 'form')],
-            //     'context': self.env.context,
+            //     'context': self.env.context | {'dialog_size': 'medium'},
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -5642,26 +5993,25 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> TotpRateLimitInternalAsync(object limit_type)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def _totp_rate_limit(self, limit_type):
             // self.ensure_one()
             // assert request, "A request is required to be able to rate limit TOTP related actions"
-            // limit, interval = TOTP_RATE_LIMITS.get(limit_type)
+            // limit, interval = TOTP_RATE_LIMITS[limit_type]
             // RateLimitLog = self.env['auth.totp.rate.limit.log'].sudo()
             // ip = request.httprequest.environ['REMOTE_ADDR']
             // domain = [
             //     ('user_id', '=', self.id),
             //     ('create_date', '>=', datetime.now() - timedelta(seconds=interval)),
             //     ('limit_type', '=', limit_type),
-            //     ('ip', '=', ip),
             // ]
             // count = RateLimitLog.search_count(domain)
             // if count >= limit:
             //     descriptions = {
-            //         'send_email': _('You reached the limit of authentication mails sent for your account'),
-            //         'code_check': _('You reached the limit of code verifications for your account'),
+            //         'send_email': _('You reached the limit of authentication mails sent for your account, please try again later.'),
+            //         'code_check': _('You reached the limit of code verifications for your account, please try again later.'),
             //     }
-            //     description = descriptions.get(limit_type)
+            //     description = descriptions[limit_type]
             //     raise AccessDenied(description)
             // RateLimitLog.create({
             //     'user_id': self.id,
@@ -5675,16 +6025,14 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResUsers> TotpRateLimitPurgeInternalAsync(object limit_type)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def _totp_rate_limit_purge(self, limit_type):
             // self.ensure_one()
             // assert request, "A request is required to be able to rate limit TOTP related actions"
-            // ip = request.httprequest.environ['REMOTE_ADDR']
             // RateLimitLog = self.env['auth.totp.rate.limit.log'].sudo()
             // RateLimitLog.search([
             //     ('user_id', '=', self.id),
             //     ('limit_type', '=', limit_type),
-            //     ('ip', '=', ip),
             // ]).unlink()
             */
             return default;
@@ -5706,6 +6054,7 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // 
             // self.sudo().totp_secret = secret
+            // self.sudo().totp_last_counter = match
             // if request:
             //     self.env.flush_all()
             //     # update session token so the user does not get logged out (cache cleared by change)
@@ -5735,15 +6084,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _unlink_except_master_data(self):
             // portal_user_template = self.env.ref('base.template_portal_user_id', False)
-            // default_user_template = self.env.ref('base.default_user', False)
+            // public_user = self.env.ref('base.public_user', False)
             // if SUPERUSER_ID in self.ids:
             //     raise UserError(_('You can not remove the admin user as it is used internally for resources created by Odoo (updates, module installation, ...)'))
             // user_admin = self.env.ref('base.user_admin', raise_if_not_found=False)
             // if user_admin and user_admin in self:
             //     raise UserError(_('You cannot delete the admin user because it is utilized in various places (such as security configurations,...). Instead, archive it.'))
             // self.env.registry.clear_cache()
-            // if (portal_user_template and portal_user_template in self) or (default_user_template and default_user_template in self):
+            // if portal_user_template and portal_user_template in self:
             //     raise UserError(_('Deleting the template users is not allowed. Deleting this profile will compromise critical functionalities.'))
+            // if public_user and public_user in self:
+            //     raise UserError(_("Deleting the public user is not allowed. Deleting this profile will compromise critical functionalities."))
             */
             return default;
         }
@@ -5852,6 +6203,11 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, ResUsers entity, List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
+            // def write(self, vals):
+            // if 'active' in vals and not vals['active']:
+            //     self.partner_id.signup_cancel()
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
             // def write(self, vals):
             // res = super().write(vals)
@@ -5875,23 +6231,21 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // """ Forbid the calendar default privacy update from different users for keeping private events secured. """
             // privacy_update = 'calendar_default_privacy' in vals
-            // default_user = self.env.ref('base.default_user', raise_if_not_found=False)
-            // if default_user and privacy_update and any(user not in [default_user, self.env.user] for user in self):
+            // if privacy_update and self != self.env.user:
             //     raise AccessError(_("You are not allowed to change the calendar default privacy of another user due to privacy constraints."))
-            // res = super().write(vals)
-            // return res
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: res_users.py) ---
-            // def write(self, values):
-            // if 'karma' in values:
+            // def write(self, vals):
+            // if 'karma' in vals:
             //     self._add_karma_batch({
             //         user: {
-            //             'gain': int(values['karma']) - user.karma,
+            //             'gain': int(vals['karma']) - user.karma,
             //             'origin_ref': f'res.users,{self.env.uid}',
             //         }
             //         for user in self
-            //         if int(values['karma']) != user.karma
+            //         if int(vals['karma']) != user.karma
             //     })
-            // return super().write(values)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def write(self, vals):
             // """
@@ -5904,10 +6258,6 @@ namespace Bamboo.Core.Application.Services
             //     for field_name, field in self._fields.items()
             //     if field.related_field and field.related_field.model_name == 'hr.employee' and field_name in vals
             // }
-            // can_edit_self = self.env['ir.config_parameter'].sudo().get_param('hr.hr_employee_self_edit') or self.env.user.has_group('hr.group_hr_user')
-            // if hr_fields and not can_edit_self:
-            //     # Raise meaningful error message
-            //     raise AccessError(_("You are only allowed to update your preferences. Please contact a HR officer to update other information."))
             // 
             // employee_domain = [
             //     *self.env['hr.employee']._check_company_domain(self.env.company),
@@ -5931,7 +6281,7 @@ namespace Bamboo.Core.Application.Services
             //                 ),
             //                 partner_ids=partner_ids,
             //             )
-            // result = super(User, self).write(vals)
+            // result = super().write(vals)
             // 
             // employee_values = {}
             // for fname in [f for f in self._get_employee_fields_to_sync() if f in vals]:
@@ -5944,31 +6294,40 @@ namespace Bamboo.Core.Application.Services
             //         without_image = self.env['hr.employee'].sudo().search(employee_domain + [('image_1920', '=', False)])
             //         with_image = self.env['hr.employee'].sudo().search(employee_domain + [('image_1920', '!=', False)])
             //         without_image.write(employee_values)
-            //         if not can_edit_self:
-            //             employee_values.pop('image_1920')
             //         with_image.write(employee_values)
             //     else:
             //         employees = self.env['hr.employee'].sudo().search(employee_domain)
             //         if employees:
             //             employees.write(employee_values)
             // return result
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_users.py) ---
+            // def write(self, vals):
+            // if vals.get("group_ids"):
+            //     operator_group = self.env.ref("im_livechat.im_livechat_group_user")
+            //     if operator_group in self.all_group_ids:
+            //         result = super().write(vals)
+            //         lost_operators = self.filtered_domain([("all_group_ids", "not in", operator_group.id)])
+            //         # sudo - im_livechat.channel: user manager can remove user from livechat channels
+            //         self.env["im_livechat.channel"].sudo() \
+            //             .search([("user_ids", "in", lost_operators.ids)]) \
+            //             .write({"user_ids": [Command.unlink(operator.id) for operator in lost_operators]})
+            //         return result
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def write(self, vals):
             // res = super().write(vals)
             // if "active" in vals and not vals["active"]:
             //     self._unsubscribe_from_non_public_channels()
-            // sel_groups = [vals[k] for k in vals if is_selection_groups(k) and vals[k]]
-            // if vals.get("groups_id"):
+            // if vals.get("group_ids"):
             //     # form: {'group_ids': [(3, 10), (3, 3), (4, 10), (4, 3)]} or {'group_ids': [(6, 0, [ids]}
-            //     user_group_ids = [command[1] for command in vals["groups_id"] if command[0] == 4]
-            //     user_group_ids += [id for command in vals["groups_id"] if command[0] == 6 for id in command[2]]
+            //     user_group_ids = [command[1] for command in vals["group_ids"] if command[0] == 4]
+            //     user_group_ids += [id for command in vals["group_ids"] if command[0] == 6 for id in command[2]]
+            //     user_group_ids += self.env['res.groups'].browse(user_group_ids).all_implied_ids._ids
             //     self.env["discuss.channel"].search([("group_ids", "in", user_group_ids)])._subscribe_users_automatically()
-            // elif sel_groups:
-            //     self.env["discuss.channel"].search([("group_ids", "in", sel_groups)])._subscribe_users_automatically()
             // return res
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
             // def write(self, vals):
-            // log_portal_access = 'groups_id' in vals and not self._context.get('mail_create_nolog') and not self._context.get('mail_notrack')
+            // log_portal_access = 'group_ids' in vals and not self.env.context.get('mail_create_nolog') and not self.env.context.get('mail_notrack')
             // user_portal_access_dict = {
             //     user.id: user._is_portal()
             //     for user in self
@@ -5978,13 +6337,13 @@ namespace Bamboo.Core.Application.Services
             // if vals.get('email'):
             //     previous_email_by_user = {
             //         user: user.email
-            //         for user in self.filtered(lambda user: bool(email_normalize(user.email)))
-            //         if email_normalize(user.email) != email_normalize(vals['email'])
+            //         for user in self.filtered(lambda user: bool(user.email_normalized))
+            //         if user.email_normalized != email_normalize(vals['email'])
             //     }
             // if 'notification_type' in vals:
             //     user_notification_type_modified = self.filtered(lambda user: user.notification_type != vals['notification_type'])
             // 
-            // write_res = super(Users, self).write(vals)
+            // write_res = super().write(vals)
             // 
             // # log a portal status change (manual tracking)
             // if log_portal_access:
@@ -6022,13 +6381,9 @@ namespace Bamboo.Core.Application.Services
             //             mail_values={'email_to': previous_email},
             //             suggest_password_reset=False,
             //         )
-            // if 'notification_type' in vals:
+            // if "notification_type" in vals:
             //     for user in user_notification_type_modified:
-            //         user._bus_send_store(
-            //             user.partner_id,
-            //             fields=["notification_type"],
-            //             main_user_by_partner={user.partner_id: user},
-            //         )
+            //         Store(bus_channel=user).add(user, "notification_type").bus_send()
             // 
             // return write_res
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: res_users.py) ---
@@ -6047,119 +6402,77 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_users.py) ---
             // def write(self, vals):
             // """ Trigger automatic subscription based on updated user groups """
-            // res = super(Users, self).write(vals)
-            // sanitized_vals = self._remove_reified_groups(vals)
-            // if sanitized_vals.get('groups_id'):
-            //     added_group_ids = [command[1] for command in sanitized_vals['groups_id'] if command[0] == 4]
-            //     added_group_ids += [id for command in sanitized_vals['groups_id'] if command[0] == 6 for id in command[2]]
+            // res = super().write(vals)
+            // if 'group_ids' in vals:
+            //     group_ids = [command[1] for command in vals['group_ids'] if command[0] == Command.LINK]
+            //     group_ids += [id_ for command in vals['group_ids'] if command[0] == Command.SET for id_ in command[2]]
+            //     added_group_ids = self.env['res.groups'].browse(group_ids).all_implied_ids.ids
             //     self.env['slide.channel'].sudo().search([('enroll_group_ids', 'in', added_group_ids)])._action_add_members(self.mapped('partner_id'))
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def write(self, values):
-            // if values.get('active') and SUPERUSER_ID in self._ids:
+            // def write(self, vals):
+            // if vals.get('active') and SUPERUSER_ID in self._ids:
             //     raise UserError(_("You cannot activate the superuser."))
-            // if values.get('active') == False and self._uid in self._ids:
+            // if vals.get('active') == False and self.env.uid in self._ids:  # noqa: E712
             //     raise UserError(_("You cannot deactivate the user you're currently logged in as."))
             // 
-            // if values.get('active'):
-            //     for user in self:
-            //         if not user.active and not user.partner_id.active:
-            //             user.partner_id.toggle_active()
+            // if vals.get('active'):
+            //     # unarchive partners before unarchiving the users
+            //     self.partner_id.action_unarchive()
             // if self == self.env.user:
-            //     writeable = self.SELF_WRITEABLE_FIELDS
-            //     for key in list(values):
-            //         if not (key in writeable or key.startswith('context_')):
+            //     writeable = self._self_accessible_fields()[1]
+            //     for key in list(vals):
+            //         if key not in writeable:
             //             break
             //     else:
-            //         if 'company_id' in values:
-            //             if values['company_id'] not in self.env.user.company_ids.ids:
-            //                 del values['company_id']
+            //         if 'company_id' in vals:
+            //             if vals['company_id'] not in self.env.user.company_ids.ids:
+            //                 del vals['company_id']
             //         # safe fields only, so we write as super-user to bypass access rights
             //         self = self.sudo()
             // 
-            // old_groups = []
-            // if 'groups_id' in values and self._apply_groups_to_existing_employees():
-            //     # if modify groups_id content, compute the delta of groups to apply
-            //     # the new ones to other existing users
-            //     old_groups = self._default_groups()
+            // res = super().write(vals)
             // 
-            // res = super(Users, self).write(values)
-            // 
-            // if old_groups:
-            //     # new elements in _default_groups() means new groups for default users
-            //     # that needs to be added to existing ones as well for consistency
-            //     added_groups = self._default_groups() - old_groups
-            //     if added_groups:
-            //         internal_users = self.env.ref('base.group_user').users - self
-            //         internal_users.write({'groups_id': [Command.link(gid) for gid in added_groups.ids]})
-            // 
-            // if 'company_id' in values:
+            // if 'company_id' in vals:
             //     for user in self:
             //         # if partner is global we keep it that way
-            //         if user.partner_id.company_id and user.partner_id.company_id.id != values['company_id']:
+            //         if user.partner_id.company_id and user.partner_id.company_id.id != vals['company_id']:
             //             user.partner_id.write({'company_id': user.company_id.id})
             // 
-            // if 'company_id' in values or 'company_ids' in values:
+            // if 'company_id' in vals or 'company_ids' in vals:
             //     # Reset lazy properties `company` & `companies` on all envs,
-            //     # and also their _cache_key, which may depend on them.
             //     # This is unlikely in a business code to change the company of a user and then do business stuff
             //     # but in case it happens this is handled.
             //     # e.g. `account_test_savepoint.py` `setup_company_data`, triggered by `test_account_invoice_report.py`
             //     for env in list(self.env.transaction.envs):
             //         if env.user in self:
-            //             lazy_property.reset_all(env)
-            //             env._cache_key.clear()
+            //             reset_cached_properties(env)
             // 
-            // # clear caches linked to the users
-            // if self.ids and 'groups_id' in values:
-            //     # DLE P139: Calling invalidate_cache on a new, well you lost everything as you wont be able to take it back from the cache
-            //     # `test_00_equipment_multicompany_user`
+            // if 'group_ids' in vals and self.ids:
+            //     # clear caches linked to the users
             //     self.env['ir.model.access'].call_cache_clearing_methods()
             // 
             // # per-method / per-model caches have been removed so the various
             // # clear_cache/clear_caches methods pretty much just end up calling
             // # Registry.clear_cache
             // invalidation_fields = self._get_invalidation_fields()
-            // if (invalidation_fields & values.keys()) or any(key.startswith('context_') for key in values):
+            // if invalidation_fields & vals.keys():
             //     self.env.registry.clear_cache()
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def write(self, values):
-            // if not values.get('groups_id'):
-            //     return super(UsersImplied, self).write(values)
-            // users_before = self.filtered(lambda u: u._is_internal())
-            // res = super(UsersImplied, self.with_context(no_add_implied_groups=True)).write(values)
-            // demoted_users = users_before.filtered(lambda u: not u._is_internal())
-            // if demoted_users:
-            //     # demoted users are restricted to the assigned groups only
-            //     vals = {'groups_id': [Command.clear()] + values['groups_id']}
-            //     super(UsersImplied, demoted_users).write(vals)
-            // if self.env.context.get('no_add_implied_groups'):
-            //     # in a recursive write, defer adding implied groups to the base call
+            // def write(self, vals):
+            // res = super().write(vals)
+            // if 'company_ids' not in vals:
             //     return res
-            // # add implied groups for all users (in batches)
-            // users_batch = defaultdict(self.browse)
-            // for user in self:
-            //     users_batch[user.groups_id] += user
-            // for groups, users in users_batch.items():
-            //     gs = set(concat(g.trans_implied_ids for g in groups))
-            //     vals = {'groups_id': [Command.link(g.id) for g in gs]}
-            //     super(UsersImplied, users).write(vals)
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def write(self, values):
-            // values = self._remove_reified_groups(values)
-            // res = super(UsersView, self).write(values)
-            // if 'company_ids' not in values:
-            //     return res
-            // group_multi_company = self.env.ref('base.group_multi_company', False)
-            // if group_multi_company:
+            // group_multi_company_id = self.env['ir.model.data']._xmlid_to_res_id(
+            //     'base.group_multi_company', raise_if_not_found=False)
+            // if group_multi_company_id:
             //     for user in self:
-            //         if len(user.company_ids) <= 1 and user.id in group_multi_company.users.ids:
-            //             user.write({'groups_id': [Command.unlink(group_multi_company.id)]})
-            //         elif len(user.company_ids) > 1 and user.id not in group_multi_company.users.ids:
-            //             user.write({'groups_id': [Command.link(group_multi_company.id)]})
+            //         if len(user.company_ids) <= 1 and group_multi_company_id in user.group_ids.ids:
+            //             user.write({'group_ids': [Command.unlink(group_multi_company_id)]})
+            //         elif len(user.company_ids) > 1 and group_multi_company_id not in user.group_ids.ids:
+            //             user.write({'group_ids': [Command.link(group_multi_company_id)]})
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

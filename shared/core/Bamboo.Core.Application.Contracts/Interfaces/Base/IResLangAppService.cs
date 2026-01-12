@@ -17,6 +17,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<List<object>> GetInstalledAsync(Guid id);
         Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id);
         Task<ResLang> InstallLangAsync(Guid id);
-        Task<ResLang> ToggleActiveAsync(Guid id);
+        Task<ResLang> UnarchiveAsync(Guid id);
     }
 }

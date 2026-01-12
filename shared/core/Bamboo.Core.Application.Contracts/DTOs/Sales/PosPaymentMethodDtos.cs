@@ -9,6 +9,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Default { get; set; }
     }
     
+    public class PosPaymentMethodGetProviderStatusRequestDto
+    {
+        public object ModulesList { get; set; }
+    }
+    
     public class PosPaymentMethodGetQrCodeRequestDto
     {
         public object Amount { get; set; }
@@ -38,21 +43,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public Guid PaymentIntentId { get; set; }
     }
     
-    public class PosPaymentMethodPaytmFetchPaymentStatusRequestDto
-    {
-        public Guid TransactionId { get; set; }
-        public Guid ReferenceId { get; set; }
-        public object Timestamp { get; set; }
-    }
-    
-    public class PosPaymentMethodPaytmMakePaymentRequestRequestDto
-    {
-        public object Amount { get; set; }
-        public Guid TransactionId { get; set; }
-        public Guid ReferenceId { get; set; }
-        public object Timestamp { get; set; }
-    }
-    
     public class PosPaymentMethodPineLabsCancelPaymentRequestRequestDto
     {
         public object Data { get; set; }
@@ -74,6 +64,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Operation { get; set; }
     }
     
+    public class PosPaymentMethodQfpaySignRequestRequestDto
+    {
+        public object Payload { get; set; }
+    }
+    
     public class PosPaymentMethodRazorpayCancelPaymentRequestRequestDto
     {
         public object Data { get; set; }
@@ -89,6 +84,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Data { get; set; }
     }
     
+    public class PosPaymentMethodRazorpayMakeRefundRequestRequestDto
+    {
+        public object Data { get; set; }
+    }
+    
+    public class PosPaymentMethodSendDpopayRequestRequestDto
+    {
+        public object Data { get; set; }
+        public object Endpoint { get; set; }
+    }
+    
     public class PosPaymentMethodStripeCapturePaymentRequestDto
     {
         public object PaymentIntentId { get; set; }
@@ -100,17 +106,22 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Amount { get; set; }
     }
     
-    public class PosPaymentMethodVivaWalletGetPaymentStatusRequestDto
+    public class PosPaymentMethodVivaComGetPaymentStatusRequestDto
     {
         public Guid SessionId { get; set; }
     }
     
-    public class PosPaymentMethodVivaWalletSendPaymentCancelRequestDto
+    public class PosPaymentMethodVivaComSendPaymentCancelRequestDto
     {
         public object Data { get; set; }
     }
     
-    public class PosPaymentMethodVivaWalletSendPaymentRequestRequestDto
+    public class PosPaymentMethodVivaComSendPaymentRequestRequestDto
+    {
+        public object Data { get; set; }
+    }
+    
+    public class PosPaymentMethodVivaComSendRefundRequestRequestDto
     {
         public object Data { get; set; }
     }

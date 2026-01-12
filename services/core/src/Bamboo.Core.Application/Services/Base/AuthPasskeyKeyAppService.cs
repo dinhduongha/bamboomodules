@@ -71,7 +71,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_session_challenge(self):
             // challenge = request.session.pop('webauthn_challenge', None)
             // if not challenge:
-            //     raise AccessDenied('Cannot find a challenge for this session')
+            //     raise AccessDenied('Cannot find a challenge for this session')  # pylint: disable=missing-gettext
             // return challenge
             */
             return default;

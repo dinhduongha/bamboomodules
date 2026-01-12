@@ -13,19 +13,4 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Debug { get; set; }
     }
-    
-    public class IrUiMenuSearchCountRequestDto
-    {
-        public object Domain { get; set; }
-        public object Limit { get; set; }
-    }
-    
-    public class IrUiMenuSearchFetchRequestDto
-    {
-        public object Domain { get; set; }
-        public object FieldNames { get; set; }
-        public object Offset { get; set; }
-        public object Limit { get; set; }
-        public object Order { get; set; }
-    }
 }

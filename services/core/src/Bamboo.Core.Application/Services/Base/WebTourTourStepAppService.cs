@@ -32,8 +32,11 @@ namespace Bamboo.Core.Application.Services
             // def get_steps_json(self):
             // steps = []
             // 
-            // for step in self.read(fields=["trigger", "content", "run"]):
+            // for step in self.read(fields=["trigger", "content", "run", "tooltip_position"]):
             //     del step["id"]
+            //     step["tooltipPosition"] = step["tooltip_position"]
+            //     del step["tooltip_position"]
+            // 
             //     if not step["content"]:
             //         del step["content"]
             //     steps.append(step)

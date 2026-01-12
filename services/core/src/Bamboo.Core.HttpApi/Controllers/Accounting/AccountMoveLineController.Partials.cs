@@ -91,6 +91,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-column-to-exclude-for-colspan-calculation")]
+        public async Task<IActionResult> GetColumnToExcludeForColspanCalculationAsync(Guid id, [FromBody] AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input)
+        {
+            var result = await _appService.GetColumnToExcludeForColspanCalculationAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-import-templates")]
         public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
         {
@@ -107,18 +115,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-views")]
-        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountMoveLineGetViewsRequestDto input)
+        [Route("{id}/get-parent-section-line")]
+        public async Task<IActionResult> GetParentSectionLineAsync(Guid id)
         {
-            var result = await _appService.GetViewsAsync(id, input);
+            var result = await _appService.GetParentSectionLineAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/get-section-subtotal")]
+        public async Task<IActionResult> GetSectionSubtotalAsync(Guid id)
         {
-            var result = await _appService.InitAsync(id);
+            var result = await _appService.GetSectionSubtotalAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-views")]
+        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountMoveLineGetViewsRequestDto input)
+        {
+            var result = await _appService.GetViewsAsync(id, input);
             return Ok(result);
         }
         

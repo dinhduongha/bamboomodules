@@ -11,5 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IProjectTagsAppService : IGenericApplicationService<ProjectTags>
     {
         Task<ProjectTags> ArrangeTagListByIdAsync(Guid id, ProjectTagsArrangeTagListByIdRequestDto input);
+        Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(Guid id, ProjectTagsFormattedReadGroupRequestDto input);
     }
 }

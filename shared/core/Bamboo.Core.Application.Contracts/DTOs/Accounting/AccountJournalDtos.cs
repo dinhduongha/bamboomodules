@@ -14,14 +14,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public List<Guid> AttachmentIds { get; set; }
     }
     
-    public class AccountJournalGetNextBankCashDefaultCodeRequestDto
-    {
-        public object JournalType { get; set; }
-        public object Company { get; set; }
-        public object Cache { get; set; }
-        public object ProtectedCodes { get; set; }
-    }
-    
     public class AccountJournalOpenPaymentsActionRequestDto
     {
         public object PaymentType { get; set; }

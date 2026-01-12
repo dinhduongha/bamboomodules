@@ -17,5 +17,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.CreateAliasAsync(id);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/create-and-get-alias")]
+        public async Task<IActionResult> CreateAndGetAliasAsync(Guid id)
+        {
+            var result = await _appService.CreateAndGetAliasAsync(id);
+            return Ok(result);
+        }
     }
 }

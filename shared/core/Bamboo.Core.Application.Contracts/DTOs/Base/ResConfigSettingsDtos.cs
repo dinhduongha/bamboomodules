@@ -18,16 +18,4 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public Guid MenuXmlId { get; set; }
     }
-    
-    public class ResConfigSettingsOnchangeModuleRequestDto
-    {
-        public object FieldValue { get; set; }
-        public object ModuleName { get; set; }
-    }
-    
-    public class ResConfigSettingsRemoveDataRequestDto
-    {
-        public object O { get; set; }
-        public object S { get; set; }
-    }
 }

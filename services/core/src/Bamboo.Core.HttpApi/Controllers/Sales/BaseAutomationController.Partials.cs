@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-open-scheduled-action")]
+        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid id)
+        {
+            var result = await _appService.OpenScheduledActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-rotate-webhook-uuid")]
         public async Task<IActionResult> ActionRotateWebhookUuidAsync(Guid id)
         {

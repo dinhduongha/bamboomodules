@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_add_from_catalog(self):
             // """ Will open the catalog view """
             // move = self.env['account.move'].browse(self.env.context.get('order_id'))
-            // return move.action_add_from_catalog()
+            // return move.with_context(child_field='line_ids').action_add_from_catalog()
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def action_add_from_catalog(self):
             // order = self.env['purchase.order'].browse(self.env.context.get('order_id'))
@@ -40,6 +40,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_add_from_catalog(self):
             // order = self.env['sale.order'].browse(self.env.context.get('order_id'))
             // return order.with_context(child_field='order_line').action_add_from_catalog()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionApproveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_approve(self):
+            // """ Approve an expense, pops a wizard if a duplicated expense is found to confirm they are all valid expenses """
+            // self._check_can_approve()
+            // for expense in self:
+            //     expense._validate_distribution(
+            //         account=expense.account_id.id,
+            //         product=expense.product_id.id,
+            //         business_domain='expense',
+            //         company_id=expense.company_id.id,
+            //     )
+            // 
+            // duplicates = self.duplicate_expense_ids.filtered(lambda exp: exp.state in {'submitted', 'approved', 'posted', 'paid', 'in_payment'})
+            // if duplicates:
+            //     action = self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_approve_duplicate_action')
+            //     action['context'] = {'default_expense_ids': duplicates.ids}
+            //     return action
+            // self._do_approve(False)
             */
             return default;
         }
@@ -103,18 +128,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionGetAttachmentViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ActionOpenAccountMoveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_get_attachment_view(self):
+            // def action_open_account_move(self):
             // self.ensure_one()
-            // res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
-            // res.update({
-            //     'domain': [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)],
-            //     'context': {'default_res_model': 'hr.expense', 'default_res_id': self.id},
-            // })
-            // return res
+            // if self.payment_mode == 'own_account':
+            //     res_model = 'account.move'
+            //     record_id = self.account_move_id
+            // else:
+            //     res_model = 'account.payment'
+            //     record_id = self.account_move_id.origin_payment_id
+            // 
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': res_model,
+            //     'name': record_id.name,
+            //     'view_mode': 'form',
+            //     'res_id': record_id.id,
+            //     'views': [(False, 'form')],
+            // }
             */
             return default;
         }
@@ -145,6 +179,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionOpenSplitExpenseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_open_split_expense(self):
+            // self.ensure_one()
+            // split_expense_ids = self.search([('split_expense_origin_id', '=', self.split_expense_origin_id.id)])
+            // return split_expense_ids._get_records_action(name=_("Split Expenses"))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPayAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_pay(self):
+            // """ Register payment shortcut on the expense form view """
+            // return self.account_move_id.with_context(default_partner_bank_id=(
+            //     self.account_move_id.partner_bank_id.id if len(self.account_move_id.partner_bank_id) <= 1 else None
+            // )).action_register_payment()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionPaymentItemsRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -155,38 +214,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionPurchaseHistoryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ActionPostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def action_purchase_history(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
-            // action['domain'] = [('state', 'in', ['purchase', 'done']), ('product_id', '=', self.product_id.id)]
-            // action['display_name'] = _("Purchase History for %s", self.product_id.display_name)
-            // action['context'] = {
-            //     'search_default_partner_id': self.partner_id.id
-            // }
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_post(self):
+            // """
+            // Post the expense, following one of those two options:
+            //     - Company-paid expenses: Create and post a payment, with an accounting entry
+            //     - Employee-paid expenses: Through a wizard, create and post a receipt
+            // """
+            // # When a move has been deleted
+            // self._check_can_create_move()
             // 
-            // return action
+            // company_expenses = self.filtered(lambda expense: expense.payment_mode == 'company_account')
+            // employee_expenses = self - company_expenses
+            // if len(employee_expenses.company_id) > 1:
+            //     raise UserError(_("You can't post simultaneously employee-paid expenses belonging to different companies"))
+            // 
+            // if company_expenses:
+            //     company_expenses._create_company_paid_moves()
+            //     # Post the company-paid expense through the payment, to post both at the same time
+            //     company_expenses.account_move_id.origin_payment_id.action_post()
+            // 
+            // if employee_expenses:
+            //     return employee_expenses.with_context(company_paid_move_ids=company_expenses.account_move_id.ids)._post_wizard()
             */
             return default;
         }
 
-        public async Task<TEntity> ActionReadDistributionModelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ActionRefuseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_distribution_model.py) ---
-            // def action_read_distribution_model(self):
-            // self.ensure_one()
-            // return {
-            //     'name': self.display_name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_type': 'form',
-            //     'view_mode': 'form',
-            //     'res_model': 'account.analytic.distribution.model',
-            //     'res_id': self.id,
-            // }
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_refuse(self):
+            // """ Refuse an expense with a reason """
+            // self._check_can_refuse()
+            // return self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_refuse_wizard_action')
             */
             return default;
         }
@@ -214,6 +278,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'target': 'new',
             //     'type': 'ir.actions.act_window',
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionResetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_reset(self):
+            // """  Reset an expense to draft state, reversing the accounting entries if needed """
+            // self._check_can_reset_approval()
+            // self = self.with_context(clean_context(self.env.context))
+            // moves_sudo = self.sudo().account_move_id
+            // draft_moves_sudo = moves_sudo.filtered(lambda m: m.state == 'draft')
+            // non_draft_moves_sudo = moves_sudo - draft_moves_sudo
+            // non_draft_moves_sudo._reverse_moves(
+            //     default_values_list=[{'invoice_date': fields.Date.context_today(move_sudo)} for move_sudo in non_draft_moves_sudo],
+            //     cancel=True
+            // )
+            // draft_moves_sudo.unlink()
+            // self._do_reset_approval()
             */
             return default;
         }
@@ -253,14 +338,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def action_split_wizard(self):
             // self.ensure_one()
+            // if self.filtered(lambda expense: expense.state in {'posted', 'paid', 'in_payment'}):
+            //     raise UserError(_("You cannot split an expense that is already posted."))
+            // if not self.is_editable:
+            //     raise UserError(_("You do not have the rights to edit this expense."))
+            // 
             // splits = self.env['hr.expense.split'].create(self._get_split_values())
             // 
-            // wizard = self.env['hr.expense.split.wizard'].create({
+            // wizard = self.env['hr.expense.split.wizard'].create([{
             //     'expense_split_line_ids': splits.ids,
             //     'expense_id': self.id,
-            // })
+            // }])
             // return {
-            //     'name': _('Expense split'),
+            //     'name': _("Expense split"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'views': [[False, "form"]],
@@ -273,21 +363,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionSubmitExpensesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ActionSubmitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_submit_expenses(self):
-            // sheets = self._create_sheets_from_expense()
-            // return {
-            //     'name': _('New Expense Reports'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.expense.sheet',
-            //     'context': self.env.context,
-            //     'views': [[False, "list"], [False, "form"]] if len(sheets) > 1 else [[False, "form"]],
-            //     'domain': [('id', 'in', sheets.ids)],
-            //     'res_id': sheets.id if len(sheets) == 1 else False,
-            // }
+            // def action_submit(self):
+            // """ Submit a draft expense to an approve, may skip to the approval step if no approver on the employee nor the expense """
+            // user = self.env.user
+            // for expense in self:
+            //     if user.employee_id != expense.employee_id and not expense.can_approve:
+            //         raise UserError(_("You do not have the required permission to submit this expense."))
+            //     if not expense.product_id:
+            //         raise UserError(_("You can not submit an expense without a category."))
+            //     if not expense.manager_id:
+            //         expense.sudo().manager_id = expense._get_default_responsible_for_approval()
+            // expenses_autovalidated = self.filtered(lambda expense: expense._can_be_autovalidated())
+            // (self - expenses_autovalidated).approval_state = 'submitted'
+            // if expenses_autovalidated:  # Note, this will and should bypass the duplicate check. May be changed later
+            //     expenses_autovalidated._do_approve(check=False)
+            // self.sudo().update_activities_and_mails()
             */
             return default;
         }
@@ -298,28 +392,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def action_unreconcile_match_entries(self):
             // """ This method will do the unreconcile action in the list view of the moves """
-            // active_ids = self._context.get('active_ids')
+            // active_ids = self.env.context.get('active_ids')
             // if active_ids:
             //     move_lines = self.env['account.move.line'].browse(active_ids)._all_reconciled_lines()
             //     move_lines.remove_move_reconcile()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionViewSheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_view_sheet(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [[False, "form"]],
-            //     'res_model': 'hr.expense.sheet',
-            //     'target': 'current',
-            //     'res_id': self.sheet_id.id
-            // }
             */
             return default;
         }
@@ -344,218 +420,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_work_order(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
             // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddExchangeDifferenceCashBasisValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object exchange_diff_vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _add_exchange_difference_cash_basis_vals(self, exchange_diff_vals):
-            // """ Generate the exchange difference values used to create the journal items
-            // in order to fix the cash basis lines using the transfer account in a multi-currencies
-            // environment when this account is not a reconcile one.
-            // When the tax cash basis journal entries are generated and all involved
-            // transfer account set on taxes are all reconcilable, the account balance
-            // will be reset to zero by the exchange difference journal items generated
-            // above. However, this mechanism will not work if there is any transfer
-            // accounts that are not reconcile and we are generating the cash basis
-            // journal items in a foreign currency. In that specific case, we need to
-            // generate extra journal items at the generation of the exchange difference
-            // journal entry to ensure this balance is reset to zero and then, will not
-            // appear on the tax report leading to erroneous tax base amount / tax amount.
-            // :param exchange_diff_vals:  The current vals of the exchange difference journal entry created by the
-            //                             '_prepare_exchange_difference_move_vals' method.
-            // """
-            // caba_lines_to_reconcile = defaultdict(lambda: self.env['account.move.line']) # in the form {(move, account, repartition_line): move_lines}
-            // move_vals = exchange_diff_vals['move_values']
-            // for move in self.move_id:
-            //     account_vals_to_fix = {}
-            // 
-            //     move_values = move._collect_tax_cash_basis_values()
-            // 
-            //     # The cash basis doesn't need to be handled for this move because there is another payment term
-            //     # line that is not yet fully paid.
-            //     if not move_values or not move_values['is_fully_paid']:
-            //         continue
-            // 
-            //     # ==========================================================================
-            //     # Add the balance of all tax lines of the current move in order in order
-            //     # to compute the residual amount for each of them.
-            //     # ==========================================================================
-            // 
-            //     caba_rounding_diff_label = _("Cash basis rounding difference")
-            //     move_vals['date'] = max(move_vals['date'], move.date)
-            //     move_vals['journal_id'] = self.company_id.tax_cash_basis_journal_id.id
-            //     for caba_treatment, line in move_values['to_process_lines']:
-            // 
-            //         vals = {
-            //             'name': caba_rounding_diff_label,
-            //             'currency_id': line.currency_id.id,
-            //             'partner_id': line.partner_id.id,
-            //             'tax_ids': [Command.set(line.tax_ids.ids)],
-            //             'tax_tag_ids': [Command.set(line.tax_tag_ids.ids)],
-            //             'debit': line.debit,
-            //             'credit': line.credit,
-            //             'amount_currency': line.amount_currency,
-            //         }
-            // 
-            //         if caba_treatment == 'tax':
-            //             # Tax line.
-            //             grouping_key = self.env['account.partial.reconcile']._get_cash_basis_tax_line_grouping_key_from_record(line)
-            //             if grouping_key in account_vals_to_fix:
-            //                 debit = account_vals_to_fix[grouping_key]['debit'] + vals['debit']
-            //                 credit = account_vals_to_fix[grouping_key]['credit'] + vals['credit']
-            //                 balance = debit - credit
-            // 
-            //                 account_vals_to_fix[grouping_key].update({
-            //                     'debit': balance if balance > 0 else 0,
-            //                     'credit': -balance if balance < 0 else 0,
-            //                     'tax_base_amount': account_vals_to_fix[grouping_key]['tax_base_amount'] + line.tax_base_amount,
-            //                     'amount_currency': account_vals_to_fix[grouping_key]['amount_currency'] + line.amount_currency,
-            //                 })
-            //             else:
-            //                 account_vals_to_fix[grouping_key] = {
-            //                     **vals,
-            //                     'account_id': line.account_id.id,
-            //                     'tax_base_amount': line.tax_base_amount,
-            //                     'tax_repartition_line_id': line.tax_repartition_line_id.id,
-            //                 }
-            // 
-            //             if line.account_id.reconcile:
-            //                 caba_lines_to_reconcile[(move, line.account_id, line.tax_repartition_line_id)] |= line
-            // 
-            //         elif caba_treatment == 'base':
-            //             # Base line.
-            //             account_to_fix = line.company_id.account_cash_basis_base_account_id
-            //             if not account_to_fix:
-            //                 continue
-            // 
-            //             grouping_key = self.env['account.partial.reconcile']._get_cash_basis_base_line_grouping_key_from_record(line, account=account_to_fix)
-            // 
-            //             if grouping_key not in account_vals_to_fix:
-            //                 account_vals_to_fix[grouping_key] = {
-            //                     **vals,
-            //                     'account_id': account_to_fix.id,
-            //                 }
-            //             else:
-            //                 # Multiple base lines could share the same key, if the same
-            //                 # cash basis tax is used alone on several lines of the invoices
-            //                 account_vals_to_fix[grouping_key]['debit'] += vals['debit']
-            //                 account_vals_to_fix[grouping_key]['credit'] += vals['credit']
-            //                 account_vals_to_fix[grouping_key]['amount_currency'] += vals['amount_currency']
-            // 
-            //     # ==========================================================================
-            //     # Subtract the balance of all previously generated cash basis journal entries
-            //     # in order to retrieve the residual balance of each involved transfer account.
-            //     # ==========================================================================
-            // 
-            //     cash_basis_moves = self.env['account.move'].search([('tax_cash_basis_origin_move_id', '=', move.id)])
-            //     caba_transition_accounts = self.env['account.account']
-            //     for line in cash_basis_moves.line_ids:
-            //         grouping_key = None
-            //         if line.tax_repartition_line_id:
-            //             # Tax line.
-            //             transition_account = line.tax_line_id.cash_basis_transition_account_id
-            //             grouping_key = self.env['account.partial.reconcile']._get_cash_basis_tax_line_grouping_key_from_record(
-            //                 line,
-            //                 account=transition_account,
-            //             )
-            //             caba_transition_accounts |= transition_account
-            //         elif line.tax_ids:
-            //             # Base line.
-            //             grouping_key = self.env['account.partial.reconcile']._get_cash_basis_base_line_grouping_key_from_record(
-            //                 line,
-            //                 account=line.company_id.account_cash_basis_base_account_id,
-            //             )
-            // 
-            //         if grouping_key not in account_vals_to_fix:
-            //             continue
-            // 
-            //         account_vals_to_fix[grouping_key]['debit'] -= line.debit
-            //         account_vals_to_fix[grouping_key]['credit'] -= line.credit
-            //         account_vals_to_fix[grouping_key]['amount_currency'] -= line.amount_currency
-            // 
-            //     # Collect the caba lines affecting the transition account.
-            //     for transition_line in filter(lambda x: x.account_id in caba_transition_accounts, cash_basis_moves.line_ids):
-            //         caba_reconcile_key = (transition_line.move_id, transition_line.account_id, transition_line.tax_repartition_line_id)
-            //         caba_lines_to_reconcile[caba_reconcile_key] |= transition_line
-            // 
-            //     # ==========================================================================
-            //     # Generate the exchange difference journal items:
-            //     # - to reset the balance of all transfer account to zero.
-            //     # - fix rounding issues on the tax account/base tax account.
-            //     # ==========================================================================
-            // 
-            //     currency = move_values['currency']
-            // 
-            //     # To know which rate to use for the adjustment, get the rate used by the most recent cash basis move
-            //     last_caba_move = max(cash_basis_moves, key=lambda m: m.date) if cash_basis_moves else self.env['account.move']
-            //     currency_line = last_caba_move.line_ids.filtered(lambda x: x.currency_id == currency)[:1]
-            //     currency_rate = currency_line.balance / currency_line.amount_currency if currency_line.amount_currency else 1.0
-            // 
-            //     existing_line_vals_list = move_vals['line_ids']
-            //     next_sequence = len(existing_line_vals_list)
-            //     for grouping_key, values in account_vals_to_fix.items():
-            // 
-            //         if currency.is_zero(values['amount_currency']):
-            //             continue
-            // 
-            //         # There is a rounding error due to multiple payments on the foreign currency amount
-            //         balance = currency.round(currency_rate * values['amount_currency'])
-            // 
-            //         if values.get('tax_repartition_line_id'):
-            //             # Tax line
-            //             tax_repartition_line = self.env['account.tax.repartition.line'].browse(values['tax_repartition_line_id'])
-            //             account = tax_repartition_line.account_id or self.env['account.account'].browse(values['account_id'])
-            // 
-            //             existing_line_vals_list.extend([
-            //                 Command.create({
-            //                     **values,
-            //                     'debit': balance if balance > 0.0 else 0.0,
-            //                     'credit': -balance if balance < 0.0 else 0.0,
-            //                     'amount_currency': values['amount_currency'],
-            //                     'account_id': account.id,
-            //                     'sequence': next_sequence,
-            //                 }),
-            //                 Command.create({
-            //                     **values,
-            //                     'debit': -balance if balance < 0.0 else 0.0,
-            //                     'credit': balance if balance > 0.0 else 0.0,
-            //                     'amount_currency': -values['amount_currency'],
-            //                     'account_id': values['account_id'],
-            //                     'tax_ids': [],
-            //                     'tax_tag_ids': [],
-            //                     'tax_base_amount': 0,
-            //                     'tax_repartition_line_id': False,
-            //                     'sequence': next_sequence + 1,
-            //                 }),
-            //             ])
-            //         else:
-            //             # Base line
-            //             existing_line_vals_list.extend([
-            //                 Command.create({
-            //                     **values,
-            //                     'debit': balance if balance > 0.0 else 0.0,
-            //                     'credit': -balance if balance < 0.0 else 0.0,
-            //                     'amount_currency': values['amount_currency'],
-            //                     'sequence': next_sequence,
-            //                 }),
-            //                 Command.create({
-            //                     **values,
-            //                     'debit': -balance if balance < 0.0 else 0.0,
-            //                     'credit': balance if balance > 0.0 else 0.0,
-            //                     'amount_currency': -values['amount_currency'],
-            //                     'tax_ids': [],
-            //                     'tax_tag_ids': [],
-            //                     'sequence': next_sequence + 1,
-            //                 }),
-            //             ])
-            // 
-            //         next_sequence += 2
-            // 
-            // return caba_lines_to_reconcile
             */
             return default;
         }
@@ -634,6 +498,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CanBeAutovalidatedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _can_be_autovalidated(self):
+            // """ Check whether the given expenses can be auto-validated (no approver) """
+            // self.ensure_one()
+            // return (not self.manager_id and not self.employee_id.expense_manager_id) or self.manager_id == self.employee_id.user_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CanBeEditedOnPortalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _can_be_edited_on_portal(self):
+            // self.ensure_one()
+            // return self.order_id._can_be_edited_on_portal() and not self.combo_item_id
+            */
+            return default;
+        }
+
         public async Task<TEntity> CanBeInvoicedAloneInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -673,13 +560,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                             This is usefull if you want to preview the reconciliation before doing some changes
             //                             on amls like changing a date or an account.
             // """
+            // not_reconciled_partial_matching_numbers = set(self
+            //     .filtered(lambda aml: not aml.reconciled and aml.matching_number and aml.matching_number.startswith('P'))
+            //     .mapped('matching_number')
+            // )
+            // self = self.filtered(lambda aml: not aml.reconciled or aml.matching_number not in not_reconciled_partial_matching_numbers)
+            // 
             // if not self:
             //     return
             // 
             // if any(aml.reconciled for aml in self):
             //     raise UserError(_("You are trying to reconcile some entries that are already reconciled."))
-            // if any(aml.parent_state != 'posted' for aml in self):
-            //     raise UserError(_("You can only reconcile posted entries."))
+            // if any(aml.parent_state == 'cancel' for aml in self):
+            //     raise UserError(_("You can not reconcile cancelled entries."))
             // accounts = self.mapped(lambda x: x._get_reconciliation_aml_field_value('account_id', shadowed_aml_values))
             // if len(accounts) > 1:
             //     raise UserError(_(
@@ -697,24 +590,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         "to allow it.",
             //         accounts.display_name,
             //     ))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckAmountNotZeroAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def check_amount_not_zero(self, vals):
-            // error_msgs = []
-            // if 'total_amount' in vals:
-            //     if any(expense.company_currency_id.is_zero(vals['total_amount']) for expense in self):
-            //         error_msgs.append(_("You cannot set the expense total to 0 if it's linked to a report."))
-            // if 'total_amount_currency' in vals:
-            //     if any(expense.currency_id.is_zero(vals['total_amount_currency']) for expense in self):
-            //         error_msgs.append(_("You cannot set the expense total in currency to 0 if it's linked to a report."))
-            // if error_msgs:
-            //     raise UserError("\n".join(error_msgs))
             */
             return default;
         }
@@ -766,13 +641,54 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckCapacityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> CheckCanApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _check_capacity(self):
-            // if any(workcenter.default_capacity <= 0.0 for workcenter in self):
-            //     raise exceptions.UserError(_('The capacity must be strictly positive.'))
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_can_approve(self):
+            // if not all(self.mapped('can_approve')):
+            //     reasons_list = tuple(reason for reason in self._get_cannot_approve_reason().values() if reason)
+            //     reasons = _("You cannot approve:\n %(reasons)s", reasons="\n".join(reasons_list))
+            //     raise UserError(reasons)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckCanCreateMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_can_create_move(self):
+            // if any(expense.state != 'approved' for expense in self):
+            //     raise UserError(_("You can only generate an accounting entry for approved expense(s)."))
+            // 
+            // if False in self.mapped('payment_mode'):
+            //     raise UserError(_("Please specify if the expenses were paid by the company, or the employee."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckCanRefuseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_can_refuse(self):
+            // if not all(self.mapped('can_approve')):
+            //     reasons = _("You cannot refuse:\n %(reasons)s", reasons="\n".join(self._get_cannot_approve_reason().values()))
+            //     raise UserError(reasons)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckCanResetApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_can_reset_approval(self):
+            // if not all(self.mapped('can_reset')):
+            //     raise UserError(_("Only HR Officers, accountants, or the concerned employee can reset to draft."))
+            // if any(state not in {False, 'draft'} for state in self.account_move_id.mapped('state')):
+            //     raise UserError(_("You cannot reset to draft an expense linked to a posted journal entry."))
             */
             return default;
         }
@@ -836,28 +752,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Avoid using api.constrains for fields journal_id and account_id as in case of a write on
             // # account move and account move line in the same operation, the check would be done
             // # before all write are complete, causing a false positive
-            // for line in self.filtered(lambda x: x.display_type not in ('line_section', 'line_note')):
+            // for line in self.filtered(lambda x: x.display_type not in ('line_section', 'line_subsection', 'line_note')):
             //     account = line.account_id
             //     journal = line.move_id.journal_id
             // 
-            //     if account.deprecated and not self.env.context.get('skip_account_deprecation_check'):
-            //         raise UserError(_('The account %(name)s (%(code)s) is deprecated.', name=account.name, code=account.code))
+            //     if not (account.active or line.is_imported or self.env.context.get('skip_account_deprecation_check')):
+            //         raise UserError(_('The account %(name)s (%(code)s) is archived.', name=account.name, code=account.code))
             // 
             //     account_currency = account.currency_id
             //     if account_currency and account_currency != line.company_currency_id and account_currency != line.currency_id:
             //         raise UserError(_('The account selected on your journal entry forces to provide a secondary currency. You should remove the secondary currency on the account.'))
             // 
-            //     if account.allowed_journal_ids and journal not in account.allowed_journal_ids:
-            //         raise UserError(_('You cannot use this account (%s) in this journal, check the field \'Allowed Journals\' on the related account.', account.display_name))
-            // 
             //     if account in (journal.default_account_id, journal.suspense_account_id):
             //         continue
-            // 
-            //     is_account_control_ok = not journal.account_control_ids or account in journal.account_control_ids
-            // 
-            //     if not is_account_control_ok:
-            //         raise UserError(_("You cannot use this account (%s) in this journal, check the section 'Control-Access' under "
-            //                           "tab 'Advanced Settings' on the related journal.", account.display_name))
             */
             return default;
         }
@@ -910,6 +817,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckNonZeroInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_non_zero(self):
+            // """ Helper to raise when we should ensure that an expense isn't approved  """
+            // for expense in self:
+            //     total_amount_is_zero = expense.company_currency_id.is_zero(expense.total_amount)
+            //     total_amount_currency_is_zero = expense.currency_id.is_zero(expense.total_amount_currency)
+            //     if (expense.state != 'draft' or expense.approval_state != False) and (total_amount_is_zero or total_amount_currency_is_zero):
+            //         raise ValidationError(_("Only draft expenses can have a total of 0."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckO2oPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _check_o2o_payment(self):
+            // for expense in self:
+            //     if len(expense.account_move_id.origin_payment_id.expense_ids) > 1:
+            //         raise ValidationError(_("Only one expense can be linked to a particular payment"))
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckOffBalanceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -948,34 +882,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckPaymentModeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _check_payment_mode(self):
-            // self.sheet_id._check_payment_mode()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckProductUomCategoryIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _check_product_uom_category_id(self):
-            // for line in self:
-            //     if line.product_uom_id and line.product_id and line.product_uom_id.category_id != line.product_id.product_tmpl_id.uom_id.category_id:
-            //         raise UserError(_(
-            //             "The Unit of Measure (UoM) '%(uom)s' you have selected for product '%(product)s', "
-            //             "is incompatible with its category : %(category)s.",
-            //             uom=line.product_uom_id.name,
-            //             product=line.product_id.name,
-            //             category=line.product_id.product_tmpl_id.uom_id.category_id.name
-            //         ))
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckProrataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -992,7 +898,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _check_reconciliation(self):
-            // for line in self:
+            // for line in self.filtered(lambda x: x.parent_state == 'posted'):
             //     if line.matched_debit_ids or line.matched_credit_ids:
             //         raise UserError(_("You cannot do this modification on a reconciled journal entry. "
             //                           "You can just change some non legal fields or you must unreconcile first.\n"
@@ -1058,7 +964,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                    ON account_companies.account_account_id = account.id
             //              WHERE account_companies.res_company_id = ANY(%(company_ids)s)
             //                AND account.account_type IN ('asset_receivable', 'liability_payable')
-            //                AND account.deprecated = 'f'
+            //                AND account.active = 't'
             //         )
             //         SELECT * FROM previous
             //         UNION ALL
@@ -1101,12 +1007,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             company_id=line.company_id.id,
             //             partner_id=line.partner_id.id,
             //             move_type=line.move_id.move_type,
-            //             journal_id=line.journal_id.id,
             //         )
             //         if account_id:
             //             line.account_id = account_id
             // for line in self:
-            //     if not line.account_id and line.display_type not in ('line_section', 'line_note'):
+            //     if not line.account_id and line.display_type not in ('line_section', 'line_subsection', 'line_note'):
             //         previous_two_accounts = line.move_id.line_ids.filtered(
             //             lambda l: l.account_id and l.display_type == line.display_type
             //         )[-2:].account_id
@@ -1116,15 +1021,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             line.account_id = line.move_id.journal_id.default_account_id
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_account_id(self):
-            // property_field = self.env['product.category']._fields['property_account_expense_categ_id']
             // for _expense in self:
             //     expense = _expense.with_company(_expense.company_id)
             //     if not expense.product_id:
-            //         expense.account_id = property_field.get_company_dependent_fallback(self.env['product.category'])
+            //         expense.account_id = _expense.company_id.expense_account_id
             //         continue
             //     account = expense.product_id.product_tmpl_id._get_product_accounts()['expense']
             //     if account:
             //         expense.account_id = account
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAllowedUomIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for line in self:
+            //     line.allowed_uom_ids = line.product_id.uom_id | line.product_id.uom_ids
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for line in self:
+            //     line.allowed_uom_ids = line.product_id.uom_id | line.product_id.uom_ids | line.product_id.seller_ids.product_uom_id
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for line in self:
+            //     line.allowed_uom_ids = line.product_id.uom_id | line.product_id.uom_ids
             */
             return default;
         }
@@ -1137,7 +1060,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for line in self:
             //     if line.amount_currency is False:
             //         line.amount_currency = line.currency_id.round(line.balance * line.currency_rate)
-            //     if line.currency_id == line.company_id.currency_id:
+            //     if line.currency_id == line.company_id.currency_id and not line.move_id.is_invoice(True):
             //         line.amount_currency = line.balance
             */
             return default;
@@ -1148,19 +1071,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_amount(self):
+            // AccountTax = self.env['account.tax']
             // for line in self:
+            //     company = line.company_id or self.env.company
             //     base_line = line._prepare_base_line_for_taxes_computation()
-            //     self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
-            //     line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            //     line.price_total = base_line['tax_details']['raw_total_included_currency']
+            //     AccountTax._add_tax_details_in_base_line(base_line, company)
+            //     AccountTax._round_base_lines_tax_details([base_line], company)
+            //     line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            //     line.price_total = base_line['tax_details']['total_included_currency']
             //     line.price_tax = line.price_total - line.price_subtotal
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _compute_amount(self):
+            // AccountTax = self.env['account.tax']
             // for line in self:
+            //     company = line.company_id or self.env.company
             //     base_line = line._prepare_base_line_for_taxes_computation()
-            //     self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
-            //     line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            //     line.price_total = base_line['tax_details']['raw_total_included_currency']
+            //     AccountTax._add_tax_details_in_base_line(base_line, company)
+            //     AccountTax._round_base_lines_tax_details([base_line], company)
+            //     line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            //     line.price_total = base_line['tax_details']['total_included_currency']
             //     line.price_tax = line.price_total - line.price_subtotal
             */
             return default;
@@ -1204,7 +1133,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.env['res.currency'].flush_model(['decimal_places'])
             // 
             //     aml_ids = tuple(stored_lines.ids)
-            //     self._cr.execute('''
+            //     self.env.cr.execute('''
             //         SELECT
             //             part.debit_move_id AS line_id,
             //             'debit' AS flag,
@@ -1258,6 +1187,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeAmountToInvoiceAtDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_amount_to_invoice_at_date(self):
+            // for line in self:
+            //     line.amount_to_invoice_at_date = (line.qty_received_at_date - line.qty_invoiced_at_date) * line.price_unit
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_amount_to_invoice_at_date(self):
+            // for line in self:
+            //     line.amount_to_invoice_at_date = (line.qty_delivered_at_date - line.qty_invoiced_at_date) * line.price_unit
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeAmountToInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -1275,20 +1219,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeAmountTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_amount_type(self):
-            // for line in self:
-            //     if line.rule_type == 'writeoff_button' and line.model_id.counterpart_type in ('sale', 'purchase'):
-            //         line.amount_type = line.amount_type or 'percentage_st_line'
-            //     else:
-            //         line.amount_type = line.amount_type or 'percentage'
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeAnalyticDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -1299,18 +1229,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if line.display_type == 'product' or not line.move_id.is_invoice(include_receipts=True):
             //         related_distribution = line._related_analytic_distribution()
             //         root_plans = self.env['account.analytic.account'].browse(
-            //             list({int(account_id) for ids in related_distribution for account_id in ids.split(',')})
+            //             list({int(account_id) for ids in related_distribution for account_id in ids.split(',') if account_id.strip()})
             //         ).exists().root_plan_id
             // 
-            //         arguments = frozendict({
-            //             "product_id": line.product_id.id,
-            //             "product_categ_id": line.product_id.categ_id.id,
-            //             "partner_id": line.partner_id.id,
-            //             "partner_category_id": line.partner_id.category_id.ids,
-            //             "account_prefix": line.account_id.code,
-            //             "company_id": line.company_id.id,
-            //             "related_root_plan_ids": root_plans,
-            //         })
+            //         arguments = frozendict(line._get_analytic_distribution_arguments(root_plans))
             //         if arguments not in cache:
             //             cache[arguments] = self.env['account.analytic.distribution.model']._get_distribution(arguments)
             //         line.analytic_distribution = related_distribution | cache[arguments] or line.analytic_distribution
@@ -1363,7 +1285,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _compute_balance(self):
             // for line in self:
-            //     if line.display_type in ('line_section', 'line_note'):
+            //     if line.display_type in ('line_section', 'line_subsection', 'line_note'):
             //         line.balance = False
             //     elif not line.move_id.is_invoice(include_receipts=True):
             //         # Only act as a default value when none of balance/debit/credit is specified
@@ -1462,6 +1384,50 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeCanApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _compute_can_approve(self):
+            // cannot_reason_per_record_id = self._get_cannot_approve_reason()
+            // for expense in self:
+            //     expense.can_approve = not cannot_reason_per_record_id[expense.id]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCanResetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _compute_can_reset(self):
+            // user = self.env.user
+            // is_team_approver = user.has_group('hr_expense.group_hr_expense_team_approver') or self.env.su
+            // is_all_approver = user.has_groups('hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager') or self.env.su
+            // 
+            // valid_company_ids = set(self.env.companies.ids)
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:  # We don't need to search if the user has not the required rights
+            //     expenses_employee_ids_under_user_ones = set(self.env['hr.employee'].sudo().search([
+            //         ('id', 'in', self.employee_id.ids),
+            //         ('id', 'child_of', user.employee_ids.ids),
+            //         ('id', 'not in', user.employee_ids.ids),
+            //     ]).ids)
+            // 
+            // for expense in self:
+            //     expense.can_reset = (
+            //         expense.company_id.id in valid_company_ids
+            //         and (
+            //                 is_all_approver
+            //                 or expense.employee_id.id in expenses_employee_ids_under_user_ones
+            //                 or expense.employee_id.expense_manager_id == user
+            //                 or (expense.state in {'draft', 'submitted'} and expense.employee_id.user_id == user)
+            //         )
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeCostsHourAccountIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -1486,7 +1452,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // 
             // # get the where clause
-            // query = self._where_calc(list(self.env.context.get('domain_cumulated_balance') or []))
+            // query = self._search(self.env.context.get('domain_cumulated_balance') or [], bypass_access=True)
             // sql_order = self._order_to_sql(self.env.context.get('order_cumulated_balance'), query, reverse=True)
             // result = dict(self.env.execute_query(query.select(
             //     SQL.identifier(query.table, "id"),
@@ -1517,7 +1483,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_currency_id(self):
             // for expense in self:
-            //     if expense.product_has_cost and expense.state in {'draft', 'reported'}:
+            //     if expense.product_has_cost and expense.state == 'draft':
             //         expense.currency_id = expense.company_currency_id
             */
             return default;
@@ -1530,7 +1496,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_currency_rate(self):
             // for line in self:
             //     if line.move_id.is_invoice(include_receipts=True):
-            //         line.currency_rate = line.move_id.invoice_currency_rate
+            //         line.currency_rate = line.move_id.invoice_currency_rate or 1.0
             //     elif line.currency_id:
             //         line.currency_rate = self.env['res.currency']._get_conversion_rate(
             //             from_currency=line.company_currency_id,
@@ -1566,11 +1532,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         expense.label_currency_rate = False
             //         continue
             // 
+            //     company_currency = expense.company_currency_id or expense.env.company.currency_id
             //     expense.label_currency_rate = _(
             //         '1 %(exp_cur)s = %(rate)s %(comp_cur)s',
-            //         exp_cur=expense.currency_id.name,
+            //         exp_cur=(expense.currency_id or company_currency).name,
             //         rate=float_repr(expense.currency_rate, 6),
-            //         comp_cur=expense.company_currency_id.name,
+            //         comp_cur=company_currency.name,
             //     )
             */
             return default;
@@ -1788,6 +1755,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not (line.order_id.pricelist_id and discount_enabled):
             //         continue
             // 
+            //     if line.combo_item_id:
+            //         line.discount = line._get_linked_line().discount
+            //         continue
+            // 
             //     line.discount = 0.0
             // 
             //     if not line.pricelist_item_id._show_discount():
@@ -1864,10 +1835,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
             // def _compute_distribution_analytic_account_ids(self):
-            // all_ids = {int(_id) for rec in self for key in (rec.analytic_distribution or {}) for _id in key.split(',')}
+            // all_ids = {int(_id) for rec in self for key in (rec.analytic_distribution or {}) for _id in key.split(',') if _id.isdigit()}
             // existing_accounts_ids = set(self.env['account.analytic.account'].browse(all_ids).exists().ids)
             // for rec in self:
-            //     ids = list(unique(int(_id) for key in (rec.analytic_distribution or {}) for _id in key.split(',') if int(_id) in existing_accounts_ids))
+            //     ids = list(unique(int(_id) for key in (rec.analytic_distribution or {}) for _id in key.split(',') if _id.isdigit() and int(_id) in existing_accounts_ids))
             //     rec.distribution_analytic_account_ids = self.env['account.analytic.account'].browse(ids)
             */
             return default;
@@ -2029,6 +2000,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeFromEmployeeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _compute_from_employee_id(self):
+            // for expense in self:
+            //     expense.department_id = expense.employee_id.department_id
+            //     expense.manager_id = expense._get_default_responsible_for_approval()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeFromProductInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -2063,13 +2046,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeHasInvalidAnalyticsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_has_invalid_analytics(self):
+            // SKIPPED_ACCOUNT_TYPES = {'asset_receivable', 'liability_payable', 'asset_cash', 'liability_credit_card'}
+            // lines_to_validate = self.filtered(lambda line: (
+            //     line.display_type == 'product' and
+            //     line.account_id.account_type not in SKIPPED_ACCOUNT_TYPES
+            // ))
+            // (self - lines_to_validate).has_invalid_analytics = False
+            // for line in lines_to_validate:
+            //     line.has_invalid_analytics = False
+            //     try:
+            //         business_domain = (
+            //             'invoice' if line.move_id.is_sale_document(True)
+            //             else 'bill' if line.move_id.is_purchase_document(True)
+            //             else 'general'
+            //         )
+            //         line.with_context(validate_analytic=True)._validate_distribution(
+            //             company_id=line.company_id.id,
+            //             product=line.product_id.id,
+            //             account=line.account_id.id,
+            //             business_domain=business_domain,
+            //         )
+            //     except ValidationError:
+            //         line.has_invalid_analytics = True
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeHasRoutingLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_has_routing_lines(self):
             // for workcenter in self:
-            //     workcenter.has_routing_lines = self.env['mrp.routing.workcenter'].search_count([('workcenter_id', '=', workcenter.id)], limit=1)
+            //     workcenter.has_routing_lines = self.env['mrp.routing.workcenter'].search_count([('workcenter_id', 'in', workcenter.ids)], limit=1)
             */
             return default;
         }
@@ -2091,7 +2105,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //   occurs only in state 'sale', the upselling opportunity is removed from the list.
             // - invoiced: the quantity invoiced is larger or equal to the quantity ordered.
             // """
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // for line in self:
             //     if line.state != 'sale':
             //         line.invoice_status = 'no'
@@ -2116,11 +2130,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_is_editable(self):
+            // is_hr_admin = (
+            //     self.env.user.has_group('hr_expense.group_hr_expense_manager')
+            //     or self.env.su
+            // )
+            // is_team_approver = self.env.user.has_group('hr_expense.group_hr_expense_team_approver')
+            // is_all_approver = self.env.user.has_group('hr_expense.group_hr_expense_user')
+            // 
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:
+            //     expenses_employee_ids_under_user_ones = set(
+            //         self.env['hr.employee'].sudo().search(
+            //             [
+            //                 ('id', 'in', self.employee_id.ids),
+            //                 ('id', 'child_of', self.env.user.employee_ids.ids),
+            //                 ('id', 'not in', self.env.user.employee_ids.ids),
+            //             ]
+            //         ).ids
+            //     )
             // for expense in self:
-            //     if expense.sheet_id:
-            //         expense.is_editable = expense.sheet_id.is_editable
-            //     else:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # This would lead to fields being set as editable, instead of using the env company,
+            //         # recomputing the interface just to be blocked when trying to save we choose not to recompute anything
+            //         # and wait for a proper company to be inputted.
+            //         continue
+            //     if expense.state not in {'draft', 'submitted', 'approved'} and not self.env.su:
+            //         # Not editable
+            //         expense.is_editable = False
+            //         continue
+            // 
+            //     if is_hr_admin:
+            //         # Administrator-level users are not restricted, they can edit their own expenses
             //         expense.is_editable = True
+            //         continue
+            // 
+            //     employee = expense.employee_id
+            //     is_own_expense = employee.user_id == self.env.user
+            //     if is_own_expense and expense.state == 'draft':
+            //         # Anyone can edit their own draft expense
+            //         expense.is_editable = True
+            //         continue
+            // 
+            //     managers = (
+            //         expense.manager_id
+            //         | employee.expense_manager_id
+            //         | employee.sudo().department_id.manager_id.user_id.sudo(self.env.su)
+            //     )
+            //     if is_all_approver:
+            //         managers |= self.env.user
+            //     if expense.employee_id.id in expenses_employee_ids_under_user_ones:
+            //             managers |= self.env.user
+            //     if not is_own_expense and self.env.user in managers:
+            //         # If Approver-level or designated manager, can edit other people expense
+            //         expense.is_editable = True
+            //         continue
+            //     expense.is_editable = False
             */
             return default;
         }
@@ -2131,7 +2196,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_is_multiple_currency(self):
             // for expense in self:
-            //     expense.is_multiple_currency = expense.currency_id != expense.company_currency_id
+            //     expense_currency = expense.currency_id or expense.company_currency_id or expense.env.company.currency_id
+            //     expense_company_currency = expense.company_currency_id or expense.env.company.currency_id
+            //     expense.is_multiple_currency = expense_currency != expense_company_currency
             */
             return default;
         }
@@ -2160,11 +2227,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if line.tax_repartition_line_id:
             //             is_refund = line.tax_repartition_line_id.document_type == 'refund'
             //         else:
-            //             tax_type = line.tax_ids[:1].type_tax_use
-            //             if tax_type == 'sale' and line.credit == 0:
-            //                 is_refund = True
-            //             elif tax_type == 'purchase' and line.debit == 0:
-            //                 is_refund = True
+            //             # If we have both purchase and sale taxes on a line (which can happen in bank rec).
+            //             # We choose invoice by default
+            //             tax_type = line.tax_ids.mapped('type_tax_use')
+            //             if 'sale' in tax_type and 'purchase' in tax_type:
+            //                 is_refund = line.credit == 0
+            //             else:
+            //                 tax_type = line.tax_ids[:1].type_tax_use
+            //                 if (tax_type == 'sale' and line.credit == 0) or (tax_type == 'purchase' and line.debit == 0):
+            //                     is_refund = True
             // 
             //             if line.tax_ids and line.move_id.reversed_entry_id:
             //                 is_refund = not is_refund
@@ -2173,16 +2244,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeJournalIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ComputeIsStornoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_journal_id(self):
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_is_storno(self):
             // for line in self:
-            //     if line.journal_id.type != line.model_id.counterpart_type:
-            //         line.journal_id = None
-            //     else:
-            //         line.journal_id = line.journal_id
+            //     if not line.company_id.account_storno:
+            //         continue
+            //     line.is_storno = (line.is_storno or line.move_id.is_storno) and line.move_type not in ('in_invoice', 'out_invoice')
+            // 
+            //     # For invoice lines, we want to set is_storno based on the sign of the line if the entire move is not storno (not refund)
+            //     # This allows setting is_storno to true or false depending on quantity and price_unit
+            //     if not line.move_id.is_storno and line in line.move_id.invoice_line_ids and line.quantity * line.price_unit:
+            //         line.is_storno = line.quantity * line.price_unit < 0
             */
             return default;
         }
@@ -2239,12 +2314,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             index = term_lines._ids.index(line.id) if line in term_lines else len(term_lines)
             // 
             //             name = _('%(name)s installment #%(number)s', name=name if name else '', number=index + 1).lstrip()
-            //         if n_terms > 1 or not line.name or line._origin.name == line._origin.move_id.payment_reference or (
-            //             line._origin.move_id.payment_reference and line._origin.move_id.ref
-            //             and line._origin.name == f'{line._origin.move_id.ref} - {line._origin.move_id.payment_reference}'
-            //         ):
+            //         if name:
             //             line.name = name
-            //     if not line.product_id or line.display_type in ('line_section', 'line_note'):
+            //     if not line.product_id or line.display_type in ('line_section', 'line_subsection', 'line_note'):
             //         continue
             // 
             //     if not line.name or line._origin.name == get_name(line._origin):
@@ -2290,6 +2362,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_no_followup(self):
+            // for aml in self:
+            //     aml.no_followup = aml.move_id.is_entry() and not aml.move_id.origin_payment_id
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeNoVariantAttributeValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -2315,11 +2398,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_oee(self):
-            // for order in self:
-            //     if order.productive_time:
-            //         order.oee = round(order.productive_time * 100.0 / (order.productive_time + order.blocked_time), 2)
+            // time_data = self.env['mrp.workcenter.productivity']._read_group(
+            //     domain=[
+            //         ('date_start', '>=', fields.Datetime.to_string(datetime.now() - relativedelta.relativedelta(months=1))),
+            //         ('workcenter_id', 'in', self.ids),
+            //         ('date_end', '!=', False),
+            //     ],
+            //     groupby=['workcenter_id', 'loss_type'],
+            //     aggregates=['duration:sum'],
+            // )
+            // time_by_workcenter = defaultdict(lambda: {'productive_time': 0.0, 'blocked_time': 0.0})
+            // for data in time_data:
+            //     workcenter, loss_type, duration = data
+            //     time_to_update = 'productive_time' if loss_type == 'productive' else 'blocked_time'
+            //     time_by_workcenter[workcenter.id][time_to_update] += duration
+            // for workcenter in self:
+            //     workcenter_time = time_by_workcenter[workcenter.id]
+            //     productive_time = workcenter_time['productive_time']
+            //     if productive_time:
+            //         blocked_time = workcenter_time['blocked_time']
+            //         workcenter.oee = float_round(productive_time * 100.0 / (productive_time + blocked_time), precision_digits=2)
             //     else:
-            //         order.oee = 0.0
+            //         workcenter.oee = 0.0
             */
             return default;
         }
@@ -2332,10 +2432,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // line_found = defaultdict(set)
             // for line in self:
             //     total = 0.0
-            //     for po in line.requisition_id.purchase_ids.filtered(lambda purchase_order: purchase_order.state in ['purchase', 'done']):
+            //     for po in line.requisition_id.purchase_ids.filtered(lambda purchase_order: purchase_order.state == 'purchase'):
             //         for po_line in po.order_line.filtered(lambda order_line: order_line.product_id == line.product_id):
-            //             if po_line.product_uom != line.product_uom_id:
-            //                 total += po_line.product_uom._compute_quantity(po_line.product_qty, line.product_uom_id)
+            //             if po_line.product_uom_id != line.product_uom_id:
+            //                 total += po_line.product_uom_id._compute_quantity(po_line.product_qty, line.product_uom_id)
             //             else:
             //                 total += po_line.product_qty
             //     if line.product_id not in line_found[line.requisition_id]:
@@ -2343,6 +2443,81 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         line_found[line.requisition_id].add(line.product_id)
             //     else:
             //         line.qty_ordered = 0
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeParentIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_parent_id(self):
+            // parent_id_vals_to_lines = defaultdict(list)
+            // for move, lines in self.grouped('move_id').items():
+            //     if not move:
+            //         parent_id_vals_to_lines[False].extend(lines._ids)
+            //         continue
+            //     last_section = False
+            //     last_sub = False
+            //     for line in move.line_ids.sorted('sequence'):
+            //         value = False
+            //         if line.display_type == 'line_section':
+            //             last_section = line
+            //             value = False
+            //             last_sub = False
+            //         elif line.display_type == 'line_subsection':
+            //             value = last_section
+            //             last_sub = line
+            //         elif line.display_type in {'line_note', 'product'}:
+            //             value = last_sub or last_section
+            //         else:
+            //             value = False
+            //         parent_id_vals_to_lines[value].append(line.id)
+            // 
+            // for val, record_ids in parent_id_vals_to_lines.items():
+            //     self.browse(record_ids).parent_id = val
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_parent_id(self):
+            // purchase_order_lines = set(self)
+            // for order, lines in self.grouped('order_id').items():
+            //     if not order:
+            //         lines.parent_id = False
+            //         continue
+            //     last_section = False
+            //     last_sub = False
+            //     for line in order.order_line.sorted('sequence'):
+            //         if line.display_type == 'line_section':
+            //             last_section = line
+            //             if line in purchase_order_lines:
+            //                 line.parent_id = False
+            //             last_sub = False
+            //         elif line.display_type == 'line_subsection':
+            //             if line in purchase_order_lines:
+            //                 line.parent_id = last_section
+            //             last_sub = line
+            //         elif line in purchase_order_lines:
+            //             line.parent_id = last_sub or last_section
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_parent_id(self):
+            // sale_order_lines = set(self)
+            // for order, lines in self.grouped('order_id').items():
+            //     if not order:
+            //         lines.parent_id = False
+            //         continue
+            //     last_section = False
+            //     last_sub = False
+            //     for line in order.order_line.sorted('sequence'):
+            //         if line.display_type == 'line_section':
+            //             last_section = line
+            //             if line in sale_order_lines:
+            //                 line.parent_id = False
+            //             last_sub = False
+            //         elif line.display_type == 'line_subsection':
+            //             if line in sale_order_lines:
+            //                 line.parent_id = last_section
+            //             last_sub = line
+            //         elif line in sale_order_lines:
+            //             line.parent_id = last_sub or last_section
             */
             return default;
         }
@@ -2365,6 +2540,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_payment_date(self):
             // for line in self:
             //     line.payment_date = line.discount_date if line.discount_date and date.today() <= line.discount_date else line.date_maturity
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePaymentMethodLineIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _compute_payment_method_line_id(self):
+            // for expense in self:
+            //     expense.payment_method_line_id = expense.selectable_payment_method_line_ids[:1]
             */
             return default;
         }
@@ -2417,33 +2603,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_price_unit_and_date_planned_and_name(self):
             // for line in self:
-            //     if not line.product_id or line.invoice_lines or not line.company_id:
+            //     if not line.product_id or line.invoice_lines or not line.company_id or self.env.context.get('skip_uom_conversion') or (line.technical_price_unit != line.price_unit):
             //         continue
             //     params = line._get_select_sellers_params()
-            //     seller = line.product_id._select_seller(
-            //         partner_id=line.partner_id,
-            //         quantity=line.product_qty,
-            //         date=line.order_id.date_order and line.order_id.date_order.date() or fields.Date.context_today(line),
-            //         uom_id=line.product_uom,
-            //         params=params)
             // 
-            //     if seller or not line.date_planned:
-            //         line.date_planned = line._get_date_planned(seller).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            //     if line.selected_seller_id or not line.date_planned:
+            //         line.date_planned = line._get_date_planned(line.selected_seller_id).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             // 
             //     # If not seller, use the standard price. It needs a proper currency conversion.
-            //     if not seller:
-            //         line.discount = 0
+            //     if not line.selected_seller_id:
             //         unavailable_seller = line.product_id.seller_ids.filtered(
             //             lambda s: s.partner_id == line.order_id.partner_id)
-            //         if not unavailable_seller and line.price_unit and line.product_uom == line._origin.product_uom:
+            //         if not unavailable_seller and line.price_unit and line.product_uom_id == line._origin.product_uom_id:
             //             # Avoid to modify the price unit if there is no price list for this partner and
             //             # the line has already one to avoid to override unit price set manually.
             //             continue
-            //         po_line_uom = line.product_uom or line.product_id.uom_po_id
+            //         line.discount = 0
+            //         po_line_uom = line.product_uom_id or line.product_id.uom_id
             //         price_unit = line.env['account.tax']._fix_tax_included_price_company(
             //             line.product_id.uom_id._compute_price(line.product_id.standard_price, po_line_uom),
             //             line.product_id.supplier_taxes_id,
-            //             line.taxes_id,
+            //             line.tax_ids,
             //             line.company_id,
             //         )
             //         price_unit = line.product_id.cost_currency_id._convert(
@@ -2453,14 +2633,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             line.date_order or fields.Date.context_today(line),
             //             False
             //         )
-            //         line.price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
+            //         line.price_unit = line.technical_price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
             // 
-            //     elif seller:
-            //         price_unit = line.env['account.tax']._fix_tax_included_price_company(seller.price, line.product_id.supplier_taxes_id, line.taxes_id, line.company_id) if seller else 0.0
-            //         price_unit = seller.currency_id._convert(price_unit, line.currency_id, line.company_id, line.date_order or fields.Date.context_today(line), False)
+            //     elif line.selected_seller_id:
+            //         price_unit = line.env['account.tax']._fix_tax_included_price_company(line.selected_seller_id.price, line.product_id.supplier_taxes_id, line.tax_ids, line.company_id) if line.selected_seller_id else 0.0
+            //         price_unit = line.selected_seller_id.currency_id._convert(price_unit, line.currency_id, line.company_id, line.date_order or fields.Date.context_today(line), False)
             //         price_unit = float_round(price_unit, precision_digits=max(line.currency_id.decimal_places, self.env['decimal.precision'].precision_get('Product Price')))
-            //         line.price_unit = seller.product_uom._compute_price(price_unit, line.product_uom)
-            //         line.discount = seller.discount or 0.0
+            //         line.price_unit = line.technical_price_unit = line.selected_seller_id.product_uom_id._compute_price(price_unit, line.product_uom_id)
+            //         line.discount = line.selected_seller_id.discount or 0.0
             // 
             //     # record product names to avoid resetting custom descriptions
             //     default_names = []
@@ -2471,7 +2651,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         product_ctx = {'seller_id': vendor.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
             //         default_names.append(line._get_product_purchase_description(line.product_id.with_context(product_ctx)))
             //     if not line.name or line.name in default_names:
-            //         product_ctx = {'seller_id': seller.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
+            //         product_ctx = {'seller_id': line.selected_seller_id.id, 'lang': get_lang(line.env, line.partner_id.lang).code}
             //         line.name = line._get_product_purchase_description(line.product_id.with_context(product_ctx))
             */
             return default;
@@ -2494,7 +2674,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _compute_price_unit(self):
             // for line in self:
-            //     if not line.product_id or line.display_type in ('line_section', 'line_note') or line.is_imported:
+            //     if not line.product_id or line.display_type in ('line_section', 'line_subsection', 'line_note') or line.is_imported:
             //         continue
             //     if line.move_id.is_sale_document(include_receipts=True):
             //         document_type = 'sale'
@@ -2514,12 +2694,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_price_unit(self):
             // """
             //    The price_unit is the unit price of the product if no product is set and no attachment overrides it.
-            //    Otherwise it is always computed from the total_amount and the quantity else it would break the vendor bill
+            //    Otherwise it is always computed from the total_amount and the quantity else it would break the Receipt Entry
             //    when edited after creation.
             // """
             // for expense in self:
-            //     if expense.state not in {'draft', 'reported'}:
+            //     if expense.state != 'draft':
             //         continue
+            // 
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     product_id = expense.product_id
             //     if expense._needs_product_price_computation():
             //         expense.price_unit = product_id._price_compute(
@@ -2540,24 +2728,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     line.price_unit = seller.price if seller else line.product_id.standard_price
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _compute_price_unit(self):
+            // def has_manual_price(line):
+            //     # `line.currency_id` can be False for NewId records
+            //     currency = (
+            //         line.currency_id
+            //         or line.company_id.currency_id
+            //         or line.env.company.currency_id
+            //     )
+            //     return currency.compare_amounts(line.technical_price_unit, line.price_unit)
+            // 
+            // force_recompute = self.env.context.get('force_price_recomputation')
             // for line in self:
-            //     # Don't compute the price for deleted lines.
-            //     if not line.order_id:
+            //     # Don't compute the price for deleted lines or lines for which the
+            //     # price unit doesn't come from the product.
+            //     if not line.order_id or line.is_downpayment or line._is_global_discount():
             //         continue
+            // 
             //     # check if the price has been manually set or there is already invoiced amount.
             //     # if so, the price shouldn't change as it might have been manually edited.
             //     if (
-            //         (line.technical_price_unit != line.price_unit and not line.env.context.get('force_price_recomputation'))
+            //         (not force_recompute and has_manual_price(line))
             //         or line.qty_invoiced > 0
             //         or (line.product_id.expense_policy == 'cost' and line.is_expense)
             //     ):
             //         continue
             //     line = line.with_context(sale_write_from_compute=True)
-            //     if not line.product_uom or not line.product_id:
+            //     if not line.product_uom_id or not line.product_id:
             //         line.price_unit = 0.0
             //         line.technical_price_unit = 0.0
             //     else:
             //         line._reset_price_unit()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePriceUnitProductUomInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_price_unit_product_uom(self):
+            // for line in self:
+            //     line.price_unit_product_uom = not line.display_type and line.product_uom_id._compute_price(line.price_unit, line.product_id.uom_id)
             */
             return default;
         }
@@ -2572,10 +2783,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         line.pricelist_item_id = False
             //     else:
             //         line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
-            //             line.product_id,
-            //             quantity=line.product_uom_qty or 1.0,
-            //             uom=line.product_uom,
-            //             date=line._get_order_date(),
+            //             # No need for the price context, we're not considering the price here
+            //             product=line.product_id,
+            //             **line._get_pricelist_kwargs(),
             //         )
             */
             return default;
@@ -2588,74 +2798,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_product_description(self):
             // for expense in self:
             //     expense.product_description = not is_html_empty(expense.product_id.description) and expense.product_id.description
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeProductPackagingIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_packaging_id(self):
-            // for line in self:
-            //     # remove packaging if not match the product
-            //     if line.product_packaging_id.product_id != line.product_id:
-            //         line.product_packaging_id = False
-            //     # suggest biggest suitable packaging matching the PO's company
-            //     if line.product_id and line.product_qty and line.product_uom:
-            //         suggested_packaging = line.product_id.packaging_ids\
-            //                 .filtered(lambda p: p.purchase and (p.product_id.company_id <= p.company_id <= line.company_id))\
-            //                 ._find_suitable_product_packaging(line.product_qty, line.product_uom)
-            //         line.product_packaging_id = suggested_packaging or line.product_packaging_id
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_product_packaging_id(self):
-            // for line in self:
-            //     # remove packaging if not match the product
-            //     if line.product_packaging_id.product_id != line.product_id:
-            //         line.product_packaging_id = False
-            //     # suggest biggest suitable packaging matching the SO's company
-            //     if line.product_id and line.product_uom_qty and line.product_uom:
-            //         suggested_packaging = line.product_id.packaging_ids\
-            //                 .filtered(lambda p: p.sales and (p.product_id.company_id <= p.company_id <= line.company_id))\
-            //                 ._find_suitable_product_packaging(line.product_uom_qty, line.product_uom)
-            //         line.product_packaging_id = suggested_packaging or line.product_packaging_id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeProductPackagingQtyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_packaging_qty(self):
-            // self.product_packaging_qty = 0
-            // for line in self:
-            //     if not line.product_packaging_id:
-            //         continue
-            //     line.product_packaging_qty = line.product_packaging_id._compute_qty(line.product_qty, line.product_uom)
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_product_packaging_qty(self):
-            // self.product_packaging_qty = 0
-            // for line in self:
-            //     if not line.product_packaging_id:
-            //         continue
-            //     line.product_packaging_qty = line.product_packaging_id._compute_qty(line.product_uom_qty, line.product_uom)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeProductQtyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _compute_product_qty(self):
-            // for line in self:
-            //     if line.product_packaging_id:
-            //         packaging_uom = line.product_packaging_id.product_uom_id
-            //         qty_per_packaging = line.product_packaging_id.qty
-            //         product_qty = packaging_uom._compute_quantity(line.product_packaging_qty * qty_per_packaging, line.product_uom)
-            //         if float_compare(product_qty, line.product_qty, precision_rounding=line.product_uom.rounding) != 0:
-            //             line.product_qty = product_qty
             */
             return default;
         }
@@ -2679,25 +2821,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for line in self.filtered(lambda l: l.parent_state == 'draft'):
             //     # vendor bills should have the product purchase UOM
             //     if line.move_id.is_purchase_document():
-            //         line.product_uom_id = line.product_id.uom_po_id
+            //         seller_ids = line.product_id.seller_ids._get_filtered_supplier(line.company_id, line.product_id, False)
+            //         line.product_uom_id = seller_ids[:1].product_uom_id or line.product_id.uom_id
             //     else:
             //         line.product_uom_id = line.product_id.uom_id
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
             // def _compute_product_uom_id(self):
             // for line in self:
             //     line.product_uom_id = line.product_id.uom_id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeProductUomInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_product_uom(self):
+            // def _compute_product_uom_id(self):
             // for line in self:
-            //     if not line.product_uom or (line.product_id.uom_id.id != line.product_uom.id):
-            //         line.product_uom = line.product_id.uom_id
+            //     if not line.product_uom_id or (line.product_id.uom_id.id != line.product_uom_id.id):
+            //         line.product_uom_id = line.product_id.uom_id
             */
             return default;
         }
@@ -2708,8 +2844,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_product_uom_qty(self):
             // for line in self:
-            //     if line.product_id and line.product_id.uom_id != line.product_uom:
-            //         line.product_uom_qty = line.product_uom._compute_quantity(line.product_qty, line.product_id.uom_id)
+            //     if line.product_id and line.product_id.uom_id != line.product_uom_id:
+            //         line.product_uom_qty = line.product_uom_id._compute_quantity(line.product_qty, line.product_id.uom_id)
             //     else:
             //         line.product_uom_qty = line.product_qty
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
@@ -2717,16 +2853,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for line in self:
             //     if line.display_type:
             //         line.product_uom_qty = 0.0
-            //         continue
-            // 
-            //     if not line.product_packaging_id:
-            //         continue
-            //     packaging_uom = line.product_packaging_id.product_uom_id
-            //     qty_per_packaging = line.product_packaging_id.qty
-            //     product_uom_qty = packaging_uom._compute_quantity(
-            //         line.product_packaging_qty * qty_per_packaging, line.product_uom)
-            //     if float_compare(product_uom_qty, line.product_uom_qty, precision_rounding=line.product_uom.rounding) != 0:
-            //         line.product_uom_qty = product_uom_qty
             */
             return default;
         }
@@ -2783,6 +2909,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputePurchaseLineWarnMsgInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_purchase_line_warn_msg(self):
+            // has_warning_group = self.env.user.has_group('purchase.group_warning_purchase')
+            // for line in self:
+            //     line.purchase_line_warn_msg = line.product_id.purchase_line_warn_msg if has_warning_group else ""
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeQtyDeliveredAtDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_qty_delivered_at_date(self):
+            // if not self._date_in_the_past():
+            //     # Avoid useless compute if we don't look in the past.
+            //     for line in self:
+            //         line.qty_delivered_at_date = line.qty_delivered
+            //     return
+            // delivered_qties = self._prepare_qty_delivered()
+            // for line in self:
+            //     line.qty_delivered_at_date = delivered_qties[line]
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeQtyDeliveredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -2794,11 +2949,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     take their concerned so lines, compute and set the `qty_delivered` field, and call super with the remaining
             //     records.
             // """
-            // # compute for analytic lines
-            // lines_by_analytic = self.filtered(lambda sol: sol.qty_delivered_method == 'analytic')
-            // mapping = lines_by_analytic._get_delivered_quantity_by_analytic([('amount', '<=', 0.0)])
-            // for so_line in lines_by_analytic:
-            //     so_line.qty_delivered = mapping.get(so_line.id or so_line._origin.id, 0.0)
+            // delivered_qties = self._prepare_qty_delivered()
+            // for so_line in self:
+            //     if not so_line.qty_delivered or so_line in delivered_qties:
+            //         so_line.qty_delivered = delivered_qties[so_line]
             */
             return default;
         }
@@ -2825,24 +2979,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeQtyInvoicedAtDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_qty_invoiced_at_date(self):
+            // if not self._date_in_the_past():
+            //     for line in self:
+            //         line.qty_invoiced_at_date = line.qty_invoiced
+            //     return
+            // invoiced_quantities = self._prepare_qty_invoiced()
+            // for line in self:
+            //     line.qty_invoiced_at_date = invoiced_quantities[line]
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_qty_invoiced_at_date(self):
+            // if not self._date_in_the_past():
+            //     # Avoid useless compute if we don't look in the past.
+            //     for line in self:
+            //         line.qty_invoiced_at_date = line.qty_invoiced
+            //     return
+            // invoiced_quantities = self._prepare_qty_invoiced()
+            // for line in self:
+            //     line.qty_invoiced_at_date = invoiced_quantities[line]
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeQtyInvoicedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_qty_invoiced(self):
+            // invoiced_quantities = self._prepare_qty_invoiced()
             // for line in self:
-            //     # compute qty_invoiced
-            //     qty = 0.0
-            //     for inv_line in line._get_invoice_lines():
-            //         if inv_line.move_id.state not in ['cancel'] or inv_line.move_id.payment_state == 'invoicing_legacy':
-            //             if inv_line.move_id.move_type == 'in_invoice':
-            //                 qty += inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom)
-            //             elif inv_line.move_id.move_type == 'in_refund':
-            //                 qty -= inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom)
-            //     line.qty_invoiced = qty
+            //     line.qty_invoiced = invoiced_quantities[line]
             // 
             //     # compute qty_to_invoice
-            //     if line.order_id.state in ['purchase', 'done']:
+            //     if line.order_id.state == 'purchase':
             //         if line.product_id.purchase_method == 'purchase':
             //             line.qty_to_invoice = line.product_qty - line.qty_invoiced
             //         else:
@@ -2857,15 +3030,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // a refund made would automatically decrease the invoiced quantity, then there is a risk of reinvoicing
             // it automatically, which may not be wanted at all. That's why the refund has to be created from the SO
             // """
+            // invoiced_quantities = self._prepare_qty_invoiced()
             // for line in self:
-            //     qty_invoiced = 0.0
-            //     for invoice_line in line._get_invoice_lines():
-            //         if invoice_line.move_id.state != 'cancel' or invoice_line.move_id.payment_state == 'invoicing_legacy':
-            //             if invoice_line.move_id.move_type == 'out_invoice':
-            //                 qty_invoiced += invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, line.product_uom)
-            //             elif invoice_line.move_id.move_type == 'out_refund':
-            //                 qty_invoiced -= invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, line.product_uom)
-            //     line.qty_invoiced = qty_invoiced
+            //     line.qty_invoiced = invoiced_quantities[line]
             */
             return default;
         }
@@ -2885,10 +3052,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     qty_invoiced_posted = 0.0
             //     for invoice_line in line._get_invoice_lines():
             //         if invoice_line.move_id.state == 'posted' or invoice_line.move_id.payment_state == 'invoicing_legacy':
-            //             qty_unsigned = invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, line.product_uom)
+            //             qty_unsigned = invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, line.product_uom_id)
             //             qty_signed = qty_unsigned * -invoice_line.move_id.direction_sign
             //             qty_invoiced_posted += qty_signed
             //     line.qty_invoiced_posted = qty_invoiced_posted
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeQtyReceivedAtDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_qty_received_at_date(self):
+            // if not self._date_in_the_past():
+            //     for line in self:
+            //         line.qty_received_at_date = line.qty_received
+            //     return
+            // received_quantities = self._prepare_qty_received()
+            // for line in self:
+            //     line.qty_received_at_date = received_quantities[line]
             */
             return default;
         }
@@ -2898,11 +3081,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_qty_received(self):
+            // received_qties = self._prepare_qty_received()
             // for line in self:
-            //     if line.qty_received_method == 'manual':
-            //         line.qty_received = line.qty_received_manual or 0.0
-            //     else:
-            //         line.qty_received = 0.0
+            //     if not line.qty_received or line in received_qties:
+            //         line.qty_received = received_qties[line]
             */
             return default;
         }
@@ -2971,6 +3153,45 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeReconciledLinesExcludingExchangeDiffIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_reconciled_lines_excluding_exchange_diff_ids(self):
+            // for line in self:
+            //     all_lines = line.matched_debit_ids.debit_move_id + line.matched_credit_ids.credit_move_id
+            //     excluded_ids = (
+            //         line.matched_debit_ids.exchange_move_id.line_ids +
+            //         line.matched_credit_ids.exchange_move_id.line_ids
+            //     )
+            //     line.reconciled_lines_excluding_exchange_diff_ids = all_lines - excluded_ids
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeReconciledLinesIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _compute_reconciled_lines_ids(self):
+            // for line in self:
+            //     line.reconciled_lines_ids = line.matched_debit_ids.debit_move_id + line.matched_credit_ids.credit_move_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeSaleLineWarnMsgInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_sale_line_warn_msg(self):
+            // has_warning_group = self.env.user.has_group('sale.group_warning_sale')
+            // for line in self:
+            //     line.sale_line_warn_msg = line.product_id.sale_line_warn_msg if has_warning_group else ""
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeSameCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -2989,7 +3210,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_same_receipt_expense_ids(self):
             // self.same_receipt_expense_ids = [Command.clear()]
             // 
-            // expenses_with_attachments = self.filtered(lambda expense: expense.attachment_ids)
+            // expenses_with_attachments = self.filtered(lambda expense: expense.attachment_ids and not expense.split_expense_origin_id)
             // if not expenses_with_attachments:
             //     return
             // 
@@ -3011,6 +3232,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeSelectablePaymentMethodLineIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _compute_selectable_payment_method_line_ids(self):
+            // for expense in self:
+            //     allowed_method_line_ids = expense.company_id.company_expense_allowed_payment_method_line_ids
+            //     if allowed_method_line_ids:
+            //         expense.selectable_payment_method_line_ids = allowed_method_line_ids
+            //     else:
+            //         expense.selectable_payment_method_line_ids = self.env['account.payment.method.line'].search([
+            //             # The journal is the source of the payment method line company
+            //             *self.env['account.journal']._check_company_domain(expense.company_id),
+            //             ('payment_type', '=', 'outbound'),
+            //         ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeSelectedSellerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _compute_selected_seller_id(self):
+            // for line in self:
+            //     if line.product_id:
+            //         params = line._get_select_sellers_params()
+            //         seller = line.product_id._select_seller(
+            //             partner_id=line.partner_id,
+            //             quantity=abs(line.product_qty),
+            //             date=line.order_id.date_order and line.order_id.date_order.date() or fields.Date.context_today(line),
+            //             uom_id=line.product_uom_id,
+            //             params=params)
+            //         line.selected_seller_id = seller.id if seller else False
+            //     else:
+            //         line.selected_seller_id = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -3027,35 +3288,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeShowForceTaxIncludedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_show_force_tax_included(self):
-            // for record in self:
-            //     record.show_force_tax_included = False if len(record.tax_ids) != 1 else True
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_state(self):
+            // """
+            // Compute the states of the expense as such (priority is given to the last matching state of the list):
+            //     - draft: By default
+            //     - submitted: When the approval_state is 'submitted'
+            //     - approved: When the approval_state is 'approved'
+            //     - refused: When the approval_state is 'refused'
+            //     - paid: When it is a company paid expense or the move state is neither 'draft' nor 'posted'
+            //     - in_payment (or paid): When the move state is 'posted' and it's 'payment_state' is 'in_payment' or 'paid'
+            //                             or ('partial' and there is a residual amount)
+            //     - posted: When the linked move state is 'draft', or if it is 'posted' and it's 'payment_state' is 'not_paid'
+            // """
             // for expense in self:
-            //     if not expense.sheet_id:
-            //         expense.state = 'draft'
-            //     elif expense.sheet_id.state == 'draft':
-            //         expense.state = 'reported'
-            //     elif expense.sheet_id.state == 'cancel':
-            //         expense.state = 'refused'
-            //     elif expense.sheet_id.state in {'approve', 'post'}:
-            //         expense.state = 'approved'
-            //     elif not expense.sheet_id.account_move_ids:
-            //         expense.state = 'submitted'
-            //     else:
-            //         expense.state = 'done'
+            //     move = expense.account_move_id
+            //     if move.state == 'cancel':
+            //         expense.state = 'paid'
+            //         continue
+            //     if move:
+            //         if expense.payment_mode == 'company_account':
+            //             # Shortcut to paid, as it's already paid, but we may not have the bank statement yet
+            //             expense.state = 'paid'
+            //         elif move.state == 'draft':
+            //             expense.state = 'posted'
+            //         elif move.payment_state == 'not_paid':
+            //             expense.state = 'posted'
+            //         elif (
+            //                 move.payment_state == 'in_payment'
+            //                 or (move.payment_state == 'partial' and not expense.company_currency_id.is_zero(expense.amount_residual))
+            //         ):
+            //             expense.state = self.env['account.move']._get_invoice_in_payment_state()
+            //         else:  # Partial, reversed or in_payment
+            //             expense.state = 'paid'
+            //         continue
+            //     expense.state = expense.approval_state or 'draft'
             */
             return default;
         }
@@ -3071,6 +3341,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     base_line = expense._prepare_base_line_for_taxes_computation(
             //         price_unit=expense.total_amount_currency,
             //         quantity=1.0,
@@ -3090,11 +3367,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_tax_amount(self):
             // """
-            //      Note: as total_amount can be set directly by the user when the currency_rate is overriden,
+            //      Note: as total_amount can be set directly by the user when the currency_rate is overridden,
             //      the tax must be computed after the total_amount.
             // """
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     if expense.is_multiple_currency:
             //         base_line = expense._prepare_base_line_for_taxes_computation(
             //             price_unit=expense.total_amount,
@@ -3105,8 +3389,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         AccountTax._round_base_lines_tax_details([base_line], expense.company_id)
             //         tax_details = base_line['tax_details']
             //         expense.tax_amount = tax_details['total_included_currency'] - tax_details['total_excluded_currency']
+            //         expense.untaxed_amount = tax_details['total_excluded_currency']
             //     else:  # Mono-currency case computation shortcut
             //         expense.tax_amount = expense.tax_amount_currency
+            //         expense.untaxed_amount = expense.untaxed_amount_currency
             */
             return default;
         }
@@ -3121,35 +3407,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     fpos = line.order_id.fiscal_position_id or line.order_id.fiscal_position_id._get_fiscal_position(line.order_id.partner_id)
             //     # filter taxes by company
             //     taxes = line.product_id.supplier_taxes_id._filter_taxes_by_company(line.company_id)
-            //     line.taxes_id = fpos.map_tax(taxes)
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_tax_id(self):
-            // lines_by_company = defaultdict(lambda: self.env['sale.order.line'])
-            // cached_taxes = {}
-            // for line in self:
-            //     if line.product_type == 'combo':
-            //         line.tax_id = False
-            //         continue
-            //     lines_by_company[line.company_id] += line
-            // for company, lines in lines_by_company.items():
-            //     for line in lines.with_company(company):
-            //         taxes = None
-            //         if line.product_id:
-            //             taxes = line.product_id.taxes_id._filter_taxes_by_company(company)
-            //         if not line.product_id or not taxes:
-            //             # Nothing to map
-            //             line.tax_id = False
-            //             continue
-            //         fiscal_position = line.order_id.fiscal_position_id
-            //         cache_key = (fiscal_position.id, company.id, tuple(taxes.ids))
-            //         cache_key += line._get_custom_compute_tax_cache_key()
-            //         if cache_key in cached_taxes:
-            //             result = cached_taxes[cache_key]
-            //         else:
-            //             result = fiscal_position.map_tax(taxes)
-            //             cached_taxes[cache_key] = result
-            //         # If company_id is set, always filter taxes by the company
-            //         line.tax_id = result
+            //     line.tax_ids = fpos.map_tax(taxes)
             */
             return default;
         }
@@ -3160,58 +3418,45 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _compute_tax_ids(self):
             // for line in self:
-            //     if line.display_type in ('line_section', 'line_note', 'payment_term') or line.is_imported:
+            //     if line.display_type in ('line_section', 'line_subsection', 'line_note', 'payment_term') or line.is_imported:
             //         continue
             //     # /!\ Don't remove existing taxes if there is no explicit taxes set on the account.
             //     if line.product_id or (line.display_type != 'discount' and (line.account_id.tax_ids or not line.tax_ids)):
             //         line.tax_ids = line._get_computed_taxes()
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_tax_ids(self):
-            // for line in self:
-            //     if line.rule_type == 'writeoff_button' and line.model_id.counterpart_type in ('sale', 'purchase'):
-            //         line.tax_ids = line.tax_ids.filtered(lambda x: x.type_tax_use == line.model_id.counterpart_type)
-            //         if not line.tax_ids:
-            //             line.tax_ids = line.account_id.tax_ids.filtered(lambda x: x.type_tax_use == line.model_id.counterpart_type)
-            //         if not line.tax_ids:
-            //             if line.model_id.counterpart_type == 'purchase' and line.company_id.account_purchase_tax_id:
-            //                 line.tax_ids = line.company_id.account_purchase_tax_id
-            //             elif line.model_id.counterpart_type == 'sale' and line.company_id.account_sale_tax_id:
-            //                 line.tax_ids = line.company_id.account_sale_tax_id
-            //     else:
-            //         line.tax_ids = line.tax_ids
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _compute_tax_ids(self):
-            // for _expense in self:
+            // for _expense in self.filtered('company_id'):   # Avoid a traceback, the field is required anyway
             //     expense = _expense.with_company(_expense.company_id)
             //     # taxes only from the same company
             //     expense.tax_ids = expense.product_id.supplier_taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(expense.company_id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeTaxTagInvertInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _compute_tax_tag_invert(self):
-            // for record in self:
-            //     origin_move_id = record.move_id.tax_cash_basis_origin_move_id or record.move_id
-            //     if not record.tax_repartition_line_id and not record.tax_ids:
-            //         # Invoices imported from other softwares might only have kept the tags, not the taxes.
-            //         record.tax_tag_invert = record.tax_tag_ids and origin_move_id.is_inbound()
-            // 
-            //     elif origin_move_id.move_type == 'entry':
-            //         # For misc operations, cash basis entries and write-offs from the bank reconciliation widget
-            //         tax = record.tax_repartition_line_id.tax_id or record.tax_ids[:1]
-            //         is_refund = record.is_refund
-            //         tax_type = tax.type_tax_use
-            //         if record.display_type == 'epd':  # In case of early payment, tax_tag_invert is independent of the balance of the line
-            //             record.tax_tag_invert = tax_type == 'purchase'
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _compute_tax_ids(self):
+            // lines_by_company = defaultdict(lambda: self.env['sale.order.line'])
+            // cached_taxes = {}
+            // for line in self:
+            //     if line.product_type == 'combo':
+            //         line.tax_ids = False
+            //         continue
+            //     lines_by_company[line.company_id] += line
+            // for company, lines in lines_by_company.items():
+            //     for line in lines.with_company(company):
+            //         taxes = None
+            //         if line.product_id:
+            //             taxes = line.product_id.taxes_id._filter_taxes_by_company(company)
+            //         if not line.product_id or not taxes:
+            //             # Nothing to map
+            //             line.tax_ids = False
+            //             continue
+            //         fiscal_position = line.order_id.fiscal_position_id
+            //         cache_key = (fiscal_position.id, company.id, tuple(taxes.ids))
+            //         cache_key += line._get_custom_compute_tax_cache_key()
+            //         if cache_key in cached_taxes:
+            //             result = cached_taxes[cache_key]
             //         else:
-            //             record.tax_tag_invert = (tax_type == 'purchase' and is_refund) or (tax_type == 'sale' and not is_refund)
-            //     else:
-            //         # For invoices with taxes
-            //         record.tax_tag_invert = origin_move_id.is_inbound()
+            //             result = fiscal_position.map_tax(taxes)
+            //             cached_taxes[cache_key] = result
+            //         # If company_id is set, always filter taxes by the company
+            //         line.tax_ids = result
             */
             return default;
         }
@@ -3256,6 +3501,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_total_amount(self):
             // AccountTax = self.env['account.tax']
             // for expense in self:
+            //     if not expense.company_id:
+            //         # This would be happening when emptying the required company_id field, triggering the "onchange"s.
+            //         # A traceback would occur because company_currency_id would be set to False.
+            //         # Instead of using the env company, recomputing the interface just to be blocked when trying to save
+            //         # we choose not to recompute anything and wait for a proper company to be inputted.
+            //         continue
+            // 
             //     if expense.is_multiple_currency:
             //         base_line = expense._prepare_base_line_for_taxes_computation(
             //             price_unit=expense.total_amount_currency * expense.currency_rate,
@@ -3283,14 +3535,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // AccountTax = self.env['account.tax']
             // for line in self:
             //     # TODO remove the need of cogs lines to have a price_subtotal/price_total
-            //     if line.display_type not in ('product', 'cogs'):
+            //     if line.display_type not in ('product', 'cogs', 'non_deductible_product', 'non_deductible_product_total') or not line.move_id:
             //         line.price_total = line.price_subtotal = False
             //         continue
             // 
+            //     company = line.company_id or self.env.company
             //     base_line = line.move_id._prepare_product_base_line_for_taxes_computation(line)
-            //     AccountTax._add_tax_details_in_base_line(base_line, line.company_id)
-            //     line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            //     line.price_total = base_line['tax_details']['raw_total_included_currency']
+            //     AccountTax._add_tax_details_in_base_line(base_line, company)
+            //     AccountTax._round_base_lines_tax_details([base_line], company)
+            //     line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            //     line.price_total = base_line['tax_details']['total_included_currency']
             */
             return default;
         }
@@ -3358,11 +3612,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         uom_qty_to_consider = line.qty_delivered if line.product_id.invoice_policy == 'delivery' else line.product_uom_qty
             //         price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             //         price_subtotal = price_reduce * uom_qty_to_consider
-            //         if len(line.tax_id.filtered(lambda tax: tax.price_include)) > 0:
+            //         if len(line.tax_ids.filtered(lambda tax: tax.price_include)) > 0:
             //             # As included taxes are not excluded from the computed subtotal, `compute_all()` method
             //             # has to be called to retrieve the subtotal without them.
             //             # `price_reduce_taxexcl` cannot be used as it is computed from `price_subtotal` field. (see upper Note)
-            //             price_subtotal = line.tax_id.compute_all(
+            //             price_subtotal = line.tax_ids.compute_all(
             //                 price_reduce,
             //                 currency=line.currency_id,
             //                 quantity=uom_qty_to_consider,
@@ -3404,7 +3658,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def compute_uom_qty(self, new_qty, stock_move, rounding=True):
-            // return self.product_uom._compute_quantity(new_qty, stock_move.product_uom, rounding)
+            // return self.product_uom_id._compute_quantity(new_qty, stock_move.product_uom, rounding)
             */
             return default;
         }
@@ -3414,14 +3668,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_working_state(self):
+            // # We search for a productivity line associated to this workcenter having no `date_end`.
+            // # If we do not find one, the workcenter is not currently being used. If we find one, according
+            // # to its `type_loss`, the workcenter is either being used or blocked.
+            // time_log_by_workcenter = {}
+            // for time_log in self.env['mrp.workcenter.productivity'].search([
+            //     ('workcenter_id', 'in', self.ids),
+            //     ('date_end', '=', False),
+            // ]):
+            //     wc = time_log.workcenter_id
+            //     if wc not in time_log_by_workcenter:
+            //         time_log_by_workcenter[wc] = time_log
+            // 
             // for workcenter in self:
-            //     # We search for a productivity line associated to this workcenter having no `date_end`.
-            //     # If we do not find one, the workcenter is not currently being used. If we find one, according
-            //     # to its `type_loss`, the workcenter is either being used or blocked.
-            //     time_log = self.env['mrp.workcenter.productivity'].search([
-            //         ('workcenter_id', '=', workcenter.id),
-            //         ('date_end', '=', False)
-            //     ], limit=1)
+            //     time_log = time_log_by_workcenter.get(workcenter._origin)
             //     if not time_log:
             //         # the workcenter is not being used
             //         workcenter.working_state = 'normal'
@@ -3445,7 +3705,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // result_duration_expected = {wid: 0 for wid in self._ids}
             // # Count Late Workorder
             // data = MrpWorkorder._read_group(
-            //     [('workcenter_id', 'in', self.ids), ('state', 'in', ('pending', 'waiting', 'ready')), ('date_start', '<', datetime.now().strftime('%Y-%m-%d'))],
+            //     [('workcenter_id', 'in', self.ids), ('state', 'in', ('blocked', 'ready')), ('date_start', '<', datetime.now().strftime('%Y-%m-%d'))],
             //     ['workcenter_id'], ['__count'])
             // count_data = {workcenter.id: count for workcenter, count in data}
             // # Count All, Pending, Ready, Progress Workorder
@@ -3454,63 +3714,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ['workcenter_id', 'state'], ['duration_expected:sum', '__count'])
             // for workcenter, state, duration_sum, count in res:
             //     result[workcenter.id][state] = count
-            //     if state in ('pending', 'waiting', 'ready', 'progress'):
+            //     if state in ('blocked', 'ready', 'progress'):
             //         result_duration_expected[workcenter.id] += duration_sum
             // for workcenter in self:
             //     workcenter.workorder_count = sum(count for state, count in result[workcenter.id].items() if state not in ('done', 'cancel'))
-            //     workcenter.workorder_pending_count = result[workcenter.id].get('pending', 0)
+            //     workcenter.workorder_blocked_count = result[workcenter.id].get('blocked', 0)
             //     workcenter.workcenter_load = result_duration_expected[workcenter.id]
             //     workcenter.workorder_ready_count = result[workcenter.id].get('ready', 0)
             //     workcenter.workorder_progress_count = result[workcenter.id].get('progress', 0)
             //     workcenter.workorder_late_count = count_data.get(workcenter.id, 0)
-            */
-            return default;
-        }
-
-        public async Task<object> ConditionToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string fname, string @operator, object @value, object query) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
-            // def _condition_to_sql(self, alias: str, fname: str, operator: str, value, query: Query) -> SQL:
-            // # Don't use this override when account_report_analytic_groupby is truly in the context
-            // # Indeed, when account_report_analytic_groupby is in the context it means that `analytic_distribution`
-            // # doesn't have the same format and the table is a temporary one, see _prepare_lines_for_analytic_groupby
-            // if fname != 'analytic_distribution' or self.env.context.get('account_report_analytic_groupby'):
-            //     return super()._condition_to_sql(alias, fname, operator, value, query)
-            // 
-            // if operator not in ('=', '!=', 'ilike', 'not ilike', 'in', 'not in'):
-            //     raise UserError(_('Operation not supported'))
-            // 
-            // if operator in ('=', '!=') and isinstance(value, bool):
-            //     return super()._condition_to_sql(alias, fname, operator, value, query)
-            // 
-            // if isinstance(value, str) and operator in ('=', '!=', 'ilike', 'not ilike'):
-            //     value = list(self.env['account.analytic.account']._search(
-            //         [('display_name', '=' if operator in ('=', '!=') else 'ilike', value)]
-            //     ))
-            //     operator = 'in' if operator in ('=', 'ilike') else 'not in'
-            // 
-            // if isinstance(value, int) and operator in ('=', '!='):
-            //     value = [value]
-            //     operator = 'in' if operator == '=' else 'not in'
-            // 
-            // # keys can be comma-separated ids, we will split those into an array and then make an array comparison with the list of ids to check
-            // analytic_accounts_query = self._query_analytic_accounts()
-            // value = [str(id_) for id_ in value if id_]  # list of ids -> list of string
-            // if operator == 'in':
-            //     return SQL(
-            //         "%s && %s",
-            //         analytic_accounts_query,
-            //         value,
-            //     )
-            // if operator == 'not in':
-            //     return SQL(
-            //         "(NOT %s && %s OR %s IS NULL)",
-            //         analytic_accounts_query,
-            //         value,
-            //         self._field_to_sql(alias, 'analytic_distribution', query),
-            //     )
-            // raise UserError(_('Operation not supported'))
             */
             return default;
         }
@@ -3527,6 +3739,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // )
             // to_reset.invalidate_recordset([fname])
             // self.env.add_to_compute(field, to_reset)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ConstrainsDeductibleAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _constrains_deductible_amount(self):
+            // for line in self:
+            //     if not line.move_id.is_purchase_document() and float_compare(line.deductible_amount, 100, precision_digits=2):
+            //         raise ValidationError(_("Only vendor bills allow for deductibility of product/services."))
+            //     if line.deductible_amount < 0 or line.deductible_amount > 100:
+            //         raise ValidationError(_("The deductibility must be a value between 0 and 100."))
             */
             return default;
         }
@@ -3611,13 +3837,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if line.display_type == 'payment_term' and line.move_id.is_invoice(True):
             //         del vals['name']
             //     # Don't copy restricted fields of notes
-            //     if line.display_type in ('line_section', 'line_note'):
+            //     if line.display_type in ('line_section', 'line_subsection', 'line_note'):
             //         del vals['balance']
             //         del vals['account_id']
             //     # Will be recomputed from the price_unit
             //     if line.display_type == 'product' and line.move_id.is_invoice(True):
             //         del vals['balance']
-            //     if self._context.get('include_business_fields'):
+            //     if self.env.context.get('include_business_fields'):
             //         line._copy_data_extend_business_fields(vals)
             // return vals_list
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -3670,6 +3896,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // move_container = {'records': moves}
             // with moves._check_balanced(move_container),\
             //      ExitStack() as exit_stack,\
+            //      self.env.protecting(self.env['account.move']._get_protected_vals({}, moves)), \
             //      moves._sync_dynamic_lines(move_container),\
             //      self._sync_invoice(container):
             //     lines = super().create([self._sanitize_vals(vals) for vals in vals_list])
@@ -3695,6 +3922,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // lines.move_id._synchronize_business_models(['line_ids'])
             // lines._check_constrains_account_id_journal_id()
+            // # Remove analytic lines created for draft AMLs, after analytic_distribution has been updated
+            // lines.filtered(lambda l: l.parent_state == 'draft').analytic_line_ids.with_context(skip_analytic_sync=True).unlink()
             // return lines
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
             // def create(self, vals_list):
@@ -3705,17 +3934,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def create(self, vals_list):
             // expenses = super().create(vals_list)
-            // if self.env.context.get('check_total_amount_not_zero'):
-            //     for expense, vals in zip(expenses, vals_list):
-            //         expense.check_amount_not_zero(vals)
+            // expenses.update_activities_and_mails()
             // return expenses
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def create(self, vals_list):
             // for values in vals_list:
             //     if values.get('display_type', self.default_get(['display_type'])['display_type']):
-            //         values.update(product_id=False, price_unit=0, product_uom_qty=0, product_uom=False, date_planned=False)
+            //         values.update(product_id=False, price_unit=0, product_uom_qty=0, product_uom_id=False, date_planned=False)
             //     else:
             //         values.update(self._prepare_add_missing_fields(values))
+            //     if values.get('price_unit') and not values.get('technical_price_unit'):
+            //         values['technical_price_unit'] = values['price_unit']
             // 
             // lines = super().create(vals_list)
             // for line in lines:
@@ -3773,6 +4002,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CreateCompanyPaidMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _create_company_paid_moves(self):
+            // """
+            // Creation of the account moves for the company paid expenses.
+            // -> Create an account payment (we only "log" the already paid expense so it can be reconciled)
+            // """
+            // self = self.with_context(clean_context(self.env.context))  # remove default_*
+            // company_account_expenses = self.filtered(lambda expense: expense.payment_mode == 'company_account')
+            // moves_sudo = self.env['account.move'].sudo()
+            // 
+            // if company_account_expenses:
+            //     move_vals_list, payment_vals_list = zip(*[expense._prepare_payments_vals() for expense in company_account_expenses])
+            // 
+            //     payment_moves_sudo = self.env['account.move'].sudo().create(move_vals_list)
+            //     for payment_vals, move in zip(payment_vals_list, payment_moves_sudo):
+            //         payment_vals['move_id'] = move.id
+            // 
+            //     payments_sudo = self.env['account.payment'].sudo().create(payment_vals_list)
+            //     for payment_sudo, move_sudo in zip(payments_sudo, payment_moves_sudo):
+            //         move_sudo.update({
+            //             'origin_payment_id': payment_sudo.id,
+            //             # We need to put the journal_id because editing origin_payment_id triggers a re-computation chain
+            //             # that voids the company_currency_id of the lines
+            //             'journal_id': move_sudo.journal_id.id,
+            //         })
+            // 
+            //     moves_sudo |= payment_moves_sudo
+            // 
+            // # returning the move with the superuser flag set back as it was at the origin of the call
+            // return moves_sudo.sudo(self.env.su)
+            */
+            return default;
+        }
+
         public async Task<TEntity> CreateDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fname, object @value) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -3798,6 +4064,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                                     See the '_prepare_exchange_difference_move_vals' method.
             // :return: An account.move recordset.
             // """
+            // # early return to prevent endless recursive computation of reconcile plan
+            // if not exchange_diff_values_list:
+            //     return self.env['account.move']
+            // 
             // exchange_move_values_list = []
             // journal_ids = set()
             // for exchange_diff_values in exchange_diff_values_list:
@@ -3811,9 +4081,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ))
             // 
             //     journal_ids.add(move_vals['journal_id'])
-            // 
-            // if not exchange_move_values_list:
-            //     return self.env['account.move']
             // 
             // # ==== Check the config ====
             // journals = self.env['account.journal'].browse(list(journal_ids))
@@ -3829,20 +4096,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             " automatically the booking of accounting entries related to differences between exchange rates."
             //         ))
             // 
-            // # ==== Create the move ====
-            // exchange_moves = self.env['account.move'].create(exchange_move_values_list)
-            // exchange_moves._post(soft=False)
+            // # ==== Create the moves ====
+            // exchange_moves = self.env['account.move'].with_context(no_exchange_difference=True).create(exchange_move_values_list)
+            // # The reconciliation of exchange moves is now dealt thanks to the reconciled_lines_ids field
             // 
-            // # ==== Reconcile ====
-            // reconciliation_plan = []
-            // for exchange_move, exchange_diff_values in zip(exchange_moves, exchange_diff_values_list):
-            //     for source_line, sequence in exchange_diff_values['to_reconcile']:
-            //         exchange_diff_line = exchange_move.line_ids[sequence]
-            //         reconciliation_plan.append((source_line + exchange_diff_line))
+            // # ==== See if the exchange moves need to be posted or not ====
+            // exchange_moves_to_post = self.env['account.move']
+            // for exchange_move, vals in zip(exchange_moves, exchange_diff_values_list):
+            //     if vals['to_post']:
+            //         exchange_moves_to_post |= exchange_move
             // 
-            // self\
-            //     .with_context(no_exchange_difference=True)\
-            //     ._reconcile_plan(reconciliation_plan)
+            // if exchange_moves_to_post:
+            //     exchange_moves_to_post._post(soft=False)
             // 
             // return exchange_moves
             */
@@ -3874,9 +4139,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_("You need to have at least one category that can be expensed in your database to proceed!"))
             // 
             // for attachment in attachments:
-            //     attachment_name = '.'.join(attachment.name.split('.')[:-1])
             //     vals = {
-            //         'name': attachment_name,
+            //         'name': self._get_untitled_expense_name(format_date(self.env, fields.Date.context_today(self))),
             //         'price_unit': 0,
             //         'product_id': product.id,
             //     }
@@ -3887,54 +4151,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     expense._message_set_main_attachment_id(attachment, force=True)
             //     expenses += expense
-            // return {
-            //     'name': _('Generate Expenses'),
-            //     'res_model': 'hr.expense',
-            //     'type': 'ir.actions.act_window',
-            //     'views': [[False, view_type], [False, "form"]],
-            //     'domain': [('id', 'in', expenses.ids)],
-            //     'context': self.env.context,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateReconciliationPartialsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _create_reconciliation_partials(self):
-            // '''create the partial reconciliation between all the records in self
-            //  :return: A recordset of account.partial.reconcile.
-            // '''
-            // partials_vals_list, exchange_data = self._prepare_reconciliation_partials([
-            //     {
-            //         'aml': line,
-            //         'amount_residual': line.amount_residual,
-            //         'amount_residual_currency': line.amount_residual_currency,
-            //     }
-            //     for line in self
-            // ])
-            // partials = self.env['account.partial.reconcile'].create(partials_vals_list)
-            // 
-            // # ==== Create exchange difference moves ====
-            // for index, exchange_values in exchange_data.items():
-            //     partials[index].exchange_move_id = self._create_exchange_difference_move(exchange_values)
-            // 
-            // return partials
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateSheetsFromExpenseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _create_sheets_from_expense(self):
-            // if self.filtered(lambda expense: not expense.is_editable):
-            //     raise UserError(_('You are not authorized to edit this expense.'))
-            // sheets = self.env['hr.expense.sheet'].create(self._get_default_expense_sheet_values())
-            // return sheets
+            // return expenses.ids
             */
             return default;
         }
@@ -3951,11 +4168,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.env['product.supplierinfo'].sudo().create({
             //         'partner_id': purchase_requisition.vendor_id.id,
             //         'product_id': self.product_id.id,
+            //         'product_uom_id': self.product_uom_id.id,
             //         'product_tmpl_id': self.product_id.product_tmpl_id.id,
             //         'price': self.price_unit,
             //         'currency_id': self.requisition_id.currency_id.id,
             //         'purchase_requisition_line_id': self.id,
             //     })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreationMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _creation_message(self):
+            // if self.env.context.get('from_split_wizard'):
+            //     return _("Expense created from a split.")
+            // return super()._creation_message()
             */
             return default;
         }
@@ -3966,6 +4196,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
             // def _cron_generate_entries(self):
             // self.compute_generated_entries(datetime.today())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DateInThePastInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _date_in_the_past(self):
+            // if not 'accrual_entry_date' in self.env.context:
+            //     return False
+            // accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
+            // return accrual_date < fields.Date.today()
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _date_in_the_past(self):
+            // if not 'accrual_entry_date' in self.env.context:
+            //     return False
+            // accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
+            // return accrual_date < fields.Date.today()
             */
             return default;
         }
@@ -3983,20 +4232,86 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def default_get(self, fields_list):
-            // defaults = super().default_get(fields_list)
+            // def default_get(self, fields):
+            // defaults = super().default_get(fields)
             // quick_encode_suggestion = self.env.context.get('quick_encoding_vals')
-            // if quick_encode_suggestion and self.env.context.get('default_display_type') not in ('line_section', 'line_note'):
+            // if quick_encode_suggestion and self.env.context.get('default_display_type') not in ('line_section', 'line_subsection', 'line_note'):
             //     defaults['account_id'] = quick_encode_suggestion['account_id']
             //     defaults['price_unit'] = quick_encode_suggestion['price_unit']
             //     defaults['tax_ids'] = [Command.set(quick_encode_suggestion['tax_ids'])]
             // elif (journal := self.env['account.journal'].browse(self.env.context.get('journal_id'))) and journal.default_account_id:
             //     defaults['account_id'] = journal.default_account_id
             // return defaults
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DoApproveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object check) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _do_approve(self, check=True):
+            // if check:
+            //     self._check_can_approve()
+            // expenses_to_approve = self.filtered(lambda s: s.state in {'submitted', 'draft'})
+            // for expense in expenses_to_approve:
+            //     expense.write({
+            //         'approval_state': 'approved',
+            //         'manager_id': self.env.user.id,
+            //         'approval_date': fields.Datetime().now(),
+            //     })
+            // self.update_activities_and_mails()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DoRefuseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reason) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _do_refuse(self, reason):
+            // # Sudoed as approvers may not be accountants
+            // draft_moves_sudo = self.sudo().account_move_id.filtered(lambda move: move.state == 'draft')
+            // if self.sudo().account_move_id - draft_moves_sudo:
+            //     raise UserError(_("You cannot cancel an expense linked to a posted journal entry"))
+            // 
+            // if draft_moves_sudo:
+            //     draft_moves_sudo.unlink()  # Else we have lingering moves
+            // 
+            // self.approval_state = 'refused'
+            // subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
+            // for expense in self:
+            //     expense.message_post_with_source(
+            //         'hr_expense.hr_expense_template_refuse_reason',
+            //         subtype_id=subtype_id,
+            //         render_values={'reason': reason, 'name': expense.name},
+            //     )
+            // self.update_activities_and_mails()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DoResetApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _do_reset_approval(self):
+            // self.sudo().write({'approval_state': False, 'approval_date': False, 'account_move_id': False})
+            // self.update_activities_and_mails()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DomainProductIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _domain_product_id(self):
+            // return [('sale_ok', '=', True)]
             */
             return default;
         }
@@ -4043,22 +4358,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string fname, object query, bool flush) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string field_expr, object query) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _field_to_sql(self, alias: str, fname: str, query: (Query | None) = None, flush: bool = True) -> SQL:
+            // def _field_to_sql(self, alias: str, field_expr: str, query: (Query | None) = None) -> SQL:
+            // fname, property_name = fields.parse_field_expr(field_expr)
             // if fname != 'payment_date':
-            //     return super()._field_to_sql(alias, fname, query, flush)
-            // return SQL("""
+            //     return super()._field_to_sql(alias, field_expr, query)
+            // sql = SQL("""
             //     CASE
             //          WHEN %(discount_date)s >= %(today)s THEN %(discount_date)s
             //          ELSE %(date_maturity)s
             //     END""",
             //     today=fields.Date.context_today(self),
-            //     discount_date=super()._field_to_sql(alias, "discount_date", query, flush),
-            //     date_maturity=super()._field_to_sql(alias, "date_maturity", query, flush),
+            //     discount_date=super()._field_to_sql(alias, "discount_date", query),
+            //     date_maturity=super()._field_to_sql(alias, "date_maturity", query),
             // )
+            // if property_name:
+            //     sql = self._field[fname].property_to_sql(sql, property_name, self, alias, query)
+            // return sql
             */
             return default;
         }
@@ -4086,7 +4405,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // Uses a mapping built with `_reconciled_by_number` to avoid multiple calls to the database.
             // """
-            // matching_numbers = [n for n in set(self.mapped('matching_number')) if n]
+            // # We ignore Import matching numbers as they are not truly reconciled yet
+            // matching_numbers = [n for n in set(self.mapped('matching_number')) if n and not n.startswith('I')]
+            // 
             // return self | self.browse([_id for number in matching_numbers for _id in mapping[number].ids])
             */
             return default;
@@ -4099,7 +4420,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def filtered_domain(self, domain):
             // # Filter based on the accounts used (i.e. allowing a name_search) instead of the distribution
             // # A domain on a binary field doesn't make sense anymore outside of set or not; and it is still doable.
-            // return super(AnalyticMixin, self.with_context(distribution_ids=True)).filtered_domain(domain)
+            // # Hack to filter using another field.
+            // domain = Domain(domain).map_conditions(lambda cond: Domain('distribution_analytic_account_ids', cond.operator, cond.value) if cond.field_expr == 'analytic_distribution' else cond)
+            // return super().filtered_domain(domain)
             */
             return default;
         }
@@ -4150,6 +4473,72 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAmlValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_aml_values(self, **kwargs):
+            // self.ensure_one()
+            // return {
+            //     'name': self.name,
+            //     'account_id': self.account_id.id,
+            //     'currency_id': self.currency_id.id,
+            //     'amount_currency': self.amount_currency,
+            //     'balance': self.balance,
+            //     'reconcile_model_id': self.reconcile_model_id.id,
+            //     'analytic_distribution': self.analytic_distribution,
+            //     'tax_repartition_line_id': self.tax_repartition_line_id.id,
+            //     'tax_ids': [Command.set(self.tax_ids.ids)] + kwargs.pop('tax_ids', []),
+            //     'tax_tag_ids': [Command.set(self.tax_tag_ids.ids)],
+            //     'group_tax_id': self.group_tax_id.id,
+            //     'partner_id': self.partner_id.id,
+            //     **kwargs,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAnalyticAccountIdsFromDistributionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object distributions) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
+            // def _get_analytic_account_ids_from_distributions(self, distributions):
+            // if not distributions:
+            //     return []
+            // 
+            // if isinstance(distributions, (list, tuple, set)):
+            //     return {int(_id) for distribution in distributions for key in (distribution or {}) for _id in key.split(',')}
+            // else:
+            //     return {int(_id) for key in (distributions or {}) for _id in key.split(',')}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAnalyticDistributionArgumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object root_plans) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_analytic_distribution_arguments(self, root_plans):
+            // """
+            // Get arguments to determine analytic distribution.
+            // This function aims to be overridden by partner submodules
+            // :param root_plans: account.analytic.plan recordset
+            // :return: dict
+            // """
+            // arguments = {
+            //     "product_id": self.product_id.id,
+            //     "product_categ_id": self.product_id.categ_id.id,
+            //     "partner_id": self.partner_id.id,
+            //     "partner_category_id": self.partner_id.category_id.ids,
+            //     "account_prefix": self.account_id.code,
+            //     "company_id": self.company_id.id,
+            //     "related_root_plan_ids": root_plans,
+            // }
+            // return arguments
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetApplicableModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -4164,21 +4553,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAttachmentByRecordInternalAsync<TEntity>(IEnumerable<TEntity> entities, object id_model2attachments, object move_line) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_attachment_by_record(self, id_model2attachments, move_line):
+            // return (
+            //     id_model2attachments.get(('account.move', move_line.move_id.id))
+            //     or id_model2attachments.get(('account.bank.statement', move_line.statement_id.id))
+            //     or id_model2attachments.get(('account.payment', move_line.payment_id.id))
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAttachmentDomainsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _get_attachment_domains(self):
-            // self.ensure_one()
             // domains = [[
             //     ('res_model', '=', 'account.move'),
-            //     ('res_id', '=', self.move_id.id),
+            //     ('res_id', 'in', self.move_id.ids),
             //     ('res_field', 'in', (False, 'invoice_pdf_report_file')),
             // ]]
             // if self.statement_id:
-            //     domains.append([('res_model', '=', 'account.bank.statement'), ('res_id', '=', self.statement_id.id)])
+            //     domains.append([('res_model', '=', 'account.bank.statement'), ('res_id', 'in', self.statement_id.ids)])
             // if self.payment_id:
-            //     domains.append([('res_model', '=', 'account.payment'), ('res_id', '=', self.payment_id.id)])
+            //     domains.append([('res_model', '=', 'account.payment'), ('res_id', 'in', self.payment_id.ids)])
             // return domains
             */
             return default;
@@ -4195,13 +4597,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // Returned expense accounts are the first expense account encountered in the following list:
             // 1. expense account of the expense itself
             // 2. expense account of the product
-            // 3. expense account of the product category
+            // 3. expense account of the company
             // 4. expense account on the purchase journal for employee expense
             // """
             // 
             // # expense account of the expense itself
             // account = self.account_id
-            // 
             // if account:
             //     return account
             // 
@@ -4209,29 +4610,173 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.product_id:
             //     account = self.product_id.product_tmpl_id._get_product_accounts()['expense']
             // else:
-            //     field = self.env['product.category']._fields['property_account_expense_categ_id']
-            //     account = field.get_company_dependent_fallback(self.env['product.category'])
+            //     account = self.env.company.expense_account_id
             // 
             // if account:
             //     return account
             // 
             // # expense account on the purchase journal for employee expense
-            // journal = self.sheet_id.journal_id
+            // journal = self.journal_id
             // if journal.type == 'purchase':
             //     account = journal.default_account_id
             // 
+            // if not account:
+            //     raise UserError(self.env._(
+            //         "Odoo had a look at your expense, its product, your company and the journal but came back with empty hands.\n"
+            //         "Give Odoo a hand to find an account by setting up an expense account.\n"
+            //         "%(expense)s %(expense_name)s.\n",
+            //         expense=self,
+            //         expense_name=self.name,
+            //     ))
             // return account
             */
             return default;
         }
 
-        public async Task<TEntity> GetCapacityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> GetCannotApproveReasonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_cannot_approve_reason(self):
+            // """ Returns the reason why the user cannot approve the expense """
+            // is_team_approver = self.env.user.has_group('hr_expense.group_hr_expense_team_approver') or self.env.su
+            // is_approver = self.env.user.has_group('hr_expense.group_hr_expense_user') or self.env.su
+            // is_hr_admin = self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su
+            // 
+            // valid_company_ids = set(self.env.companies.ids)
+            // 
+            // expenses_employee_ids_under_user_ones = set()
+            // if is_team_approver:  # We don't need to search if the user has not the required rights
+            //     expenses_employee_ids_under_user_ones = set(
+            //         self.env['hr.employee'].sudo().search([
+            //             ('id', 'in', self.employee_id.ids),
+            //             ('id', 'child_of', self.env.user.employee_ids.ids),
+            //             ('id', 'not in', self.env.user.employee_ids.ids),
+            //         ]).ids
+            //     )
+            // reasons_per_record_id = {}
+            // for expense in self:
+            //     reason = False
+            //     expense_employee = expense.employee_id
+            //     is_expense_team_approver = (
+            //             is_team_approver  # Admins are team approvers, not necessarily direct parents
+            //             or expense_employee.id in expenses_employee_ids_under_user_ones
+            //             or (expense_employee.expense_manager_id == self.env.user)
+            //     )
+            //     if expense.company_id.id not in valid_company_ids:
+            //         reason = _(
+            //             "%(expense_name)s: Your are neither a Manager nor a HR Officer of this expense's company",
+            //             expense_name=expense.name,
+            //         )
+            // 
+            //     elif not is_expense_team_approver:
+            //         reason = _("%(expense_name)s: You are neither a Manager nor a HR Officer", expense_name=expense.name)
+            // 
+            //     elif not is_hr_admin:
+            //         current_managers = (
+            //                 expense_employee.expense_manager_id
+            //                 | expense_employee.sudo().department_id.manager_id.user_id.sudo(self.env.su)
+            //                 | expense.manager_id
+            //         )
+            //         if expense_employee.id in expenses_employee_ids_under_user_ones:
+            //             current_managers |= self.env.user
+            // 
+            //         if expense_employee.user_id == self.env.user:
+            //             reason = _("%(expense_name)s: It is your own expense", expense_name=expense.name)
+            // 
+            //         elif self.env.user not in current_managers and not is_approver:
+            //             reason = _("%(expense_name)s: It is not from your department", expense_name=expense.name)
+            //     reasons_per_record_id[expense.id] = reason
+            // return reasons_per_record_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCapacityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object unit, object default_capacity) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _get_capacity(self, product):
-            // product_capacity = self.capacity_ids.filtered(lambda capacity: capacity.product_id == product)
-            // return product_capacity.capacity if product_capacity else self.default_capacity
+            // def _get_capacity(self, product, unit, default_capacity=1):
+            // capacity = self.capacity_ids.sorted(lambda c: (
+            //     not (c.product_id == product and c.product_uom_id == product.uom_id),
+            //     not (not c.product_id and c.product_uom_id == unit),
+            //     not (not c.product_id and c.product_uom_id == product.uom_id),
+            // ))[:1]
+            // if capacity and capacity.product_id in [product, self.env['product.product']] and capacity.product_uom_id in [product.uom_id, unit]:
+            //     if float_is_zero(capacity.capacity, 0):
+            //         return (default_capacity, capacity.time_start, capacity.time_stop)
+            //     return (capacity.product_uom_id._compute_quantity(capacity.capacity, unit), capacity.time_start, capacity.time_stop)
+            // return (default_capacity, self.time_start, self.time_stop)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetChildLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_child_lines(self):
+            // """
+            // Return a tax-wise summary of account move lines linked to section.
+            // Groups lines by their tax IDs and computes subtotal and total for each group.
+            // """
+            // self.ensure_one()
+            // 
+            // section_lines = self.move_id.invoice_line_ids.filtered(lambda l: (l.parent_id == self or l.parent_id.parent_id == self))
+            // result = []
+            // for taxes, lines_for_tax_group in groupby(section_lines, key=lambda l: l.tax_ids):
+            //     lines_for_tax_group = sum(lines_for_tax_group, start=self.env['account.move.line'])
+            //     tax_labels = [tax.tax_label for tax in taxes if tax.tax_label]
+            //     for section_line, move_lines in lines_for_tax_group.sorted('sequence').grouped('parent_id').items():
+            //         lines_to_sum = move_lines if section_line != self else lines_for_tax_group
+            //         subtotal = sum(l.price_subtotal for l in lines_to_sum)
+            //         total = sum(l.price_total for l in lines_to_sum)
+            //         if not subtotal and not tax_labels:
+            //             continue
+            //         elif section_line.collapse_composition or section_line.parent_id.collapse_composition:
+            //             result.append({
+            //                 'name': section_line.name,
+            //                 'taxes': tax_labels if not section_line.parent_id.collapse_prices else [],
+            //                 'price_subtotal': subtotal,
+            //                 'price_total': total,
+            //                 'display_type': 'product',
+            //                 'quantity': 1,
+            //                 'line_uom': False,
+            //                 'product_uom': False,
+            //                 'discount': 0.0,
+            //             })
+            //         else:
+            //             for line in (section_line | move_lines):
+            //                 result.append({
+            //                     'name': line.name,
+            //                     'taxes': tax_labels if line == self else [],
+            //                     'price_subtotal': subtotal if line == section_line else line.price_subtotal,
+            //                     'price_total': total if line == section_line else line.price_total,
+            //                     'display_type': line.display_type,
+            //                     'quantity': line.quantity,
+            //                     'line_uom': line.product_uom_id,
+            //                     'product_uom': line.product_id.uom_id,
+            //                     'discount': line.discount,
+            //                 })
+            // 
+            // return result or [{
+            //     'name': self.name,
+            //     'taxes': [],
+            //     'price_subtotal': 0.0,
+            //     'price_total': 0.0,
+            //     'quantity': 0,
+            //     'display_type': 'product',
+            // }]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetColumnToExcludeForColspanCalculationAsync<TEntity>(IEnumerable<TEntity> entities, object taxes) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def get_column_to_exclude_for_colspan_calculation(self, taxes=None):
+            // return False
             */
             return default;
         }
@@ -4263,7 +4808,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         to_currency=self.currency_id,
             //         company=self.company_id,
             //         date=self.order_id.date_order,
-            //     ) for combo_id in combo_line.product_template_id.combo_ids
+            //     ) for combo_id in combo_line.product_template_id.sudo().combo_ids
             // }
             // total_combo_base_price = sum(combo_base_prices.values())
             // # Compute the prorated combo prices.
@@ -4280,7 +4825,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # the combo prices to make the delta 0.
             // combo_price_delta = combo_product_price - sum(combo_prices.values())
             // if combo_price_delta:
-            //     combo_prices[combo_line.product_template_id.combo_ids[-1]] += combo_price_delta
+            //     combo_prices[combo_line.product_template_id.sudo().combo_ids[-1]] += combo_price_delta
             // # Add the extra price of this combo item, as well as the extra prices of any `no_variant`
             // # attributes to the combo price.
             // return (
@@ -4290,6 +4835,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.product_no_variant_attribute_value_ids
             //     )
             // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetComboTotalsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object totals_field) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_combo_totals(self, totals_field):
+            // """Return the total/subtotal amount sale order lines linked to combo."""
+            // self.ensure_one()
+            // combo_item_lines = self.order_id.order_line.filtered(
+            //     lambda line: line.linked_line_id == self and line.combo_item_id,
+            // )
+            // return sum(combo_item_lines.mapped(totals_field))
             */
             return default;
         }
@@ -4312,8 +4872,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     filtered_supplier_taxes_id = self.product_id.supplier_taxes_id.filtered_domain(company_domain)
             //     tax_ids = filtered_supplier_taxes_id or self.account_id.tax_ids.filtered(lambda tax: tax.type_tax_use == 'purchase')
             // 
+            // elif self.env.context.get('account_default_taxes'):
+            //     tax_ids = self.account_id.tax_ids
+            // 
             // else:
-            //     tax_ids = False if self.env.context.get('skip_computed_taxes') else self.account_id.tax_ids
+            //     tax_ids = False if self.env.context.get('skip_computed_taxes') or self.move_id.is_entry() else self.account_id.tax_ids
             // 
             // if self.company_id and tax_ids:
             //     tax_ids = tax_ids._filter_taxes_by_company(self.company_id)
@@ -4380,52 +4943,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDefaultExpenseSheetValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> GetDefaultReadFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_default_read_fields(self):
+            // weirdos = {'term_key', 'epd_key', 'epd_needed', 'discount_allocation_key', 'discount_allocation_needed'}
+            // return [fname for fname in self.fields_get(attributes=()) if fname not in weirdos]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDefaultResponsibleForApprovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _get_default_expense_sheet_values(self):
-            // # If there is an expense with total_amount == 0, it means that expense has not been processed by OCR yet
-            // expenses_with_amount = self.filtered(lambda expense: not (
-            //     expense.currency_id.is_zero(expense.total_amount_currency)
-            //     or expense.company_currency_id.is_zero(expense.total_amount)
-            //     or (expense.product_id and not float_round(expense.quantity, precision_rounding=expense.product_uom_id.rounding))
-            // ))
+            // def _get_default_responsible_for_approval(self):
+            // self.ensure_one()
+            // approver_group = 'hr_expense.group_hr_expense_team_approver'
             // 
-            // if any(expense.state != 'draft' or expense.sheet_id for expense in expenses_with_amount):
-            //     raise UserError(_("You cannot report twice the same line!"))
-            // if not expenses_with_amount:
-            //     raise UserError(_("You cannot report the expenses without amount!"))
-            // if len(expenses_with_amount.mapped('employee_id')) != 1:
-            //     raise UserError(_("You cannot report expenses for different employees in the same report."))
-            // if any(not expense.product_id for expense in expenses_with_amount):
-            //     raise UserError(_("You can not create report without category."))
-            // if len(self.company_id) != 1:
-            //     raise UserError(_("You cannot report expenses for different companies in the same report."))
+            // employee = self.employee_id.sudo()
+            // expense_manager = employee.expense_manager_id - employee.user_id
+            // if expense_manager:
+            //     return expense_manager.sudo(False)
             // 
-            // # Check if two reports should be created
-            // own_expenses = expenses_with_amount.filtered(lambda x: x.payment_mode == 'own_account')
-            // company_expenses = expenses_with_amount - own_expenses
-            // create_two_reports = own_expenses and company_expenses
+            // department_manager = employee.department_id.manager_id.user_id - employee.user_id
+            // if department_manager and department_manager.has_groups(approver_group):
+            //     return department_manager.sudo(False)
             // 
-            // sheets = (own_expenses, company_expenses) if create_two_reports else (expenses_with_amount,)
-            // values = []
+            // employee_team_leader = employee.parent_id.user_id
+            // if employee_team_leader:
+            //     return employee_team_leader.sudo(False)
             // 
-            // # We use a fallback name only when several expense sheets are created,
-            // # else we use the form view required name to force the user to set a name
-            // for todo in sheets:
-            //     paid_by = 'company' if todo[0].payment_mode == 'company_account' else 'employee'
-            //     sheet_name = self.env['hr.expense.sheet']._get_default_sheet_name(todo)
-            //     if not sheet_name and len(sheets) > 1:
-            //         sheet_name = _("New Expense Report, paid by %(paid_by)s", paid_by=paid_by)
-            //     values.append({
-            //         'company_id': self.company_id.id,
-            //         'employee_id': self[0].employee_id.id,
-            //         'name': sheet_name,
-            //         'expense_line_ids': [Command.set(todo.ids)],
-            //         'state': 'draft',
-            //     })
-            // return values
+            // return self.env['res.users']
             */
             return default;
         }
@@ -4449,8 +4999,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _get_delivered_quantity_by_analytic(self, additional_domain):
-            // """ Compute and write the delivered quantity of current SO lines, based on their related
-            //     analytic lines.
+            // """ Compute and return the delivered quantity of current SO lines,
+            //     based on their related analytic lines.
             //     :param additional_domain: domain to restrict AAL to include in computation (required since timesheet is an AAL with a project ...)
             // """
             // result = defaultdict(float)
@@ -4460,7 +5010,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return result
             // 
             // # group analytic lines by product uom and so line
-            // domain = expression.AND([[('so_line', 'in', self.ids)], additional_domain])
+            // domain = Domain.AND([[('so_line', 'in', self.ids)], additional_domain])
             // data = self.env['account.analytic.line']._read_group(
             //     domain,
             //     ['product_uom_id', 'so_line'],
@@ -4476,11 +5026,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         qty = unit_amount_sum / count
             //     else:
             //         qty = unit_amount_sum
-            //     if so_line.product_uom.category_id == uom.category_id:
-            //         qty = uom._compute_quantity(qty, so_line.product_uom, rounding_method='HALF-UP')
+            //     qty = uom._compute_quantity(qty, so_line.product_uom_id, rounding_method='HALF-UP')
             //     result[so_line.id] += qty
             // 
             // return result
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDiscountedPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_discounted_price(self):
+            // self.ensure_one()
+            // return self.price_unit * (1 - (self.discount or 0.0) / 100.0)
             */
             return default;
         }
@@ -4686,11 +5246,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _get_employee_from_email(self, email_address):
+            // if not email_address:
+            //     return self.env['hr.employee']
             // employee = self.env['hr.employee'].search([
-            //     ('user_id', '!=', False),
-            //     '|',
-            //     ('work_email', 'ilike', email_address),
-            //     ('user_id.email', 'ilike', email_address),
+            //     ('user_id', '!=', False), '|', ('work_email', 'ilike', email_address), ('user_id.email', 'ilike', email_address),
             // ])
             // 
             // if len(employee) > 1:
@@ -4764,26 +5323,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetExpectedDurationInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid product_id) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _get_expected_duration(self, product_id):
-            // """Compute the expected duration when using this work-center
-            // Always use the startup / clean-up time from specific capacity if defined.
-            // """
-            // capacity = self.capacity_ids.filtered(lambda p: p.product_id == product_id)
-            // return capacity.time_start + capacity.time_stop if capacity else self.time_start + self.time_stop
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetExpenseAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> GetExpenseAccountDestinationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def get_expense_attachments(self):
-            // return self.attachment_ids.mapped('image_src')
+            // def _get_expense_account_destination(self):
+            // # account.move used to allow having several expenses with payment_mode = 'company_account'.
+            // # This method needs to support processing several expenses to allow reconciliation of old account.move.line
+            // ids = set()
+            // for expense in self:
+            //     if expense.payment_mode == 'company_account':
+            //         account_dest = expense.payment_method_line_id.payment_account_id or expense._get_outstanding_account_id()
+            //     elif not expense.employee_id.sudo().work_contact_id:
+            //         raise UserError(self.env._(
+            //             "No work contact found for the employee %(name)s, please configure one.",
+            //             name=expense.employee_id.name,
+            //         ))
+            //     else:
+            //         partner = expense.employee_id.sudo().work_contact_id.with_company(expense.company_id)
+            //         account_dest = partner.property_account_payable_id or partner.parent_id.property_account_payable_id
+            //     ids.add(account_dest.id)
+            // 
+            // # mimics <account.account>.id
+            // if not ids:
+            //     return False
+            // if len(ids) > 1:
+            //     raise UserError(self.env._(
+            //         "The following expenses payment method leads to several accounts payable and this isn't supported:\n%(expenses)s",
+            //         expenses=self.browse(ids),
+            //     ))
+            // return ids.pop()
             */
             return default;
         }
@@ -4794,62 +5363,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def get_expense_dashboard(self):
             // expense_state = {
-            //     'to_submit': {
-            //         'description': _('to submit'),
+            //     'draft': {
+            //         'description': _("To Submit"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     },
             //     'submitted': {
-            //         'description': _('under validation'),
+            //         'description': _("Waiting Approval"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     },
             //     'approved': {
-            //         'description': _('to be reimbursed'),
+            //         'description': _("Waiting Reimbursement"),
             //         'amount': 0.0,
             //         'currency': self.env.company.currency_id.id,
             //     }
             // }
             // if not self.env.user.employee_ids:
             //     return expense_state
-            // target_currency = self.env.company.currency_id
             // # Counting the expenses to display in the dashboard:
-            // # - To submit: contains the expenses paid either by the employee or by the company, and that are draft or reported
-            // # - Under validation: contains expenses paid by the employee or paid by the company, and that have been submitted but still need to be approved/refused
+            // # - To Submit: contains the expenses paid either by the employee or by the company, and that are draft or reported
+            // # - Waiting approval: contains expenses paid by the employee or paid by the company, and that have been submitted but still need to be approved/refused
             // # - To be reimbursed: contains ONLY expenses paid by the employee that are approved, the payment has not yet been made
-            // expenses = self._read_group(
+            // fetched_expenses = self._read_group(
             //     [
             //         ('employee_id', 'in', self.env.user.employee_ids.ids),
-            //         '|', '&', ('payment_mode', 'in', ('own_account', 'company_account')), ('state', 'in', ('draft', 'reported', 'submitted')),
+            //         '|', ('state', 'in', ('draft', 'submitted')),
             //              '&', ('payment_mode', '=', 'own_account'), ('state', '=', 'approved')
             //     ], ['state'], ['total_amount:sum'])
-            // for state, total_amount_sum in expenses:
-            //     if state in {'draft', 'reported'}:  # Fuse the two states into only one "To Submit" state
-            //         state = 'to_submit'
+            // for state, total_amount_sum in fetched_expenses:
             //     expense_state[state]['amount'] += total_amount_sum
             // return expense_state
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetExpensesToSubmitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def get_expenses_to_submit(self):
-            // # if there ere no records selected, then select all draft expenses for the user
-            // if self:
-            //     expenses = self.filtered(lambda expense: expense.state == 'draft' and not expense.sheet_id and expense.is_editable)
-            // else:
-            //     expenses = self.env['hr.expense'].search([
-            //         ('state', '=', 'draft'),
-            //         ('sheet_id', '=', False),
-            //         ('employee_id', '=', self.env.user.employee_id.id),
-            //     ]).filtered(lambda expense: expense.is_editable)
-            // 
-            // if not expenses:
-            //     raise UserError(_('You have no expense to report'))
-            // return expenses.action_submit_expenses()
             */
             return default;
         }
@@ -4874,20 +5418,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :rtype: tuple
             // """
             // self.ensure_one()
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // max_planning_iterations = max(int(ICP.get_param('mrp.workcenter_max_planning_iterations', '50')), 1)
             // resource = self.resource_id
-            // start_datetime, revert = make_aware(start_datetime)
+            // revert = to_timezone(start_datetime.tzinfo)
+            // start_datetime = localized(start_datetime)
             // get_available_intervals = partial(self.resource_calendar_id._work_intervals_batch, resources=resource, tz=timezone(self.resource_calendar_id.tz))
             // workorder_intervals_leaves_domain = [('time_type', '=', 'other')]
             // if leaves_to_ignore:
             //     workorder_intervals_leaves_domain.append(('id', 'not in', leaves_to_ignore.ids))
             // get_workorder_intervals = partial(self.resource_calendar_id._leave_intervals_batch, domain=workorder_intervals_leaves_domain, resources=resource, tz=timezone(self.resource_calendar_id.tz))
-            // extra_leaves_slots_intervals = Intervals([(make_aware(start)[0], make_aware(stop)[0], self.env['resource.calendar.attendance']) for start, stop in extra_leaves_slots])
+            // extra_leaves_slots_intervals = Intervals([(localized(start), localized(stop), self.env['resource.calendar.attendance']) for start, stop in extra_leaves_slots])
             // 
-            // remaining = duration
-            // now = make_aware(datetime.now())[0]
+            // remaining = duration = max(duration, 1 / 60)
+            // now = localized(datetime.now())
             // delta = timedelta(days=14)
             // start_interval, stop_interval = None, None
-            // for n in range(50):  # 50 * 14 = 700 days in advance (hardcoded)
+            // for n in range(max_planning_iterations):  # 50 * 14 = 700 days in advance
             //     if forward:
             //         date_start = start_datetime + delta * n
             //         date_stop = date_start + delta
@@ -4938,18 +5485,55 @@ namespace Bamboo.Core.Application.Services.Mixins
             // price_unit = self.price_unit
             // if self.discount:
             //     price_unit = price_unit * (1 - self.discount / 100)
-            // if self.taxes_id:
+            // if self.tax_ids:
             //     qty = self.product_qty or 1
-            //     price_unit = self.taxes_id.compute_all(
+            //     price_unit = self.tax_ids.compute_all(
             //         price_unit,
             //         currency=self.order_id.currency_id,
             //         quantity=qty,
             //         rounding_method='round_globally',
             //     )['total_void']
             //     price_unit = price_unit / qty
-            // if self.product_uom.id != self.product_id.uom_id.id:
-            //     price_unit *= self.product_uom.factor / self.product_id.uom_id.factor
+            // if self.product_uom_id.id != self.product_id.uom_id.id:
+            //     price_unit *= self.product_id.uom_id.factor / self.product_uom_id.factor
             // return price_unit
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetGroupedSectionSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object display_taxes) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_grouped_section_summary(self, display_taxes=True):
+            // """Return a tax-wise summary of sales order lines linked to section.
+            // 
+            // Group lines by their tax IDs and computes subtotal and total for each group.
+            // """
+            // self.ensure_one()
+            // 
+            // section_lines = self.order_id.order_line.filtered(self._is_line_in_section)
+            // 
+            // if display_taxes:
+            //     res = [
+            //         {
+            //             'tax_labels': [tax.tax_label for tax in taxes if tax.tax_label],
+            //             'price_subtotal': sum(lines.mapped('price_subtotal')),
+            //             'price_total': sum(lines.mapped('price_total')),
+            //         }
+            //         for taxes, lines in section_lines.grouped('tax_ids').items()
+            //     ]
+            // else:
+            //     res = [{
+            //         'tax_labels': [],
+            //         'price_subtotal': sum(section_lines.mapped('price_subtotal')),
+            //         'price_total': sum(section_lines.mapped('price_total')),
+            //     }]
+            // return res or [{
+            //     'tax_labels': [],
+            //     'price_subtotal': 0.0,
+            //     'price_total': 0.0,
+            // }]
             */
             return default;
         }
@@ -4977,7 +5561,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // payment_date = payment_date or fields.Date.context_today(self)
             // 
-            // term_lines = self.sorted(key=lambda line: (line.date_maturity, line.date))
+            // term_lines = self.sorted(key=lambda line: (line.date_maturity or date.max, line.date))
             // sign = move.direction_sign
             // installments = []
             // first_installment_mode = False
@@ -5043,7 +5627,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _get_integrity_hash_fields(self):
             // # Use the new hash version by default, but keep the old one for backward compatibility when generating the integrity report.
-            // hash_version = self._context.get('hash_version', MAX_HASH_VERSION)
+            // hash_version = self.env.context.get('hash_version', MAX_HASH_VERSION)
             // if hash_version == 1:
             //     return ['debit', 'credit', 'account_id', 'partner_id']
             // elif hash_version in (2, 3, 4):
@@ -5078,18 +5662,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _get_invoice_lines(self):
             // self.ensure_one()
-            // if self._context.get('accrual_entry_date'):
+            // if self.env.context.get('accrual_entry_date'):
+            //     accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
             //     return self.invoice_lines.filtered(
-            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= self._context['accrual_entry_date']
+            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= accrual_date
             //     )
             // else:
             //     return self.invoice_lines
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _get_invoice_lines(self):
             // self.ensure_one()
-            // if self._context.get('accrual_entry_date'):
+            // if self.env.context.get('accrual_entry_date'):
+            //     accrual_date = fields.Date.from_string(self.env.context['accrual_entry_date'])
             //     return self.invoice_lines.filtered(
-            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= self._context['accrual_entry_date']
+            //         lambda l: l.move_id.invoice_date and l.move_id.invoice_date <= accrual_date
             //     )
             // else:
             //     return self.invoice_lines
@@ -5119,7 +5705,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _get_journal_items_full_name(self, name, display_name):
-            // return name if not display_name or display_name in name else f"{display_name} {name}"
+            // return name if not display_name or display_name in name else f"{display_name}\n{name}"
             */
             return default;
         }
@@ -5132,7 +5718,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ A combo product line always has a zero price (by design). The actual price of the combo
             // product can be computed by summing the prices of its combo items (i.e. its linked lines).
             // """
-            // return self.linked_line_ids if self.product_type == 'combo' else self
+            // if self.product_type == 'combo':
+            //     # Only consider combo item lines (not optional product lines)
+            //     return self.linked_line_ids.filtered('combo_item_id')
+            // return self
             */
             return default;
         }
@@ -5203,6 +5792,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetMatchedMoveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_matched_move_ids(self):
+            // """ Return a record set with both self.matched_debit_ids & self.matched_credit_ids """
+            // return self.matched_debit_ids | self.matched_credit_ids
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetMoveLineNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -5227,6 +5827,56 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetOutstandingAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_outstanding_account_id(self):
+            // account_ref = 'account_journal_payment_debit_account_id' if self.payment_method_line_id.payment_type == 'inbound' else 'account_journal_payment_credit_account_id'
+            // chart_template = self.with_context(allowed_company_ids=self.company_id.root_id.ids).env['account.chart.template']
+            // outstanding_account = chart_template.ref(account_ref, raise_if_not_found=False)
+            // if not outstanding_account:
+            //     bank_prefix = self.company_id.bank_account_code_prefix
+            //     first_account = self.env['account.account'].search([('company_ids', 'in', self.company_id.id)], limit=1)
+            //     code_digits = len(first_account.code or '') or 6
+            //     chart_template._create_outstanding_accounts(self.company_id, bank_prefix, code_digits)
+            //     outstanding_account = chart_template.ref(account_ref, raise_if_not_found=False)
+            // if not outstanding_account.active:
+            //     raise RedirectWarning(
+            //         message=_("The account %(name)s (%(code)s) is archived. Activate it to continue", name=outstanding_account.name, code=outstanding_account.code),
+            //         action=outstanding_account._get_records_action(),
+            //         button_text=_("Go to Account"),
+            //     )
+            // return outstanding_account
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetParentSectionLineAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def get_parent_section_line(self):
+            // if self.display_type == 'product' and self.parent_id.display_type == 'line_subsection':
+            //     return self.parent_id.parent_id
+            // 
+            // return self.parent_id
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def get_parent_section_line(self):
+            // if not self.display_type and self.parent_id.display_type == 'line_subsection':
+            //     return self.parent_id.parent_id
+            // 
+            // return self.parent_id
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def get_parent_section_line(self):
+            // if not self.display_type and self.parent_id.display_type == 'line_subsection':
+            //     return self.parent_id.parent_id
+            // 
+            // return self.parent_id
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetPartnerDisplayInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -5239,13 +5889,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetPricelistKwargsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_pricelist_kwargs(self):
+            // return {
+            //     'quantity': self.product_uom_qty or 1.0,
+            //     'uom': self.product_uom_id,
+            //     'date': self._get_order_date(),
+            //     'currency': self.currency_id,
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetPricelistPriceBeforeDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _get_pricelist_price_before_discount(self):
             // """Compute the price used as base for the pricelist price computation.
-            // 
             // :return: the product sales price in the order currency (without taxes)
             // :rtype: float
             // """
@@ -5254,10 +5918,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return self.pricelist_item_id._compute_price_before_discount(
             //     product=self.product_id.with_context(**self._get_product_price_context()),
-            //     quantity=self.product_uom_qty or 1.0,
-            //     uom=self.product_uom,
-            //     date=self._get_order_date(),
-            //     currency=self.currency_id,
+            //     **self._get_pricelist_kwargs()
             // )
             */
             return default;
@@ -5272,7 +5933,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // return {
             //     'pricelist': self.order_id.pricelist_id.id,
-            //     'uom': self.product_uom.id,
+            //     'uom': self.product_uom_id.id,
             //     'quantity': self.product_uom_qty,
             //     'date': self._get_order_date(),
             // }
@@ -5293,15 +5954,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // self.product_id.ensure_one()
             // 
-            // price = self.pricelist_item_id._compute_price(
+            // return self.pricelist_item_id._compute_price(
             //     product=self.product_id.with_context(**self._get_product_price_context()),
-            //     quantity=self.product_uom_qty or 1.0,
-            //     uom=self.product_uom,
-            //     date=self._get_order_date(),
-            //     currency=self.currency_id,
+            //     **self._get_pricelist_kwargs(),
             // )
-            // 
-            // return price
             */
             return default;
         }
@@ -5344,6 +6000,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             )
             //         ),
             //         'readOnly': self.move_id._is_readonly() or len(self) > 1,
+            //         'uomDisplayName': len(self) == 1 and self.product_uom_id.display_name or self.product_id.uom_id.display_name,
             //     }
             // return {
             //     'quantity': 0,
@@ -5359,8 +6016,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // the product is read-only or not.
             // 
             // A product is considered read-only if the order is considered read-only (see
-            // ``PurchaseOrder._is_readonly`` for more details) or if `self` contains multiple records
-            // or if it has purchase_line_warn == "block".
+            // ``PurchaseOrder._is_readonly`` for more details) or if `self` contains multiple records.
             // 
             // Note: This method cannot be called with multiple records that have different products linked.
             // 
@@ -5371,43 +6027,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'quantity': float,
             //         'price': float,
             //         'readOnly': bool,
-            //         'uom': dict,
-            //         'purchase_uom': dict,
+            //         'uomDisplayName': String,
             //         'packaging': dict,
             //         'warning': String,
             //     }
             // """
             // if len(self) == 1:
             //     catalog_info = self.order_id._get_product_price_and_data(self.product_id)
-            //     uom = {
-            //         'display_name': self.product_id.uom_id.display_name,
-            //         'id': self.product_id.uom_id.id,
-            //     }
             //     catalog_info.update(
             //         quantity=self.product_qty,
             //         price=self.price_unit * (1 - self.discount / 100),
             //         readOnly=self.order_id._is_readonly(),
-            //         uom=uom,
             //     )
-            //     if self.product_id.uom_id != self.product_uom:
-            //         catalog_info['purchase_uom'] = {
-            //         'display_name': self.product_uom.display_name,
-            //         'id': self.product_uom.id,
-            //     }
-            //     if self.product_packaging_id:
-            //         packaging = self.product_packaging_id
-            //         catalog_info['packaging'] = {
-            //             'id': packaging.id,
-            //             'name': packaging.display_name,
-            //             'qty': packaging.product_uom_id._compute_quantity(packaging.qty, self.product_uom),
-            //         }
+            //     if self.product_id.uom_id != self.product_uom_id:
+            //         catalog_info['uomDisplayName'] = self.product_uom_id.display_name
             //     return catalog_info
             // elif self:
             //     self.product_id.ensure_one()
             //     order_line = self[0]
             //     catalog_info = order_line.order_id._get_product_price_and_data(order_line.product_id)
             //     catalog_info['quantity'] = sum(self.mapped(
-            //         lambda line: line.product_uom._compute_quantity(
+            //         lambda line: line.product_uom_id._compute_quantity(
             //             qty=line.product_qty,
             //             to_unit=line.product_id.uom_id,
             //     )))
@@ -5425,8 +6065,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // the product is read-only or not.
             // 
             // A product is considered read-only if the order is considered read-only (see
-            // ``SaleOrder._is_readonly`` for more details) or if `self` contains multiple records
-            // or if it has sale_line_warn == "block".
+            // ``SaleOrder._is_readonly`` for more details) or if `self` contains multiple records.
             // 
             // Note: This method cannot be called with multiple records that have different products linked.
             // 
@@ -5437,27 +6076,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'quantity': float,
             //         'price': float,
             //         'readOnly': bool,
-            //         'warning': String
+            //         'uomDisplayName': String,
             //     }
             // """
             // if len(self) == 1:
-            //     res = {
+            //     return {
             //         'quantity': self.product_uom_qty,
-            //         'price': self.price_unit,
+            //         'price': self._get_discounted_price(),
             //         'readOnly': (
             //             self.order_id._is_readonly()
-            //             or self.product_id.sale_line_warn == 'block'
             //             or bool(self.combo_item_id)
             //         ),
+            //         'uomDisplayName': self.product_uom_id.display_name,
             //     }
-            //     if self.product_id.sale_line_warn != 'no-message' and self.product_id.sale_line_warn_msg:
-            //         res['warning'] = self.product_id.sale_line_warn_msg
-            //     return res
             // elif self:
             //     self.product_id.ensure_one()
             //     order_line = self[0]
             //     order = order_line.order_id
-            //     res = {
+            //     return {
             //         'readOnly': True,
             //         'price': order.pricelist_id._get_product_price(
             //             product=order_line.product_id,
@@ -5468,16 +6104,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ),
             //         'quantity': sum(
             //             self.mapped(
-            //                 lambda line: line.product_uom._compute_quantity(
+            //                 lambda line: line.product_uom_id._compute_quantity(
             //                     qty=line.product_uom_qty,
             //                     to_unit=line.product_id.uom_id,
             //                 )
             //             )
-            //         )
+            //         ),
+            //         'uomDisplayName': self.product_id.uom_id.display_name,
             //     }
-            //     if self.product_id.sale_line_warn != 'no-message' and self.product_id.sale_line_warn_msg:
-            //         res['warning'] = self.product_id.sale_line_warn_msg
-            //     return res
             // else:
             //     return {
             //         'quantity': 0,
@@ -5531,20 +6165,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :rtype: list
             // """
             // return [
-            //     'product_id', 'name', 'price_unit', 'product_uom', 'product_uom_qty',
-            //     'tax_id', 'analytic_distribution'
+            //     'product_id', 'name', 'price_unit', 'product_uom_id', 'product_uom_qty',
+            //     'tax_ids', 'analytic_distribution', 'discount'
             // ]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetRateDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def _get_rate_date(self):
-            // self.ensure_one()
-            // return self.move_id.invoice_date or self.move_id.date or fields.Date.context_today(self)
             */
             return default;
         }
@@ -5583,12 +6206,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     + self._get_sale_order_line_multiline_description_variants()
             // )
             // if self.linked_line_id and not self.combo_item_id:
-            //     description += "\n" + _("Option for: %s", self.linked_line_id.product_id.display_name)
-            // if self.linked_line_ids and self.product_type != 'combo':
-            //     description += "\n" + "\n".join([
-            //         _("Option: %s", linked_line.product_id.display_name)
-            //         for linked_line in self.linked_line_ids
-            //     ])
+            //     description += "\n" + _(
+            //         "Option for: %s",
+            //         self.linked_line_id.product_id.with_context(display_default_code=False).display_name
+            //     )
             // return description
             */
             return default;
@@ -5613,7 +6234,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self.product_custom_attribute_value_ids and not no_variant_ptavs:
             //     return ""
             // 
-            // name = "\n"
+            // name = ""
             // 
             // custom_ptavs = self.product_custom_attribute_value_ids.custom_product_template_attribute_value_id
             // multi_ptavs = no_variant_ptavs.filtered(lambda ptav: ptav.display_type == 'multi').sorted()
@@ -5642,6 +6263,45 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetSectionLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _get_section_lines(self):
+            // self.ensure_one()
+            // return self.move_id.invoice_line_ids.filtered(self._is_line_in_section)
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_section_lines(self):
+            // self.ensure_one()
+            // return self.order_id.order_line.filtered(self._is_line_in_section)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSectionSubtotalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def get_section_subtotal(self):
+            // section_lines = self._get_section_lines()
+            // return sum(section_lines.mapped('price_subtotal'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSectionTotalsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object totals_field) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _get_section_totals(self, totals_field):
+            // """Return the total/subtotal amount sale order lines linked to section."""
+            // self.ensure_one()
+            // section_lines = self._get_section_lines()
+            // return sum(section_lines.mapped(totals_field))
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetSelectSellersParamsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -5650,6 +6310,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // return {
             //     "order_id": self.order_id,
+            //     "force_uom": True,
             // }
             */
             return default;
@@ -5674,6 +6335,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'company_id': self.company_id.id,
             //     'analytic_distribution': self.analytic_distribution,
             //     'employee_id': self.employee_id.id,
+            //     'approval_state': self.approval_state,
+            //     'approval_date': self.approval_date,
+            //     'manager_id': self.manager_id.id,
             //     'expense_id': self.id,
             // } for price in (price_round_up, price_round_down)]
             */
@@ -5688,7 +6352,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Returns a domain to be used to identify the move lines that are allowed
             // to be taken into account in the tax report.
             // """
-            // return [
+            // return Domain([
             //     # Lines on moves without any payable or receivable line are always exigible
             //     '|', ('move_id.always_tax_exigible', '=', True),
             // 
@@ -5701,7 +6365,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # Lines from non-CABA taxes are always exigible
             //     '|', ('tax_line_id.tax_exigibility', '!=', 'on_payment'),
             //     ('tax_ids.tax_exigibility', '!=', 'on_payment'), # So: exigible if at least one tax from tax_ids isn't on_payment
-            // ]
+            // ])
             */
             return default;
         }
@@ -5722,6 +6386,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // unavailability_ressources = self.resource_id._get_unavailable_intervals(start_datetime, end_datetime)
             // return {wc.id: unavailability_ressources.get(wc.resource_id.id, []) for wc in self}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetUntitledExpenseNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _get_untitled_expense_name(self, *args):
+            // """ Done in a specific function to be called by hr_expense_extract to keep the same translation """
+            // return _("Untitled Expense %s", *args)
             */
             return default;
         }
@@ -5804,12 +6479,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> HasTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _has_taxes(self):
+            // """Check if a line has taxes or not. For (sub)sections, check if any child line has taxes."""
+            // self.ensure_one()
+            // return bool(
+            //     self.tax_ids
+            //     or (self.display_type and any(line._has_taxes() for line in self._get_section_lines())),
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> HasValuedMoveIdsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def has_valued_move_ids(self):
-            // return self.move_ids
+            // return None
             */
             return default;
         }
@@ -5817,28 +6507,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def init(self):
-            // """ change index on partner_id to a multi-column index on (partner_id, ref), the new index will behave in the
-            //     same way when we search on partner_id, with the addition of being optimal when having a query that will
-            //     search on partner_id and ref at the same time (which is the case when we open the bank reconciliation widget)
-            // """
-            // create_index(self._cr, 'account_move_line_partner_id_ref_idx', 'account_move_line', ["partner_id", "ref"])
-            // create_index(self._cr, 'account_move_line_date_name_id_idx', 'account_move_line', ["date desc", "move_name desc", "id"])
-            // # Match exactly how the ORM converts domains to ensure the query planner uses it
-            // create_index(self._cr, 'account_move_line__unreconciled_index', 'account_move_line', ['account_id', 'partner_id'],
-            //              where="(reconciled IS NULL OR reconciled = false OR reconciled IS NOT true) AND parent_state = 'posted'")
-            // create_index(self.env.cr,
-            //              indexname='account_move_line_journal_id_neg_amnt_residual_idx',
-            //              tablename='account_move_line',
-            //              expressions=['journal_id'],
-            //              where="amount_residual < 0 AND parent_state = 'posted'")
-            // # covers the standard index on account_id
-            // create_index(self.env.cr,
-            //              indexname='account_move_line_account_id_date_idx',
-            //              tablename='account_move_line',
-            //              expressions=['account_id', 'date'])
-            // super().init()
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
             // def init(self):
             // # Add a gin index for json search on the keys, on the models that actually have a table
@@ -5933,6 +6601,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // lines_to_modify = self.env['account.move.line'].browse([
             //     line.id for line in self if line.parent_state == "posted"
             // ]).with_context(skip_analytic_sync=True)
+            // old_distributions = dict(self.env.execute_query(SQL(
+            //     "SELECT id, analytic_distribution FROM account_move_line WHERE id = ANY(%s)",
+            //     self.ids,
+            // )))
+            // for line in self:
+            //     line.analytic_distribution = self._merge_distribution(
+            //         old_distribution=old_distributions.get(line._origin.id) or {},
+            //         new_distribution=line.analytic_distribution or {},
+            //     )
             // lines_to_modify.analytic_line_ids.unlink()
             // lines_to_modify._create_analytic_lines()
             */
@@ -5945,6 +6622,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _inverse_credit(self):
             // for line in self:
+            //     line.is_storno = line.credit < 0
             //     if line.credit:
             //         line.debit = 0
             //     line.balance = line.debit - line.credit
@@ -5958,9 +6636,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _inverse_debit(self):
             // for line in self:
+            //     line.is_storno = line.debit < 0
             //     if line.debit:
             //         line.credit = 0
             //     line.balance = line.debit - line.credit
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _inverse_no_followup(self):
+            // # If one line of an invoice gets excluded from or included in the follow up report, we want all
+            // # payable/receivable lines of that invoice to do the same.
+            // for aml in self:
+            //     move = aml.move_id
+            //     if move.is_invoice():
+            //         move.no_followup = aml.no_followup
             */
             return default;
         }
@@ -6008,6 +6702,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> InverseReconciledLinesIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _inverse_reconciled_lines_ids(self):
+            // self._reconcile_plan([
+            //     line + line.reconciled_lines_ids
+            //     for line in self
+            // ])
+            */
+            return default;
+        }
+
         public async Task<TEntity> InverseTotalAmountCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6015,7 +6722,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _inverse_total_amount_currency(self):
             // for expense in self:
             //     if not expense.is_editable:
-            //         raise UserError(_('You are not authorized to edit this expense.'))
+            //         raise UserError(_(
+            //             "Uh-oh! You can’t edit this expense.\n\n"
+            //             "Reach out to the administrators, flash your best smile, and see if they'll grant you the magical access you seek."
+            //         ))
             //     expense.price_unit = (expense.total_amount / expense.quantity) if expense.quantity != 0 else 0.
             */
             return default;
@@ -6039,9 +6749,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         AccountTax._round_base_lines_tax_details([base_line], expense.company_id)
             //         tax_details = base_line['tax_details']
             //         expense.tax_amount = tax_details['total_included_currency'] - tax_details['total_excluded_currency']
+            //         expense.untaxed_amount =  tax_details['total_excluded_currency']
             //     else:
             //         expense.total_amount_currency = expense.total_amount
             //         expense.tax_amount = expense.tax_amount_currency
+            //         expense.untaxed_amount = expense.untaxed_amount_currency
             //     expense.currency_rate = expense.total_amount / expense.total_amount_currency if expense.total_amount_currency else 1.0
             //     expense.price_unit = expense.total_amount / expense.quantity if expense.quantity else expense.total_amount
             */
@@ -6059,26 +6771,95 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsNotSellableLineInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> IsDiscountLineInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _is_not_sellable_line(self):
-            // # True if the line is a computed line (reward, delivery, ...) that user cannot add manually
-            // return False
+            // def _is_discount_line(self):
+            // self.ensure_one()
+            // return self.product_id in self.company_id.sale_discount_product_id
             */
             return default;
         }
 
-        public async Task<TEntity> MappedAsync<TEntity>(IEnumerable<TEntity> entities, object func) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> IsGlobalDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _is_global_discount(self):
+            // self.ensure_one()
+            // return self.extra_tax_data and self.extra_tax_data.get('computation_key', '').startswith('global_discount,')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsLineInSectionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _is_line_in_section(self, line):
+            // """Return whether the line is a direct or indirect child of the section."""
+            // self.ensure_one()
+            // is_direct_child = line.parent_id == self
+            // is_indirect_child = (
+            //     self.display_type == 'line_section'
+            //     and line.parent_id
+            //     and line.parent_id.display_type == 'line_subsection'
+            //     and line.parent_id.parent_id == self
+            // )
+            // return is_direct_child or is_indirect_child
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _is_line_in_section(self, line):
+            // """Return whether the line is a direct or indirect child of the section."""
+            // self.ensure_one()
+            // is_direct_child = line.parent_id == self and not line.display_type
+            // is_indirect_child = (
+            //     self.display_type == 'line_section'
+            //     and line.parent_id
+            //     and line.parent_id.display_type == 'line_subsection'
+            //     and line.parent_id.parent_id == self
+            // )
+            // return is_direct_child or is_indirect_child
+            */
+            return default;
+        }
+
+        public async Task<Dictionary<string, object>> MergeDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> old_distribution, Dictionary<string, object> new_distribution) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
-            // def mapped(self, func):
-            // # Get the related analytic accounts as a recordset instead of the distribution
-            // if func == 'analytic_distribution' and self.env.context.get('distribution_ids'):
-            //     return self.distribution_analytic_account_ids
-            // return super().mapped(func)
+            // def _merge_distribution(self, old_distribution: dict, new_distribution: dict) -> dict:
+            // if '__update__' not in new_distribution:
+            //     return new_distribution  # update everything by default
+            // 
+            // non_changing_values, changing_values, non_changing_amount, changing_amount = self._modifiying_distribution_values(
+            //     old_distribution,
+            //     new_distribution,
+            // )
+            // if non_changing_amount > changing_amount:
+            //     ratio = changing_amount / non_changing_amount
+            //     additional_vals = {
+            //         ','.join(map(str, old_key)): old_val * (1 - ratio)
+            //         for old_key, old_val in non_changing_values.items()
+            //         if old_key
+            //     }
+            //     ratio = 1
+            // elif changing_amount > non_changing_amount:
+            //     ratio = non_changing_amount / changing_amount
+            //     additional_vals = {
+            //         ','.join(map(str, new_key)): new_val * (1 - ratio)
+            //         for new_key, new_val in changing_values.items()
+            //         if new_key
+            //     }
+            // else:
+            //     ratio = 1
+            //     additional_vals = {}
+            // 
+            // return {
+            //     ','.join(map(str, old_key + new_key)): ratio * old_val * new_val / non_changing_amount
+            //     for old_key, old_val in non_changing_values.items()
+            //     for new_key, new_val in changing_values.items()
+            // } | additional_vals
             */
             return default;
         }
@@ -6094,12 +6875,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> MessageAutoSubscribeFollowersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object updated_values, List<Guid> subtype_ids) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _message_auto_subscribe_followers(self, updated_values, subtype_ids):
+            // res = super()._message_auto_subscribe_followers(updated_values, subtype_ids)
+            // if updated_values.get('employee_id'):
+            //     employee_user = self.env['hr.employee'].browse(updated_values['employee_id']).user_id
+            //     if employee_user:
+            //         res.append((employee_user.partner_id.id, subtype_ids, False))
+            // return res
+            */
+            return default;
+        }
+
         public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict, object custom_values) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def message_new(self, msg_dict, custom_values=None):
-            // email_address = email_split(msg_dict.get('email_from', False))[0]
+            // email_address = email_normalize(msg_dict.get('email_from'))
             // employee = self._get_employee_from_email(email_address)
             // 
             // if not employee:
@@ -6145,6 +6941,50 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ModifiyingDistributionValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object old_distribution, object new_distribution) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
+            // def _modifiying_distribution_values(self, old_distribution, new_distribution):
+            // fnames_to_update = set(new_distribution.pop('__update__', ()))
+            // if old_distribution:
+            //     old_distribution.pop('__update__', None)  # might be set before in `create`
+            // project_plan, other_plans = self.env['account.analytic.plan']._get_all_plans()
+            // non_changing_plans = {
+            //     plan
+            //     for plan in project_plan + other_plans
+            //     if plan._column_name() not in fnames_to_update
+            // }
+            // 
+            // non_changing_values = defaultdict(float)
+            // non_changing_amount = 0
+            // for old_key, old_val in old_distribution.items():
+            //     remaining_key = tuple(sorted(
+            //         account.id
+            //         for account in self.env['account.analytic.account'].browse(int(aid) for aid in old_key.split(','))
+            //         if account.plan_id.root_id in non_changing_plans
+            //     ))
+            //     if remaining_key:
+            //         non_changing_values[remaining_key] += old_val
+            //         non_changing_amount += old_val
+            // 
+            // changing_values = defaultdict(float)
+            // changing_amount = 0
+            // for new_key, new_val in new_distribution.items():
+            //     remaining_key = tuple(sorted(
+            //         account.id
+            //         for account in self.env['account.analytic.account'].browse(int(aid) for aid in new_key.split(','))
+            //         if account.plan_id.root_id not in non_changing_plans
+            //     ))
+            //     if remaining_key:
+            //         changing_values[remaining_key] += new_val
+            //         changing_amount += new_val
+            // 
+            // return non_changing_values, changing_values, non_changing_amount, changing_amount
+            */
+            return default;
+        }
+
         public async Task<TEntity> NeedsProductPriceComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6178,7 +7018,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.amount_string = ''
             // if self.amount_type in ('percentage', 'percentage_st_line'):
             //     self.amount_string = '100'
-            // elif self.amount_type == 'regex':
+            // elif self.amount_type in ('regex', 'from_transaction_details'):
             //     self.amount_string = r'([\d,]+)'
             */
             return default;
@@ -6273,7 +7113,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _onchange_product_has_cost(self):
             // """ Reset quantity to 1, in case of 0-cost product. To make sure switching non-0-cost to 0-cost doesn't keep the quantity."""
-            // if not self.product_has_cost and self.state in {'draft', 'reported'}:
+            // if not self.product_has_cost and self.state == 'draft':
             //     self.quantity = 1
             */
             return default;
@@ -6289,7 +7129,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // 
             // # Reset date, price and quantity since _onchange_quantity will provide default values
-            // self.price_unit = self.product_qty = 0.0
+            // self.price_unit = self.product_qty = self.technical_price_unit = 0.0
             // 
             // self._product_id_change()
             // 
@@ -6306,109 +7146,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self.product_id:
             //     return
             // self._reset_price_unit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeProductIdWarningAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def onchange_product_id_warning(self):
-            // if not self.product_id or not self.env.user.has_group('purchase.group_warning_purchase'):
-            //     return
-            // warning = {}
-            // title = False
-            // message = False
-            // 
-            // product_info = self.product_id
-            // 
-            // if product_info.purchase_line_warn != 'no-message':
-            //     title = _("Warning for %s", product_info.name)
-            //     message = product_info.purchase_line_warn_msg
-            //     warning['title'] = title
-            //     warning['message'] = message
-            //     if product_info.purchase_line_warn == 'block':
-            //         self.product_id = False
-            //     return {'warning': warning}
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeProductIdWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _onchange_product_id_warning(self):
-            // if not self.product_id:
-            //     return
-            // 
-            // product = self.product_id
-            // if product.sale_line_warn != 'no-message':
-            //     if product.sale_line_warn == 'block':
-            //         self.product_id = False
-            // 
-            //     return {
-            //         'warning': {
-            //             'title': _("Warning for %s", product.name),
-            //             'message': product.sale_line_warn_msg,
-            //         }
-            //     }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeProductPackagingIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _onchange_product_packaging_id(self):
-            // if self.product_packaging_id and self.product_qty:
-            //     newqty = self.product_packaging_id._check_qty(self.product_qty, self.product_uom, "UP")
-            //     if float_compare(newqty, self.product_qty, precision_rounding=self.product_uom.rounding) != 0:
-            //         return {
-            //             'warning': {
-            //                 'title': _('Warning'),
-            //                 'message': _(
-            //                     "This product is packaged by %(pack_size).2f %(pack_name)s. You should purchase %(quantity).2f %(unit)s.",
-            //                     pack_size=self.product_packaging_id.qty,
-            //                     pack_name=self.product_id.uom_id.name,
-            //                     quantity=newqty,
-            //                     unit=self.product_uom.name
-            //                 ),
-            //             },
-            //         }
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _onchange_product_packaging_id(self):
-            // if self.product_packaging_id and self.product_uom_qty:
-            //     newqty = self.product_packaging_id._check_qty(self.product_uom_qty, self.product_uom, "UP")
-            //     if float_compare(newqty, self.product_uom_qty, precision_rounding=self.product_uom.rounding) != 0:
-            //         return {
-            //             'warning': {
-            //                 'title': _('Warning'),
-            //                 'message': _(
-            //                     "This product is packaged by %(pack_size).2f %(pack_name)s. You should sell %(quantity).2f %(unit)s.",
-            //                     pack_size=self.product_packaging_id.qty,
-            //                     pack_name=self.product_id.uom_id.name,
-            //                     quantity=newqty,
-            //                     unit=self.product_uom.name
-            //                 ),
-            //             },
-            //         }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeTaxIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _onchange_tax_ids(self):
-            // # Multiple taxes with force_tax_included results in wrong computation, so we
-            // # only allow to set the force_tax_included field if we have one tax selected
-            // if len(self.tax_ids) != 1:
-            //     self.force_tax_included = False
             */
             return default;
         }
@@ -6491,7 +7228,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // 
             // def process_amls(amls):
-            //     if self._context.get('reduced_line_sorting'):
+            //     if self.env.context.get('reduced_line_sorting'):
             //         sorted_amls = amls.sorted(key=lambda aml: (
             //             aml._get_reconciliation_aml_field_value('date_maturity', shadowed_aml_values)
             //                 or aml._get_reconciliation_aml_field_value('date', shadowed_aml_values),
@@ -6656,6 +7393,66 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> PostWithoutWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _post_without_wizard(self):
+            // """ Post an employee expense without any direct call for the wizard, should never be called unless in very specific flows """
+            // # When a move has been deleted
+            // self._check_can_create_move()
+            // today = fields.Date.context_today(self)
+            // employee_expenses = self.filtered(lambda expense: expense.payment_mode == 'own_account')
+            // 
+            // for company, expenses in employee_expenses.grouped('company_id').items():
+            //     expenses = expenses.with_company(company)
+            //     company_domain = self.env['account.journal']._check_company_domain(company)
+            //     journal = (
+            //             company.expense_journal_id
+            //             or expenses.env['account.journal'].search([*company_domain, ('type', '=', 'purchase')], limit=1))
+            //     expense_receipt_vals_list = [
+            //         {
+            //             **new_receipt_vals,
+            //             'journal_id': journal.id,
+            //             'invoice_date': today,
+            //         }
+            //         for new_receipt_vals in expenses._prepare_receipts_vals()
+            //     ]
+            //     moves = self.env['account.move'].sudo().create(expense_receipt_vals_list)
+            //     for move in moves:
+            //         move._message_set_main_attachment_id(move.attachment_ids, force=True, filter_xml=False)
+            //     moves.action_post()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PostWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _post_wizard(self):
+            // if 'company_account' in set(self.mapped('payment_mode')):
+            //     raise UserError(_("Only expense paid by the employee can be posted with the wizard"))
+            // 
+            // wizard_name = (
+            //     _("Post expenses paid by the employee")
+            //     if self.env.context.get('company_paid_move_ids')
+            //     else _("Post expenses")
+            // )
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': wizard_name,
+            //     'view_mode': 'form',
+            //     'views': [(False, "form")],
+            //     'res_model': 'hr.expense.post.wizard',
+            //     'res_id': self.env['hr.expense.post.wizard'].create({}).id,
+            //     'target': 'new',
+            //     'context': self.with_context(active_ids=self.ids).env.context,
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> PrepareAccountMoveLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6669,11 +7466,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'display_type': self.display_type or 'product',
             //     'name': self.env['account.move.line']._get_journal_items_full_name(self.name, self.product_id.display_name),
             //     'product_id': self.product_id.id,
-            //     'product_uom_id': self.product_uom.id,
-            //     'quantity': self.qty_to_invoice,
+            //     'product_uom_id': self.product_uom_id.id,
+            //     'quantity': -self.qty_to_invoice if move and move.move_type == 'in_refund' else self.qty_to_invoice,
             //     'discount': self.discount,
             //     'price_unit': self.currency_id._convert(self.price_unit, aml_currency, self.company_id, date, round=False),
-            //     'tax_ids': [(6, 0, self.taxes_id.ids)],
+            //     'tax_ids': [(6, 0, self.tax_ids.ids)],
             //     'purchase_line_id': self.id,
             //     'is_downpayment': self.is_downpayment,
             // }
@@ -6689,7 +7486,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _prepare_add_missing_fields(self, values):
             // """ Deduce missing required fields from the onchange """
             // res = {}
-            // onchange_fields = ['name', 'price_unit', 'product_qty', 'product_uom', 'taxes_id', 'date_planned']
+            // onchange_fields = ['name', 'price_unit', 'product_qty', 'product_uom_id', 'tax_ids', 'date_planned']
             // if values.get('order_id') and values.get('product_id') and any(f not in values for f in onchange_fields):
             //     line = self.new(values)
             //     line.onchange_product_id()
@@ -6734,7 +7531,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'general_account_id': self.account_id.id,
             //     'ref': self.ref,
             //     'move_line_id': self.id,
-            //     'user_id': self.move_id.invoice_user_id.id or self._uid,
+            //     'user_id': self.move_id.invoice_user_id.id or self.env.uid,
             //     'company_id': self.company_id.id or self.env.company.id,
             //     'category': 'invoice' if self.move_id.is_sale_document() else 'vendor_bill' if self.move_id.is_purchase_document() else 'other',
             // }
@@ -6755,8 +7552,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     distribution_on_each_plan = {}
             //     for account_ids, distribution in self.analytic_distribution.items():
             //         line_values = self._prepare_analytic_distribution_line(float(distribution), account_ids, distribution_on_each_plan)
-            //         if not self.currency_id.is_zero(line_values.get('amount')):
+            //         if not self.company_currency_id.is_zero(line_values.get('amount')):
             //             analytic_line_vals.append(line_values)
+            // 
+            //     self._round_analytic_distribution_line(analytic_line_vals)
             // return analytic_line_vals
             */
             return default;
@@ -6770,12 +7569,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //     self,
-            //     **{
-            //         'partner_id': self.vendor_id,
-            //         'special_mode': 'total_included',
-            //         'rate': self.currency_rate,
-            //         **kwargs,
-            //     },
+            //     **{'partner_id': self.vendor_id, 'special_mode': 'total_included', 'rate': self.currency_rate, **kwargs},
             // )
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _prepare_base_line_for_taxes_computation(self):
@@ -6785,13 +7579,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return: A python dictionary.
             // """
             // self.ensure_one()
+            // company = self.order_id.company_id or self.env.company
             // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //     self,
-            //     tax_ids=self.taxes_id,
+            //     tax_ids=self.tax_ids,
             //     quantity=self.product_qty,
             //     partner_id=self.order_id.partner_id,
-            //     currency_id=self.order_id.currency_id or self.order_id.company_id.currency_id,
+            //     currency_id=self.order_id.currency_id or company.currency_id,
             //     rate=self.order_id.currency_rate,
+            //     name=self.name,
             // )
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _prepare_base_line_for_taxes_computation(self, **kwargs):
@@ -6801,17 +7597,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return: A python dictionary.
             // """
             // self.ensure_one()
-            // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
-            //     self,
-            //     **{
-            //         'tax_ids': self.tax_id,
-            //         'quantity': self.product_uom_qty,
-            //         'partner_id': self.order_id.partner_id,
-            //         'currency_id': self.order_id.currency_id or self.order_id.company_id.currency_id,
-            //         'rate': self.order_id.currency_rate,
-            //         **kwargs,
-            //     },
-            // )
+            // company = self.order_id.company_id or self.env.company
+            // base_values = {
+            //     'tax_ids': self.tax_ids,
+            //     'quantity': self.product_uom_qty,
+            //     'partner_id': self.order_id.partner_id,
+            //     'currency_id': self.order_id.currency_id or company.currency_id,
+            //     'rate': self.order_id.currency_rate,
+            //     'name': self.name,
+            // }
+            // if self._is_global_discount():
+            //     base_values['special_type'] = 'global_discount'
+            // elif self.is_downpayment:
+            //     base_values['special_type'] = 'down_payment'
+            // base_values.update(kwargs)
+            // return self.env['account.tax']._prepare_base_line_for_taxes_computation(self, **base_values)
             */
             return default;
         }
@@ -6834,7 +7634,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         res_vals.pop('debit', 0)
             //         res_vals.pop('credit', 0)
             // 
-            //     if res_vals['display_type'] in ('line_section', 'line_note'):
+            //     if res_vals['display_type'] in ('line_section', 'line_subsection', 'line_note'):
             //         res_vals.pop('account_id')
             // 
             // return result_vals_list
@@ -6913,8 +7713,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'always_tax_exigible': True,
             // }
             // to_reconcile = []
-            // 
             // for line, amounts in zip(self, amounts_list):
+            // 
             //     move_vals['date'] = max(move_vals['date'], line.date)
             // 
             //     if 'amount_residual' in amounts:
@@ -6948,6 +7748,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'currency_id': line.currency_id.id,
             //             'partner_id': line.partner_id.id,
             //             'sequence': sequence,
+            //             'reconciled_lines_ids': [Command.set(line.ids)],
             //         },
             //         {
             //             'name': _('Currency exchange rate difference'),
@@ -7012,9 +7813,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'display_type': 'line_section',
             //         'sequence': self.sequence,
             //         'name': f'{self.product_id.name} x {qty_to_invoice}',
-            //         'product_uom_id': self.product_uom.id,
+            //         'product_uom_id': self.product_uom_id.id,
             //         'quantity': self.qty_to_invoice,
             //         'sale_line_ids': [Command.link(self.id)],
+            //         'collapse_prices': self.collapse_prices,
+            //         'collapse_composition': self.collapse_composition,
             //         **optional_values,
             //     }
             // res = {
@@ -7022,13 +7825,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'sequence': self.sequence,
             //     'name': self.env['account.move.line']._get_journal_items_full_name(self.name, self.product_id.display_name),
             //     'product_id': self.product_id.id,
-            //     'product_uom_id': self.product_uom.id,
+            //     'product_uom_id': self.product_uom_id.id,
             //     'quantity': self.qty_to_invoice,
             //     'discount': self.discount,
             //     'price_unit': self.price_unit,
-            //     'tax_ids': [Command.set(self.tax_id.ids)],
+            //     'tax_ids': [Command.set(self.tax_ids.ids)],
             //     'sale_line_ids': [Command.link(self.id)],
             //     'is_downpayment': self.is_downpayment,
+            //     'extra_tax_data': self.extra_tax_data,
+            //     'collapse_prices': self.collapse_prices,
+            //     'collapse_composition': self.collapse_composition,
             // }
             // downpayment_lines = self.invoice_lines.filtered('is_downpayment')
             // if self.is_downpayment and downpayment_lines:
@@ -7038,6 +7844,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.display_type:
             //     res['account_id'] = False
             // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareInvoiceLinesValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _prepare_invoice_lines_vals_list(self, **optional_values):
+            // return [self._prepare_invoice_line(**optional_values)]
             */
             return default;
         }
@@ -7063,7 +7879,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return aml.move_id.origin_payment_id or aml.move_id.statement_line_id
             // 
             // def get_odoo_rate(aml, other_aml, currency):
-            //     if forced_rate := self._context.get('forced_rate_from_register_payment'):
+            //     if forced_rate := self.env.context.get('forced_rate_from_register_payment'):
             //         return forced_rate
             //     if other_aml and not is_payment(aml) and is_payment(other_aml):
             //         return get_accounting_rate(other_aml, currency)
@@ -7132,11 +7948,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _prepare_move_lines_vals(self):
             // self.ensure_one()
-            // account = self._get_base_account()
-            // 
             // return {
             //     'name': self._get_move_line_name(),
-            //     'account_id': account.id,
+            //     'account_id': self._get_base_account().id,
             //     'quantity': self.quantity or 1,
             //     'price_unit': self.price_unit,
             //     'product_id': self.product_id.id,
@@ -7150,6 +7964,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> PrepareMoveValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _prepare_move_vals(self):
+            // return {
+            //     # force the name to the default value, to avoid an eventual 'default_name' in the context
+            //     # that would set it to '' which would then cause no number to be given to the account.move
+            //     # when it is posted.
+            //     'name': '/',
+            //     'expense_ids': [Command.set(self.ids)],
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> PreparePaymentsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -7157,8 +7987,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _prepare_payments_vals(self):
             // self.ensure_one()
             // 
-            // journal = self.sheet_id.journal_id
-            // payment_method_line = self.sheet_id.payment_method_line_id
+            // journal = self.journal_id
+            // payment_method_line = self.payment_method_line_id
             // if not payment_method_line:
             //     raise UserError(_("You need to add a manual payment method on the journal (%s)", journal.name))
             // 
@@ -7178,6 +8008,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Base line.
             // move_lines = []
+            // base_move_line = {}
             // for base_line, to_update in tax_results['base_lines_to_update']:
             //     base_move_line = {
             //         'name': self._get_move_line_name(),
@@ -7191,7 +8022,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'balance': to_update['balance'],
             //         'currency_id': base_line['currency_id'].id,
             //         'partner_id': self.vendor_id.id,
-            //         'quantity': self.quantity,
             //     }
             //     move_lines.append(base_move_line)
             // 
@@ -7205,7 +8035,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Outstanding payment line.
             // move_lines.append({
             //     'name': self._get_move_line_name(),
-            //     'account_id': self.sheet_id._get_expense_account_destination(),
+            //     'account_id': self._get_expense_account_destination(),
             //     'balance': -self.total_amount,
             //     'amount_currency': self.currency_id.round(-self.total_amount_currency),
             //     'currency_id': self.currency_id.id,
@@ -7224,9 +8054,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'company_id': self.company_id.id,
             // }
             // move_vals = {
-            //     **self.sheet_id._prepare_move_vals(),
+            //     **self._prepare_move_vals(),
+            //     'date': self.date or fields.Date.context_today(self),
             //     'ref': self.name,
-            //     'date': self.date,  # Overidden from self.sheet_id._prepare_move_vals() so we can use the expense date for the account move date
             //     'journal_id': journal.id,
             //     'partner_id': self.vendor_id.id,
             //     'currency_id': self.currency_id.id,
@@ -7240,11 +8070,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareProcurementValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid group_id) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> PrepareProcurementValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _prepare_procurement_values(self, group_id=False):
+            // def _prepare_procurement_values(self):
             // """ Prepare specific key for moves or other components that will be created from a stock rule
             // coming from a sale order line. This method could be override in order to add other custom key that could
             // be used in move/po creation.
@@ -7258,30 +8088,39 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
-            // partner = supplier.partner_id
-            // uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id, rounding_method='HALF-UP')
+            // def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, partner_id, po):
+            // values = self.env.context.get('procurement_values', {})
+            // uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_id, rounding_method='HALF-UP')
             // # _select_seller is used if the supplier have different price depending
             // # the quantities ordered.
             // today = fields.Date.today()
             // seller = product_id.with_company(company_id)._select_seller(
-            //     partner_id=partner,
-            //     quantity=uom_po_qty,
+            //     partner_id=partner_id,
+            //     quantity=product_qty if values.get('force_uom') else uom_po_qty,
             //     date=po.date_order and max(po.date_order.date(), today) or today,
-            //     uom_id=product_id.uom_po_id)
+            //     uom_id=product_uom if values.get('force_uom') else product_id.uom_id,
+            //     params={'force_uom': values.get('force_uom')}
+            // )
+            // if seller and (seller.product_uom_id or seller.product_tmpl_id.uom_id) != product_uom:
+            //     uom_po_qty = product_id.uom_id._compute_quantity(uom_po_qty, seller.product_uom_id, rounding_method='HALF-UP')
             // 
-            // product_taxes = product_id.supplier_taxes_id.filtered(lambda x: x.company_id in company_id.parent_ids)
+            // tax_domain = self.env['account.tax']._check_company_domain(company_id)
+            // product_taxes = product_id.supplier_taxes_id.filtered_domain(tax_domain)
             // taxes = po.fiscal_position_id.map_tax(product_taxes)
             // 
-            // price_unit = self.env['account.tax']._fix_tax_included_price_company(
-            //     seller.price, product_taxes, taxes, company_id) if seller else 0
+            // if seller:
+            //     price_unit = (seller.product_uom_id._compute_price(seller.price, product_uom) if product_uom else seller.price)
+            //     price_unit = self.env['account.tax']._fix_tax_included_price_company(
+            //     price_unit, product_taxes, taxes, company_id)
+            // else:
+            //     price_unit = 0
             // if price_unit and seller and po.currency_id and seller.currency_id != po.currency_id:
             //     price_unit = seller.currency_id._convert(
             //         price_unit, po.currency_id, po.company_id, po.date_order or fields.Date.today())
             // 
             // product_lang = product_id.with_prefetch().with_context(
-            //     lang=partner.lang,
-            //     partner_id=partner.id,
+            //     lang=partner_id.lang,
+            //     partner_id=partner_id.id,
             // )
             // name = product_lang.with_context(seller_id=seller.id).display_name
             // if product_lang.description_purchase:
@@ -7292,12 +8131,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return {
             //     'name': name,
-            //     'product_qty': uom_po_qty,
+            //     'product_qty': product_qty if product_uom else uom_po_qty,
             //     'product_id': product_id.id,
-            //     'product_uom': product_id.uom_po_id.id,
+            //     'product_uom_id': product_uom.id or seller.product_uom_id.id,
             //     'price_unit': price_unit,
             //     'date_planned': date_planned,
-            //     'taxes_id': [(6, 0, taxes.ids)],
+            //     'tax_ids': [(6, 0, taxes.ids)],
             //     'order_id': po.id,
             //     'discount': discount,
             // }
@@ -7312,13 +8151,107 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return {
             //     'name': name,
             //     'product_id': self.product_id.id,
-            //     'product_uom': self.product_id.uom_po_id.id,
+            //     'product_uom_id': self.product_uom_id.id,
             //     'product_qty': product_qty,
             //     'price_unit': price_unit,
-            //     'taxes_id': [(6, 0, taxes_ids)],
+            //     'tax_ids': [(6, 0, taxes_ids)],
             //     'date_planned': date_planned,
             //     'analytic_distribution': self.analytic_distribution,
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareQtyDeliveredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _prepare_qty_delivered(self):
+            // # compute for analytic lines
+            // delivered_qties = defaultdict(float)
+            // lines_by_analytic = self.filtered(lambda sol: sol.qty_delivered_method == 'analytic')
+            // mapping = lines_by_analytic._get_delivered_quantity_by_analytic([('amount', '<=', 0.0)])
+            // for so_line in lines_by_analytic:
+            //     delivered_qties[so_line] = mapping.get(so_line.id or so_line._origin.id, 0.0)
+            // return delivered_qties
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareQtyInvoicedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _prepare_qty_invoiced(self):
+            // # Compute qty_invoiced
+            // invoiced_qties = defaultdict(float)
+            // for line in self:
+            //     for inv_line in line._get_invoice_lines():
+            //         if inv_line.move_id.state not in ['cancel'] or inv_line.move_id.payment_state == 'invoicing_legacy':
+            //             if inv_line.move_id.move_type == 'in_invoice':
+            //                 invoiced_qties[line] += inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom_id)
+            //             elif inv_line.move_id.move_type == 'in_refund':
+            //                 invoiced_qties[line] -= inv_line.product_uom_id._compute_quantity(inv_line.quantity, line.product_uom_id)
+            // return invoiced_qties
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def _prepare_qty_invoiced(self):
+            // invoiced_qties = defaultdict(float)
+            // for line in self:
+            //     for invoice_line in line._get_invoice_lines():
+            //         if invoice_line.move_id.state != 'cancel' or invoice_line.move_id.payment_state == 'invoicing_legacy':
+            //             invoice_qty = invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, line.product_uom_id)
+            //             if invoice_line.move_id.move_type == 'out_invoice':
+            //                 invoiced_qties[line] += invoice_qty
+            //             elif invoice_line.move_id.move_type == 'out_refund':
+            //                 invoiced_qties[line] -= invoice_qty
+            // return invoiced_qties
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareQtyReceivedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _prepare_qty_received(self):
+            // received_qties = defaultdict(float)
+            // for line in self:
+            //     if line.qty_received_method == 'manual':
+            //         received_qties[line] = line.qty_received_manual or 0.0
+            //     else:
+            //         received_qties[line] = 0.0
+            // return received_qties
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareReceiptsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _prepare_receipts_vals(self):
+            // attachments_data = []
+            // for attachment in self.message_main_attachment_id:
+            //     attachments_data.append(
+            //         Command.create(attachment.copy_data({'res_model': 'account.move', 'res_id': False, 'raw': attachment.raw})[0])
+            //     )
+            // 
+            // return_vals = []
+            // for employee_sudo, expenses_sudo in self.sudo().grouped('employee_id').items():
+            //     multiple_expenses_name = _("Expenses of %(employee)s", employee=employee_sudo.name)
+            //     move_ref = expenses_sudo.name if len(expenses_sudo) == 1 else multiple_expenses_name
+            //     return_vals.append({
+            //     **expenses_sudo._prepare_move_vals(),
+            //         'ref': move_ref,
+            //         'move_type': 'in_receipt',
+            //         'partner_id': employee_sudo.work_contact_id.id,
+            //         'commercial_partner_id': employee_sudo.user_partner_id.id,
+            //         'currency_id': expenses_sudo.company_currency_id.id,
+            //         'line_ids': [Command.create(expense_sudo._prepare_move_lines_vals()) for expense_sudo in expenses_sudo],
+            //         'partner_bank_id': employee_sudo.primary_bank_account_id.id,
+            //         'attachment_ids': attachments_data,
+            //     })
+            // return return_vals
             */
             return default;
         }
@@ -7415,6 +8348,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // def process_amls(amls):
             //     remaining_amls = amls.filtered(lambda aml: aml.id not in all_fully_reconciled_aml_ids)
+            //     if len(remaining_amls.mapped('partner_id')) > 1:
+            //         remaining_amls = remaining_amls.sorted(lambda aml: (aml.partner_id and aml.partner_id.id) or False)
             //     amls_results, fully_reconciled_aml_ids = self._prepare_reconciliation_amls(
             //         [
             //             amls_values_map[aml]
@@ -7632,10 +8567,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         and company_currency.compare_amounts(partial_credit_amount, partial_debit_amount_range[2]) <= 0
             //         and company_currency.compare_amounts(partial_credit_amount, partial_debit_amount_range[0]) >= 0
             //     ):
-            //         if debit_fully_matched:
-            //             partial_amount = remaining_debit_amount
-            //         else:
-            //             partial_amount = -remaining_credit_amount
+            //         partial_amount = min(remaining_debit_amount, -remaining_credit_amount)
             //         partial_debit_amount = partial_amount
             //         partial_credit_amount = partial_amount
             // 
@@ -7653,7 +8585,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Computation of the partial exchange difference. You can skip this part using the
             // # `no_exchange_difference` context key (when reconciling an exchange difference for example).
-            // if not self._context.get('no_exchange_difference') and not self._context.get('no_exchange_difference_no_recursive'):
+            // if not self.env.context.get('no_exchange_difference') and not self.env.context.get('no_exchange_difference_no_recursive'):
             //     exchange_lines_to_fix = self.env['account.move.line']
             //     amounts_list = []
             //     if recon_currency == company_currency:
@@ -7721,6 +8653,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 credit_aml._get_reconciliation_aml_field_value('date', shadowed_aml_values),
             //             ),
             //         )
+            //         res['exchange_values']['to_post'] = debit_aml.parent_state == 'posted' and credit_aml.parent_state == 'posted'
             // 
             // # ==== Create partials ====
             // 
@@ -7785,7 +8718,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self.product_id:
             //     return
             // 
-            // self.product_uom = self.product_id.uom_po_id or self.product_id.uom_id
+            // self.product_uom_id = self.product_id.uom_id
             // product_lang = self.product_id.with_context(
             //     lang=get_lang(self.env, self.partner_id.lang).code,
             //     partner_id=None,
@@ -7811,26 +8744,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ReadGroupAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object groupby, object offset, object limit, object @orderby, object lazy) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> ReadAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object load) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-            // # Hide total amount_currency from read_group when view is not grouped by currency_id. Avoids mix of currencies
-            // res = super().read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
-            // if 'currency_id' not in groupby and 'amount_currency:sum' in fields:
-            //     for group_line in res:
-            //         group_line['amount_currency'] = False
-            // return res
+            // def read(self, fields=None, load='_classic_read'):
+            // fields = fields or self._get_default_read_fields()
+            // return super().read(fields, load)
             */
             return default;
         }
 
-        public async Task<object> ReadGroupGroupbyInternalAsync<TEntity>(IEnumerable<TEntity> entities, string groupby_spec, object query) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<object> ReadGroupGroupbyInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string groupby_spec, object query) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
-            // def _read_group_groupby(self, groupby_spec: str, query: Query) -> SQL:
+            // def _read_group_groupby(self, alias: str, groupby_spec: str, query: Query) -> SQL:
             // """To group by `analytic_distribution`, we first need to separate the analytic_ids and associate them with the ids to be counted
             // Do note that only '__count' can be passed in the `aggregates`"""
             // if groupby_spec == 'analytic_distribution':
@@ -7849,7 +8778,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     query._where_clauses = []
             //     return SQL("account_id")
             // 
-            // return super()._read_group_groupby(groupby_spec, query)
+            // return super()._read_group_groupby(alias, groupby_spec, query)
             */
             return default;
         }
@@ -7943,9 +8872,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _reconcile_plan_with_sync(self, plan_list, all_amls):
-            // # Parameter allowing to disable the exchange journal entries on partials.
-            // disable_partial_exchange_diff = bool(self.env['ir.config_parameter'].sudo().get_param('account.disable_partial_exchange_diff'))
-            // 
             // # ==== Prefetch the fields all at once to speedup the reconciliation ====
             // # All of those fields will be cached by the orm. Since the amls are split into multiple batches, the orm is not
             // # able to prefetch the data for all of them at once. For that reason, we force the orm to populate the cache
@@ -7966,6 +8892,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'aml': aml,
             //         'amount_residual': aml.amount_residual,
             //         'amount_residual_currency': aml.amount_residual_currency,
+            //         'parent_state': aml.parent_state,
             //     }
             //     for aml in all_amls
             // }
@@ -7973,14 +8900,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # ==== Prepare the partials ====
             // partials_values_list = []
             // exchange_diff_values_list = []
-            // exchange_diff_partial_index = []
             // all_plan_results = []
-            // partial_index = 0
             // for plan in plan_list:
             //     plan_results = self\
             //         .with_context(
-            //             no_exchange_difference=self._context.get('no_exchange_difference') or disable_partial_exchange_diff,
-            //             no_exchange_difference_no_recursive=self._context.get('no_exchange_difference_no_recursive', False),
+            //             no_exchange_difference=self.env.context.get('no_exchange_difference'),
+            //             no_exchange_difference_no_recursive=self.env.context.get('no_exchange_difference_no_recursive', False),
             //         )\
             //         ._prepare_reconciliation_plan(plan, aml_values_map)
             //     all_plan_results.append(plan_results)
@@ -7988,12 +8913,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         partials_values_list.append(results['partial_values'])
             //         if results.get('exchange_values') and results['exchange_values']['move_values']['line_ids']:
             //             exchange_diff_values_list.append(results['exchange_values'])
-            //             exchange_diff_partial_index.append(partial_index)
-            //             partial_index += 1
             // 
             // # ==== Create the partials ====
             // # Link the newly created partials to the plan. There are needed later for caba exchange entries.
             // partials = self.env['account.partial.reconcile'].create(partials_values_list)
+            // if self.env.context.get('add_caba_vals'):
+            //     partials._set_draft_caba_move_vals()
             // start_range = 0
             // for plan_results, plan in zip(all_plan_results, plan_list):
             //     size = len(plan_results)
@@ -8002,18 +8927,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # ==== Create the partial exchange journal entries ====
             // exchange_moves = self._create_exchange_difference_moves(exchange_diff_values_list)
-            // for index, exchange_move in zip(exchange_diff_partial_index, exchange_moves):
-            //     partials[index].exchange_move_id = exchange_move
+            // used_exchange_moves = set()
+            // used_partials = set()
+            // 
+            // for partial in partials:
+            //     for exchange_move in exchange_moves:
+            //         linked_move_lines = exchange_move.line_ids.reconciled_lines_ids
+            // 
+            //         if (
+            //             any(line == partial.debit_move_id or line == partial.credit_move_id for line in linked_move_lines)
+            //             and exchange_move not in used_exchange_moves
+            //             and partial not in used_partials
+            //         ):
+            //             partial.exchange_move_id = exchange_move
+            //             used_exchange_moves.add(exchange_move)
+            //             used_partials.add(partial)
             // 
             // # ==== Create entries for cash basis taxes ====
             // def is_cash_basis_needed(amls):
             //     return any(amls.company_id.mapped('tax_exigibility')) \
             //         and amls.account_id.account_type in ('asset_receivable', 'liability_payable')
             // 
-            // if not self._context.get('move_reverse_cancel') and not self._context.get('no_cash_basis'):
+            // if not self.env.context.get('move_reverse_cancel') and not self.env.context.get('no_cash_basis'):
             //     for plan in plan_list:
             //         if is_cash_basis_needed(plan['amls']):
             //             plan['partials'].with_context(no_exchange_difference_no_recursive=False)._create_tax_cash_basis_moves()
+            //             plan['partials']._set_draft_caba_move_vals()
             // 
             // # ==== Prepare full reconcile creation ====
             // # First, we need to find all sub-set of amls that are candidates for a full.
@@ -8062,62 +9001,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // all_amls.matched_debit_ids
             // all_amls.matched_credit_ids
             // 
-            // # ==== Prepare the full exchange journal entries ====
-            // # This part could be bypassed using the 'no_exchange_difference' key inside the context. This is useful
-            // # when importing a full accounting including the reconciliation like Winbooks.
-            // 
-            // exchange_diff_values_list = []
-            // exchange_diff_full_batch_index = []
-            // if not self._context.get('no_exchange_difference'):
-            //     for full_batch_index, full_batch in enumerate(full_batches):
-            //         involved_amls = full_batch['amls']
-            //         if not full_batch['is_fully_reconciled']:
-            //             continue
-            // 
-            //         # In normal cases, the exchange differences are already generated by the partial at this point meaning
-            //         # there is no journal item left with a zero amount residual in one currency but not in the other.
-            //         # However, after a migration coming from an older version with an older partial reconciliation or due to
-            //         # some rounding issues (when dealing with different decimal places for example), we could need an extra
-            //         # exchange difference journal entry to handle them.
-            //         exchange_lines_to_fix = self.env['account.move.line']
-            //         amounts_list = []
-            //         exchange_max_date = date.min
-            //         for aml in involved_amls:
-            //             if not aml.company_currency_id.is_zero(aml.amount_residual):
-            //                 exchange_lines_to_fix += aml
-            //                 amounts_list.append({'amount_residual': aml.amount_residual})
-            //             elif not aml.currency_id.is_zero(aml.amount_residual_currency):
-            //                 exchange_lines_to_fix += aml
-            //                 amounts_list.append({'amount_residual_currency': aml.amount_residual_currency})
-            //             exchange_max_date = max(exchange_max_date, aml.date)
-            //         exchange_diff_values = exchange_lines_to_fix._prepare_exchange_difference_move_vals(
-            //             amounts_list,
-            //             company=involved_amls.company_id,
-            //             exchange_date=exchange_max_date,
-            //         )
-            // 
-            //         # Exchange difference for cash basis entries.
-            //         # If we are fully reversing the entry, no need to fix anything since the journal entry
-            //         # is exactly the mirror of the source journal entry.
-            //         caba_lines_to_reconcile = None
-            //         if is_cash_basis_needed(involved_amls) and not self._context.get('move_reverse_cancel') and not self._context.get('no_cash_basis'):
-            //             caba_lines_to_reconcile = involved_amls._add_exchange_difference_cash_basis_vals(exchange_diff_values)
-            // 
-            //         # Prepare the exchange difference.
-            //         if exchange_diff_values['move_values']['line_ids']:
-            //             exchange_diff_full_batch_index.append(full_batch_index)
-            //             exchange_diff_values_list.append(exchange_diff_values)
-            //             full_batch['caba_lines_to_reconcile'] = caba_lines_to_reconcile
-            // 
-            // # ==== Create the full exchange journal entries ====
-            // exchange_moves = self._create_exchange_difference_moves(exchange_diff_values_list)
-            // for full_batch_index, exchange_move in zip(exchange_diff_full_batch_index, exchange_moves):
-            //     full_batch = full_batches[full_batch_index]
-            //     amls = full_batch['amls']
-            //     full_batch['exchange_move'] = exchange_move
-            //     exchange_move_lines = exchange_move.line_ids.filtered(lambda line: line.account_id == amls.account_id)
-            //     full_batch['amls'] |= exchange_move_lines
-            // 
             // # ==== Create the full reconcile ====
             // # Note we are using Command.link and not Command.set because Command.set is triggering an unlink that is
             // # slowing down the assignation of the co-fields. Indeed, unlink is forcing a flush.
@@ -8128,7 +9011,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     involved_partials = amls.matched_debit_ids + amls.matched_credit_ids
             //     if full_batch['is_fully_reconciled']:
             //         full_reconcile_values_list.append({
-            //             'exchange_move_id': full_batch.get('exchange_move') and full_batch['exchange_move'].id,
             //             'partial_reconcile_ids': [Command.link(partial.id) for partial in involved_partials],
             //             'reconciled_line_ids': [Command.link(aml.id) for aml in amls],
             //         })
@@ -8145,7 +9027,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     caba_lines_to_reconcile = full_batch['caba_lines_to_reconcile']
             //     exchange_move = full_batch['exchange_move']
-            //     for (dummy, account, repartition_line), amls_to_reconcile in caba_lines_to_reconcile.items():
+            //     for (_dummy, account, repartition_line), amls_to_reconcile in caba_lines_to_reconcile.items():
             //         if not account.reconcile:
             //             continue
             // 
@@ -8197,11 +9079,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Get the mapping of all the lines matched with the lines in self grouped by matching number."""
             // matching_numbers = [n for n in set(self.mapped('matching_number')) if n]
             // if matching_numbers:
-            //     return dict(self._read_group(
+            //     return {number: lines.with_env(self.env) for number, lines in self.sudo()._read_group(
             //         domain=[('matching_number', 'in', matching_numbers)],
             //         groupby=['matching_number'],
             //         aggregates=['id:recordset'],
-            //     ))
+            //     )}
             // return {}
             */
             return default;
@@ -8289,6 +9171,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> RoundAnalyticDistributionLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object analytic_lines_vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _round_analytic_distribution_line(self, analytic_lines_vals):
+            // """ Round the analytic lines amount, and cancel the rounding error. """
+            // if not analytic_lines_vals:
+            //     return
+            // 
+            // rounding_error = 0
+            // for line in analytic_lines_vals:
+            //     rounded_amount = self.company_currency_id.round(line['amount'])
+            //     rounding_error += rounded_amount - line['amount']
+            //     line['amount'] = rounded_amount
+            // 
+            // # distributing the rounding error
+            // for line in analytic_lines_vals:
+            //     if self.company_currency_id.is_zero(rounding_error):
+            //         break
+            //     amt = max(
+            //         self.company_currency_id.rounding,
+            //         abs(self.company_currency_id.round(rounding_error / len(analytic_lines_vals)))
+            //     )
+            //     if rounding_error < 0.0:
+            //         line['amount'] += amt
+            //         rounding_error += amt
+            //     else:
+            //         line['amount'] -= amt
+            //         rounding_error -= amt
+            */
+            return default;
+        }
+
         public async Task<TEntity> SanitizeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -8296,11 +9211,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _sanitize_vals(self, vals):
             // if 'debit' in vals or 'credit' in vals:
             //     vals = vals.copy()
-            //     if 'balance' in vals:
-            //         vals.pop('debit', None)
-            //         vals.pop('credit', None)
-            //     else:
-            //         vals['balance'] = vals.pop('debit', 0) - vals.pop('credit', 0)
+            // 
+            //     # This is used for negative amounts in debit/credit for manual inputs (to stay in same debit/credit as input)
+            //     if vals.get('move_id') and self.env['account.move'].browse(vals['move_id']).company_id.account_storno:
+            //         vals['is_storno'] = vals.get('is_storno', False) or (vals.get('debit', 0) < 0 or vals.get('credit', 0) < 0)
+            // 
+            //     debit = vals.pop('debit', 0)
+            //     credit = vals.pop('credit', 0)
+            //     if 'balance' not in vals:
+            //         vals['balance'] = debit - credit
             // if (
             //     vals.get('matching_number')
             //     and not vals['matching_number'].startswith('I')
@@ -8321,8 +9240,93 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Normalize the float of the distribution """
             // if 'analytic_distribution' in vals:
             //     vals['analytic_distribution'] = vals.get('analytic_distribution') and {
-            //         account_id: float_round(distribution, decimal_precision) for account_id, distribution in vals['analytic_distribution'].items()}
+            //         account_id: float_round(distribution, decimal_precision) if account_id != '__update__' else distribution
+            //         for account_id, distribution in vals['analytic_distribution'].items()
+            //     }
             // return vals
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def _search_account_id(self, operator, value):
+            // """
+            // Search method that can be a drop-in replacement for searching on `account_id`.
+            // Resolves the domain and inlines the resulting ids to yield better final queries
+            // and avoids joining on the `account.account` model.
+            // This should be a net positive on average, under the assertion that the cardinality of
+            // `account.account` doesn't grow too large. (e.g. <10k rows)
+            // """
+            // if (
+            //     operator in ('in', 'not in', 'any', 'not any')
+            //     and not isinstance(value, (tuple, list, OrderedSet))
+            // ):
+            //     if operator in ('any', 'not any'):
+            //         operator = {'any': 'in', 'not any': 'not in'}[operator]
+            // 
+            //     if isinstance(value, (Query, SQL)):
+            //         query_value = value.select() if isinstance(value, Query) else value
+            //         value = [row[0] for row in self.env.execute_query(query_value)]
+            //     else:  # isinstance(value, Domain) is True
+            //         # sudo reason: ignore ir.rules, `account_id` is with `bypass_search_access=True`
+            //         value = self.env['account.account'].sudo()._search(value).get_result_ids()
+            // 
+            // return [('account_id', operator, value)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchAnalyticDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
+            // def _search_analytic_distribution(self, operator, value):
+            // # Don't use this override when account_report_analytic_groupby is truly in the context
+            // # Indeed, when account_report_analytic_groupby is in the context it means that `analytic_distribution`
+            // # doesn't have the same format and the table is a temporary one, see _prepare_lines_for_analytic_groupby
+            // if self.env.context.get('account_report_analytic_groupby'):
+            //     return Domain('analytic_distribution', operator, value)
+            // 
+            // def search_value(value: str, exact: bool):
+            //     return list(self.env['account.analytic.account']._search(
+            //         [('display_name', ('=' if exact else 'ilike'), value)]
+            //     ))
+            // 
+            // # reformulate the condition as <field> in/not in <ids>
+            // if operator in ('in', 'not in'):
+            //     ids = [
+            //         r
+            //         for v in value
+            //         for r in (search_value(v, exact=True) if isinstance(value, str) else [v])
+            //     ]
+            // elif operator in ('ilike', 'not ilike'):
+            //     ids = search_value(value, exact=False)
+            //     operator = 'not in' if operator.startswith('not') else 'in'
+            // else:
+            //     raise UserError(_('Operation not supported'))
+            // 
+            // if not ids:
+            //     # not ids found, just let it optimize to a constant
+            //     return Domain(operator == 'not in')
+            // 
+            // # keys can be comma-separated ids, we will split those into an array and then make an array comparison with the list of ids to check
+            // ids = [str(id_) for id_ in ids if id_]  # list of ids -> list of string
+            // if operator == 'in':
+            //     return Domain.custom(to_sql=lambda model, alias, query: SQL(
+            //         "%s && %s",
+            //         self._query_analytic_accounts(alias),
+            //         ids,
+            //     ))
+            // else:
+            //     return Domain.custom(to_sql=lambda model, alias, query: SQL(
+            //         "(NOT %s && %s OR %s IS NULL)",
+            //         self._query_analytic_accounts(alias),
+            //         ids,
+            //         model._field_to_sql(alias, 'analytic_distribution', query),
+            //     ))
             */
             return default;
         }
@@ -8341,7 +9345,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+            // def search_fetch(self, domain, field_names=None, offset=0, limit=None, order=None):
             // def to_tuple(t):
             //     return tuple(map(to_tuple, t)) if isinstance(t, (list, tuple)) else t
             // order = (order or self._order)
@@ -8363,9 +9367,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _search_journal_group_id(self, operator, value):
-            // field = 'name' if 'like' in operator else 'id'
-            // journal_groups = self.env['account.journal.group'].search([(field, operator, value)])
-            // return [('journal_id', 'not in', journal_groups.excluded_journal_ids.ids)]
+            // return self.env['account.move']._search_journal_group_id(operator, value)
             */
             return default;
         }
@@ -8379,7 +9381,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return super()._search_panel_domain_image(field_name, domain, set_count, limit)
             // 
             // # if domain is logically equivalent to false
-            // if expression.is_false(self, domain):
+            // domain = Domain(domain)
+            // if domain.is_false():
             //     return {}
             // 
             // # Override in order to not read the complete move line table and use the index instead
@@ -8414,6 +9417,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _search_payment_date(self, operator, value):
+            // if operator == 'in':
+            //     # recursive call with operator '='
+            //     return Domain.OR(self._search_payment_date('=', v) for v in value)
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // if operator == '=':
             //     operator = '<='
             // return [
@@ -8437,18 +9445,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object offset, object limit, object order) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+            // fields = fields or self._get_default_read_fields()
+            // return super().search_read(domain, fields, offset, limit, order, **read_kwargs)
+            */
+            return default;
+        }
+
         public async Task<TEntity> SellableLinesDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
             // def _sellable_lines_domain(self):
             // discount_products_ids = self.env.companies.sale_discount_product_id.ids
-            // domain = [('is_downpayment', '=', False)]
+            // domain = Domain('is_downpayment', '=', False)
             // if discount_products_ids:
-            //     domain = expression.AND([
-            //         domain,
-            //         [('product_id', 'not in', discount_products_ids)],
-            //     ])
+            //     domain &= Domain('product_id', 'not in', discount_products_ids)
             // return domain
             */
             return default;
@@ -8459,6 +9475,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _send_expense_success_mail(self, msg_dict, expense):
+            // """ Send a confirmation mail to the employee that an expense has been created by their previous mail """
             // if expense.employee_id.user_id:
             //     mail_template_id = 'hr_expense.hr_expense_template_register'
             // else:
@@ -8504,9 +9521,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def _set_expense_currency_rate(self, date_today):
             // for expense in self:
+            //     company_currency = expense.company_currency_id or self.env.company.currency_id
             //     expense.currency_rate = expense.env['res.currency']._get_conversion_rate(
-            //         from_currency=expense.currency_id,
-            //         to_currency=expense.company_currency_id,
+            //         from_currency=expense.currency_id or company_currency,
+            //         to_currency=company_currency,
             //         company=expense.company_id,
             //         date=expense.date or date_today,
             //     )
@@ -8543,20 +9561,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _suggest_quantity(self):
-            // '''
-            // Suggest a minimal quantity based on the seller
+            // ''' Suggest a minimal quantity based on the seller
             // '''
             // if not self.product_id:
             //     return
-            // seller_min_qty = self.product_id._select_seller(
-            //     partner_id=self.order_id.partner_id,
-            //     quantity=None,
-            //     date=self.order_id.date_order and self.order_id.date_order.date() or fields.Date.context_today(self),
-            //     params=self._get_select_sellers_params(),
-            // )
+            // date = self.order_id.date_order and self.order_id.date_order.date() or fields.Date.context_today(self)
+            // seller_min_qty = self.product_id.seller_ids\
+            //     .filtered(lambda r: r.partner_id == self.order_id.partner_id and
+            //               (not r.product_id or r.product_id == self.product_id) and
+            //               (not r.date_start or r.date_start <= date) and
+            //               (not r.date_end or r.date_end >= date))\
+            //     .sorted(key=lambda r: r.min_qty)
             // if seller_min_qty:
             //     self.product_qty = seller_min_qty[0].min_qty or 1.0
-            //     self.product_uom = seller_min_qty[0].product_uom
+            //     self.product_uom_id = seller_min_qty[0].product_uom_id
             // else:
             //     self.product_qty = 1.0
             */
@@ -8592,6 +9610,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // yield
             // after = existing()
             // for line in after:
+            //     if (
+            //         (changed('balance') or changed('move_type'))
+            //          and not self.env.is_protected(self._fields['amount_currency'], line)
+            //          and (not changed('amount_currency') or (line not in before and not line.amount_currency))
+            //          and line.currency_id == line.company_id.currency_id
+            //     ):
+            //         line.amount_currency = line.balance
             //     if (
             //         (changed('amount_currency') or changed('currency_rate') or changed('move_type'))
             //         and not self.env.is_protected(self._fields['balance'], line)
@@ -8629,6 +9654,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> TrackSubtypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object init_values) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _track_subtype(self, init_values):
+            // self.ensure_one()
+            // if 'state' not in init_values:
+            //     return super()._track_subtype(init_values)
+            // 
+            // match self.state:
+            //     case 'draft':
+            //         return self.env.ref('hr_expense.mt_expense_reset')
+            //     case 'cancel':
+            //         return self.env.ref('hr_expense.mt_expense_refused')
+            //     case 'paid':
+            //         return self.env.ref('hr_expense.mt_expense_paid')
+            //     case 'approved':
+            //         if init_values['state'] in {'posted', 'in_payment', 'paid'}:  # Reverting state
+            //             subtype = 'hr_expense.mt_expense_entry_draft' if self.account_move_id else 'hr_expense.mt_expense_entry_delete'
+            //             return self.env.ref(subtype)
+            //         return self.env.ref('hr_expense.mt_expense_approved')
+            //     case _:
+            //         return super()._track_subtype(init_values)
+            */
+            return default;
+        }
+
         public async Task<TEntity> UnblockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -8652,8 +9704,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self:
             //     return True
             // 
-            // # Check the lines are not reconciled (partially or not).
-            // self._check_reconciliation()
+            // self.remove_move_reconcile()
             // 
             // # Check the lock date. (Only relevant if the move is posted)
             // self.move_id.filtered(lambda m: m.state == 'posted')._check_fiscal_lock_dates()
@@ -8682,14 +9733,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     res = super().unlink()
             // 
             // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def unlink(self):
-            // attachments_to_unlink = self.env['ir.attachment']
-            // for sheet in self.sheet_id:
-            //     checksums = set((sheet.expense_line_ids.attachment_ids & self.attachment_ids).mapped('checksum'))
-            //     attachments_to_unlink += sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            // attachments_to_unlink.with_context(sync_attachment=False).unlink()
-            // return super().unlink()
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
             // def unlink(self):
             // to_unlink = self.filtered(lambda r: r.requisition_id.state not in ['draft', 'cancel', 'done'])
@@ -8704,6 +9747,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if depreciation_line.move_id:
             //             raise UserError(_('You cannot delete a document that contains posted entries.'))
             // return super(AccountAssetAsset, self).unlink()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UnlinkExceptApprovedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def _unlink_except_approved(self):
+            // for expense in self:
+            //     if expense.state in {'approved', 'posted', 'in_payment', 'paid'}:
+            //         raise UserError(_('You cannot delete a posted or approved expense.'))
             */
             return default;
         }
@@ -8726,33 +9781,87 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def _unlink_except_posted(self):
             // # Prevent deleting lines on posted entries
-            // if not self._context.get('force_delete') and any(m.state == 'posted' for m in self.move_id):
+            // if not self.env.context.get('force_delete') and any(m.state == 'posted' for m in self.move_id):
             //     raise UserError(_("You can't delete a posted journal item. Don’t play games with your accounting records; reset the journal entry to draft before deleting it."))
             */
             return default;
         }
 
-        public async Task<TEntity> UnlinkExceptPostedOrApprovedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> UnlinkExceptPurchaseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def _unlink_except_posted_or_approved(self):
-            // for expense in self:
-            //     if expense.state in {'done', 'approved'}:
-            //         raise UserError(_('You cannot delete a posted or approved expense.'))
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def _unlink_except_purchase(self):
+            // for line in self:
+            //     if line.order_id.state == 'purchase' and line.display_type not in ['line_section', 'line_subsection', 'line_note']:
+            //         state_description = {state_desc[0]: state_desc[1] for state_desc in self._fields['state']._description_selection(self.env)}
+            //         raise UserError(_('Cannot delete a purchase order line which is in state “%s”.', state_description.get(line.state)))
             */
             return default;
         }
 
-        public async Task<TEntity> UnlinkExceptPurchaseOrDoneInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        public async Task<TEntity> UpdateActivitiesAndMailsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def _unlink_except_purchase_or_done(self):
-            // for line in self:
-            //     if line.order_id.state in ['purchase', 'done'] and line.display_type not in ['line_note', 'line_section']:
-            //         state_description = {state_desc[0]: state_desc[1] for state_desc in self._fields['state']._description_selection(self.env)}
-            //         raise UserError(_('Cannot delete a purchase order line which is in state “%s”.', state_description.get(line.state)))
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def update_activities_and_mails(self):
+            // """ Update the "Review this expense" activity with the new state of the expense, also sends mail to approver to ask them to act """
+            // expenses_activity_done = self.env['hr.expense']
+            // expenses_activity_unlink = self.env['hr.expense']
+            // expenses_submitted_to_review = self.env['hr.expense']
+            // for expense in self:
+            //     if expense.state == 'submitted':
+            //         expense.activity_schedule(
+            //             'hr_expense.mail_act_expense_approval',
+            //             user_id=expense.manager_id.id or
+            //             expense.sudo()._get_default_responsible_for_approval().id or
+            //             self.env.user.id
+            //         )
+            //         expenses_submitted_to_review |= expense
+            //     elif expense.state == 'approved':
+            //         expenses_activity_done |= expense
+            //     elif expense.state in {'draft', 'refused'}:
+            //         expenses_activity_unlink |= expense
+            // 
+            // # Batched actions
+            // if expenses_activity_done:
+            //     expenses_activity_done.activity_feedback(['hr_expense.mail_act_expense_approval'])
+            // if expenses_activity_unlink:
+            //     expenses_activity_unlink.activity_unlink(['hr_expense.mail_act_expense_approval'])
+            // # Avoid sending yourself mails
+            // expenses_submitted_to_review = expenses_submitted_to_review.filtered(lambda expense: expense.manager_id != self.env.user)
+            // if expenses_submitted_to_review:
+            //     new_mails = []
+            //     for company, expenses_submitted_per_company in expenses_submitted_to_review.grouped('company_id').items():
+            //         parent_company_mails = company.parent_ids[::-1].mapped('email_formatted')
+            //         mail_from = (
+            //                 self.env.user.email
+            //                 or company.email_formatted
+            //                 or (parent_company_mails and parent_company_mails[0])
+            //         )
+            // 
+            //         if not mail_from:  # We can't send a mail without sender
+            //             _logger.warning(_("Failed to send mails for submitted expenses. No valid email was found for the company"))
+            //             continue
+            // 
+            //         for manager, expenses_submitted in expenses_submitted_per_company.grouped('manager_id').items():
+            //             manager_langs = tuple(lang for lang in manager.partner_id.mapped('lang') if lang)
+            //             mail_lang = (manager_langs and manager_langs[0]) or self.env.lang or 'en_US'
+            //             body = self.env['ir.qweb']._render(
+            //                 template='hr_expense.hr_expense_template_submitted_expenses',
+            //                 values={'manager_name': manager.name, 'url': '/expenses-to-approve'},
+            //                 lang=mail_lang,
+            //             )
+            //             new_mails.append({
+            //                 'author_id': self.env.user.partner_id.id,
+            //                 'auto_delete': True,
+            //                 'body_html': body,
+            //                 'email_from': mail_from,
+            //                 'email_to': manager.employee_id.work_email or manager.email,
+            //                 'subject': _("New expenses waiting for your approval"),
+            //             })
+            //         if new_mails:
+            //             self.env['mail.mail'].sudo().create(new_mails).send()
             */
             return default;
         }
@@ -8767,6 +9876,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for line in self:
             //     line.with_context(skip_analytic_sync=True).analytic_distribution = {
             //         analytic_line._get_distribution_key(): -analytic_line.amount / line.balance * 100
+            //         if line.balance else 100
             //         for analytic_line in line.analytic_line_ids
             //     }
             */
@@ -8965,9 +10075,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // protected_fields = self._get_lock_date_protected_fields()
             // account_to_write = self.env['account.account'].browse(vals['account_id']) if 'account_id' in vals else None
             // 
-            // # Check writing a deprecated account.
-            // if account_to_write and account_to_write.deprecated:
-            //     raise UserError(_('You cannot use a deprecated account.'))
+            // # Check writing a archived account.
+            // if account_to_write and not account_to_write.active:
+            //     raise UserError(_('You cannot use an archived account.'))
             // 
             // inalterable_fields = set(self._get_integrity_hash_fields()).union({'inalterable_hash'})
             // hashed_moves = self.move_id.filtered('inalterable_hash')
@@ -8976,13 +10086,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_(
             //         "You cannot edit the following fields: %(fields)s.\n"
             //         "The following entries are already hashed:\n%(entries)s",
-            //         fields=format_list(self.env, [f['string'] for f in self.fields_get(violated_fields).values()]),
+            //         fields=[f['string'] for f in self.fields_get(violated_fields).values()],
             //         entries='\n'.join(hashed_moves.mapped('name')),
             //     ))
             // 
             // line_to_write = self
             // vals = self._sanitize_vals(vals)
-            // matching2lines = None
+            // matching2lines = None  # lazy cache
+            // lines_to_unreconcile = self.env['account.move.line']
+            // st_lines_to_unreconcile = self.env['account.bank.statement.line']
+            // tax_lock_check_ids = []
             // for line in self:
             //     if not any(self.env['account.move']._field_will_change(line, vals, field_name) for field_name in vals):
             //         line_to_write -= line
@@ -8997,25 +10110,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     # Check the tax lock date.
             //     if line.parent_state == 'posted' and any(self.env['account.move']._field_will_change(line, vals, field_name) for field_name in protected_fields['tax']):
-            //         line._check_tax_lock_date()
+            //         tax_lock_check_ids.append(line.id)
             // 
-            //     # Check the reconciliation.
-            //     if changing_fields := {
-            //         field_name
-            //         for field_name in protected_fields['reconciliation']
-            //         if self.env['account.move']._field_will_change(line, vals, field_name)
-            //     }:
-            //         matching2lines = dict(self.env['account.move.line'].sudo()._read_group(
-            //             domain=[('matching_number', 'in', [n for n in self.mapped('matching_number') if n])],
-            //             groupby=['matching_number'],
-            //             aggregates=['id:recordset']
-            //         )) if matching2lines is None and line.matching_number else matching2lines
+            //     # Break the reconciliation.
+            //     if (
+            //         line.matching_number
+            //         and (changing_fields := {
+            //             field_name
+            //             for field_name in protected_fields['reconciliation']
+            //             if self.env['account.move']._field_will_change(line, vals, field_name)
+            //         })
+            //     ):
+            //         matching2lines = self._reconciled_by_number() if matching2lines is None else matching2lines
             //         if (
             //             # allow changing the account on all the lines of a reconciliation together
             //             changing_fields - {'account_id'}
-            //             or line.matching_number and not all(reconciled_line in self for reconciled_line in matching2lines[line.matching_number])
+            //             or not all(reconciled_line in self for reconciled_line in matching2lines[line.matching_number])
             //         ):
-            //             line._check_reconciliation()
+            //             lines_to_unreconcile += line
+            //             st_lines_to_unreconcile += (line.matched_debit_ids.debit_move_id + line.matched_credit_ids.credit_move_id).statement_line_id
+            // 
+            // lines_to_unreconcile.remove_move_reconcile()
+            // for st_line in st_lines_to_unreconcile:
+            //     try:
+            //         st_line.move_id._check_fiscal_lock_dates()
+            //         st_line.move_id.line_ids._check_tax_lock_date()
+            //     except UserError:
+            //         st_lines_to_unreconcile -= st_line
+            // st_lines_to_unreconcile.action_undo_reconciliation()
+            // 
+            // self.browse(tax_lock_check_ids)._check_tax_lock_date()
             // 
             // move_container = {'records': self.move_id}
             // with self.move_id._check_balanced(move_container),\
@@ -9051,6 +10175,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if any(field in vals for field in ['account_id', 'currency_id']):
             //         self._check_constrains_account_id_journal_id()
             // 
+            //     # double check modified lines in case a tax field was changed on a line that didn't previously affect tax
+            //     self.browse(tax_lock_check_ids)._check_tax_lock_date()
+            // 
             //     if not self.env.context.get('tracking_disable', False):
             //         # Log changes to move lines on each move
             //         for move_id, modified_lines in move_initial_values.items():
@@ -9062,6 +10189,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                         body=msg,
             //                         tracking_value_ids=tracking_value_ids
             //                     )
+            //     if 'analytic_line_ids' in vals:
+            //         self.filtered(lambda l: l.parent_state == 'draft').analytic_line_ids.with_context(skip_analytic_sync=True).unlink()
             // 
             // return result
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_mixin.py) ---
@@ -9072,81 +10201,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
             // def write(self, vals):
-            // if (
-            //         'state' in vals
-            //         and vals['state'] != 'submitted'
-            //         and not (self.env.user.has_group('hr_expense.group_hr_expense_manager') or self.env.su)
-            //         and any(state == 'draft' for state in self.mapped('state'))
-            // ):
-            //     raise UserError(_("You don't have the rights to bypass the validation process of this expense."))
-            // expense_to_previous_sheet = {}
-            // if 'sheet_id' in vals:
-            //     # Check access rights on the sheet
-            //     self.env['hr.expense.sheet'].browse(vals['sheet_id']).check_access('write')
+            // if any(field in vals for field in {'is_editable', 'can_approve', 'can_refuse'}):
+            //     raise UserError(_("You cannot edit the security fields of an expense manually"))
             // 
-            //     # Store the previous sheet of the expenses to unlink the attachments later if needed
-            //     for expense in self:
-            //         expense_to_previous_sheet[expense] = expense.sheet_id
-            // 
-            //     # If the sheet_id is modified, we need to check that the expenses are not set to 0,
-            //     # unless it's to unlink the sheet
-            //     enforced_non_zero_expenses = self.env['hr.expense']
-            //     if vals.get('sheet_id'):  # If sheet is linked, we need to check all the newly linked expenses in self
-            //         enforced_non_zero_expenses = self
-            // else:  # If sheet_id is not modified, we need to check all the expenses in self linked to a sheet
-            //     enforced_non_zero_expenses = self.filtered('sheet_id')
-            // 
-            // if 'tax_ids' in vals or 'analytic_distribution' in vals or 'account_id' in vals:
-            //     if any(not expense.is_editable for expense in self):
-            //         raise UserError(_('You are not authorized to edit this expense report.'))
-            // 
-            // if enforced_non_zero_expenses:
-            //     enforced_non_zero_expenses.check_amount_not_zero(vals)
+            // if any(field in vals for field in {'tax_ids', 'analytic_distribution', 'account_id', 'manager_id'}):
+            //     if any((not expense.is_editable and not self.env.su) for expense in self):
+            //         raise UserError(_(
+            //             "Uh-oh! You can’t edit this expense.\n\n"
+            //             "Reach out to the administrators, flash your best smile, and see if they'll grant you the magical access you seek."
+            //         ))
             // 
             // res = super().write(vals)
+            // 
+            // if vals.get('state') == 'approved' or vals.get('approval_state') == 'approved':
+            //     self._check_can_approve()
+            // elif vals.get('state') == 'refused' or vals.get('approval_state') == 'refused':
+            //     self._check_can_refuse()
             // 
             // if 'currency_id' in vals:
             //     self._set_expense_currency_rate(date_today=fields.Date.context_today(self))
             //     for expense in self:
             //         expense.total_amount = expense.total_amount_currency * expense.currency_rate
-            // 
-            // if 'employee_id' in vals:
-            //     # In case expense has sheet which has only one expense_line_ids,
-            //     # then changing the expense.employee_id triggers changing the sheet.employee_id too.
-            //     # Otherwise we unlink the expense line from sheet, (so that the user can create a new report).
-            //     if self.sheet_id:
-            //         employees = self.sheet_id.expense_line_ids.mapped('employee_id')
-            //         if len(employees) == 1:
-            //             self.sheet_id.write({'employee_id': vals['employee_id']})
-            //         elif len(employees) > 1:
-            //             self.sheet_id = False
-            // if 'sheet_id' in vals:
-            //     # The sheet_id has been modified, either by an explicit write on sheet_id of the expense,
-            //     # or by processing a command on the sheet's expense_line_ids.
-            //     # We need to delete the attachments on the previous sheet coming from the expenses that were modified,
-            //     # and copy the attachments of the expenses to the new sheet,
-            //     # if it's a no-op (writing same sheet_id as the current sheet_id of the expense),
-            //     # nothing should be done (no unlink then copy of the same attachments)
-            //     attachments_to_unlink = self.env['ir.attachment']
-            //     for expense in self:
-            //         previous_sheet = expense_to_previous_sheet[expense]
-            //         checksums = set((expense.attachment_ids - previous_sheet.expense_line_ids.attachment_ids).mapped('checksum'))
-            //         attachments_to_unlink += previous_sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            //         if vals['sheet_id'] and expense.sheet_id != previous_sheet:
-            //             for attachment in expense.attachment_ids.with_context(sync_attachment=False):
-            //                 attachment.copy({
-            //                     'res_model': 'hr.expense.sheet',
-            //                     'res_id': vals['sheet_id'],
-            //                 })
-            //     attachments_to_unlink.with_context(sync_attachment=False).unlink()
             // return res
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
             //     raise UserError(_("You cannot change the type of a purchase order line. Instead you should delete the current line and create a new line of the proper type."))
             // 
             // if 'product_qty' in values:
-            //     precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            //     precision = self.env['decimal.precision'].precision_get('Product Unit')
             //     for line in self:
             //         if (
             //             line.order_id.state == "purchase"
@@ -9161,7 +10245,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if 'qty_received' in values:
             //     for line in self:
             //         line._track_qty_received(values['qty_received'])
-            // return super(PurchaseOrderLine, self).write(values)
+            // return super().write(values)
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
             // def write(self, vals):
             // res = super().write(vals)
@@ -9175,7 +10259,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.supplier_info_ids.write({'price': vals['price_unit']})
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
             //     raise UserError(_("You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type."))
             // 
@@ -9187,7 +10272,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_("You cannot modify the product of this order line."))
             // 
             // if 'product_uom_qty' in values:
-            //     precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            //     precision = self.env['decimal.precision'].precision_get('Product Unit')
             //     self.filtered(
             //         lambda r: r.state == 'sale' and float_compare(r.product_uom_qty, values['product_uom_qty'], precision_digits=precision) != 0)._update_line_quantity(values)
             // 
@@ -9218,13 +10303,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //               '\n'.join(fields.mapped('field_description')))
             //         )
             // 
-            // result = super().write(values)
-            // 
-            // # Don't recompute the package_id if we are setting the quantity of the items and the quantity of packages
-            // if 'product_uom_qty' in values and 'product_packaging_qty' in values and 'product_packaging_id' not in values:
-            //     self.env.remove_to_compute(self._fields['product_packaging_id'], self)
-            // 
-            // return result
+            // return super().write(values)
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
             // def write(self, vals):
             // res = super(AccountAssetAsset, self).write(vals)

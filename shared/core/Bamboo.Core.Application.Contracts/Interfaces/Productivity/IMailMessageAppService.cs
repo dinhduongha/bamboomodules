@@ -13,8 +13,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MailMessage> CancelLetterAsync(Guid id);
         Task<MailMessage> ExportDataAsync(Guid id, MailMessageExportDataRequestDto input);
         Task<MailMessage> FetchAsync(Guid id, MailMessageFetchRequestDto input);
-        Task<MailMessage> InitAsync(Guid id);
-        Task<MailMessage> IsThreadMessageAsync(Guid id, MailMessageIsThreadMessageRequestDto input);
         Task<MailMessage> MarkAllAsReadAsync(Guid id, MailMessageMarkAllAsReadRequestDto input);
         Task<MailMessage> OpenDocumentAsync(Guid id);
         Task<MailMessage> PortalMessageFormatAsync(Guid id, MailMessagePortalMessageFormatRequestDto input);

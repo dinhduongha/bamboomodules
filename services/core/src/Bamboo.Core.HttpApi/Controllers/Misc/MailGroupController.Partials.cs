@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-close")]
+        public async Task<IActionResult> ActionCloseAsync(Guid id)
+        {
+            var result = await _appService.CloseAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-go-to-website")]
         public async Task<IActionResult> ActionGoToWebsiteAsync(Guid id)
         {
@@ -31,6 +39,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionLeaveAsync(Guid id)
         {
             var result = await _appService.LeaveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open")]
+        public async Task<IActionResult> ActionOpenAsync(Guid id)
+        {
+            var result = await _appService.OpenAsync(id);
             return Ok(result);
         }
         

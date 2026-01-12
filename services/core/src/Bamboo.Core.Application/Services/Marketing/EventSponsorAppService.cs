@@ -17,19 +17,19 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteEventExhibitor", Category = "Marketing", Depends = new[] { "website_event_jitsi" })]
+    [Module("WebsiteEventExhibitor", Category = "Marketing", Depends = new[] { "website_event" })]
     public class EventSponsorAppService : GenericApplicationService<EventSponsor>, IEventSponsorAppService
     {
-        private readonly IChatRoomMixinAppService _chatRoomMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
-        public EventSponsorAppService(IRepository<EventSponsor, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IChatRoomMixinAppService chatRoomMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
+        public EventSponsorAppService(IRepository<EventSponsor, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _chatRoomMixinAppService = chatRoomMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
             _websitePublishedMixinAppService = websitePublishedMixinAppService;
+            _websiteSearchableMixinAppService = websiteSearchableMixinAppService;
         }
 
         protected async Task<EventSponsor> ComputeCountryFlagUrlInternalAsync()
@@ -101,16 +101,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventSponsor> ComputeMobileInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
-            // def _compute_mobile(self):
-            // self._synchronize_with_partner('mobile')
-            */
-            return default;
-        }
-
         protected async Task<EventSponsor> ComputeNameInternalAsync()
         {
             /*
@@ -139,6 +129,16 @@ namespace Bamboo.Core.Application.Services
             // for sponsor in self:
             //     if sponsor.partner_id.website or not sponsor.url:
             //         sponsor.url = sponsor.partner_id.website
+            */
+            return default;
+        }
+
+        protected async Task<EventSponsor> ComputeWebsiteAbsoluteUrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
+            // def _compute_website_absolute_url(self):
+            // super()._compute_website_absolute_url()
             */
             return default;
         }
@@ -177,11 +177,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
             // def _compute_website_url(self):
-            // super(Sponsor, self)._compute_website_url()
+            // super()._compute_website_url()
             // for sponsor in self:
             //     if sponsor.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
-            //         base_url = sponsor.event_id.get_base_url()
-            //         sponsor.website_url = '%s/event/%s/exhibitor/%s' % (base_url, self.env["ir.http"]._slug(sponsor.event_id), self.env["ir.http"]._slug(sponsor))
+            //         sponsor.website_url = f'/event/{self.env["ir.http"]._slug(sponsor.event_id)}/exhibitor/{self.env["ir.http"]._slug(sponsor)}'
             */
             return default;
         }
@@ -206,55 +205,39 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<EventSponsor> MessageGetSuggestedRecipientsInternalAsync()
+        public async Task<EventSponsor> GetBaseUrlAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // if self.partner_id:
-            //     self._message_add_suggested_recipient(
-            //         recipients,
-            //         partner=self.partner_id,
-            //         reason=_('Sponsor')
-            //     )
-            // return recipients
-            */
-            return default;
-        }
-
-        protected async Task<EventSponsor> OnchangeExhibitorTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
-            // def _onchange_exhibitor_type(self):
-            // """ Keep an explicit onchange to allow configuration of room names, even
-            // if this field is normally a related on chat_room_id.name. It is not a real
-            // computed field, an onchange used in form view is sufficient. """
-            // for sponsor in self:
-            //     if sponsor.exhibitor_type == 'online' and not sponsor.room_name:
-            //         if sponsor.name:
-            //             room_name = "odoo-exhibitor-%s" % sponsor.name
-            //         else:
-            //             room_name = self.env['chat.room']._default_name(objname='exhibitor')
-            //         sponsor.room_name = self._jitsi_sanitize_name(room_name)
-            //     if sponsor.exhibitor_type == 'online' and not sponsor.room_max_capacity:
-            //         sponsor.room_max_capacity = '8'
-            */
-            return default;
-        }
-
-        public async Task<EventSponsor> OpenWebsiteUrlAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
-            // def open_website_url(self):
-            // """ Overridden to use a relative URL instead of an absolute when website_id is False. """
-            // if self.event_id.website_id:
-            //     return super().open_website_url()
-            // return self.env['website'].get_client_action(f'/event/{self.env["ir.http"]._slug(self.event_id)}/exhibitor/{self.env["ir.http"]._slug(self)}')
+            // def get_base_url(self):
+            // """As website_id is not defined on this record, we rely on event website_id for base URL."""
+            // return self.event_id.get_base_url()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<EventSponsor> SearchGetDetailInternalAsync(object website, object order, object options)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
+            // def _search_get_detail(self, website, order, options):
+            // event_id = self.env['ir.http']._unslug(options['event'])[1]
+            // mapping = {
+            //     'name': {'name': 'name', 'type': 'text', 'match': True},
+            //     'website_url': {'name': 'website_url', 'type': 'text', 'truncate': False},
+            //     'description': {'name': 'website_description', 'type': 'text', 'truncate': True, 'html': True},
+            // }
+            // return {
+            //     'model': 'event.sponsor',
+            //     'base_domain': [[('event_id', '=', event_id), ('exhibitor_type', '!=', 'sponsor')]],
+            //     'search_fields': ['name', 'website_description'],
+            //     'fetch_fields': ['name', 'website_url', 'website_description'],
+            //     'mapping': mapping,
+            //     'icon': 'fa-black-tie',
+            //     'order': order,
+            // }
+            */
+            return default;
         }
 
         protected async Task<EventSponsor> SynchronizeWithPartnerInternalAsync(object fname)

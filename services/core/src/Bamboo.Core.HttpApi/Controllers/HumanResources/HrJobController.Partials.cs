@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        {
+            var result = await _appService.ArchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-new-survey")]
         public async Task<IActionResult> ActionNewSurveyAsync(Guid id)
         {
@@ -35,26 +43,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-late-activities")]
-        public async Task<IActionResult> ActionOpenLateActivitiesAsync(Guid id)
+        [Route("{id}/action-open-employees")]
+        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid id)
         {
-            var result = await _appService.OpenLateActivitiesAsync(id);
+            var result = await _appService.OpenEmployeesAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-today-activities")]
-        public async Task<IActionResult> ActionOpenTodayActivitiesAsync(Guid id)
+        [Route("{id}/action-search-matching-applicants")]
+        public async Task<IActionResult> ActionSearchMatchingApplicantsAsync(Guid id)
         {
-            var result = await _appService.OpenTodayActivitiesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-search-matching-candidates")]
-        public async Task<IActionResult> ActionSearchMatchingCandidatesAsync(Guid id)
-        {
-            var result = await _appService.SearchMatchingCandidatesAsync(id);
+            var result = await _appService.SearchMatchingApplicantsAsync(id);
             return Ok(result);
         }
         
@@ -67,26 +67,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/close-dialog")]
-        public async Task<IActionResult> CloseDialogAsync(Guid id)
-        {
-            var result = await _appService.CloseDialogAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrJobCopyDataRequestDto input)
         {
             var result = await _appService.CopyDataAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/edit-dialog")]
-        public async Task<IActionResult> EditDialogAsync(Guid id)
-        {
-            var result = await _appService.EditDialogAsync(id);
             return Ok(result);
         }
         
@@ -103,14 +87,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SetOpenAsync(Guid id)
         {
             var result = await _appService.SetOpenAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

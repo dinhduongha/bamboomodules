@@ -24,6 +24,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        public async Task<TEntity> AddInvoiceHeaderNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
+            // def _add_invoice_header_nodes(self, document_node, vals):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // super()._add_invoice_header_nodes(document_node, vals)
+            // if not document_node['cbc:BuyerReference']['_text']:
+            //     document_node['cbc:BuyerReference']['_text'] = 'N/A'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddInvoiceTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
+            // def _add_invoice_tax_total_nodes(self, document_node, vals):
+            // # OVERRIDE
+            // document_node['cac:TaxTotal'] = [
+            //     self._ubl_get_tax_total_node(vals, tax_total)
+            //     for tax_total in vals['_ubl_values']['tax_totals_currency'].values()
+            // ]
+            */
+            return default;
+        }
+
         public async Task<TEntity> ExportInvoiceConstraintsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
         {
             /*
@@ -33,24 +60,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // constraints = super()._export_invoice_constraints(invoice, vals)
             // 
             // constraints.update({
-            //     'bis3_de_supplier_telephone_required': self._check_required_fields(vals['supplier'], ['phone', 'mobile']),
+            //     'bis3_de_supplier_telephone_required': self._check_required_fields(vals['supplier'], ['phone']),
             //     'bis3_de_supplier_electronic_mail_required': self._check_required_fields(vals['supplier'], 'email'),
             // })
             // 
             // return constraints
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ExportInvoiceEcosioSchematronsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
-            // def _export_invoice_ecosio_schematrons(self):
-            // return {
-            //     'invoice': 'de.xrechnung:ubl-invoice:2.2.0',
-            //     'credit_note': 'de.xrechnung:ubl-creditnote:2.2.0',
-            // }
             */
             return default;
         }
@@ -65,36 +79,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ExportInvoiceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        public async Task<TEntity> GetCustomizationIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object process_type) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._export_invoice_vals(invoice)
-            // vals['vals']['customization_id'] = self._get_customization_ids()['xrechnung']
-            // if not vals['vals'].get('buyer_reference'):
-            //     vals['vals']['buyer_reference'] = 'N/A'
-            // return vals
+            // def _get_customization_id(self, process_type='billing'):
+            // if process_type == 'billing':
+            //     return 'urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0'
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        public async Task<TEntity> GetPartyNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
-            // def _get_partner_party_vals(self, partner, role):
+            // def _get_party_node(self, vals):
             // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._get_partner_party_vals(partner, role)
-            // 
-            // if not vals.get('endpoint_id') and partner.email:
-            //     vals.update({
-            //         'endpoint_id': partner.email,
-            //         'endpoint_id_attrs': {'schemeID': 'EM'},
-            //     })
-            // 
-            // return vals
+            // party_node = super()._get_party_node(vals)
+            // partner = vals['partner']
+            // if not party_node.get('cbc:EndpointID', {}).get('_text') and partner.email:
+            //     party_node['cbc:EndpointID'] = {
+            //         '_text': partner.email,
+            //         'schemeID': 'EM'
+            //     }
+            // return party_node
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
+            // def _ubl_add_values_tax_currency_code(self, vals):
+            // # OVERRIDE account.edi.xml.ubl_bis3
+            // self._ubl_add_values_tax_currency_code_empty(vals)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IAccountEdiXmlUblDeable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
+            // def _ubl_get_line_allowance_charge_discount_node(self, vals, discount_values):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // discount_node = super()._ubl_get_line_allowance_charge_discount_node(vals, discount_values)
+            // discount_node['cbc:AllowanceChargeReason'] = None
+            // discount_node['cbc:MultiplierFactorNumeric'] = None
+            // discount_node['cbc:BaseAmount'] = None
+            // return discount_node
             */
             return default;
         }

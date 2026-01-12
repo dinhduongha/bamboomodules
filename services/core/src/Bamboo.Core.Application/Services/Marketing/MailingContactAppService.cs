@@ -17,15 +17,17 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "utm", "link_tracker", "web_editor", "social_media", "web_tour", "digest" })]
+    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
     public class MailingContactAppService : GenericApplicationService<MailingContact>, IMailingContactAppService
     {
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;
         private readonly IMailThreadPhoneAppService _mailThreadPhoneAppService;
-        public MailingContactAppService(IRepository<MailingContact, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IPropertiesBaseDefinitionMixinAppService _propertiesBaseDefinitionMixinAppService;
+        public MailingContactAppService(IRepository<MailingContact, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService, IPropertiesBaseDefinitionMixinAppService propertiesBaseDefinitionMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadBlacklistAppService = mailThreadBlacklistAppService;
             _mailThreadPhoneAppService = mailThreadPhoneAppService;
+            _propertiesBaseDefinitionMixinAppService = propertiesBaseDefinitionMixinAppService;
         }
 
         public async Task<MailingContact> AddToListAsync(Guid id, MailingContactAddToListRequestDto input)
@@ -73,8 +75,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
             // def _compute_opt_out(self):
-            // if 'default_list_ids' in self._context and isinstance(self._context['default_list_ids'], (list, tuple)) and len(self._context['default_list_ids']) == 1:
-            //     [active_list_id] = self._context['default_list_ids']
+            // if 'default_list_ids' in self.env.context and isinstance(self.env.context['default_list_ids'], (list, tuple)) and len(self.env.context['default_list_ids']) == 1:
+            //     [active_list_id] = self.env.context['default_list_ids']
             //     for record in self:
             //         active_subscription_list = record.subscription_ids.filtered(lambda l: l.list_id.id == active_list_id)
             //         record.opt_out = active_subscription_list.opt_out
@@ -128,39 +130,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailingContact> MessageGetDefaultRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
-            // def _message_get_default_recipients(self):
-            // return {
-            //     r.id: {
-            //         'partner_ids': [],
-            //         'email_to': ','.join(tools.email_normalize_all(r.email)) or r.email,
-            //         'email_cc': False,
-            //     } for r in self
-            // }
-            */
-            return default;
-        }
-
         protected async Task<MailingContact> SearchOptOutInternalAsync(object @operator, object @value)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
             // def _search_opt_out(self, operator, value):
-            // # Assumes operator is '=' or '!=' and value is True or False
-            // if operator != '=':
-            //     if operator == '!=' and isinstance(value, bool):
-            //         value = not value
-            //     else:
-            //         raise NotImplementedError()
+            // if operator != 'in':
+            //     return NotImplemented
             // 
-            // if 'default_list_ids' in self._context and isinstance(self._context['default_list_ids'], (list, tuple)) and len(self._context['default_list_ids']) == 1:
-            //     [active_list_id] = self._context['default_list_ids']
-            //     contacts = self.env['mailing.subscription'].search([('list_id', '=', active_list_id)])
-            //     return [('id', 'in', [record.contact_id.id for record in contacts if record.opt_out == value])]
-            // return expression.FALSE_DOMAIN if value else expression.TRUE_DOMAIN
+            // if 'default_list_ids' in self.env.context and isinstance(self.env.context['default_list_ids'], (list, tuple)) and len(self.env.context['default_list_ids']) == 1:
+            //     [active_list_id] = self.env.context['default_list_ids']
+            //     subscriptions = self.env['mailing.subscription']._search([
+            //         ('list_id', '=', active_list_id),
+            //         ('opt_out', '=', True),
+            //     ])
+            //     return [('id', 'in', subscriptions.subselect('contact_id'))]
+            // return Domain.FALSE
             */
             return default;
         }

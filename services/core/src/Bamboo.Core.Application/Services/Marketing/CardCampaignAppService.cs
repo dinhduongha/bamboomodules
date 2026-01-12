@@ -30,6 +30,50 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
+        protected async Task<CardCampaign> ActionShareGetDefaultBodyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
+            // def _action_share_get_default_body(self):
+            //         # try to pick a relevant card if users try to visit during preview/test mailings
+            //         preview_card = self._fetch_or_create_preview_card() if self else self.env['card.card']
+            //         return f"""
+            // <div class="o_layout oe_unremovable oe_unmovable o_empty_theme" data-name="Mailing">
+            // <style id="design-element"></style>
+            // <div class="container o_mail_wrapper o_mail_regular oe_unremovable">
+            // <div class="row">
+            // <div class="col o_mail_no_options o_mail_wrapper_td bg-white oe_structure o_editable theme_selection_done">
+            // 
+            // <div class="s_text_block o_mail_snippet_general pt24 pb24" style="padding-left: 15px; padding-right: 15px;" data-snippet="s_text_block" data-name="Text">
+            //     <div class="container s_allow_columns">
+            //         <p">{_("Hello everyone")}</p>
+            //         <p>{_("Here's the link to advertise your participation.")}
+            //         <br>{_("Your help with this promotion would be greatly appreciated!")}</p>
+            //         <p>{_("Many thanks")}</p>
+            //     </div>
+            // </div>
+            // 
+            // <div class="s_call_to_share_card o_mail_snippet_general" style="padding-top: 10px; padding-bottom: 10px;">
+            //     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            //         <tbody>
+            //             <tr>
+            //                 <td align="center">
+            //                     <a href="/cards/{preview_card.id or 0}/preview" style="padding-left: 3px !important; padding-right: 3px !important">
+            //                         <img src="/web/image/card.campaign/{self.id or 0}/image_preview" alt="{_("Card Preview")}" class="img-fluid" style="width: 540px;"
+            //                             data-original-src="/web/image/card.campaign/{self.id or 0}/image_preview"/>
+            //                     </a>
+            //                 </td>
+            //             </tr>
+            //         </tbody>
+            //     </table>
+            // </div>
+            // 
+            // </div></div></div></div>
+            // """
+            */
+            return default;
+        }
+
         protected async Task<CardCampaign> CheckAccessRightDynamicTemplateInternalAsync()
         {
             /*
@@ -146,6 +190,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<CardCampaign> FetchOrCreatePreviewCardInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
+            // def _fetch_or_create_preview_card(self):
+            // """Fetch the card corresponding to the preview record, or create one if none exists.
+            // 
+            // The image also gets the preview render if it has none. It is also archived to ensure
+            // it is rerendered later if sent.
+            // """
+            // self.ensure_one()
+            // card = self.env['card.card'].with_context(active_test=False).search([
+            //     ('campaign_id', '=', self.id),
+            //     ('res_id', '=', self.preview_record_ref.id),
+            // ])
+            // image = self.image_preview
+            // if card:
+            //     card.write({
+            //         'image': image,
+            //         'active': False,
+            //     })
+            // else:
+            //     card = self.env['card.card'].create({
+            //         'campaign_id': self.id,
+            //         'res_id': self.preview_record_ref.id,
+            //         'image': image,
+            //         'active': False,
+            //     })
+            // return card
+            */
+            return default;
+        }
+
         protected async Task<CardCampaign> GetCardElementValuesInternalAsync(object record)
         {
             /*
@@ -167,17 +244,24 @@ namespace Bamboo.Core.Application.Services
             // for el, text_field, dyn_field, path_field in campaign_text_element_fields:
             //     if not self[dyn_field]:
             //         result[el] = self[text_field]
+            //     elif not (field_path := self[path_field]):
+            //         result[el] = record
             //     else:
+            //         fnames = field_path.split('.')
             //         try:
-            //             m = record.mapped(self[path_field])
+            //             value = record
+            //             while fnames and (fname := fnames.pop(0)):
+            //                 value.fetch([fname])
+            //                 value = value[fname]
+            //             m = record.mapped(field_path)
             //             result[el] = m and m[0] or False
-            //         except (AttributeError, KeyError):
+            //         except (AttributeError, ValueError):
             //             # for generic image, or if field incorrect, return name of field
-            //             result[el] = self[path_field]
+            //             result[el] = field_path
             //         # force dates to their relevant timezone as that's what is usually wanted
             //         if (
             //             isinstance(result[el], (date, datetime))
-            //             and (tz := record._mail_get_timezone_with_default(default_tz=None))
+            //             and (tz := record._mail_get_timezone())
             //         ):
             //             result[el] = pytz.utc.localize(result[el]).astimezone(pytz.timezone(tz)).replace(tzinfo=None)
             // return result
@@ -197,6 +281,15 @@ namespace Bamboo.Core.Application.Services
             //     [self._render_field('body_html', record.ids, add_context={'card_campaign': self})[record.id]],
             //     *TEMPLATE_DIMENSIONS
             // )[0]
+            // 
+            // # None means there was a logged error at image rendering time.
+            // # Tests also do not render by default, in that case ignore.
+            // if image_bytes is None and not modules.module.current_test:
+            //     raise exceptions.UserError(_(
+            //         'An error occured while rendering a card for %(record_name)s. '
+            //         'Try again or check the server logs for more details.',
+            //         record_name=record.display_name
+            //     ))
             // return image_bytes and base64.b64encode(image_bytes)
             */
             return default;
@@ -249,19 +342,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
             // def action_preview(self):
             // self.ensure_one()
-            // card = self.env['card.card'].with_context(active_test=False).search([
-            //     ('campaign_id', '=', self.id),
-            //     ('res_id', '=', self.preview_record_ref.id),
-            // ])
-            // if card:
-            //     card.image = self.image_preview
-            // else:
-            //     card = self.env['card.card'].create({
-            //         'campaign_id': self.id,
-            //         'res_id': self.preview_record_ref.id,
-            //         'image': self.image_preview,
-            //         'active': False,
-            //     })
+            // card = self._fetch_or_create_preview_card()
             // return {'type': 'ir.actions.act_url', 'url': card._get_path('preview'), 'target': 'new'}
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -272,51 +353,21 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
             // def action_share(self):
-            //         self.ensure_one()
-            //         return {
-            //             'type': 'ir.actions.act_window',
-            //             'name': _('Send Cards'),
-            //             'res_model': 'mailing.mailing',
-            //             'context': {
-            //                 'default_subject': self.name,
-            //                 'default_card_campaign_id': self.id,
-            //                 'default_mailing_model_id': self.env['ir.model']._get_id(self.res_model),
-            //                 'default_body_arch': f"""
-            // <div class="o_layout oe_unremovable oe_unmovable bg-200 o_empty_theme" data-name="Mailing">
-            // <style id="design-element"></style>
-            // <div class="container o_mail_wrapper o_mail_regular oe_unremovable">
-            // <div class="row">
-            // <div class="col o_mail_no_options o_mail_wrapper_td bg-white oe_structure o_editable theme_selection_done">
-            // 
-            // <div class="s_text_block o_mail_snippet_general pt24 pb24" style="padding-left: 15px; padding-right: 15px;" data-snippet="s_text_block" data-name="Text">
-            //     <div class="container s_allow_columns">
-            //         <p class="o_default_snippet_text">Hello everyone</p>
-            //         <p class="o_default_snippet_text">Here's the link to advertise your participation.
-            //         <br> Your help with this promotion would be greatly appreciated!`</p>
-            //         <p class="o_default_snippet_text">Many thanks</p>
-            //     </div>
-            // </div>
-            // 
-            // <div class="s_call_to_share_card o_mail_snippet_general" style="padding-top: 10px; padding-bottom: 10px;">
-            //     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            //         <tbody>
-            //             <tr>
-            //                 <td align="center">
-            //                     <a href="/cards/{self.id}/preview" style="padding-left: 3px !important; padding-right: 3px !important">
-            //                         <img src="/web/image/card.campaign/{self.id}/image_preview" alt="Card Preview" class="img-fluid" style="width: 540px;"/>
-            //                     </a>
-            //                 </td>
-            //             </tr>
-            //         </tbody>
-            //     </table>
-            // </div>
-            // 
-            // </div></div></div></div>
-            // """,
-            //             },
-            //             'views': [[False, 'form']],
-            //             'target': 'new',
-            //         }
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Send Cards'),
+            //     'res_model': 'mailing.mailing',
+            //     'context': {
+            //         'create': False,
+            //         'default_subject': self.name,
+            //         'default_card_campaign_id': self.id,
+            //         'default_mailing_model_id': self.env['ir.model']._get_id(self.res_model),
+            //         'default_body_arch': self._action_share_get_default_body(),
+            //     },
+            //     'views': [[False, 'form']],
+            //     'target': 'current',
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

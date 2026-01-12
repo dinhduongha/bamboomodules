@@ -11,7 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IStockQuantAppService : IGenericApplicationService<StockQuant>
     {
         Task<StockQuant> ApplyAllAsync(Guid id);
-        Task<StockQuant> ApplyInventoryAsync(Guid id);
+        Task<StockQuant> ApplyInventoryAsync(Guid id, StockQuantApplyInventoryRequestDto input);
         Task<StockQuant> CheckLocationIdAsync(Guid id);
         Task<StockQuant> CheckLotIdAsync(Guid id);
         Task<StockQuant> CheckProductIdAsync(Guid id);
@@ -29,6 +29,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<StockQuant> ViewOrderpointsAsync(Guid id);
         Task<StockQuant> ViewQuantsAsync(Guid id);
         Task<StockQuant> ViewStockMovesAsync(Guid id);
-        Task<StockQuant> WarningDuplicatedSnAsync(Guid id);
     }
 }

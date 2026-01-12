@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldMonetaryable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // lang = self.user_lang()
             // 
@@ -44,7 +44,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(MonetaryConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     from_currency=dict(type='model', params='res.currency', string=_('Original currency')),
             //     display_currency=dict(type='model', params='res.currency', string=_('Display currency'), required="value_to_html"),
@@ -74,11 +74,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if currency_fields:
             //         options['display_currency'] = record[currency_fields[0]]
             // if 'date' not in options:
-            //     options['date'] = record._context.get('date')
+            //     options['date'] = record.env.context.get('date')
             // if 'company_id' not in options:
-            //     options['company_id'] = record._context.get('company_id')
+            //     options['company_id'] = record.env.context.get('company_id')
             // 
-            // return super(MonetaryConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             */
             return default;
         }
@@ -108,6 +108,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         company = self.env.company
             //     value = options['from_currency']._convert(value, display_currency, company, date)
+            // 
+            // if float_is_zero(value, precision_digits=display_currency.decimal_places):
+            //     value = 0.0
             // 
             // lang = self.user_lang()
             // formatted_amount = lang.format(fmt, display_currency.round(value), grouping=True)\

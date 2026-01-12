@@ -26,66 +26,21 @@ namespace Bamboo.Core.Application.Services
             _busListenerMixinAppService = busListenerMixinAppService;
         }
 
-        protected async Task<MailMessage> AuthorToStoreInternalAsync(object store)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
-            // def _author_to_store(self, store: Store):
-            // messages_w_author_channel = self.filtered(
-            //     lambda message: message.author_id
-            //     and message.model == "discuss.channel"
-            //     and message.res_id
-            // )
-            // channel_by_message = messages_w_author_channel._record_by_message()
-            // messages_w_author_livechat = messages_w_author_channel.filtered(
-            //     lambda message: channel_by_message[message].channel_type == "livechat"
-            // )
-            // super(MailMessage, self - messages_w_author_livechat)._author_to_store(store)
-            // for message in messages_w_author_livechat:
-            //     store.add(
-            //         message,
-            //         {
-            //             "author": Store.one(
-            //                 message.author_id,
-            //                 fields=["avatar_128", "is_company", "user_livechat_username", "user"],
-            //             ),
-            //         },
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _author_to_store(self, store: Store):
-            // for message in self:
-            //     data = {
-            //         "author": False,
-            //         "email_from": message.email_from,
-            //     }
-            //     # sudo: mail.message: access to author is allowed
-            //     if guest_author := message.sudo().author_guest_id:
-            //         data["author"] = Store.one(guest_author, fields=["avatar_128", "name"])
-            //     # sudo: mail.message: access to author is allowed
-            //     elif author := message.sudo().author_id:
-            //         data["author"] = Store.one(
-            //             author, fields=["avatar_128", "is_company", "name", "user"]
-            //         )
-            //     store.add(message, data)
-            */
-            return default;
-        }
-
         protected async Task<MailMessage> BusChannelInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _bus_channel(self):
             // self.ensure_one()
-            // if self.model == "discuss.channel" and self.res_id:
-            //     return self.env["discuss.channel"].browse(self.res_id)._bus_channel()
+            // if self.channel_id:
+            //     return self.channel_id
             // guest = self.env["mail.guest"]._get_guest_from_context()
             // if self.env.user._is_public() and guest:
-            //     return guest._bus_channel()
+            //     return guest
             // return super()._bus_channel()
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _bus_channel(self):
-            // return self.env.user._bus_channel()
+            // return self.env.user
             */
             return default;
         }
@@ -95,9 +50,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _bus_send_reaction_group(self, content):
-            // store = Store()
+            // store = Store(bus_channel=self._bus_channel())
             // self._reaction_group_to_store(store, content)
-            // self._bus_send_store(store)
+            // store.bus_send()
             */
             return default;
         }
@@ -159,67 +114,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailMessage> CleanupSideRecordsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _cleanup_side_records(self):
-            // """ Clean related data: notifications, stars, ... to avoid lingering
-            // notifications / unreachable counters with void messages notably. """
-            // outdated_starred_partners = self.starred_partner_ids.sorted("id")
-            // self.write({
-            //     'starred_partner_ids': [(5, 0, 0)],
-            //     'notification_ids': [(5, 0, 0)],
-            // })
-            // if outdated_starred_partners:
-            //     # sudo: bus.bus: reading non-sensitive last id
-            //     bus_last_id = self.env["bus.bus"].sudo()._bus_last_id()
-            //     self.env.cr.execute("""
-            //         SELECT res_partner_id, count(*)
-            //           FROM mail_message_res_partner_starred_rel
-            //          WHERE res_partner_id IN %s
-            //       GROUP BY res_partner_id
-            //       ORDER BY res_partner_id
-            //     """, [tuple(outdated_starred_partners.ids)])
-            //     star_count_by_partner_id = dict(self.env.cr.fetchall())
-            //     for partner in outdated_starred_partners:
-            //         partner._bus_send_store(
-            //             "mail.thread",
-            //             {
-            //                 "counter": star_count_by_partner_id.get(partner.id, 0),
-            //                 "counter_bus_id": bus_last_id,
-            //                 "id": "starred",
-            //                 "messages": Store.many(self, "DELETE", only_id=True),
-            //                 "model": "mail.box",
-            //             },
-            //         )
-            */
-            return default;
-        }
-
         protected async Task<MailMessage> ComputeAccountAuditLogAccountIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
             // def _compute_account_audit_log_account_id(self):
             // self._compute_audit_log_related_record_id('account.account', 'account_audit_log_account_id')
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> ComputeAccountAuditLogActivatedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
-            // def _compute_account_audit_log_activated(self):
-            // for message in self:
-            //     message.account_audit_log_activated = message.message_type == 'notification' and (
-            //         message.account_audit_log_move_id
-            //         or message.account_audit_log_account_id
-            //         or message.account_audit_log_tax_id
-            //         or message.account_audit_log_partner_id
-            //         or message.account_audit_log_company_id
-            //     )
             */
             return default;
         }
@@ -259,7 +159,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
             // def _compute_account_audit_log_preview(self):
-            // audit_messages = self.filtered('account_audit_log_activated')
+            // audit_messages = self.filtered(lambda m: m.message_type == 'notification')
             // (self - audit_messages).account_audit_log_preview = False
             // for message in audit_messages:
             //     title = message.subject or message.preview
@@ -271,13 +171,26 @@ namespace Bamboo.Core.Application.Services
             //     audit_log_preview = (title or '') + '\n'
             //     audit_log_preview += "\n".join(
             //         "%(old_value)s ⇨ %(new_value)s (%(field)s)" % {
-            //             'old_value': fmt_vals['oldValue']['value'],
-            //             'new_value': fmt_vals['newValue']['value'],
-            //             'field': fmt_vals['changedField'],
+            //             'old_value': fmt_vals['oldValue'],
+            //             'new_value': fmt_vals['newValue'],
+            //             'field': fmt_vals['fieldInfo']['changedField'],
             //         }
             //         for fmt_vals in tracking_value_ids._tracking_value_format()
             //     )
             //     message.account_audit_log_preview = audit_log_preview
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> ComputeAccountAuditLogRestrictedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
+            // def _compute_account_audit_log_restricted(self):
+            // self.account_audit_log_restricted = False
+            // if potentially_restricted := self.filtered(lambda r: r.model in DOMAINS):
+            //     restricted = self.search(Domain('id', 'in', potentially_restricted.ids) + self._search_account_audit_log_restricted('in', [True]))
+            //     restricted.account_audit_log_restricted = True
             */
             return default;
         }
@@ -299,12 +212,22 @@ namespace Bamboo.Core.Application.Services
             // def _compute_audit_log_related_record_id(self, model, fname):
             // messages_of_related = self.filtered(lambda m: m.model == model and m.res_id)
             // (self - messages_of_related)[fname] = False
-            // if messages_of_related:
-            //     domain = DOMAINS[model](operator='=', value=True)
-            //     related_recs = self.env[model].sudo().search([('id', 'in', messages_of_related.mapped('res_id'))] + domain)
-            //     recs_by_id = {record.id: record for record in related_recs}
-            //     for message in messages_of_related:
-            //         message[fname] = recs_by_id.get(message.res_id, False)
+            // for message in messages_of_related:
+            //     message[fname] = message.res_id
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> ComputeChannelIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _compute_channel_id(self):
+            // for message in self:
+            //     if message.model == "discuss.channel" and message.res_id:
+            //         message.channel_id = self.env["discuss.channel"].browse(message.res_id)
+            //     else:
+            //         message.channel_id = False
             */
             return default;
         }
@@ -352,6 +275,58 @@ namespace Bamboo.Core.Application.Services
             //         message.is_current_user_or_guest_author = True
             //     else:
             //         message.is_current_user_or_guest_author = False
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: mail_message.py) ---
+            // def _compute_is_current_user_or_guest_author(self):
+            // super()._compute_is_current_user_or_guest_author()
+            // portal_data = self.env.context.get("portal_data", {})
+            // portal_partner = portal_data.get("portal_partner")
+            // portal_thread = portal_data.get("portal_thread")
+            // if (
+            //     not portal_partner
+            //     or not portal_thread
+            //     or not isinstance(portal_partner, self.pool["res.partner"])
+            //     or not isinstance(portal_thread, self.pool["mail.thread"])
+            // ):
+            //     return
+            // for message in self:
+            //     if (
+            //         message.author_id == portal_partner
+            //         and message.model == portal_thread._name
+            //         and message.res_id == portal_thread.id
+            //     ):
+            //         message.is_current_user_or_guest_author = True
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> ComputeLinkedMessageIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _compute_linked_message_ids(self):
+            // """ Compute the linked messages from the body of the message."""
+            // message_ids_by_message = defaultdict(list)
+            // for message in self:
+            //     if tools.is_html_empty(message.body):
+            //         continue
+            //     str_ids = html.fromstring(message.body).xpath(
+            //         "//a[contains(@class, 'o_message_redirect') and @data-oe-model='mail.message']/@data-oe-id",
+            //     )
+            //     for str_id in str_ids:
+            //         with contextlib.suppress(ValueError, TypeError):
+            //             message_ids_by_message[message].append(int(str_id))
+            // mids = [mid for mids in message_ids_by_message.values() for mid in mids]
+            // if not mids:
+            //     self.linked_message_ids = self.env["mail.message"]
+            //     return
+            // # Remove any potential sudo from the env as linked messages are user input, returning them
+            // # as sudo could lead to users being able to read any arbitrary message through this feature.
+            // # Only allowed messages for the current user are acceptable.
+            // linked_messages = self.sudo(False).search(Domain("id", "in", mids))
+            // for message in self:
+            //     message.linked_message_ids = linked_messages.filtered(
+            //         lambda m, message=message: m.id in message_ids_by_message[message],
+            //     )
             */
             return default;
         }
@@ -368,29 +343,6 @@ namespace Bamboo.Core.Application.Services
             //     ('is_read', '=', False)]).mapped('mail_message_id')
             // for message in self:
             //     message.needaction = message in my_messages
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> ComputeParentAuthorNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
-            // def _compute_parent_author_name(self):
-            // for message in self:
-            //     author = message.parent_id.author_id or message.parent_id.author_guest_id
-            //     message.parent_author_name = author.name if author else False
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> ComputeParentBodyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
-            // def _compute_parent_body(self):
-            // for message in self:
-            //     message.parent_body = message.parent_id.body if message.parent_id else False
             */
             return default;
         }
@@ -434,6 +386,23 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MailMessage> ComputeRecordNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _compute_record_name(self):
+            // free = self.filtered(lambda m: not m.model or not m.res_id or m.model not in self.env)
+            // free.record_name = False
+            // # sudo here, as it behaves like a m2o -> can read message, can read name_get
+            // for message, record in (self - free)._record_by_message().items():
+            //     try:
+            //         message.record_name = record.sudo().display_name
+            //     except MissingError:
+            //         message.record_name = False
+            */
+            return default;
+        }
+
         protected async Task<MailMessage> ComputeSnailmailErrorInternalAsync()
         {
             /*
@@ -467,24 +436,11 @@ namespace Bamboo.Core.Application.Services
             // def _except_audit_log(self):
             // if self.env.context.get('bypass_audit') is bypass_token:
             //     return
-            // to_check = self
-            // partner_message = self.filtered(lambda m: m.account_audit_log_partner_id)
-            // if partner_message:
-            //     # The audit trail uses the cheaper check on `customer_rank`, but that field could be set
-            //     # without actually having an invoice linked (i.e. creation of the contact through the
-            //     # Invoicing/Customers menu)
-            //     has_related_move = self.env['account.move'].sudo().search_count([
-            //         ('partner_id', 'in', partner_message.account_audit_log_partner_id.ids),
-            //         ('company_id.check_account_audit_trail', '=', True),
-            //     ], limit=1)
-            //     if not has_related_move:
-            //         to_check -= partner_message
-            // for message in to_check:
-            //     if message.account_audit_log_activated and not (
-            //         message.account_audit_log_move_id
-            //         and not message.account_audit_log_move_id.posted_before
-            //     ):
-            //         raise UserError(self.env._("You cannot remove parts of the audit trail."))
+            // for message in self:
+            //     if message.account_audit_log_move_id and not message.account_audit_log_move_id.posted_before:
+            //         continue
+            //     if message.account_audit_log_restricted:
+            //         raise UserError(self.env._("You cannot remove parts of a restricted audit trail. Archive the record instead."))
             */
             return default;
         }
@@ -497,7 +453,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.is_admin():
             //     raise AccessError(_("Only administrators are allowed to export mail message"))
             // 
-            // return super(Message, self).export_data(fields_to_export)
+            // return super().export_data(fields_to_export)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -510,10 +466,10 @@ namespace Bamboo.Core.Application.Services
             // super()._extras_to_store(store, format_reply=format_reply)
             // if format_reply:
             //     # sudo: mail.message: access to parent is allowed
-            //     for message in self.sudo().filtered(lambda message: message.model == "discuss.channel"):
-            //         store.add(
-            //             message, {"parentMessage": Store.one(message.parent_id, format_reply=False)}
-            //         )
+            //     store.add(
+            //         self.sudo().filtered(lambda message: message.channel_id),
+            //         Store.One("parent_id", format_reply=False),
+            //     )
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _extras_to_store(self, store: Store, format_reply):
             // pass
@@ -525,7 +481,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def fetch(self, field_names):
+            // def fetch(self, field_names=None):
             // # This freaky hack is aimed at reading data without the overhead of
             // # checking that "self" is accessible, which is already done above in
             // # methods read() and _search(). It reproduces the existing behavior
@@ -537,19 +493,41 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<MailMessage> FieldStoreReprInternalAsync(object field_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _field_store_repr(self, field_name):
+            // """Return the default Store representation of the given field name, which can be passed as
+            // param to the various Store methods."""
+            // if field_name == "message_link_preview_ids":
+            //     return [
+            //         Store.Many(
+            //             "message_link_preview_ids",
+            //             value=lambda m: m.sudo()
+            //             .message_link_preview_ids.filtered(
+            //                 lambda message_link_preview: not message_link_preview.is_hidden
+            //             )
+            //             .sorted(
+            //                 lambda message_link_preview: (
+            //                     message_link_preview.sequence,
+            //                     message_link_preview.id,
+            //                 )
+            //             ),
+            //         )
+            //     ]
+            // return [field_name]
+            */
+            return default;
+        }
+
         protected async Task<MailMessage> FilterEmptyInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _filter_empty(self):
             // """ Return subset of "void" messages """
-            // return self.filtered(
-            //     lambda msg:
-            //         (not msg.body or tools.is_html_empty(msg.body)) and
-            //         (not msg.subtype_id or not msg.subtype_id.description) and
-            //         not msg.attachment_ids and
-            //         not msg.tracking_value_ids
-            // )
+            // return self.filtered(lambda message: message._is_empty())
             */
             return default;
         }
@@ -559,25 +537,39 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _find_allowed_doc_ids(self, model_ids):
+            // """ Filter out message user cannot read due to missing document access.
+            // 
+            // :param dict model_ids: dictionary like {
+            //     'document_model_name': {
+            //         'document_id_1': set(message IDs),
+            //         'document_id_2': set(message IDs),
+            //     },
+            //     [...]
+            // }
+            // 
+            // :return: set of allowed message IDs to read, based on document check
+            // :rtype: set
+            // """
             // IrModelAccess = self.env['ir.model.access']
             // allowed_ids = set()
             // for doc_model, doc_dict in model_ids.items():
             //     if not IrModelAccess.check(doc_model, 'read', False):
             //         continue
-            //     allowed_ids |= self._find_allowed_model_wise(doc_model, doc_dict)
+            //     records_all = self.env[doc_model].with_context(active_test=False).search([('id', 'in', list(doc_dict))])
+            //     allowed_documents = self.env[doc_model]
+            //     # _mail_group_by_operation_for_mail_message_operation set prefetch to records_all.ids
+            //     # hence should be good, no need to force it again
+            //     operation_res_ids = records_all._mail_group_by_operation_for_mail_message_operation('read')
+            //     # filter for each operation
+            //     for record_operation, records in operation_res_ids.items():
+            //         if record_operation == "read":  # already implied by 'search'
+            //             allowed_documents += records
+            //         else:
+            //             allowed_documents += records._filtered_access(record_operation)
+            //     allowed_ids |= {
+            //         msg_id for document_id in allowed_documents.ids for msg_id in doc_dict[document_id]
+            //     }
             // return allowed_ids
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> FindAllowedModelWiseInternalAsync(object doc_model, object doc_dict)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _find_allowed_model_wise(self, doc_model, doc_dict):
-            // doc_ids = list(doc_dict)
-            // allowed_doc_ids = self.env[doc_model].with_context(active_test=False).search([('id', 'in', doc_ids)]).ids
-            // return set([message_id for allowed_doc_id in allowed_doc_ids for message_id in doc_dict[allowed_doc_id]])
             */
             return default;
         }
@@ -662,7 +654,7 @@ namespace Bamboo.Core.Application.Services
             //             messages_to_check.pop(mid)
             // elif operation == 'create':
             //     for mid, message in list(messages_to_check.items()):
-            //         if not self.is_thread_message(message):
+            //         if not self._is_thread_message_visible(vals=message):
             //             messages_to_check.pop(mid)
             // 
             // if not messages_to_check:
@@ -687,15 +679,14 @@ namespace Bamboo.Core.Application.Services
             // 
             // for model, docid_msgids in model_docid_msgids.items():
             //     documents = self.env[model].browse(docid_msgids)
-            //     if hasattr(documents, '_get_mail_message_access'):
-            //         doc_operation = documents._get_mail_message_access(docid_msgids, operation)  # why not giving model here?
-            //     else:
-            //         doc_operation = self.env['mail.thread']._get_mail_message_access(docid_msgids, operation, model_name=model)
-            //     doc_result = documents._check_access(doc_operation)
-            //     forbidden_doc_ids = set(doc_result[0]._ids) if doc_result else set()
-            //     for doc_id, msg_ids in docid_msgids.items():
-            //         if doc_id not in forbidden_doc_ids:
-            //             for mid in msg_ids:
+            //     # group documents per operation to check, based on mail.message access
+            //     # note that some ids may be filtered out if (e.g. group limitation, ...)
+            //     operation_res_ids = documents._mail_group_by_operation_for_mail_message_operation(operation)
+            //     for record_operation, records in operation_res_ids.items():
+            //         check_result = records._check_access(record_operation)
+            //         forbidden_doc_ids = set(check_result[0]._ids) if check_result else set()
+            //         for res_id in (r.id for r in records if r.id not in forbidden_doc_ids):
+            //             for mid in docid_msgids[res_id]:
             //                 messages_to_check.pop(mid)
             // 
             // if not messages_to_check:
@@ -751,27 +742,11 @@ namespace Bamboo.Core.Application.Services
             // def _get_message_id(self, values):
             // if values.get('reply_to_force_new', False) is True:
             //     message_id = tools.mail.generate_tracking_message_id('reply_to')
-            // elif self.is_thread_message(values):
+            // elif self._is_thread_message(vals=values):
             //     message_id = tools.mail.generate_tracking_message_id('%(res_id)s-%(model)s' % values)
             // else:
             //     message_id = tools.mail.generate_tracking_message_id('private')
             // return message_id
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> GetRecordNameInternalAsync(object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _get_record_name(self, values):
-            // """ Return the related document name, using display_name. It is done using
-            //     SUPERUSER_ID, to be sure to have the record name correctly stored. """
-            // model = values.get('model', self.env.context.get('default_model'))
-            // res_id = values.get('res_id', self.env.context.get('default_res_id'))
-            // if not model or not res_id or model not in self.env:
-            //     return False
-            // return self.env[model].sudo().browse(res_id).display_name
             */
             return default;
         }
@@ -782,16 +757,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _get_reply_to(self, values):
             // """ Return a specific reply_to for the document """
-            // model = values.get('model', self._context.get('default_model'))
-            // res_id = values.get('res_id', self._context.get('default_res_id')) or False
+            // author_id = values.get('author_id')
+            // model = values.get('model', self.env.context.get('default_model'))
+            // res_id = values.get('res_id', self.env.context.get('default_res_id')) or False
             // email_from = values.get('email_from')
             // message_type = values.get('message_type')
             // records = None
-            // if self.is_thread_message({'model': model, 'res_id': res_id, 'message_type': message_type}):
+            // if self._is_thread_message(vals={'model': model, 'res_id': res_id, 'message_type': message_type}):
             //     records = self.env[model].browse([res_id])
             // else:
             //     records = self.env[model] if model else self.env['mail.thread']
-            // return records.sudo()._notify_get_reply_to(default=email_from)[res_id]
+            // return records.sudo()._notify_get_reply_to(default=email_from, author_id=author_id)[res_id]
             */
             return default;
         }
@@ -801,64 +777,147 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _get_search_domain_share(self):
-            // return ['&', '&', ('is_internal', '=', False), ('subtype_id', '!=', False), ('subtype_id.internal', '=', False)]
+            // return Domain(['&', '&', ('is_internal', '=', False), ('subtype_id', '!=', False), ('subtype_id.internal', '=', False)])
             */
             return default;
         }
 
-        protected async Task<MailMessage> GetWithAccessInternalAsync(Guid message_id, object operation)
+        protected async Task<MailMessage> GetStoreAttachmentFieldsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _get_with_access(self, message_id, operation, **kwargs):
-            // """Return the message with the given id if it exists and if the current
-            // user can access it for the given operation."""
+            // def _get_store_attachment_fields(self, target):
+            // self.ensure_one()
+            // if target.is_current_user(self.env) and self.is_current_user_or_guest_author:
+            //     return self.env["ir.attachment"]._get_store_ownership_fields()
+            // return []
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> GetStoreLinkedMessagesFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _get_store_linked_messages_fields(self):
+            // """Add the messages that are referenced by the current message's body to the given store.
+            // This method should only return message data that are not sensitive to be broadcasted to
+            // other users, as it doesn't check store.target by simplicity and the target might not
+            // necessarily have permission to read the linked messages."""
+            // record_by_message = self.linked_message_ids._record_by_message()
+            // return [
+            //     Store.Many(
+            //         "linked_message_ids",
+            //         [
+            //             "model",
+            //             "res_id",
+            //             Store.Attr(
+            //                 "thread",
+            //                 lambda m: Store.One(
+            //                     record_by_message.get(m),
+            //                     # sudo: mail.thread - reading record name of accessible message is acceptable
+            //                     [Store.Attr("display_name", sudo=True)],
+            //                     as_thread=True,
+            //                 ),
+            //             ),
+            //         ],
+            //         only_data=True,
+            //     ),
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> GetStorePartnerNameFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
+            // def _get_store_partner_name_fields(self):
+            // if self.channel_id.channel_type == "livechat":
+            //     return self.env["res.partner"]._get_store_livechat_username_fields()
+            // return super()._get_store_partner_name_fields()
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _get_store_partner_name_fields(self):
+            // self.ensure_one()
+            // return ["name"]
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> GetTrackingValuesDomainInternalAsync(object search_term)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _get_tracking_values_domain(self, search_term):
+            // """Get the domain to search for tracking values."""
+            // numeric_term = None
+            // # try to convert the search term to a number
+            // with contextlib.suppress(ValueError, TypeError):
+            //     numeric_term = float(search_term)
+            // domain = Domain.OR(
+            //     Domain(field_name, "ilike", search_term)
+            //     for field_name in (
+            //         "old_value_char",
+            //         "new_value_char",
+            //         "old_value_text",
+            //         "new_value_text",
+            //         "old_value_datetime",
+            //         "new_value_datetime",
+            //         "field_id.name",
+            //         "field_id.field_description",
+            //     )
+            // )
+            // if numeric_term:
+            //     epsilon = 1e-9  # small epsilon to allow for floating point precision
+            //     domain |= Domain.OR(
+            //         Domain(field_name, ">=", numeric_term - epsilon)
+            //         & Domain(field_name, "<=", numeric_term + epsilon)
+            //         for field_name in ("old_value_float", "new_value_float")
+            //     )
+            //     if numeric_term.is_integer():
+            //         domain |= Domain.OR(
+            //             Domain(field_name, "=", int(numeric_term))
+            //             for field_name in ("old_value_integer", "new_value_integer")
+            //         )
+            // return domain
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> GetWithAccessInternalAsync(Guid message_id, object mode)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _get_with_access(self, message_id, mode="read", **kwargs):
             // message = self.browse(message_id).exists()
             // if not message:
             //     return message
+            // 
+            // # sanity check on kwargs
+            // allowed_params = self.env[message.sudo().model or 'mail.thread']._get_allowed_access_params()
+            // if invalid := (set((kwargs or {}).keys()) - allowed_params):
+            //     _logger.warning("Invalid parameters to _get_with_access: %s", invalid)
             // 
             // if self.env.user._is_public() and self.env["mail.guest"]._get_guest_from_context():
             //     # Don't check_access_rights for public user with a guest, as the rules are
             //     # incorrect due to historically having no reason to allow operations on messages to
             //     # public user before the introduction of guests. Even with ignoring the rights,
             //     # check_access_rule and its sub methods are already covering all the cases properly.
-            //     if not message.sudo(False)._get_forbidden_access(operation):
+            //     if not message.sudo(False)._get_forbidden_access(mode):
             //         return message
             // else:
-            //     if message.sudo(False).has_access(operation):
+            //     if message.sudo(False).has_access(mode):
             //         return message
             // 
             // if message.model and message.res_id:
-            //     mode = self.env[message.model]._get_mail_message_access([message.res_id], operation)
-            //     if self.env[message.model]._get_thread_with_access(message.res_id, mode, **kwargs):
+            //     thread_su = self.env[message.model].browse(message.res_id).sudo()
+            //     access_mode = thread_su._mail_get_operation_for_mail_message_operation(mode)[thread_su]
+            //     if access_mode and self.env[message.model]._get_thread_with_access(message.res_id, mode=access_mode, **kwargs):
             //         return message
             // 
             // return self.browse()
             */
             return default;
-        }
-
-        public async Task<MailMessage> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def init(self):
-            // self._cr.execute("""SELECT indexname FROM pg_indexes WHERE indexname = 'mail_message_model_res_id_idx'""")
-            // if not self._cr.fetchone():
-            //     self._cr.execute("""CREATE INDEX mail_message_model_res_id_idx ON mail_message (model, res_id)""")
-            // self._cr.execute("""CREATE INDEX IF NOT EXISTS mail_message_model_res_id_id_idx ON mail_message (model, res_id, id)""")
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: mail_message.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(
-            //     self._cr,
-            //     'mail_message_date_res_id_id_for_burndown_chart',
-            //     self._table,
-            //     ['date', 'res_id', 'id'],
-            //     where="model='project.task' AND message_type='notification'"
-            // )
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<MailMessage> InvalidateDocumentsInternalAsync(object model, Guid res_id)
@@ -878,41 +937,56 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailMessage> IsEditableInPortalInternalAsync()
+        protected async Task<MailMessage> IsEmptyInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: portal, FILE: mail_message.py) ---
-            // def _is_editable_in_portal(self, **kwargs):
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _is_empty(self):
             // self.ensure_one()
-            // if self.model and self.res_id and self.env.user._is_public():
-            //     thread = request.env[self.model].browse(self.res_id)
-            //     partner = get_portal_partner(
-            //         thread, kwargs.get("hash"), kwargs.get("pid"), kwargs.get("token")
+            // return (
+            //     (not self.body or tools.is_html_empty(self.body))
+            //     and (not self.subtype_id or not self.subtype_id.description)
+            //     and not self.attachment_ids
+            //     and not (
+            //         self._has_field_access(self._fields["tracking_value_ids"], "read")
+            //         and self.tracking_value_ids
             //     )
-            //     if partner and self.author_id == partner:
-            //         return True
-            // return False
+            // )
+            --- ODOO METHOD SOURCE (MODULE: rating, FILE: mail_message.py) ---
+            // def _is_empty(self):
+            // return super()._is_empty() and not self.rating_id
             */
             return default;
         }
 
-        public async Task<MailMessage> IsThreadMessageAsync(Guid id, MailMessageIsThreadMessageRequestDto input)
+        protected async Task<MailMessage> IsThreadMessageInternalAsync(object vals, object thread)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def is_thread_message(self, vals=None):
-            // if vals:
-            //     res_id = vals.get('res_id')
-            //     model = vals.get('model')
-            //     message_type = vals.get('message_type')
-            // else:
-            //     self.ensure_one()
-            //     res_id = self.res_id
-            //     model = self.model
-            //     message_type = self.message_type
-            // return res_id and model and message_type != 'user_notification'
+            // def _is_thread_message(self, vals=False, thread=None):
+            // """ Tool method to compute thread validity in notification methods. """
+            // vals = vals or {}
+            // res_model = vals['model'] if 'model' in vals else thread._name if thread else self.model
+            // res_id = vals['res_id'] if 'res_id' in vals else thread.ids[0] if thread and thread.ids else self.res_id
+            // return bool(res_id) if (res_model and res_model != 'mail.thread') else False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<MailMessage> IsThreadMessageVisibleInternalAsync(object vals, object thread)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _is_thread_message_visible(self, vals=False, thread=None):
+            // """ In addition to being a thread message, it should not be a user specific
+            // notification that is recipient-specific. Used mainly for ACL purpose. """
+            // is_thread = self._is_thread_message(vals=vals, thread=thread)
+            // if is_thread:
+            //     message_type = (vals or {}).get('message_type') or self.message_type
+            //     return is_thread and message_type != 'user_notification'
+            // return is_thread
+            */
+            return default;
         }
 
         protected async Task<object> MakeAccessErrorInternalAsync(string operation)
@@ -964,31 +1038,53 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<MailMessage> MessageFetchInternalAsync(object domain, object search_term, object before, object after, object around, object limit)
+        protected async Task<MailMessage> MessageFetchInternalAsync(object domain)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _message_fetch(self, domain, search_term=None, before=None, after=None, around=None, limit=30):
+            // def _message_fetch(self, domain, *, thread=None, search_term=None, is_notification=None, before=None, after=None, around=None, limit=30):
             // res = {}
+            // domain = Domain(True if domain is None else domain)
+            // if thread:
+            //     domain &= (
+            //         Domain("res_id", "=", thread.id)
+            //         & Domain("model", "=", thread._name)
+            //         & Domain("message_type", "!=", "user_notification")
+            //     )
+            // if is_notification is True:
+            //     domain &= Domain("message_type", "=", "notification")
+            // elif is_notification is False:
+            //     domain &= Domain("message_type", "!=", "notification")
             // if search_term:
             //     # we replace every space by a % to avoid hard spacing matching
             //     search_term = search_term.replace(" ", "%")
-            //     domain = expression.AND([domain, expression.OR([
+            //     message_domain = Domain.OR([
             //         # sudo: access to attachment is allowed if you have access to the parent model
             //         [("attachment_ids", "in", self.env["ir.attachment"].sudo()._search([("name", "ilike", search_term)]))],
             //         [("body", "ilike", search_term)],
             //         [("subject", "ilike", search_term)],
             //         [("subtype_id.description", "ilike", search_term)],
-            //     ])])
+            //     ])
+            //     if thread and is_notification is not False:
+            //         tracking_value_domain = (
+            //             Domain("mail_message_id.res_id", "=", thread.id)
+            //             & Domain("mail_message_id.model", "=", thread._name)
+            //             & self._get_tracking_values_domain(search_term)
+            //         )
+            //         # sudo: mail.tracking.value - searching allowed tracking values for acessible records
+            //         tracking_values = self.env["mail.tracking.value"].sudo().search(tracking_value_domain)
+            //         accessible_tracking_value_ids = tracking_values._filter_has_field_access(self.env)
+            //         message_domain |= Domain("id", "in", accessible_tracking_value_ids.mail_message_id.ids)
+            //     domain &= message_domain
             //     res["count"] = self.search_count(domain)
             // if around is not None:
-            //     messages_before = self.search(domain=[*domain, ('id', '<=', around)], limit=limit // 2, order="id DESC")
-            //     messages_after = self.search(domain=[*domain, ('id', '>', around)], limit=limit // 2, order='id ASC')
+            //     messages_before = self.search(domain & Domain('id', '<=', around), limit=limit // 2, order="id DESC")
+            //     messages_after = self.search(domain & Domain('id', '>', around), limit=limit // 2, order='id ASC')
             //     return {**res, "messages": (messages_after + messages_before).sorted('id', reverse=True)}
             // if before:
-            //     domain = expression.AND([domain, [('id', '<', before)]])
+            //     domain &= Domain('id', '<', before)
             // if after:
-            //     domain = expression.AND([domain, [('id', '>', after)]])
+            //     domain &= Domain('id', '>', after)
             // res["messages"] = self.search(domain, limit=limit, order='id ASC' if after else 'id DESC')
             // if after:
             //     res["messages"] = res["messages"].sorted('id', reverse=True)
@@ -1008,22 +1104,31 @@ namespace Bamboo.Core.Application.Services
             // Notifications hold the information about each recipient of a message: if
             // the message was successfully sent or if an exception or bounce occurred.
             // """
-            // for message in self:
-            //     message_data = {
-            //         "author": Store.one(message.author_id, only_id=True),
-            //         "date": message.date,
-            //         "message_type": message.message_type,
-            //         "body": message.body,
-            //         "notifications": Store.many(message.notification_ids._filtered_for_web_client()),
-            //         "thread": (
-            //             Store.one(
-            //                 self.env[message.model].browse(message.res_id) if message.model else False,
-            //                 as_thread=True,
-            //                 fields=["modelName", "name" if message.model == "discuss.channel" else "display_name"],
-            //             )
+            // store.add(
+            //     self,
+            //     [
+            //         Store.One("author_id", []),
+            //         Store.One("author_guest_id", []),
+            //         "body",
+            //         "date",
+            //         "message_type",
+            //         Store.Many(
+            //             "notification_ids",
+            //             value=lambda m: m.notification_ids._filtered_for_web_client(),
             //         ),
-            //     }
-            //     store.add(message, message_data)
+            //         Store.One(
+            //             "thread",
+            //             [
+            //                 Store.Attr(
+            //                     "modelName",
+            //                     lambda thread: self.env["ir.model"]._get(thread._name).display_name,
+            //                 ),
+            //                 "display_name",
+            //             ],
+            //             as_thread=True,
+            //         ),
+            //     ],
+            // )
             */
             return default;
         }
@@ -1086,9 +1191,10 @@ namespace Bamboo.Core.Application.Services
             //     if message.author_id and not any(user._is_public() for user in message.author_id.with_context(active_test=False).user_ids):
             //         messages_per_partner[message.author_id] |= message
             // for partner, messages in messages_per_partner.items():
-            //     store = Store()
-            //     messages._message_notifications_to_store(store)
-            //     partner._bus_send_store(store)
+            //     if user := partner.main_user_id:
+            //         store = Store(bus_channel=user)
+            //         messages.with_user(user)._message_notifications_to_store(store)
+            //         store.bus_send()
             */
             return default;
         }
@@ -1121,7 +1227,8 @@ namespace Bamboo.Core.Application.Services
             // :param dict options: options, used notably for inheritance and adding
             //   specific fields or properties to compute;
             // 
-            // :return set: fields or properties derived from fields
+            // :returns: fields or properties derived from fields
+            // :rtype: set
             // """
             // return {
             //     'attachment_ids',
@@ -1173,8 +1280,9 @@ namespace Bamboo.Core.Application.Services
             // :param dict options: options, used notably for inheritance and adding
             //   specific fields or properties to compute;
             // 
-            // :return list: list of dict, one per message in self. Each dict contains
+            // :returns: list of dict, one per message in self. Each dict contains
             //   values for either fields, either properties derived from fields.
+            // :rtype: list[dict]
             // """
             // self.check_access('read')
             // return self._portal_message_format(
@@ -1196,7 +1304,8 @@ namespace Bamboo.Core.Application.Services
             // :param dict attachment_values: values coming from reading attachments
             //   in database;
             // 
-            // :return dict: updated attachment_values
+            // :returns: updated attachment_values
+            // :rtype: dict
             // """
             // safari = request and request.httprequest.user_agent and request.httprequest.user_agent.browser == 'safari'
             // attachment_values['filename'] = attachment_values['name']
@@ -1204,6 +1313,10 @@ namespace Bamboo.Core.Application.Services
             //     'application/octet-stream' if safari and
             //     'video' in (attachment_values["mimetype"] or "")
             //     else attachment_values["mimetype"])
+            // attachment = self.env['ir.attachment'].browse(attachment_values['id'])
+            // attachment_values["raw_access_token"] = attachment._get_raw_access_token()
+            // if self.is_current_user_or_guest_author:
+            //     attachment_values["ownership_token"] = attachment._get_ownership_token()
             // return attachment_values
             */
             return default;
@@ -1224,23 +1337,23 @@ namespace Bamboo.Core.Application.Services
             // :param set properties_names: fields or properties derived from fields
             //   for which we are going to compute values;
             // 
-            // :return list: list of dict, one per message in self. Each dict contains
+            // :returns: list of dict, one per message in self. Each dict contains
             //   values for either fields, either properties derived from fields.
+            // :rtype: list[dict]
             // """
             // message_to_attachments = {}
             // if 'attachment_ids' in properties_names:
             //     properties_names.remove('attachment_ids')
             //     attachments_sudo = self.sudo().attachment_ids
-            //     attachments_sudo.generate_access_token()
             //     related_attachments = {
             //         att_read_values['id']: att_read_values
             //         for att_read_values in attachments_sudo.read(
-            //             ["access_token", "checksum", "id", "mimetype", "name", "res_id", "res_model"]
+            //             ["checksum", "id", "mimetype", "name", "res_id", "res_model"]
             //         )
             //     }
             //     message_to_attachments = {
             //         message.id: [
-            //             self._portal_message_format_attachments(related_attachments[att_id])
+            //             message._portal_message_format_attachments(related_attachments[att_id])
             //             for att_id in message.attachment_ids.ids
             //         ]
             //         for message in self.sudo()
@@ -1254,6 +1367,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // note_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note')
             // for message, values in zip(self, vals_list):
+            //     values["body"] = ["markup", values["body"]]
             //     if message_to_attachments:
             //         values['attachment_ids'] = message_to_attachments.get(message.id, {})
             //     if 'author_avatar_url' in properties_names:
@@ -1274,25 +1388,24 @@ namespace Bamboo.Core.Application.Services
             //             {
             //                 "content": content,
             //                 "count": len(reactions),
-            //                 "personas": [
-            //                                 {"id": guest.id, "name": guest.name, "type": "guest"}
-            //                                 for guest in reactions.guest_id
-            //                             ]
-            //                             + [
-            //                                 # sudo: res.partner - reading partners of reaction on accessible message is allowed
-            //                                 {"id": partner.id, "name": partner.name, "type": "partner"}
-            //                                 for partner in reactions.partner_id.sudo()
-            //                             ],
+            //                 "guests": [
+            //                     {"id": guest.id, "name": guest.name}
+            //                     for guest in reactions.guest_id
+            //                 ],
             //                 "message": message.id,
-            //             }
+            //                 "partners": [
+            //                     # sudo: res.partner - reading partners of reaction on accessible message is allowed
+            //                     {"id": partner.id, "name": partner.name}
+            //                     for partner in reactions.partner_id.sudo()
+            //                 ],
+            //             },
             //         )
             //     values.update(
             //         {
             //             "reactions": reaction_groups,
-            //             "author": {
+            //             "author_id": {
             //                 "id": message.author_id.id,
             //                 "name": message.author_id.name,
-            //                 "type": "partner",
             //             },
             //             "thread": {"model": values["model"], "id": values["res_id"]},
             //         }
@@ -1318,7 +1431,7 @@ namespace Bamboo.Core.Application.Services
             // }
             // 
             // for message, values in zip(self, vals_list):
-            //     values["rating"] = message_to_rating.get(message.id, {})
+            //     values["rating_id"] = message_to_rating.get(message.id, {})
             // 
             //     record = self.env[message.model].browse(message.res_id)
             //     if hasattr(record, 'rating_get_stats'):
@@ -1340,7 +1453,8 @@ namespace Bamboo.Core.Application.Services
             // :param dict rating_values: values coming from reading ratings
             //   in database;
             // 
-            // :return dict: updated rating_values
+            // :returns: updated rating_values
+            // :rtype: dict
             // """
             // publisher_id, publisher_name = rating_values['publisher_id'] or [False, '']
             // rating_values['publisher_avatar'] = f'/web/image/res.partner/{publisher_id}/avatar_128/50x50' if publisher_id else ''
@@ -1361,7 +1475,7 @@ namespace Bamboo.Core.Application.Services
             // group_domain = [("message_id", "=", self.id), ("content", "=", content)]
             // reactions = self.env["mail.message.reaction"].search(group_domain)
             // reaction_group = (
-            //     Store.many(reactions, "ADD")
+            //     Store.Many(reactions, mode="ADD")
             //     if reactions
             //     else [("DELETE", {"message": self.id, "content": content})]
             // )
@@ -1377,8 +1491,7 @@ namespace Bamboo.Core.Application.Services
             // def _record_by_message(self):
             // records_by_model_name = self._records_by_model_name()
             // return {
-            //     message: self.env[message.model]
-            //     .browse(message.res_id)
+            //     message: self.env[message.model].browse(message.res_id)
             //     .with_prefetch(records_by_model_name[message.model]._prefetch_ids)
             //     for message in self.filtered(lambda m: m.model and m.res_id)
             // }
@@ -1398,8 +1511,7 @@ namespace Bamboo.Core.Application.Services
             //     target = ids_by_model if message in self else prefetch_ids_by_model
             //     target[message.model].add(message.res_id)
             // return {
-            //     model_name: self.env[model_name]
-            //     .browse(ids)
+            //     model_name: self.env[model_name].browse(ids)
             //     .with_prefetch(tuple(ids_by_model[model_name] | prefetch_ids_by_model[model_name]))
             //     for model_name, ids in ids_by_model.items()
             // }
@@ -1413,21 +1525,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
             // def _search_account_audit_log_account_id(self, operator, value):
             // return self._search_audit_log_related_record_id('account.account', operator, value)
-            */
-            return default;
-        }
-
-        protected async Task<MailMessage> SearchAccountAuditLogActivatedInternalAsync(object @operator, object @value)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
-            // def _search_account_audit_log_activated(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(self.env._('Operation not supported'))
-            // return [('message_type', '=', 'notification')] + OR([
-            //     [('model', '=', model), ('res_id', 'in', self.env[model]._search(DOMAINS[model](operator, value)))]
-            //     for model in DOMAINS
-            // ])
             */
             return default;
         }
@@ -1462,6 +1559,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MailMessage> SearchAccountAuditLogPreviewInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
+            // def _search_account_audit_log_preview(self, operator, value):
+            // if operator not in ['=', 'like', '=like', 'ilike'] or not isinstance(value, str):
+            //     return NotImplemented
+            // 
+            // return Domain('message_type', '=', 'notification') & Domain.OR([
+            //     [('tracking_value_ids.old_value_char', operator, value)],
+            //     [('tracking_value_ids.new_value_char', operator, value)],
+            //     [('tracking_value_ids.old_value_text', operator, value)],
+            //     [('tracking_value_ids.new_value_text', operator, value)],
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> SearchAccountAuditLogRestrictedInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
+            // def _search_account_audit_log_restricted(self, operator, value):
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // 
+            // return Domain('message_type', '=', 'notification') & Domain.OR(
+            //     [('model', '=', model), ('res_id', 'in', self.env[model]._search(domain_factory(self, operator, value)))]
+            //     for model, domain_factory in DOMAINS.items()
+            // )
+            */
+            return default;
+        }
+
         protected async Task<MailMessage> SearchAccountAuditLogTaxIdInternalAsync(object @operator, object @value)
         {
             /*
@@ -1477,12 +1608,22 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
             // def _search_audit_log_related_record_id(self, model, operator, value):
-            // if operator in ['=', 'like', 'ilike', '!=', 'not ilike', 'not like'] and isinstance(value, str):
+            // if (
+            //     operator in ('like', 'ilike', 'not ilike', 'not like') and isinstance(value, str)
+            // ) or (
+            //     operator in ('in', 'not in') and any(isinstance(v, str) for v in value)
+            // ):
             //     res_id_domain = [('res_id', 'in', self.env[model]._search([('display_name', operator, value)]))]
-            // elif operator in ['=', 'in', '!=', 'not in']:
+            // elif operator in ('any', 'not any', 'any!', 'not any!'):
+            //     if isinstance(value, Domain):
+            //         query = self.env[model]._search(value)
+            //     else:
+            //         query = value
+            //     res_id_domain = [('res_id', 'in' if operator in ('any', 'any!') else 'not in', query)]
+            // elif operator in ('in', 'not in'):
             //     res_id_domain = [('res_id', operator, value)]
             // else:
-            //     raise UserError(self.env._('Operation not supported'))
+            //     return NotImplemented
             // return [('model', '=', model)] + res_id_domain
             */
             return default;
@@ -1493,9 +1634,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _search_has_error(self, operator, operand):
-            // if operator == '=' and operand:
-            //     return [('notification_ids.notification_status', 'in', ('bounce', 'exception'))]
-            // return ['!', ('notification_ids.notification_status', 'in', ('bounce', 'exception'))]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('notification_ids.notification_status', 'in', ('bounce', 'exception'))]
             */
             return default;
         }
@@ -1505,9 +1646,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: mail_message.py) ---
             // def _search_has_sms_error(self, operator, operand):
-            // if operator == '=' and operand:
-            //     return ['&', ('notification_ids.notification_status', '=', 'exception'), ('notification_ids.notification_type', '=', 'sms')]
-            // raise NotImplementedError()
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('notification_ids', 'any', [
+            //     ('notification_status', '=', 'exception'),
+            //     ('notification_type', '=', 'sms'),
+            // ])]
             */
             return default;
         }
@@ -1516,7 +1660,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, *, bypass_access=False, **kwargs):
             // """ Override that adds specific access rights of mail.message, to remove
             // ids uid could not see according to our custom rules. Please refer to
             // _check_access() for more details about those rules.
@@ -1532,15 +1676,15 @@ namespace Bamboo.Core.Application.Services
             // - otherwise: remove the id
             // """
             // # Rules do not apply to administrator
-            // if self.env.is_superuser():
-            //     return super()._search(domain, offset, limit, order)
+            // if self.env.is_superuser() or bypass_access:
+            //     return super()._search(domain, offset, limit, order, bypass_access=True, **kwargs)
             // 
             // # Non-employee see only messages with a subtype and not internal
             // if not self.env.user._is_internal():
-            //     domain = self._get_search_domain_share() + domain
+            //     domain = self._get_search_domain_share() & Domain(domain)
             // 
             // # make the search query with the default rules
-            // query = super()._search(domain, offset, limit, order)
+            // query = super()._search(domain, offset, limit, order, **kwargs)
             // 
             // # retrieve matching records and determine which ones are truly accessible
             // self.flush_model(['model', 'res_id', 'author_id', 'message_type', 'partner_ids'])
@@ -1600,7 +1744,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _search_needaction(self, operator, operand):
-            // is_read = False if operator == '=' and operand else True
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // is_read = operator == 'not in'
             // notification_ids = self.env['mail.notification']._search([('res_partner_id', '=', self.env.user.partner_id.id), ('is_read', '=', is_read)])
             // return [('notification_ids', 'in', notification_ids)]
             */
@@ -1612,12 +1758,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: mail_message.py) ---
             // def _search_rating_value(self, operator, operand):
-            // ratings = self.env['rating.rating'].sudo().search([
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // ratings = self.env['rating.rating'].sudo()._search([
             //     ('rating', operator, operand),
             //     ('message_id', '!=', False),
-            //     ("consumed", "=", True),
+            //     ('consumed', '=', True),
             // ])
-            // return [('id', 'in', ratings.mapped('message_id').ids)]
+            // domain = Domain("id", "in", ratings.subselect("message_id"))
+            // if operator == "in" and 0 in operand:
+            //     return domain | Domain("rating_ids", "=", False)
+            // return domain
             */
             return default;
         }
@@ -1627,9 +1778,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: mail_message.py) ---
             // def _search_snailmail_error(self, operator, operand):
-            // if operator == '=' and operand:
-            //     return ['&', ('letter_ids.state', '=', 'error'), ('letter_ids.user_id', '=', self.env.user.id)]
-            // return ['!', '&', ('letter_ids.state', '=', 'error'), ('letter_ids.user_id', '=', self.env.user.id)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return ['&', ('letter_ids.state', '=', 'error'), ('letter_ids.user_id', '=', self.env.user.id)]
             */
             return default;
         }
@@ -1639,9 +1790,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def _search_starred(self, operator, operand):
-            // if operator == '=' and operand:
-            //     return [('starred_partner_ids', 'in', [self.env.user.partner_id.id])]
-            // return [('starred_partner_ids', 'not in', [self.env.user.partner_id.id])]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('starred_partner_ids', 'in', self.env.user.partner_id.ids)]
             */
             return default;
         }
@@ -1683,17 +1834,107 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<MailMessage> ToStoreInternalAsync()
+        protected async Task<MailMessage> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
-            // def _to_store(self, store: Store, **kwargs):
+            // def _to_store_defaults(self, target):
+            // return super()._to_store_defaults(target) + ["chatbot_current_step"]
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _to_store_defaults(self, target):
+            // return super()._to_store_defaults(target) + [
+            //     Store.Many(
+            //         "call_history_ids",
+            //         ["duration_hour", "end_dt"],
+            //         predicate=lambda m: m.body and 'data-oe-type="call"' in m.body,
+            //     ),
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
+            // def _to_store_defaults(self, target: Store.Target):
+            // field_names = [
+            //     # sudo: mail.message - reading attachments on accessible message is allowed
+            //     Store.Many(
+            //         "attachment_ids",
+            //         sort="id",
+            //         dynamic_fields=lambda m: m._get_store_attachment_fields(target),
+            //         sudo=True,
+            //     ),
+            //     # sudo: mail.message: access to author_guest_id is allowed
+            //     Store.One("author_guest_id", ["avatar_128", "name"], sudo=True),
+            //     # sudo: mail.message: access to author_id is allowed
+            //     Store.One(
+            //         "author_id",
+            //         ["avatar_128", "is_company", Store.One("main_user_id", "share")],
+            //         dynamic_fields=lambda m: m._get_store_partner_name_fields(),
+            //         sudo=True,
+            //     ),
+            //     "body",
+            //     "create_date",
+            //     "date",
+            //     Store.Attr(
+            //         "email_from",
+            //         predicate=lambda m: target.is_internal(self.env)
+            //         or (not m.author_id and not m.author_guest_id),
+            //     ),
+            //     "incoming_email_cc",
+            //     "incoming_email_to",
+            //     # sudo: mail.message - reading link preview on accessible message is allowed
+            //     "message_format",
+            //     "message_link_preview_ids",
+            //     "message_type",
+            //     "model",  # keep for iOS app
+            //     # sudo: res.partner: reading limited data of recipients is acceptable
+            //     Store.Many(
+            //         "partner_ids",
+            //         "avatar_128",
+            //         dynamic_fields=lambda m: m._get_store_partner_name_fields(),
+            //         sort="id",
+            //         sudo=True,
+            //     ),
+            //     "pinned_at",
+            //     # sudo: mail.message - reading reactions on accessible message is allowed
+            //     Store.Attr("reactions", value=lambda m: Store.Many(m.sudo().reaction_ids)),
+            //     "record_name",  # keep for iOS app
+            //     "res_id",  # keep for iOS app
+            //     "subject",
+            //     # sudo: mail.message.subtype - reading subtype on accessible message is allowed
+            //     Store.One("subtype_id", ["description"], sudo=True),
+            //     "write_date",
+            //     *self._get_store_linked_messages_fields(),
+            // ]
+            // if target.is_internal(self.env):
+            //     # sudo - mail.notification: internal users can access notifications.
+            //     field_names.append(
+            //         Store.Many(
+            //             "notification_ids",
+            //             value=lambda m: m.sudo().notification_ids._filtered_for_web_client(),
+            //         ),
+            //     )
+            // return field_names
+            --- ODOO METHOD SOURCE (MODULE: rating, FILE: mail_message.py) ---
+            // def _to_store_defaults(self, target):
+            // # sudo: mail.message - guest and portal user can receive rating of accessible message
+            // return super()._to_store_defaults(target) + [
+            //     Store.One("rating_id", sudo=True),
+            //     "record_rating",
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<MailMessage> ToStoreInternalAsync(object store, object fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: mail_message.py) ---
+            // def _to_store(self, store: Store, fields, **kwargs):
             // """If we are currently running a chatbot.script, we include the information about
             // the chatbot.message related to this mail.message.
             // This allows the frontend display to include the additional features
             // (e.g: Show additional buttons with the available answers for this step)."""
-            // super()._to_store(store, **kwargs)
-            // channel_messages = self.filtered(lambda message: message.model == "discuss.channel")
+            // super()._to_store(store, [f for f in fields if f != "chatbot_current_step"], **kwargs)
+            // if "chatbot_current_step" not in fields:
+            //     return
+            // channel_messages = self.filtered(lambda message: message.channel_id)
             // channel_by_message = channel_messages._record_by_message()
             // for message in channel_messages.filtered(
             //     lambda message: channel_by_message[message].channel_type == "livechat"
@@ -1701,7 +1942,7 @@ namespace Bamboo.Core.Application.Services
             //     channel = channel_by_message[message]
             //     # sudo: chatbot.script.step - checking whether the current message is from chatbot
             //     chatbot = channel.chatbot_current_step_id.sudo().chatbot_script_id.operator_partner_id
-            //     if (channel.chatbot_current_step_id and message.author_id == chatbot):
+            //     if channel.chatbot_current_step_id and message.author_id == chatbot:
             //         chatbot_message = (
             //             self.env["chatbot.message"]
             //             .sudo()
@@ -1710,194 +1951,186 @@ namespace Bamboo.Core.Application.Services
             //         if step := chatbot_message.script_step_id:
             //             step_data = {
             //                 "id": (step.id, message.id),
-            //                 "message": Store.one(message, only_id=True),
-            //                 "scriptStep": Store.one(step, only_id=True),
-            //                 "operatorFound": step.step_type == "forward_operator"
-            //                 and len(channel.channel_member_ids) > 2,
+            //                 "message": message.id,
+            //                 "scriptStep": Store.One(step, ["id", "message", "step_type"]),
+            //                 "operatorFound": step.is_forward_operator
+            //                 and channel.livechat_operator_id != chatbot,
             //             }
             //             if answer := chatbot_message.user_script_answer_id:
-            //                 step_data["selectedAnswer"] = Store.one(answer, only_id=True)
-            //             store.add("ChatbotStep", step_data)
+            //                 step_data["selectedAnswer"] = {
+            //                     "id": answer.id,
+            //                     "label": answer.name,
+            //                 }
+            //             if step.step_type in [
+            //                 "free_input_multi",
+            //                 "free_input_single",
+            //                 "question_email",
+            //                 "question_phone",
+            //             ]:
+            //                 # sudo: chatbot.message - checking the user answer to the step is allowed
+            //                 user_answer_message = (
+            //                     self.env["chatbot.message"]
+            //                     .sudo()
+            //                     .search(
+            //                         [
+            //                             ("script_step_id", "=", step.id),
+            //                             ("id", "!=", chatbot_message.id),
+            //                             ("discuss_channel_id", "=", channel.id),
+            //                         ],
+            //                         limit=1,
+            //                     )
+            //                 )
+            //                 step_data["rawAnswer"] = [
+            //                     "markup",
+            //                     user_answer_message.user_raw_answer,
+            //                 ]
+            //             store.add_model_values("ChatbotStep", step_data)
             //             store.add(
-            //                 message,
-            //                 {"chatbotStep": {"scriptStep": step.id, "message": message.id}},
+            //                 message, {"chatbotStep": {"scriptStep": step.id, "message": message.id}}
             //             )
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
-            // def _to_store(
-            //     self,
-            //     store: Store,
-            //     /,
-            //     *,
-            //     fields=None,
-            //     format_reply=True,
-            //     msg_vals=None,
-            //     for_current_user=False,
-            //     add_followers=False,
-            //     followers=None,
-            // ):
-            //     """Add the messages to the given store.
+            // def _to_store(self, store: Store, fields, *, format_reply=True, msg_vals=False, add_followers=False, followers=None):
+            // """Add the messages to the given store.
             // 
-            //     :param format_reply: if True, also get data about the parent message if it exists.
-            //         Only makes sense for discuss channel.
+            // :param format_reply: if True, also get data about the parent message if it exists.
+            //     Only makes sense for discuss channel.
             // 
-            //     :param msg_vals: dictionary of values used to create the message. If
-            //       given it may be used to access values related to ``message`` without
-            //       accessing it directly. It lessens query count in some optimized use
-            //       cases by avoiding access message content in db;
+            // :param msg_vals: dictionary of values used to create the message. If
+            //   given it may be used to access values related to ``message`` without
+            //   accessing it directly. It lessens query count in some optimized use
+            //   cases by avoiding access message content in db;
             // 
-            //     :param for_current_user: if True, get extra fields only relevant to the current user.
-            //         When this param is set, the result should not be broadcasted to other users!
+            // :param add_followers: if True, also add followers of the current target for each thread of
+            //     each message. Only applicable if ``store.target`` is a specific user.
             // 
-            //     :param add_followers: if True, also add followers of the current user for each thread of
-            //         each message. Only applicable if ``for_current_user`` is also True.
-            // 
-            //     :param followers: if given, use this pre-computed list of followers instead of fetching
-            //         them. It lessen query count in some optimized use cases.
-            //         Only applicable if ``add_followers`` is True.
-            //     """
-            //     if fields is None:
-            //         fields = [
-            //             "body",
-            //             "create_date",
-            //             "date",
-            //             "message_type",
-            //             "model",  # keep for iOS app
-            //             "pinned_at",
-            //             "res_id",  # keep for iOS app
-            //             "subject",
-            //             "write_date",
-            //         ]
-            //     com_id = self.env["ir.model.data"]._xmlid_to_res_id("mail.mt_comment")
-            //     note_id = self.env["ir.model.data"]._xmlid_to_res_id("mail.mt_note")
-            //     # fetch scheduled notifications once, only if msg_vals is not given to
-            //     # avoid useless queries when notifying Inbox right after a message_post
-            //     scheduled_dt_by_msg_id = {}
-            //     if msg_vals:
-            //         scheduled_dt_by_msg_id = {msg.id: msg_vals.get("scheduled_date", False) for msg in self}
-            //     elif self:
-            //         schedulers = (
-            //             self.env["mail.message.schedule"]
-            //             .sudo()
-            //             .search([("mail_message_id", "in", self.ids)])
+            // :param followers: if given, use this pre-computed list of followers instead of fetching
+            //     them. It lessen query count in some optimized use cases.
+            //     Only applicable if ``add_followers`` is True.
+            // """
+            // if "message_format" not in fields:
+            //     store.add_records_fields(self, fields)
+            //     return
+            // fields.remove("message_format")
+            // # fetch scheduled notifications once, only if msg_vals is not given to
+            // # avoid useless queries when notifying Inbox right after a message_post
+            // scheduled_dt_by_msg_id = {}
+            // if msg_vals:
+            //     scheduled_dt_by_msg_id = {msg.id: msg_vals.get("scheduled_date", False) for msg in self}
+            // elif self:
+            //     schedulers = (
+            //         self.env["mail.message.schedule"]
+            //         .sudo()
+            //         .search([("mail_message_id", "in", self.ids)])
+            //     )
+            //     for scheduler in schedulers:
+            //         scheduled_dt_by_msg_id[scheduler.mail_message_id.id] = scheduler.scheduled_datetime
+            // record_by_message = self._record_by_message()
+            // records = record_by_message.values()
+            // non_channel_records = filter(lambda record: record._name != "discuss.channel", records)
+            // target_user = store.target.get_user(self.env)
+            // if target_user and add_followers and non_channel_records:
+            //     if followers is None:
+            //         domain = Domain.OR(
+            //             [("res_model", "=", model), ("res_id", "in", [r.id for r in records])]
+            //             for model, records in groupby(non_channel_records, key=lambda r: r._name)
             //         )
-            //         for scheduler in schedulers:
-            //             scheduled_dt_by_msg_id[scheduler.mail_message_id.id] = scheduler.scheduled_datetime
-            //     record_by_message = self._record_by_message()
-            //     records = record_by_message.values()
-            //     non_channel_records = filter(lambda record: record._name != "discuss.channel", records)
-            //     if for_current_user and add_followers and non_channel_records:
-            //         if followers is None:
-            //             domain = expression.OR(
-            //                 [("res_model", "=", model), ("res_id", "in", [r.id for r in records])]
-            //                 for model, records in groupby(non_channel_records, key=lambda r: r._name)
-            //             )
-            //             domain = expression.AND(
-            //                 [domain, [("partner_id", "=", self.env.user.partner_id.id)]]
-            //             )
-            //             # sudo: mail.followers - reading followers of current partner
-            //             followers = self.env["mail.followers"].sudo().search(domain)
-            //         follower_by_record_and_partner = {
-            //             (
-            //                 self.env[follower.res_model].browse(follower.res_id),
-            //                 follower.partner_id,
-            //             ): follower
-            //             for follower in followers
-            //         }
-            //     for record in records:
-            //         thread_data = {}
-            //         if record._name != "discuss.channel":
-            //             try:
-            //                 # sudo: mail.thread - if mentionned in a non accessible thread, name is allowed
-            //                 thread_data["name"] = record.sudo().display_name
-            //             except MissingError:
-            //                 continue  # related non mail.thread document deleted, still show message in history
-            //         if self.env[record._name]._original_module:
-            //             thread_data["module_icon"] = modules.module.get_module_icon(
-            //                 self.env[record._name]._original_module
-            //             )
-            //         if for_current_user and add_followers:
-            //             thread_data["selfFollower"] = Store.one(
-            //                 follower_by_record_and_partner.get((record, self.env.user.partner_id)),
-            //                 fields={"is_active": True, "partner": []},
-            //             )
-            //         store.add(record, thread_data, as_thread=True)
-            //     for message in self:
-            //         # model, res_id, record_name need to be kept for mobile app as iOS app cannot be updated
-            //         data = message._read_format(fields, load=False)[0]
-            //         record = record_by_message.get(message)
-            //         record_name = False
+            //         domain &= Domain("partner_id", "=", target_user.partner_id.id)
+            //         # sudo: mail.followers - reading followers of current partner
+            //         followers = self.env["mail.followers"].sudo().search(domain)
+            //     follower_by_record_and_partner = {
+            //         (
+            //             self.env[follower.res_model].browse(follower.res_id),
+            //             follower.partner_id,
+            //         ): follower
+            //         for follower in followers
+            //     }
+            // record_fields = [
+            //     # sudo: mail.thread - if mentionned in a non accessible thread, name is allowed
+            //     Store.Attr("display_name", sudo=True),
+            //     Store.Attr(
+            //         "module_icon",
+            //         lambda record: modules.module.get_module_icon(self.env[record._name]._original_module),
+            //         predicate=lambda record: self.env[record._name]._original_module,
+            //     ),
+            // ]
+            // if target_user and add_followers and non_channel_records:
+            //     record_fields.append(
+            //         Store.One(
+            //             "selfFollower",
+            //             ["is_active", Store.One("partner_id", [])],
+            //             value=lambda r: follower_by_record_and_partner.get((r, target_user.partner_id)),
+            //         ),
+            //     )
+            // for record in records:
+            //     store.add(record, record_fields, as_thread=True)
+            // if store.target.is_current_user(self.env):
+            //     fields.append("starred")
+            // store.add(self, fields)
+            // for message in self:
+            //     record = record_by_message.get(message)
+            //     if record:
+            //         if hasattr(record, "_message_compute_subject"):
+            //             # sudo: if mentionned in a non accessible thread, user should be able to see the subject
+            //             default_subject = record.sudo()._message_compute_subject()
+            //         else:
+            //             default_subject = message.record_name
+            //     else:
             //         default_subject = False
-            //         if record:
-            //             with contextlib.suppress(MissingError):
-            //                 # sudo: if mentionned in a non accessible thread, user should be able to see the name
-            //                 record_name = record.sudo().display_name
-            //             if record_name:
-            //                 default_subject = record_name
-            //                 if hasattr(record, "_message_compute_subject"):
-            //                     # sudo: if mentionned in a non accessible thread, user should be able to see the subject
-            //                     default_subject = record.sudo()._message_compute_subject()
-            //         data["default_subject"] = default_subject
-            //         vals = {
-            //             # sudo: mail.message - reading attachments on accessible message is allowed
-            //             "attachment_ids": Store.many(message.sudo().attachment_ids.sorted("id")),
-            //             # sudo: mail.message - reading link preview on accessible message is allowed
-            //             "linkPreviews": Store.many(
-            //                 message.sudo().link_preview_ids.filtered(lambda l: not l.is_hidden)
-            //             ),
-            //             # sudo: mail.message - reading reactions on accessible message is allowed
-            //             "reactions": Store.many(message.sudo().reaction_ids),
-            //             "record_name": record_name,  # keep for iOS app
-            //             "is_note": message.subtype_id.id == note_id,
-            //             "is_discussion": message.subtype_id.id == com_id,
-            //             # sudo: mail.message.subtype - reading description on accessible message is allowed
-            //             "subtype_description": message.subtype_id.sudo().description,
-            //             # sudo: res.partner: reading limited data of recipients is acceptable
-            //             "recipients": Store.many(message.sudo().partner_ids, fields=["avatar_128", "name"]),
-            //             "scheduledDatetime": scheduled_dt_by_msg_id.get(message.id, False),
-            //             "thread": Store.one(record, as_thread=True, only_id=True),
-            //         }
-            //         if self.env.user._is_internal():
-            //             vals["notifications"] = Store.many(message.notification_ids._filtered_for_web_client())
-            //         if for_current_user:
-            //             # sudo: mail.message - filtering allowed tracking values
-            //             displayed_tracking_ids = message.sudo().tracking_value_ids._filter_has_field_access(
-            //                 self.env
+            //     data = {
+            //         "default_subject": default_subject,
+            //         "scheduledDatetime": scheduled_dt_by_msg_id.get(message.id, False),
+            //         "thread": Store.One(record, [], as_thread=True),
+            //     }
+            // 
+            //     if message.incoming_email_cc:
+            //         data["incoming_email_cc"] = tools.mail.email_split_tuples(message.incoming_email_cc)
+            //     if message.incoming_email_to:
+            //         data["incoming_email_to"] = tools.mail.email_split_tuples(message.incoming_email_to)
+            //     if store.target.is_current_user(self.env):
+            //         # sudo: mail.message - filtering allowed tracking values
+            //         displayed_tracking_ids = message.sudo().tracking_value_ids._filter_has_field_access(
+            //             self.env
+            //         )
+            //         if record and hasattr(record, "_track_filter_for_display"):
+            //             displayed_tracking_ids = record._track_filter_for_display(
+            //                 displayed_tracking_ids
             //             )
-            //             if record and hasattr(record, "_track_filter_for_display"):
-            //                 displayed_tracking_ids = record._track_filter_for_display(
-            //                     displayed_tracking_ids
-            //                 )
-            //             # sudo: mail.message - checking whether there is a notification for the current user is acceptable
-            //             notifications_partners = message.sudo().notification_ids.filtered(
-            //                 lambda n: not n.is_read
-            //             ).res_partner_id
-            //             vals["needaction"] = (
-            //                 not self.env.user._is_public()
-            //                 and self.env.user.partner_id in notifications_partners
-            //             )
-            //             vals["starred"] = message.starred
-            //             vals["trackingValues"] = displayed_tracking_ids._tracking_value_format()
-            //         data.update(vals)
-            //         store.add(message, data)
-            //     # sudo: mail.message: access to author is allowed
-            //     self.sudo()._author_to_store(store)
-            //     # Add extras at the end to guarantee order in result. In particular, the parent message
-            //     # needs to be after the current message (client code assuming the first received message is
-            //     # the one just posted for example, and not the message being replied to).
-            //     self._extras_to_store(store, format_reply=format_reply)
+            //         # sudo: mail.message - checking whether there is a notification for the current user is acceptable
+            //         notifications_partners = message.sudo().notification_ids.filtered(
+            //             lambda n: not n.is_read
+            //         ).res_partner_id
+            //         data["needaction"] = (
+            //             not self.env.user._is_public()
+            //             and self.env.user.partner_id in notifications_partners
+            //         )
+            //         data["trackingValues"] = displayed_tracking_ids._tracking_value_format()
+            //     store.add(message, data)
+            // # Add extras at the end to guarantee order in result. In particular, the parent message
+            // # needs to be after the current message (client code assuming the first received message is
+            // # the one just posted for example, and not the message being replied to).
+            // self._extras_to_store(store, format_reply=format_reply)
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: mail_message.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None, **kwargs):
-            // super()._to_store(store, fields=fields, **kwargs)
-            // if fields is None:
-            //     fields = ["rating_id", "record_rating"]
-            // if "rating_id" in fields:
-            //     for message in self:
-            //         # sudo: mail.message - guest and portal user can receive rating of accessible message
-            //         store.add(message, {"rating_id": Store.one(message.sudo().rating_id)})
+            // def _to_store(self, store: Store, fields, **kwargs):
+            // super()._to_store(store, [f for f in fields if f != "record_rating"], **kwargs)
             // if "record_rating" in fields:
             //     for records in self._records_by_model_name().values():
-            //         if issubclass(self.pool[records._name], self.pool["rating.mixin"]):
-            //             store.add(records, fields=["rating_avg", "rating_count"], as_thread=True)
+            //         if (
+            //             issubclass(self.pool[records._name], self.pool["rating.mixin"])
+            //             and records._has_field_access(records._fields["rating_avg"], 'read')
+            //         ):
+            //             all_stats = {}
+            //             if records._allow_publish_rating_stats():
+            //                 all_stats = records._rating_get_stats_per_record()
+            //             record_fields = [
+            //                 "rating_avg",
+            //                 "rating_count",
+            //                 Store.Attr(
+            //                     "rating_stats",
+            //                     lambda record, all_stats=all_stats: all_stats.get(record.id),
+            //                     predicate=lambda record: record._allow_publish_rating_stats(),
+            //                 ),
+            //             ]
+            //             store.add(records, record_fields, as_thread=True)
             */
             return default;
         }
@@ -1914,15 +2147,14 @@ namespace Bamboo.Core.Application.Services
             // # a user should always be able to star a message they can read
             // self.check_access('read')
             // starred = not self.starred
-            // partner = self.env.user.partner_id
             // if starred:
-            //     partner.starred_message_ids |= self
+            //     self.starred_partner_ids = [Command.link(self.env.user.partner_id.id)]
             // else:
-            //     partner.starred_message_ids -= self
+            //     self.starred_partner_ids = [Command.unlink(self.env.user.partner_id.id)]
             // self.env.user._bus_send(
             //     "mail.message/toggle_star", {"message_ids": [self.id], "starred": starred}
             // )
-            // return Store(self, {"starred": self.starred}).get_result()
+            // return Store().add(self, {"starred": self.starred}).get_result()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1933,9 +2165,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def unstar_all(self):
             // """ Unstar messages for the current partner. """
-            // partner = self.env.user.partner_id
-            // starred_messages = self.search([('starred_partner_ids', 'in', partner.id)])
-            // partner.starred_message_ids -= starred_messages
+            // starred_messages = self.search([("starred_partner_ids", "in", self.env.user.partner_id.id)])
+            // starred_messages.starred_partner_ids = [Command.unlink(self.env.user.partner_id.id)]
             // self.env.user._bus_send(
             //     "mail.message/toggle_star", {"message_ids": starred_messages.ids, "starred": False}
             // )
@@ -1959,15 +2190,17 @@ namespace Bamboo.Core.Application.Services
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
             // def write(self, vals):
+            // if not (self.env.su or self.env.user.has_group('base.group_user')):
+            //     vals.pop('author_id', None)
+            //     vals.pop('email_from', None)
             // record_changed = 'model' in vals or 'res_id' in vals
             // if record_changed and not self.env.is_system():
             //     raise AccessError(_("Only administrators can modify 'model' and 'res_id' fields."))
             // if record_changed or 'message_type' in vals:
             //     self._invalidate_documents()
-            // res = super(Message, self).write(vals)
+            // res = super().write(vals)
             // if vals.get('attachment_ids'):
-            //     for mail in self:
-            //         mail.attachment_ids.check(mode='read')
+            //     self.attachment_ids.check_access('read')
             // if 'notification_ids' in vals or record_changed:
             //     self._invalidate_documents()
             // return res

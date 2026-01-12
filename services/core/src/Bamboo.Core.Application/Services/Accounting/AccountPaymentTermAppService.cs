@@ -160,8 +160,6 @@ namespace Bamboo.Core.Application.Services
             //     We assume that the input total in move currency (tax_amount_currency + untaxed_amount_currency) is already cash rounded.
             //     The cash rounding does not change the totals: Consider the sum of all the computed payment term amounts in move / company currency.
             //     It is the same as the input total in move / company currency.
-            // :return (list<tuple<datetime.date,tuple<float,float>>>): the amount in the company's currency and
-            //     the document's currency, respectively for each required payment date
             // """
             // self.ensure_one()
             // company_currency = company.currency_id
@@ -255,7 +253,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment_term.py) ---
             // def _default_example_date(self):
-            // return self._context.get('example_date') or fields.Date.today()
+            // return self.env.context.get('example_date') or fields.Date.today()
             */
             return default;
         }
@@ -308,7 +306,16 @@ namespace Bamboo.Core.Application.Services
             //         discount_amount_currency = (total_amount - untaxed_amount) * percentage
             //     else:
             //         discount_amount_currency = total_amount * percentage
-            //     return self.currency_id.round(total_amount - discount_amount_currency)
+            //     amount_due = self.currency_id.round(total_amount - discount_amount_currency)
+            //     if self.env.context.get('active_model') == 'account.move' and (active_id := self.env.context.get('active_id')):
+            //         move = self.env['account.move'].browse(active_id)
+            //         cash_rounding = move.invoice_cash_rounding_id
+            //         currency = move.currency_id
+            //         if cash_rounding:
+            //             cash_rounding_difference = cash_rounding.compute_difference(currency, amount_due)
+            //             if not currency.is_zero(cash_rounding_difference):
+            //                 amount_due = self.currency_id.round(amount_due + cash_rounding_difference)
+            //     return amount_due
             // return total_amount
             */
             return default;
@@ -346,7 +353,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment_term.py) ---
             // def _unlink_except_referenced_terms(self):
             // if self.env['account.move'].search_count([('invoice_payment_term_id', 'in', self.ids)], limit=1):
-            //     raise UserError(_('You can not delete payment terms as other records still reference it. However, you can archive it.'))
+            //     raise UserError(_("Uh-oh! Those payment terms are quite popular and can't be deleted since there are still some records referencing them. How about archiving them instead?"))
             */
             return default;
         }

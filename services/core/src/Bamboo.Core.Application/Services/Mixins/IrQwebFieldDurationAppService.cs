@@ -27,9 +27,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldDurationable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def attributes(self, record, field_name, options, values):
-            // attrs = super(Duration, self).attributes(record, field_name, options, values)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def attributes(self, record, field_name, options, values=None):
+            // attrs = super().attributes(record, field_name, options, values)
             // if options.get('inherit_branding'):
             //     attrs['data-oe-original'] = record[field_name]
             // return attrs
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldDurationable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // value = element.text_content().strip()
             // 
@@ -55,7 +55,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(DurationConverter, self).get_available_options()
+            // options = super().get_available_options()
             // unit = [(value, str(label)) for value, label, ratio in TIMEDELTA_UNITS]
             // options.update(
             //     digital=dict(type="boolean", string=_('Digital formatting')),
@@ -105,7 +105,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     sign = '-'
             // 
             // if options.get('digital'):
-            //     for unit, label, secs_per_unit in TIMEDELTA_UNITS:
+            //     for _unit, _label, secs_per_unit in TIMEDELTA_UNITS:
             //         if secs_per_unit > 3600:
             //             continue
             //         v, r = divmod(r, secs_per_unit)
@@ -114,7 +114,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         sections.append(u"%02.0f" % int(round(v)))
             //     return sign + u':'.join(sections)
             // 
-            // for unit, label, secs_per_unit in TIMEDELTA_UNITS:
+            // for _unit, _label, secs_per_unit in TIMEDELTA_UNITS:
             //     v, r = divmod(r, secs_per_unit)
             //     if not v:
             //         continue

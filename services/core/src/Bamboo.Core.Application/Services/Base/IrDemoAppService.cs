@@ -30,7 +30,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_demo.py) ---
             // def install_demo(self):
-            // force_demo(self.env)
+            // import odoo.modules.loading  # noqa: PLC0415
+            // odoo.modules.loading.force_demo(self.env)
             // return {
             //     'type': 'ir.actions.act_url',
             //     'target': 'self',

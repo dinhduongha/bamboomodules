@@ -111,14 +111,6 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
             // def init(self):
-            // self.env.cr.execute(SQL("""
-            //     CREATE INDEX IF NOT EXISTS res_device_log__composite_idx ON %s
-            //     (user_id, session_identifier, platform, browser, last_activity, id) WHERE revoked = False
-            // """,
-            //     SQL.identifier(self._table)
-            // ))
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
-            // def init(self):
             // tools.drop_view_if_exists(self.env.cr, self._table)
             // self.env.cr.execute(SQL("""
             //     CREATE or REPLACE VIEW %s as (%s)
@@ -148,8 +140,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
             // def _order_field_to_sql(self, alias, field_name, direction, nulls, query):
-            // if field_name == 'is_current' and request:
-            //     return SQL("session_identifier = %s DESC", request.session.sid[:42])
+            // if field_name == 'is_current' and request and request.session.sid:
+            //     return SQL("session_identifier = %s DESC", request.session.sid[:STORED_SESSION_BYTES])
             // return super()._order_field_to_sql(alias, field_name, direction, nulls, query)
             */
             return default;
@@ -221,7 +213,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // geoip = GeoIP(trace['ip_address'])
             // user_id = request.session.uid
-            // session_identifier = request.session.sid[:42]
+            // session_identifier = request.session.sid[:STORED_SESSION_BYTES]
             // 
             // if self.env.cr.readonly:
             //     self.env.cr.rollback()
@@ -269,10 +261,51 @@ namespace Bamboo.Core.Application.Services
             //                     D2.last_activity > D.last_activity
             //                     OR (D2.last_activity = D.last_activity AND D2.id > D.id)
             //                 )
-            //                 AND D2.revoked = False
+            //                 AND D2.revoked IS NOT TRUE
             //         )
-            //         AND D.revoked = False
+            //         AND D.revoked IS NOT TRUE
             // """
+            */
+            return default;
+        }
+
+        private async Task<ResDeviceLog> _UpdateRevokedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
+            // def __update_revoked(self):
+            // """
+            //     Set the field ``revoked`` to ``True`` for ``res.device.log``
+            //     for which the session file no longer exists on the filesystem.
+            // """
+            // batch_size = 100_000
+            // offset = 0
+            // 
+            // while True:
+            //     candidate_device_log_ids = self.env['res.device.log'].search_fetch(
+            //         [
+            //             ('revoked', '=', False),
+            //             ('last_activity', '<', datetime.now() - timedelta(seconds=get_session_max_inactivity(self.env))),
+            //         ],
+            //         ['session_identifier'],
+            //         order='id',
+            //         limit=batch_size,
+            //         offset=offset,
+            //     )
+            //     if not candidate_device_log_ids:
+            //         break
+            //     offset += batch_size
+            //     revoked_session_identifiers = root.session_store.get_missing_session_identifiers(
+            //         set(candidate_device_log_ids.mapped('session_identifier'))
+            //     )
+            //     if not revoked_session_identifiers:
+            //         continue
+            //     to_revoke = candidate_device_log_ids.filtered(
+            //         lambda candidate: candidate.session_identifier in revoked_session_identifiers
+            //     )
+            //     to_revoke.write({'revoked': True})
+            //     self.env.cr.commit()
+            //     offset -= len(to_revoke)
             */
             return default;
         }

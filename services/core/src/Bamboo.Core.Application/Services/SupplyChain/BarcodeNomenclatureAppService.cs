@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("Barcodes", Category = "Supply Chain", Depends = new[] { "web" })]
+    [Module("Barcodes", Category = "SupplyChain", Depends = new[] { "web" })]
     public class BarcodeNomenclatureAppService : GenericApplicationService<BarcodeNomenclature>, IBarcodeNomenclatureAppService
     {
 
@@ -118,18 +118,24 @@ namespace Bamboo.Core.Application.Services
             //     date = datetime.datetime.strptime(str(year) + gs1_date[2:4], '%Y%m')
             //     date = date.replace(day=calendar.monthrange(year, int(gs1_date[2:4]))[1])
             // else:
-            //     date = datetime.datetime.strptime(str(year) + gs1_date[2:], '%Y%m%d')
+            //     try:
+            //         date = datetime.datetime.strptime(str(year) + gs1_date[2:], '%Y%m%d')
+            //     except ValueError as e:
+            //         raise ValidationError(_(
+            //             "A GS1 barcode nomenclature pattern was matched. However, the barcode failed to be converted to a valid date: '%(error_message)s'",
+            //             error_message=e
+            //         ))
             // return date.date()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<BarcodeNomenclature> Gs1DecomposeExtandedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtandedRequestDto input)
+        public async Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
-            // def gs1_decompose_extanded(self, barcode):
-            // """Try to decompose the gs1 extanded barcode into several unit of information using gs1 rules.
+            // def gs1_decompose_extended(self, barcode):
+            // """Try to decompose the gs1 extended barcode into several unit of information using gs1 rules.
             // 
             // Return a ordered list of dict
             // """
@@ -283,11 +289,13 @@ namespace Bamboo.Core.Application.Services
             // :param barcode:
             // :type barcode: str
             // :return: A object containing various information about the barcode, like as:
+            // 
             //     - code: the barcode
             //     - type: the barcode's type
             //     - value: if the id encodes a numerical value, it will be put there
             //     - base_code: the barcode code with all the encoding parts set to
             //       zero; the one put on the product in the backend
+            // 
             // :rtype: dict
             // """
             // parsed_result = {
@@ -330,7 +338,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
             // def parse_nomenclature_barcode(self, barcode):
             // if self.is_gs1_nomenclature:
-            //     return self.gs1_decompose_extanded(barcode)
+            //     return self.gs1_decompose_extended(barcode)
             // return super().parse_nomenclature_barcode(barcode)
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -366,30 +374,50 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<BarcodeNomenclature> PreprocessGs1SearchArgsInternalAsync(object args, object barcode_types, object field)
+        protected async Task<BarcodeNomenclature> PreprocessGs1SearchArgsInternalAsync(object domain, object barcode_types, object field)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
-            // def _preprocess_gs1_search_args(self, args, barcode_types, field='barcode'):
-            // """Helper method to preprocess 'args' in _search method to add support to
+            // def _preprocess_gs1_search_args(self, domain, barcode_types, field='barcode'):
+            // """Helper method to preprocess 'domain' in _search method to add support to
             // search with GS1 barcode result.
             // Cut off the padding if using GS1 and searching on barcode. If the barcode
             // is only digits to keep the original barcode part only.
             // """
+            // domain = Domain(domain)
             // nomenclature = self.env.company.nomenclature_id
-            // if nomenclature.is_gs1_nomenclature:
-            //     for i, arg in enumerate(args):
-            //         if not isinstance(arg, (list, tuple)) or len(arg) != 3:
-            //             continue
-            //         field_name, operator, value = arg
-            //         if field_name != field or operator not in ['ilike', 'not ilike', '=', '!='] or value is False:
-            //             continue
+            // if not self.env.context.get('skip_preprocess_gs1'):
+            //     def map_gs1_barcode(condition):
+            //         if condition.field_expr != field or not nomenclature.is_gs1_nomenclature:
+            //             return condition
+            //         # Check operator
+            //         # handle `in` first and check the rest
+            //         operator = condition.operator
+            //         value = condition.value
+            //         if not value:
+            //             return condition
             // 
-            //         parsed_data = []
+            //         if operator in ('in', 'not in') and len(value) > 1:
+            //             sub_domain = Domain.OR(
+            //                 map_gs1_barcode(Domain(field, '=', v))
+            //                 for v in value
+            //             )
+            //             if operator == 'not in':
+            //                 sub_domain = ~sub_domain
+            //             return sub_domain
+            //         if operator in ('in', 'not in'):
+            //             operator = '=' if operator == 'in' else '!='
+            //             value = next(iter(value))
+            //         elif operator not in ('ilike', 'not ilike', '=', '!='):
+            //             return condition
+            // 
+            //         # Parse the value
+            //         if not value:
+            //             return condition
             //         try:
-            //             parsed_data += nomenclature.parse_barcode(value) or []
+            //             parsed_data = nomenclature.parse_barcode(value) or []
             //         except (ValidationError, ValueError):
-            //             pass
+            //             parsed_data = []
             // 
             //         replacing_operator = 'ilike' if operator in ['ilike', '='] else 'not ilike'
             //         for data in parsed_data:
@@ -397,20 +425,22 @@ namespace Bamboo.Core.Application.Services
             //             value = data['value']
             //             if data_type in barcode_types:
             //                 if data_type == 'lot':
-            //                     args[i] = (field_name, operator, value)
-            //                     break
+            //                     return Domain(field, operator, value)
             //                 match = re.match('0*([0-9]+)$', str(value))
             //                 if match:
             //                     unpadded_barcode = match.groups()[0]
-            //                     args[i] = (field_name, replacing_operator, unpadded_barcode)
+            //                     return Domain(field, replacing_operator, unpadded_barcode)
             //                 break
             // 
             //         # The barcode isn't a valid GS1 barcode, checks if it can be unpadded.
             //         if not parsed_data:
             //             match = re.match('0+([0-9]+)$', value)
             //             if match:
-            //                 args[i] = (field_name, replacing_operator, match.groups()[0])
-            // return args
+            //                 return Domain(field, replacing_operator, match.groups()[0])
+            //         return condition
+            // 
+            //     domain = domain.map_conditions(map_gs1_barcode)
+            // return domain
             */
             return default;
         }
@@ -442,6 +472,21 @@ namespace Bamboo.Core.Application.Services
             // return self.sanitize_ean('0' + upc)[1:]
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<BarcodeNomenclature> UnlinkExceptDefaultInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
+            // def _unlink_except_default(self):
+            // default_record = self.env.ref("barcodes.default_barcode_nomenclature", raise_if_not_found=False)
+            // if default_record and default_record in self:
+            //     raise UserError(_(
+            //         "You cannot delete '%(name)s' because it's the default barcode nomenclature.",
+            //         name=default_record.display_name
+            //     ))
+            */
+            return default;
         }
     }
 }

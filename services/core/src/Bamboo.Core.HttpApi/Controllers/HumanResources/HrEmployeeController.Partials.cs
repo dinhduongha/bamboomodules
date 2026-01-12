@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        {
+            var result = await _appService.ArchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-create-user")]
         public async Task<IActionResult> ActionCreateUserAsync(Guid id)
         {
@@ -19,10 +27,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-contract")]
-        public async Task<IActionResult> ActionOpenContractAsync(Guid id)
+        [Route("{id}/action-create-users")]
+        public async Task<IActionResult> ActionCreateUsersAsync(Guid id)
         {
-            var result = await _appService.OpenContractAsync(id);
+            var result = await _appService.CreateUsersAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-create-users-confirmation")]
+        public async Task<IActionResult> ActionCreateUsersConfirmationAsync(Guid id)
+        {
+            var result = await _appService.CreateUsersConfirmationAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-allocation-wizard")]
+        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid id)
+        {
+            var result = await _appService.OpenAllocationWizardAsync(id);
             return Ok(result);
         }
         
@@ -51,10 +75,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-last-month-overtime")]
-        public async Task<IActionResult> ActionOpenLastMonthOvertimeAsync(Guid id)
+        [Route("{id}/action-open-leave-request")]
+        public async Task<IActionResult> ActionOpenLeaveRequestAsync(Guid id)
         {
-            var result = await _appService.OpenLastMonthOvertimeAsync(id);
+            var result = await _appService.OpenLeaveRequestAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-versions")]
+        public async Task<IActionResult> ActionOpenVersionsAsync(Guid id)
+        {
+            var result = await _appService.OpenVersionsAsync(id);
             return Ok(result);
         }
         
@@ -75,6 +107,38 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-send-log")]
+        public async Task<IActionResult> ActionSendLogAsync(Guid id)
+        {
+            var result = await _appService.SendLogAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-send-sms")]
+        public async Task<IActionResult> ActionSendSmsAsync(Guid id)
+        {
+            var result = await _appService.SendSmsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-set-absent")]
+        public async Task<IActionResult> ActionSetAbsentAsync(Guid id)
+        {
+            var result = await _appService.SetAbsentAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-set-present")]
+        public async Task<IActionResult> ActionSetPresentAsync(Guid id)
+        {
+            var result = await _appService.SetPresentAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-time-off-dashboard")]
         public async Task<IActionResult> ActionTimeOffDashboardAsync(Guid id)
         {
@@ -91,10 +155,50 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-toggle-primary-bank-account-trust")]
+        public async Task<IActionResult> ActionTogglePrimaryBankAccountTrustAsync(Guid id)
+        {
+            var result = await _appService.TogglePrimaryBankAccountTrustAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-unlink-wizard")]
         public async Task<IActionResult> ActionUnlinkWizardAsync(Guid id)
         {
             var result = await _appService.UnlinkWizardAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/check-no-existing-contract")]
+        public async Task<IActionResult> CheckNoExistingContractAsync(Guid id, [FromBody] HrEmployeeCheckNoExistingContractRequestDto input)
+        {
+            var result = await _appService.CheckNoExistingContractAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/create-contract")]
+        public async Task<IActionResult> CreateContractAsync(Guid id, [FromBody] HrEmployeeCreateContractRequestDto input)
+        {
+            var result = await _appService.CreateContractAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/create-version")]
+        public async Task<IActionResult> CreateVersionAsync(Guid id, [FromBody] HrEmployeeCreateVersionRequestDto input)
+        {
+            var result = await _appService.CreateVersionAsync(id, input);
             return Ok(result);
         }
         
@@ -123,10 +227,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-accounts-with-fixed-allocations")]
+        public async Task<IActionResult> GetAccountsWithFixedAllocationsAsync(Guid id)
+        {
+            var result = await _appService.GetAccountsWithFixedAllocationsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-allocation-requests-amount")]
         public async Task<IActionResult> GetAllocationRequestsAmountAsync(Guid id)
         {
             var result = await _appService.GetAllocationRequestsAmountAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-avatar-card-data")]
+        public async Task<IActionResult> GetAvatarCardDataAsync(Guid id, [FromBody] HrEmployeeGetAvatarCardDataRequestDto input)
+        {
+            var result = await _appService.GetAvatarCardDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-bank-account-salary-allocation")]
+        public async Task<IActionResult> GetBankAccountSalaryAllocationAsync(Guid id, [FromBody] HrEmployeeGetBankAccountSalaryAllocationRequestDto input)
+        {
+            var result = await _appService.GetBankAccountSalaryAllocationAsync(id, input);
             return Ok(result);
         }
         
@@ -163,6 +291,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-internal-resume-lines")]
+        public async Task<IActionResult> GetInternalResumeLinesAsync(Guid id, [FromBody] HrEmployeeGetInternalResumeLinesRequestDto input)
+        {
+            var result = await _appService.GetInternalResumeLinesAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-mandatory-days")]
         public async Task<IActionResult> GetMandatoryDaysAsync(Guid id, [FromBody] HrEmployeeGetMandatoryDaysRequestDto input)
         {
@@ -179,6 +315,30 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-overtime-data")]
+        public async Task<IActionResult> GetOvertimeDataAsync(Guid id, [FromBody] HrEmployeeGetOvertimeDataRequestDto input)
+        {
+            var result = await _appService.GetOvertimeDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-overtime-data-by-employee")]
+        public async Task<IActionResult> GetOvertimeDataByEmployeeAsync(Guid id)
+        {
+            var result = await _appService.GetOvertimeDataByEmployeeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-presence-server-action-data")]
+        public async Task<IActionResult> GetPresenceServerActionDataAsync(Guid id)
+        {
+            var result = await _appService.GetPresenceServerDataAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-public-holidays-data")]
         public async Task<IActionResult> GetPublicHolidaysDataAsync(Guid id, [FromBody] HrEmployeeGetPublicHolidaysDataRequestDto input)
         {
@@ -187,10 +347,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-remaining-percentage")]
+        public async Task<IActionResult> GetRemainingPercentageAsync(Guid id)
+        {
+            var result = await _appService.GetRemainingPercentageAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-special-days-data")]
         public async Task<IActionResult> GetSpecialDaysDataAsync(Guid id, [FromBody] HrEmployeeGetSpecialDaysDataRequestDto input)
         {
             var result = await _appService.GetSpecialDaysDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-time-off-dashboard-data")]
+        public async Task<IActionResult> GetTimeOffDashboardDataAsync(Guid id, [FromBody] HrEmployeeGetTimeOffDashboardDataRequestDto input)
+        {
+            var result = await _appService.GetTimeOffDashboardDataAsync(id, input);
             return Ok(result);
         }
         
@@ -211,18 +387,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/search-fetch")]
-        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] HrEmployeeSearchFetchRequestDto input)
+        [Route("{id}/new")]
+        public async Task<IActionResult> NewAsync(Guid id, [FromBody] HrEmployeeNewRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input);
+            var result = await _appService.NewAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
+        [Route("{id}/notify-expiring-contract-work-permit")]
+        public async Task<IActionResult> NotifyExpiringContractWorkPermitAsync(Guid id)
         {
-            var result = await _appService.ToggleActiveAsync(id);
+            var result = await _appService.NotifyExpiringContractWorkPermitAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-barcode-scanner")]
+        public async Task<IActionResult> OpenBarcodeScannerAsync(Guid id)
+        {
+            var result = await _appService.OpenBarcodeScannerAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/search-fetch")]
+        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] HrEmployeeSearchFetchRequestDto input)
+        {
+            var result = await _appService.SearchFetchAsync(id, input);
             return Ok(result);
         }
     }

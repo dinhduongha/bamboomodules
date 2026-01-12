@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class ResCompanyCloseStockValuationRequestDto
+    {
+        public object AtDate { get; set; }
+        public object AutoPost { get; set; }
+    }
+    
     public class ResCompanyComputeFiscalyearDatesRequestDto
     {
         public object CurrentDate { get; set; }
@@ -37,5 +43,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object OldCode { get; set; }
         public object NewCode { get; set; }
+    }
+    
+    public class ResCompanyStockAccountingValueRequestDto
+    {
+        public object AccountsByProduct { get; set; }
+        public object AtDate { get; set; }
+    }
+    
+    public class ResCompanyStockValueRequestDto
+    {
+        public object AccountsByProduct { get; set; }
+        public object AtDate { get; set; }
     }
 }

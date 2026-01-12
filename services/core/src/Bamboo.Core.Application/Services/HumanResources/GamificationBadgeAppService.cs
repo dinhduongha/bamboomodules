@@ -37,8 +37,6 @@ namespace Bamboo.Core.Application.Services
             // def _can_grant_badge(self):
             // """Check if a user can grant a badge to another user
             // 
-            // :param uid: the id of the res.users trying to send the badge
-            // :param badge_id: the granted badge id
             // :return: integer representing the permission.
             // """
             // if self.env.is_admin():
@@ -95,11 +93,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_gamification, FILE: gamification.py) ---
             // def _compute_granted_employees_count(self):
+            // user_count = dict(
+            //     self.env['gamification.badge.user']._read_group(
+            //         [('badge_id', 'in', self.ids), ('employee_id', '!=', False)],
+            //         ['badge_id'], ['__count'],
+            //     ),
+            // )
             // for badge in self:
-            //     badge.granted_employees_count = self.env['gamification.badge.user'].search_count([
-            //         ('badge_id', '=', badge.id),
-            //         ('employee_id', '!=', False)
-            //     ])
+            //     badge.granted_employees_count = user_count.get(badge._origin, 0)
             */
             return default;
         }
@@ -176,8 +177,7 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // Users = self.env["res.users"]
-            // query = Users._where_calc([])
-            // Users._apply_ir_rules(query)
+            // query = Users._search([])
             // badge_alias = query.join("res_users", "id", "gamification_badge_user", "user_id", "badges")
             // 
             // rows = self.env.execute_query(SQL(

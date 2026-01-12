@@ -11,14 +11,6 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-contracts")]
-        public async Task<IActionResult> ActionOpenContractsAsync(Guid id)
-        {
-            var result = await _appService.OpenContractsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResourceCalendarCopyDataRequestDto input)
         {
@@ -55,6 +47,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> PlanHoursAsync(Guid id, [FromBody] ResourceCalendarPlanHoursRequestDto input)
         {
             var result = await _appService.PlanHoursAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/switch-based-on-duration")]
+        public async Task<IActionResult> SwitchBasedOnDurationAsync(Guid id)
+        {
+            var result = await _appService.SwitchBasedOnDurationAsync(id);
             return Ok(result);
         }
         

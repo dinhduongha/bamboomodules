@@ -33,17 +33,21 @@ namespace Bamboo.Core.Application.Services
             // def action_approve_leave(self):
             // self.ensure_one()
             // if self.leave_id:
-            //     # Already confirmed once
-            //     if self.leave_id.state == 'validate1':
-            //         self.leave_id.action_validate()
-            //     # Still in confirmed state
-            //     else:
-            //         self.leave_id.action_approve()
-            //         # If double validation, still have to validate it again
-            //         if self.leave_id.validation_type == 'both':
-            //             self.leave_id.action_validate()
+            //     self.leave_id.action_approve()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<HrWorkEntry> CheckDurationInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
+            // def _check_duration(self):
+            // for work_entry in self:
+            //     if float_compare(work_entry.duration, 0, 3) <= 0 or float_compare(work_entry.duration, 24, 3) > 0:
+            //         raise ValidationError(self.env._("Duration must be positive and cannot exceed 24 hours."))
+            */
+            return default;
         }
 
         protected async Task<HrWorkEntry> CheckIfErrorInternalAsync()
@@ -55,18 +59,10 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // undefined_type = self.filtered(lambda b: not b.work_entry_type_id)
             // undefined_type.write({'state': 'conflict'})
-            // conflict = self._mark_conflicting_work_entries(min(self.mapped('date_start')), max(self.mapped('date_stop')))
-            // return undefined_type or conflict
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _check_if_error(self):
-            // res = super()._check_if_error()
+            // conflict = self._mark_conflicting_work_entries(min(self.mapped('date')), max(self.mapped('date')))
             // outside_calendar = self._mark_leaves_outside_schedule()
-            // return res or outside_calendar
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
-            // def _check_if_error(self):
-            // res = super()._check_if_error()
-            // conflict_with_leaves = self._compute_conflicts_leaves_to_approve()
-            // return res or conflict_with_leaves
+            // already_validated_days = self._mark_already_validated_days()
+            // return undefined_type or conflict or outside_calendar or already_validated_days
             */
             return default;
         }
@@ -82,71 +78,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrWorkEntry> ComputeConflictsLeavesToApproveInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
-            // def _compute_conflicts_leaves_to_approve(self):
-            // if not self:
-            //     return False
-            // 
-            // self.flush_recordset(['date_start', 'date_stop', 'employee_id', 'active'])
-            // self.env['hr.leave'].flush_model(['date_from', 'date_to', 'state', 'employee_id'])
-            // 
-            // query = """
-            //     SELECT
-            //         b.id AS work_entry_id,
-            //         l.id AS leave_id
-            //     FROM hr_work_entry b
-            //     INNER JOIN hr_leave l ON b.employee_id = l.employee_id
-            //     WHERE
-            //         b.active = TRUE AND
-            //         b.id IN %s AND
-            //         l.date_from < b.date_stop AND
-            //         l.date_to > b.date_start AND
-            //         l.state IN ('confirm', 'validate1');
-            // """
-            // self.env.cr.execute(query, [tuple(self.ids)])
-            // conflicts = self.env.cr.dictfetchall()
-            // for res in conflicts:
-            //     self.browse(res.get('work_entry_id')).write({
-            //         'state': 'conflict',
-            //         'leave_id': res.get('leave_id')
-            //     })
-            // return bool(conflicts)
-            */
-            return default;
-        }
-
-        protected async Task<HrWorkEntry> ComputeDateStopInternalAsync()
+        protected async Task<HrWorkEntry> ComputeDisplayNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
-            // def _compute_date_stop(self):
-            // for work_entry in self.filtered(lambda w: w.date_start and w.duration):
-            //     work_entry.date_stop = work_entry.date_start + relativedelta(hours=work_entry.duration)
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _compute_date_stop(self):
+            // def _compute_display_name(self):
             // for work_entry in self:
-            //     if work_entry._get_duration_is_valid():
-            //         calendar = work_entry.contract_id.resource_calendar_id
-            //         if not calendar:
-            //             continue
-            //         work_entry.date_stop = calendar.plan_hours(work_entry.duration, work_entry.date_start, compute_leaves=True)
-            //         continue
-            //     super(HrWorkEntry, work_entry)._compute_date_stop()
-            */
-            return default;
-        }
-
-        protected async Task<HrWorkEntry> ComputeDurationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
-            // def _compute_duration(self):
-            // durations = self._get_duration_batch()
-            // for work_entry in self:
-            //     work_entry.duration = durations[work_entry.id]
+            //     duration = str(timedelta(hours=work_entry.duration)).split(":")
+            //     work_entry.display_name = "%s - %sh%s" % (work_entry.work_entry_type_id.name, duration[0], duration[1])
             */
             return default;
         }
@@ -163,31 +102,6 @@ namespace Bamboo.Core.Application.Services
             //         work_entry.name = "%s: %s" % (work_entry.work_entry_type_id.name or _('Undefined Type'), work_entry.employee_id.name)
             */
             return default;
-        }
-
-        public override async Task<HrWorkEntry> CreateAsync(HrWorkEntry entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
-            // def create(self, vals_list):
-            // company_by_employee_id = {}
-            // for vals in vals_list:
-            //     if vals.get('company_id'):
-            //         continue
-            //     if vals['employee_id'] not in company_by_employee_id:
-            //         employee = self.env['hr.employee'].browse(vals['employee_id'])
-            //         company_by_employee_id[employee.id] = employee.company_id.id
-            //     vals['company_id'] = company_by_employee_id[vals['employee_id']]
-            // work_entries = super().create(vals_list)
-            // work_entries._check_if_error()
-            // return work_entries
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def create(self, vals_list):
-            // vals_list = [self._set_current_contract(vals) for vals in vals_list]
-            // work_entries = super().create(vals_list)
-            // return work_entries
-            */
-            return await base.CreateAsync(entity, fields);
         }
 
         protected async Task<HrWorkEntry> ErrorCheckingInternalAsync(object start, object stop, object skip, List<Guid> employee_ids)
@@ -207,16 +121,16 @@ namespace Bamboo.Core.Application.Services
             // """
             // try:
             //     skip = skip or self.env.context.get('hr_work_entry_no_check', False)
-            //     start = start or min(self.mapped('date_start'), default=False)
-            //     stop = stop or max(self.mapped('date_stop'), default=False)
+            //     start = start or min(self.mapped('date'), default=False)
+            //     stop = stop or max(self.mapped('date'), default=False)
             //     if not skip and start and stop:
-            //         domain = [
-            //             ('date_start', '<', stop),
-            //             ('date_stop', '>', start),
-            //             ('state', 'not in', ('validated', 'cancelled')),
-            //         ]
+            //         domain = (
+            //             Domain('date', '<=', stop)
+            //             & Domain('date', '>=', start)
+            //             & Domain('state', 'not in', ('validated', 'cancelled'))
+            //         )
             //         if employee_ids:
-            //             domain = expression.AND([domain, [('employee_id', 'in', list(employee_ids))]])
+            //             domain &= Domain('employee_id', 'in', list(employee_ids))
             //         work_entries = self.sudo().with_context(hr_work_entry_no_check=True).search(domain)
             //         work_entries._reset_conflicting_state()
             //     yield
@@ -237,77 +151,9 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrWorkEntry> FromIntervalsInternalAsync(object intervals)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _from_intervals(self, intervals):
             // return self.browse(chain.from_iterable(recs.ids for start, end, recs in intervals))
-            */
-            return default;
-        }
-
-        protected async Task<HrWorkEntry> GetDurationBatchInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
-            // def _get_duration_batch(self):
-            // result = {}
-            // cached_periods = defaultdict(float)
-            // for work_entry in self:
-            //     date_start = work_entry.date_start
-            //     date_stop = work_entry.date_stop
-            //     if not date_start or not date_stop:
-            //         result[work_entry.id] = 0.0
-            //         continue
-            //     if (date_start, date_stop) in cached_periods:
-            //         result[work_entry.id] = cached_periods[(date_start, date_stop)]
-            //     else:
-            //         dt = date_stop - date_start
-            //         duration = round(dt.total_seconds()) / 3600  # Number of hours
-            //         cached_periods[(date_start, date_stop)] = duration
-            //         result[work_entry.id] = duration
-            // return result
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _get_duration_batch(self):
-            // super_work_entries = self.env['hr.work.entry']
-            // result = {}
-            // # {(date_start, date_stop): {calendar: employees}}
-            // mapped_periods = defaultdict(lambda: defaultdict(lambda: self.env['hr.employee']))
-            // for work_entry in self:
-            //     if not work_entry.date_start or not work_entry.date_stop or not work_entry._is_duration_computed_from_calendar() or not work_entry.employee_id:
-            //         super_work_entries |= work_entry
-            //         continue
-            //     date_start = work_entry.date_start
-            //     date_stop = work_entry.date_stop
-            //     calendar = work_entry.contract_id.resource_calendar_id
-            //     if not calendar:
-            //         result[work_entry.id] = 0.0
-            //         continue
-            //     employee = work_entry.contract_id.employee_id
-            //     mapped_periods[(date_start, date_stop)][calendar] |= employee
-            // 
-            // # {(date_start, date_stop): {calendar: {'hours': foo}}}
-            // mapped_contract_data = defaultdict(lambda: defaultdict(lambda: {'hours': 0.0}))
-            // for (date_start, date_stop), employees_by_calendar in mapped_periods.items():
-            //     for calendar, employees in employees_by_calendar.items():
-            //         mapped_contract_data[(date_start, date_stop)][calendar] = employees._get_work_days_data_batch(
-            //             date_start, date_stop, compute_leaves=False, calendar=calendar)
-            // result = super(HrWorkEntry, super_work_entries)._get_duration_batch()
-            // for work_entry in self - super_work_entries:
-            //     date_start = work_entry.date_start
-            //     date_stop = work_entry.date_stop
-            //     calendar = work_entry.contract_id.resource_calendar_id
-            //     employee = work_entry.contract_id.employee_id
-            //     result[work_entry.id] = mapped_contract_data[(date_start, date_stop)][calendar][employee.id]['hours'] if calendar else 0.0
-            // return result
-            */
-            return default;
-        }
-
-        protected async Task<HrWorkEntry> GetDurationIsValidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _get_duration_is_valid(self):
-            // return self.work_entry_type_id and self.work_entry_type_id.is_leave
             */
             return default;
         }
@@ -321,8 +167,8 @@ namespace Bamboo.Core.Application.Services
             // date_to += relativedelta(hour=23, minute=59, second=59)
             // leaves_work_entries = self.env['hr.work.entry'].search([
             //     ('employee_id', '=', employee_id.id),
-            //     ('date_start', '>=', date_from),
-            //     ('date_stop', '<=', date_to),
+            //     ('date', '>=', date_from),
+            //     ('date', '<=', date_to),
             //     ('state', '!=', 'cancelled'),
             //     ('leave_id', '!=', False),
             //     ('leave_state', '=', 'validate'),
@@ -342,76 +188,60 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrWorkEntry> GetLeavesEntriesOutsideScheduleInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _get_leaves_entries_outside_schedule(self):
             // return self.filtered(lambda w: w.work_entry_type_id.is_leave and w.state not in ('validated', 'cancelled'))
             */
             return default;
         }
 
-        public async Task<HrWorkEntry> InitAsync(Guid id)
+        public async Task<HrWorkEntry> GetUnusualDaysAsync(Guid id, HrWorkEntryGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
-            // def init(self):
-            // tools.create_index(self._cr, "hr_work_entry_date_start_date_stop_index", self._table, ["date_start", "date_stop"])
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def init(self):
-            // # FROM 7s by query to 2ms (with 2.6 millions entries)
-            // self.env.cr.execute("""
-            //     CREATE INDEX IF NOT EXISTS hr_work_entry_contract_date_start_stop_idx
-            //     ON hr_work_entry(contract_id, date_start, date_stop)
-            //     WHERE state in ('draft', 'validated');
-            // """)
+            // def get_unusual_days(self, date_from, date_to=None):
+            // return self.env.company.resource_calendar_id._get_unusual_days(
+            //     datetime.combine(fields.Date.from_string(date_from), time.min).replace(tzinfo=pytz.utc),
+            //     datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=pytz.utc),
+            //     self.company_id,
+            // )
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<HrWorkEntry> InitColumnInternalAsync(object column_name)
+        protected async Task<HrWorkEntry> GetWorkEntryTypeDomainInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _init_column(self, column_name):
-            // if column_name != 'contract_id':
-            //     super()._init_column(column_name)
-            // else:
-            //     self.env.cr.execute("""
-            //         UPDATE hr_work_entry AS _hwe
-            //         SET contract_id = result.contract_id
-            //         FROM (
-            //             SELECT
-            //                 hc.id AS contract_id,
-            //                 array_agg(hwe.id) AS entry_ids
-            //             FROM
-            //                 hr_work_entry AS hwe
-            //             LEFT JOIN
-            //                 hr_contract AS hc
-            //             ON
-            //                 hwe.employee_id=hc.employee_id AND
-            //                 hc.state in ('open', 'close') AND
-            //                 hwe.date_start >= hc.date_start AND
-            //                 hwe.date_stop < COALESCE(hc.date_end + integer '1', '9999-12-31 23:59:59')
-            //             WHERE
-            //                 hwe.contract_id IS NULL
-            //             GROUP BY
-            //                 hwe.employee_id, hc.id
-            //         ) AS result
-            //         WHERE _hwe.id = ANY(result.entry_ids)
-            //     """)
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
+            // def _get_work_entry_type_domain(self):
+            // if len(self.env.companies.country_id.ids) > 1:
+            //     return [('country_id', '=', False)]
+            // return ['|', ('country_id', '=', False), ('country_id', 'in', self.env.companies.country_id.ids)]
             */
             return default;
         }
 
-        protected async Task<HrWorkEntry> IsDurationComputedFromCalendarInternalAsync()
+        protected async Task<HrWorkEntry> MarkAlreadyValidatedDaysInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _is_duration_computed_from_calendar(self):
-            // self.ensure_one()
-            // return self._get_duration_is_valid()
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
-            // def _is_duration_computed_from_calendar(self):
-            // return super()._is_duration_computed_from_calendar() or bool(not self.work_entry_type_id and self.leave_id)
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
+            // def _mark_already_validated_days(self):
+            // invalid_entries = self.env['hr.work.entry']
+            // validated_work_entries = self.env["hr.work.entry"].search([
+            //     ('state', '=', 'validated'),
+            //     ('date', '<=', max(self.mapped('date'))),
+            //     ('date', '>=', min(self.mapped('date'))),
+            //     ('company_id', '=', self.env.company.id)
+            // ])
+            // validated_entries_by_employee_date = defaultdict(lambda: self.env['hr.work.entry'])
+            // for entry in validated_work_entries:
+            //     validated_entries_by_employee_date[entry.employee_id, entry.date] += entry
+            // 
+            // for entry in self:
+            //     if validated_entries_by_employee_date[entry.employee_id, entry.date]:
+            //         invalid_entries += entry
+            // invalid_entries.write({'state': 'conflict'})
+            // return bool(invalid_entries)
             */
             return default;
         }
@@ -422,37 +252,36 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _mark_conflicting_work_entries(self, start, stop):
             // """
-            // Set `state` to `conflict` for overlapping work entries
-            // between two dates.
-            // If `self.ids` is truthy then check conflicts with the corresponding work entries.
-            // Return True if overlapping work entries were detected.
+            // Set `state` to `conflict` for work entries where, for the same employee and day,
+            // the total duration exceeds 24 hours.
+            // Return True if such entries are found.
             // """
-            // # Use the postgresql range type `tsrange` which is a range of timestamp
-            // # It supports the intersection operator (&&) useful to detect overlap.
-            // # use '()' to exlude the lower and upper bounds of the range.
-            // # Filter on date_start and date_stop (both indexed) in the EXISTS clause to
-            // # limit the resulting set size and fasten the query.
-            // self.flush_model(['date_start', 'date_stop', 'employee_id', 'active'])
+            // self.flush_model(['date', 'duration', 'employee_id', 'active'])
             // query = """
-            //     SELECT b1.id,
-            //            b2.id
-            //       FROM hr_work_entry b1
-            //       JOIN hr_work_entry b2
-            //         ON b1.employee_id = b2.employee_id
-            //        AND b1.id <> b2.id
-            //      WHERE b1.date_start <= %(stop)s
-            //        AND b1.date_stop >= %(start)s
-            //        AND b1.active = TRUE
-            //        AND b2.active = TRUE
-            //        AND tsrange(b1.date_start, b1.date_stop, '()') && tsrange(b2.date_start, b2.date_stop, '()')
-            //        AND {}
-            // """.format("b2.id IN %(ids)s" if self.ids else "b2.date_start <= %(stop)s AND b2.date_stop >= %(start)s")
-            // self.env.cr.execute(query, {"stop": stop, "start": start, "ids": tuple(self.ids)})
-            // conflicts = set(itertools.chain.from_iterable(self.env.cr.fetchall()))
-            // self.browse(conflicts).write({
-            //     'state': 'conflict',
+            //     WITH excessive_days AS (
+            //         SELECT employee_id, date
+            //         FROM hr_work_entry
+            //         WHERE active = TRUE
+            //           AND date BETWEEN %(start)s AND %(stop)s
+            //           AND employee_id IN %(employee_ids)s
+            //         GROUP BY employee_id, date
+            //         HAVING 0 >= SUM(duration) OR SUM(duration) > 24
+            //     )
+            //     SELECT we.id
+            //     FROM hr_work_entry we
+            //     JOIN excessive_days ed
+            //       ON we.employee_id = ed.employee_id
+            //      AND we.date = ed.date
+            //     WHERE we.active = TRUE
+            // """
+            // self.env.cr.execute(query, {
+            //     "start": start,
+            //     "stop": stop,
+            //     'employee_ids': tuple(self.employee_id.ids),
             // })
-            // return bool(conflicts)
+            // conflict_ids = [row[0] for row in self.env.cr.fetchall()]
+            // self.browse(conflict_ids).write({'state': 'conflict'})
+            // return bool(conflict_ids)
             */
             return default;
         }
@@ -460,7 +289,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrWorkEntry> MarkLeavesOutsideScheduleInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _mark_leaves_outside_schedule(self):
             // """
             // Check leave work entries in `self` which are completely outside
@@ -470,17 +299,20 @@ namespace Bamboo.Core.Application.Services
             // work_entries = self._get_leaves_entries_outside_schedule()
             // entries_by_calendar = defaultdict(lambda: self.env['hr.work.entry'])
             // for work_entry in work_entries:
-            //     calendar = work_entry.contract_id.resource_calendar_id
+            //     calendar = work_entry.version_id.resource_calendar_id
             //     entries_by_calendar[calendar] |= work_entry
             // 
             // outside_entries = self.env['hr.work.entry']
             // for calendar, entries in entries_by_calendar.items():
-            //     if calendar.flexible_hours:
+            //     if not calendar or calendar.flexible_hours:
             //         continue
-            //     datetime_start = min(entries.mapped('date_start'))
-            //     datetime_stop = max(entries.mapped('date_stop'))
+            //     datetime_start = datetime.combine(min(entries.mapped('date')), time.min)
+            //     datetime_stop = datetime.combine(max(entries.mapped('date')), time.max)
             // 
-            //     calendar_intervals = calendar._attendance_intervals_batch(pytz.utc.localize(datetime_start), pytz.utc.localize(datetime_stop))[False]
+            //     if calendar:
+            //         calendar_intervals = calendar._attendance_intervals_batch(pytz.utc.localize(datetime_start), pytz.utc.localize(datetime_stop))[False]
+            //     else:
+            //         calendar_intervals = Intervals([(pytz.utc.localize(datetime_start), pytz.utc.localize(datetime_stop), self.env['resource.calendar.attendance'])])
             //     entries_intervals = entries._to_intervals()
             //     overlapping_entries = self._from_intervals(entries_intervals & calendar_intervals)
             //     outside_entries |= entries - overlapping_entries
@@ -490,22 +322,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrWorkEntry> OnchangeContractIdInternalAsync()
+        protected async Task<HrWorkEntry> OnchangeVersionIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
-            // def _onchange_contract_id(self):
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
+            // def _onchange_version_id(self):
             // vals = {
             //     'employee_id': self.employee_id.id,
-            //     'date_start': self.date_start,
-            //     'date_stop': self.date_stop,
+            //     'date': self.date,
             // }
             // try:
             //     res = self._set_current_contract(vals)
             // except ValidationError:
             //     return
-            // if res.get('contract_id'):
-            //     self.contract_id = res.get('contract_id')
+            // if version_id := res.get('version_id'):
+            //     self.version_id = version_id
             */
             return default;
         }
@@ -541,35 +372,56 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrWorkEntry> SetCurrentContractInternalAsync(object vals)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _set_current_contract(self, vals):
-            // if not vals.get('contract_id') and vals.get('date_start') and vals.get('date_stop') and vals.get('employee_id'):
-            //     contract_start = fields.Datetime.to_datetime(vals.get('date_start')).date()
-            //     contract_end = fields.Datetime.to_datetime(vals.get('date_stop')).date()
+            // if not vals.get('version_id') and vals.get('date') and vals.get('employee_id'):
+            //     contract_start = fields.Datetime.to_datetime(vals.get('date'))
+            //     contract_end = contract_start
             //     employee = self.env['hr.employee'].browse(vals.get('employee_id'))
-            //     contracts = employee._get_contracts(contract_start, contract_end, states=['open', 'pending', 'close'])
+            //     contracts = employee._get_versions_with_contract_overlap_with_period(contract_start, contract_end)
             //     if not contracts:
             //         raise ValidationError(_(
-            //             "%(employee)s does not have a contract from %(date_start)s to %(date_end)s.",
+            //             "%(employee)s does not have a contract on %(date)s.",
             //             employee=employee.name,
-            //             date_start=contract_start,
-            //             date_end=contract_end,
+            //             date=contract_start,
             //         ))
-            //     elif len(contracts) > 1:
-            //         raise ValidationError(_("%(employee)s has multiple contracts from %(date_start)s to %(date_end)s. A work entry cannot overlap multiple contracts.",
-            //                                 employee=employee.name, date_start=contract_start, date_end=contract_end))
-            //     return dict(vals, contract_id=contracts[0].id)
+            //     return dict(vals, version_id=contracts[0].id)
             // return vals
             */
             return default;
         }
 
+        public async Task<HrWorkEntry> SplitAsync(Guid id, HrWorkEntrySplitRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
+            // def action_split(self, vals):
+            // self.ensure_one()
+            // if self.duration < 1:
+            //     raise UserError(self.env._("You can't split a work entry with less than 1 hour."))
+            // split_duration = vals['duration']
+            // if self.duration <= split_duration:
+            //     raise UserError(
+            //         self.env._(
+            //             "Split work entry duration has to be less than the existing work entry duration."
+            //         )
+            //     )
+            // self.duration -= split_duration
+            // split_work_entry = self.copy()
+            // split_work_entry.write(vals)
+            // return split_work_entry.id
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<HrWorkEntry> ToIntervalsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_work_entry.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def _to_intervals(self):
-            // return WorkIntervals((w.date_start.replace(tzinfo=pytz.utc), w.date_stop.replace(tzinfo=pytz.utc), w) for w in self)
+            // return Intervals(
+            //     ((datetime.combine(w.date, time.min).replace(tzinfo=pytz.utc), datetime.combine(w.date, time.max).replace(tzinfo=pytz.utc), w) for w in self),
+            //     keep_distinct=True)
             */
             return default;
         }
@@ -610,7 +462,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
             // def write(self, vals):
-            // skip_check = not bool({'date_start', 'date_stop', 'employee_id', 'work_entry_type_id', 'active'} & vals.keys())
+            // skip_check = not bool({'date', 'duration', 'employee_id', 'work_entry_type_id', 'active'} & vals.keys())
             // if 'state' in vals:
             //     if vals['state'] == 'draft':
             //         vals['active'] = True
@@ -625,7 +477,7 @@ namespace Bamboo.Core.Application.Services
             // if 'employee_id' in vals and vals['employee_id']:
             //     employee_ids += [vals['employee_id']]
             // with self._error_checking(skip=skip_check, employee_ids=employee_ids):
-            //     return super(HrWorkEntry, self).write(vals)
+            //     return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
             // def write(self, vals):
             // if 'state' in vals and vals['state'] == 'cancelled':

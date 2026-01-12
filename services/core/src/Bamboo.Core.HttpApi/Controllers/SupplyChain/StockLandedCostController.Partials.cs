@@ -11,14 +11,6 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-stock-valuation-layers")]
-        public async Task<IActionResult> ActionViewStockValuationLayersAsync(Guid id)
-        {
-            var result = await _appService.ViewStockValuationLayersAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-cancel")]
         public async Task<IActionResult> ButtonCancelAsync(Guid id)
         {
@@ -47,14 +39,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetValuationLinesAsync(Guid id)
         {
             var result = await _appService.GetValuationLinesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/reconcile-landed-cost")]
-        public async Task<IActionResult> ReconcileLandedCostAsync(Guid id)
-        {
-            var result = await _appService.ReconcileLandedCostAsync(id);
             return Ok(result);
         }
     }

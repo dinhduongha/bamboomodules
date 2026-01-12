@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-view-speedscope")]
+        public async Task<IActionResult> ActionViewSpeedscopeAsync(Guid id)
+        {
+            var result = await _appService.ViewSpeedscopeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/set-profiling")]
         public async Task<IActionResult> SetProfilingAsync(Guid id, [FromBody] IrProfileSetProfilingRequestDto input)
         {

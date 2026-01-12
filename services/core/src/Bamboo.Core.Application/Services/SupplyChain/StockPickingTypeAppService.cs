@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking.py) ---
             // def action_batch(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id("stock_picking_batch.stock_picking_batch_action")
+            // action = self._get_action('stock_picking_batch.stock_picking_batch_action')
             // if self.env.context.get("view_mode"):
             //     del action["mobile_view_mode"]
             //     del action["views"]
@@ -59,10 +59,10 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockPickingType> CheckDefaultLocationInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_picking.py) ---
             // def _check_default_location(self):
             // for record in self:
-            //     if record.code == 'mrp_operation' and record.default_location_dest_id.scrap_location:
+            //     if record.code == 'mrp_operation' and record.default_location_dest_id.usage == 'inventory':
             //         raise ValidationError(_("You cannot set a scrap location as the destination location for a manufacturing type operation."))
             */
             return default;
@@ -142,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             // prod_locations = {l[0].id: l[1] for l in prod_locations}
             // for picking_type in repair_picking_type:
             //     picking_type.default_location_dest_id = prod_locations.get(picking_type.company_id.id)
-            // super(PickingType, (self - repair_picking_type))._compute_default_location_dest_id()
+            // super(StockPickingType, (self - repair_picking_type))._compute_default_location_dest_id()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _compute_default_location_dest_id(self):
             // for picking_type in self:
@@ -175,7 +175,7 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     stock_location = picking_type.warehouse_id.lot_stock_id
             //     picking_type.default_location_src_id = stock_location.id
-            // super(PickingType, remaining_picking_type)._compute_default_location_src_id()
+            // super(StockPickingType, remaining_picking_type)._compute_default_location_src_id()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _compute_default_location_src_id(self):
             // for picking_type in self:
@@ -232,7 +232,7 @@ namespace Bamboo.Core.Application.Services
             // company_ids = repair_picking_type.company_id.ids
             // company_ids.append(False)
             // scrap_locations = self.env['stock.location']._read_group(
-            //     [('scrap_location', '=', True), ('company_id', 'in', company_ids)],
+            //     [('usage', '=', 'inventory'), ('company_id', 'in', company_ids)],
             //     ['company_id'],
             //     ['id:min'],
             // )
@@ -254,6 +254,18 @@ namespace Bamboo.Core.Application.Services
             //         picking_type.display_name = f"{picking_type.warehouse_id.name}: {picking_type.name}"
             //     else:
             //         picking_type.display_name = picking_type.name
+            */
+            return default;
+        }
+
+        protected async Task<StockPickingType> ComputeDockIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking.py) ---
+            // def _compute_dock_ids(self):
+            // for picking_type in self:
+            //     if picking_type.warehouse_id != picking_type._origin.warehouse_id and picking_type.dock_ids:
+            //         picking_type.dock_ids = [Command.clear()]
             */
             return default;
         }
@@ -282,18 +294,6 @@ namespace Bamboo.Core.Application.Services
             // def _compute_is_favorite(self):
             // for picking_type in self:
             //     picking_type.is_favorite = self.env.user in picking_type.favorite_user_ids
-            */
-            return default;
-        }
-
-        protected async Task<StockPickingType> ComputeIsRepairableInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: stock_picking.py) ---
-            // def _compute_is_repairable(self):
-            // for picking_type in self:
-            //     if not picking_type.return_type_of_ids:
-            //         picking_type.is_repairable = False
             */
             return default;
         }
@@ -386,23 +386,6 @@ namespace Bamboo.Core.Application.Services
             //         picking_type.print_label = False
             //     elif picking_type.code == 'outgoing':
             //         picking_type.print_label = True
-            */
-            return default;
-        }
-
-        protected async Task<StockPickingType> ComputeReadyItemsLabelInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
-            // def _compute_ready_items_label(self):
-            // for pt in self:
-            //     label = _('To Process')
-            //     match pt.code:
-            //         case 'incoming':
-            //             label = _('To Receive')
-            //         case 'outgoing':
-            //             label = _('To Deliver')
-            //     pt.ready_items_label = label
             */
             return default;
         }
@@ -520,7 +503,6 @@ namespace Bamboo.Core.Application.Services
             // if self:
             //     action['display_name'] = self.display_name
             //     context.update({
-            //         'search_default_picking_type_id': [self.id],
             //         'default_picking_type_id': self.id,
             //         'default_company_id': self.company_id.id,
             //     })
@@ -534,6 +516,7 @@ namespace Bamboo.Core.Application.Services
             // action_context = literal_eval(action['context'])
             // context = {**action_context, **context}
             // action['context'] = context
+            // action['domain'] = [('picking_type_id', '=', self.id)]
             // 
             // action['help'] = self.env['ir.ui.view']._render_template(
             //     'stock.help_message_template', {
@@ -573,7 +556,7 @@ namespace Bamboo.Core.Application.Services
             // repair_picking_types = self.filtered(lambda picking: picking.code == 'repair_operation')
             // other_picking_types = (self - repair_picking_types)
             // 
-            // records = super(PickingType, other_picking_types)._get_aggregated_records_by_date()
+            // records = super(StockPickingType, other_picking_types)._get_aggregated_records_by_date()
             // repair_records = self.env['repair.order']._read_group(
             //     [
             //         ('picking_type_id', 'in', repair_picking_types.ids),
@@ -631,6 +614,22 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking.py) ---
             // def _get_batch_group_by_keys(self):
             // return ['batch_group_by_partner', 'batch_group_by_destination', 'batch_group_by_src_loc', 'batch_group_by_dest_loc']
+            */
+            return default;
+        }
+
+        protected async Task<StockPickingType> GetCodeReportNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
+            // def _get_code_report_name(self):
+            // self.ensure_one()
+            // code_names = {
+            //     'outgoing': _('Delivery Note'),
+            //     'incoming': _('Goods Receipt Note'),
+            //     'internal': _('Internal Move'),
+            // }
+            // return code_names.get(self.code)
             */
             return default;
         }
@@ -731,7 +730,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_type_moves_analysis(self):
             // action = self.env["ir.actions.actions"]._for_xml_id('stock.stock_move_action')
-            // action['domain'] = expression.AND([
+            // action['domain'] = Domain.AND([
             //     action['domain'] or [], [('picking_type_id', '=', self.id)]
             // ])
             // return action
@@ -767,6 +766,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_stock_picking_action_picking_type(self):
+            // if self.code == 'incoming':
+            //     return self._get_action('stock.action_picking_tree_incoming')
+            // if self.code == 'outgoing':
+            //     return self._get_action('stock.action_picking_tree_outgoing')
+            // if self.code == 'internal':
+            //     return self._get_action('stock.action_picking_tree_internal')
             // return self._get_action('stock.stock_picking_action_picking_type')
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -819,21 +824,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockPickingType> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<StockPickingType> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_picking.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('id', '=', data['pos.config']['data'][0]['picking_type_id'])]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', '=', config.picking_type_id.id)]
             */
             return default;
         }
 
-        protected async Task<StockPickingType> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<StockPickingType> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_picking.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'use_create_lots', 'use_existing_lots']
             */
             return default;
@@ -946,28 +951,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<StockPickingType> RepairOverviewAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: stock_picking.py) ---
-            // def action_repair_overview(self):
-            // routing_count = self.env['stock.picking.type'].search_count([('code', '=', 'repair_operation')])
-            // if routing_count == 1:
-            //     return self.env['ir.actions.actions']._for_xml_id('repair.action_repair_order_tree')
-            // return self.env['ir.actions.actions']._for_xml_id('repair.action_repair_picking_type_kanban')
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<StockPickingType> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _search_display_name(self, operator, value):
             // # Try to reverse the `display_name` structure
+            // if operator == 'in':
+            //     return Domain.OR(self._search_display_name('=', v) for v in value)
+            // if operator == 'not in':
+            //     return NotImplemented
             // parts = isinstance(value, str) and value.split(': ')
             // if parts and len(parts) == 2:
-            //     return ['&', ('warehouse_id.name', operator, parts[0]), ('name', operator, parts[1])]
+            //     return Domain('warehouse_id.name', operator, parts[0]) & Domain('name', operator, parts[1])
+            // if operator == '=':
+            //     operator = 'in'
+            //     value = [value]
             // return super()._search_display_name(operator, value)
             */
             return default;
@@ -978,9 +977,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _search_is_favorite(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // return [('favorite_user_ids', 'in' if (operator == '=') == value else 'not in', self.env.uid)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('favorite_user_ids', 'in', [self.env.uid])]
             */
             return default;
         }
@@ -998,6 +997,17 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_("If the Automatic Batches feature is enabled, at least one 'Group by' option must be selected."))
             */
             return default;
+        }
+
+        public async Task<StockPickingType> WaveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking.py) ---
+            // def action_wave(self):
+            // action = self._get_action('stock_picking_batch.action_picking_tree_wave')
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

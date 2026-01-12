@@ -4,25 +4,55 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class PosConfigGetCategoriesRequestDto
+    public class PosConfigGetLimitedPartnersLoadingRequestDto
     {
-        public object Categories { get; set; }
+        public object Offset { get; set; }
     }
     
-    public class PosConfigGetLimitedProductsLoadingRequestDto
+    public class PosConfigGetRecordByRefRequestDto
     {
-        public object Fields { get; set; }
+        public object RecordRefs { get; set; }
     }
     
-    public class PosConfigGetRecordsRequestDto
+    public class PosConfigGetStatisticsForSessionRequestDto
     {
-        public object Data { get; set; }
+        public object Session { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingBakeryScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingBarScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingClothesScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingFurnitureScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingRestaurantScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
+    }
+    
+    public class PosConfigLoadOnboardingRetailScenarioRequestDto
+    {
+        public object WithDemoData { get; set; }
     }
     
     public class PosConfigNotifySynchronisationRequestDto
     {
         public Guid SessionId { get; set; }
-        public object LoginNumber { get; set; }
+        public object DeviceIdentifier { get; set; }
         public object Records { get; set; }
     }
     
@@ -35,7 +65,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class PosConfigUpdateCustomerDisplayRequestDto
     {
         public object Order { get; set; }
-        public object AccessToken { get; set; }
+        public object DeviceUuid { get; set; }
     }
     
     public class PosConfigUseCouponCodeRequestDto

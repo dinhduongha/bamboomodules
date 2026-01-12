@@ -166,6 +166,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SlideSlide> CanReturnContentInternalAsync(object field_name, object access_token)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // # Override because the module `website` overrides `_can_return_content` to allow returning the content of any
+            // # `website_published=True` record while the content of a course (`slide.slide`) can still be restricted
+            // # despite it's website published, according if the course is on invitation and so on.
+            // if self.website_published:
+            //     return self.has_access("read")
+            // # if not `website_published`, the base `_can_return_content` returns `False``
+            // return super()._can_return_content(field_name, access_token)
+            */
+            return default;
+        }
+
         protected async Task<SlideSlide> ComputeCanPublishInternalAsync()
         {
             /*
@@ -223,7 +239,7 @@ namespace Bamboo.Core.Application.Services
             //     if slide.channel_id.id not in channel_slides:
             //         channel_slides[slide.channel_id.id] = slide.channel_id.slide_ids
             // 
-            // for cid, slides in channel_slides.items():
+            // for slides in channel_slides.values():
             //     current_category = self.env['slide.slide']
             //     slide_list = list(slides)
             //     slide_list.sort(key=lambda s: (s.sequence, not s.is_category))
@@ -419,7 +435,7 @@ namespace Bamboo.Core.Application.Services
             // slides_certification = self.filtered(lambda slide: slide.slide_category == 'certification')
             // slides_certification.can_self_mark_uncompleted = False
             // slides_certification.can_self_mark_completed = False
-            // super(Slide, self - slides_certification)._compute_mark_complete_actions()
+            // super(SlideSlide, self - slides_certification)._compute_mark_complete_actions()
             */
             return default;
         }
@@ -506,7 +522,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_slide_icon_class(self):
             // certification = self.filtered(lambda slide: slide.slide_type == 'certification')
             // certification.slide_icon_class = 'fa-trophy'
-            // super(Slide, self - certification)._compute_slide_icon_class()
+            // super(SlideSlide, self - certification)._compute_slide_icon_class()
             */
             return default;
         }
@@ -544,7 +560,7 @@ namespace Bamboo.Core.Application.Services
             //         slide.slide_type = False
             --- ODOO METHOD SOURCE (MODULE: website_slides_survey, FILE: slide_slide.py) ---
             // def _compute_slide_type(self):
-            // super(Slide, self)._compute_slide_type()
+            // super()._compute_slide_type()
             // for slide in self:
             //     if slide.slide_category == 'certification':
             //         slide.slide_type = 'certification'
@@ -671,6 +687,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SlideSlide> ComputeWebsiteAbsoluteUrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def _compute_website_absolute_url(self):
+            // super()._compute_website_absolute_url()
+            */
+            return default;
+        }
+
         protected async Task<SlideSlide> ComputeWebsiteShareUrlInternalAsync()
         {
             /*
@@ -690,11 +716,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def _compute_website_url(self):
-            // super(Slide, self)._compute_website_url()
+            // super()._compute_website_url()
             // for slide in self:
             //     if slide.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
-            //         base_url = slide.channel_id.get_base_url()
-            //         slide.website_url = '%s/slides/slide/%s' % (base_url, self.env['ir.http']._slug(slide))
+            //         slide.website_url = f"/slides/slide/{self.env['ir.http']._slug(slide)}"
             */
             return default;
         }
@@ -725,7 +750,7 @@ namespace Bamboo.Core.Application.Services
             // """Sets the sequence to zero so that it always lands at the beginning
             // of the newly selected course as an uncategorized slide"""
             // default = dict(default or {})
-            // if 'slide.channel' not in self._context.get('__copy_data_seen', {}) and 'sequence' not in default:
+            // if 'slide.channel' not in self.env.context.get('__copy_data_seen', {}) and 'sequence' not in default:
             //     default['sequence'] = 0
             // return super().copy_data(default=default)
             */
@@ -787,7 +812,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def _default_website_meta(self):
-            // res = super(Slide, self)._default_website_meta()
+            // res = super()._default_website_meta()
             // res['default_opengraph']['og:title'] = res['default_twitter']['twitter:title'] = self.name
             // res['default_opengraph']['og:description'] = res['default_twitter']['twitter:description'] = html2plaintext(self.description)
             // res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = self.env['website'].image_url(self, 'image_1024')
@@ -1227,22 +1252,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SlideSlide> GenerateSignedTokenInternalAsync(Guid partner_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def _generate_signed_token(self, partner_id):
-            // """ Lazy generate the acces_token and return it signed by the given partner_id
-            //     :rtype tuple (string, int)
-            //     :return (signed_token, partner_id)
-            // """
-            // if not self.access_token:
-            //     self.write({'access_token': self._default_access_token()})
-            // return self._sign_token(partner_id)
-            */
-            return default;
-        }
-
         protected async Task<SlideSlide> GetAccessActionInternalAsync(object access_uid, object force_website)
         {
             /*
@@ -1253,12 +1262,12 @@ namespace Bamboo.Core.Application.Services
             // if force_website or self.website_published:
             //     return {
             //         'type': 'ir.actions.act_url',
-            //         'url': '%s' % self.website_url,
+            //         'url': self.website_absolute_url,
             //         'target': 'self',
             //         'target_type': 'public',
             //         'res_id': self.id,
             //     }
-            // return super(Slide, self)._get_access_action(access_uid=access_uid, force_website=force_website)
+            // return super()._get_access_action(access_uid=access_uid, force_website=force_website)
             */
             return default;
         }
@@ -1269,6 +1278,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('website_slides.website_slides_menu_root').id
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<SlideSlide> GetBaseUrlAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def get_base_url(self):
+            // """As website_id is not defined on this record, we rely on channel website_id for base URL."""
+            // return self.channel_id.get_base_url()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1397,7 +1417,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // if message_type == 'comment' and not self.channel_id.can_comment:  # user comments have a restriction on karma
             //     raise AccessError(_('Not enough karma to comment'))
-            // return super(Slide, self).message_post(message_type=message_type, **kwargs)
+            // return super().message_post(message_type=message_type, **kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1406,8 +1426,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Add access button to everyone if the document is active. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -1474,19 +1493,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> OpenWebsiteUrlAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def open_website_url(self):
-            // """ Overridden to use a relative URL instead of an absolute when website_id is False. """
-            // if self.website_id:
-            //     return super().open_website_url()
-            // return self.env['website'].get_client_action(f'/slides/slide/{self.env["ir.http"]._slug(self)}')
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<SlideSlide> PostPublicationInternalAsync()
         {
             /*
@@ -1503,7 +1509,7 @@ namespace Bamboo.Core.Application.Services
             //     reply_to = publish_template._render_field('reply_to', slide.ids)[slide.id]
             //     if reply_to:
             //         kwargs['reply_to'] = reply_to
-            //     slide.channel_id.with_context(mail_create_nosubscribe=True).message_post(
+            //     slide.channel_id.with_context(mail_post_autofollow_author_skip=True).message_post(
             //         subject=subject,
             //         body=html_body,
             //         subtype_xmlid='website_slides.mt_channel_slide_published',
@@ -1563,9 +1569,9 @@ namespace Bamboo.Core.Application.Services
             // results_data = super()._search_render_results(fetch_fields, mapping, icon, limit)
             // for slide, data in zip(self, results_data):
             //     data['_fa'] = icon_per_category.get(slide.slide_category, 'fa-file-pdf-o')
-            //     data['url'] = slide.website_url
+            //     data['url'] = slide.website_absolute_url
             //     data['course'] = _('Course: %s', slide.channel_id.name)
-            //     data['course_url'] = slide.channel_id.website_url
+            //     data['course_url'] = slide.channel_id.website_absolute_url
             // return results_data
             */
             return default;
@@ -1612,21 +1618,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SlideSlide> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def toggle_active(self):
-            // # archiving/unarchiving a channel does it on its slides, too
-            // to_archive = self.filtered(lambda slide: slide.active)
-            // res = super(Slide, self).toggle_active()
-            // if to_archive:
-            //     to_archive.filtered(lambda slide: not slide.is_category).is_published = False
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public override async Task<object> UnlinkAsync(List<Guid> ids)
         {
             /*
@@ -1635,13 +1626,13 @@ namespace Bamboo.Core.Application.Services
             // for category in self.filtered(lambda slide: slide.is_category):
             //     category.channel_id._move_category_slides(category, False)
             // channel_partner_ids = self.channel_id.channel_partner_ids
-            // res = super(Slide, self).unlink()
+            // res = super().unlink()
             // channel_partner_ids._recompute_completion()
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_slides_survey, FILE: slide_slide.py) ---
             // def unlink(self):
             // old_surveys = self.mapped('survey_id')
-            // result = super(Slide, self).unlink()
+            // result = super().unlink()
             // self._ensure_challenge_category(old_surveys=old_surveys, unlink=True)
             // return result
             */
@@ -1666,7 +1657,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if values.get('is_category'):
             //     values['is_preview'] = True
             //     values['is_published'] = True
@@ -1680,7 +1672,8 @@ namespace Bamboo.Core.Application.Services
             //     elif values['slide_category'] != 'article':
             //         values = {'html_content': False, **values}
             // 
-            // res = super(Slide, self).write(values)
+            // res = super().write(values)
+            // 
             // if values.get('is_published'):
             //     self.date_published = datetime.datetime.now()
             //     self._post_publication()
@@ -1700,15 +1693,17 @@ namespace Bamboo.Core.Application.Services
             //         })
             // 
             // if 'is_published' in values or 'active' in values:
+            //     # archiving a channel unpublishes its slides
+            //     self.filtered(lambda slide: not slide.active and not slide.is_category and slide.is_published).is_published = False
             //     # recompute the completion for all partners of the channel
             //     self.channel_id.channel_partner_ids._recompute_completion()
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_slides_survey, FILE: slide_slide.py) ---
-            // def write(self, values):
+            // def write(self, vals):
             // old_surveys = self.mapped('survey_id')
-            // result = super(Slide, self).write(values)
-            // if 'survey_id' in values:
+            // result = super().write(vals)
+            // if 'survey_id' in vals:
             //     self._ensure_challenge_category(old_surveys=old_surveys - self.mapped('survey_id'))
             // return result
             */

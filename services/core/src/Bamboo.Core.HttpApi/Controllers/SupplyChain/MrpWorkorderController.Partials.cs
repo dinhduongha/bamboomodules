@@ -51,14 +51,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-done")]
-        public async Task<IActionResult> ButtonDoneAsync(Guid id)
-        {
-            var result = await _appService.ButtonDoneAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-finish")]
         public async Task<IActionResult> ButtonFinishAsync(Guid id)
         {
@@ -127,6 +119,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetWorkingDurationAsync(Guid id)
         {
             var result = await _appService.GetWorkingDurationAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/set-state")]
+        public async Task<IActionResult> SetStateAsync(Guid id, [FromBody] MrpWorkorderSetStateRequestDto input)
+        {
+            var result = await _appService.SetStateAsync(id, input);
             return Ok(result);
         }
     }

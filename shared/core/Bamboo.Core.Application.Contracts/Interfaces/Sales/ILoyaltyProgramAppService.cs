@@ -14,6 +14,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<LoyaltyProgram> GetProgramTemplatesAsync(Guid id);
         Task<LoyaltyProgram> OpenLoyaltyCardsAsync(Guid id);
         Task<LoyaltyProgram> ProgramShareAsync(Guid id);
-        Task<LoyaltyProgram> ToggleActiveAsync(Guid id);
     }
 }

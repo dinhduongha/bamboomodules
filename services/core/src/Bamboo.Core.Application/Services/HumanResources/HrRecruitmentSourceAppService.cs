@@ -47,13 +47,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_recruitment_source.py) ---
             // def _compute_url(self):
             // for source in self:
-            //     source.url = urls.url_join(source.job_id.get_base_url(), "%s?%s" % (
+            //     source.url = urls.urljoin(source.job_id.get_base_url(), "%s?%s" % (
             //         source.job_id.website_url,
-            //         urls.url_encode({
+            //         url_encode({
             //             'utm_campaign': self.env.ref('hr_recruitment.utm_campaign_job').name,
             //             'utm_medium': source.medium_id.name or self.env['utm.medium']._fetch_or_create_utm_medium('website').name,
             //             'utm_source': source.source_id.name or None
-            //         })
+            //         }),
             //     ))
             */
             return default;
@@ -84,6 +84,18 @@ namespace Bamboo.Core.Application.Services
             //     # check that you can create source before to call mail.alias in sudo with known/controlled vals
             //     source.check_access('create')
             //     source.alias_id = self.env['mail.alias'].sudo().create(vals)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<HrRecruitmentSource> CreateAndGetAliasAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_recruitment_source.py) ---
+            // def create_and_get_alias(self):
+            // self.ensure_one()
+            // self.create_alias()
+            // return self.email
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

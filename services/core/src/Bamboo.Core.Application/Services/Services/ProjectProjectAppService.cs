@@ -23,16 +23,14 @@ namespace Bamboo.Core.Application.Services
         private readonly IAnalyticPlanFieldsMixinAppService _analyticPlanFieldsMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
-        private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IMailTrackingDurationMixinAppService _mailTrackingDurationMixinAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;
         private readonly IRatingParentMixinAppService _ratingParentMixinAppService;
-        public ProjectProjectAppService(IRepository<ProjectProject, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailAliasMixinAppService mailAliasMixinAppService, IMailThreadAppService mailThreadAppService, IMailTrackingDurationMixinAppService mailTrackingDurationMixinAppService, IPortalMixinAppService portalMixinAppService, IRatingParentMixinAppService ratingParentMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ProjectProjectAppService(IRepository<ProjectProject, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailAliasMixinAppService mailAliasMixinAppService, IMailTrackingDurationMixinAppService mailTrackingDurationMixinAppService, IPortalMixinAppService portalMixinAppService, IRatingParentMixinAppService ratingParentMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticPlanFieldsMixinAppService = analyticPlanFieldsMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailAliasMixinAppService = mailAliasMixinAppService;
-            _mailThreadAppService = mailThreadAppService;
             _mailTrackingDurationMixinAppService = mailTrackingDurationMixinAppService;
             _portalMixinAppService = portalMixinAppService;
             _ratingParentMixinAppService = ratingParentMixinAppService;
@@ -95,16 +93,16 @@ namespace Bamboo.Core.Application.Services
             //     [],
             //     ['id:recordset'],
             // )[0][0]
-            // revenue_items_from_invoices = self._get_revenues_items_from_invoices(
+            // items_from_invoices = self._get_items_from_invoices(
             //     excluded_move_line_ids=sale_lines.invoice_lines.ids,
             //     with_action=with_action
             // )
-            // profitability_items['revenues']['data'] += revenue_items_from_invoices['revenues']['data']
-            // profitability_items['revenues']['total']['to_invoice'] += revenue_items_from_invoices['revenues']['total']['to_invoice']
-            // profitability_items['revenues']['total']['invoiced'] += revenue_items_from_invoices['revenues']['total']['invoiced']
-            // profitability_items['costs']['data'] += revenue_items_from_invoices['costs']['data']
-            // profitability_items['costs']['total']['to_bill'] += revenue_items_from_invoices['costs']['total']['to_bill']
-            // profitability_items['costs']['total']['billed'] += revenue_items_from_invoices['costs']['total']['billed']
+            // profitability_items['revenues']['data'] += items_from_invoices['revenues']['data']
+            // profitability_items['revenues']['total']['to_invoice'] += items_from_invoices['revenues']['total']['to_invoice']
+            // profitability_items['revenues']['total']['invoiced'] += items_from_invoices['revenues']['total']['invoiced']
+            // profitability_items['costs']['data'] += items_from_invoices['costs']['data']
+            // profitability_items['costs']['total']['to_bill'] += items_from_invoices['costs']['total']['to_bill']
+            // profitability_items['costs']['total']['billed'] += items_from_invoices['costs']['total']['billed']
             */
             return default;
         }
@@ -132,7 +130,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _alias_get_creation_values(self):
-            // values = super(Project, self)._alias_get_creation_values()
+            // values = super()._alias_get_creation_values()
             // values['alias_model_id'] = self.env['ir.model']._get('project.task').id
             // if self.id:
             //     values['alias_defaults'] = defaults = ast.literal_eval(self.alias_defaults or "{}")
@@ -174,11 +172,11 @@ namespace Bamboo.Core.Application.Services
             // for project in self:
             //     if project.privacy_visibility == new_visibility:
             //         continue
-            //     if new_visibility == 'portal':
+            //     if new_visibility in ['invited_users', 'portal']:
             //         project.message_subscribe(partner_ids=project.partner_id.ids)
             //         for task in project.task_ids.filtered('partner_id'):
             //             task.message_subscribe(partner_ids=task.partner_id.ids)
-            //     elif project.privacy_visibility == 'portal':
+            //     elif project.privacy_visibility in ['invited_users', 'portal']:
             //         portal_users = project.message_partner_ids.user_ids.filtered('share')
             //         project.message_unsubscribe(partner_ids=portal_users.partner_id.ids)
             //         project.tasks._unsubscribe_portal_users()
@@ -206,12 +204,79 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def _check_allow_timesheet(self):
             // for project in self:
-            //     if project.allow_timesheets and not project.account_id:
+            //     if project.allow_timesheets and not project.account_id and not project.is_template:
             //         project_plan, _other_plans = self.env['account.analytic.plan']._get_all_plans()
             //         raise ValidationError(_(
             //             "To use the timesheets feature, you need an analytic account for your project. Please set one up in the plan '%(plan_name)s' or turn off the timesheets feature.",
             //             plan_name=project_plan.name
             //         ))
+            */
+            return default;
+        }
+
+        public async Task<ProjectProject> CheckFeaturesEnabledAsync(Guid id, ProjectProjectCheckFeaturesEnabledRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def check_features_enabled(self, updated_features=None):
+            // if not self.env.user.has_group('project.group_project_user'):
+            //     return {}
+            // if updated_features:
+            //     return {
+            //         field_name: self.env.user.has_group(group)
+            //         for field_name, group in self._get_project_features_mapping().items()
+            //         if field_name in updated_features
+            //     }
+            // return {
+            //     field_name: self.env.user.has_group(group)
+            //     for field_name, group in self._get_project_features_mapping().items()
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProjectProject> CheckProjectGroupAtRemovalInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _check_project_group_at_removal(self):
+            // self._check_project_group_with_field('allow_task_dependencies', 'project.group_project_task_dependencies')
+            // self._check_project_group_with_field('allow_milestones', 'project.group_project_milestone')
+            // self._check_project_group_with_field('allow_recurring_tasks', 'project.group_project_recurring_tasks')
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> CheckProjectGroupWithFieldInternalAsync(object field_name, object group_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _check_project_group_with_field(self, field_name, group_name):
+            // """ Check if the user has the group 'group_name' and if there is a project with the field 'field_name' set to True.
+            // If not, remove the group 'group_name' from the user base group.
+            // Otherwise, add the group 'group_name' to the user base group.
+            // Returns True if the group was added, False if it was removed, None if no change was made.
+            // """
+            // has_user_group = bool(self.env.user.has_group(group_name))
+            // group = self.env.ref(group_name)
+            // base_group_user = self.env.ref('base.group_user')
+            // has_project_field_set = bool(self.env['project.project'].search_count([(field_name, '=', True)], limit=1))
+            // res = None
+            // 
+            // if not has_user_group and has_project_field_set:
+            //     # add the group to the base user group if there is at least one project with field_name=True
+            //     base_group_user.sudo().write({
+            //         'implied_ids': [Command.link(group.id)]
+            //     })
+            //     res = True
+            // elif has_user_group and not has_project_field_set:
+            //     # remove the group from the base user group if there is no project with field_name=True
+            //     base_group_user.sudo().write({
+            //         'implied_ids': [Command.unlink(group.id)]
+            //     })
+            //     group.sudo().write({'user_ids': [Command.clear()]})
+            //     res = False
+            // return res
             */
             return default;
         }
@@ -222,7 +287,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _check_project_sharing_access(self):
             // self.ensure_one()
-            // if self.privacy_visibility != 'portal':
+            // if self.privacy_visibility not in ['invited_users', 'portal']:
             //     return False
             // if self.env.user._is_portal():
             //     return self.env['project.collaborator'].search([('project_id', '=', self.sudo().id), ('partner_id', '=', self.env.user.partner_id.id)])
@@ -252,9 +317,11 @@ namespace Bamboo.Core.Application.Services
             // def _compute_access_instruction_message(self):
             // for project in self:
             //     if project.privacy_visibility == 'portal':
-            //         project.access_instruction_message = _('Grant portal users access to your project by adding them as followers (the tasks of the project are not included). To grant access to tasks to a portal user, add them as followers for these tasks.')
+            //         project.access_instruction_message = self.env._('To give portal users access to your project, add them as followers. For task access, add them as followers for each task.')
             //     elif project.privacy_visibility == 'followers':
-            //         project.access_instruction_message = _('Grant employees access to your project or tasks by adding them as followers. Employees automatically get access to the tasks they are assigned to.')
+            //         project.access_instruction_message = self.env._('Grant employees access to your project or tasks by adding them as followers. Employees automatically get access to the tasks they are assigned to.')
+            //     elif project.privacy_visibility == 'invited_users':
+            //         project.access_instruction_message = self.env._("Grant users access by adding them as followers — either to the project or individual tasks. Internal users automatically gain access to tasks they are assigned to.")
             //     else:
             //         project.access_instruction_message = ''
             */
@@ -266,22 +333,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_access_url(self):
-            // super(Project, self)._compute_access_url()
+            // super()._compute_access_url()
             // for project in self:
             //     project.access_url = f'/my/projects/{project.id}'
-            */
-            return default;
-        }
-
-        protected async Task<ProjectProject> ComputeAccessWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _compute_access_warning(self):
-            // super(Project, self)._compute_access_warning()
-            // for project in self.filtered(lambda x: x.privacy_visibility != 'portal'):
-            //     project.access_warning = _(
-            //         "This project is currently restricted to \"Invited internal users\". The project's visibility will be changed to \"invited portal users and all internal users (public)\" in order to make it accessible to the recipients.")
             */
             return default;
         }
@@ -342,7 +396,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_collaborator_count(self):
-            // project_sharings = self.filtered(lambda project: project.privacy_visibility == 'portal')
+            // project_sharings = self.filtered(lambda project: project.privacy_visibility in ['invited_users', 'portal'])
             // collaborator_read_group = self.env['project.collaborator']._read_group(
             //     [('project_id', 'in', project_sharings.ids)],
             //     ['project_id'],
@@ -475,8 +529,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_is_favorite(self):
+            // favorite_project_ids = self.env.user.favorite_project_ids
             // for project in self:
-            //     project.is_favorite = self.env.user in project.favorite_user_ids
+            //     project.is_favorite = project in favorite_project_ids
             */
             return default;
         }
@@ -567,19 +622,46 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_next_milestone_id(self):
-            // milestone_ids_per_project_id = {
-            //     project.id: milestone_ids
-            //     for project, milestone_ids in self.env['project.milestone']._read_group(
+            // milestones_per_project_id = {
+            //     project.id: milestones
+            //     for project, milestones in self.env['project.milestone']._read_group(
             //         [('project_id', 'in', self.ids), ('is_reached', '=', False)],
             //         ['project_id'],
             //         ['id:recordset'],
             //     )
             // }
+            // milestones = self.env['project.milestone'].concat(*milestones_per_project_id.values())
+            // task_read_group = self.env['project.task']._read_group(
+            //     [('milestone_id', 'in', milestones.ids)],
+            //     ['milestone_id', 'state'],
+            //     ['__count'],
+            // )
+            // task_count_per_milestones = defaultdict(lambda: (0, 0))
+            // for milestone, state, count in task_read_group:
+            //     opened_task_count, closed_task_count = task_count_per_milestones[milestone.id]
+            //     if state in CLOSED_STATES:
+            //         closed_task_count += count
+            //     else:
+            //         opened_task_count += count
+            //     task_count_per_milestones[milestone.id] = opened_task_count, closed_task_count
             // for project in self:
-            //     milestone = milestone_ids_per_project_id.get(project.id, self.env['project.milestone'])[:1]
-            //     project.next_milestone_id = milestone
-            //     project.can_mark_milestone_as_done = milestone.can_be_marked_as_done
-            //     project.is_milestone_deadline_exceeded = milestone.is_deadline_exceeded
+            //     milestones = milestones_per_project_id.get(project.id, self.env['project.milestone'])
+            //     project.next_milestone_id = milestones[:1]
+            //     milestone_deadline_exceeded = False
+            //     milestone_marked_as_done = False
+            //     for m in milestones:
+            //         opened_task_count, closed_task_count = task_count_per_milestones[m.id]
+            //         if (
+            //             not milestone_deadline_exceeded
+            //             and m.is_deadline_exceeded
+            //             and (opened_task_count > 0 or closed_task_count == 0)
+            //         ):
+            //             milestone_deadline_exceeded = True
+            //             break
+            //         if not milestone_marked_as_done and opened_task_count == 0 and closed_task_count > 0:
+            //             milestone_marked_as_done = True
+            //     project.is_milestone_deadline_exceeded = milestone_deadline_exceeded
+            //     project.can_mark_milestone_as_done = milestone_marked_as_done
             */
             return default;
         }
@@ -646,9 +728,9 @@ namespace Bamboo.Core.Application.Services
             // for project in self:
             //     if not project.ids:
             //         project.privacy_visibility_warning = ''
-            //     elif project.privacy_visibility == 'portal' and project._origin.privacy_visibility != 'portal':
+            //     elif project.privacy_visibility in ['invited_users', 'portal'] and project._origin.privacy_visibility not in ['invited_users', 'portal']:
             //         project.privacy_visibility_warning = _('Customers will be added to the followers of their project and tasks.')
-            //     elif project.privacy_visibility != 'portal' and project._origin.privacy_visibility == 'portal':
+            //     elif project.privacy_visibility not in ['invited_users', 'portal'] and project._origin.privacy_visibility in ['invited_users', 'portal']:
             //         project.privacy_visibility_warning = _('Portal users will be removed from the followers of the project and its tasks.')
             //     else:
             //         project.privacy_visibility_warning = ''
@@ -710,18 +792,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProjectProject> ComputeRatingRequestDeadlineInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _compute_rating_request_deadline(self):
-            // periods = {'daily': 1, 'weekly': 7, 'bimonthly': 15, 'monthly': 30, 'quarterly': 90, 'yearly': 365}
-            // for project in self:
-            //     project.rating_request_deadline = fields.datetime.now() + timedelta(days=periods.get(project.rating_status_period, 0))
-            */
-            return default;
-        }
-
         protected async Task<ProjectProject> ComputeRemainingHoursInternalAsync()
         {
             /*
@@ -769,7 +839,7 @@ namespace Bamboo.Core.Application.Services
             // for project in self.filtered(lambda p: not p.sale_line_id and p.partner_id and p.pricing_type == 'employee_rate'):
             //     # Give a SOL by default either the last SOL with service product and remaining_hours > 0
             //     SaleOrderLine = self.env['sale.order.line']
-            //     sol = SaleOrderLine.search(expression.AND([
+            //     sol = SaleOrderLine.search(Domain.AND([
             //         SaleOrderLine._domain_sale_line_service(),
             //         [('order_partner_id', 'child_of', project.partner_id.commercial_partner_id.id), ('remaining_hours', '>', 0)],
             //     ]), limit=1)
@@ -789,7 +859,7 @@ namespace Bamboo.Core.Application.Services
             //     project.sale_order_line_count = len(sale_order_lines)
             // 
             //     # Use sudo to avoid AccessErrors when the SOLs belong to different companies.
-            //     project.sale_order_count = len(sale_order_lines.sudo().order_id)
+            //     project.sale_order_count = len(sale_order_lines.sudo().order_id or project.reinvoiced_sale_order_id)
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
             // def _compute_sale_order_count(self):
             // billable_projects = self.filtered('allow_billable')
@@ -797,6 +867,24 @@ namespace Bamboo.Core.Application.Services
             // non_billable_projects = self - billable_projects
             // non_billable_projects.sale_order_line_count = 0
             // non_billable_projects.sale_order_count = 0
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> ComputeShowRatingsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _compute_show_ratings(self):
+            // projects_with_rating_active = self.env['project.task.type'].search_fetch(
+            //     domain=[
+            //         ('project_ids', 'in', self.ids),
+            //         ('rating_active', '=', True),
+            //     ],
+            //     field_names=['project_ids'],
+            // ).project_ids
+            // for project in self:
+            //     project.show_ratings = project in projects_with_rating_active
             */
             return default;
         }
@@ -868,11 +956,11 @@ namespace Bamboo.Core.Application.Services
             //     # if the timesheet has no product_uom_id then we take the one of the project
             //     total_time = 0.0
             //     for product_uom, unit_amount in timesheet_time_dict[project.id]:
-            //         factor = (product_uom or project.timesheet_encode_uom_id).factor_inv
+            //         factor = (product_uom or project.timesheet_encode_uom_id).factor
             //         total_time += unit_amount * (1.0 if project.encode_uom_in_days else factor)
             //     # Now convert to the proper unit of measure set in the settings
-            //     total_time *= project.timesheet_encode_uom_id.factor
-            //     project.total_timesheet_time = int(round(total_time))
+            //     total_time /= project.timesheet_encode_uom_id.factor
+            //     project.total_timesheet_time = float_round(total_time, precision_digits=2)
             */
             return default;
         }
@@ -935,12 +1023,97 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def copy_data(self, default=None):
+            // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
-            // if default and 'name' in default:
-            //     return vals_list
-            // return [dict(vals, name=self.env._("%s (copy)", project.name)) for project, vals in zip(self, vals_list)]
+            // copy_from_template = self.env.context.get('copy_from_template')
+            // for project, vals in zip(self, vals_list):
+            //     if project.is_template and not copy_from_template:
+            //         vals['is_template'] = True
+            //     if copy_from_template:
+            //         for field in self._get_template_field_blacklist():
+            //             if field in vals and field not in default:
+            //                 del vals[field]
+            //     if copy_from_template or (not project.is_template and vals.get('is_template')):
+            //         vals['name'] = default.get('name', project.name)
+            //     else:
+            //         vals['name'] = default.get('name', self.env._('%s (copy)', project.name))
+            // return vals_list
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProjectProject> CopyEmbeddedActionsConfigInternalAsync(object new_projects, object shared_embedded_actions_mapping)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _copy_embedded_actions_config(self, new_projects, shared_embedded_actions_mapping=None):
+            // shared_embedded_actions_mapping = shared_embedded_actions_mapping or {}
+            // embedded_action_configs_per_project = dict(
+            //     self.env['res.users.settings.embedded.action'].sudo()._read_group(
+            //         [('res_id', 'in', self.ids), ('res_model', '=', self._name)],
+            //         ['res_id'],
+            //         ['id:recordset'],
+            //     )
+            // )
+            // valid_embedded_action_ids = self.env['ir.embedded.actions'].sudo().search(
+            //     domain=[
+            //         ('parent_res_model', '=', self._name),
+            //         ('user_id', '=', False),
+            //     ],
+            // ).ids + [False]
+            // new_embedded_actions_config_vals_list = []
+            // for project, new_project in zip(self, new_projects):
+            //     configs = embedded_action_configs_per_project.get(project.id, self.env['res.users.settings.embedded.action'])
+            //     config_vals_list = configs.copy_data({'res_id': new_project.id})
+            //     for config_vals in config_vals_list:
+            //         # Apply the mapping of shared embedded actions and filter the visibility and order by excluding the user-specific actions
+            //         if config_vals['embedded_actions_visibility']:
+            //             embedded_actions_visibility = [
+            //                 shared_embedded_actions_mapping.get(action_id, action_id)
+            //                 for action_id in [False if x == 'false' else int(x) for x in config_vals['embedded_actions_visibility'].split(',')]
+            //                 if action_id in valid_embedded_action_ids
+            //             ]
+            //             config_vals['embedded_actions_visibility'] = ','.join('false' if action_id is False else str(action_id) for action_id in embedded_actions_visibility)
+            //         if config_vals['embedded_actions_order']:
+            //             embedded_actions_order = [
+            //                 shared_embedded_actions_mapping.get(action_id, action_id)
+            //                 for action_id in [False if x == 'false' else int(x) for x in config_vals['embedded_actions_order'].split(',')]
+            //                 if action_id in valid_embedded_action_ids
+            //             ]
+            //             config_vals['embedded_actions_order'] = ','.join('false' if action_id is False else str(action_id) for action_id in embedded_actions_order)
+            //         new_embedded_actions_config_vals_list.append(config_vals)
+            // # sudo is needed to update the user settings for all users using the projects to duplicate
+            // self.env['res.users.settings.embedded.action'].sudo().create(new_embedded_actions_config_vals_list)
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> CopySharedEmbeddedActionsInternalAsync(object new_projects)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _copy_shared_embedded_actions(self, new_projects):
+            // shared_embedded_actions_per_record = dict(self.env['ir.embedded.actions'].sudo()._read_group(
+            //     domain=[
+            //         ('parent_res_id', 'in', self.ids),
+            //         ('parent_res_model', '=', self._name),
+            //         ('user_id', '=', False),
+            //     ],
+            //     groupby=['parent_res_id'],
+            //     aggregates=['id:recordset'],
+            // ))
+            // shared_embedded_actions_mapping = dict()
+            // for project, new_project in zip(self, new_projects):
+            //     # Copy the shared embedded actions in the new record
+            //     shared_embedded_actions = shared_embedded_actions_per_record.get(project.id)
+            //     if shared_embedded_actions:
+            //         copy_shared_embedded_actions = shared_embedded_actions.copy({'parent_res_id': new_project.id})
+            //         for original_action, copied_action in zip(shared_embedded_actions, copy_shared_embedded_actions):
+            //             shared_embedded_actions_mapping[original_action.id] = copied_action.id
+            //             copied_action.filter_ids = original_action.filter_ids.copy({'embedded_parent_res_id': new_project.id})
+            // return shared_embedded_actions_mapping
+            */
+            return default;
         }
 
         protected async Task<ProjectProject> CreateAnalyticAccountInternalAsync()
@@ -964,12 +1137,12 @@ namespace Bamboo.Core.Application.Services
             // """ Create an analytic account if project allow timesheet and don't provide one
             //     Note: create it before calling super() to avoid raising the ValidationError from _check_allow_timesheet
             // """
-            // defaults = self.default_get(['allow_timesheets', 'account_id'])
+            // defaults = self.default_get(['allow_timesheets', 'account_id', 'is_template'])
             // analytic_accounts_vals = [
             //     vals for vals in vals_list
             //     if (
             //         vals.get('allow_timesheets', defaults.get('allow_timesheets')) and
-            //         not vals.get('account_id', defaults.get('account_id'))
+            //         not vals.get('account_id', defaults.get('account_id')) and not vals.get('is_template', defaults.get('is_template'))
             //     )
             // ]
             // 
@@ -988,8 +1161,8 @@ namespace Bamboo.Core.Application.Services
             //         if 'label_tasks' in vals and not vals['label_tasks']:
             //             vals['label_tasks'] = task_label
             // if self.env.user.has_group('project.group_project_stages'):
-            //     if 'default_stage_id' in self._context:
-            //         stage = self.env['project.project.stage'].browse(self._context['default_stage_id'])
+            //     if 'default_stage_id' in self.env.context:
+            //         stage = self.env['project.project.stage'].browse(self.env.context['default_stage_id'])
             //         # The project's company_id must be the same as the stage's company_id
             //         if stage.company_id:
             //             for vals in vals_list:
@@ -1020,16 +1193,54 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def create(self, vals_list):
             // projects = super().create(vals_list)
-            // sol_ids = {
-            //     vals['sale_line_id']
-            //     for vals in vals_list
-            //     if vals.get('sale_line_id')
-            // }
+            // sol_ids = set()
+            // for project, vals in zip(projects, vals_list):
+            //     if (vals.get('sale_line_id')):
+            //         sol_ids.add(vals['sale_line_id'])
+            //     if project.sale_order_id and not project.sale_order_id.project_id:
+            //         project.sale_order_id.project_id = project.id
+            //     elif project.sudo().reinvoiced_sale_order_id and not project.sudo().reinvoiced_sale_order_id.project_id:
+            //         project.sudo().reinvoiced_sale_order_id.project_id = project.id
             // if sol_ids:
             //     projects._ensure_sale_order_linked(list(sol_ids))
             // return projects
             */
             return await base.CreateAsync(entity, fields);
+        }
+
+        public async Task<ProjectProject> CreateFromTemplateAsync(Guid id, ProjectProjectCreateFromTemplateRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_create_from_template(self, values=None, role_to_users_mapping=None):
+            // self.ensure_one()
+            // values = values or {}
+            // 
+            // if self.date_start and self.date:
+            //     if not values.get("date_start"):
+            //         values["date_start"] = fields.Date.today()
+            //     if not values.get("date"):
+            //         values["date"] = values["date_start"] + (self.date - self.date_start)
+            // 
+            // default = {
+            //     key.removeprefix('default_'): value
+            //     for key, value in self.env.context.items()
+            //     if key.startswith('default_') and key.removeprefix('default_') in self._get_template_default_context_whitelist()
+            // } | values
+            // project = self.with_context(copy_from_template=True, copy_from_project_template=True).copy(default=default)
+            // project.message_post(body=self.env._("Project created from template %(name)s.", name=self.name))
+            // 
+            // # Tasks dispatching using project roles
+            // if role_to_users_mapping and (mapping := role_to_users_mapping.filtered(lambda entry: entry.user_ids)):
+            //     for new_task in project.task_ids:
+            //         for entry in mapping:
+            //             if entry.role_id in new_task.role_ids:
+            //                 new_task.user_ids |= entry.user_ids
+            // 
+            // project.task_ids.role_ids = False
+            // return project
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ProjectProject> CreateInvoiceAsync(Guid id)
@@ -1046,6 +1257,47 @@ namespace Bamboo.Core.Application.Services
             // if not self.has_any_so_to_invoice:
             //     action['context']['default_advance_payment_method'] = 'percentage'
             // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ProjectProject> CreateTemplateFromProjectAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_create_template_from_project(self):
+            // self.ensure_one()
+            // template = self.copy(default={"is_template": True, "partner_id": False})
+            // template._toggle_template_mode(True)
+            // template.message_post(body=self.env._("Template created from %s.", self.name))
+            // config = {
+            //     "tag": "project_template_show_notification",
+            //     "params": {
+            //         "project_id": template.id,
+            //         "undo_method": "unlink",
+            //     },
+            // }
+            // if callbacks := self._get_template_from_project_undo_callbacks():
+            //     config["params"]["callback_data"] = {
+            //         "method": "create_template_from_project_undo_callback",
+            //         "args": [self.id, callbacks],
+            //     }
+            // return {
+            //     "type": "ir.actions.client",
+            //     **config,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ProjectProject> CreateTemplateFromProjectUndoCallbackAsync(Guid id, ProjectProjectCreateTemplateFromProjectUndoCallbackRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def create_template_from_project_undo_callback(self, callbacks):
+            // self.ensure_one()
+            // if callbacks.get("unarchive_project"):
+            //     self.action_unarchive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1068,6 +1320,19 @@ namespace Bamboo.Core.Application.Services
         public override async Task<ProjectProject> DefaultGetAsync(List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def default_get(self, fields):
+            // defaults = super().default_get(fields)
+            // if self.env.context.get('order_state') == 'sale':
+            //     order_id = self.env.context.get('order_id')
+            //     sale_line_id = self.env['sale.order.line'].search(
+            //         [('order_id', '=', order_id), ('is_service', '=', True)],
+            //         limit=1).id
+            //     defaults.update({
+            //         'reinvoiced_sale_order_id': order_id,
+            //         'sale_line_id': sale_line_id,
+            //     })
+            // return defaults
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
             // def default_get(self, fields):
             // """ Pre-fill timesheet product as "Time" data product when creating new project allowing billable tasks by default. """
@@ -1107,7 +1372,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def _domain_sale_line_id(self):
-            // domain = expression.AND([
+            // domain = Domain.AND([
             //     self.env['sale.order.line']._sellable_lines_domain(),
             //     self.env['sale.order.line']._domain_sale_line_service(),
             //     [
@@ -1155,6 +1420,17 @@ namespace Bamboo.Core.Application.Services
             //             'There are a couple of options to consider: either change the project\'s company '
             //             'to align with the stage\'s company or remove the company designation from the stage', project.stage_id.company_id.name)
             //         )
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> FetchProductsLinkedToTemplateInternalAsync(object limit)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _fetch_products_linked_to_template(self, limit=None):
+            // self.ensure_one()
+            // return self.env['product.template'].search([('project_template_id', '=', self.id)], limit=limit)
             */
             return default;
         }
@@ -1244,9 +1520,9 @@ namespace Bamboo.Core.Application.Services
             // ]
             --- ODOO METHOD SOURCE (MODULE: project_hr_expense, FILE: project_project.py) ---
             // def _get_add_purchase_items_domain(self):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_add_purchase_items_domain(),
-            //     [('expense_id', '=', False)],
+            //     Domain('expense_id', '=', False),
             // ])
             */
             return default;
@@ -1266,7 +1542,7 @@ namespace Bamboo.Core.Application.Services
             // # we need to make sure they are exclusive in the profitability report.
             // move_line_ids = super()._get_already_included_profitability_invoice_line_ids()
             // query = self.env['account.move.line'].sudo()._search([
-            //     ('move_id.expense_sheet_id', '!=', False),
+            //     ('expense_id', '!=', False),
             //     ('id', 'not in', move_line_ids),
             // ])
             // return move_line_ids + list(query)
@@ -1274,7 +1550,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_already_included_profitability_invoice_line_ids(self):
             // move_line_ids = super()._get_already_included_profitability_invoice_line_ids()
             // expenses_read_group = self.env['hr.expense']._read_group(
-            //     [('sheet_id.state', 'in', ['post', 'done']), ('analytic_distribution', 'in', self.account_id.ids)],
+            //     [('state', 'in', ['posted', 'in_payment', 'paid']), ('analytic_distribution', 'in', self.account_id.ids)],
             //     groupby=['sale_order_id'],
             //     aggregates=['__count'],
             // )
@@ -1296,14 +1572,14 @@ namespace Bamboo.Core.Application.Services
             // # calculate the cost of bills without a purchase order
             // account_move_lines = self.env['account.move.line'].sudo().search_fetch(
             //     domain + [('analytic_distribution', 'in', self.account_id.ids)],
-            //     ['price_subtotal', 'parent_state', 'currency_id', 'analytic_distribution', 'move_type', 'move_id'],
+            //     ['balance', 'parent_state', 'company_currency_id', 'analytic_distribution', 'move_id', 'date'],
             // )
             // if account_move_lines:
             //     # Get conversion rate from currencies to currency of the current company
             //     amount_invoiced = amount_to_invoice = 0.0
             //     for move_line in account_move_lines:
-            //         price_subtotal = move_line.currency_id._convert(
-            //             from_amount=move_line.price_subtotal, to_currency=self.currency_id,
+            //         line_balance = move_line.company_currency_id._convert(
+            //             from_amount=move_line.balance, to_currency=self.currency_id, date=move_line.date
             //         )
             //         # an analytic account can appear several time in an analytic distribution with different repartition percentage
             //         analytic_contribution = sum(
@@ -1311,15 +1587,9 @@ namespace Bamboo.Core.Application.Services
             //             if str(self.account_id.id) in ids.split(',')
             //         ) / 100.
             //         if move_line.parent_state == 'draft':
-            //             if move_line.move_type == 'in_invoice':
-            //                 amount_to_invoice -= price_subtotal * analytic_contribution
-            //             else:  # move_line.move_type == 'in_refund'
-            //                 amount_to_invoice += price_subtotal * analytic_contribution
+            //             amount_to_invoice -= line_balance * analytic_contribution
             //         else:  # move_line.parent_state == 'posted'
-            //             if move_line.move_type == 'in_invoice':
-            //                 amount_invoiced -= price_subtotal * analytic_contribution
-            //             else:  # move_line.move_type == 'in_refund'
-            //                 amount_invoiced += price_subtotal * analytic_contribution
+            //             amount_invoiced -= line_balance * analytic_contribution
             //     # don't display the section if the final values are both 0 (bill -> vendor credit)
             //     if amount_invoiced != 0 or amount_to_invoice != 0:
             //         costs = profitability_items['costs']
@@ -1360,7 +1630,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
             // def _get_domain_aal_with_no_move_line(self):
             // # we add the tuple 'project_id = False' in the domain to remove the timesheets from the search.
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_domain_aal_with_no_move_line(),
             //     [('project_id', '=', False)]
             // ])
@@ -1440,7 +1710,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // expenses_read_group = self.env['hr.expense']._read_group(
             //     [
-            //         ('sheet_id.state', 'in', ['post', 'done']),
+            //         ('state', 'in', ['posted', 'in_payment', 'paid']),
             //         ('analytic_distribution', 'in', self.account_id.ids),
             //     ],
             //     groupby=['currency_id'],
@@ -1473,7 +1743,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: project_sale_expense, FILE: project_project.py) ---
             // def _get_expenses_profitability_items(self, with_action=True):
             // expenses_read_group = self.env['hr.expense']._read_group(
-            //     [('sheet_id.state', 'in', ['post', 'done']), ('analytic_distribution', 'in', self.account_id.ids)],
+            //     [('state', 'in', ['posted', 'in_payment', 'paid']), ('analytic_distribution', 'in', self.account_id.ids)],
             //     groupby=['sale_order_id', 'product_id', 'currency_id'],
             //     aggregates=['id:array_agg', 'untaxed_amount_currency:sum'],
             // )
@@ -1595,10 +1865,9 @@ namespace Bamboo.Core.Application.Services
             // }
             --- ODOO METHOD SOURCE (MODULE: project_account, FILE: project_project.py) ---
             // def _get_items_from_aal(self, with_action=True):
-            // domain = self._get_domain_aal_with_no_move_line()
-            // domain = expression.AND([
-            //     domain,
-            //     [('category', 'not in', ['manufacturing_order', 'picking_entry'])]
+            // domain = Domain.AND([
+            //     self._get_domain_aal_with_no_move_line(),
+            //     Domain('category', 'not in', ['manufacturing_order', 'picking_entry']),
             // ])
             // aal_other_search = self.env['account.analytic.line'].sudo().search_read(domain, ['id', 'amount', 'currency_id'])
             // if not aal_other_search:
@@ -1650,11 +1919,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project_stock_account, FILE: project_project.py) ---
             // def _get_items_from_aal_picking(self, with_action=True):
-            // domain = self._get_domain_aal_with_no_move_line()
-            // domain = expression.AND([
-            //     domain,
-            //     [('category', '=', 'picking_entry')]
-            // ])
+            // domain = Domain(self._get_domain_aal_with_no_move_line()) & Domain('category', '=', 'picking_entry')
             // aal_other_search = self.env['account.analytic.line'].sudo().search_read(domain, ['id', 'amount', 'currency_id'])
             // if not aal_other_search:
             //     return False
@@ -1687,6 +1952,110 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProjectProject> GetItemsFromInvoicesDomainInternalAsync(object domain)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_items_from_invoices_domain(self, domain=None):
+            // domain = Domain(domain or Domain.TRUE)
+            // included_invoice_line_ids = self._get_already_included_profitability_invoice_line_ids()
+            // return domain & Domain([
+            //     ('move_id.move_type', 'in', self.env['account.move'].get_sale_types()),
+            //     ('parent_state', 'in', ['draft', 'posted']),
+            //     ('price_subtotal', '!=', 0),
+            //     ('is_downpayment', '=', False),
+            //     ('id', 'not in', included_invoice_line_ids),
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetItemsFromInvoicesInternalAsync(List<Guid> excluded_move_line_ids, object with_action)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_items_from_invoices(self, excluded_move_line_ids=None, with_action=True):
+            // """
+            // Get all items from invoices, and put them into their own respective section
+            // (either costs or revenues)
+            // If the final total is 0 for either to_invoice or invoiced (ex: invoice -> credit note),
+            // we don't output a new section
+            // 
+            // :param excluded_move_line_ids a list of 'account.move.line' to ignore
+            // when fetching the move lines, for example a list of invoices that were
+            // generated from a sales order
+            // """
+            // if excluded_move_line_ids is None:
+            //     excluded_move_line_ids = []
+            // aml_fetch_fields = [
+            //     'balance', 'parent_state', 'company_currency_id', 'analytic_distribution', 'move_id',
+            //     'display_type', 'date',
+            // ]
+            // invoices_move_lines = self.env['account.move.line'].sudo().search_fetch(
+            //     Domain.AND([
+            //         self._get_items_from_invoices_domain([('id', 'not in', excluded_move_line_ids)]),
+            //         [('analytic_distribution', 'in', self.account_id.ids)]
+            //     ]),
+            //     aml_fetch_fields,
+            // )
+            // res = {
+            //     'revenues': {
+            //         'data': [], 'total': {'invoiced': 0.0, 'to_invoice': 0.0}
+            //     },
+            //     'costs': {
+            //         'data': [], 'total': {'billed': 0.0, 'to_bill': 0.0}
+            //     },
+            // }
+            // # TODO: invoices_move_lines.with_context(prefetch_fields=False).move_id.move_type ??
+            // if invoices_move_lines:
+            //     revenues_lines = []
+            //     cogs_lines = []
+            //     for move_line in invoices_move_lines:
+            //         if move_line['display_type'] == 'cogs':
+            //             cogs_lines.append(move_line)
+            //         else:
+            //             revenues_lines.append(move_line)
+            //     for move_lines, ml_type in ((revenues_lines, 'revenues'), (cogs_lines, 'costs')):
+            //         amount_invoiced = amount_to_invoice = 0.0
+            //         for move_line in move_lines:
+            //             currency = move_line.company_currency_id
+            //             line_balance = currency._convert(move_line.balance, self.currency_id, self.company_id, move_line.date)
+            //             # an analytic account can appear several time in an analytic distribution with different repartition percentage
+            //             analytic_contribution = sum(
+            //                 percentage for ids, percentage in move_line.analytic_distribution.items()
+            //                 if str(self.account_id.id) in ids.split(',')
+            //             ) / 100.
+            //             if move_line.parent_state == 'draft':
+            //                 amount_to_invoice -= line_balance * analytic_contribution
+            //             else:  # move_line.parent_state == 'posted'
+            //                 amount_invoiced -= line_balance * analytic_contribution
+            //         # don't display the section if the final values are both 0 (invoice -> credit note)
+            //         if amount_invoiced != 0 or amount_to_invoice != 0:
+            //             section_id = 'other_invoice_revenues' if ml_type == 'revenues' else 'cost_of_goods_sold'
+            //             invoices_items = {
+            //                 'id': section_id,
+            //                 'sequence': self._get_profitability_sequence_per_invoice_type()[section_id],
+            //                 'invoiced' if ml_type == 'revenues' else 'billed': amount_invoiced,
+            //                 'to_invoice' if ml_type == 'revenues' else 'to_bill': amount_to_invoice,
+            //             }
+            //             if with_action and (
+            //                 self.env.user.has_group('sales_team.group_sale_salesman_all_leads')
+            //                 or self.env.user.has_group('account.group_account_invoice')
+            //                 or self.env.user.has_group('account.group_account_readonly')
+            //             ):
+            //                 invoices_items['action'] = self._get_action_for_profitability_section(invoices_move_lines.move_id.ids, section_id)
+            //             res[ml_type] = {
+            //                 'data': [invoices_items],
+            //                 'total': {
+            //                     'invoiced' if ml_type == 'revenues' else 'billed': amount_invoiced,
+            //                     'to_invoice' if ml_type == 'revenues' else 'to_bill': amount_to_invoice,
+            //                 },
+            //             }
+            // return res
+            */
+            return default;
+        }
+
         public async Task<ProjectProject> GetLastUpdateOrDefaultAsync(Guid id)
         {
             /*
@@ -1707,31 +2076,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def action_get_list_view(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("%(name)s's Milestones", name=self.name),
-            //     'domain': [('project_id', '=', self.id)],
-            //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
-            //     'view_mode': 'list',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             No milestones found. Let's create one!
-            //         </p><p>
-            //             Track major progress points that must be reached to achieve success.
-            //         </p>
-            //     """),
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         **self.env.context
-            //     }
-            // }
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_milestone_action')
+            // action['display_name'] = _("%(name)s's Milestones", name=self.name)
+            // return action
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def action_get_list_view(self):
             // action = super().action_get_list_view()
             // if self.allow_billable:
-            //     action['views'] = [(self.env.ref('sale_project.project_milestone_view_tree').id, 'list'), (False, 'form')]
+            //     action['views'] = [(self.env.ref('sale_project.project_milestone_view_tree').id, view_type) if view_type == 'list' else (view_id, view_type) for view_id, view_type in action['views']]
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1831,18 +2183,21 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project_stock, FILE: project_project.py) ---
             // def _get_picking_action(self, action_name, picking_type=None):
-            // domain = [('project_id', '=', self.id)]
+            // domain = Domain('project_id', '=', self.id)
             // context = {'default_project_id': self.id}
             // if picking_type:
-            //     domain = AND([domain, [('picking_type_id.code', '=', picking_type)]])
+            //     domain &= Domain('picking_type_id.code', '=', picking_type)
             //     context['restricted_picking_type_code'] = picking_type
             //     if picking_type == 'outgoing':
             //         context['default_partner_id'] = self.partner_id.id
+            // view_mode = "list,kanban,form,calendar"
+            // if picking_type != 'outgoing':
+            //     view_mode += ",activity"
             // return {
             //     'name': action_name,
             //     'type': 'ir.actions.act_window',
             //     'res_model': 'stock.picking',
-            //     'view_mode': f"list,kanban,form,calendar,{'map' if picking_type == 'outgoing' else 'activity'}",
+            //     'view_mode': view_mode,
             //     'domain': domain,
             //     'context': context,
             //     'help': self.env['ir.ui.view']._render_template(
@@ -1871,7 +2226,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _get_plan_domain(self, plan):
-            // return AND([super()._get_plan_domain(plan), ['|', ('company_id', '=', False), ('company_id', '=?', unquote('company_id'))]])
+            // return Domain.AND([super()._get_plan_domain(plan), ['|', ('company_id', '=', False), ('company_id', '=?', unquote('company_id'))]])
             */
             return default;
         }
@@ -1884,26 +2239,26 @@ namespace Bamboo.Core.Application.Services
             // return [('account_id', 'in', self.account_id.ids)]
             --- ODOO METHOD SOURCE (MODULE: project_hr_expense, FILE: project_project.py) ---
             // def _get_profitability_aal_domain(self):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_profitability_aal_domain(),
             //     ['|', ('move_line_id', '=', False), ('move_line_id.expense_id', '=', False)],
             // ])
             --- ODOO METHOD SOURCE (MODULE: project_mrp_account, FILE: project_project.py) ---
             // def _get_profitability_aal_domain(self):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_profitability_aal_domain(),
-            //     [('category', '!=', 'manufacturing_order')],
+            //     Domain('category', '!=', 'manufacturing_order'),
             // ])
             --- ODOO METHOD SOURCE (MODULE: project_purchase, FILE: project_project.py) ---
             // def _get_profitability_aal_domain(self):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_profitability_aal_domain(),
             //     ['|', ('move_line_id', '=', False), ('move_line_id.purchase_line_id', '=', False)],
             // ])
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
             // def _get_profitability_aal_domain(self):
             // domain = ['|', ('project_id', 'in', self.ids), ('so_line', 'in', self._fetch_sale_order_item_ids())]
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_profitability_aal_domain(),
             //     domain,
             // ])
@@ -1941,7 +2296,7 @@ namespace Bamboo.Core.Application.Services
             // total_revenues = {'invoiced': 0.0, 'to_invoice': 0.0}
             // total_costs = {'billed': 0.0, 'to_bill': 0.0}
             // convert_company = self.company_id or self.env.company
-            // for timesheet_invoice_type, dummy, currency, category, amount, ids in aa_line_read_group:
+            // for timesheet_invoice_type, _dummy, currency, category, amount, ids in aa_line_read_group:
             //     if category == 'vendor_bill':
             //         continue  # This is done to prevent expense duplication with product re-invoice policies
             //     amount = currency._convert(amount, self.currency_id, convert_company)
@@ -2072,39 +2427,66 @@ namespace Bamboo.Core.Application.Services
             // def _get_profitability_items(self, with_action=True):
             // profitability_items = super()._get_profitability_items(with_action)
             // if self.account_id:
-            //     invoice_lines = self.env['account.move.line'].sudo().search_fetch([
-            //         ('parent_state', 'in', ['draft', 'posted']),
+            //     purchase_lines = self.env['purchase.order.line'].sudo().search([
             //         ('analytic_distribution', 'in', self.account_id.ids),
-            //         ('purchase_line_id', '!=', False),
-            //     ], ['parent_state', 'currency_id', 'price_subtotal', 'analytic_distribution'])
+            //         ('state', 'in', 'purchase')
+            //     ])
             //     purchase_order_line_invoice_line_ids = self._get_already_included_profitability_invoice_line_ids()
             //     with_action = with_action and (
             //         self.env.user.has_group('purchase.group_purchase_user')
             //         or self.env.user.has_group('account.group_account_invoice')
             //         or self.env.user.has_group('account.group_account_readonly')
             //     )
-            //     if invoice_lines:
+            //     if purchase_lines:
             //         amount_invoiced = amount_to_invoice = 0.0
-            //         purchase_order_line_invoice_line_ids.extend(invoice_lines.ids)
-            //         for line in invoice_lines:
-            //             price_subtotal = line.currency_id._convert(line.price_subtotal, self.currency_id, self.company_id)
+            //         purchase_order_line_invoice_line_ids.extend(purchase_lines.invoice_lines.ids)
+            //         for purchase_line in purchase_lines:
+            //             price_subtotal = purchase_line.currency_id._convert(purchase_line.price_subtotal, self.currency_id, self.company_id)
             //             # an analytic account can appear several time in an analytic distribution with different repartition percentage
             //             analytic_contribution = sum(
-            //                 percentage for ids, percentage in line.analytic_distribution.items()
+            //                 percentage for ids, percentage in purchase_line.analytic_distribution.items()
             //                 if str(self.account_id.id) in ids.split(',')
             //             ) / 100.
-            //             cost = price_subtotal * analytic_contribution * (-1 if line.is_refund else 1)
-            //             if line.parent_state == 'posted':
-            //                 amount_invoiced -= cost
+            //             purchase_line_amount_to_invoice = price_subtotal * analytic_contribution
+            //             invoice_lines = purchase_line.invoice_lines.filtered(
+            //                 lambda l:
+            //                 l.parent_state != 'cancel'
+            //                 and l.analytic_distribution
+            //                 and any(
+            //                     key == str(self.account_id.id)
+            //                     or key.startswith(str(self.account_id.id) + ",")
+            //                     for key in l.analytic_distribution
+            //                 )
+            //             )
+            //             if invoice_lines:
+            //                 invoiced_qty = sum(invoice_lines.filtered(lambda l: not l.is_refund).mapped('quantity'))
+            //                 if invoiced_qty < purchase_line.product_qty:
+            //                     amount_to_invoice -= purchase_line_amount_to_invoice * ((purchase_line.product_qty - invoiced_qty) / purchase_line.product_qty)
+            //                 for line in invoice_lines:
+            //                     price_subtotal = line.currency_id._convert(line.price_subtotal, self.currency_id, self.company_id)
+            //                     if not line.analytic_distribution:
+            //                         continue
+            //                     # an analytic account can appear several time in an analytic distribution with different repartition percentage
+            //                     analytic_contribution = sum(
+            //                         percentage for ids, percentage in line.analytic_distribution.items()
+            //                         if str(self.account_id.id) in ids.split(',')
+            //                     ) / 100.
+            //                     cost = price_subtotal * analytic_contribution * (-1 if line.is_refund else 1)
+            //                     if line.parent_state == 'posted':
+            //                         amount_invoiced -= cost
+            //                     else:
+            //                         amount_to_invoice -= cost
             //             else:
-            //                 amount_to_invoice -= cost
+            //                 amount_to_invoice -= purchase_line_amount_to_invoice
+            // 
             //         costs = profitability_items['costs']
             //         section_id = 'purchase_order'
             //         purchase_order_costs = {'id': section_id, 'sequence': self._get_profitability_sequence_per_invoice_type()[section_id], 'billed': amount_invoiced, 'to_bill': amount_to_invoice}
             //         if with_action:
-            //             args = [section_id, [('id', 'in', invoice_lines.purchase_line_id.ids)]]
-            //             if len(invoice_lines.purchase_line_id) == 1:
-            //                 args.append(invoice_lines.purchase_line_id.id)
+            //             purchase_order = purchase_lines.order_id
+            //             args = [section_id, [('id', 'in', purchase_order.ids)]]
+            //             if len(purchase_order) == 1:
+            //                 args.append(purchase_order.id)
             //             action = {'name': 'action_profitability_items', 'type': 'object', 'args': json.dumps(args)}
             //             purchase_order_costs['action'] = action
             //         costs['data'].append(purchase_order_costs)
@@ -2113,6 +2495,7 @@ namespace Bamboo.Core.Application.Services
             //     domain = [
             //         ('move_id.move_type', 'in', ['in_invoice', 'in_refund']),
             //         ('parent_state', 'in', ['draft', 'posted']),
+            //         ('price_subtotal', '!=', 0),
             //         ('id', 'not in', purchase_order_line_invoice_line_ids),
             //     ]
             //     self._get_costs_items_from_purchase(domain, profitability_items, with_action=with_action)
@@ -2223,17 +2606,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def _get_profitability_sale_order_items_domain(self, domain=None):
-            // if domain is None:
-            //     domain = []
-            // return expression.AND([
-            //     [
-            //         '|', ('product_id', '!=', False), ('is_downpayment', '=', True),
-            //         ('is_expense', '=', False),
-            //         ('state', '=', 'sale'),
-            //         '|', ('qty_to_invoice', '>', 0), ('qty_invoiced', '>', 0),
-            //     ],
-            //     domain,
-            // ])
+            // domain = Domain(domain or Domain.TRUE)
+            // return Domain([
+            //     '|', ('product_id', '!=', False), ('is_downpayment', '=', True),
+            //     ('is_expense', '=', False),
+            //     ('state', '=', 'sale'),
+            //     '|', ('qty_to_invoice', '>', 0), ('qty_invoiced', '>', 0),
+            // ]) & domain
             */
             return default;
         }
@@ -2299,6 +2678,87 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProjectProject> GetProfitabilityValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_profitability_values(self):
+            // if not self.env.user.has_group('project.group_project_manager'):
+            //     return {}, False
+            // profitability_items = self._get_profitability_items(False)
+            // if profitability_items and 'revenues' in profitability_items and 'costs' in profitability_items:  # sort the data values
+            //     profitability_items['revenues']['data'] = sorted(profitability_items['revenues']['data'], key=lambda k: k['sequence'])
+            //     profitability_items['costs']['data'] = sorted(profitability_items['costs']['data'], key=lambda k: k['sequence'])
+            // costs = sum(profitability_items['costs']['total'].values())
+            // revenues = sum(profitability_items['revenues']['total'].values())
+            // margin = revenues + costs
+            // to_bill_to_invoice = profitability_items['costs']['total']['to_bill'] + profitability_items['revenues']['total']['to_invoice']
+            // billed_invoiced = profitability_items['costs']['total']['billed'] + profitability_items['revenues']['total']['invoiced']
+            // expected_percentage, to_bill_to_invoice_percentage, billed_invoiced_percentage = 0, 0, 0
+            // if revenues:
+            //     expected_percentage = formatLang(self.env, (margin / revenues) * 100, digits=0)
+            // if profitability_items['revenues']['total']['to_invoice']:
+            //     to_bill_to_invoice_percentage = formatLang(self.env, (to_bill_to_invoice / profitability_items['revenues']['total']['to_invoice']) * 100, digits=0)
+            // if profitability_items['revenues']['total']['invoiced']:
+            //     billed_invoiced_percentage = formatLang(self.env, (billed_invoiced / profitability_items['revenues']['total']['invoiced']) * 100, digits=0)
+            // profitability_values_dict = {
+            //     'account_id': self.account_id,
+            //     'costs': profitability_items['costs'],
+            //     'revenues': profitability_items['revenues'],
+            //     'expected_percentage': expected_percentage,
+            //     'to_bill_to_invoice_percentage': to_bill_to_invoice_percentage,
+            //     'billed_invoiced_percentage': billed_invoiced_percentage,
+            //     'total': {
+            //         'costs': costs,
+            //         'revenues': revenues,
+            //         'margin': margin,
+            //         'margin_percentage': formatLang(self.env,
+            //                                         not float_utils.float_is_zero(costs, precision_digits=2) and (margin / -costs) * 100 or 0.0,
+            //                                         digits=0),
+            //     },
+            //     'labels': self._get_profitability_labels(),
+            // }
+            // show_profitability = bool(profitability_values_dict.get('account_id')
+            //     and (profitability_values_dict.get('costs') or profitability_values_dict.get('revenues'))
+            // )
+            // return profitability_values_dict, show_profitability
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_profitability_values(self):
+            // if not self.allow_billable:
+            //     return {}, False
+            // return super()._get_profitability_values()
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetProjectFeaturesMappingInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_project_features_mapping(self):
+            // return {
+            //     'allow_task_dependencies': 'project.group_project_task_dependencies',
+            //     'allow_milestones': 'project.group_project_milestone',
+            //     'allow_recurring_tasks': 'project.group_project_recurring_tasks',
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetProjectToTemplateWarningsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
+            // def _get_project_to_template_warnings(self):
+            // res = super()._get_project_to_template_warnings()
+            // timesheet_linked_count = self.env['account.analytic.line'].search_count([('project_id', '=', self.id)], limit=1)
+            // if timesheet_linked_count:
+            //     res.append(self.env._("This project is current linked to timesheet."))
+            // return res
+            */
+            return default;
+        }
+
         protected async Task<ProjectProject> GetProjectsForInvoiceStatusInternalAsync(object invoice_status)
         {
             /*
@@ -2338,118 +2798,10 @@ namespace Bamboo.Core.Application.Services
             // return [('partner_id', '!=', False)]
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def _get_projects_to_make_billable_domain(self):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_projects_to_make_billable_domain(),
             //     [('allow_billable', '=', False)],
             // ])
-            */
-            return default;
-        }
-
-        protected async Task<ProjectProject> GetRevenuesItemsFromInvoicesDomainInternalAsync(object domain)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
-            // def _get_revenues_items_from_invoices_domain(self, domain=None):
-            // if domain is None:
-            //     domain = []
-            // included_invoice_line_ids = self._get_already_included_profitability_invoice_line_ids()
-            // return expression.AND([
-            //     domain,
-            //     [('move_id.move_type', 'in', self.env['account.move'].get_sale_types()),
-            //     ('parent_state', 'in', ['draft', 'posted']),
-            //     ('price_subtotal', '!=', 0),
-            //     ('is_downpayment', '=', False),
-            //     ('id', 'not in', included_invoice_line_ids)],
-            // ])
-            */
-            return default;
-        }
-
-        protected async Task<ProjectProject> GetRevenuesItemsFromInvoicesInternalAsync(List<Guid> excluded_move_line_ids, object with_action)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
-            // def _get_revenues_items_from_invoices(self, excluded_move_line_ids=None, with_action=True):
-            // """
-            // Get all revenues items from invoices, and put them into their own
-            // "other_invoice_revenues" section.
-            // If the final total is 0 for either to_invoice or invoiced (ex: invoice -> credit note),
-            // we don't output a new section
-            // 
-            // :param excluded_move_line_ids a list of 'account.move.line' to ignore
-            // when fetching the move lines, for example a list of invoices that were
-            // generated from a sales order
-            // """
-            // if excluded_move_line_ids is None:
-            //     excluded_move_line_ids = []
-            // invoices_move_lines = self.env['account.move.line'].sudo().search_fetch(
-            //     expression.AND([
-            //         self._get_revenues_items_from_invoices_domain([('id', 'not in', excluded_move_line_ids)]),
-            //         [('analytic_distribution', 'in', self.account_id.ids)]
-            //     ]),
-            //     ['price_subtotal', 'parent_state', 'currency_id', 'analytic_distribution', 'move_type', 'move_id', 'display_type']
-            // )
-            // res = {
-            //     'revenues': {
-            //         'data': [], 'total': {'invoiced': 0.0, 'to_invoice': 0.0}
-            //     },
-            //     'costs': {
-            //         'data': [], 'total': {'billed': 0.0, 'to_bill': 0.0}
-            //     },
-            // }
-            // # TODO: invoices_move_lines.with_context(prefetch_fields=False).move_id.move_type ??
-            // if invoices_move_lines:
-            //     revenues_lines = []
-            //     cogs_lines = []
-            //     for move_line in invoices_move_lines:
-            //         if move_line['display_type'] == 'cogs':
-            //             cogs_lines.append(move_line)
-            //         else:
-            //             revenues_lines.append(move_line)
-            //     for move_lines, ml_type in ((revenues_lines, 'revenues'), (cogs_lines, 'costs')):
-            //         amount_invoiced = amount_to_invoice = 0.0
-            //         for move_line in move_lines:
-            //             currency = move_line.currency_id
-            //             price_subtotal = currency._convert(move_line.price_subtotal, self.currency_id, self.company_id)
-            //             # an analytic account can appear several time in an analytic distribution with different repartition percentage
-            //             analytic_contribution = sum(
-            //                 percentage for ids, percentage in move_line.analytic_distribution.items()
-            //                 if str(self.account_id.id) in ids.split(',')
-            //             ) / 100.
-            //             if move_line.parent_state == 'draft':
-            //                 if move_line.move_type == 'out_invoice':
-            //                     amount_to_invoice += price_subtotal * analytic_contribution
-            //                 else:  # move_line.move_type == 'out_refund'
-            //                     amount_to_invoice -= price_subtotal * analytic_contribution
-            //             else:  # move_line.parent_state == 'posted'
-            //                 if move_line.move_type == 'out_invoice':
-            //                     amount_invoiced += price_subtotal * analytic_contribution
-            //                 else:  # moves_read['move_type'] == 'out_refund'
-            //                     amount_invoiced -= price_subtotal * analytic_contribution
-            //         # don't display the section if the final values are both 0 (invoice -> credit note)
-            //         if amount_invoiced != 0 or amount_to_invoice != 0:
-            //             section_id = 'other_invoice_revenues' if ml_type == 'revenues' else 'cost_of_goods_sold'
-            //             invoices_items = {
-            //                 'id': section_id,
-            //                 'sequence': self._get_profitability_sequence_per_invoice_type()[section_id],
-            //                 'invoiced' if ml_type == 'revenues' else 'billed': amount_invoiced,
-            //                 'to_invoice' if ml_type == 'revenues' else 'to_bill': amount_to_invoice,
-            //             }
-            //             if with_action and (
-            //                 self.env.user.has_group('sales_team.group_sale_salesman_all_leads')
-            //                 or self.env.user.has_group('account.group_account_invoice')
-            //                 or self.env.user.has_group('account.group_account_readonly')
-            //             ):
-            //                 invoices_items['action'] = self._get_action_for_profitability_section(invoices_move_lines.move_id.ids, section_id)
-            //             res[ml_type] = {
-            //                 'data': [invoices_items],
-            //                 'total': {
-            //                     'invoiced' if ml_type == 'revenues' else 'billed': amount_invoiced,
-            //                     'to_invoice' if ml_type == 'revenues' else 'to_bill': amount_to_invoice,
-            //                 },
-            //             }
-            // return res
             */
             return default;
         }
@@ -2594,7 +2946,7 @@ namespace Bamboo.Core.Application.Services
             //     'sol_items': [{
             //         **sol_read,
             //         **get_action(sol_read['id']),
-            //     } for sol_read in all_sols.with_context(with_price_unit=True)._read_format(['name', 'product_uom_qty', 'qty_delivered', 'qty_invoiced', 'product_uom', 'product_id'])],
+            //     } for sol_read in all_sols.with_context(with_price_unit=True)._read_format(['display_name', 'product_uom_qty', 'qty_delivered', 'qty_invoiced', 'product_uom_id', 'product_id'])],
             //     'displayLoadMore': display_load_more,
             // }
             */
@@ -2617,7 +2969,7 @@ namespace Bamboo.Core.Application.Services
             //         ('id', 'in', sale_items.ids),
             // ]
             // if additional_domain:
-            //     domain = expression.AND([domain, additional_domain])
+            //     domain = Domain.AND([domain, additional_domain])
             // return domain
             */
             return default;
@@ -2643,36 +2995,33 @@ namespace Bamboo.Core.Application.Services
             // billable_project_domain = [('allow_billable', '=', True)]
             // project_domain = [('id', 'in', self.ids), ('sale_line_id', '!=', False)]
             // if 'project.project' in domain_per_model:
-            //     project_domain = expression.AND([
+            //     project_domain = Domain.AND([
             //         domain_per_model['project.project'],
             //         project_domain,
             //         billable_project_domain,
             //     ])
-            // project_query = self.env['project.project']._where_calc(project_domain)
-            // self._apply_ir_rules(project_query, 'read')
+            // project_query = self.env['project.project']._search(project_domain)
             // project_sql = project_query.select(f'{self._table}.id ', f'{self._table}.sale_line_id')
             // 
             // Task = self.env['project.task']
             // task_domain = [('project_id', 'in', self.ids), ('sale_line_id', '!=', False)]
             // if Task._name in domain_per_model:
-            //     task_domain = expression.AND([
+            //     task_domain = Domain.AND([
             //         domain_per_model[Task._name],
             //         task_domain,
             //     ])
-            // task_query = Task._where_calc(task_domain)
-            // Task._apply_ir_rules(task_query, 'read')
+            // task_query = Task._search(task_domain)
             // task_sql = task_query.select(f'{Task._table}.project_id AS id', f'{Task._table}.sale_line_id')
             // 
             // ProjectMilestone = self.env['project.milestone']
             // milestone_domain = [('project_id', 'in', self.ids), ('allow_billable', '=', True), ('sale_line_id', '!=', False)]
             // if ProjectMilestone._name in domain_per_model:
-            //     milestone_domain = expression.AND([
+            //     milestone_domain = Domain.AND([
             //         domain_per_model[ProjectMilestone._name],
             //         milestone_domain,
             //         billable_project_domain,
             //     ])
-            // milestone_query = ProjectMilestone._where_calc(milestone_domain)
-            // ProjectMilestone._apply_ir_rules(milestone_query)
+            // milestone_query = ProjectMilestone._search(milestone_domain)
             // milestone_sql = milestone_query.select(
             //     f'{ProjectMilestone._table}.project_id AS id',
             //     f'{ProjectMilestone._table}.sale_line_id',
@@ -2687,7 +3036,7 @@ namespace Bamboo.Core.Application.Services
             //             ('project_id', 'in', self.ids),
             //         ]),
             // ]
-            // sale_order_line_query = SaleOrderLine._where_calc(sale_order_line_domain)
+            // sale_order_line_query = SaleOrderLine._search(sale_order_line_domain, bypass_access=True)
             // sale_order_line_sql = sale_order_line_query.select(
             //     f'{SaleOrderLine._table}.project_id AS id',
             //     f'{SaleOrderLine._table}.id AS sale_line_id',
@@ -2701,7 +3050,7 @@ namespace Bamboo.Core.Application.Services
             // if domain_per_model is None:
             //     domain_per_model = {'project.task': [('allow_billable', '=', True)]}
             // else:
-            //     domain_per_model['project.task'] = expression.AND([
+            //     domain_per_model['project.task'] = Domain.AND([
             //         domain_per_model.get('project.task', []),
             //         [('allow_billable', '=', True)],
             //     ])
@@ -2710,12 +3059,11 @@ namespace Bamboo.Core.Application.Services
             // Timesheet = self.env['account.analytic.line']
             // timesheet_domain = [('project_id', 'in', self.ids), ('so_line', '!=', False), ('project_id.allow_billable', '=', True)]
             // if Timesheet._name in domain_per_model:
-            //     timesheet_domain = expression.AND([
+            //     timesheet_domain = Domain.AND([
             //         domain_per_model.get(Timesheet._name, []),
             //         timesheet_domain,
             //     ])
-            // timesheet_query = Timesheet._where_calc(timesheet_domain)
-            // Timesheet._apply_ir_rules(timesheet_query, 'read')
+            // timesheet_query = Timesheet._search(timesheet_domain)
             // timesheet_sql = timesheet_query.select(
             //     f'{Timesheet._table}.project_id AS id',
             //     f'{Timesheet._table}.so_line AS sale_line_id',
@@ -2724,12 +3072,11 @@ namespace Bamboo.Core.Application.Services
             // EmployeeMapping = self.env['project.sale.line.employee.map']
             // employee_mapping_domain = [('project_id', 'in', self.ids), ('project_id.allow_billable', '=', True), ('sale_line_id', '!=', False)]
             // if EmployeeMapping._name in domain_per_model:
-            //     employee_mapping_domain = expression.AND([
+            //     employee_mapping_domain = Domain.AND([
             //         domain_per_model[EmployeeMapping._name],
             //         employee_mapping_domain,
             //     ])
-            // employee_mapping_query = EmployeeMapping._where_calc(employee_mapping_domain)
-            // EmployeeMapping._apply_ir_rules(employee_mapping_query, 'read')
+            // employee_mapping_query = EmployeeMapping._search(employee_mapping_domain)
             // employee_mapping_sql = employee_mapping_query.select(
             //     f'{EmployeeMapping._table}.project_id AS id',
             //     f'{EmployeeMapping._table}.sale_line_id',
@@ -2741,6 +3088,16 @@ namespace Bamboo.Core.Application.Services
             //     employee_mapping_sql,
             // ]))
             // return query
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetSaleOrdersDomainInternalAsync(object all_sale_orders)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_sale_orders_domain(self, all_sale_orders):
+            // return [("id", "in", all_sale_orders.ids)]
             */
             return default;
         }
@@ -2783,15 +3140,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def _get_stat_buttons(self):
-            // buttons = super(Project, self)._get_stat_buttons()
+            // buttons = super()._get_stat_buttons()
             // if not self.allow_timesheets or not self.env.user.has_group("hr_timesheet.group_hr_timesheet_user"):
             //     return buttons
             // 
             // encode_uom = self.env.company.timesheet_encode_uom_id
             // uom_ratio = self.env.ref('uom.product_uom_hour').factor / encode_uom.factor
             // 
-            // allocated = self.allocated_hours / uom_ratio
-            // effective = self.total_timesheet_time / uom_ratio
+            // allocated = self.allocated_hours * uom_ratio
+            // effective = self.total_timesheet_time
             // color = ""
             // if allocated:
             //     number = f"{round(effective)} / {round(allocated)} {encode_uom.name}"
@@ -2868,14 +3225,14 @@ namespace Bamboo.Core.Application.Services
             //     )
             // buttons = [{
             //     'icon': 'check',
-            //     'text': self.env._('Tasks'),
+            //     'text': self.label_tasks,
             //     'number': number,
             //     'action_type': 'object',
             //     'action': 'action_view_tasks',
             //     'show': True,
             //     'sequence': 1,
             // }]
-            // if self.rating_count != 0 and self.env.user.has_group('project.group_project_rating'):
+            // if self.rating_count != 0:
             //     if self.rating_avg >= rating_data.RATING_AVG_TOP:
             //         icon = 'smile-o text-success'
             //     elif self.rating_avg >= rating_data.RATING_AVG_OK:
@@ -2888,7 +3245,7 @@ namespace Bamboo.Core.Application.Services
             //         'number': f'{int(self.rating_avg) if self.rating_avg.is_integer() else round(self.rating_avg, 1)} / 5',
             //         'action_type': 'object',
             //         'action': 'action_view_all_rating',
-            //         'show': self.rating_active,
+            //         'show': self.show_ratings,
             //         'sequence': 15,
             //     })
             // if self.env.user.has_group('project.group_project_user'):
@@ -2914,38 +3271,36 @@ namespace Bamboo.Core.Application.Services
             // def _get_stat_buttons(self):
             // buttons = super()._get_stat_buttons()
             // if self.env.user.has_group('mrp.group_mrp_user'):
-            //     self_sudo = self.sudo()
             //     buttons.extend([{
             //         'icon': 'flask',
             //         'text': self.env._('Bills of Materials'),
-            //         'number': self_sudo.bom_count,
+            //         'number': self.bom_count,
             //         'action_type': 'object',
             //         'action': 'action_view_mrp_bom',
-            //         'show': self_sudo.bom_count > 0,
+            //         'show': self.bom_count > 0,
             //         'sequence': 35,
             //     },
             //     {
             //         'icon': 'wrench',
             //         'text': self.env._('Manufacturing Orders'),
-            //         'number': self_sudo.production_count,
+            //         'number': self.production_count,
             //         'action_type': 'object',
             //         'action': 'action_view_mrp_production',
-            //         'show': self_sudo.production_count > 0,
+            //         'show': self.production_count > 0,
             //         'sequence': 46,
             //     }])
             // return buttons
             --- ODOO METHOD SOURCE (MODULE: project_purchase, FILE: project_project.py) ---
             // def _get_stat_buttons(self):
-            // buttons = super(Project, self)._get_stat_buttons()
+            // buttons = super()._get_stat_buttons()
             // if self.env.user.has_group('purchase.group_purchase_user'):
-            //     self_sudo = self.sudo()
             //     buttons.append({
             //         'icon': 'credit-card',
             //         'text': self.env._('Purchase Orders'),
-            //         'number': self_sudo.purchase_orders_count,
+            //         'number': self.purchase_orders_count,
             //         'action_type': 'object',
             //         'action': 'action_open_project_purchase_orders',
-            //         'show': self_sudo.purchase_orders_count > 0,
+            //         'show': self.purchase_orders_count > 0,
             //         'sequence': 36,
             //     })
             // return buttons
@@ -2953,17 +3308,16 @@ namespace Bamboo.Core.Application.Services
             // def _get_stat_buttons(self):
             // buttons = super()._get_stat_buttons()
             // if self.env.user.has_group('sales_team.group_sale_salesman_all_leads'):
-            //     self_sudo = self.sudo()
             //     buttons.append({
             //         'icon': 'dollar',
             //         'text': self.env._('Sales Orders'),
-            //         'number': self_sudo.sale_order_count,
+            //         'number': self.sale_order_count,
             //         'action_type': 'object',
             //         'action': 'action_view_sos',
             //         'additional_context': json.dumps({
             //             'create_for_project_id': self.id,
             //         }),
-            //         'show': self_sudo.display_sales_stat_buttons and self_sudo.sale_order_count > 0,
+            //         'show': self.display_sales_stat_buttons and self.sale_order_count > 0,
             //         'sequence': 27,
             //     })
             // if self.env.user.has_group('sales_team.group_sale_salesman_all_leads'):
@@ -2977,28 +3331,133 @@ namespace Bamboo.Core.Application.Services
             //         'sequence': 28,
             //     })
             // if self.env.user.has_group('account.group_account_readonly'):
-            //     self_sudo = self.sudo()
             //     buttons.append({
             //         'icon': 'pencil-square-o',
             //         'text': self.env._('Invoices'),
-            //         'number': self_sudo.invoice_count,
+            //         'number': self.invoice_count,
             //         'action_type': 'object',
             //         'action': 'action_open_project_invoices',
-            //         'show': bool(self.account_id) and self_sudo.invoice_count > 0,
+            //         'show': bool(self.account_id) and self.invoice_count > 0,
             //         'sequence': 30,
             //     })
             // if self.env.user.has_group('account.group_account_readonly'):
-            //     self_sudo = self.sudo()
             //     buttons.append({
             //         'icon': 'pencil-square-o',
             //         'text': self.env._('Vendor Bills'),
-            //         'number': self_sudo.vendor_bill_count,
+            //         'number': self.vendor_bill_count,
             //         'action_type': 'object',
             //         'action': 'action_open_project_vendor_bills',
-            //         'show': self_sudo.vendor_bill_count > 0,
+            //         'show': self.vendor_bill_count > 0,
             //         'sequence': 38,
             //     })
             // return buttons
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetTemplateDefaultContextWhitelistInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_default_context_whitelist(self):
+            // """
+            // Whitelist of fields that can be set through the `default_` context keys when creating a project from a template.
+            // """
+            // return [
+            //     "allow_milestones",
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_template_default_context_whitelist(self):
+            // return [
+            //     *super()._get_template_default_context_whitelist(),
+            //     'allow_billable',
+            //     'from_sale_order_action',
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
+            // def _get_template_default_context_whitelist(self):
+            // return [
+            //     *super()._get_template_default_context_whitelist(),
+            //     "allow_timesheets",
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetTemplateFieldBlacklistInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_field_blacklist(self):
+            // """
+            // Blacklist of fields to not copy when creating a project from a template.
+            // """
+            // return [
+            //     "partner_id",
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetTemplateFromProjectUndoCallbacksInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_from_project_undo_callbacks(self):
+            // self.ensure_one()
+            // callbacks = {}
+            // if self.active:
+            //     self.action_archive()
+            //     callbacks["unarchive_project"] = True
+            // return callbacks
+            */
+            return default;
+        }
+
+        public async Task<ProjectProject> GetTemplateTasksAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def get_template_tasks(self):
+            // self.ensure_one()
+            // return self.env['project.task'].search_read(
+            //     [('project_id', '=', self.id), ('is_template', '=', True)],
+            //     ['id', 'name'],
+            // )
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProjectProject> GetTemplateToProjectConfirmationCallbacksInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_to_project_confirmation_callbacks(self):
+            // self.ensure_one()
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_template_to_project_confirmation_callbacks(self):
+            // callbacks = super()._get_template_to_project_confirmation_callbacks()
+            // if self._fetch_products_linked_to_template(limit=1):
+            //     callbacks['unlink_template_products'] = True
+            // return callbacks
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> GetTemplateToProjectWarningsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_to_project_warnings(self):
+            // self.ensure_one()
+            // return []
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_template_to_project_warnings(self):
+            // self.ensure_one()
+            // res = super()._get_template_to_project_warnings()
+            // if self.is_template and self._fetch_products_linked_to_template(limit=1):
+            //     res.append(self.env._('Converting this template to a regular project will unlink it from its associated products.'))
+            // return res
             */
             return default;
         }
@@ -3031,6 +3490,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProjectProject> GetViewActionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def _get_view_action(self):
+            // return self.env["ir.actions.act_window"]._for_xml_id("sale.action_orders")
+            */
+            return default;
+        }
+
         protected async Task<ProjectProject> GetViewInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -3050,7 +3519,27 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def _init_data_analytic_account(self):
-            // self.search([('account_id', '=', False), ('allow_timesheets', '=', True)])._create_analytic_account()
+            // self.search([('account_id', '=', False), ('allow_timesheets', '=', True), ('is_template', '=', False)])._create_analytic_account()
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> InverseAllowMilestonesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _inverse_allow_milestones(self):
+            // self._check_project_group_with_field('allow_milestones', 'project.group_project_milestone')
+            */
+            return default;
+        }
+
+        protected async Task<ProjectProject> InverseAllowRecurringTasksInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _inverse_allow_recurring_tasks(self):
+            // self._check_project_group_with_field('allow_recurring_tasks', 'project.group_project_recurring_tasks')
             */
             return default;
         }
@@ -3087,6 +3576,11 @@ namespace Bamboo.Core.Application.Services
             //     )
             // ):
             //     waiting_tasks.state = '01_in_progress'
+            // res = self._check_project_group_with_field('allow_task_dependencies', 'project.group_project_task_dependencies')
+            // # Hide/Show task waiting subtype when task dependencies feature is disabled/enabled
+            // if res or res is False:
+            //     self.env.ref('project.mt_task_waiting').hidden = not res
+            //     self.env.ref('project.mt_project_task_waiting').hidden = not res
             */
             return default;
         }
@@ -3102,7 +3596,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // for project in self:
             //     account = project.account_id
-            //     if project.partner_id and project.partner_id.company_id and project.company_id != project.partner_id.company_id:
+            //     if (
+            //         project.partner_id
+            //         and project.partner_id.company_id
+            //         and project.company_id
+            //         and project.company_id != project.partner_id.company_id
+            //     ):
             //         raise UserError(_('The project and the associated partner must be linked to the same company.'))
             //     if not account or not account.company_id:
             //         continue
@@ -3110,7 +3609,7 @@ namespace Bamboo.Core.Application.Services
             //     if (account.project_count > 1 or account.line_ids) and project.company_id != account.company_id:
             //         raise UserError(
             //             _("The project's company cannot be changed if its analytic account has analytic lines or if more than one project is linked to it."))
-            //     account.company_id = project.company_id
+            //     account.company_id = project.company_id or project.partner_id.company_id
             */
             return default;
         }
@@ -3121,8 +3620,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _mail_get_message_subtypes(self):
             // res = super()._mail_get_message_subtypes()
-            // if not self.rating_active:
-            //     res -= self.env.ref('project.mt_project_task_rating')
             // if len(self) == 1:
             //     waiting_subtype = self.env.ref('project.mt_project_task_waiting')
             //     if not self.allow_task_dependencies and waiting_subtype in res:
@@ -3139,7 +3636,6 @@ namespace Bamboo.Core.Application.Services
             // def map_tasks(self, new_project_id):
             // """ copy and map tasks from old to new project """
             // project = self.browse(new_project_id)
-            // new_tasks = self.env['project.task']
             // # We want to copy archived task, but do not propagate an active_test context key
             // tasks = self.env['project.task'].with_context(active_test=False).search([('project_id', '=', self.id), ('parent_id', '=', False)])
             // if self.allow_task_dependencies and 'task_mapping' not in self.env.context:
@@ -3148,17 +3644,10 @@ namespace Bamboo.Core.Application.Services
             // defaults = self._map_tasks_default_values(project)
             // new_tasks = tasks.with_context(copy_project=True).copy(defaults)
             // all_subtasks = new_tasks._get_all_subtasks()
-            // project.write({'tasks': [Command.set(new_tasks.ids)]})
-            // subtasks_not_displayed = all_subtasks.filtered(
-            //     lambda task: not task.display_in_project
-            // )
             // all_subtasks.filtered(
             //     lambda child: child.project_id == self
             // ).write({
             //     'project_id': project.id
-            // })
-            // subtasks_not_displayed.write({
-            //     'display_in_project': False
             // })
             // return True
             */
@@ -3196,7 +3685,7 @@ namespace Bamboo.Core.Application.Services
             // User update notification preference of project its propagated to all the tasks that the user is
             // currently following.
             // """
-            // res = super(Project, self).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            // res = super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             // if subtype_ids:
             //     project_subtypes = self.env['mail.message.subtype'].browse(subtype_ids)
             //     task_subtypes = (project_subtypes.mapped('parent_id') | project_subtypes.filtered(lambda sub: sub.internal or sub.default)).ids
@@ -3216,6 +3705,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def message_unsubscribe(self, partner_ids=None):
+            // self.task_ids.message_unsubscribe(partner_ids=partner_ids)
             // super().message_unsubscribe(partner_ids=partner_ids)
             // if partner_ids:
             //     self.env['project.collaborator'].search([('partner_id', 'in', partner_ids), ('project_id', 'in', self.ids)]).unlink()
@@ -3227,14 +3717,14 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // """ Give access to the portal user/customer if the project visibility is portal. """
             // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals=msg_vals)
             // if not self:
             //     return groups
             // 
             // self.ensure_one()
-            // portal_privacy = self.privacy_visibility == 'portal'
+            // portal_privacy = self.privacy_visibility in ['invited_users', 'portal']
             // for group_name, _group_method, group_data in groups:
             //     if group_name in ['portal', 'portal_customer'] and not portal_privacy:
             //         group_data['has_button_access'] = False
@@ -3264,8 +3754,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def _onchange_reinvoiced_sale_order_id(self):
-            // if not self.sale_line_id and self.reinvoiced_sale_order_id.order_line:
-            //     self.sale_line_id = self.reinvoiced_sale_order_id.order_line[0]
+            // if (
+            //     not self.sale_line_id
+            //     and (service_sols := self.reinvoiced_sale_order_id.order_line.filtered('is_service'))
+            // ):
+            //     self.sale_line_id = service_sols[0]
             */
             return default;
         }
@@ -3534,9 +4027,9 @@ namespace Bamboo.Core.Application.Services
             // def action_profitability_items(self, section_name, domain=None, res_id=False):
             // if section_name == 'purchase_order':
             //     action = {
-            //         'name': self.env._('Purchase Order Items'),
+            //         'name': self.env._('Purchase Orders'),
             //         'type': 'ir.actions.act_window',
-            //         'res_model': 'purchase.order.line',
+            //         'res_model': 'purchase.order',
             //         'views': [[False, 'list'], [False, 'form']],
             //         'domain': domain,
             //         'context': {
@@ -3605,7 +4098,7 @@ namespace Bamboo.Core.Application.Services
             // if section_name in ['billable_fixed', 'billable_time', 'billable_milestones', 'billable_manual', 'non_billable']:
             //     action = self.action_billable_time_button()
             //     if domain:
-            //         action['domain'] = expression.AND([[('project_id', '=', self.id)], domain])
+            //         action['domain'] = Domain.AND([[('project_id', '=', self.id)], domain])
             //     action['context'].update(search_default_groupby_timesheet_invoice_type=False, **self.env.context)
             //     graph_view = False
             //     if section_name == 'billable_time':
@@ -3658,7 +4151,18 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def action_project_timesheets(self):
             // action = self.env['ir.actions.act_window']._for_xml_id('hr_timesheet.act_hr_timesheet_line_by_project')
-            // action['display_name'] = _("%(name)s's Timesheets", name=self.name)
+            // if not self.env.context.get('from_embedded_action'):
+            //     action['display_name'] = _("%(name)s's Timesheets", name=self.name)
+            // return action
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
+            // def action_project_timesheets(self):
+            // action = super().action_project_timesheets()
+            // if not self.allow_billable:
+            //     context = action['context'].replace('active_id', str(self.id))
+            //     action['context'] = {
+            //         **ast.literal_eval(context),
+            //         'hide_so_line': True,
+            //     }
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -3681,9 +4185,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _search_is_favorite(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // return [('favorite_user_ids', 'in' if (operator == '=') == value else 'not in', self.env.uid)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('favorite_user_ids', 'in', [self.env.uid])]
             */
             return default;
         }
@@ -3693,20 +4197,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def _search_is_internal_project(self, operator, value):
-            // if not isinstance(value, bool):
-            //     raise ValueError(_('Invalid value: %s', value))
-            // if operator not in ['=', '!=']:
-            //     raise ValueError(_('Invalid operator: %s', operator))
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // 
             // Company = self.env['res.company']
-            // sql = Company._where_calc(
-            //     [('internal_project_id', '!=', False)], active_test=False
+            // sql = Company._search(
+            //     [('internal_project_id', '!=', False)],
+            //     active_test=False, bypass_access=True,
             // ).subselect("internal_project_id")
-            // if (operator == '=' and value is True) or (operator == '!=' and value is False):
-            //     operator_new = 'in'
-            // else:
-            //     operator_new = 'not in'
-            // return [('id', operator_new, sql)]
+            // return [('id', operator, sql)]
             */
             return default;
         }
@@ -3716,10 +4215,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _search_is_milestone_exceeded(self, operator, value):
-            // if not isinstance(value, bool):
-            //     raise ValueError(_('Invalid value: %s', value))
-            // if operator not in ['=', '!=']:
-            //     raise ValueError(_('Invalid operator: %s', operator))
+            // if operator != 'in':
+            //     return NotImplemented
             // 
             // sql = SQL("""(
             //     SELECT P.id
@@ -3729,11 +4226,7 @@ namespace Bamboo.Core.Application.Services
             //        AND P.allow_milestones IS true
             //        AND M.deadline <= CAST(now() AS date)
             // )""")
-            // if (operator == '=' and value is True) or (operator == '!=' and value is False):
-            //     operator_new = 'in'
-            // else:
-            //     operator_new = 'not in'
-            // return [('id', operator_new, sql)]
+            // return [('id', 'any', sql)]
             */
             return default;
         }
@@ -3743,10 +4236,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
             // def _search_is_project_overtime(self, operator, value):
-            // if not isinstance(value, bool):
-            //     raise ValueError(_('Invalid value: %s', value))
-            // if operator not in ['=', '!=']:
-            //     raise ValueError(_('Invalid operator: %s', operator))
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // 
             // sql = SQL("""(
             //     SELECT Project.id
@@ -3760,11 +4251,7 @@ namespace Bamboo.Core.Application.Services
             //   GROUP BY Project.id
             //     HAVING Project.allocated_hours - SUM(Task.effective_hours) < 0
             // )""")
-            // if (operator == '=' and value is True) or (operator == '!=' and value is False):
-            //     operator_new = 'in'
-            // else:
-            //     operator_new = 'not in'
-            // return [('id', operator_new, sql)]
+            // return [('id', operator, sql)]
             */
             return default;
         }
@@ -3776,63 +4263,23 @@ namespace Bamboo.Core.Application.Services
             // def _search_pricing_type(self, operator, value):
             // """ Search method for pricing_type field.
             // 
-            //     This method returns a domain based on the operator and the value given in parameter:
-            //     - operator = '=':
-            //         - value = 'task_rate': [('sale_line_employee_ids', '=', False), ('sale_line_id', '=', False), ('allow_billable', '=', True)]
-            //         - value = 'fixed_rate': [('sale_line_employee_ids', '=', False), ('sale_line_id', '!=', False), ('allow_billable', '=', True)]
-            //         - value = 'employee_rate': [('sale_line_employee_ids', '!=', False), ('allow_billable', '=', True)]
-            //         - value is False: [('allow_billable', '=', False)]
-            //     - operator = '!=':
-            //         - value = 'task_rate': ['|', '|', ('sale_line_employee_ids', '!=', False), ('sale_line_id', '!=', False), ('allow_billable', '=', False)]
-            //         - value = 'fixed_rate': ['|', '|', ('sale_line_employee_ids', '!=', False), ('sale_line_id', '=', False), ('allow_billable', '=', False)]
-            //         - value = 'employee_rate': ['|', ('sale_line_employee_ids', '=', False), ('allow_billable', '=', False)]
-            //         - value is False: [('allow_billable', '!=', False)]
-            // 
             //     :param operator: the supported operator is either '=' or '!='.
             //     :param value: the value than the field should be is among these values into the following tuple: (False, 'task_rate', 'fixed_rate', 'employee_rate').
             // 
             //     :returns: the domain to find the expected projects.
             // """
-            // if operator not in ('=', '!='):
-            //     raise UserError(_('Operation not supported'))
-            // if not ((isinstance(value, bool) and value is False) or (isinstance(value, str) and value in ('task_rate', 'fixed_rate', 'employee_rate'))):
-            //     raise UserError(_('Value does not exist in the pricing type'))
-            // if value is False:
-            //     return [('allow_billable', operator, value)]
-            // 
-            // sol_cond = ('sale_line_id', '!=', False)
-            // mapping_cond = ('sale_line_employee_ids', '!=', False)
-            // if value == 'task_rate':
-            //     domain = [expression.NOT_OPERATOR, sol_cond, expression.NOT_OPERATOR, mapping_cond]
-            // elif value == 'fixed_rate':
-            //     domain = [sol_cond, expression.NOT_OPERATOR, mapping_cond]
-            // else:  # value == 'employee_rate'
-            //     domain = [mapping_cond]
-            // 
-            // domain = expression.AND([domain, [('allow_billable', '=', True)]])
-            // domain = expression.normalize_domain(domain)
-            // if operator != '=':
-            //     domain.insert(0, expression.NOT_OPERATOR)
-            // domain = expression.distribute_not(domain)
-            // return domain
-            */
-            return default;
-        }
-
-        protected async Task<ProjectProject> SendRatingAllInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _send_rating_all(self):
-            // projects = self.search([
-            //     ('rating_active', '=', True),
-            //     ('rating_status', '=', 'periodic'),
-            //     ('rating_request_deadline', '<=', fields.Datetime.now())
-            // ])
-            // for project in projects:
-            //     project.task_ids._send_task_rating_mail()
-            //     project._compute_rating_request_deadline()
-            //     self.env.cr.commit()
+            // if operator != 'in':
+            //     return NotImplemented
+            // domains = []
+            // if 'task_rate' in value:
+            //     domains.append([('sale_line_employee_ids', '=', False), ('sale_line_id', '=', False), ('allow_billable', '=', True)])
+            // if 'fixed_rate' in value:
+            //     domains.append([('sale_line_employee_ids', '=', False), ('sale_line_id', '!=', False), ('allow_billable', '=', True)])
+            // if 'employee_rate' in value:
+            //     domains.append([('sale_line_employee_ids', '!=', False), ('allow_billable', '=', True)])
+            // if False in value:
+            //     domains.append([('allow_billable', '=', False)])
+            // return Domain.OR(domains)
             */
             return default;
         }
@@ -3842,9 +4289,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project_sms, FILE: project_project.py) ---
             // def _send_sms(self):
-            // for project in self:
+            // for project in self.sudo():
             //     if project.partner_id and project.stage_id and project.stage_id.sms_template_id:
-            //         project._message_sms_with_template(
+            //         project.with_env(self.env)._message_sms_with_template(
             //             template=project.stage_id.sms_template_id,
             //             partner_ids=project.partner_id.ids,
             //         )
@@ -3894,16 +4341,32 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProjectProject> ThreadToStoreInternalAsync()
+        public async Task<ProjectProject> TemplateToProjectConfirmationCallbackAsync(Guid id, ProjectProjectTemplateToProjectConfirmationCallbackRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _thread_to_store(self, store: Store, /, *, request_list=None, **kwargs):
-            // super()._thread_to_store(store, request_list=request_list, **kwargs)
+            // def template_to_project_confirmation_callback(self, callbacks):
+            // self.ensure_one()
+            // pass
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
+            // def template_to_project_confirmation_callback(self, callbacks):
+            // super().template_to_project_confirmation_callback(callbacks)
+            // if callbacks.get('unlink_template_products'):
+            //     self._fetch_products_linked_to_template().project_template_id = False
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProjectProject> ThreadToStoreInternalAsync(object store, object fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _thread_to_store(self, store: Store, fields, *, request_list=None):
+            // super()._thread_to_store(store, fields, request_list=request_list)
             // if request_list and "followers" in request_list:
             //     store.add(
             //         self,
-            //         {"collaborator_ids": Store.many(self.collaborator_ids.partner_id, only_id=True)},
+            //         {"collaborator_ids": Store.Many(self.collaborator_ids.partner_id, [])},
             //         as_thread=True,
             //     )
             */
@@ -3927,6 +4390,61 @@ namespace Bamboo.Core.Application.Services
             // favorite_projects.write({'favorite_user_ids': [(3, self.env.uid)]})
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ProjectProject> ToggleProjectTemplateModeAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_toggle_project_template_mode(self):
+            // self.ensure_one()
+            // config = {
+            //     "params": {
+            //         "project_id": self.id,
+            //     },
+            // }
+            // if self.is_template:
+            //     config["tag"] = "project_template_show_undo_confirmation_dialog"
+            //     if callbacks := self._get_template_to_project_confirmation_callbacks():
+            //         config["params"]["callback_data"] = {
+            //             "method": "template_to_project_confirmation_callback",
+            //             "args": [self.id, callbacks],
+            //         }
+            //     if warning_messages := self._get_template_to_project_warnings():
+            //         config["params"]["message"] = self.env._(
+            //             "%(warning_messages)s\nAre you sure you want to continue?",
+            //             warning_messages="\n".join(warning_messages),
+            //         )
+            //     else:
+            //         config["params"]["message"] = self.env._(
+            //             "This project is currently a template. Would you like to convert it back into a regular project?",
+            //         )
+            // else:
+            //     config["tag"] = "project_to_template_redirection_action"
+            // return {
+            //     "type": "ir.actions.client",
+            //     **config,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProjectProject> ToggleTemplateModeInternalAsync(object is_template)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
+            // def _toggle_template_mode(self, is_template):
+            // if not is_template and self.allow_timesheets and not self.account_id:
+            //     self._create_analytic_account()
+            // super()._toggle_template_mode(is_template)
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _toggle_template_mode(self, is_template):
+            // self.ensure_one()
+            // self.is_template = is_template
+            // if not is_template:
+            //     self.task_ids.role_ids = False
+            */
+            return default;
         }
 
         protected async Task<ProjectProject> TrackSubtypeInternalAsync(object init_values)
@@ -3958,6 +4476,29 @@ namespace Bamboo.Core.Application.Services
             // return res
             */
             return default;
+        }
+
+        public async Task<ProjectProject> UndoConvertToTemplateAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_undo_convert_to_template(self):
+            // self.ensure_one()
+            // self._toggle_template_mode(False)
+            // self.message_post(body=self.env._("Template converted back to regular project."))
+            // return {
+            //     "type": "ir.actions.client",
+            //     "tag": "display_notification",
+            //     "params": {
+            //         "message": self.env._("Template converted back to regular project."),
+            //         "next": {
+            //             "type": "ir.actions.client",
+            //             "tag": "soft_reload",
+            //         },
+            //     },
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ProjectProject> UnlinkExceptContainsEntriesInternalAsync()
@@ -4009,7 +4550,7 @@ namespace Bamboo.Core.Application.Services
             // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
             // action['display_name'] = _("%(name)s's Rating", name=self.name)
             // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context.update(self._context)
+            // action_context.update(self.env.context)
             // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
             // action_context.pop('group_by', None)
             // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
@@ -4115,33 +4656,22 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // all_sale_orders = self._fetch_sale_order_items({'project.task': [('is_closed', '=', False)]}).sudo().order_id
             // embedded_action_context = self.env.context.get('from_embedded_action', False)
-            // action_window = {
-            //     "type": "ir.actions.act_window",
-            //     "res_model": "sale.order",
-            //     'name': _("%(name)s's Sales Orders", name=self.name),
-            //     "context": {
-            //         "create": self.env.context.get('create_for_project_id', embedded_action_context),
-            //         "show_sale": True,
-            //         'default_partner_id': self.partner_id.id,
-            //         'default_project_id': self.id,
-            //         "create_for_project_id": self.id if not embedded_action_context else False,
-            //         "from_embedded_action": embedded_action_context
-            //     },
-            //     'help': "<p class='o_view_nocontent_smiling_face'>%s</p><p>%s<br/>%s</p>" %
-            //     (_("Create a new quotation, the first step of a new sale!"),
-            //         _("Once the quotation is confirmed by the customer, it becomes a sales order."),
-            //         _("You will be able to create an invoice and collect the payment."))
+            // action_window = self._get_view_action()
+            // action_window["display_name"] = self.env._("%(name)s's %(action_name)s", name=self.name, action_name=action_window.get('name'))
+            // action_window["domain"] = self._get_sale_orders_domain(all_sale_orders)
+            // action_window['context'] = {
+            //     **ast.literal_eval(action_window['context']),
+            //     "create": self.env.context.get("create_for_project_id", embedded_action_context),
+            //     "show_sale": True,
+            //     "default_partner_id": self.partner_id.id,
+            //     "default_project_id": self.id,
+            //     "create_for_project_id": self.id if not embedded_action_context else False,
+            //     "from_embedded_action": embedded_action_context,
             // }
             // if len(all_sale_orders) <= 1 and not embedded_action_context:
             //     action_window.update({
             //         "res_id": all_sale_orders.id,
             //         "views": [[False, "form"]],
-            //     })
-            // else:
-            //     action_window.update({
-            //         "domain": [('id', 'in', all_sale_orders.ids)],
-            //         "views": [[False, "list"], [False, "kanban"], [False, "calendar"], [False, "pivot"],
-            //                    [False, "graph"], [False, "activity"], [False, "form"]],
             //     })
             // return action_window
             */
@@ -4180,9 +4710,15 @@ namespace Bamboo.Core.Application.Services
             // context = ast.literal_eval(context)
             // context.update({
             //     'create': self.active,
-            //     'active_test': self.active
+            //     'active_test': self.active,
+            //     'active_id': self.id,
+            //     'allow_milestones': self.allow_milestones,
+            //     'allow_task_dependencies': self.allow_task_dependencies,
             //     })
             // action['context'] = context
+            // if self.is_template:
+            //     action['context'].update({'template_project': True})
+            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type not in ('pivot', 'graph')]
             // return action
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_project.py) ---
             // def action_view_tasks(self):
@@ -4200,6 +4736,29 @@ namespace Bamboo.Core.Application.Services
             // 
             // action = super().action_view_tasks()
             // action['context']['hide_partner'] = self._get_hide_partner()
+            // action['context']['allow_billable'] = self.allow_billable
+            // if self.env.context.get("from_sale_order_action"):
+            //     context = dict(action.get("context", {}))
+            //     context.pop("search_default_open_tasks", None)
+            //     if sale_order_id := self.env.context.get('default_reinvoiced_sale_order_id') or self.reinvoiced_sale_order_id.id:
+            //         context["search_default_sale_order_id"] = sale_order_id
+            //     if not self.sale_order_id:
+            //         sale_order = self.env["sale.order"].browse(self.env.context.get("active_id"))
+            //         context["default_sale_order_id"] = sale_order.id
+            //     action["context"] = context
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ProjectProject> ViewTasksFromProjectMilestoneAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks_from_project_milestone(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_milestone_action_view_tasks')
+            // action['display_name'] = _("Tasks")
+            // action['domain'] = [('milestone_id', 'in', self.milestone_ids.ids)]
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -4241,18 +4800,18 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_project.py) ---
-            // def write(self, values):
+            // def write(self, vals):
             // # create the AA for project still allowing timesheet
-            // if values.get('allow_timesheets') and not values.get('account_id'):
-            //     project_wo_account = self.filtered(lambda project: not project.account_id)
+            // if vals.get('allow_timesheets') and not vals.get('account_id'):
+            //     project_wo_account = self.filtered(lambda project: not project.account_id and not project.is_template)
             //     if project_wo_account:
             //         project_wo_account._create_analytic_account()
-            // return super(Project, self).write(values)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def write(self, vals):
             // if vals.get('access_token'):
             //     self.ensure_one()  # We are not supposed to add a single access token to multiple project
-            //     if self.privacy_visibility != 'portal':
+            //     if self.privacy_visibility not in ['invited_users', 'portal']:
             //         vals['access_token'] = ''
             // 
             // # Here we modify the project's stage according to the selected company (selecting the first
@@ -4302,10 +4861,13 @@ namespace Bamboo.Core.Application.Services
             //     elif (date_end_update and no_current_date_begin and not date_start_update):
             //         del vals['date']
             // 
-            // res = super(Project, self).write(vals) if vals else True
+            // res = super().write(vals) if vals else True
             // 
             // if 'allow_task_dependencies' in vals and not vals.get('allow_task_dependencies'):
             //     self.env['project.task'].search([('project_id', 'in', self.ids), ('state', '=', '04_waiting_normal')]).write({'state': '01_in_progress'})
+            // 
+            // if 'allow_recurring_tasks' in vals and not vals['allow_recurring_tasks']:
+            //     self.env['project.task'].search([('project_id', 'in', self.ids), ('recurring_task', '=', True)]).write({'recurring_task': False})
             // 
             // if 'active' in vals:
             //     # archiving/unarchiving a project does it on its tasks, too
@@ -4334,9 +4896,9 @@ namespace Bamboo.Core.Application.Services
             //     self._ensure_sale_order_linked([sol_id])
             // return project
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_project.py) ---
-            // def write(self, values):
-            // res = super().write(values)
-            // if 'allow_billable' in values and not values.get('allow_billable'):
+            // def write(self, vals):
+            // res = super().write(vals)
+            // if 'allow_billable' in vals and not vals.get('allow_billable'):
             //     self.task_ids._get_timesheet().write({
             //         'so_line': False,
             //     })
@@ -4353,12 +4915,11 @@ namespace Bamboo.Core.Application.Services
             // count_fields = {fname for fname in self._fields if 'count' in fname}
             // if count_field not in count_fields:
             //     raise ValueError(f"Parameter 'count_field' can only be one of {count_fields}, got {count_field} instead.")
-            // domain = [('project_id', 'in', self.ids), ('display_in_project', '=', True)]
+            // domain = Domain('project_id', 'in', self.ids) & Domain('is_template', '=', False)
             // if additional_domain:
-            //     domain = AND([domain, additional_domain])
-            // tasks_count_by_project = dict(self.env['project.task'].with_context(
-            //     active_test=any(project.active for project in self)
-            // )._read_group(domain, ['project_id'], ['__count']))
+            //     domain &= Domain(additional_domain)
+            // ProjectTask = self.env['project.task'].with_context(active_test=any(project.active for project in self))
+            // tasks_count_by_project = dict(ProjectTask._read_group(domain, ['project_id'], ['__count']))
             // for project in self:
             //     project.update({count_field: tasks_count_by_project.get(project, 0)})
             */

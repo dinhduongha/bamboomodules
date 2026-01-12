@@ -78,11 +78,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> CreateAbTestingUtmCampaignsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> CreateAliasAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
+        Task<TEntity> CreateAndGetAliasAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> CreateAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> CreateAttachmentsFromInlineImagesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object b64images) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
-        Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
+        Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> FixAttachmentOwnershipInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
-        Task<TEntity> FormatForFrontendInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> GenerateMailingRecipientTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid document_id, object email) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> GenerateMailingReportTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid user_id) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> GetAbTestingDescriptionModifyingFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
@@ -112,8 +112,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> PostWelcomeStepsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object discuss_channel) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> PrepareStatisticsEmailValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> ProcessMassMailingQueueInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
+        Task<TEntity> ToStoreDefaultsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> UnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
         Task<TEntity> ValidateEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_address, object discuss_channel) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
-        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
+        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IUtmSourceMixinable;
     }
 }

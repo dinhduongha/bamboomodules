@@ -10,19 +10,23 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrExpenseAppService : IGenericApplicationService<HrExpense>
     {
+        Task<HrExpense> ApproveAsync(Guid id);
         Task<HrExpense> ApproveDuplicatesAsync(Guid id);
         Task<HrExpense> AttachDocumentAsync(Guid id);
-        Task<HrExpense> CheckAmountNotZeroAsync(Guid id, HrExpenseCheckAmountNotZeroRequestDto input);
         Task<HrExpense> CreateExpenseFromAttachmentsAsync(Guid id, HrExpenseCreateExpenseFromAttachmentsRequestDto input);
-        Task<HrExpense> GetAttachmentViewAsync(Guid id);
         Task<HrExpense> GetEmptyListHelpAsync(Guid id, HrExpenseGetEmptyListHelpRequestDto input);
-        Task<HrExpense> GetExpenseAttachmentsAsync(Guid id);
         Task<HrExpense> GetExpenseDashboardAsync(Guid id);
-        Task<HrExpense> GetExpensesToSubmitAsync(Guid id);
         Task<HrExpense> MessageNewAsync(Guid id, HrExpenseMessageNewRequestDto input);
+        Task<HrExpense> OpenAccountMoveAsync(Guid id);
+        Task<HrExpense> OpenSaleOrderAsync(Guid id);
+        Task<HrExpense> OpenSplitExpenseAsync(Guid id);
+        Task<HrExpense> PayAsync(Guid id);
+        Task<HrExpense> PostAsync(Guid id);
+        Task<HrExpense> RefuseAsync(Guid id);
+        Task<HrExpense> ResetAsync(Guid id);
         Task<HrExpense> ShowSameReceiptExpenseIdsAsync(Guid id);
         Task<HrExpense> SplitWizardAsync(Guid id);
-        Task<HrExpense> SubmitExpensesAsync(Guid id);
-        Task<HrExpense> ViewSheetAsync(Guid id);
+        Task<HrExpense> SubmitAsync(Guid id);
+        Task<HrExpense> UpdateActivitiesAndMailsAsync(Guid id);
     }
 }

@@ -87,11 +87,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_bom.py) ---
             // def _get_cost_share(self):
             // self.ensure_one()
-            // if self.cost_share:
+            // product = self.env.context.get('bom_variant_id', self.env['product.product'])
+            // variant_bom_lines = self.bom_id.bom_line_ids.filtered(lambda bl: not bl._skip_bom_line(product) and not bl.product_uom_id.is_zero(bl.product_qty))
+            // if not float_is_zero(self.cost_share, precision_digits=2) or not len(variant_bom_lines) or not all(float_is_zero(bom_line.cost_share, precision_digits=2) for bom_line in variant_bom_lines):
             //     return self.cost_share / 100
-            // bom = self.bom_id
-            // bom_lines_without_cost_share = bom.bom_line_ids.filtered(lambda bl: not bl.cost_share)
-            // return 1 / len(bom_lines_without_cost_share)
+            // return 1 / len(variant_bom_lines)
             */
             return default;
         }
@@ -102,6 +102,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _get_default_product_uom_id(self):
             // return self.env['uom.uom'].search([], limit=1, order='id').id
+            */
+            return default;
+        }
+
+        protected async Task<MrpBomLine> GetLineCostShareInternalAsync(object product, object boms_done)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_bom.py) ---
+            // def _get_line_cost_share(self, product, boms_done):
+            // if not self:
+            //     return 100.0
+            // self.ensure_one()
+            // parent_cost_share = next((vals.get('bom_cost_share', 100.0) for bom, vals in reversed(boms_done) if bom == self.bom_id), 100)
+            // line_cost_share = parent_cost_share * self.with_context(bom_variant_id=product)._get_cost_share()
+            // return line_cost_share
             */
             return default;
         }
@@ -124,6 +139,7 @@ namespace Bamboo.Core.Application.Services
             //             )
             //         ),
             //         'readOnly': len(self) > 1,
+            //         'uomDisplayName': len(self) == 1 and self.product_uom_id.display_name or self.product_id.uom_id.display_name,
             //     }
             // return {
             //     'quantity': 0,
@@ -143,20 +159,34 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MrpBomLine> OnchangeProductUomIdAsync(Guid id)
+        protected async Task<MrpBomLine> PrepareBomDoneValuesInternalAsync(object quantity, object product, object original_quantity, object boms_done)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def onchange_product_uom_id(self):
-            // res = {}
-            // if not self.product_uom_id or not self.product_id:
-            //     return res
-            // if self.product_uom_id.category_id != self.product_id.uom_id.category_id:
-            //     self.product_uom_id = self.product_id.uom_id.id
-            //     res['warning'] = {'title': _('Warning'), 'message': _('The Product Unit of Measure you chose has a different category than in the product form.')}
-            // return res
+            // def _prepare_bom_done_values(self, quantity, product, original_quantity, boms_done):
+            // return {'qty': quantity, 'product': product, 'original_qty': original_quantity, 'parent_line': self}
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_bom.py) ---
+            // def _prepare_bom_done_values(self, quantity, product, original_quantity, boms_done):
+            // result = super()._prepare_bom_done_values(quantity, product, original_quantity, boms_done)
+            // result['bom_cost_share'] = self._get_line_cost_share(product, boms_done)
+            // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<MrpBomLine> PrepareLineDoneValuesInternalAsync(object quantity, object product, object original_quantity, object parent_line, object boms_done)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _prepare_line_done_values(self, quantity, product, original_quantity, parent_line, boms_done):
+            // return {'qty': quantity, 'product': product, 'original_qty': original_quantity, 'parent_line': parent_line}
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_bom.py) ---
+            // def _prepare_line_done_values(self, quantity, product, original_quantity, parent_line, boms_done):
+            // result = super()._prepare_line_done_values(quantity, product, original_quantity, parent_line, boms_done)
+            // result['line_cost_share'] = float_round(self._get_line_cost_share(product, boms_done), precision_digits=2)
+            // return result
+            */
+            return default;
         }
 
         public async Task<MrpBomLine> SeeAttachmentsAsync(Guid id)

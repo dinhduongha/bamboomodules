@@ -51,10 +51,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-peppol-ready-moves")]
-        public async Task<IActionResult> ActionPeppolReadyMovesAsync(Guid id)
+        [Route("{id}/action-post-all-entries")]
+        public async Task<IActionResult> ActionPostAllEntriesAsync(Guid id)
         {
-            var result = await _appService.PeppolReadyMovesAsync(id);
+            var result = await _appService.PostAllEntriesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/button-fetch-in-einvoices")]
+        public async Task<IActionResult> ButtonFetchInEinvoicesAsync(Guid id)
+        {
+            var result = await _appService.ButtonFetchInEinvoicesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/button-refresh-out-einvoices-status")]
+        public async Task<IActionResult> ButtonRefreshOutEinvoicesStatusAsync(Guid id)
+        {
+            var result = await _appService.ButtonRefreshOutEinvoicesStatusAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/button-unsubscribe-from-invoice-notifications")]
+        public async Task<IActionResult> ButtonUnsubscribeFromInvoiceNotificationsAsync(Guid id)
+        {
+            var result = await _appService.ButtonUnsubscribeFromInvoiceNotificationsAsync(id);
             return Ok(result);
         }
         
@@ -99,14 +123,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-next-bank-cash-default-code")]
-        public async Task<IActionResult> GetNextBankCashDefaultCodeAsync(Guid id, [FromBody] AccountJournalGetNextBankCashDefaultCodeRequestDto input)
-        {
-            var result = await _appService.GetNextBankCashDefaultCodeAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/open-action")]
         public async Task<IActionResult> OpenActionAsync(Guid id)
         {
@@ -131,26 +147,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/open-invalid-statements-action")]
+        public async Task<IActionResult> OpenInvalidStatementsActionAsync(Guid id)
+        {
+            var result = await _appService.OpenInvalidStatementsActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/open-payments-action")]
         public async Task<IActionResult> OpenPaymentsActionAsync(Guid id, [FromBody] AccountJournalOpenPaymentsActionRequestDto input)
         {
             var result = await _appService.OpenPaymentsActionAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/peppol-get-message-status")]
-        public async Task<IActionResult> PeppolGetMessageStatusAsync(Guid id)
-        {
-            var result = await _appService.PeppolGetMessageStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/peppol-get-new-documents")]
-        public async Task<IActionResult> PeppolGetNewDocumentsAsync(Guid id)
-        {
-            var result = await _appService.PeppolGetNewDocumentsAsync(id);
             return Ok(result);
         }
         

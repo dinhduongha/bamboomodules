@@ -16,10 +16,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<AccountMoveLine> CopyDataAsync(Guid id, AccountMoveLineCopyDataRequestDto input);
         Task<AccountMoveLine> FlushModelAsync(Guid id, AccountMoveLineFlushModelRequestDto input);
         Task<AccountMoveLine> FlushRecordsetAsync(Guid id, AccountMoveLineFlushRecordsetRequestDto input);
+        Task<AccountMoveLine> GetColumnToExcludeForColspanCalculationAsync(Guid id, AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input);
         Task<AccountMoveLine> GetImportTemplatesAsync(Guid id);
         Task<AccountMoveLine> GetInvoiceLineAccountAsync(Guid id, AccountMoveLineGetInvoiceLineAccountRequestDto input);
+        Task<AccountMoveLine> GetParentSectionLineAsync(Guid id);
+        Task<AccountMoveLine> GetSectionSubtotalAsync(Guid id);
         Task<AccountMoveLine> GetViewsAsync(Guid id, AccountMoveLineGetViewsRequestDto input);
-        Task<AccountMoveLine> InitAsync(Guid id);
         Task<AccountMoveLine> InvalidateModelAsync(Guid id, AccountMoveLineInvalidateModelRequestDto input);
         Task<AccountMoveLine> InvalidateRecordsetAsync(Guid id, AccountMoveLineInvalidateRecordsetRequestDto input);
         Task<AccountMoveLine> OnchangeAssetCategoryIdAsync(Guid id);

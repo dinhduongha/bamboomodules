@@ -648,7 +648,9 @@ namespace Bamboo.Core.Application.Services
             //         lines = challenge._get_serialized_challenge_lines(user, restrict_goals=subset_goals)
             //         if not lines:
             //             continue
-            // 
+            //         # Avoid error if 'full_suffix' is missing in the line
+            //         for line in lines:
+            //             line.setdefault('full_suffix', '')
             //         body_html = challenge.report_template_id.with_user(user).with_context(challenge_lines=lines)._render_field('body_html', challenge.ids)[challenge.id]
             // 
             //         # notify message only to users, do not post on the challenge
@@ -709,7 +711,8 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // 
             // Goals = self.env['gamification.goal']
-            // 
+            // self.flush_recordset()
+            // self.user_ids.presence_ids.flush_recordset()
             // # include yesterday goals to update the goals that just ended
             // # exclude goals for users that have not interacted with the
             // # webclient since the last update or whose session is no longer
@@ -717,9 +720,9 @@ namespace Bamboo.Core.Application.Services
             // yesterday = fields.Date.to_string(date.today() - timedelta(days=1))
             // self.env.cr.execute("""SELECT gg.id
             //                 FROM gamification_goal as gg
-            //                 JOIN bus_presence as bp ON bp.user_id = gg.user_id
-            //                WHERE gg.write_date <= bp.last_presence
-            //                  AND bp.last_presence >= now() AT TIME ZONE 'UTC' - interval '%(session_lifetime)s seconds'
+            //                 JOIN mail_presence as mp ON mp.user_id = gg.user_id
+            //                WHERE gg.write_date <= mp.last_presence
+            //                  AND mp.last_presence >= now() AT TIME ZONE 'UTC' - interval '%(session_lifetime)s seconds'
             //                  AND gg.closed IS NOT TRUE
             //                  AND gg.challenge_id IN %(challenge_ids)s
             //                  AND (gg.state = 'inprogress'

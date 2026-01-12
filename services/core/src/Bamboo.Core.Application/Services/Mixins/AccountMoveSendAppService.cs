@@ -30,17 +30,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def action_what_is_peppol_activate(self, moves):
             // companies = moves.company_id
-            // can_send = self.env['account_edi_proxy_client.user']._get_can_send_domain()
-            // if len(companies) == 1 and companies.account_peppol_proxy_state not in can_send:
+            // if len(companies) == 1 and not companies.peppol_can_send:
             //     action = self.env['peppol.registration']._action_open_peppol_form()
-            //     action['context'].update({
-            //         'active_model': 'account.move',
+            //     action['context'] = {
+            //         'active_model': "account.move",
             //         'active_ids': moves.ids,
             //         'dialog_size': 'medium',
-            //     })
+            //         **action['context'],
+            //     }
             //     return action
             // else:
-            //     return moves.action_send_and_print()
+            //     # go back to previous (send and print) action
+            //     # to avoid doing participant SML lookup again, we don't go through action_send_and_print
+            //     return {
+            //         'name': _("Send"),
+            //         'type': 'ir.actions.act_window',
+            //         'view_mode': 'form',
+            //         'res_model': 'account.move.send.wizard' if len(moves) == 1 else 'account.move.send.batch.wizard',
+            //         'target': 'new',
+            //         'context': {
+            //             'active_model': 'account.move',
+            //             'active_ids': moves.ids
+            //         },
+            //     }
             */
             return default;
         }
@@ -62,19 +74,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // invoices_data_peppol = {}
             // for invoice, invoice_data in invoices_data.items():
             //     partner = invoice.partner_id.commercial_partner_id.with_company(invoice.company_id)
-            //     if 'peppol' in invoice_data['sending_methods']:
-            //         if not partner.peppol_eas or not partner.peppol_endpoint:
-            //             invoice.peppol_move_state = 'error'
-            //             invoice_data['error'] = _('The partner is missing Peppol EAS and/or Endpoint identifier.')
-            //             continue
-            // 
-            //         if self.env['res.partner']._get_peppol_verification_state(partner.peppol_endpoint, partner.peppol_eas, invoice_data['invoice_edi_format']) != 'valid':
-            //             invoice.peppol_move_state = 'error'
-            //             invoice_data['error'] = _('Please verify partner configuration in partner settings.')
-            //             continue
-            // 
-            //         if not self._is_applicable_to_move('peppol', invoice, **invoice_data):
-            //             continue
+            //     if 'peppol' in invoice_data['sending_methods'] and self._is_applicable_to_move('peppol', invoice, **invoice_data):
             // 
             //         if invoice_data.get('ubl_cii_xml_attachment_values'):
             //             xml_file = invoice_data['ubl_cii_xml_attachment_values']['raw']
@@ -91,6 +91,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             )
             //             continue
             // 
+            //         if len(xml_file) > 64000000:
+            //             invoice_data['error'] = _("Invoice %s is too big to send via peppol (64MB limit)", invoice.name)
+            //             continue
+            // 
             //         receiver_identification = f"{partner.peppol_eas}:{partner.peppol_endpoint}"
             //         params['documents'].append({
             //             'filename': filename,
@@ -102,8 +106,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not params['documents']:
             //     return
             // 
-            // edi_user = next(iter(invoices_data)).company_id.account_edi_proxy_client_ids.filtered(
-            //     lambda u: u.proxy_type == 'peppol')
+            // edi_user = next(iter(invoices_data)).company_id.account_peppol_edi_user
             // 
             // try:
             //     response = edi_user._call_peppol_proxy(
@@ -113,27 +116,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             // except AccountEdiProxyError as e:
             //     for invoice, invoice_data in invoices_data_peppol.items():
             //         invoice.peppol_move_state = 'error'
-            //         invoice_data['error'] = e.message
+            //         invoice_data['error'] = {'error_title': e.message}
             // else:
-            //     if response.get('error'):
+            //     if error_vals := response.get('error'):
             //         # at the moment the only error that can happen here is ParticipantNotReady error
             //         for invoice, invoice_data in invoices_data_peppol.items():
             //             invoice.peppol_move_state = 'error'
-            //             invoice_data['error'] = response['error']['message']
+            //             invoice_data['error'] = {
+            //                 'error_title': edi_user._get_peppol_error_message(error_vals),
+            //             }
             //     else:
             //         # the response only contains message uuids,
             //         # so we have to rely on the order to connect peppol messages to account.move
-            //         invoices = self.env['account.move']
+            //         attachments_linked_message = _("The invoice has been sent to the Peppol Access Point. The following attachments were sent with the XML:")
+            //         attachments_not_linked_message = _("Some attachments could not be sent with the XML:")
             //         for message, (invoice, invoice_data) in zip(response['messages'], invoices_data_peppol.items()):
             //             invoice.peppol_message_uuid = message['message_uuid']
             //             invoice.peppol_move_state = 'processing'
-            //             invoices |= invoice
-            //         log_message = _('The document has been sent to the Peppol Access Point for processing')
-            //         invoices._message_log_batch(bodies={invoice.id: log_message for invoice in invoices})
+            //             attachments_linked, attachments_not_linked = self._get_ubl_available_attachments(
+            //                 invoice_data.get('mail_attachments_widget', []),
+            //                 invoice_data['invoice_edi_format']
+            //             )
+            //             if attachments_not_linked:
+            //                 invoice._message_log(body=attachments_not_linked_message, attachment_ids=attachments_not_linked.mapped('id'))
+            // 
+            //             base_attachments = [
+            //                 (invoice_data[key]['name'], invoice_data[key]['raw'])
+            //                 for key in ['pdf_attachment_values', 'ubl_cii_xml_attachment_values']
+            //                 if invoice_data.get(key)
+            //             ]
+            // 
+            //             attachments_embedded = [
+            //                 (attachment.name, attachment.raw)
+            //                 for attachment in attachments_linked
+            //             ] + base_attachments
+            // 
+            //             invoice.message_post(
+            //                 body=attachments_linked_message,
+            //                 attachments=attachments_embedded
+            //             )
             //         self.env.ref('account_peppol.ir_cron_peppol_get_message_status')._trigger(at=fields.Datetime.now() + timedelta(minutes=5))
             // 
             // if self._can_commit():
-            //     self._cr.commit()
+            //     self.env.cr.commit()
             */
             return default;
         }
@@ -158,7 +183,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Helper to know if we can commit the current transaction or not.
             // :return: True if commit is accepted, False otherwise.
             // """
-            // return not modules.module.current_test
+            // return not (tools.config['test_enable'] or modules.module.current_test)
             */
             return default;
         }
@@ -170,7 +195,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _check_invoice_report(self, moves, **custom_settings):
             // if ((
             //         custom_settings.get('pdf_report')
-            //         and not custom_settings['pdf_report'].is_invoice_report
+            //         and any(not move._is_action_report_available(custom_settings['pdf_report']) for move in moves)
             //     )
             //     or any(not self._get_default_pdf_report_id(move).is_invoice_report for move in moves)
             // ):
@@ -179,15 +204,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckMoveConstrainsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        public async Task<TEntity> CheckMoveConstraintsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves) where TEntity : IEntity<Guid>, IAccountMoveSendable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
-            // def _check_move_constrains(self, moves):
-            // if any(move.state != 'posted' for move in moves):
-            //     raise UserError(_("You can't generate invoices that are not posted."))
-            // if any(not move.is_sale_document(include_receipts=True) for move in moves):
-            //     raise UserError(_("You can only generate sales documents."))
+            // def _check_move_constraints(self, moves):
+            // for move in moves:
+            //     if move_constraints := self._get_move_constraints(move):
+            //         raise UserError(next(iter(move_constraints.values()), None))
             */
             return default;
         }
@@ -200,12 +224,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Assert the data provided to _generate_and_send_invoices are correct.
             // This is a security in case the method is called directly without going through the wizards.
             // """
-            // self._check_move_constrains(moves)
+            // self._check_move_constraints(moves)
             // self._check_invoice_report(moves, **custom_settings)
             // assert all(
             //     sending_method in dict(self.env['res.partner']._fields['invoice_sending_method'].selection)
             //     for sending_method in custom_settings.get('sending_methods', [])
             // ) if 'sending_methods' in custom_settings else True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DisplayAttachmentsWidgetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_format, object sending_methods) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
+            // def _display_attachments_widget(self, edi_format, sending_methods):
+            // return 'email' in sending_methods
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move_send.py) ---
+            // def _display_attachments_widget(self, edi_format, sending_methods):
+            // ubl_format_info = self.env['res.partner']._get_ubl_cii_formats_info()
+            // return (
+            //     super()._display_attachments_widget(edi_format, sending_methods)
+            //     or ubl_format_info.get(edi_format, {}).get('embed_attachments')
+            // )
             */
             return default;
         }
@@ -216,10 +257,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def _do_peppol_pre_send(self, moves):
             // if len(moves.company_id) == 1:
-            //     can_send = self.env['account_edi_proxy_client.user']._get_can_send_domain()
-            //     if moves.company_id.account_peppol_proxy_state not in can_send:
-            //         registration_wizard = self.env['peppol.registration'].create({'company_id': moves.company_id.id})
-            //         return registration_wizard._action_open_peppol_form(reopen=False)
+            //     if not moves.company_id.peppol_can_send:
+            //         return self.env['peppol.registration'].with_context(default_company_id=moves.company_id.id)._action_open_peppol_form(reopen=False)
             // 
             // for move in moves:
             //     if move.peppol_move_state in ('ready', False):
@@ -233,17 +272,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _format_error_html(self, error):
-            // """ Format the error that can be either a dict (complex format needed) or a string (simple format) into a
-            // valid html format.
+            // """ Format the error that can be a dict (complex format needed)
             // 
             // :param error: the error to format.
             // :return: a html formatted error.
             // """
-            // if isinstance(error, dict):
-            //     errors = Markup().join(Markup("<li>%s</li>") % error for error in error['errors'])
-            //     return Markup("%s<ul>%s</ul>") % (error['error_title'], errors)
-            // else:
-            //     return error
+            // if 'errors' not in error:
+            //     return error['error_title']
+            // errors = Markup().join(Markup("<li>%s</li>") % error for error in error['errors'])
+            // return Markup("%s<ul>%s</ul>") % (error['error_title'], errors)
             */
             return default;
         }
@@ -253,17 +290,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _format_error_text(self, error):
-            // """ Format the error that can be either a dict (complex format needed) or a string (simple format) into a
-            // regular string.
+            // """ Format the error that can be a dict (complex format needed)
             // 
             // :param error: the error to format.
             // :return: a text formatted error.
             // """
-            // if isinstance(error, dict):
-            //     errors = '\n- '.join(error['errors'])
-            //     return f"{error['error_title']}\n- {errors}" if errors else error['error_title']
-            // else:
-            //     return error
+            // errors = '\n- '.join(error.get('errors', ''))
+            // return f"{error['error_title']}\n- {errors}" if errors else error['error_title']
             */
             return default;
         }
@@ -304,19 +337,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Successfully generated a PDF - Process sending.
             // success = {move: move_data for move, move_data in moves_data.items() if not move_data.get('error')}
             // if success:
-            //     self._hook_if_success(success)
+            //     self._hook_if_success(success, from_cron=from_cron)
             // 
             // # Update sending data of moves
             // for move, move_data in moves_data.items():
-            //     if from_cron and move_data.get('error'):
-            //         move.sending_data = {'error': True}
-            //     else:
-            //         move.sending_data = False
+            //     # We keep the sending_data, so it will be retried
+            //     if from_cron and move_data.get('error', {}).get('retry'):
+            //         continue
+            //     move.sending_data = False
             // 
             // # Return generated attachments.
             // attachments = self.env['ir.attachment']
             // for move, move_data in success.items():
             //     attachments += self._get_invoice_extra_attachments(move) or move_data['proforma_pdf_attachment']
+            // 
             // return attachments
             */
             return default;
@@ -479,16 +513,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             // - action the action to run when the link is clicked
             // """
             // alerts = {}
-            // if len(moves) > 1 and (partners_without_mail := moves.filtered(
-            //         lambda m: 'email' in moves_data[m]['sending_methods'] and not m.partner_id.email).partner_id
-            // ):
-            //     # should only appear in mass invoice sending
-            //     alerts['account_missing_email'] = {
-            //         'level': 'warning',
-            //         'message': _("Partner(s) should have an email address."),
-            //         'action_text': _("View Partner(s)"),
-            //         'action': partners_without_mail._get_records_action(name=_("Check Partner(s) Email(s)")),
-            //     }
+            // 
+            // # Filter moves that are trying to send via email
+            // email_moves = moves.filtered(lambda m: 'email' in moves_data[m]['sending_methods'])
+            // if email_moves:
+            //     # Identify partners without email depending on batch/single send
+            //     if is_batch := len(moves) > 1:
+            //         # Batch sending
+            //         partners_without_mail = email_moves.filtered(lambda m: not m.partner_id.email).mapped('partner_id')
+            //     else:
+            //         # Single sending
+            //         partners_without_mail = moves_data[email_moves]['mail_partner_ids'].filtered(lambda p: not p.email)
+            // 
+            //     # If there are partners without email, add an alert
+            //     if partners_without_mail:
+            //         alerts['account_missing_email'] = {
+            //             'level': 'warning' if is_batch else 'danger',
+            //             'message': _("Partner(s) should have an email address."),
+            //             'action_text': _("View Partner(s)") if is_batch else False,
+            //             'action': (
+            //                 partners_without_mail._get_records_action(name=_("Check Partner(s) Email(s)"))
+            //                 if is_batch else False
+            //             ),
+            //         }
+            // 
             // return alerts
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move_send.py) ---
             // def _get_alerts(self, moves, moves_data):
@@ -517,6 +565,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'action_text': _("View Partner(s)"),
             //             'action': not_configured_partners._get_records_action(name=_("Check Partner(s)"))
             //         }
+            // 
+            //     if any(
+            //             self.env['account.edi.xml.ubl_bis3']._is_customer_behind_chorus_pro(partner)
+            //             for partner in peppol_format_moves.partner_id.commercial_partner_id
+            //         ):
+            //         chorus_pro = self.env['ir.module.module'].sudo().search([('name', '=', 'l10n_fr_facturx_chorus_pro')], limit=1)
+            //         if chorus_pro and chorus_pro.state != 'installed':
+            //             alerts['account_edi_ubl_cii_chorus_pro_install'] = {
+            //                 'message': _("Please install the french Chorus pro module to have all the specific rules."),
+            //                 'level': 'info',
+            //                 'action': chorus_pro._get_records_action(),
+            //                 'action_text': _("Install Chorus Pro"),
+            //             }
             // return alerts
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def _get_alerts(self, moves, moves_data):
@@ -525,11 +586,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return moves.partner_id.commercial_partner_id
             // 
             // def filter_peppol_state(moves, states):
-            //     return peppol_partner(moves.filtered(
-            //         lambda m: self.env['res.partner']._get_peppol_verification_state(
-            //             peppol_partner(m).peppol_endpoint,
-            //             peppol_partner(m).peppol_eas,
-            //             moves_data[m]['invoice_edi_format']) in states))
+            //     return peppol_partner(
+            //         moves.filtered(lambda m: peppol_partner(m).peppol_verification_state in states)
+            //     )
             // 
             // alerts = super()._get_alerts(moves, moves_data)
             // # Check for invalid peppol partners.
@@ -558,27 +617,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     },
             // }
             // info_always_on_countries = {'BE', 'FI', 'LU', 'LV', 'NL', 'NO', 'SE'}
-            // can_send = self.env['account_edi_proxy_client.user']._get_can_send_domain()
             // any_moves_not_sent_peppol = any(move.peppol_move_state not in ('processing', 'done') for move in moves)
             // always_on_companies = moves.company_id.filtered(
-            //     lambda c: c.country_code in info_always_on_countries and c.account_peppol_proxy_state not in can_send
+            //     lambda c: c.country_code in info_always_on_countries and not c.peppol_can_send
             // )
-            // if always_on_companies and any_moves_not_sent_peppol and not filter_peppol_state(moves, ['not_valid', 'not_verified']):
+            // if all((
+            //     always_on_companies,
+            //     any_moves_not_sent_peppol,
+            //     not filter_peppol_state(moves, ['not_valid', 'not_verified']),
+            // )):
             //     alerts.pop('account_edi_ubl_cii_configure_company', False)
             //     alerts['account_peppol_what_is_peppol'] = {
             //         'message': _("You can send this invoice electronically via Peppol."),
             //         **what_is_peppol_alert,
             //     }
-            // elif (peppol_not_selected_partners := filter_peppol_state(not_peppol_moves, ['valid'])) and any_moves_not_sent_peppol:
-            //     # Check for not peppol partners that are on the network.
-            //     if len(peppol_not_selected_partners) == 1:
-            //         alerts['account_peppol_partner_want_peppol'] = {
-            //             'message': _(
-            //                 "%s has requested electronic invoices reception on Peppol.",
-            //                 peppol_not_selected_partners.display_name
-            //             ),
-            //             **what_is_peppol_alert,
-            //         }
+            // elif all((
+            //     (peppol_not_selected_partners := filter_peppol_state(not_peppol_moves, ['valid'])),
+            //     any_moves_not_sent_peppol,
+            //     len(peppol_not_selected_partners) == 1,  # Check for not peppol partners that are on the network
+            // )):
+            //     alerts['account_peppol_partner_want_peppol'] = {
+            //         'message': _(
+            //             "%s has requested electronic invoices reception on Peppol.",
+            //             peppol_not_selected_partners.display_name
+            //         ),
+            //         **what_is_peppol_alert,
+            //     }
             // return alerts
             --- ODOO METHOD SOURCE (MODULE: snailmail_account, FILE: account_move_send.py) ---
             // def _get_alerts(self, moves, moves_data):
@@ -633,7 +697,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _get_default_invoice_edi_format(self, move, **kwargs) -> str:
             // """ By default, we generate the EDI format set on partner. """
-            // return move.partner_id.with_company(move.company_id).invoice_edi_format
+            // return move.commercial_partner_id.with_company(move.company_id).invoice_edi_format
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def _get_default_invoice_edi_format(self, move, **kwargs) -> str:
             // # EXTENDS 'account' - default on bis3 if Peppol is set but no format on the partner
@@ -650,7 +714,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _get_default_mail_attachments_widget(self, move, mail_template, invoice_edi_format=None, extra_edis=None, pdf_report=None):
-            // return self._get_placeholder_mail_attachments_data(move, invoice_edi_format=invoice_edi_format, extra_edis=extra_edis) \
+            // return self._get_placeholder_mail_attachments_data(move, invoice_edi_format=invoice_edi_format, extra_edis=extra_edis, pdf_report=pdf_report) \
             //     + self._get_placeholder_mail_template_dynamic_attachments_data(move, mail_template, pdf_report=pdf_report) \
             //     + self._get_invoice_extra_attachments_data(move) \
             //     + self._get_mail_template_attachments_data(mail_template)
@@ -689,20 +753,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _get_default_mail_partner_ids(self, move, mail_template, mail_lang):
+            // # TDE FIXME: this should use standard composer / template code to be sure
+            // # it is aligned with standard recipients management. Todo later
             // partners = self.env['res.partner'].with_company(move.company_id)
-            // if mail_template.email_to:
-            //     email_to = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'email_to')
-            //     for mail_data in tools.email_split(email_to):
-            //         partners |= partners.find_or_create(mail_data)
-            // if mail_template.email_cc:
-            //     email_cc = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'email_cc')
-            //     for mail_data in tools.email_split(email_cc):
-            //         partners |= partners.find_or_create(mail_data)
-            // if mail_template.partner_to:
+            // if mail_template.use_default_to:
+            //     defaults = move._message_get_default_recipients()[move.id]
+            //     email_cc = defaults['email_to']
+            //     email_to = defaults['email_to']
+            //     partners |= partners.browse(defaults['partner_ids'])
+            // else:
+            //     if mail_template.email_cc:
+            //         email_cc = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'email_cc')
+            //     else:
+            //         email_cc = ''
+            //     if mail_template.email_to:
+            //         email_to = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'email_to')
+            //     else:
+            //         email_to = ''
+            // 
+            // partners |= move._partner_find_from_emails_single(
+            //     tools.email_split(email_cc or '') + tools.email_split(email_to or ''),
+            //     no_create=False,
+            // )
+            // 
+            // if not mail_template.use_default_to and mail_template.partner_to:
             //     partner_to = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'partner_to')
             //     partner_ids = mail_template._parse_partner_to(partner_to)
             //     partners |= self.env['res.partner'].sudo().browse(partner_ids).exists()
-            // return partners.filtered('email')
+            // return partners if self.env.context.get('allow_partners_without_mail') else partners.filtered('email')
             */
             return default;
         }
@@ -737,18 +815,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _get_default_pdf_report_id(self, move):
-            // return move.partner_id.with_company(move.company_id).invoice_template_pdf_report_id or self.env.ref('account.account_invoices')
+            // if partner_default_template := move.commercial_partner_id.with_company(move.company_id).invoice_template_pdf_report_id:
+            //     return partner_default_template
+            // 
+            // if journal_default_template := move.journal_id.with_company(move.company_id).invoice_template_pdf_report_id:
+            //     return journal_default_template
+            // 
+            // action_report = self.env.ref('account.account_invoices')
+            // 
+            // if move._is_action_report_available(action_report):
+            //     return action_report
+            // 
+            // raise UserError(_("There is no template that applies to this move type."))
             */
             return default;
         }
 
-        public async Task<object> GetDefaultSendingMethodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        public async Task<object> GetDefaultSendingMethodsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IAccountMoveSendable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
-            // def _get_default_sending_method(self, move) -> set:
+            // def _get_default_sending_methods(self, move) -> set:
             // """ By default, we use the sending method set on the partner or email. """
-            // return move.partner_id.with_company(move.company_id).invoice_sending_method or 'email'
+            // return {move.commercial_partner_id.with_company(move.company_id).invoice_sending_method or 'email'}
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
+            // def _get_default_sending_methods(self, move) -> set:
+            // """ By default, we use the sending method set on the partner or email and peppol. """
+            // # EXTENDS 'account'
+            // default_sending_methods = super()._get_default_sending_methods(move)
+            // if self._is_applicable_to_move('peppol', move):
+            //     default_sending_methods.add('peppol')
+            // return default_sending_methods
             */
             return default;
         }
@@ -765,16 +862,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return custom_settings.get(key) if key in custom_settings else move.sending_data.get(key) if from_cron else default_value
             // 
             // vals = {
-            //     'sending_methods': get_setting('sending_methods', default_value={self._get_default_sending_method(move)}) or {},
+            //     'sending_methods': get_setting('sending_methods', default_value=self._get_default_sending_methods(move)) or {},
             //     'extra_edis': get_setting('extra_edis', default_value=self._get_default_extra_edis(move)) or {},
             //     'pdf_report': get_setting('pdf_report') or self._get_default_pdf_report_id(move),
             //     'author_user_id': get_setting('author_user_id', from_cron=from_cron) or self.env.user.id,
             //     'author_partner_id': get_setting('author_partner_id', from_cron=from_cron) or self.env.user.partner_id.id,
             // }
             // vals['invoice_edi_format'] = get_setting('invoice_edi_format', default_value=self._get_default_invoice_edi_format(move, sending_methods=vals['sending_methods']))
+            // mail_template = get_setting('mail_template') or self._get_default_mail_template_id(move)
             // if 'email' in vals['sending_methods']:
-            //     mail_template = get_setting('mail_template') or self._get_default_mail_template_id(move)
             //     mail_lang = get_setting('mail_lang') or self._get_default_mail_lang(move, mail_template)
+            //     vals.update({
+            //         'mail_template': mail_template,
+            //         'mail_lang': mail_lang,
+            //         'mail_body': get_setting('mail_body', default_value=self._get_default_mail_body(move, mail_template, mail_lang)),
+            //         'mail_subject': get_setting('mail_subject', default_value=self._get_default_mail_subject(move, mail_template, mail_lang)),
+            //         'mail_partner_ids': get_setting('mail_partner_ids', default_value=self._get_default_mail_partner_ids(move, mail_template, mail_lang).ids),
+            //     })
+            // # Add mail attachments if sending methods support them
+            // if self._display_attachments_widget(vals['invoice_edi_format'], vals['sending_methods']):
             //     mail_attachments_widget = self._get_default_mail_attachments_widget(
             //         move,
             //         mail_template,
@@ -782,14 +888,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         extra_edis=vals['extra_edis'],
             //         pdf_report=vals['pdf_report'],
             //     )
-            //     vals.update({
-            //         'mail_template': mail_template,
-            //         'mail_lang': mail_lang,
-            //         'mail_body': get_setting('mail_body', default_value=self._get_default_mail_body(move, mail_template, mail_lang)),
-            //         'mail_subject': get_setting('mail_subject', default_value=self._get_default_mail_subject(move, mail_template, mail_lang)),
-            //         'mail_partner_ids': get_setting('mail_partner_ids', default_value=self._get_default_mail_partner_ids(move, mail_template, mail_lang).ids),
-            //         'mail_attachments_widget': get_setting('mail_attachments_widget', default_value=mail_attachments_widget),
-            //     })
+            //     vals['mail_attachments_widget'] = get_setting('mail_attachments_widget', default_value=mail_attachments_widget)
             // return vals
             */
             return default;
@@ -855,7 +954,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_mail_default_field_value_from_template(self, mail_template, lang, move, field, **kwargs):
             // if not mail_template:
             //     return
-            // return mail_template\
+            // return mail_template.sudo()\
             //     .with_context(lang=lang)\
             //     ._render_field(field, move.ids, **kwargs)[move._origin.id]
             */
@@ -870,12 +969,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return 'mail.mail_notification_layout_with_responsible_signature'
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def _get_mail_layout(self):
-            // # EXTENDS 'account'
-            // # TODO remove the fallback in master
-            // if self.env.ref('account_peppol.mail_notification_layout_with_responsible_signature_and_peppol',
-            //                 raise_if_not_found=False):
-            //     return 'account_peppol.mail_notification_layout_with_responsible_signature_and_peppol'
-            // return super()._get_mail_layout()
+            // # OVERRIDE 'account'
+            // return 'account_peppol.mail_notification_layout_with_responsible_signature_and_peppol'
             */
             return default;
         }
@@ -938,11 +1033,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetPlaceholderMailAttachmentsDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move, object invoice_edi_format, object extra_edis) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        public async Task<TEntity> GetMoveConstraintsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IAccountMoveSendable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
-            // def _get_placeholder_mail_attachments_data(self, move, invoice_edi_format=None, extra_edis=None):
+            // def _get_move_constraints(self, move):
+            // constraints = {}
+            // if move.state != 'posted':
+            //     constraints['not_posted'] = _("You can't generate invoices that are not posted.")
+            // if not move.is_sale_document(include_receipts=True):
+            //     constraints['not_sale_document'] = _("You can only generate sales documents.")
+            // return constraints
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
+            // def _get_move_constraints(self, move):
+            // constraints = super()._get_move_constraints(move)
+            // if move._is_exportable_as_self_invoice():
+            //     constraints.pop('not_sale_document', None)
+            // return constraints
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetPlaceholderMailAttachmentsDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move, object invoice_edi_format, object extra_edis, object pdf_report) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
+            // def _get_placeholder_mail_attachments_data(self, move, invoice_edi_format=None, extra_edis=None, pdf_report=None):
             // """ Returns all the placeholder data.
             // Should be extended to add placeholder based on the sending method.
             // :param: move:       The current move.
@@ -954,8 +1070,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // if move.invoice_pdf_report_id:
             //     return []
-            // 
-            // filename = move._get_invoice_report_filename()
+            // filename = move._get_invoice_report_filename(report=pdf_report)
             // return [{
             //     'id': f'placeholder_{filename}',
             //     'name': filename,
@@ -963,9 +1078,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'placeholder': True,
             // }]
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move_send.py) ---
-            // def _get_placeholder_mail_attachments_data(self, move, invoice_edi_format=None, extra_edis=None):
+            // def _get_placeholder_mail_attachments_data(self, move, invoice_edi_format=None, extra_edis=None, pdf_report=None):
             // # EXTENDS 'account'
-            // results = super()._get_placeholder_mail_attachments_data(move, invoice_edi_format=invoice_edi_format, extra_edis=extra_edis)
+            // results = super()._get_placeholder_mail_attachments_data(move, invoice_edi_format=invoice_edi_format, extra_edis=extra_edis, pdf_report=pdf_report)
             // if move._need_ubl_cii_xml(invoice_edi_format):
             //     builder = move.partner_id.commercial_partner_id._get_edi_builder(invoice_edi_format)
             //     filename = builder._export_invoice_filename(move)
@@ -998,9 +1113,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # In case the report selected to do so is also added in dynamic attachments of the mail template, we need to
             // # filter them out to avoid duplicated placeholders, since they are already added in the
             // # _get_placeholder_mail_attachments_data method.
-            // invoice_template = (pdf_report or self._get_default_pdf_report_id(move)) + self.env.ref('account.account_invoices')
+            // pdf_report = pdf_report or self._get_default_pdf_report_id(move)
+            // invoice_template = pdf_report | self.env.ref('account.account_invoices')
             // extra_mail_templates = mail_template.report_template_ids - invoice_template
-            // filename = move._get_invoice_report_filename()
+            // filename = move._get_invoice_report_filename(report=pdf_report)
             // return [
             //     {
             //         'id': f'placeholder_{extra_mail_template.name.lower()}_{filename}',
@@ -1014,23 +1130,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetUblAvailableAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_attachments_widget, object invoice_edi_format) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move_send.py) ---
+            // def _get_ubl_available_attachments(self, mail_attachments_widget, invoice_edi_format):
+            // if not invoice_edi_format or not mail_attachments_widget:
+            //     return self.env['ir.attachment'], self.env['ir.attachment']
+            // attachment_ids = [values['id'] for values in mail_attachments_widget if values.get('manual')]
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // 
+            // ubl_format_info = self.env['res.partner']._get_ubl_cii_formats_info().get(invoice_edi_format, {})
+            // if not ubl_format_info.get('embed_attachments'):
+            //     return self.env['ir.attachment'], attachments
+            // 
+            // accepted_attachments = attachments.filtered(lambda attachment: attachment.mimetype in SUPPORTED_FILE_TYPES)
+            // return accepted_attachments, attachments - accepted_attachments
+            */
+            return default;
+        }
+
         public async Task<TEntity> HookIfErrorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves_data, object allow_raising) where TEntity : IEntity<Guid>, IAccountMoveSendable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _hook_if_errors(self, moves_data, allow_raising=True):
-            // """ Process errors found so far when generating the documents.
-            // :param from_cron:   Flag indicating if the method is called from a cron. In that case, we avoid raising any
-            //                     error.
-            // :param allow_fallback_pdf:  In case of error when generating the documents for invoices, generate a
-            //                             proforma PDF report instead.
-            // """
+            // """ Process errors found so far when generating the documents. """
+            // group_by_partner = defaultdict(list)
             // for move, move_data in moves_data.items():
             //     error = move_data['error']
             //     if allow_raising:
             //         raise UserError(self._format_error_text(error))
-            // 
-            //     move.with_context(no_document=True, no_new_invoice=True).message_post(body=self._format_error_html(error))
+            //     group_by_partner[move_data['author_partner_id']].append(move.id)
+            //     move.message_post(body=self._format_error_html(error))
+            // self._send_notifications_to_partners(group_by_partner, is_success=False)
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move_send.py) ---
             // def _hook_if_errors(self, moves_data, allow_raising=True):
             // # EXTENDS 'account'
@@ -1048,23 +1181,42 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> HookIfSuccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves_data) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        public async Task<TEntity> HookIfSuccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves_data, object from_cron) where TEntity : IEntity<Guid>, IAccountMoveSendable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
-            // def _hook_if_success(self, moves_data):
+            // def _hook_if_success(self, moves_data, from_cron=False):
             // """ Process (typically send) successful documents."""
-            // to_send_mail = {
-            //     move: move_data
-            //     for move, move_data in moves_data.items()
-            //     if 'email' in move_data['sending_methods'] and self._is_applicable_to_move('email', move, **move_data)
-            // }
+            // group_by_partner = defaultdict(list)
+            // to_send_mail = {}
+            // for move, move_data in moves_data.items():
+            //     if from_cron:
+            //         group_by_partner[move_data['author_partner_id']].append(move.id)
+            //     if 'email' in move_data['sending_methods'] and self._is_applicable_to_move('email', move, **move_data):
+            //         to_send_mail[move] = move_data
             // self._send_mails(to_send_mail)
-            --- ODOO METHOD SOURCE (MODULE: snailmail_account, FILE: account_move_send.py) ---
-            // def _hook_if_success(self, moves_data):
-            // # EXTENDS 'account'
-            // super()._hook_if_success(moves_data)
+            // self._send_notifications_to_partners(group_by_partner)
             // 
+            // # Notify subscribers.
+            // for move, move_data in moves_data.items():
+            //     if not move.is_invoice(include_receipts=True):
+            //         continue
+            // 
+            //     try:
+            //         move.journal_id._notify_invoice_subscribers(
+            //             invoice=move,
+            //             mail_params={
+            //                 'attachment_ids': [
+            //                     Command.create({'name': attachment.name, 'raw': attachment.raw, 'mimetype': attachment.mimetype})
+            //                     for attachment in self._get_invoice_extra_attachments(move)
+            //                 ]
+            //             },
+            //         )
+            //     except Exception:
+            //         _logger.exception("Failed notifying subscribers for move %s", move.id)
+            --- ODOO METHOD SOURCE (MODULE: snailmail_account, FILE: account_move_send.py) ---
+            // def _hook_if_success(self, moves_data, from_cron=False):
+            // # EXTENDS 'account'
             // to_send = {
             //     move: move_data
             //     for move, move_data in moves_data.items()
@@ -1079,6 +1231,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         for move, move_data in to_send.items()
             //     ])\
             //     ._snailmail_print(immediate=False)
+            // super()._hook_if_success(moves_data, from_cron)
             */
             return default;
         }
@@ -1237,9 +1390,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if method == 'peppol':
             //     partner = move.partner_id.commercial_partner_id.with_company(move.company_id)
             //     invoice_edi_format = move_data.get('invoice_edi_format') or partner._get_peppol_edi_format()
+            //     if partner.peppol_verification_state == 'not_verified':
+            //         partner.button_account_peppol_check_partner_endpoint(company=move.company_id)
             //     return all([
+            //         partner.country_code in PEPPOL_LIST,
             //         self._is_applicable_to_company(method, move.company_id),
-            //         self.env['res.partner']._get_peppol_verification_state(partner.peppol_endpoint, partner.peppol_eas, invoice_edi_format) == 'valid',
+            //         partner.peppol_verification_state == 'valid',
             //         move.company_id.account_peppol_proxy_state != 'rejected',
             //         move._need_ubl_cii_xml(invoice_edi_format)
             //         or move.ubl_cii_xml_id and move.peppol_move_state not in ('processing', 'done'),
@@ -1303,42 +1459,73 @@ namespace Bamboo.Core.Application.Services.Mixins
             #if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move_send.py) ---
             // def _postprocess_invoice_ubl_xml(self, invoice, invoice_data):
-            // # Adding the PDF to the XML
+            // """
+            // Include the PDF in the UBL as an AdditionalDocumentReference element.
+            // 
+            // According to UBL 2.1 standard, the AdditionalDocumentReference element should be
+            // placed above ProjectReference which isn't usually in xml files.
+            // So usually it's set above AccountingSupplierParty. Here, we try to find a suitable anchor point among
+            // the available element to insert our PDF attachment. If none of these are found, we
+            // skip adding the attachment to avoid breaking the XML structure.
+            // Inside CreditNote, the ProjectReference element is not used in xml.
+            // So we look for OriginatorDocumentReference instead.
+            // """
             // tree = etree.fromstring(invoice_data['ubl_cii_xml_attachment_values']['raw'])
-            // anchor_elements = tree.xpath("//*[local-name()='AccountingSupplierParty']")
+            // 
+            // localname = etree.QName(tree).localname
+            // anchor_xpath = {
+            //     'Invoice': "//*[local-name()='ProjectReference' or local-name()='Signature' or local-name()='AccountingSupplierParty']",
+            //     'CreditNote': "//*[local-name()='StatementDocumentReference' or local-name()='OriginatorDocumentReference' or local-name()='Signature' or local-name()='AccountingSupplierParty']",
+            //     'DebitNote': "//*[local-name()='Signature' or local-name()='AccountingSupplierParty']",
+            // }.get(localname)
+            // 
+            // anchor_elements = tree.xpath(anchor_xpath)
+            // 
             // if not anchor_elements:
             //     return
             // 
-            // xmlns_move_type = 'Invoice' if invoice.move_type == 'out_invoice' else 'CreditNote'
-            // pdf_values = invoice.invoice_pdf_report_id or invoice_data.get('pdf_attachment_values') or invoice_data['proforma_pdf_attachment_values']
-            // filename = pdf_values['name']
-            // content = pdf_values['raw']
-            // 
-            // doc_type_node = ""
-            // edi_model = invoice_data["ubl_cii_xml_options"]["builder"]
-            // doc_type_code_vals = edi_model._get_document_type_code_vals(invoice, invoice_data)
-            // if doc_type_code_vals['value']:
-            //     doc_type_code_attrs = " ".join(f'{name}="{value}"' for name, value in doc_type_code_vals['attrs'].items())
-            //     doc_type_node = f"<cbc:DocumentTypeCode {doc_type_code_attrs}>{doc_type_code_vals['value']}</cbc:DocumentTypeCode>"
-            // to_inject = f'''
-            //     <cac:AdditionalDocumentReference
-            //         xmlns="urn:oasis:names:specification:ubl:schema:xsd:{xmlns_move_type}-2"
-            //         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
-            //         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
-            //         <cbc:ID>{escape(filename)}</cbc:ID>
-            //         {doc_type_node}
-            //         <cac:Attachment>
-            //             <cbc:EmbeddedDocumentBinaryObject
-            //                 mimeCode="application/pdf"
-            //                 filename={quoteattr(filename)}>
-            //                 {base64.b64encode(content).decode()}
-            //             </cbc:EmbeddedDocumentBinaryObject>
-            //         </cac:Attachment>
-            //     </cac:AdditionalDocumentReference>
-            // '''
-            // 
             // anchor_index = tree.index(anchor_elements[0])
-            // tree.insert(anchor_index, etree.fromstring(to_inject))
+            // pdf_values = invoice.invoice_pdf_report_id or invoice_data.get('pdf_attachment_values') or invoice_data['proforma_pdf_attachment_values']
+            // 
+            // edi_model = invoice_data["ubl_cii_xml_options"]["builder"]
+            // doc_type_code_node = edi_model._get_document_type_code_node(invoice, invoice_data)
+            // vals = {'invoice': invoice}
+            // edi_model._add_invoice_config_vals(vals)
+            // nsmap = edi_model._get_document_nsmap(vals)
+            // 
+            // attachments_to_embed = [
+            //     {
+            //         'filename': attachment.name,
+            //         'raw': attachment.raw,
+            //         'mimetype': attachment.mimetype,
+            //     }
+            //     for attachment in self._get_ubl_available_attachments(
+            //         invoice_data['mail_attachments_widget'],
+            //         invoice_data['invoice_edi_format']
+            //     )[0]
+            // ] if invoice_data.get('mail_attachments_widget') else []
+            // attachments_to_embed.append({
+            //     'filename': pdf_values['name'],
+            //     'raw': pdf_values['raw'],
+            //     'mimetype': pdf_values['mimetype'],
+            //     'document_type_node': doc_type_code_node,
+            // })
+            // 
+            // for attachment_values in attachments_to_embed:
+            //     additional_document_reference_node = {
+            //         '_tag': 'cac:AdditionalDocumentReference',
+            //         'cbc:ID': {'_text': attachment_values['filename']},
+            //         'cbc:DocumentTypeCode': attachment_values.get('document_type_node'),
+            //         'cac:Attachment': {
+            //             'cbc:EmbeddedDocumentBinaryObject': {
+            //                 '_text': base64.b64encode(attachment_values['raw']).decode(),
+            //                 'mimeCode': attachment_values['mimetype'],
+            //                 'filename': attachment_values['filename']
+            //             }
+            //         }
+            //     }
+            //     tree.insert(anchor_index, dict_to_xml(additional_document_reference_node, nsmap=nsmap))
+            // 
             // invoice_data['ubl_cii_xml_attachment_values']['raw'] = etree.tostring(
             //     cleanup_xml_node(tree), xml_declaration=True, encoding='UTF-8'
             // )
@@ -1371,7 +1558,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     for invoice, invoice_data in group_invoices_data.items():
             //         invoice_data['pdf_attachment_values'] = {
-            //             'name': invoice._get_invoice_report_filename(),
+            //             'name': invoice._get_invoice_report_filename(report=pdf_report),
             //             'raw': content_by_id[invoice.id],
             //             'mimetype': 'application/pdf',
             //             'res_model': invoice._name,
@@ -1440,26 +1627,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
             // def _send_mail(self, move, mail_template, **kwargs):
             // """ Send the journal entry passed as parameter by mail. """
-            // partner_ids = kwargs.get('partner_ids', [])
-            // author_id = kwargs.pop('author_id')
-            // 
-            // new_message = move\
-            //     .with_context(
-            //         no_document=True,
-            //         no_new_invoice=True,
-            //         mail_notify_author=author_id in partner_ids,
-            //         email_notification_allow_footer=True,
-            //     ).message_post(
-            //         message_type='comment',
-            //         **kwargs,
-            //         **{  # noqa: PIE804
-            //             'email_layout_xmlid': self._get_mail_layout(),
-            //             'email_add_signature': not mail_template,
-            //             'mail_auto_delete': mail_template.auto_delete,
-            //             'mail_server_id': mail_template.mail_server_id.id,
-            //             'reply_to_force_new': False,
-            //         }
-            //     )
+            // new_message = move.with_context(
+            //     email_notification_allow_footer=True,
+            //     disable_attachment_import=True,
+            //     no_document=True,
+            // ).message_post(
+            //     message_type='comment',
+            //     **kwargs,
+            //     **{  # noqa: PIE804
+            //         'email_layout_xmlid': self._get_mail_layout(),
+            //         'email_add_signature': not mail_template,
+            //         'mail_auto_delete': mail_template.auto_delete,
+            //         'mail_server_id': mail_template.mail_server_id.id,
+            //         'reply_to_force_new': False,
+            //     }
+            // )
             // 
             // # Prevent duplicated attachments linked to the invoice.
             // new_message.attachment_ids.invalidate_recordset(['res_id', 'res_model'], flush=False)
@@ -1497,17 +1679,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         attachment = move_data['proforma_pdf_attachment']
             //         mail_params['attachments'].append((attachment.name, attachment.raw))
             // 
+            //     # synchronize author / email_from, as account.move.send wizard computes
+            //     # a bit too much stuff
+            //     author_id = mail_params.pop('author_id', False)
             //     email_from = self._get_mail_default_field_value_from_template(mail_template, mail_lang, move, 'email_from')
+            //     if email_from or not author_id:
+            //         author_id, email_from = move._message_compute_author(email_from=email_from)
             //     model_description = move.with_context(lang=mail_lang).type_name
             // 
             //     self._send_mail(
             //         move,
             //         mail_template,
+            //         author_id=author_id,
             //         subtype_id=subtype.id,
             //         model_description=model_description,
+            //         notify_author_mention=True,
             //         email_from=email_from,
             //         **mail_params,
             //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SendNotificationsToPartnersInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid moves_grouped_by_author_partner_id, object is_success) where TEntity : IEntity<Guid>, IAccountMoveSendable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_send.py) ---
+            // def _send_notifications_to_partners(self, moves_grouped_by_author_partner_id, is_success=True):
+            // if not moves_grouped_by_author_partner_id:
+            //     return
+            // 
+            // def get_account_notification(move_ids, is_success: bool):
+            //     _ = self.env._
+            //     return [
+            //         'account_notification',
+            //         {
+            //             'type': 'success' if is_success else 'warning',
+            //             'title': _("Invoices sent") if is_success else _("Invoices in error"),
+            //             'message': _("Invoices sent successfully.") if is_success else _(
+            //                 "One or more invoices couldn't be processed."),
+            //             'action_button': {
+            //                 'name': _('Open'),
+            //                 'action_name': _("Sent invoices") if is_success else _("Invoices in error"),
+            //                 'model': 'account.move',
+            //                 'res_ids': move_ids,
+            //             },
+            //         },
+            //     ]
+            // ResPartner = self.env['res.partner']
+            // for partner_id, move_ids in moves_grouped_by_author_partner_id.items():
+            //     partner = ResPartner.browse(partner_id)
+            //     partner._bus_send(*get_account_notification(move_ids, is_success))
             */
             return default;
         }

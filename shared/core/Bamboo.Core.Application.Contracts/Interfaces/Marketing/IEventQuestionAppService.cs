@@ -10,6 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventQuestionAppService : IGenericApplicationService<EventQuestion>
     {
+        Task<EventQuestion> EventViewAsync(Guid id);
         Task<EventQuestion> ViewQuestionAnswersAsync(Guid id);
     }
 }

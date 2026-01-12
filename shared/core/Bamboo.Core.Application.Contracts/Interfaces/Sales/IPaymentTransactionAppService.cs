@@ -14,6 +14,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<PaymentTransaction> DemoSetCanceledAsync(Guid id);
         Task<PaymentTransaction> DemoSetDoneAsync(Guid id);
         Task<PaymentTransaction> DemoSetErrorAsync(Guid id);
+        Task<PaymentTransaction> PostProcessAsync(Guid id);
         Task<PaymentTransaction> RefundAsync(Guid id, PaymentTransactionRefundRequestDto input);
         Task<PaymentTransaction> ViewInvoicesAsync(Guid id);
         Task<PaymentTransaction> ViewPosOrderAsync(Guid id);

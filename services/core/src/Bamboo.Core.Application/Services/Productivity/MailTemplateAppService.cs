@@ -21,28 +21,13 @@ namespace Bamboo.Core.Application.Services
     public class MailTemplateAppService : GenericApplicationService<MailTemplate>, IMailTemplateAppService
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
+        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         private readonly ITemplateResetMixinAppService _templateResetMixinAppService;
-        public MailTemplateAppService(IRepository<MailTemplate, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailRenderMixinAppService mailRenderMixinAppService, ITemplateResetMixinAppService templateResetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MailTemplateAppService(IRepository<MailTemplate, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailRenderMixinAppService mailRenderMixinAppService, IPosLoadMixinAppService posLoadMixinAppService, ITemplateResetMixinAppService templateResetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailRenderMixinAppService = mailRenderMixinAppService;
+            _posLoadMixinAppService = posLoadMixinAppService;
             _templateResetMixinAppService = templateResetMixinAppService;
-        }
-
-        public async Task<MailTemplate> CancelUnlinkAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
-            // def cancel_unlink(self):
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_id': self.id,
-            //     'res_model': self._name,
-            //     'target': 'new',
-            //     'context': {'dialog_size': 'large'},
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<MailTemplate> CheckAbstractModelsInternalAsync(object vals_list)
@@ -60,6 +45,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MailTemplate> CheckCanBeRenderedInternalAsync(object fnames, object render_options)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _check_can_be_rendered(self, fnames=None, render_options=None):
+            // dynamic_fnames = self._get_dynamic_field_names()
+            // 
+            // for template in self:
+            //     model = template.sudo().model_id.model
+            //     if not model:
+            //         return
+            //     record = template.env[model].search([], limit=1)
+            //     if not record:
+            //         return
+            // 
+            //     fnames = fnames & dynamic_fnames if fnames else dynamic_fnames
+            //     for fname in fnames:
+            //         try:
+            //             template._render_field(fname, record.ids, options=render_options)
+            //         except Exception as e:
+            //             _logger.exception("Error while checking if template can be rendered for field %s", fname)
+            //             raise ValidationError(
+            //                 _("Oops! We couldn't save your template due to an issue with this value: %(template_txt)s. Correct it and try again.",
+            //                 template_txt=template[fname])
+            //             ) from e
+            */
+            return default;
+        }
+
         protected async Task<MailTemplate> ComputeCanWriteInternalAsync()
         {
             /*
@@ -68,6 +82,35 @@ namespace Bamboo.Core.Application.Services
             // writable_templates = self._filtered_access('write')
             // for template in self:
             //     template.can_write = template in writable_templates
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> ComputeHasDynamicReportsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _compute_has_dynamic_reports(self):
+            // number_of_dynamic_reports_per_model = dict(
+            //     self.env['ir.actions.report'].sudo()._read_group(
+            //         domain=[('model', 'in', self.mapped('model'))],
+            //         groupby=['model'],
+            //         aggregates=['id:count'],
+            //         having=[('__count', '>', 0)]))
+            // for template in self:
+            //     template.has_dynamic_reports = template.model in number_of_dynamic_reports_per_model
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> ComputeHasMailServerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _compute_has_mail_server(self):
+            // has_mail_server = bool(self.env['ir.mail_server'].sudo().search([], limit=1))
+            // for template in self:
+            //     template.has_mail_server = has_mail_server
             */
             return default;
         }
@@ -125,7 +168,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
             // def copy_data(self, default=None):
             // vals_list = super().copy_data(default=default)
-            // return [dict(vals, name=self.env._("%s (copy)", template.name)) for template, vals in zip(self, vals_list)]
+            // for vals, template in zip(vals_list, self):
+            //     if 'name' not in (default or {}) and vals.get('name') == template.name:
+            //         vals['name'] = self.env._("%s (copy)", template.name)
+            // return vals_list
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -159,6 +205,20 @@ namespace Bamboo.Core.Application.Services
             // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<MailTemplate> ExpressionIsDefaultInternalAsync(object source, object model, object fname)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _expression_is_default(self, source, model, fname):
+            // if not fname or not model:
+            //     return False
+            // Model = self.env[model]
+            // model_defaults = hasattr(Model, '_mail_template_default_values') and Model._mail_template_default_values() or {}
+            // return source == model_defaults.get(fname)
+            */
+            return default;
         }
 
         protected async Task<MailTemplate> FixAttachmentOwnershipInternalAsync()
@@ -255,11 +315,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailTemplate> GenerateTemplateInternalAsync(List<Guid> res_ids, object render_fields, object find_or_create_partners)
+        protected async Task<MailTemplate> GenerateTemplateInternalAsync(List<Guid> res_ids, object render_fields, object recipients_allow_suggested, object find_or_create_partners)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
             // def _generate_template(self, res_ids, render_fields,
+            //                    recipients_allow_suggested=False,
             //                    find_or_create_partners=False):
             // """ Render values from template 'self' on records given by 'res_ids'.
             // Those values are generally used to create a mail.mail or a mail.message.
@@ -267,6 +328,11 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param list res_ids: list of record IDs on which template is rendered;
             // :param list render_fields: list of fields to render on template;
+            // 
+            // # recipients generation
+            // :param boolean recipients_allow_suggested: when computing default
+            //   recipients, include suggested recipients in addition to minimal
+            //   defaults;
             // :param boolean find_or_create_partners: transform emails into partners
             //   (see ``_generate_template_recipients``);
             // 
@@ -294,7 +360,7 @@ namespace Bamboo.Core.Application.Services
             // }
             // 
             // render_results = {}
-            // for _lang, (template, template_res_ids) in self._classify_per_lang(res_ids).items():
+            // for (template, template_res_ids) in self._classify_per_lang(res_ids).values():
             //     # render fields not rendered by sub methods
             //     fields_torender = {
             //         field for field in render_fields_set
@@ -312,6 +378,7 @@ namespace Bamboo.Core.Application.Services
             //         template._generate_template_recipients(
             //             template_res_ids, render_fields_set,
             //             render_results=render_results,
+            //             allow_suggested=recipients_allow_suggested,
             //             find_or_create_partners=find_or_create_partners
             //         )
             // 
@@ -342,11 +409,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MailTemplate> GenerateTemplateRecipientsInternalAsync(List<Guid> res_ids, object render_fields, object find_or_create_partners, object render_results)
+        protected async Task<MailTemplate> GenerateTemplateRecipientsInternalAsync(List<Guid> res_ids, object render_fields, object allow_suggested, object find_or_create_partners, object render_results)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
             // def _generate_template_recipients(self, res_ids, render_fields,
+            //                               allow_suggested=False,
             //                               find_or_create_partners=False,
             //                               render_results=None):
             // """ Render recipients of the template 'self', returning values for records
@@ -366,6 +434,8 @@ namespace Bamboo.Core.Application.Services
             // :param list res_ids: list of record IDs on which template is rendered;
             // :param list render_fields: list of fields to render on template which
             //   are specific to recipients, e.g. email_cc, email_to, partner_to);
+            // :param boolean allow_suggested: when computing default recipients,
+            //   include suggested recipients in addition to minimal defaults;
             // :param boolean find_or_create_partners: transform emails into partners
             //   (calling ``find_or_create`` on partner model);
             // :param dict render_results: res_ids-based dictionary of render values.
@@ -380,14 +450,31 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // if render_results is None:
             //     render_results = {}
-            // ModelSudo = self.env[self.model].with_prefetch(res_ids).sudo()
+            // Model = self.env[self.model].with_prefetch(res_ids)
             // 
             // # if using default recipients -> ``_message_get_default_recipients`` gives
-            // # values for email_to, email_cc and partner_ids
+            // # values for email_to, email_cc and partner_ids; if using suggested recipients
+            // # -> ``_message_get_suggested_recipients_batch`` gives a list of potential
+            // # recipients (TODO: decide which API to keep)
             // if self.use_default_to and self.model:
-            //     default_recipients = ModelSudo.browse(res_ids)._message_get_default_recipients()
-            //     for res_id, recipients in default_recipients.items():
-            //         render_results.setdefault(res_id, {}).update(recipients)
+            //     if allow_suggested:
+            //         suggested_recipients = Model.browse(res_ids)._message_get_suggested_recipients_batch(
+            //             reply_discussion=True, no_create=not find_or_create_partners,
+            //         )
+            //         for res_id, suggested_list in suggested_recipients.items():
+            //             pids = [r['partner_id'] for r in suggested_list if r['partner_id']]
+            //             email_to_lst = [
+            //                 tools.mail.formataddr(
+            //                     (r['name'] or '', r['email'] or '')
+            //                 ) for r in suggested_list if not r['partner_id']
+            //             ]
+            //             render_results.setdefault(res_id, {})
+            //             render_results[res_id]['partner_ids'] = pids
+            //             render_results[res_id]['email_to'] = ', '.join(email_to_lst)
+            //     else:
+            //         default_recipients = Model.browse(res_ids)._message_get_default_recipients()
+            //         for res_id, recipients in default_recipients.items():
+            //             render_results.setdefault(res_id, {}).update(recipients)
             // # render fields dynamically which generates recipients
             // else:
             //     for field in set(render_fields) & {'email_cc', 'email_to', 'partner_to'}:
@@ -397,42 +484,22 @@ namespace Bamboo.Core.Application.Services
             // 
             // # create partners from emails if asked to
             // if find_or_create_partners:
-            //     res_id_to_company = {}
-            //     if self.model and 'company_id' in ModelSudo._fields:
-            //         for read_record in ModelSudo.browse(res_ids).read(['company_id']):
-            //             company_id = read_record['company_id'][0] if read_record['company_id'] else False
-            //             res_id_to_company[read_record['id']] = company_id
-            // 
-            //     all_emails = []
             //     email_to_res_ids = {}
-            //     email_to_company = {}
-            //     for res_id in res_ids:
-            //         record_values = render_results.setdefault(res_id, {})
+            //     records_emails = {}
+            //     for record in Model.browse(res_ids):
+            //         record_values = render_results.setdefault(record.id, {})
             //         mails = tools.email_split(record_values.pop('email_to', '')) + \
             //                 tools.email_split(record_values.pop('email_cc', ''))
-            //         all_emails += mails
-            //         record_company = res_id_to_company.get(res_id)
+            //         records_emails[record] = mails
             //         for mail in mails:
-            //             email_to_res_ids.setdefault(mail, []).append(res_id)
-            //             if record_company:
-            //                 email_to_company[mail] = record_company
+            //             email_to_res_ids.setdefault(mail, []).append(record.id)
             // 
-            //     if all_emails:
-            //         customers_information = ModelSudo.browse(res_ids)._get_customer_information()
-            //         partners = self.env['res.partner']._find_or_create_from_emails(
-            //             all_emails,
-            //             additional_values={
-            //                 email: {
-            //                     'company_id': email_to_company.get(email),
-            //                     **customers_information.get(email, {}),
-            //                 }
-            //                 for email in itertools.chain(all_emails, [False])
-            //             })
-            //         for original_email, partner in zip(all_emails, partners):
-            //             if not partner:
-            //                 continue
-            //             for res_id in email_to_res_ids[original_email]:
-            //                 render_results[res_id].setdefault('partner_ids', []).append(partner.id)
+            //     if hasattr(Model, '_partner_find_from_emails'):
+            //         records_partners = Model.browse(res_ids)._partner_find_from_emails(records_emails)
+            //     else:
+            //         records_partners = self.env['mail.thread']._partner_find_from_emails(records_emails)
+            //     for res_id, partners in records_partners.items():
+            //         render_results[res_id].setdefault('partner_ids', []).extend(partners.ids)
             // 
             // # update 'partner_to' rendered value to 'partner_ids'
             // all_partner_to = {
@@ -443,7 +510,7 @@ namespace Bamboo.Core.Application.Services
             // existing_pids = set()
             // if all_partner_to:
             //     existing_pids = set(self.env['res.partner'].sudo().browse(list(all_partner_to)).exists().ids)
-            // for res_id, record_values in render_results.items():
+            // for record_values in render_results.values():
             //     partner_to = record_values.pop('partner_to', '')
             //     if partner_to:
             //         tpl_partner_ids = set(self._parse_partner_to(partner_to)) & existing_pids
@@ -523,21 +590,104 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> OpenDeleteConfirmationModalAsync(Guid id)
+        protected async Task<MailTemplate> GetDynamicFieldNamesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
-            // def open_delete_confirmation_modal(self):
+            // def _get_dynamic_field_names(self):
             // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_id': self.id,
-            //     'res_model': self._name,
-            //     'target': 'new',
-            //     'view_id': self.env.ref('mail.mail_template_view_form_confirm_delete').id,
-            //     'context': {'dialog_size': 'medium'},
-            //     'name': _('Confirmation'),
+            //     'body_html',
+            //     'email_cc',
+            //     'email_from',
+            //     'email_to',
+            //     'lang',
+            //     'partner_to',
+            //     'reply_to',
+            //     'scheduled_date',
+            //     'subject',
             // }
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> GetNonAbstractModelsDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _get_non_abstract_models_domain(self):
+            // registry = self.env.registry
+            // abstract_models = [model for model in registry if registry[model]._abstract]
+            // return [('model', 'not in', abstract_models)]
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> HasUnsafeExpressionTemplateInlineTemplateInternalAsync(object source, object model, object fname)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _has_unsafe_expression_template_inline_template(self, source, model, fname=None):
+            // if self._expression_is_default(source, model, fname):
+            //     return False
+            // return super()._has_unsafe_expression_template_inline_template(source, model, fname=fname)
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> HasUnsafeExpressionTemplateQwebInternalAsync(object source, object model, object fname)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _has_unsafe_expression_template_qweb(self, source, model, fname=None):
+            // if self._expression_is_default(source, model, fname):
+            //     return False
+            // return super()._has_unsafe_expression_template_qweb(source, model, fname=fname)
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> LoadPosDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: mail_template.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', 'in', [preset['mail_template_id'] for preset in data['pos.preset']])]
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> LoadPosDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: mail_template.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return ['id']
+            */
+            return default;
+        }
+
+        protected async Task<MailTemplate> OnchangeModelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def _onchange_model(self):
+            // for template in self.filtered("model"):
+            //     target = self.env[template.model]
+            //     if hasattr(target, "_mail_template_default_values"):
+            //         upd_values = target._mail_template_default_values()
+            //         template.update(upd_values)
+            */
+            return default;
+        }
+
+        public async Task<MailTemplate> OpenMailPreviewAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
+            // def action_open_mail_preview(self):
+            // action = self.env.ref('mail.mail_template_preview_action')._get_action_dict()
+            // action.update({'name': _('Template Preview: "%(template_name)s"', template_name=self.name)})
+            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -574,7 +724,7 @@ namespace Bamboo.Core.Application.Services
             // method to filtrate the mail templates.
             // """
             // if self.env.context.get('filter_template_on_event'):
-            //     domain = expression.AND([[('model', '=', 'event.registration')], domain])
+            //     domain = Domain('model', '=', 'event.registration') & Domain(domain)
             // return super()._search(domain, *args, **kwargs)
             */
             return default;
@@ -585,35 +735,24 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
             // def _search_template_category(self, operator, value):
-            // if operator not in ['in', 'not in', '=', '!=']:
-            //     raise NotImplementedError(_('Operation not supported'))
-            // 
-            // value = [value] if isinstance(value, str) else value
-            // operator = 'in' if operator in ("in", "=") else 'not in'
+            // if operator != 'in':
+            //     return NotImplemented
             // 
             // templates_with_xmlid = self.env['ir.model.data'].sudo()._search([
             //     ('model', '=', 'mail.template'),
             //     ('module', '!=', '__export__')
             // ]).subselect('res_id')
             // 
-            // domain = []
+            // domain = Domain.FALSE
+            // 
             // if 'hidden_template' in value:
-            //     domain.append(['|', ('active', '=', False), '&', ('description', '=', False), ('id', 'in', templates_with_xmlid)])
+            //     domain |= Domain(['|', ('active', '=', False), '&', ('description', '=', False), ('id', 'in', templates_with_xmlid)])
             // 
             // if 'base_template' in value:
-            //     domain.append(['&', ('description', '!=', False), ('id', 'in', templates_with_xmlid)])
+            //     domain |= Domain([('active', '=', True), ('description', '!=', False), ('id', 'in', templates_with_xmlid)])
             // 
             // if 'custom_template' in value:
-            //     domain.append([('template_category', 'not in', ['base_template', 'hidden_template'])])
-            // 
-            // if operator == 'not in':
-            //     for dom in domain:
-            //         dom.insert(0, "!")
-            // 
-            // if len(domain) > 1:
-            //     domain = (expression.OR if operator == 'in' else expression.AND)(domain)
-            // else:
-            //     domain = domain[0]
+            //     domain |= Domain([('active', '=', True), ('template_category', 'not in', ['base_template', 'hidden_template'])])
             // 
             // return domain
             */
@@ -736,37 +875,21 @@ namespace Bamboo.Core.Application.Services
             //             values['body'] = values['body_html']
             //             continue
             // 
-            //         lang = res_ids_langs.get(record.id) or False
+            //         lang = res_ids_langs.get(record.id) or self.env.lang
             //         company = res_ids_companies.get(record.id) or self.env.company
-            //         model_lang = record_ir_model.with_context(lang=lang) if lang else record_ir_model
+            //         model_lang = record_ir_model.with_context(lang=lang)
+            //         self_lang = self.with_context(lang=lang)
+            //         record_lang = record.with_context(lang=lang)
             // 
-            //         template_ctx = {
-            //             # message
-            //             'message': self.env['mail.message'].sudo().new(dict(body=values['body_html'], record_name=record.display_name)),
-            //             'subtype': self.env['mail.message.subtype'].sudo(),
-            //             # record
-            //             'model_description': model_lang.display_name,
-            //             'record': record,
-            //             'record_name': False,
-            //             'subtitles': False,
-            //             # user / environment
-            //             'company': company,
-            //             'email_add_signature': False,
-            //             'signature': '',
-            //             'website_url': '',
-            //             # tools
-            //             'is_html_empty': is_html_empty,
-            //         }
-            //         body = model_lang.env['ir.qweb']._render(sending_email_layout_xmlid, template_ctx, minimal_qcontext=True, raise_if_not_found=False)
-            //         if not body:
-            //             _logger.warning(
-            //                 'QWeb template %s not found when sending template %s. Sending without layout.',
-            //                 sending_email_layout_xmlid,
-            //                 self.name,
-            //             )
-            //             body = values['body_html']
-            // 
-            //         values['body_html'] = self.env['mail.render.mixin']._replace_local_links(body)
+            //         values['body_html'] = self_lang._render_encapsulate(
+            //             sending_email_layout_xmlid,
+            //             values['body_html'],
+            //             add_context={
+            //                 'company': company,
+            //                 'model_description': model_lang.display_name,
+            //             },
+            //             context_record=record_lang,
+            //         )
             //         values['body'] = values['body_html']
             // 
             //     mails = self.env['mail.mail'].sudo().create(values_list)

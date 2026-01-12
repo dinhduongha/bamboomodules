@@ -11,6 +11,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IWebsiteAppService : IGenericApplicationService<Website>
     {
         Task<Website> ButtonGoWebsiteAsync(Guid id, WebsiteButtonGoWebsiteRequestDto input);
+        Task<Website> CheckExistingPageAsync(Guid id, WebsiteCheckExistingPageRequestDto input);
+        Task<Website> ConfiguratorAddonsApplyAsync(Guid id, WebsiteConfiguratorAddonsApplyRequestDto input);
         Task<Website> ConfiguratorApplyAsync(Guid id);
         Task<Website> ConfiguratorGetFooterLinksAsync(Guid id);
         Task<Website> ConfiguratorInitAsync(Guid id);
@@ -24,6 +26,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<Website> GetCdnUrlAsync(Guid id, WebsiteGetCdnUrlRequestDto input);
         Task<Website> GetClientActionAsync(Guid id, WebsiteGetClientActionRequestDto input);
         Task<Website> GetClientUrlAsync(Guid id, WebsiteGetClientUrlRequestDto input);
+        Task<Website> GetConfiguratorProductPageStylesAsync(Guid id);
+        Task<Website> GetConfiguratorShopPageStylesAsync(Guid id);
         Task<Website> GetCtaDataAsync(Guid id, WebsiteGetCtaDataRequestDto input);
         Task<Website> GetCurrentWebsiteAsync(Guid id, WebsiteGetCurrentWebsiteRequestDto input);
         Task<Website> GetPricelistAvailableAsync(Guid id, WebsiteGetPricelistAvailableRequestDto input);
@@ -43,12 +47,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<Website> NewPageAsync(Guid id, WebsiteNewPageRequestDto input);
         Task<Website> PagerAsync(Guid id, WebsitePagerRequestDto input);
         Task<Website> RuleIsEnumerableAsync(Guid id, WebsiteRuleIsEnumerableRequestDto input);
-        Task<Website> SaleGetOrderAsync(Guid id, WebsiteSaleGetOrderRequestDto input);
         Task<Website> SaleProductDomainAsync(Guid id);
         Task<Website> SaleResetAsync(Guid id);
         Task<Website> SearchPagesAsync(Guid id, WebsiteSearchPagesRequestDto input);
         Task<Website> SearchUrlDependenciesAsync(Guid id, WebsiteSearchUrlDependenciesRequestDto input);
         Task<Website> ViewrefAsync(Guid id, WebsiteViewrefRequestDto input);
-        Task<Website> WebsiteDomainAsync(Guid id, WebsiteWebsiteDomainRequestDto input);
+        Task<Website> WebsiteDomainAsync(Guid id);
     }
 }

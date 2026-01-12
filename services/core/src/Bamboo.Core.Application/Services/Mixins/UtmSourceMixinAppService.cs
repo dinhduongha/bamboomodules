@@ -47,7 +47,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'list,kanban,form,calendar,graph',
             //     'res_model': 'mailing.mailing',
-            //     'domain': expression.AND([
+            //     'domain': Domain.AND([
             //         [('campaign_id', '=', self.campaign_id.id)],
             //         [('ab_testing_enabled', '=', True)],
             //         [('mailing_type', '=', self.mailing_type)]
@@ -87,9 +87,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // while keeping using it, without cluttering the Kanban view if they're a lot of
             // templates.
             // """
-            // domain = [('favorite', '=', True)]
+            // domain = Domain('favorite', '=', True)
             // if extra_domain:
-            //     domain = expression.AND([domain, extra_domain])
+            //     domain &= Domain(extra_domain)
             // 
             // values_list = self.with_context(active_test=False).search_read(
             //     domain=domain,
@@ -179,12 +179,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_retry_failed(self):
-            // failed_mails = self.env['mail.mail'].sudo().search([
+            // """ Remove all failed emails and their traces, and try sending them again."""
+            // # Use batching to prevent cache overfill in unlink()
+            // batch_size = 1000
+            // failed_emails = self.env['mail.mail'].sudo().with_context(prefetch_fields=False).search([
             //     ('mailing_id', 'in', self.ids),
             //     ('state', '=', 'exception')
-            // ])
-            // failed_mails.mapped('mailing_trace_ids').unlink()
-            // failed_mails.unlink()
+            // ], limit=batch_size)
+            // while failed_emails:
+            //     failed_emails.mapped('mailing_trace_ids').unlink()
+            //     failed_emails.unlink()
+            //     failed_emails = failed_emails.search([
+            //         ('mailing_id', 'in', self.ids),
+            //         ('state', '=', 'exception')
+            //     ], limit=batch_size)
             // self.action_put_in_queue()
             */
             return default;
@@ -241,7 +249,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _action_send_mail(self, res_ids=None):
-            // author_id = self.env.user.partner_id.id
+            // odoobot = self.env.ref('base.partner_root')
+            // user_partner = self.env.user.partner_id
             // 
             // for mailing in self:
             //     context_user = mailing.user_id or mailing.write_uid or self.env.user
@@ -256,7 +265,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'auto_delete': not mailing.keep_archives,
             //         # email-mode: keep original message for routing
             //         'auto_delete_keep_log': mailing.reply_to_mode == 'update',
-            //         'author_id': author_id,
+            //         # If current user is odoobot, use mailing responsible (no impact on email_from)
+            //         'author_id': mailing.user_id.partner_id.id if user_partner == odoobot else user_partner.id,
             //         'attachment_ids': [(4, attachment.id) for attachment in mailing.attachment_ids],
             //         'body': mailing._prepend_preview(mailing.body_html or '', mailing.preview),
             //         'composition_mode': 'mass_mail',
@@ -265,10 +275,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'mailing_list_ids': [(4, l.id) for l in mailing.contact_list_ids],
             //         'mass_mailing_id': mailing.id,
             //         'model': mailing.mailing_model_real,
-            //         'record_name': False,
             //         'reply_to_force_new': mailing.reply_to_mode == 'new',
             //         'subject': mailing.subject,
             //         'template_id': False,
+            //         'use_exclusion_list': mailing.use_exclusion_list,
             //     }
             //     if mailing.reply_to_mode == 'new':
             //         composer_values['reply_to'] = mailing.reply_to
@@ -280,7 +290,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ).create(composer_values)
             // 
             //     # auto-commit except in testing mode
-            //     auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            //     auto_commit = not modules.module.current_test
             //     composer._action_send_mail(auto_commit=auto_commit)
             // 
             //     mailing.write({
@@ -311,7 +321,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for mailing in self:
             //     if mailing.user_id:
             //         mailing = mailing.with_user(mailing.user_id).with_context(
-            //             lang=mailing.user_id.lang or self._context.get('lang')
+            //             lang=mailing.user_id.lang or self.env.context.get('lang')
             //         )
             //     mailing_type = mailing._get_pretty_mailing_type()
             //     mail_user = mailing.user_id or self.env.user
@@ -376,10 +386,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_send_winner_mailing(self):
             // """Send the winner mailing based on the winner selection field.
             // This action is used in 2 cases:
-            //     - When the user clicks on a button to send the winner mailing. There is only one mailing in self
-            //     - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
-            //     case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
-            //     winner.
+            // 
+            // - When the user clicks on a button to send the winner mailing. There is only one mailing in self
+            // - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
+            //   case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
+            //   winner.
+            // 
             // If the winner mailing is computed automatically, we sudo the mailings of the campaign in order to sort correctly
             // the mailings based on the selection that can be used with sub-modules like CRM and Sales
             // """
@@ -481,41 +493,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _action_view_documents_filtered(self, view_filter):
             // def _fetch_trace_res_ids(trace_domain):
-            //     trace_domain = expression.AND([
-            //         trace_domain,
-            //         [('mass_mailing_id', '=', self.id)],
-            //     ])
-            //     result = self.env['mailing.trace'].search_read(domain=trace_domain, fields=['res_id'])
-            //     return [line['res_id'] for line in result]
+            //     trace_domain &= Domain('mass_mailing_id', '=', self.id)
+            //     return self.env['mailing.trace'].search_fetch(domain=trace_domain, field_names=['res_id']).mapped('res_id')
             // 
             // model_name = self.env['ir.model']._get(self.mailing_model_real).display_name
             // helper_header = None
             // helper_message = None
             // if view_filter == 'reply':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', '=', 'reply')])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', '=', 'reply'))
             //     helper_header = _("No %s replied to your mailing yet!", model_name)
             //     helper_message = _("To track how many replies this mailing gets, make sure "
             //                        "its reply-to address belongs to this database.")
             // elif view_filter == 'bounce':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', '=', 'bounce')])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', '=', 'bounce'))
             //     helper_header = _("No %s address bounced yet!", model_name)
             //     helper_message = _("Bounce happens when a mailing cannot be delivered (fake address, "
             //                        "server issues, ...). Check each record to see what went wrong.")
             // elif view_filter == 'clicked':
-            //     res_ids = _fetch_trace_res_ids([('links_click_ids', '!=', False)])
+            //     res_ids = _fetch_trace_res_ids(Domain('links_click_ids', '!=', False))
             //     helper_header = _("No %s clicked your mailing yet!", model_name)
             //     helper_message = _(
             //         "Come back once your mailing has been sent to track who clicked on the embedded links.")
             // elif view_filter == 'open':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', 'in', ('open', 'reply'))])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', 'in', ('open', 'reply')))
             //     helper_header = _("No %s opened your mailing yet!", model_name)
             //     helper_message = _("Come back once your mailing has been sent to track who opened your mailing.")
             // elif view_filter == 'delivered':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', 'in', ('sent', 'open', 'reply'))])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', 'in', ('sent', 'open', 'reply')))
             //     helper_header = _("No %s received your mailing yet!", model_name)
             //     helper_message = _("Wait until your mailing has been sent to check how many recipients you managed to reach.")
             // elif view_filter == 'sent':
-            //     res_ids = _fetch_trace_res_ids([('sent_datetime', '!=', False)])
+            //     res_ids = _fetch_trace_res_ids(Domain('sent_datetime', '!=', False))
             // else:
             //     res_ids = []
             // 
@@ -525,7 +533,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_mode': 'list,form',
             //     'res_model': self.mailing_model_real,
             //     'domain': [('id', 'in', res_ids)],
-            //     'context': dict(self._context, create=False),
+            //     'context': dict(self.env.context, create=False),
             // }
             // if helper_header and helper_message:
             //     action['help'] = Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
@@ -555,7 +563,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'help': Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
             //         helper_header, helper_message,
             //     ),
-            //     'context': dict(self._context, create=False)
+            //     'context': dict(self.env.context, create=False)
             // }
             */
             return default;
@@ -825,7 +833,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'free_input_multi',
             //     ]
             //     welcome_steps = script.script_step_ids and script._get_welcome_steps()
-            //     if welcome_steps and welcome_steps[-1].step_type == 'forward_operator':
+            //     if welcome_steps and welcome_steps[-1].is_forward_operator:
             //         script.first_step_warning = 'first_step_operator'
             //     elif welcome_steps and welcome_steps[-1].step_type not in allowed_first_step_types:
             //         script.first_step_warning = 'first_step_invalid'
@@ -926,7 +934,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif mailing.mailing_filter_id:
             //         mailing.mailing_domain = mailing.mailing_filter_id.mailing_domain
             //     else:
-            //         mailing.mailing_domain = repr(mailing._get_default_mailing_domain())
+            //         mailing.mailing_domain = repr(mailing._get_default_mailing_domain() or [])
             */
             return default;
         }
@@ -1020,9 +1028,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for mass_mailing in self:
             //     if mass_mailing.schedule_date:
             //         # max in case the user schedules a date in the past
-            //         mass_mailing.next_departure = max(mass_mailing.schedule_date, fields.datetime.now())
+            //         mass_mailing.next_departure = max(mass_mailing.schedule_date, fields.Datetime.now())
             //     else:
-            //         mass_mailing.next_departure = fields.datetime.now()
+            //         mass_mailing.next_departure = fields.Datetime.now()
             // past = self.filtered(
             //     lambda mailing: mailing.state == 'in_queue' and mailing.next_departure < fields.Datetime.now()
             // )
@@ -1233,7 +1241,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Apply the changes.
             // urls = self._create_attachments_from_inline_images([(image, original_id) for (image, _, _, original_id) in conversion_info])
-            // for ((image, node, old_url, original_id), new_url) in zip(conversion_info, urls):
+            // for ((_image, node, old_url, _original_id), new_url) in zip(conversion_info, urls):
             //     did_modify_body = True
             //     if node.tag == 'img':
             //         node.attrib['src'] = new_url
@@ -1389,6 +1397,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CreateAndGetAliasAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_recruitment_source.py) ---
+            // def create_and_get_alias(self):
+            // self.ensure_one()
+            // self.create_alias()
+            // return self.email
+            */
+            return default;
+        }
+
         public async Task<TEntity> CreateAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -1520,33 +1540,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def default_get(self, fields_list):
-            // vals = super(MassMailing, self).default_get(fields_list)
+            // def default_get(self, fields):
+            // vals = super().default_get(fields)
             // 
             // # field sent by the calendar view when clicking on a date block
             // # we use it to setup the scheduled date of the created mailing.mailing
             // default_calendar_date = self.env.context.get('default_calendar_date')
-            // if default_calendar_date and ('schedule_type' in fields_list and 'schedule_date' in fields_list) \
-            //    and fields.Datetime.from_string(default_calendar_date) > fields.Datetime.now():
+            // if default_calendar_date and ('schedule_type' in fields and 'schedule_date' in fields) \
+            //    and Datetime.to_datetime(default_calendar_date) > Datetime.now():
             //     vals.update({
             //         'schedule_type': 'scheduled',
             //         'schedule_date': default_calendar_date
             //     })
             // 
-            // if 'contact_list_ids' in fields_list and not vals.get('contact_list_ids') and vals.get('mailing_model_id'):
+            // if 'contact_list_ids' in fields and not vals.get('contact_list_ids') and vals.get('mailing_model_id'):
             //     if vals.get('mailing_model_id') == self.env['ir.model']._get_id('mailing.list'):
             //         mailing_list = self.env['mailing.list'].search([], limit=2)
             //         if len(mailing_list) == 1:
             //             vals['contact_list_ids'] = [(6, 0, [mailing_list.id])]
             // return vals
             --- ODOO METHOD SOURCE (MODULE: utm, FILE: utm_source.py) ---
-            // def default_get(self, fields_list):
-            // # Exclude 'name' from fields_list to avoid retrieving it from context.
-            // return super().default_get([field for field in fields_list if field != "name"])
+            // def default_get(self, fields):
+            // # Exclude 'name' from fields to avoid retrieving it from context.
+            // return super().default_get([field for field in fields if field != "name"])
             */
             return default;
         }
@@ -1559,27 +1579,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     record.attachment_ids.write({'res_model': record._name, 'res_id': record.id})
             // return self
-            */
-            return default;
-        }
-
-        public async Task<TEntity> FormatForFrontendInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
-            // def _format_for_frontend(self):
-            // """ Small utility method that formats the script into a dict usable by the frontend code. """
-            // self.ensure_one()
-            // 
-            // return {
-            //     'id': self.id,
-            //     'name': self.title,
-            //     'partner': {'id': self.operator_partner_id.id, 'type': 'partner', 'name': self.operator_partner_id.name},
-            //     'welcomeSteps': [
-            //         step._format_for_frontend()
-            //         for step in self._get_welcome_steps()
-            //     ]
-            // }
             */
             return default;
         }
@@ -1721,13 +1720,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_default_mailing_domain(self):
-            // mailing_domain = []
+            // mailing_domain = Domain.TRUE
             // if hasattr(self.env[self.mailing_model_name], '_mailing_get_default_domain'):
-            //     mailing_domain = self.env[self.mailing_model_name]._mailing_get_default_domain(self)
-            // 
-            // if self.mailing_type == 'mail' and 'is_blacklisted' in self.env[self.mailing_model_name]._fields:
-            //     mailing_domain = expression.AND([[('is_blacklisted', '=', False)], mailing_domain])
-            // 
+            //     mailing_domain = Domain(self.env[self.mailing_model_name]._mailing_get_default_domain(self))
             // return mailing_domain
             */
             return default;
@@ -1738,10 +1733,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_image_by_url(self, url, session):
-            // maxsize = int(tools.config.get("import_image_maxbytes", DEFAULT_IMAGE_MAXBYTES))
+            // maxsize = tools.config.get("import_file_maxbytes")
             // _logger.debug("Trying to import image from URL: %s", url)
             // try:
-            //     response = session.get(url, timeout=int(tools.config.get("import_image_timeout", DEFAULT_IMAGE_TIMEOUT)))
+            //     response = session.get(url, timeout=tools.config.get("import_file_timeout"))
             //     response.raise_for_status()
             // 
             //     if response.headers.get('Content-Length') and int(response.headers['Content-Length']) > maxsize:
@@ -1815,8 +1810,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Give list of opt-outed emails, depending on specific model-based
             // computation if available.
             // 
-            // :return list: opt-outed emails, preferably normalized (aka not records)
+            // :returns: opt-outed emails, preferably normalized (aka not records)
             // """
+            // # FIXME: The function and docstring say it returns a list but opt_out
+            // #        is initialized as a dict, and `_mailing_get_opt_out_list`
+            // #        actually returns a set. So is it a list, a set, or a dict?
             // self.ensure_one()
             // opt_out = {}
             // target = self.env[self.mailing_model_real]
@@ -1848,7 +1846,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_recipients_domain(self):
             // """Overridable getter used to get the domain of the recipients at the time of sending."""
-            // return self._parse_mailing_domain()
+            // return Domain(self._parse_mailing_domain())
             */
             return default;
         }
@@ -1886,14 +1884,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_remaining_recipients(self):
             // res_ids = self._get_recipients()
-            // trace_domain = [('model', '=', self.mailing_model_real)]
+            // trace_domain = Domain('model', '=', self.mailing_model_real)
             // if self.ab_testing_enabled and self.ab_testing_is_winner_mailing:
-            //     trace_domain = expression.AND([trace_domain, [('mass_mailing_id', 'in', self._get_ab_testing_siblings_mailings().ids)]])
+            //     trace_domain &= Domain('mass_mailing_id', 'in', self._get_ab_testing_siblings_mailings().ids)
             // else:
-            //     trace_domain = expression.AND([trace_domain, [
-            //         ('res_id', 'in', res_ids),
-            //         ('mass_mailing_id', '=', self.id),
-            //     ]])
+            //     trace_domain &= Domain('res_id', 'in', res_ids) & Domain('mass_mailing_id', '=', self.id)
             // already_mailed = self.env['mailing.trace'].search_read(trace_domain, ['res_id'])
             // done_res_ids = {record['res_id'] for record in already_mailed}
             // return [rid for rid in res_ids if rid not in done_res_ids]
@@ -1941,8 +1936,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // join_domain, where_domain = self._get_seen_list_extra()
             // query = query % {'target': target._table, 'join_domain': join_domain, 'where_domain': where_domain}
             // params = {'mailing_id': self.id, 'mailing_campaign_id': self.campaign_id.id, 'target_model': self.mailing_model_real}
-            // self._cr.execute(query, params)
-            // seen_list = set(m[0] for m in self._cr.fetchall())
+            // self.env.cr.execute(query, params)
+            // seen_list = {m[0] for m in self.env.cr.fetchall()}
             // _logger.info(
             //     "Mass-mailing %s has already reached %s %s emails", self, len(seen_list), target._name)
             // return seen_list
@@ -1955,7 +1950,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_unsubscribe_oneclick_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/unsubscribe_oneclick?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -1963,7 +1958,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -1975,7 +1970,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_unsubscribe_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/confirm_unsubscribe?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -1983,7 +1978,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -1995,7 +1990,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_view_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/view?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -2003,7 +1998,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -2095,9 +2090,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     discuss_channel.chatbot_current_step_id = welcome_step.id
             // 
             //     if not is_html_empty(welcome_step.message):
-            //         posted_messages += discuss_channel.with_context(mail_create_nosubscribe=True).message_post(
+            //         posted_messages += discuss_channel.with_context(mail_post_autofollow_author_skip=True).message_post(
             //             author_id=self.operator_partner_id.id,
-            //             body=plaintext2html(welcome_step.message),
+            //             body=plaintext2html(welcome_step.message, with_paragraph=False),
             //             message_type='comment',
             //             subtype_xmlid='mail.mt_comment',
             //         )
@@ -2143,7 +2138,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     }
             // 
             // random_tip = self.env['digest.tip'].search(
-            //     [('group_id.category_id', '=', self.env.ref('base.module_category_marketing_email_marketing').id)]
+            //     [('group_id.privilege_id', '=', self.env.ref('mass_mailing.res_groups_privilege_email_marketing').id)]
             // )
             // if random_tip:
             //     random_tip = random.choice(random_tip).tip_description
@@ -2160,7 +2155,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                mailing_name=self.subject
             //                ),
             //     'top_button_label': _('More Info'),
-            //     'top_button_url': url_join(web_base_url, f'/odoo/mailing.mailing/{self.id}'),
+            //     'top_button_url': tools.urls.urljoin(web_base_url, f'/odoo/mailing.mailing/{self.id}'),
             //     'kpi_data': [
             //         kpi,
             //         {
@@ -2188,8 +2183,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _process_mass_mailing_queue(self):
             // mass_mailings = self.search([('state', 'in', ('in_queue', 'sending')), '|', ('schedule_date', '<', fields.Datetime.now()), ('schedule_date', '=', False)])
-            // count_total = len(mass_mailings)
-            // for count_done, mass_mailing in enumerate(mass_mailings, start=1):
+            // self.env['ir.cron']._commit_progress(remaining=len(mass_mailings))
+            // for mass_mailing in mass_mailings:
             //     context_user = mass_mailing.user_id or mass_mailing.write_uid or self.env.user
             //     mass_mailing = mass_mailing.with_context(
             //         **self.env['res.users'].with_user(context_user).context_get()
@@ -2204,7 +2199,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             # send the KPI mail only if it's the first sending
             //             'kpi_mail_required': not mass_mailing.sent_date,
             //         })
-            //     self.env['ir.cron']._notify_progress(done=count_done, remaining=count_total - count_done)
+            //     self.env['ir.cron']._commit_progress(processed=1)
             // 
             // if self.env['ir.config_parameter'].sudo().get_param('mass_mailing.mass_mailing_reports'):
             //     mailings = self.env['mailing.mailing'].search([
@@ -2215,6 +2210,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ])
             //     if mailings:
             //         mailings._action_send_statistics()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ToStoreDefaultsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
+            // def _to_store_defaults(self, target):
+            // return [Store.One("operator_partner_id", ["name"]), "title"]
             */
             return default;
         }
@@ -2259,7 +2264,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        public async Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
@@ -2271,7 +2276,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if values.get('body_arch'):
             //     values['body_arch'] = self._convert_inline_images_to_urls(values['body_arch'])
             // if values.get('body_html'):
@@ -2280,7 +2286,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if values.get('campaign_id') is False and any(mailing.ab_testing_enabled for mailing in self) and 'ab_testing_enabled' not in values:
             //     raise ValidationError(_("A campaign should be set when A/B test is enabled"))
             // 
-            // result = super(MassMailing, self).write(values)
+            // result = super().write(values)
             // if values.get('ab_testing_enabled'):
             //     self._create_ab_testing_utm_campaigns()
             // self._fix_attachment_ownership()
@@ -2292,20 +2298,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return result
             --- ODOO METHOD SOURCE (MODULE: utm, FILE: utm_source.py) ---
-            // def write(self, values):
-            // if (values.get(self._rec_name) or values.get('name')) and len(self) > 1:
+            // def write(self, vals):
+            // if (vals.get(self._rec_name) or vals.get('name')) and len(self) > 1:
             //     raise ValueError(
             //         _('You cannot update multiple records with the same name. The name should be unique!')
             //     )
             // 
-            // if values.get(self._rec_name) and not values.get('name'):
-            //     values['name'] = self.env['utm.source']._generate_name(self, values[self._rec_name])
-            // if values.get('name'):
-            //     values['name'] = self.env['utm.mixin'].with_context(
+            // if vals.get(self._rec_name) and not vals.get('name'):
+            //     vals['name'] = self.env['utm.source']._generate_name(self, vals[self._rec_name])
+            // if vals.get('name'):
+            //     vals['name'] = self.env['utm.mixin'].with_context(
             //         utm_check_skip_record_ids=self.source_id.ids
-            //     )._get_unique_names("utm.source", [values['name']])[0]
+            //     )._get_unique_names("utm.source", [vals['name']])[0]
             // 
-            // return super().write(values)
+            // return super().write(vals)
             */
             return default;
         }

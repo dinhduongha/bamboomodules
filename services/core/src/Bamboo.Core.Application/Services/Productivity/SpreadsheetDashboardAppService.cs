@@ -26,6 +26,17 @@ namespace Bamboo.Core.Application.Services
             _spreadsheetMixinAppService = spreadsheetMixinAppService;
         }
 
+        protected async Task<SpreadsheetDashboard> ComputeIsFavoriteInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def _compute_is_favorite(self):
+            // for dashboard in self:
+            //     dashboard.is_favorite = self.env.uid in dashboard.favorite_user_ids.ids
+            */
+            return default;
+        }
+
         public async Task<SpreadsheetDashboard> CopyDataAsync(Guid id, SpreadsheetDashboardCopyDataRequestDto input)
         {
             /*
@@ -46,35 +57,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
             // def _dashboard_is_empty(self):
-            // return any(self.env[model].search_count([], limit=1) == 0 for model in self.main_data_model_ids.sudo().mapped("model"))
+            // return any(self.env[model].search_count([], limit=1) == 0 for model in self.sudo().main_data_model_ids.mapped("model"))
             */
             return default;
         }
 
-        public async Task<SpreadsheetDashboard> GetReadonlyDashboardAsync(Guid id)
+        protected async Task<SpreadsheetDashboard> GetDashboardTranslationNamespaceInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
-            // def get_readonly_dashboard(self):
-            // self.ensure_one()
-            // snapshot = json.loads(self.spreadsheet_data)
-            // if self._dashboard_is_empty() and self.sample_dashboard_file_path:
-            //     sample_data = self._get_sample_dashboard()
-            //     if sample_data:
-            //         return {
-            //             "snapshot": sample_data,
-            //             "is_sample": True,
-            //         }
-            // user_locale = self.env['res.lang']._get_user_spreadsheet_locale()
-            // snapshot.setdefault('settings', {})['locale'] = user_locale
-            // default_currency = self.env['res.currency'].get_company_currency_for_spreadsheet()
-            // return {
-            //     'snapshot': snapshot,
-            //     'revisions': [],
-            //     'default_currency': default_currency,
-            // }
+            // def _get_dashboard_translation_namespace(self):
+            // data = self.env['ir.model.data'].sudo().search([
+            //     ('model', '=', self._name),
+            //     ('res_id', 'in', self.ids),
+            // ], limit=1)
+            // return data.module
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<SpreadsheetDashboard> GetSampleDashboardInternalAsync()
@@ -89,6 +88,40 @@ namespace Bamboo.Core.Application.Services
             //     return
             */
             return default;
+        }
+
+        protected async Task<SpreadsheetDashboard> GetSerializedReadonlyDashboardInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def _get_serialized_readonly_dashboard(self):
+            // snapshot = json.loads(self.spreadsheet_data)
+            // user_locale = self.env['res.lang']._get_user_spreadsheet_locale()
+            // snapshot.setdefault('settings', {})['locale'] = user_locale
+            // default_currency = self.env['res.currency'].get_company_currency_for_spreadsheet()
+            // return json.dumps({
+            //     'snapshot': snapshot,
+            //     'revisions': [],
+            //     'default_currency': default_currency,
+            //     'translation_namespace': self._get_dashboard_translation_namespace(),
+            // })
+            */
+            return default;
+        }
+
+        public async Task<SpreadsheetDashboard> ToggleFavoriteAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
+            // def action_toggle_favorite(self):
+            // self.ensure_one()
+            // current_user_id = self.env.uid
+            // if current_user_id in self.favorite_user_ids.ids:
+            //     self.sudo().favorite_user_ids = [Command.unlink(current_user_id)]
+            // else:
+            //     self.sudo().favorite_user_ids = [Command.link(current_user_id)]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

@@ -23,9 +23,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class IapAccountGetCreditsUrlRequestDto
     {
         public object ServiceName { get; set; }
-        public object BaseUrl { get; set; }
-        public object Credit { get; set; }
-        public object Trial { get; set; }
         public object AccountToken { get; set; }
     }
 }

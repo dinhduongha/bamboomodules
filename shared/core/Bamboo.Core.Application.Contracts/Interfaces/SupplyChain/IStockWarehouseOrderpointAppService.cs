@@ -11,7 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IStockWarehouseOrderpointAppService : IGenericApplicationService<StockWarehouseOrderpoint>
     {
         Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid id);
-        Task<StockWarehouseOrderpoint> GetVisibilityDaysAsync(Guid id);
+        Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid id);
         Task<StockWarehouseOrderpoint> OpenOrderpointsAsync(Guid id);
         Task<StockWarehouseOrderpoint> ProductForecastReportAsync(Guid id);
         Task<StockWarehouseOrderpoint> RemoveManualQtyToOrderAsync(Guid id);

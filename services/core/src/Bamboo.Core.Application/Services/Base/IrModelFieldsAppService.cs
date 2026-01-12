@@ -26,31 +26,12 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<IrModelFields> AddManualFieldsInternalAsync(object model)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _add_manual_fields(self, model):
-            // """ Add extra fields on model. """
-            // fields_data = self._get_manual_field_data(model._name)
-            // for name, field_data in fields_data.items():
-            //     if name not in model._fields and field_data['state'] == 'manual':
-            //         try:
-            //             field = self._instanciate(field_data)
-            //             if field:
-            //                 model._add_field(name, field)
-            //         except Exception:
-            //             _logger.exception("Failed to load field %s.%s: skipped", model._name, field_data['name'])
-            */
-            return default;
-        }
-
         protected async Task<IrModelFields> AllManualFieldDataInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def _all_manual_field_data(self):
-            // cr = self._cr
+            // cr = self.env.cr
             // # we cannot use self._fields to determine translated fields, as it has not been set up yet
             // cr.execute("""
             //     SELECT *, field_description->>'en_US' AS field_description, help->>'en_US' AS help
@@ -131,8 +112,39 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def _check_domain(self):
             // for field in self:
-            //     safe_eval(field.domain or '[]')
+            //     try:
+            //         safe_eval(field.domain or '[]')
+            //     except ValueError as e:
+            //         raise ValidationError(
+            //             _("An error occurred while evaluating the domain:\n%(error)s", error=e)
+            //         ) from e
             */
+            return default;
+        }
+
+        protected async Task<IrModelFields> CheckIfUsedInWebsiteFormInternalAsync()
+        {
+            #if PYTHON_CODE
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
+            // def _check_if_used_in_website_form(self):
+            // """Prevent field deletion if used in a website form."""
+            // for field in self:
+            //     for model_name, field_name in self.env['website']._get_html_fields():
+            //         domain = [(field_name, 'ilike', f'data-model_name="{field.model}"')]
+            //         records = self.env[model_name].with_context(active_test=False).search(domain)
+            //         for record in records:
+            //             arch_parsed = etree.fromstring(record[field_name])
+            //             xpath_selector = f'//form[@data-model_name="{field.model}"]//*[@name="{field.name}"]'
+            //             if arch_parsed.xpath(xpath_selector):
+            //                 raise ValidationError(_(
+            //                     "The field '%(field)s' cannot be deleted because it is referenced in a website view.\n"
+            //                     "Model: %(model)s\n"
+            //                     "View: %(view)s",
+            //                     field=field.name,
+            //                     model=field.model,
+            //                     view=record.display_name,
+            //                 ))
+            #endif
             return default;
         }
 
@@ -305,6 +317,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def _drop_column(self):
+            // from odoo.orm.model_classes import pop_field
+            // 
             // tables_to_drop = set()
             // 
             // for field in self:
@@ -314,25 +328,26 @@ namespace Bamboo.Core.Application.Services
             //     is_model = model is not None
             //     if field.store:
             //         # TODO: Refactor this brol in master
-            //         if is_model and sql.column_exists(self._cr, model._table, field.name) and \
-            //                 sql.table_kind(self._cr, model._table) == sql.TableKind.Regular:
-            //             self._cr.execute(SQL('ALTER TABLE %s DROP COLUMN %s CASCADE',
+            //         if is_model and sql.column_exists(self.env.cr, model._table, field.name) and \
+            //                 sql.table_kind(self.env.cr, model._table) == sql.TableKind.Regular:
+            //             self.env.cr.execute(SQL('ALTER TABLE %s DROP COLUMN %s CASCADE',
             //                 SQL.identifier(model._table), SQL.identifier(field.name),
             //             ))
             //         if field.state == 'manual' and field.ttype == 'many2many':
             //             rel_name = field.relation_table or (is_model and model._fields[field.name].relation)
             //             tables_to_drop.add(rel_name)
             //     if field.state == 'manual' and is_model:
-            //         model._pop_field(field.name)
+            //         model_cls = self.env.registry[model._name]
+            //         pop_field(model_cls, field.name)
             // 
             // if tables_to_drop:
             //     # drop the relation tables that are not used by other fields
-            //     self._cr.execute("""SELECT relation_table FROM ir_model_fields
+            //     self.env.cr.execute("""SELECT relation_table FROM ir_model_fields
             //                         WHERE relation_table IN %s AND id NOT IN %s""",
             //                      (tuple(tables_to_drop), tuple(self.ids)))
-            //     tables_to_keep = set(row[0] for row in self._cr.fetchall())
+            //     tables_to_keep = {row[0] for row in self.env.cr.fetchall()}
             //     for rel_name in tables_to_drop - tables_to_keep:
-            //         self._cr.execute(SQL('DROP TABLE %s', SQL.identifier(rel_name)))
+            //         self.env.cr.execute(SQL('DROP TABLE %s', SQL.identifier(rel_name)))
             // 
             // return True
             */
@@ -385,8 +400,10 @@ namespace Bamboo.Core.Application.Services
             // :param model_name: the name of a model
             // :return: the model's fields' help as a dictionary `{field_name: field_help}`
             // """
-            // fields = self.sudo().search([('model', '=', model_name)])
-            // return {field.name: field.help for field in fields}
+            // return {
+            //     field_name: values['help']
+            //     for field_name, values in self._get_fields_cached(model_name).items()
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -403,8 +420,7 @@ namespace Bamboo.Core.Application.Services
             // :param field_name: the name of the field
             // :return: the fields' selection as a list
             // """
-            // field = self._get(model_name, field_name)
-            // return [(sel.value, sel.name) for sel in field.selection_ids]
+            // return self._get_fields_cached(model_name).get(field_name, {}).get('selection', [])
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -420,10 +436,41 @@ namespace Bamboo.Core.Application.Services
             // :param model_name: the name of a model
             // :return: the model's fields' strings as a dictionary `{field_name: field_string}`
             // """
-            // fields = self.sudo().search([('model', '=', model_name)])
-            // return {field.name: field.field_description for field in fields}
+            // return {
+            //     field_name: values['field_description']
+            //     for field_name, values in self._get_fields_cached(model_name).items()
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<IrModelFields> GetFieldsCachedInternalAsync(object model_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
+            // def _get_fields_cached(self, model_name):
+            // """ Return the translated information of all model field's in the context's language.
+            // Note that the result contains the available translations only.
+            // 
+            // :param model_name: the name of the field's model
+            // :return: {field_name: {id, help, field_description, [selection]}}
+            // """
+            // fields = self.sudo().browse(self._get_ids(model_name).values())
+            // result = {
+            //     field.name: {
+            //         'id': field.id,
+            //         'help': field.help,
+            //         'field_description': field.field_description,
+            //     }
+            //     for field in fields
+            // }
+            // for field in fields.filtered(lambda field: field.ttype in ('selection', 'reference')):
+            //     result[field.name]['selection'] = [
+            //         (sel.value, sel.name) for sel in field.selection_ids
+            //     ]
+            // return frozendict(result)
+            */
+            return default;
         }
 
         protected async Task<IrModelFields> GetIdsInternalAsync(object model_name)
@@ -485,14 +532,14 @@ namespace Bamboo.Core.Application.Services
             // def init(self):
             // # set all existing unset website_form_blacklisted fields to ``true``
             // #  (so that we can use it as a whitelist rather than a blacklist)
-            // self._cr.execute('UPDATE ir_model_fields'
+            // self.env.cr.execute('UPDATE ir_model_fields'
             //                  ' SET website_form_blacklisted=true'
             //                  ' WHERE website_form_blacklisted IS NULL')
             // # add an SQL-level default value on website_form_blacklisted to that
             // # pure-SQL ir.model.field creations (e.g. in _reflect) generate
             // # the right default value for a whitelist (aka fields should be
             // # blacklisted by default)
-            // self._cr.execute('ALTER TABLE ir_model_fields '
+            // self.env.cr.execute('ALTER TABLE ir_model_fields '
             //                  ' ALTER COLUMN website_form_blacklisted SET DEFAULT true')
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -510,7 +557,7 @@ namespace Bamboo.Core.Application.Services
             // return attrs
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_model_fields.py) ---
             // def _instanciate_attrs(self, field_data):
-            // attrs = super(IrModelField, self)._instanciate_attrs(field_data)
+            // attrs = super()._instanciate_attrs(field_data)
             // if attrs and field_data.get('tracking'):
             //     attrs['tracking'] = field_data['tracking']
             // return attrs
@@ -530,7 +577,10 @@ namespace Bamboo.Core.Application.Services
             //     'company_dependent': bool(field_data['company_dependent']),
             // }
             // if field_data['ttype'] in ('char', 'text', 'html'):
-            //     attrs['translate'] = bool(field_data['translate'])
+            //     attrs['translate'] = FIELD_TRANSLATE.get(
+            //         field_data['translate'],
+            //         True
+            //     )
             //     if field_data['ttype'] == 'char':
             //         attrs['size'] = field_data['size'] or None
             //     elif field_data['ttype'] == 'html':
@@ -582,19 +632,6 @@ namespace Bamboo.Core.Application.Services
             // if field_data['compute']:
             //     attrs['compute'] = make_compute(field_data['compute'], field_data['depends'])
             // return attrs
-            */
-            return default;
-        }
-
-        protected async Task<IrModelFields> InstanciateInternalAsync(object field_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _instanciate(self, field_data):
-            // """ Return a field instance corresponding to parameters ``field_data``. """
-            // attrs = self._instanciate_attrs(field_data)
-            // if attrs:
-            //     return fields.Field.by_type[field_data['ttype']](**attrs)
             */
             return default;
         }
@@ -714,7 +751,9 @@ namespace Bamboo.Core.Application.Services
             //     This method prevents the modification/deletion of many2one fields
             //     that have an inverse one2many, for instance.
             // """
-            // uninstalling = self._context.get(MODULE_UNINSTALL_FLAG)
+            // from odoo.orm.model_classes import pop_field
+            // 
+            // uninstalling = self.env.context.get(MODULE_UNINSTALL_FLAG)
             // if not uninstalling and any(record.state != 'manual' for record in self):
             //     raise UserError(_("This column contains module data and cannot be removed!"))
             // 
@@ -768,10 +807,10 @@ namespace Bamboo.Core.Application.Services
             //     model = self.env.get(record.model)
             //     field = model and model._fields.get(record.name)
             //     if field:
-            //         self.env.cache.clear_dirty_field(field)
+            //         self.env._field_dirty.pop(field)
             // # remove fields from registry, and check that views are not broken
-            // fields = [self.env[record.model]._pop_field(record.name) for record in records]
-            // domain = expression.OR([('arch_db', 'like', record.name)] for record in records)
+            // fields = [pop_field(self.env.registry[record.model], record.name) for record in records]
+            // domain = Domain.OR([('arch_db', 'like', record.name)] for record in records)
             // views = self.env['ir.ui.view'].search(domain)
             // try:
             //     for view in views:
@@ -780,7 +819,7 @@ namespace Bamboo.Core.Application.Services
             //     if not uninstalling:
             //         raise UserError(_(
             //             "Cannot rename/delete fields that are still present in views:\nFields: %(fields)s\nView: %(view)s",
-            //             fields=format_list(self.env, [str(f) for f in fields]),
+            //             fields=fields,
             //             view=view.name,
             //         ))
             //     else:
@@ -792,7 +831,7 @@ namespace Bamboo.Core.Application.Services
             // finally:
             //     if not uninstalling:
             //         # the registry has been modified, restore it
-            //         self.pool.setup_models(self._cr)
+            //         self.pool._setup_models__(self.env.cr)
             // 
             // return self
             */
@@ -807,7 +846,7 @@ namespace Bamboo.Core.Application.Services
             // """ Tracking value can be either a boolean enabling tracking mechanism
             // on field, either an integer giving the sequence. Default sequence is
             // set to 100. """
-            // vals = super(IrModelField, self)._reflect_field_params(field, model_id)
+            // vals = super()._reflect_field_params(field, model_id)
             // tracking = getattr(field, 'tracking', None)
             // if tracking is True:
             //     tracking = 100
@@ -818,6 +857,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def _reflect_field_params(self, field, model_id):
             // """ Return the values to write to the database for the given field. """
+            // translate = next(k for k, v in FIELD_TRANSLATE.items() if v == field.translate)
             // return {
             //     'model_id': model_id,
             //     'model': field.model_name,
@@ -836,7 +876,7 @@ namespace Bamboo.Core.Application.Services
             //     'required': bool(field.required),
             //     'selectable': bool(field.search or field.store),
             //     'size': getattr(field, 'size', None),
-            //     'translate': bool(field.translate),
+            //     'translate': translate,
             //     'company_dependent': bool(field.company_dependent),
             //     'relation_field': field.inverse_name if field.type == 'one2many' else None,
             //     'relation_table': field.relation if field.type == 'many2many' else None,
@@ -866,7 +906,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # set 'serialization_field_id' on sparse fields; it is done here to
             // # ensure that the serialized field is reflected already
-            // cr = self._cr
+            // cr = self.env.cr
             // 
             // # retrieve existing values
             // query = """
@@ -945,7 +985,7 @@ namespace Bamboo.Core.Application.Services
             //     self.pool.post_init(mark_modified, self.browse(ids), cols[2:])
             // 
             // # update their XML id
-            // module = self._context.get('module')
+            // module = self.env.context.get('module')
             // if not module:
             //     return
             // 
@@ -1059,13 +1099,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // # The field we just deleted might be inherited, and the registry is
             // # inconsistent in this case; therefore we reload the registry.
-            // if not self._context.get(MODULE_UNINSTALL_FLAG):
+            // if not self.env.context.get(MODULE_UNINSTALL_FLAG):
             //     # setup models; this re-initializes models in registry
             //     self.env.flush_all()
-            //     self.pool.setup_models(self._cr)
+            //     self.pool._setup_models__(self.env.cr, model_names)
             //     # update database schema of model and its descendant models
             //     models = self.pool.descendants(model_names, '_inherits')
-            //     self.pool.init_models(self._cr, models, dict(self._context, update_custom_fields=True))
+            //     self.pool.init_models(self.env.cr, models, dict(self.env.context, update_custom_fields=True))
             // 
             // return res
             */
@@ -1136,6 +1176,10 @@ namespace Bamboo.Core.Application.Services
             //     if column_name in vals:
             //         del vals[column_name]
             // 
+            // if vals.get('translate') and not isinstance(vals['translate'], str):
+            //     _logger.warning("Deprecated since Odoo 19, ir.model.fields.translate becomes Selection, the value should be a string")
+            //     vals['translate'] = 'html_translate' if vals.get('ttype') == 'html' else 'standard'
+            // 
             // res = super(IrModelFields, self).write(vals)
             // 
             // self.env.flush_all()
@@ -1144,14 +1188,14 @@ namespace Bamboo.Core.Application.Services
             //     # rename column in database, and its corresponding index if present
             //     table, oldname, newname, index, stored = column_rename
             //     if stored:
-            //         self._cr.execute(SQL(
+            //         self.env.cr.execute(SQL(
             //             'ALTER TABLE %s RENAME COLUMN %s TO %s',
             //             SQL.identifier(table),
             //             SQL.identifier(oldname),
             //             SQL.identifier(newname)
             //         ))
             //         if index:
-            //             self._cr.execute(SQL(
+            //             self.env.cr.execute(SQL(
             //                 'ALTER INDEX %s RENAME TO %s',
             //                 SQL.identifier(f'{table}_{oldname}_index'),
             //                 SQL.identifier(f'{table}_{newname}_index'),
@@ -1160,12 +1204,13 @@ namespace Bamboo.Core.Application.Services
             // if column_rename or patched_models or translate_only:
             //     # setup models, this will reload all manual fields in registry
             //     self.env.flush_all()
-            //     self.pool.setup_models(self._cr)
+            //     model_names = OrderedSet(self.mapped('model'))
+            //     self.pool._setup_models__(self.env.cr, model_names)
             // 
             // if patched_models:
             //     # update the database schema of the models to patch
             //     models = self.pool.descendants(patched_models, '_inherits')
-            //     self.pool.init_models(self._cr, models, dict(self._context, update_custom_fields=True))
+            //     self.pool.init_models(self.env.cr, models, dict(self.env.context, update_custom_fields=True))
             // 
             // return res
             */

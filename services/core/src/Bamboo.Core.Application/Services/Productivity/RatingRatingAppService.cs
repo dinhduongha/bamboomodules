@@ -59,11 +59,12 @@ namespace Bamboo.Core.Application.Services
             // are classified by model. Ratings not linked to a valid record through
             // res_model / res_id are ignored.
             // 
-            // :return dict: for each model having at least one rating in self, have
+            // :returns: for each model having at least one rating in self, have
             //   a sub-dict containing
             //     * ratings: ratings related to that model;
             //     * record IDs: records linked to the ratings of that model, in same
             //       order;
+            // :rtype: dict
             // """
             // data_by_model = {}
             // for rating in self.filtered(lambda act: act.res_model and act.res_id):
@@ -119,9 +120,9 @@ namespace Bamboo.Core.Application.Services
             //     image_path = f'rating/static/src/img/{rating._get_rating_image_filename()}'
             //     rating.rating_image_url = f'/{image_path}'
             //     try:
-            //         rating.rating_image = base64.b64encode(
-            //             file_open(image_path, 'rb', filter_ext=('.png',)).read())
-            //     except (IOError, OSError, FileNotFoundError):
+            //         with file_open(image_path, 'rb', filter_ext=('.png',)) as f:
+            //             rating.rating_image = base64.b64encode(f.read())
+            //     except OSError:
             //         rating.rating_image = False
             */
             return default;
@@ -150,11 +151,14 @@ namespace Bamboo.Core.Application.Services
             //         current_object = self.env[rating.res_model].sudo().browse(rating.res_id)
             //         rating.res_name = ('%s / %s') % (current_object.livechat_channel_id.name, current_object.id)
             //     else:
-            //         super(Rating, rating)._compute_res_name()
+            //         super(RatingRating, rating)._compute_res_name()
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: rating.py) ---
             // def _compute_res_name(self):
             // for rating in self:
-            //     name = self.env[rating.res_model].sudo().browse(rating.res_id).display_name
+            //     if rating.res_model and rating.res_id:
+            //         name = self.env[rating.res_model].sudo().browse(rating.res_id).display_name
+            //     else:
+            //         name = False
             //     rating.res_name = name or f'{rating.res_model}/{rating.res_id}'
             */
             return default;
@@ -178,10 +182,10 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal_rating, FILE: rating_rating.py) ---
-            // def create(self, values_list):
-            // for values in values_list:
+            // def create(self, vals_list):
+            // for values in vals_list:
             //     self._synchronize_publisher_values(values)
-            // ratings = super().create(values_list)
+            // ratings = super().create(vals_list)
             // if any(rating.publisher_comment for rating in ratings):
             //     ratings._check_synchronize_publisher_values()
             // return ratings
@@ -190,6 +194,8 @@ namespace Bamboo.Core.Application.Services
             // for values in vals_list:
             //     if values.get('res_model_id') and values.get('res_id'):
             //         values.update(self._find_parent_data(values))
+            //     if 'rating' in values or 'feedback' in values:
+            //         values['rated_on'] = fields.Datetime.now()
             // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
@@ -244,7 +250,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: rating_rating.py) ---
             // def action_open_rated_object(self):
-            // action = super(Rating, self).action_open_rated_object()
+            // action = super().action_open_rated_object()
             // if self.res_model == 'discuss.channel':
             //     if self.env[self.res_model].browse(self.res_id):
             //         ctx = self.env.context.copy()
@@ -315,14 +321,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<RatingRating> ToStoreInternalAsync()
+        protected async Task<RatingRating> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: rating.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None):
-            // if fields is None:
-            //     fields = ["rating", "rating_image_url", "rating_text"]
-            // store.add(self._name, self._read_format(fields, load=False))
+            // def _to_store_defaults(self, target):
+            // return ["rating", "rating_image_url", "rating_text"]
             */
             return default;
         }
@@ -331,14 +335,16 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal_rating, FILE: rating_rating.py) ---
-            // def write(self, values):
-            // self._synchronize_publisher_values(values)
-            // return super().write(values)
+            // def write(self, vals):
+            // self._synchronize_publisher_values(vals)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: rating.py) ---
-            // def write(self, values):
-            // if values.get('res_model_id') and values.get('res_id'):
-            //     values.update(self._find_parent_data(values))
-            // return super(Rating, self).write(values)
+            // def write(self, vals):
+            // if vals.get('res_model_id') and vals.get('res_id'):
+            //     vals.update(self._find_parent_data(vals))
+            // if 'rating' in vals or 'feedback' in vals:
+            //     vals['rated_on'] = fields.Datetime.now()
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

@@ -75,6 +75,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-unlink-event")]
+        public async Task<IActionResult> ActionUnlinkEventAsync(Guid id, [FromBody] CalendarEventUnlinkEventRequestDto input)
+        {
+            var result = await _appService.UnlinkEventAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/change-attendee-status")]
         public async Task<IActionResult> ChangeAttendeeStatusAsync(Guid id, [FromBody] CalendarEventChangeAttendeeStatusRequestDto input)
         {

@@ -11,7 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IOnboardingProgressAppService : IGenericApplicationService<OnboardingProgress>
     {
         Task<OnboardingProgress> CloseAsync(Guid id);
-        Task<OnboardingProgress> InitAsync(Guid id);
         Task<OnboardingProgress> ToggleVisibilityAsync(Guid id);
     }
 }

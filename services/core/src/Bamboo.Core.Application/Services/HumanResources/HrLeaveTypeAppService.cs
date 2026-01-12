@@ -26,15 +26,57 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<HrLeaveType> AllocationsCountByLeaveTypeIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _allocations_count_by_leave_type_id(self):
+            // allocation_domain = [
+            //     ('holiday_status_id', 'in', self.ids),
+            // ]
+            // allocations_count = self.env['hr.leave.allocation']._read_group(
+            //     allocation_domain,
+            //     ['holiday_status_id'],
+            //     ['__count'],
+            // )
+            // return {holiday_status.id: count for holiday_status, count in allocations_count}
+            */
+            return default;
+        }
+
         public async Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def check_allocation_requirement_edit_validity(self):
-            // if self.env['hr.leave'].search_count([('holiday_status_id', 'in', self.ids)], limit=1):
+            // if not self.env.context.get('install_mode') and self.env['hr.leave'].search_count([('holiday_status_id', 'in', self.ids)], limit=1):
             //     raise UserError(_("The allocation requirement of a time off type cannot be changed once leaves of that type have been taken. You should create a new time off type instead."))
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<HrLeaveType> CheckAllowRequestOnTopInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _check_allow_request_on_top(self):
+            // for leave in self:
+            //     if leave.time_type == "leave" and leave.allow_request_on_top:
+            //         raise ValidationError(self.env._("You cannot allow requests on top of leaves of type 'Absence'."))
+            */
+            return default;
+        }
+
+        protected async Task<HrLeaveType> CheckElligibleForAccrualRateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _check_elligible_for_accrual_rate(self):
+            // for leave in self:
+            //     if leave.time_type == "other" and not leave.elligible_for_accrual_rate:
+            //         raise ValidationError(self.env._("leaves of type 'Worked Time' should be always eligible for accrual rate."))
+            */
+            return default;
         }
 
         protected async Task<HrLeaveType> CheckOverlappingPublicHolidaysInternalAsync()
@@ -42,10 +84,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def _check_overlapping_public_holidays(self):
+            // # checking for the current user's company too
+            // companies = self.company_id | self.env.company
             // public_holidays = self.env['resource.calendar.leaves'].search([
             //     ('resource_id', '=', False),
-            //     '|', ('company_id', 'in', self.company_id.ids),
-            //          ('company_id', '=', self.env.company.id),
+            //     ('company_id', 'in', companies.ids),
             // ])
             // 
             // # Define the date range for the current year
@@ -74,21 +117,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeaveType> CheckTimesheetGenerateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
-            // def _check_timesheet_generate(self):
-            // for holiday_status in self:
-            //     if holiday_status.timesheet_generate and holiday_status.company_id:
-            //         if not holiday_status.timesheet_project_id or not holiday_status.timesheet_task_id:
-            //             raise ValidationError(_("Both the internal project and task are required to "
-            //             "generate a timesheet for the time off %s. If you don't want a timesheet, you should "
-            //             "leave the internal project and task empty.", holiday_status.name))
-            */
-            return default;
-        }
-
         protected async Task<HrLeaveType> ComputeAccrualCountInternalAsync()
         {
             /*
@@ -113,7 +141,7 @@ namespace Bamboo.Core.Application.Services
             //     ('holiday_status_id', 'in', self.ids),
             //     ('date_from', '>=', min_datetime),
             //     ('date_from', '<=', max_datetime),
-            //     ('state', 'in', ('confirm', 'validate')),
+            //     ('state', 'in', ('confirm', 'validate', 'validate1')),
             // ]
             // 
             // grouped_res = self.env['hr.leave.allocation']._read_group(
@@ -128,14 +156,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeaveType> ComputeAllocationValidationTypeInternalAsync()
+        protected async Task<HrLeaveType> ComputeCountryIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
-            // def _compute_allocation_validation_type(self):
-            // for leave_type in self:
-            //     if leave_type.employee_requests == 'no':
-            //         leave_type.allocation_validation_type = 'hr'
+            // def _compute_country_id(self):
+            // for holiday_type in self:
+            //     if holiday_type.company_id:
+            //         holiday_type.country_id = holiday_type.company_id.country_id
             */
             return default;
         }
@@ -150,7 +178,7 @@ namespace Bamboo.Core.Application.Services
             //     return super()._compute_display_name()
             // for record in self:
             //     name = record.name
-            //     if record.requires_allocation == "yes":
+            //     if record.requires_allocation:
             //         remaining_time = float_round(record.virtual_remaining_leaves, precision_digits=2) or 0.0
             //         maximum = float_round(record.max_leaves, precision_digits=2) or 0.0
             // 
@@ -159,24 +187,37 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             name = _("%(name)s (%(time)g remaining out of %(maximum)g days)", name=record.name, time=remaining_time, maximum=maximum)
             //     record.display_name = name
+            // return None
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave_type.py) ---
             // def _compute_display_name(self):
             // # Exclude hours available in allocation contexts, it might be confusing otherwise
-            // if not self.requested_display_name() or self._context.get('request_type', 'leave') == 'allocation':
+            // if not self.requested_display_name() or self.env.context.get('request_type', 'leave') == 'allocation':
             //     return super()._compute_display_name()
             // 
-            // employee = self.env['hr.employee'].browse(self._context.get('employee_id')).sudo()
-            // if employee.total_overtime <= 0:
+            // employee = self.env['hr.employee'].browse(self.env.context.get('employee_id')).sudo()
+            // unspent_overtime = self.env['hr.leave']._get_deductible_employee_overtime(employee)[employee]
+            // if not unspent_overtime:
             //     return super()._compute_display_name()
             // 
-            // overtime_leaves = self.filtered(lambda l_type: l_type.overtime_deductible and l_type.requires_allocation == 'no')
+            // overtime_leaves = self.filtered(lambda l_type: l_type.overtime_deductible and not l_type.requires_allocation)
             // for leave_type in overtime_leaves:
             //     leave_type.display_name = "%(name)s (%(count)s)" % {
             //         'name': leave_type.name,
             //         'count': _('%s hours available',
-            //             format_duration(employee.total_overtime)),
+            //             format_duration(unspent_overtime)),
             //     }
-            // super(HRLeaveType, self - overtime_leaves)._compute_display_name()
+            // super(HrLeaveType, self - overtime_leaves)._compute_display_name()
+            */
+            return default;
+        }
+
+        protected async Task<HrLeaveType> ComputeEligibleForAccrualRateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _compute_eligible_for_accrual_rate(self):
+            // for leave_type in self:
+            //     leave_type.elligible_for_accrual_rate = leave_type.time_type != 'leave'
             */
             return default;
         }
@@ -206,19 +247,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrLeaveType> ComputeIsUsedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _compute_is_used(self):
+            // leaves_count = self._leaves_count_by_leave_type_id()
+            // allocations_count = self._allocations_count_by_leave_type_id()
+            // for leave_type in self:
+            //     leave_type.is_used = leaves_count.get(leave_type.id, 0) or allocations_count.get(leave_type.id, 0)
+            */
+            return default;
+        }
+
         protected async Task<HrLeaveType> ComputeLeavesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def _compute_leaves(self):
             // employee = self.env['hr.employee']._get_contextual_employee()
-            // target_date = self._context['default_date_from'] if 'default_date_from' in self._context else None
             // # This is a workaround to save the date value in context for next triggers
             // # when context gets cleaned and 'default_' context keys gets removed
-            // if target_date:
-            //     self.env.context = frozendict(self.env.context, leave_date_from=self._context['default_date_from'])
-            // else:
-            //     target_date = self._context.get('leave_date_from', None)
+            // target_date = self.env.context.get('leave_date_from') or self.env.context.get('default_date_from')
             // data_days = self.get_allocation_data(employee, target_date)[employee]
             // for holiday_status in self:
             //     result = [item for item in data_days if item[0] == holiday_status.name]
@@ -230,66 +280,33 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeaveType> ComputeTimesheetGenerateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
-            // def _compute_timesheet_generate(self):
-            // for leave_type in self:
-            //     leave_type.timesheet_generate = not leave_type.company_id or (leave_type.timesheet_task_id and leave_type.timesheet_project_id)
-            */
-            return default;
-        }
-
-        protected async Task<HrLeaveType> ComputeTimesheetProjectIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
-            // def _compute_timesheet_project_id(self):
-            // for leave in self:
-            //     leave.timesheet_project_id = leave.company_id.internal_project_id
-            */
-            return default;
-        }
-
-        protected async Task<HrLeaveType> ComputeTimesheetTaskIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
-            // def _compute_timesheet_task_id(self):
-            // for leave_type in self:
-            //     default_task_id = leave_type.company_id.leave_timesheet_task_id
-            // 
-            //     if default_task_id and default_task_id.project_id == leave_type.timesheet_project_id:
-            //         leave_type.timesheet_task_id = default_task_id
-            //     else:
-            //         leave_type.timesheet_task_id = False
-            */
-            return default;
-        }
-
         protected async Task<HrLeaveType> ComputeValidInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def _compute_valid(self):
-            // date_from = self._context.get('default_date_from', fields.Datetime.today())
-            // date_to = self._context.get('default_date_to', fields.Datetime.today())
-            // employee_id = self._context.get('default_employee_id', self._context.get('employee_id', self.env.user.employee_id.id))
-            // for leave_type in self:
-            //     if leave_type.requires_allocation == 'yes':
-            //         allocations = self.env['hr.leave.allocation'].search([
-            //             ('holiday_status_id', '=', leave_type.id),
-            //             ('employee_id', '=', employee_id),
-            //             ('date_from', '<=', date_from),
-            //             '|',
+            // date_from = self.env.context.get('default_date_from', fields.Datetime.today())
+            // date_to = self.env.context.get('default_date_to', fields.Datetime.today())
+            // employee_id = self.env.context.get('default_employee_id', self.env.context.get('employee_id', self.env.user.employee_id.id))
+            // allocation_by_leave_type = dict(self.env['hr.leave.allocation']._read_group(
+            //     domain=Domain([
+            //         ('holiday_status_id', 'in', self.filtered(lambda leave_type: leave_type.requires_allocation).ids),
+            //         ('employee_id', '=', employee_id),
+            //         ('date_from', '<=', date_from),
+            //         '|',
             //             ('date_to', '>=', date_to),
             //             ('date_to', '=', False),
-            //         ])
+            //     ]),
+            //     groupby=['holiday_status_id'],
+            //     aggregates=['id:recordset'],
+            // ))
+            // for leave_type in self:
+            //     if leave_type.requires_allocation:
+            //         allocations = allocation_by_leave_type.get(leave_type, self.env['hr.leave.allocation'])
             //         allowed_excess = leave_type.max_allowed_negative if leave_type.allows_negative else 0
             //         allocations = allocations.filtered(lambda alloc:
             //             alloc.allocation_type == 'accrual'
-            //             or (alloc.max_leaves > 0 and (alloc.max_leaves - alloc.leaves_taken) > -allowed_excess)
+            //             or (alloc.max_leaves > 0 and alloc.virtual_remaining_leaves > -allowed_excess)
             //         )
             //         leave_type.has_valid_allocation = bool(allocations)
             //     else:
@@ -325,7 +342,7 @@ namespace Bamboo.Core.Application.Services
             // allocations_leaves_consumed, extra_data = employees.with_context(
             //     ignored_leave_ids=self.env.context.get('ignored_leave_ids')
             // )._get_consumed_leaves(self, target_date)
-            // leave_type_requires_allocation = self.filtered(lambda lt: lt.requires_allocation == 'yes')
+            // leave_type_requires_allocation = self.filtered(lambda lt: lt.requires_allocation)
             // 
             // for employee in employees:
             //     for leave_type in leave_type_requires_allocation:
@@ -352,6 +369,7 @@ namespace Bamboo.Core.Application.Services
             //                 'icon': leave_type.sudo().icon_id.url,
             //                 'allows_negative': leave_type.allows_negative,
             //                 'max_allowed_negative': leave_type.max_allowed_negative,
+            //                 'employee_company': employee.company_id.id,
             //             },
             //             leave_type.requires_allocation,
             //             leave_type.id)
@@ -446,19 +464,37 @@ namespace Bamboo.Core.Application.Services
             //                 leave_type_data[1][key] = round(value, 2)
             // return allocation_data
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave_type.py) ---
-            // def get_allocation_data(self, employees, date=None):
-            // res = super().get_allocation_data(employees, date)
+            // def get_allocation_data(self, employees, target_date=None):
+            // res = super().get_allocation_data(employees, target_date)
             // deductible_time_off_types = self.env['hr.leave.type'].search([
             //     ('overtime_deductible', '=', True),
-            //     ('requires_allocation', '=', 'no')])
-            // leave_type_names = deductible_time_off_types.mapped('name')
-            // for employee in res:
-            //     for leave_data in res[employee]:
-            //         if leave_data[0] in leave_type_names:
-            //             leave_data[1]['virtual_remaining_leaves'] = employee.sudo().total_overtime
-            //             leave_data[1]['overtime_deductible'] = True
-            //         else:
-            //             leave_data[1]['overtime_deductible'] = False
+            //     ('requires_allocation', '=', False)])
+            // unspent_overtime = self.env['hr.leave']._get_deductible_employee_overtime(employees)
+            // for employee in employees:
+            //     for leave_type in deductible_time_off_types:
+            //         if leave_type in self and employee.sudo().total_overtime > 0:
+            //             lt_info = (
+            //                 leave_type.name,
+            //                 {
+            //                     'remaining_leaves': unspent_overtime[employee],
+            //                     'virtual_remaining_leaves': unspent_overtime[employee],
+            //                     'max_leaves': 0,
+            //                     'leaves_taken': 0,
+            //                     'virtual_leaves_taken': 0,
+            //                     'closest_allocation_remaining': 0,
+            //                     'closest_allocation_expire': False,
+            //                     'total_virtual_excess': 0,
+            //                     'virtual_excess_data': {},
+            //                     'request_unit': leave_type.request_unit,
+            //                     'icon': leave_type.sudo().icon_id.url,
+            //                     'allows_negative': leave_type.allows_negative,
+            //                     'max_allowed_negative': leave_type.max_allowed_negative,
+            //                     'overtime_deductible': True,
+            //                     'employee_company': employee.company_id.id,
+            //                 },
+            //                 leave_type.requires_allocation,
+            //                 leave_type.id)
+            //             res[employee].append(lt_info)
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -475,7 +511,7 @@ namespace Bamboo.Core.Application.Services
             //     ('company_id', '=', False),
             // ]
             // if not hidden_allocations:
-            //     domain.append(('show_on_dashboard', '=', True))
+            //     domain.append(('hide_on_dashboard', '=', False))
             // leave_types = self.search(domain, order='id')
             // employee = self.env['hr.employee']._get_contextual_employee()
             // if employee:
@@ -521,9 +557,9 @@ namespace Bamboo.Core.Application.Services
             //     expiration_date = allocation.date_to
             // 
             //     accrual_plan_level = allocation.sudo()._get_current_accrual_plan_level_id(target_date)[0]
-            //     carryover_policy = accrual_plan_level.action_with_unused_accruals if accrual_plan_level else False
             //     carryover_date = False
-            //     if carryover_policy in ['maximum', 'lost']:
+            //     if accrual_plan_level and (accrual_plan_level.action_with_unused_accruals == 'lost'
+            //     or accrual_plan_level.carryover_options == 'limited'):
             //         carryover_date = allocation.sudo()._get_carryover_date(target_date)
             //         # If carry over date == target date, then add 1 year to carry over date.
             //         # Rational: for example if carry over date = 01/01 this year and target date = 01/01 this year,
@@ -586,6 +622,24 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<HrLeaveType> LeavesCountByLeaveTypeIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
+            // def _leaves_count_by_leave_type_id(self):
+            // leave_domain = [
+            //     ('holiday_status_id', 'in', self.ids),
+            // ]
+            // leaves_count = self.env['hr.leave']._read_group(
+            //     leave_domain,
+            //     ['holiday_status_id'],
+            //     ['__count'],
+            // )
+            // return {holiday_status.id: count for holiday_status, count in leaves_count}
+            */
+            return default;
+        }
+
         protected async Task<HrLeaveType> LoadRecordsWriteInternalAsync(object values)
         {
             /*
@@ -605,7 +659,7 @@ namespace Bamboo.Core.Application.Services
             // def _model_sorting_key(self, leave_type):
             // remaining = leave_type.virtual_remaining_leaves > 0
             // taken = leave_type.leaves_taken > 0
-            // return -1 * leave_type.sequence, leave_type.employee_requests == 'no' and remaining, leave_type.employee_requests == 'yes' and remaining, taken
+            // return -1 * leave_type.sequence, not leave_type.employee_requests and remaining, leave_type.employee_requests and remaining, taken
             */
             return default;
         }
@@ -615,7 +669,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def requested_display_name(self):
-            // return self._context.get('holiday_status_display_name', True) and self._context.get('employee_id')
+            // return self.env.context.get('holiday_status_display_name', True) and self.env.context.get('employee_id')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -624,7 +678,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
             // """ Override _search to order the results, according to some employee.
             // The order is the following
             // 
@@ -639,11 +693,11 @@ namespace Bamboo.Core.Application.Services
             // employee = self.env['hr.employee']._get_contextual_employee()
             // if order == self._order and employee:
             //     # retrieve all leaves, sort them, then apply offset and limit
-            //     leaves = self.browse(super()._search(domain))
+            //     leaves = self.browse(super()._search(domain, **kwargs))
             //     leaves = leaves.sorted(key=self._model_sorting_key, reverse=True)
             //     leaves = leaves[offset:(offset + limit) if limit else None]
             //     return leaves._as_query()
-            // return super()._search(domain, offset, limit, order)
+            // return super()._search(domain, offset, limit, order, **kwargs)
             */
             return default;
         }
@@ -653,7 +707,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def _search_max_leaves(self, operator, value):
-            // value = float(value)
+            // op = PY_OPERATORS.get(operator)
+            // if not op:
+            //     return NotImplemented
+            // if operator != 'in':
+            //     value = float(value)
             // employee = self.env['hr.employee']._get_contextual_employee()
             // leaves = defaultdict(int)
             // 
@@ -664,22 +722,8 @@ namespace Bamboo.Core.Application.Services
             //     ])
             //     for allocation in allocations:
             //         leaves[allocation.holiday_status_id.id] += allocation.number_of_days
-            // valid_leave = []
-            // for leave in leaves:
-            //     if operator == '>':
-            //         if leaves[leave] > value:
-            //             valid_leave.append(leave)
-            //     elif operator == '<':
-            //         if leaves[leave] < value:
-            //             valid_leave.append(leave)
-            //     elif operator == '=':
-            //         if leaves[leave] == value:
-            //             valid_leave.append(leave)
-            //     elif operator == '!=':
-            //         if leaves[leave] != value:
-            //             valid_leave.append(leave)
-            // 
-            // return [('id', 'in', valid_leave)]
+            // valid_leaves = [leaf for leaf, number in leaves.items() if op(number, value)]
+            // return [('id', 'in', valid_leaves)]
             */
             return default;
         }
@@ -693,31 +737,23 @@ namespace Bamboo.Core.Application.Services
             //     or that don't need an allocation
             //     return [('id', domain_operator, [x['id'] for x in res])]
             // """
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // 
-            // if {'default_date_from', 'default_date_to', 'tz'} <= set(self._context):
-            //     default_date_from_dt = fields.Datetime.to_datetime(self._context.get('default_date_from'))
-            //     default_date_to_dt = fields.Datetime.to_datetime(self._context.get('default_date_to'))
+            // if {'default_date_from', 'default_date_to', 'tz'} <= set(self.env.context):
+            //     default_date_from_dt = fields.Datetime.to_datetime(self.env.context.get('default_date_from'))
+            //     default_date_to_dt = fields.Datetime.to_datetime(self.env.context.get('default_date_to'))
             // 
             //     # Cast: Datetime -> Date using user's tz
             //     date_from = fields.Date.context_today(self, default_date_from_dt)
             //     date_to = fields.Date.context_today(self, default_date_to_dt)
             // 
             // else:
-            //     date_from = fields.Date.today().strftime('%Y-1-1')
-            //     date_to = fields.Date.today().strftime('%Y-12-31')
+            //     current_year = fields.Date.today().year
+            //     date_from = date(current_year, 1, 1)
+            //     date_to = date(current_year, 12, 31)
             // 
-            // employee_id = self._context.get('default_employee_id', self._context.get('employee_id')) or self.env.user.employee_id.id
-            // 
-            // if not isinstance(value, bool):
-            //     raise ValueError('Invalid value: %s' % (value))
-            // if operator not in ['=', '!=']:
-            //     raise ValueError('Invalid operator: %s' % (operator))
-            // # '!=' True or '=' False
-            // if (operator == '=') ^ value:
-            //     new_operator = 'not in'
-            // # '=' True or '!=' False
-            // else:
-            //     new_operator = 'in'
+            // employee_id = self.env.context.get('default_employee_id', self.env.context.get('employee_id')) or self.env.user.employee_id.id
             // 
             // leave_types = self.env['hr.leave.allocation'].search([
             //     ('employee_id', '=', employee_id),
@@ -728,7 +764,7 @@ namespace Bamboo.Core.Application.Services
             //     ('date_to', '=', False),
             // ]).holiday_status_id
             // 
-            // return [('id', new_operator, leave_types.ids)]
+            // return [('id', operator, leave_types.ids)]
             */
             return default;
         }
@@ -738,28 +774,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def _search_virtual_remaining_leaves(self, operator, value):
-            // value = float(value)
+            // def is_valid(leave_type):
+            //     return leave_type.requires_allocation != "yes" or op(leave_type.virtual_remaining_leaves, value)
+            // op = PY_OPERATORS.get(operator)
+            // if not op:
+            //     return NotImplemented
+            // if operator != 'in':
+            //     value = float(value)
             // leave_types = self.env['hr.leave.type'].search([])
-            // valid_leave_types = self.env['hr.leave.type']
-            // 
-            // for leave_type in leave_types:
-            //     if leave_type.requires_allocation == "yes":
-            //         if operator == '>' and leave_type.virtual_remaining_leaves > value:
-            //             valid_leave_types |= leave_type
-            //         elif operator == '<' and leave_type.virtual_remaining_leaves < value:
-            //             valid_leave_types |= leave_type
-            //         elif operator == '>=' and leave_type.virtual_remaining_leaves >= value:
-            //             valid_leave_types |= leave_type
-            //         elif operator == '<=' and leave_type.virtual_remaining_leaves <= value:
-            //             valid_leave_types |= leave_type
-            //         elif operator == '=' and leave_type.virtual_remaining_leaves == value:
-            //             valid_leave_types |= leave_type
-            //         elif operator == '!=' and leave_type.virtual_remaining_leaves != value:
-            //             valid_leave_types |= leave_type
-            //     else:
-            //         valid_leave_types |= leave_type
-            // 
-            // return [('id', 'in', valid_leave_types.ids)]
+            // return [('id', 'in', leave_types.filtered(is_valid).ids)]
             */
             return default;
         }

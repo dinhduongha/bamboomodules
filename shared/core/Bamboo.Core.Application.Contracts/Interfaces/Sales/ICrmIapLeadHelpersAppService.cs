@@ -11,6 +11,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface ICrmIapLeadHelpersAppService : IGenericApplicationService<CrmIapLeadHelpers>
     {
         Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(Guid id, CrmIapLeadHelpersLeadValsFromResponseRequestDto input);
-        Task<CrmIapLeadHelpers> NotifyNoMoreCreditAsync(Guid id, CrmIapLeadHelpersNotifyNoMoreCreditRequestDto input);
     }
 }

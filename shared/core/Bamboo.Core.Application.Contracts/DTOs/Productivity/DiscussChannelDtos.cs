@@ -9,26 +9,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public List<Guid> PartnerIds { get; set; }
         public List<Guid> GuestIds { get; set; }
         public object InviteToRtcCall { get; set; }
-        public object OpenChatWindow { get; set; }
         public object PostJoinedMessage { get; set; }
     }
     
     public class DiscussChannelChannelChangeDescriptionRequestDto
     {
         public object Description { get; set; }
-    }
-    
-    public class DiscussChannelChannelCreateRequestDto
-    {
-        public object Name { get; set; }
-        public Guid GroupId { get; set; }
-    }
-    
-    public class DiscussChannelChannelGetRequestDto
-    {
-        public object PartnersTo { get; set; }
-        public object Pin { get; set; }
-        public object ForceOpen { get; set; }
     }
     
     public class DiscussChannelChannelPinRequestDto
@@ -46,17 +32,15 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Name { get; set; }
     }
     
-    public class DiscussChannelCreateGroupRequestDto
-    {
-        public object PartnersTo { get; set; }
-        public object DefaultDisplayMode { get; set; }
-        public object Name { get; set; }
-    }
-    
     public class DiscussChannelGetMentionSuggestionsRequestDto
     {
         public object Search { get; set; }
         public object Limit { get; set; }
+    }
+    
+    public class DiscussChannelInviteByEmailRequestDto
+    {
+        public object Emails { get; set; }
     }
     
     public class DiscussChannelSetMessagePinRequestDto

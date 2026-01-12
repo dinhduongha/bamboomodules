@@ -67,13 +67,13 @@ namespace Bamboo.Core.Application.Services
             // integer_value = int(integral)
             // lang = tools.get_lang(self.env)
             // if self.is_zero(amount - integer_value):
-            //     return _(
+            //     return self.env._(
             //         '%(integral_amount)s %(currency_unit)s',
             //         integral_amount=_num2words(integer_value, lang=lang.iso_code),
             //         currency_unit=self.currency_unit_label,
             //     )
             // else:
-            //     return _(
+            //     return self.env._(
             //         '%(integral_amount)s %(currency_unit)s and %(fractional_amount)s %(currency_subunit)s',
             //         integral_amount=_num2words(integer_value, lang=lang.iso_code),
             //         currency_unit=self.currency_unit_label,
@@ -89,7 +89,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def _check_company_currency_stays_active(self):
-            // if self._context.get('install_mode') or self._context.get('force_deactivate'):
+            // if self.env.context.get('install_mode') or self.env.context.get('force_deactivate'):
             //     # install_mode : At install, when this check is run, the "active" field of a currency added to a company will
             //     #                still be evaluated as False, despite it's automatically set at True when added to the company.
             //     # force_deactivate : Allows deactivation of a currency in tests to enable non multi_currency behaviors
@@ -97,7 +97,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // currencies = self.filtered(lambda c: not c.active)
             // if self.env['res.company'].search_count([('currency_id', 'in', currencies.ids)], limit=1):
-            //     raise UserError(_("This currency is set on a company and therefore cannot be deactivated."))
+            //     raise UserError(self.env._("This currency is set on a company and therefore cannot be deactivated."))
             */
             return default;
         }
@@ -152,8 +152,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def _compute_current_rate(self):
-            // date = self._context.get('date') or fields.Date.context_today(self)
-            // company = self.env['res.company'].browse(self._context.get('company_id')) or self.env.company
+            // date = self.env.context.get('date') or fields.Date.context_today(self)
+            // company = self.env['res.company'].browse(self.env.context.get('company_id')) or self.env.company
             // to_currency = self.browse(self.env.context.get('to_currency')) or company.currency_id
             // # the subquery selects the last rate before 'date' for the given currency/company
             // currency_rates = (self + to_currency)._get_rates(self.env.company, date)
@@ -199,9 +199,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_currency.py) ---
             // def _compute_display_rounding_warning(self):
             // for record in self:
-            //     record.display_rounding_warning = record.id \
-            //                                       and record._origin.rounding != record.rounding \
-            //                                       and record._origin._has_accounting_entries()
+            //     record.display_rounding_warning = (
+            //         record._origin.id and record._origin.rounding != record.rounding
+            //     )
             */
             return default;
         }
@@ -288,18 +288,17 @@ namespace Bamboo.Core.Application.Services
             // for period_key, date_from, date_to in date_periods:
             //     main_company_unit_factor = main_company.currency_id._get_rates(main_company, date_to)[main_company.currency_id.id]
             // 
+            //     table_builders.append(self._get_table_builder_current(period_key, main_company, other_companies, date_to, main_company_unit_factor))
+            // 
             //     if use_cta_rates:
             //         table_builders += [
-            //             self._get_table_builder_closing(period_key, main_company, other_companies, date_to, main_company_unit_factor),
             //             self._get_table_builder_historical(main_company, other_companies, date_to, main_company_unit_factor, last_date_to),
             //             self._get_table_builder_average(period_key, main_company, other_companies, date_from, date_to, main_company_unit_factor),
             //         ]
-            //     else:
-            //         table_builders += [self._get_table_builder_current(period_key, main_company, other_companies, date_to, main_company_unit_factor)]
             // 
             //     last_date_to = date_to
             // 
-            // self._cr.execute(SQL(
+            // self.env.cr.execute(SQL(
             //     """
             //         -- Tests may call this function multiple times within the same transaction; we then need to delete an regenerate the currency table
             //         DROP TABLE IF EXISTS account_currency_table;
@@ -352,6 +351,20 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResCurrency> GetAllCurrenciesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
+            // def get_all_currencies(self):
+            // currencies = self.sudo().search_fetch([('active', '=', True)], ['name', 'symbol', 'position', 'decimal_places'])
+            // return {
+            //     c.id: {'name': c.name, 'symbol': c.symbol, 'position': c.position, 'digits': [69, c.decimal_places]}
+            //     for c in currencies
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
         {
             /*
@@ -362,7 +375,7 @@ namespace Bamboo.Core.Application.Services
             // This function is meant to be called by the spreadsheet js lib,
             // hence the formatting of the result.
             // 
-            // :company_id int: Id of the company
+            // :param int company_id: Id of the company
             // :return: dict of the form `{ "code": str, "symbol": str, "decimalPlaces": int, "position":str }`
             // """
             // company = self.env["res.company"].browse(company_id) if company_id else self.env.company
@@ -389,29 +402,6 @@ namespace Bamboo.Core.Application.Services
             // company = company or self.env.company
             // date = date or fields.Date.context_today(self)
             // return from_currency.with_company(company).with_context(to_currency=to_currency.id, date=str(date)).inverse_rate
-            */
-            return default;
-        }
-
-        protected async Task<ResCurrency> GetCurrencyTableFiscalYearBoundsInternalAsync(object main_company)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: res_currency.py) ---
-            // def _get_currency_table_fiscal_year_bounds(self, main_company):
-            // today_fiscal_year = main_company.compute_fiscalyear_dates(fields.Date.today())
-            // first_rate = self.env['res.currency.rate'].search(self.env['res.currency.rate']._check_company_domain(main_company), order="name ASC", limit=1)
-            // fiscal_year_bounds = []
-            // if first_rate:
-            //     first_rate_fiscal_year = main_company.compute_fiscalyear_dates(first_rate.name)
-            //     fiscal_year_bounds = [(None, first_rate_fiscal_year['date_from'] - relativedelta(days=1))]  # Initialized to have a value for everything before the first rate
-            //     for civil_year in range(first_rate_fiscal_year['date_from'].year, today_fiscal_year['date_from'].year):
-            //         year_delta = relativedelta(years=civil_year - first_rate_fiscal_year['date_from'].year)
-            //         fiscal_year_bounds.append((first_rate_fiscal_year['date_from'] + year_delta, first_rate_fiscal_year['date_to'] + year_delta))
-            // 
-            // # The current fiscal year is not closed yet, so we need to use its rates for everything after it
-            // fiscal_year_bounds.append((today_fiscal_year['date_from'], None))
-            // 
-            // return fiscal_year_bounds
             */
             return default;
         }
@@ -454,20 +444,19 @@ namespace Bamboo.Core.Application.Services
             // def _get_rates(self, company, date):
             // if not self.ids:
             //     return {}
-            // currency_query = self.env['res.currency']._where_calc([
-            //     ('id', 'in', self.ids),
-            // ], active_test=False)
+            // currency_query = self._as_query(ordered=False)
             // currency_id = self.env['res.currency']._field_to_sql(currency_query.table, 'id')
-            // rate_query = self.env['res.currency.rate']._search([
+            // Rate = self.env['res.currency.rate']
+            // rate_query = Rate._search([
             //     ('name', '<=', date),
             //     ('company_id', 'in', (False, company.root_id.id)),
-            //     ('currency_id', '=', currency_id),
             // ], order='company_id.id, name DESC', limit=1)
-            // rate_fallback = self.env['res.currency.rate']._search([
+            // rate_query.add_where(SQL("%s = %s", Rate._field_to_sql(rate_query.table, 'currency_id'), currency_id))
+            // rate_fallback = Rate._search([
             //     ('company_id', 'in', (False, company.root_id.id)),
-            //     ('currency_id', '=', currency_id),
             // ], order='company_id.id, name ASC', limit=1)
-            // rate = self.env['res.currency.rate']._field_to_sql(rate_query.table, 'rate')
+            // rate_fallback.add_where(SQL("%s = %s", Rate._field_to_sql(rate_fallback.table, 'currency_id'), currency_id))
+            // rate = Rate._field_to_sql(rate_query.table, 'rate')
             // return dict(self.env.execute_query(currency_query.select(
             //     currency_id,
             //     SQL("COALESCE((%s), (%s), 1.0)", rate_query.select(rate), rate_fallback.select(rate))
@@ -569,45 +558,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<object> GetTableBuilderClosingInternalAsync(object period_key, object main_company, object other_companies, object date_to, object main_company_unit_factor)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: res_currency.py) ---
-            // def _get_table_builder_closing(self, period_key, main_company, other_companies, date_to, main_company_unit_factor) -> SQL:
-            // fiscal_year_bounds = self._get_currency_table_fiscal_year_bounds(main_company)
-            // 
-            // return SQL(
-            //     """
-            //         SELECT DISTINCT ON (other_company.id, fiscal_year_bounds.date_from, fiscal_year_bounds.date_to)
-            //             other_company.id,
-            //             %(period_key)s,
-            //             fiscal_year_bounds.date_from,
-            //             CAST(fiscal_year_bounds.date_to::TIMESTAMP + INTERVAL '1' DAY AS DATE),
-            //             'closing',
-            //             CASE WHEN rate.id IS NOT NULL THEN %(main_company_unit_factor)s / rate.rate ELSE 1 END
-            //         FROM res_company other_company
-            //         LEFT JOIN res_currency_rate rate
-            //             ON rate.currency_id = other_company.currency_id
-            //             AND rate.name <= %(date_to)s
-            //             AND rate.company_id = %(main_company_id)s
-            //         JOIN (VALUES %(fiscal_year_bounds_values)s) AS fiscal_year_bounds(date_from, date_to)
-            //             ON fiscal_year_bounds.date_to IS NULL
-            //             OR fiscal_year_bounds.date_to >= rate.name
-            //         WHERE
-            //             other_company.id IN %(other_company_ids)s
-            //         ORDER BY other_company.id, fiscal_year_bounds.date_from, fiscal_year_bounds.date_to, rate.name DESC
-            //     """,
-            //     period_key=period_key,
-            //     main_company_id=main_company.root_id.id,
-            //     fiscal_year_bounds_values=SQL(",").join(SQL("(%(fy_from)s::date,%(fy_to)s::date)", fy_from=fy_from, fy_to=fy_to) for fy_from, fy_to in fiscal_year_bounds),
-            //     other_company_ids=tuple(other_companies.ids),
-            //     date_to=date_to,
-            //     main_company_unit_factor=main_company_unit_factor,
-            // )
-            */
-            return default;
-        }
-
         protected async Task<object> GetTableBuilderCurrentInternalAsync(object period_key, object main_company, object other_companies, object date_to, object main_company_unit_factor)
         {
             /*
@@ -651,14 +601,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // rate_values = []
             // for company in companies:
+            //     rate_values.append(SQL("(%s, CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE), 'current', 1)", company.id))
+            // 
             //     if use_cta_rates:
             //         rate_values += [
             //             SQL("(%s, CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE), 'average', 1)", company.id),
             //             SQL("(%s, CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE), 'historical', 1)", company.id),
-            //             SQL("(%s, CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE), 'closing', 1)", company.id),
             //         ]
-            //     else:
-            //         rate_values.append(SQL("(%s, CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE), 'current', 1)", company.id))
             // 
             // return SQL(
             //     """
@@ -714,7 +663,7 @@ namespace Bamboo.Core.Application.Services
             // """The override of _get_view changing the rate field labels according to the company currency
             // makes the view cache dependent on the company currency"""
             // key = super()._get_view_cache_key(view_id, view_type, **options)
-            // return key + ((self.env['res.company'].browse(self._context.get('company_id')) or self.env.company).currency_id.name,)
+            // return key + ((self.env['res.company'].browse(self.env.context.get('company_id')) or self.env.company).currency_id.name,)
             */
             return default;
         }
@@ -726,10 +675,10 @@ namespace Bamboo.Core.Application.Services
             // def _get_view(self, view_id=None, view_type='form', **options):
             // arch, view = super()._get_view(view_id, view_type, **options)
             // if view_type in ('list', 'form'):
-            //     currency_name = (self.env['res.company'].browse(self._context.get('company_id')) or self.env.company).currency_id.name
+            //     currency_name = (self.env['res.company'].browse(self.env.context.get('company_id')) or self.env.company).currency_id.name
             //     fields_maps = [
-            //         [['company_rate', 'rate'], _('Unit per %s', currency_name)],
-            //         [['inverse_company_rate', 'inverse_rate'], _('%s per Unit', currency_name)],
+            //         [['company_rate', 'rate'], self.env._('Unit per %s', currency_name)],
+            //         [['inverse_company_rate', 'inverse_rate'], self.env._('%s per Unit', currency_name)],
             //     ]
             //     for fnames, label in fields_maps:
             //         xpath_expression = '//list//field[' + " or ".join(f"@name='{f}'" for f in fnames) + "][1]"
@@ -777,24 +726,25 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResCurrency> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ResCurrency> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_currency.py) ---
-            // def _load_pos_data_domain(self, data):
-            // company_currency_id = self.env['res.company'].browse(data['pos.config']['data'][0]['company_id']).currency_id.id
-            // if company_currency_id != data['pos.config']['data'][0]['currency_id']:
-            //     return [('id', 'in', [company_currency_id, data['pos.config']['data'][0]['currency_id']])]
-            // return [('id', '=', data['pos.config']['data'][0]['currency_id'])]
+            // def _load_pos_data_domain(self, data, config):
+            // company_currency_id = config.company_id.currency_id.id
+            // config_currency_id = config.currency_id.id
+            // if company_currency_id != config_currency_id:
+            //     return [('id', 'in', [company_currency_id, config_currency_id])]
+            // return [('id', '=', config_currency_id)]
             */
             return default;
         }
 
-        protected async Task<ResCurrency> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResCurrency> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_currency.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'symbol', 'position', 'rounding', 'rate', 'decimal_places', 'iso_numeric']
             */
             return default;
@@ -881,10 +831,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def write(self, vals):
             // res = super().write(vals)
-            // if vals.keys() & {'active', 'digits', 'position', 'symbol'}:
-            //     # Currency info is cached to reduce the number of SQL queries when building the session
-            //     # info. See `ir_http.get_currencies`.
-            //     self.env.registry.clear_cache()
+            // if vals.keys() & {'active', 'digits', 'name', 'position', 'symbol'}:
+            //     # invalidate cache for get_all_currencies
+            //     self.env.registry.clear_cache('stable')
             // if 'active' not in vals:
             //     return res
             // self._toggle_group_multi_currency()

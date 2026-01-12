@@ -11,5 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IStockRuleAppService : IGenericApplicationService<StockRule>
     {
         Task<StockRule> CopyDataAsync(Guid id, StockRuleCopyDataRequestDto input);
+        Task<StockRule> RunAsync(Guid id, StockRuleRunRequestDto input);
+        Task<StockRule> RunSchedulerAsync(Guid id, StockRuleRunSchedulerRequestDto input);
     }
 }

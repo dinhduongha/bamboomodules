@@ -44,6 +44,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: mail_notification.py) ---
+            // def fields_get(self, allfields=None, attributes=None):
+            // # As we are adding keys in stable, better be sure no-one is getting crashes
+            // # due to missing translations
+            // # TODO: remove in master
+            // res = super().fields_get(allfields=allfields, attributes=attributes)
+            // 
+            // existing_selection = res.get('failure_type', {}).get('selection')
+            // if existing_selection is None:
+            //     return res
+            // 
+            // updated_stable = {
+            //     'twilio_authentication', 'twilio_callback',
+            //     'twilio_from_missing', 'twilio_from_to',
+            // }
+            // need_update = updated_stable - set(dict(self._fields['failure_type'].selection))
+            // if need_update:
+            //     self.env['ir.model.fields'].invalidate_model(['selection_ids'])
+            //     self.env['ir.model.fields.selection']._update_selection(
+            //         self._name,
+            //         'failure_type',
+            //         self._fields['failure_type'].selection,
+            //     )
+            //     self.env.registry.clear_cache()
+            //     return super().fields_get(allfields=allfields, attributes=attributes)
+            // 
+            // return res
+            */
+            return await base.FieldsGetAsync(fields, attributes);
+        }
+
         protected async Task<MailNotification> FilteredForWebClientInternalAsync()
         {
             /*
@@ -52,7 +86,7 @@ namespace Bamboo.Core.Application.Services
             // """Returns only the notifications to show on the web client."""
             // def _filter_unimportant_notifications(notif):
             //     if notif.notification_status in ['bounce', 'exception', 'canceled'] \
-            //             or notif.res_partner_id.partner_share:
+            //             or notif.res_partner_id.partner_share or notif.mail_email_address:
             //         return True
             //     subtype = notif.mail_message_id.subtype_id
             //     return not subtype or subtype.track_recipients
@@ -89,49 +123,33 @@ namespace Bamboo.Core.Application.Services
             //     ('res_partner_id.partner_share', '=', False),
             //     ('notification_status', 'in', ('sent', 'canceled'))
             // ]
-            // records = self.search(domain, limit=models.GC_UNLINK_LIMIT)
-            // if len(records) >= models.GC_UNLINK_LIMIT:
-            //     self.env.ref('base.autovacuum_job')._trigger()
-            // return records.unlink()
+            // records = self.search(domain, limit=GC_UNLINK_LIMIT)
+            // records.unlink()
+            // return len(records), len(records) == GC_UNLINK_LIMIT
             */
             return default;
         }
 
-        public async Task<MailNotification> InitAsync(Guid id)
+        protected async Task<MailNotification> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_notification.py) ---
-            // def init(self):
-            // self._cr.execute("""
-            //     CREATE INDEX IF NOT EXISTS mail_notification_res_partner_id_is_read_notification_status_mail_message_id
-            //                             ON mail_notification (res_partner_id, is_read, notification_status, mail_message_id);
-            //     CREATE INDEX IF NOT EXISTS mail_notification_author_id_notification_status_failure
-            //                             ON mail_notification (author_id, notification_status)
-            //                          WHERE notification_status IN ('bounce', 'exception');
-            // """)
-            // self.env.cr.execute(
-            //     """CREATE UNIQUE INDEX IF NOT EXISTS unique_mail_message_id_res_partner_id_if_set
-            //                                       ON %s (mail_message_id, res_partner_id)
-            //                                    WHERE res_partner_id IS NOT NULL""" % self._table
-            // )
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<MailNotification> ToStoreInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_notification.py) ---
-            // def _to_store(self, store: Store, /):
-            // """Returns the current notifications in the format expected by the web
-            // client."""
-            // for notif in self:
-            //     data = notif._read_format(
-            //         ["failure_type", "notification_status", "notification_type"], load=False
-            //     )[0]
-            //     data["message"] = Store.one(notif.mail_message_id, only_id=True)
-            //     data["persona"] = Store.one(notif.res_partner_id, fields=["name"])
-            //     store.add(notif, data)
+            // def _to_store_defaults(self, target):
+            // return [
+            //     "mail_email_address",
+            //     "failure_type",
+            //     "mail_message_id",
+            //     "notification_status",
+            //     "notification_type",
+            //     Store.One(
+            //         "res_partner_id",
+            //         [
+            //             "name",
+            //             "email",
+            //             Store.Attr("display_name", predicate=lambda p: not p.name),
+            //         ],
+            //     ),
+            // ]
             */
             return default;
         }

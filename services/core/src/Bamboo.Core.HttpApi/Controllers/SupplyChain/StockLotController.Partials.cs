@@ -35,14 +35,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-revaluation")]
-        public async Task<IActionResult> ActionRevaluationAsync(Guid id)
-        {
-            var result = await _appService.RevaluationAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-view-po")]
         public async Task<IActionResult> ActionViewPoAsync(Guid id)
         {
@@ -63,14 +55,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionViewSoAsync(Guid id)
         {
             var result = await _appService.ViewSoAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-view-stock-valuation-layers")]
-        public async Task<IActionResult> ActionViewStockValuationLayersAsync(Guid id)
-        {
-            var result = await _appService.ViewStockValuationLayersAsync(id);
             return Ok(result);
         }
         

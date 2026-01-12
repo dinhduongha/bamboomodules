@@ -36,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             //         ('auto_account_id', 'in', [account.id for account in accounts]),
             //         '!', ('company_id', 'child_of', company.id),
             //     ], limit=1):
-            //         raise UserError(_("You can't set a different company on your analytic account since there are some analytic items linked to it."))
+            //         raise UserError(_("You can't change the company of an analytic account that already has analytic items! It's a recipe for an analytical disaster!"))
             */
             return default;
         }
@@ -66,12 +66,15 @@ namespace Bamboo.Core.Application.Services
             //     )
             // 
             // domain = [('company_id', 'in', [False] + self.env.companies.ids)]
-            // if self._context.get('from_date', False):
-            //     domain.append(('date', '>=', self._context['from_date']))
-            // if self._context.get('to_date', False):
-            //     domain.append(('date', '<=', self._context['to_date']))
+            // if self.env.context.get('from_date', False):
+            //     domain.append(('date', '>=', self.env.context['from_date']))
+            // if self.env.context.get('to_date', False):
+            //     domain.append(('date', '<=', self.env.context['to_date']))
             // 
             // for plan, accounts in self.grouped('plan_id').items():
+            //     if not plan:
+            //         accounts.debit = accounts.credit = accounts.balance = 0
+            //         continue
             //     credit_groups = self.env['account.analytic.line']._read_group(
             //         domain=domain + [(plan._column_name(), 'in', self.ids), ('amount', '>=', 0.0)],
             //         groupby=[plan._column_name(), 'currency_id'],
@@ -167,7 +170,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_purchase_order_count(self):
             // for account in self:
             //     account.purchase_order_count = self.env['purchase.order'].search_count([
-            //         ('order_line.invoice_lines.analytic_line_ids.account_id', '=', account.id)
+            //         ('order_line.invoice_lines.analytic_line_ids.account_id', 'in', account.ids)
             //     ])
             */
             return default;
@@ -312,10 +315,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_account.py) ---
             // def _read_group_postprocess_aggregate(self, aggregate_spec, raw_values):
-            // if aggregate_spec in ('balance:sum', 'debit:sum', 'credit:sum'):
-            //     field_name = aggregate_spec.split(':')[0]
+            // if aggregate_spec in (
+            //     'balance:sum',
+            //     'balance:sum_currency',
+            //     'debit:sum',
+            //     'debit:sum_currency',
+            //     'credit:sum',
+            //     'credit:sum_currency',
+            // ):
+            //     field_name, op = aggregate_spec.split(':')
             //     column = super()._read_group_postprocess_aggregate('id:recordset', raw_values)
-            //     return (sum(records.mapped(field_name)) for records in column)
+            //     if op == 'sum':
+            //         return (sum(records.mapped(field_name)) for records in column)
+            //     if op == 'sum_currency':
+            //         return (sum(record.currency_id._convert(
+            //             from_amount=record[field_name],
+            //             to_currency=self.env.company.currency_id,
+            //         ) for record in records) for records in column)
             // return super()._read_group_postprocess_aggregate(aggregate_spec, raw_values)
             */
             return default;
@@ -328,7 +344,14 @@ namespace Bamboo.Core.Application.Services
             // def _read_group_select(self, aggregate_spec, query):
             // # flag balance/debit/credit as aggregatable, and manually sum the values
             // # from the records in the group
-            // if aggregate_spec in ('balance:sum', 'debit:sum', 'credit:sum'):
+            // if aggregate_spec in (
+            //     'balance:sum',
+            //     'balance:sum_currency',
+            //     'debit:sum',
+            //     'debit:sum_currency',
+            //     'credit:sum',
+            //     'credit:sum_currency',
+            // ):
             //     return super()._read_group_select('id:recordset', query)
             // return super()._read_group_select(aggregate_spec, query)
             */
@@ -363,10 +386,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: account_analytic_account.py) ---
             // def _unlink_except_existing_tasks(self):
-            // projects = self.env['project.project'].search([('account_id', 'in', self.ids)])
-            // has_tasks = self.env['project.task'].search_count([('project_id', 'in', projects.ids)])
+            // has_tasks = self.env['project.task'].search_count(
+            //     [('project_id.account_id', 'in', self.ids)],
+            //     limit=1,
+            // )
             // if has_tasks:
-            //     raise UserError(_('Please remove existing tasks in the project linked to the accounts you want to delete.'))
+            //     raise UserError(_("Before we can bid farewell to these accounts, you need to tidy up the projects linked to them by removing their existing tasks!"))
             */
             return default;
         }
@@ -529,7 +554,7 @@ namespace Bamboo.Core.Application.Services
             // def action_view_vendor_bill(self):
             // self.ensure_one()
             // account_move_lines = self.env['account.move.line'].search_fetch([
-            //     ('move_id.move_type', 'in', self.env['account.move'].get_purchase_types()),
+            //     ('move_id.move_type', 'in', self.env['account.move'].get_purchase_types(include_receipts=True)),
             //     ('analytic_distribution', 'in', self.ids),
             // ], ['move_id'])
             // return {
@@ -573,7 +598,7 @@ namespace Bamboo.Core.Application.Services
             //     self_context = self.with_context(analytic_plan_id=self.plan_id.id)
             // return super(AccountAnalyticAccount, self_context).web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

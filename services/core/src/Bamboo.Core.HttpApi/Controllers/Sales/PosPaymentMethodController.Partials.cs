@@ -43,10 +43,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-latest-viva-wallet-status")]
-        public async Task<IActionResult> GetLatestVivaWalletStatusAsync(Guid id)
+        [Route("{id}/get-latest-viva-com-status")]
+        public async Task<IActionResult> GetLatestVivaComStatusAsync(Guid id)
         {
-            var result = await _appService.GetLatestVivaWalletStatusAsync(id);
+            var result = await _appService.GetLatestVivaComStatusAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-provider-status")]
+        public async Task<IActionResult> GetProviderStatusAsync(Guid id, [FromBody] PosPaymentMethodGetProviderStatusRequestDto input)
+        {
+            var result = await _appService.GetProviderStatusAsync(id, input);
             return Ok(result);
         }
         
@@ -91,22 +99,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/paytm-fetch-payment-status")]
-        public async Task<IActionResult> PaytmFetchPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodPaytmFetchPaymentStatusRequestDto input)
-        {
-            var result = await _appService.PaytmFetchPaymentStatusAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/paytm-make-payment-request")]
-        public async Task<IActionResult> PaytmMakePaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodPaytmMakePaymentRequestRequestDto input)
-        {
-            var result = await _appService.PaytmMakePaymentRequestAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/pine-labs-cancel-payment-request")]
         public async Task<IActionResult> PineLabsCancelPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input)
         {
@@ -139,6 +131,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/qfpay-sign-request")]
+        public async Task<IActionResult> QfpaySignRequestAsync(Guid id, [FromBody] PosPaymentMethodQfpaySignRequestRequestDto input)
+        {
+            var result = await _appService.QfpaySignRequestAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/razorpay-cancel-payment-request")]
         public async Task<IActionResult> RazorpayCancelPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
         {
@@ -159,6 +159,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> RazorpayMakePaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayMakePaymentRequestRequestDto input)
         {
             var result = await _appService.RazorpayMakePaymentRequestAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/razorpay-make-refund-request")]
+        public async Task<IActionResult> RazorpayMakeRefundRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
+        {
+            var result = await _appService.RazorpayMakeRefundRequestAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/send-dpopay-request")]
+        public async Task<IActionResult> SendDpopayRequestAsync(Guid id, [FromBody] PosPaymentMethodSendDpopayRequestRequestDto input)
+        {
+            var result = await _appService.SendDpopayRequestAsync(id, input);
             return Ok(result);
         }
         
@@ -187,26 +203,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/viva-wallet-get-payment-status")]
-        public async Task<IActionResult> VivaWalletGetPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodVivaWalletGetPaymentStatusRequestDto input)
+        [Route("{id}/viva-com-get-payment-status")]
+        public async Task<IActionResult> VivaComGetPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
         {
-            var result = await _appService.VivaWalletGetPaymentStatusAsync(id, input);
+            var result = await _appService.VivaComGetPaymentStatusAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-wallet-send-payment-cancel")]
-        public async Task<IActionResult> VivaWalletSendPaymentCancelAsync(Guid id, [FromBody] PosPaymentMethodVivaWalletSendPaymentCancelRequestDto input)
+        [Route("{id}/viva-com-send-payment-cancel")]
+        public async Task<IActionResult> VivaComSendPaymentCancelAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
         {
-            var result = await _appService.VivaWalletSendPaymentCancelAsync(id, input);
+            var result = await _appService.VivaComSendPaymentCancelAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-wallet-send-payment-request")]
-        public async Task<IActionResult> VivaWalletSendPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodVivaWalletSendPaymentRequestRequestDto input)
+        [Route("{id}/viva-com-send-payment-request")]
+        public async Task<IActionResult> VivaComSendPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
         {
-            var result = await _appService.VivaWalletSendPaymentRequestAsync(id, input);
+            var result = await _appService.VivaComSendPaymentRequestAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/viva-com-send-refund-request")]
+        public async Task<IActionResult> VivaComSendRefundRequestAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendRefundRequestRequestDto input)
+        {
+            var result = await _appService.VivaComSendRefundRequestAsync(id, input);
             return Ok(result);
         }
     }

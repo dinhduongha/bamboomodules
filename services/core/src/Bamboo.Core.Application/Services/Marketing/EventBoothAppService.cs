@@ -75,7 +75,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_contact_phone(self):
             // for booth in self:
             //     if not booth.contact_phone:
-            //         booth.contact_phone = booth.partner_id.phone or booth.partner_id.mobile or False
+            //         booth.contact_phone = booth.partner_id.phone or False
             */
             return default;
         }
@@ -165,10 +165,6 @@ namespace Bamboo.Core.Application.Services
             //     # If confirmed from backend, we don't have _prepare_booth_registration_values
             //     if not values.get('name'):
             //         values['name'] = self.partner_id.name
-            //     if self.booth_category_id.exhibitor_type == 'online':
-            //         values.update({
-            //             'room_name': 'odoo-exhibitor-%s' % self.partner_id.name,
-            //         })
             //     sponsor_id = self.env['event.sponsor'].sudo().create(values)
             // return sponsor_id.id
             */
@@ -192,15 +188,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventBooth> SearchIsAvailableInternalAsync(object @operator, object operand)
+        protected async Task<EventBooth> SearchIsAvailableInternalAsync(object @operator, object @value)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth, FILE: event_booth.py) ---
-            // def _search_is_available(self, operator, operand):
-            // negative = operator in expression.NEGATIVE_TERM_OPERATORS
-            // if (negative and operand) or not operand:
-            //     return [('state', '=', 'unavailable')]
-            // return [('state', '=', 'available')]
+            // def _search_is_available(self, operator, value):
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // return [('state', '=', 'available' if operator == 'in' else 'unavailable')]
             */
             return default;
         }

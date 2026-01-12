@@ -32,10 +32,10 @@ namespace Bamboo.Core.Application.Services
             // def action_brand_model(self):
             // self.ensure_one()
             // view = {
+            //     'name': _('Models'),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'list,form',
             //     'res_model': 'fleet.vehicle.model',
-            //     'name': 'Models',
             //     'context': {'search_default_brand_id': self.id, 'default_brand_id': self.id}
             // }
             // 
@@ -50,7 +50,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model_brand.py) ---
             // def _compute_model_count(self):
             // model_data = self.env['fleet.vehicle.model']._read_group([
-            //     ('brand_id', 'in', self.ids),
+            //     ('brand_id', 'in', self.ids), ('active', '=', 'true')
             // ], ['brand_id'], ['__count'])
             // models_brand = {brand.id: count for brand, count in model_data}
             // 
@@ -58,6 +58,23 @@ namespace Bamboo.Core.Application.Services
             //     record.model_count = models_brand.get(record.id, 0)
             */
             return default;
+        }
+
+        public async Task<FleetVehicleModelBrand> OpenBrandFormAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model_brand.py) ---
+            // def action_open_brand_form(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _('Manufacturer'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'fleet.vehicle.model.brand',
+            //     'res_id': self.id
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

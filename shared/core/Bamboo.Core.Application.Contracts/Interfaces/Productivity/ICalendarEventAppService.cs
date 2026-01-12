@@ -28,5 +28,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<CalendarEvent> SendSmsAsync(Guid id);
         Task<CalendarEvent> SendmailAsync(Guid id);
         Task<CalendarEvent> SetDiscussVideocallLocationAsync(Guid id);
+        Task<CalendarEvent> UnlinkEventAsync(Guid id, CalendarEventUnlinkEventRequestDto input);
     }
 }

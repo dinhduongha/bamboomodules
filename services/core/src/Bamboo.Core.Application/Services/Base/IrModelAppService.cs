@@ -26,47 +26,14 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<IrModel> AddManualModelsInternalAsync()
+        protected async Task<IrModel> CheckFoldNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _add_manual_models(self):
-            // """ Add extra models to the registry. """
-            // # clean up registry first
-            // for name, Model in list(self.pool.items()):
-            //     if Model._custom:
-            //         del self.pool.models[name]
-            //         # remove the model's name from its parents' _inherit_children
-            //         for Parent in Model.__bases__:
-            //             if hasattr(Parent, 'pool'):
-            //                 Parent._inherit_children.discard(name)
-            // # add manual models
-            // cr = self.env.cr
-            // # we cannot use self._fields to determine translated fields, as it has not been set up yet
-            // cr.execute("SELECT *, name->>'en_US' AS name FROM ir_model WHERE state = 'manual'")
-            // for model_data in cr.dictfetchall():
-            //     model_class = self._instanciate(model_data)
-            //     Model = model_class._build_model(self.pool, cr)
-            //     kind = sql.table_kind(cr, Model._table)
-            //     if kind not in (sql.TableKind.Regular, None):
-            //         _logger.info(
-            //             "Model %r is backed by table %r which is not a regular table (%r), disabling automatic schema management",
-            //             Model._name, Model._table, kind,
-            //         )
-            //         Model._auto = False
-            //         cr.execute(
-            //             '''
-            //             SELECT a.attname
-            //               FROM pg_attribute a
-            //               JOIN pg_class t
-            //                 ON a.attrelid = t.oid
-            //                AND t.relname = %s
-            //              WHERE a.attnum > 0 -- skip system columns
-            //             ''',
-            //             [Model._table]
-            //         )
-            //         columns = {colinfo[0] for colinfo in cr.fetchall()}
-            //         Model._log_access = set(models.LOG_ACCESS_COLUMNS) <= columns
+            // def _check_fold_name(self):
+            // for model in self:
+            //     if model.fold_name and model.fold_name not in model.field_id.mapped('name'):
+            //         raise ValidationError(_("The value of 'Fold Field' should be a field name of the model."))
             */
             return default;
         }
@@ -134,8 +101,8 @@ namespace Bamboo.Core.Application.Services
             // def _compute_count(self):
             // self.count = 0
             // for model in self:
-            //     records = self.env[model.model]
-            //     if not records._abstract and records._auto:
+            //     records = self.env.get(model.model)
+            //     if records is not None and not records._abstract and records._auto:
             //         [[count]] = self.env.execute_query(SQL("SELECT COUNT(*) FROM %s", SQL.identifier(records._table)))
             //         model.count = count
             */
@@ -178,6 +145,19 @@ namespace Bamboo.Core.Application.Services
             // if self.env.context.get('install_mode'):
             //     return []                   # no default field when importing
             // return [Command.create({'name': 'x_name', 'field_description': 'Name', 'ttype': 'char', 'copied': True})]
+            */
+            return default;
+        }
+
+        protected async Task<IrModel> DeleteLinkedCampaignsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: ir_model.py) ---
+            // def _delete_linked_campaigns(self):
+            // """Remove campaigns on removed models."""
+            // self.env['card.campaign'].search([
+            //     ('res_model', 'in', self.mapped('model'))
+            // ]).unlink()
             */
             return default;
         }
@@ -232,11 +212,11 @@ namespace Bamboo.Core.Application.Services
             //             continue
             // 
             //         table = current_model._table
-            //         kind = sql.table_kind(self._cr, table)
+            //         kind = sql.table_kind(self.env.cr, table)
             //         if kind == sql.TableKind.View:
-            //             self._cr.execute(SQL('DROP VIEW %s', SQL.identifier(table)))
+            //             self.env.cr.execute(SQL('DROP VIEW %s', SQL.identifier(table)))
             //         elif kind == sql.TableKind.Regular:
-            //             self._cr.execute(SQL('DROP TABLE %s CASCADE', SQL.identifier(table)))
+            //             self.env.cr.execute(SQL('DROP TABLE %s CASCADE', SQL.identifier(table)))
             //         elif kind is not None:
             //             _logger.warning(
             //                 "Unable to drop table %r of model %r: unmanaged or unknown tabe type %r",
@@ -258,7 +238,7 @@ namespace Bamboo.Core.Application.Services
             // model = self.env[model_name]
             // fields_get = model.fields_get()
             // 
-            // for key, val in model._inherits.items():
+            // for val in model._inherits.values():
             //     fields_get.pop(val, None)
             // 
             // # Unrequire fields with default values
@@ -314,7 +294,7 @@ namespace Bamboo.Core.Application.Services
             //                     if 'domain' in property_definition and isinstance(property_definition['domain'], str):
             //                         property_definition['domain'] = literal_eval(property_definition['domain'])
             //                         try:
-            //                             property_definition['domain'] = expression.normalize_domain(property_definition['domain'])
+            //                             property_definition['domain'] = list(Domain(property_definition['domain']))
             //                         except Exception:
             //                             # Ignore non-fully defined properties
             //                             continue
@@ -399,6 +379,7 @@ namespace Bamboo.Core.Application.Services
             //             inverse_fields = [
             //                 field for field in model.pool.field_inverses[model._fields[fname]]
             //                 if field.model_name in model_names
+            //                 and model.env[field.model_name]._has_field_access(field, 'read')
             //             ]
             //             if inverse_fields:
             //                 field_data['inverse_fname_by_model_name'] = {field.model_name: field.name for field in inverse_fields}
@@ -496,6 +477,7 @@ namespace Bamboo.Core.Application.Services
             //             inverse_fields = [
             //                 field for field in model.pool.field_inverses[model._fields[fname]]
             //                 if field.model_name in model_names_to_fetch
+            //                 and model.env[field.model_name]._has_field_access(field, 'read')
             //             ]
             //             if inverse_fields:
             //                 field_data['inverse_fname_by_model_name'] = {field.model_name: field.name for field in inverse_fields}
@@ -517,6 +499,25 @@ namespace Bamboo.Core.Application.Services
             // return model_definitions
             */
             return default;
+        }
+
+        public async Task<IrModel> HasSearchableParentRelationAsync(Guid id, IrModelHasSearchableParentRelationRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: ir_model.py) ---
+            // def has_searchable_parent_relation(self, model_names):
+            // result = {}
+            // for model_name in model_names:
+            //     model = self.env.get(model_name)
+            //     if model is None or not model.has_access("read"):
+            //         result[model_name] = False
+            //     else:
+            //         # we consider only stored parent relationships were meant to
+            //         # be searched
+            //         result[model_name] = model._parent_store and model._parent_name in model._fields
+            // return result
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<IrModel> InModulesInternalAsync()
@@ -541,51 +542,50 @@ namespace Bamboo.Core.Application.Services
             // def _inherited_models(self):
             // self.inherited_model_ids = False
             // for model in self:
-            //     parent_names = list(self.env[model.model]._inherits)
-            //     if parent_names:
-            //         model.inherited_model_ids = self.search([('model', 'in', parent_names)])
-            //     else:
-            //         model.inherited_model_ids = False
+            //     records = self.env.get(model.model)
+            //     if records is not None:
+            //         model.inherited_model_ids = self.search([('model', 'in', list(records._inherits))])
             */
             return default;
         }
 
-        protected async Task<IrModel> InstanciateInternalAsync(object model_data)
+        protected async Task<IrModel> InstanciateAttrsInternalAsync(object model_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_model.py) ---
-            // def _instanciate(self, model_data):
-            // model_class = super(IrModel, self)._instanciate(model_data)
-            // if model_data.get('is_mail_blacklist') and model_class._name != 'mail.thread.blacklist':
-            //     parents = model_class._inherit or []
+            // def _instanciate_attrs(self, model_data):
+            // attrs = super()._instanciate_attrs(model_data)
+            // if model_data.get('is_mail_blacklist') and attrs['_name'] != 'mail.thread.blacklist':
+            //     parents = attrs.get('_inherit') or []
             //     parents = [parents] if isinstance(parents, str) else parents
-            //     model_class._inherit = parents + ['mail.thread.blacklist']
-            //     if model_class._custom:
-            //         model_class._primary_email = 'x_email'
-            // elif model_data.get('is_mail_thread') and model_class._name != 'mail.thread':
-            //     parents = model_class._inherit or []
+            //     attrs['_inherit'] = parents + ['mail.thread.blacklist']
+            //     if attrs['_custom']:
+            //         attrs['_primary_email'] = 'x_email'
+            // elif model_data.get('is_mail_thread') and attrs['_name'] != 'mail.thread':
+            //     parents = attrs.get('_inherit') or []
             //     parents = [parents] if isinstance(parents, str) else parents
-            //     model_class._inherit = parents + ['mail.thread']
-            // if model_data.get('is_mail_activity') and model_class._name != 'mail.activity.mixin':
-            //     parents = model_class._inherit or []
+            //     attrs['_inherit'] = parents + ['mail.thread']
+            // if model_data.get('is_mail_activity') and attrs['_name'] != 'mail.activity.mixin':
+            //     parents = attrs.get('_inherit') or []
             //     parents = [parents] if isinstance(parents, str) else parents
-            //     model_class._inherit = parents + ['mail.activity.mixin']
-            // return model_class
+            //     attrs['_inherit'] = parents + ['mail.activity.mixin']
+            // return attrs
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def _instanciate(self, model_data):
-            // """ Return a class for the custom model given by parameters ``model_data``. """
-            // models.check_pg_name(model_data["model"].replace(".", "_"))
-            // 
-            // class CustomModel(models.Model):
-            //     _name = model_data['model']
-            //     _description = model_data['name']
-            //     _module = False
-            //     _custom = True
-            //     _transient = bool(model_data['transient'])
-            //     _order = model_data['order']
-            //     __doc__ = model_data['info']
-            // 
-            // return CustomModel
+            // def _instanciate_attrs(self, model_data):
+            // """ Return the attributes to instanciate a custom model definition class
+            //     corresponding to ``model_data``.
+            // """
+            // return {
+            //     '_name': model_data['model'],
+            //     '_description': model_data['name'],
+            //     '_module': False,
+            //     '_custom': True,
+            //     '_abstract': bool(model_data['abstract']),
+            //     '_transient': bool(model_data['transient']),
+            //     '_order': model_data['order'],
+            //     '_fold_name': model_data['fold_name'],
+            //     '__doc__': model_data['info'],
+            // }
             */
             return default;
         }
@@ -636,7 +636,9 @@ namespace Bamboo.Core.Application.Services
             //     'order': model._order,
             //     'info': next(cls.__doc__ for cls in self.env.registry[model._name].mro() if cls.__doc__),
             //     'state': 'manual' if model._custom else 'base',
+            //     'abstract': model._abstract,
             //     'transient': model._transient,
+            //     'fold_name': model._fold_name,
             // }
             */
             return default;
@@ -671,7 +673,7 @@ namespace Bamboo.Core.Application.Services
             //     self.pool.post_init(mark_modified, self.browse(ids), cols[1:])
             // 
             // # update their XML id
-            // module = self._context.get('module')
+            // module = self.env.context.get('module')
             // if not module:
             //     return
             // 
@@ -693,6 +695,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: ir_model.py) ---
             // def _search_is_mail_thread_sms(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
             // thread_models = self.search([('is_mail_thread', '=', True)])
             // valid_models = self.env['ir.model']
             // for model in thread_models:
@@ -703,10 +707,7 @@ namespace Bamboo.Core.Application.Services
             //     if any(fname in ModelObject._fields for fname in potential_fields):
             //         valid_models |= model
             // 
-            // search_sms = (operator == '=' and value) or (operator == '!=' and not value)
-            // if search_sms:
-            //     return [('id', 'in', valid_models.ids)]
-            // return [('id', 'not in', valid_models.ids)]
+            // return [('id', 'in', valid_models.ids)]
             */
             return default;
         }
@@ -716,20 +717,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: ir_model.py) ---
             // def _search_is_mailing_enabled(self, operator, value):
-            // if operator not in ('=', '!='):
-            //     raise ValueError(_("Searching Mailing Enabled models supports only direct search using '='' or '!='."))
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // 
-            // valid_models = self.env['ir.model']
-            // for model in self.search([]):
-            //     if model.model not in self.env or model.is_transient():
-            //         continue
-            //     if getattr(self.env[model.model], '_mailing_enabled', False):
-            //         valid_models |= model
+            // valid_models = self.search([]).filtered(
+            //     lambda model: model.model in self.env
+            //     and not model.is_transient()
+            //     and getattr(self.env[model.model], '_mailing_enabled', False)
+            // )
             // 
-            // search_is_mailing_enabled = (operator == '=' and value) or (operator == '!=' and not value)
-            // if search_is_mailing_enabled:
-            //     return [('id', 'in', valid_models.ids)]
-            // return [('id', 'not in', valid_models.ids)]
+            // return [('id', operator, valid_models.ids)]
             */
             return default;
         }
@@ -802,15 +799,20 @@ namespace Bamboo.Core.Application.Services
             // if crons:
             //     crons.unlink()
             // 
+            // # delete related ir_model_data
+            // model_data = self.env['ir.model.data'].search([('model', 'in', self.mapped('model'))])
+            // if model_data:
+            //     model_data.unlink()
+            // 
             // self._drop_table()
-            // res = super(IrModel, self).unlink()
+            // res = super().unlink()
             // 
             // # Reload registry for normal unlink only. For module uninstall, the
             // # reload is done independently in odoo.modules.loading.
-            // if not self._context.get(MODULE_UNINSTALL_FLAG):
+            // if not self.env.context.get(MODULE_UNINSTALL_FLAG):
             //     # setup models; this automatically removes model from registry
             //     self.env.flush_all()
-            //     self.pool.setup_models(self._cr)
+            //     self.pool._setup_models__(self.env.cr)
             // 
             // return res
             */
@@ -858,30 +860,29 @@ namespace Bamboo.Core.Application.Services
             //     res = super(IrModel, self).write(vals)
             //     self.env.flush_all()
             //     # setup models; this reloads custom models in registry
-            //     self.pool.setup_models(self._cr)
+            //     model_names = self.mapped('model')
+            //     self.pool._setup_models__(self.env.cr, model_names)
             //     # update database schema of models
-            //     models = self.pool.descendants(self.mapped('model'), '_inherits')
-            //     self.pool.init_models(self._cr, models, dict(self._context, update_custom_fields=True))
+            //     model_names = self.pool.descendants(model_names, '_inherits')
+            //     self.pool.init_models(self.env.cr, model_names, dict(self.env.context, update_custom_fields=True))
             // else:
             //     res = super(IrModel, self).write(vals)
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def write(self, vals):
-            // if 'model' in vals and any(rec.model != vals['model'] for rec in self):
-            //     raise UserError(_('Field "Model" cannot be modified on models.'))
-            // if 'state' in vals and any(rec.state != vals['state'] for rec in self):
-            //     raise UserError(_('Field "Type" cannot be modified on models.'))
-            // if 'transient' in vals and any(rec.transient != vals['transient'] for rec in self):
-            //     raise UserError(_('Field "Transient Model" cannot be modified on models.'))
+            // for unmodifiable_field in ('model', 'state', 'abstract', 'transient'):
+            //     if unmodifiable_field in vals and any(rec[unmodifiable_field] != vals[unmodifiable_field] for rec in self):
+            //         raise UserError(_('Field %s cannot be modified on models.', self._fields[unmodifiable_field]._description_string(self.env)))
             // # Filter out operations 4 from field id, because the web client always
             // # writes (4,id,False) even for non dirty items.
             // if 'field_id' in vals:
             //     vals['field_id'] = [op for op in vals['field_id'] if op[0] != 4]
-            // res = super(IrModel, self).write(vals)
+            // res = super().write(vals)
             // # ordering has been changed, reload registry to reflect update + signaling
-            // if 'order' in vals:
-            //     self.env.flush_all()  # setup_models need to fetch the updated values from the db
-            //     self.pool.setup_models(self._cr)
+            // if 'order' in vals or 'fold_name' in vals:
+            //     self.env.flush_all()  # _setup_models__ need to fetch the updated values from the db
+            //     # incremental setup will reload custom models
+            //     self.pool._setup_models__(self.env.cr, [])
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

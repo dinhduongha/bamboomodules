@@ -38,13 +38,15 @@ namespace Bamboo.Core.Application.Services
             // # Find all the vehicles of the same type for which the driver is the future_driver_id
             // # remove their driver_id and close their history using current date
             // vehicles = self.search([('driver_id', 'in', self.mapped('future_driver_id').ids), ('vehicle_type', '=', self.vehicle_type)])
-            // vehicles.write({'driver_id': False})
+            // vehicles.write({
+            //     'driver_id': False,
+            //     'plan_to_change_car': False,
+            //     'plan_to_change_bike': False,
+            // })
             // 
             // for vehicle in self:
-            //     if vehicle.vehicle_type == 'bike':
-            //         vehicle.future_driver_id.sudo().write({'plan_to_change_bike': False})
-            //     if vehicle.vehicle_type == 'car':
-            //         vehicle.future_driver_id.sudo().write({'plan_to_change_car': False})
+            //     vehicle.plan_to_change_bike = False
+            //     vehicle.plan_to_change_car = False
             //     vehicle.driver_id = vehicle.future_driver_id
             //     vehicle.future_driver_id = False
             */
@@ -72,22 +74,56 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<FleetVehicle> CleanValsInternalUserInternalAsync(object vals)
+        protected async Task<FleetVehicle> ComputeCategoryInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def _clean_vals_internal_user(self, vals):
-            // # Fleet administrator may not have rights to write on partner
-            // # related fields when the driver_id is a res.user.
-            // # This trick is used to prevent access right error.
-            // su_vals = {}
-            // if self.env.su:
-            //     return su_vals
-            // if 'plan_to_change_car' in vals:
-            //     su_vals['plan_to_change_car'] = vals.pop('plan_to_change_car')
-            // if 'plan_to_change_bike' in vals:
-            //     su_vals['plan_to_change_bike'] = vals.pop('plan_to_change_bike')
-            // return su_vals
+            // def _compute_category(self):
+            // self._load_fields_from_model(['category_id'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeCo2EmissionUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2_emission_unit(self):
+            // for record in self:
+            //     if record.range_unit == 'km':
+            //         record.co2_emission_unit = 'g/km'
+            //     else:
+            //         record.co2_emission_unit = 'g/mi'
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeCo2InternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2(self):
+            // self._load_fields_from_model(['co2'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeCo2StandardInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2_standard(self):
+            // self._load_fields_from_model(['co2_standard'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeColorInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_color(self):
+            // self._load_fields_from_model(['color'])
             */
             return default;
         }
@@ -169,19 +205,52 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<FleetVehicle> ComputeDoorsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_doors(self):
+            // self._load_fields_from_model(['doors'])
+            */
+            return default;
+        }
+
         protected async Task<FleetVehicle> ComputeDriverEmployeeIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle.py) ---
             // def _compute_driver_employee_id(self):
+            // employees_by_partner_id_and_company_id = self.env['hr.employee']._read_group(
+            //     domain=[('work_contact_id', 'in', self.driver_id.ids)],
+            //     groupby=['work_contact_id', 'company_id'],
+            //     aggregates=['id:recordset']
+            // )
+            // employees_by_partner_id_and_company_id = {
+            //     (partner, company): employee for partner, company, employee in employees_by_partner_id_and_company_id
+            // }
             // for vehicle in self:
-            //     if vehicle.driver_id:
-            //         vehicle.driver_employee_id = self.env['hr.employee'].search([
-            //             *self.env['hr.employee']._check_company_domain(self.env.companies),
-            //             ('work_contact_id', '=', vehicle.driver_id.id),
-            //         ], limit=1)
-            //     else:
-            //         vehicle.driver_employee_id = False
+            //     employees = employees_by_partner_id_and_company_id.get((vehicle.driver_id, vehicle.company_id))
+            //     vehicle.driver_employee_id = employees[0] if employees else False
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeElectricAssistanceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_electric_assistance(self):
+            // self._load_fields_from_model(['electric_assistance'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeFuelTypeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_fuel_type(self):
+            // self._load_fields_from_model(['fuel_type'])
             */
             return default;
         }
@@ -191,14 +260,37 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle.py) ---
             // def _compute_future_driver_employee_id(self):
+            // employees_by_partner_id_and_company_id = self.env['hr.employee']._read_group(
+            //     domain=[('work_contact_id', 'in', self.future_driver_id.ids)],
+            //     groupby=['work_contact_id', 'company_id'],
+            //     aggregates=['id:recordset']
+            // )
+            // employees_by_partner_id_and_company_id = {
+            //     (partner, company): employee for partner, company, employee in employees_by_partner_id_and_company_id
+            // }
             // for vehicle in self:
-            //     if vehicle.future_driver_id:
-            //         vehicle.future_driver_employee_id = self.env['hr.employee'].search([
-            //             *self.env['hr.employee']._check_company_domain(self.env.companies),
-            //             ('work_contact_id', '=', vehicle.future_driver_id.id),
-            //         ], limit=1)
-            //     else:
-            //         vehicle.future_driver_employee_id = False
+            //     employees = employees_by_partner_id_and_company_id.get((vehicle.future_driver_id, vehicle.company_id))
+            //     vehicle.future_driver_employee_id = employees[0] if employees else False
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeHorsepowerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_horsepower(self):
+            // self._load_fields_from_model(['horsepower'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeHorsepowerTaxInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_horsepower_tax(self):
+            // self._load_fields_from_model(['horsepower_tax'])
             */
             return default;
         }
@@ -219,24 +311,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<FleetVehicle> ComputeModelFieldsInternalAsync()
+        protected async Task<FleetVehicle> ComputeModelYearInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def _compute_model_fields(self):
-            // '''
-            // Copies all the related fields from the model to the vehicle
-            // '''
-            // model_values = dict()
-            // for vehicle in self.filtered('model_id'):
-            //     if vehicle.model_id.id in model_values:
-            //         write_vals = model_values[vehicle.model_id.id]
-            //     else:
-            //         # copy if value is truthy
-            //         write_vals = {MODEL_FIELDS_TO_VEHICLE[key]: vehicle.model_id[key] for key in MODEL_FIELDS_TO_VEHICLE\
-            //             if vehicle.model_id[key]}
-            //         model_values[vehicle.model_id.id] = write_vals
-            //     vehicle.update(write_vals)
+            // def _compute_model_year(self):
+            // self._load_fields_from_model(['model_year'])
             */
             return default;
         }
@@ -268,6 +348,36 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<FleetVehicle> ComputePowerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_power(self):
+            // self._load_fields_from_model(['power'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeRangeUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_range_unit(self):
+            // self._load_fields_from_model(['range_unit'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeSeatsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_seats(self):
+            // self._load_fields_from_model(['seats'])
+            */
+            return default;
+        }
+
         protected async Task<FleetVehicle> ComputeServiceActivityInternalAsync()
         {
             /*
@@ -276,6 +386,26 @@ namespace Bamboo.Core.Application.Services
             // for vehicle in self:
             //     activities_state = set(state for state in vehicle.log_services.mapped('activity_state') if state and state != 'planned')
             //     vehicle.service_activity = sorted(activities_state)[0] if activities_state else 'none'
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeTrailerHookInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_trailer_hook(self):
+            // self._load_fields_from_model(['trailer_hook'])
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> ComputeTransmissionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_transmission(self):
+            // self._load_fields_from_model(['transmission'])
             */
             return default;
         }
@@ -291,27 +421,49 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<FleetVehicle> ComputeVehicleRangeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_vehicle_range(self):
+            // self._load_fields_from_model(['vehicle_range'])
+            */
+            return default;
+        }
+
         public override async Task<FleetVehicle> CreateAsync(FleetVehicle entity, List<string> fields)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def create(self, vals_list):
-            // ptc_values = [self._clean_vals_internal_user(vals) for vals in vals_list]
+            // to_update_drivers_cars = set()
+            // to_update_drivers_bikes = set()
+            // state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
+            // for vals in vals_list:
+            //     if vals.get('future_driver_id'):
+            //         state_id = vals.get('state_id')
+            //         if not state_waiting_list or state_waiting_list.id != state_id:
+            //             future_driver = vals['future_driver_id']
+            //             if vals.get('vehicle_type') == 'bike':
+            //                 to_update_drivers_bikes.add(future_driver)
+            //             elif vals.get('vehicle_type') == 'car':
+            //                 to_update_drivers_cars.add(future_driver)
+            // if to_update_drivers_cars:
+            //     self.search([
+            //         ('driver_id', 'in', to_update_drivers_cars),
+            //         ('vehicle_type', '=', 'car'),
+            //     ]).plan_to_change_car = True
+            // if to_update_drivers_bikes:
+            //     self.search([
+            //         ('driver_id', 'in', to_update_drivers_bikes),
+            //         ('vehicle_type', '=', 'bike'),
+            //     ]).plan_to_change_bike = True
+            // 
             // vehicles = super().create(vals_list)
-            // for vehicle, vals, ptc_value in zip(vehicles, vals_list, ptc_values):
-            //     if ptc_value:
-            //         vehicle.sudo().write(ptc_value)
-            //     if 'driver_id' in vals and vals['driver_id']:
+            // 
+            // for vehicle, vals in zip(vehicles, vals_list):
+            //     if vals.get('driver_id'):
             //         vehicle.create_driver_history(vals)
-            //     if 'future_driver_id' in vals and vals['future_driver_id']:
-            //         state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
-            //         states = vehicle.mapped('state_id').ids
-            //         if not state_waiting_list or state_waiting_list.id not in states:
-            //             future_driver = self.env['res.partner'].browse(vals['future_driver_id'])
-            //             if self.vehicle_type == 'bike':
-            //                 future_driver.sudo().write({'plan_to_change_bike': True})
-            //             if self.vehicle_type == 'car':
-            //                 future_driver.sudo().write({'plan_to_change_car': True})
             // return vehicles
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle.py) ---
             // def create(self, vals_list):
@@ -379,11 +531,47 @@ namespace Bamboo.Core.Application.Services
             // def _get_odometer(self):
             // FleetVehicalOdometer = self.env['fleet.vehicle.odometer']
             // for record in self:
-            //     vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', '=', record.id)], limit=1, order='value desc')
+            //     vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', 'in', record.ids)], limit=1, order='value desc')
             //     if vehicle_odometer:
             //         record.odometer = vehicle_odometer.value
             //     else:
             //         record.odometer = 0
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> GetYearSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _get_year_selection(self):
+            // current_year = datetime.now().year
+            // return [(str(i), i) for i in range(1970, current_year + 1)]
+            */
+            return default;
+        }
+
+        protected async Task<FleetVehicle> LoadFieldsFromModelInternalAsync(object fields_to_load)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _load_fields_from_model(self, fields_to_load):
+            // '''
+            // Copies the desired fields from the models to the vehicles
+            // '''
+            // model_values = dict()
+            // for vehicle in self.filtered('model_id'):
+            //     if vehicle.model_id.id in model_values:
+            //         write_vals = model_values[vehicle.model_id.id]
+            //     else:
+            //         # Update only the desired fields from the model, only when the model has a truthy value.
+            //         write_vals = \
+            //             {
+            //                 vehicle_field: vehicle.model_id[model_field] for model_field, vehicle_field in MODEL_FIELDS_TO_VEHICLE.items()
+            //                 if vehicle_field in fields_to_load and vehicle.model_id[model_field]
+            //             }
+            //         model_values[vehicle.model_id.id] = write_vals
+            //     vehicle.update(write_vals)
             */
             return default;
         }
@@ -428,6 +616,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<FleetVehicle> OpenOdometerReportAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def action_open_odometer_report(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id('fleet.fleet_vehicle_odometer_reporting_action')
+            // action.update({
+            //     'domain': [('vehicle_id', '=', self.id)],
+            //     'context': {'search_default_groupby_date': True},
+            // })
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<FleetVehicle> ReturnToOpenAsync(Guid id)
         {
             /*
@@ -454,24 +658,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _search_contract_renewal_due_soon(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
             // params = self.env['ir.config_parameter'].sudo()
             // delay_alert_contract = int(params.get_param('hr_fleet.delay_alert_contract', default=30))
-            // res = []
-            // assert operator in ('=', '!=', '<>') and value in (True, False), 'Operation not supported'
-            // if (operator == '=' and value is True) or (operator in ('<>', '!=') and value is False):
-            //     search_operator = 'in'
-            // else:
-            //     search_operator = 'not in'
             // today = fields.Date.context_today(self)
             // datetime_today = fields.Datetime.from_string(today)
             // limit_date = fields.Datetime.to_string(datetime_today + relativedelta(days=+delay_alert_contract))
-            // res_ids = self.env['fleet.vehicle.log.contract'].search([
+            // return [('log_contracts', 'any', [
             //     ('expiration_date', '>', today),
             //     ('expiration_date', '<', limit_date),
-            //     ('state', 'in', ['open', 'expired'])
-            // ]).mapped('vehicle_id').ids
-            // res.append(('id', search_operator, res_ids))
-            // return res
+            //     ('state', 'in', ['open', 'expired']),
+            // ])]
             */
             return default;
         }
@@ -481,16 +679,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _search_get_overdue_contract_reminder(self, operator, value):
-            // res = []
-            // assert operator in ('=', '!=', '<>') and value in (True, False), 'Operation not supported'
-            // if (operator == '=' and value is True) or (operator in ('<>', '!=') and value is False):
-            //     search_operator = 'in'
-            // else:
-            //     search_operator = 'not in'
+            // if operator != 'in':
+            //     return NotImplemented
             // today = fields.Date.context_today(self)
             // # get the id of vehicles that have overdue contracts
             // # but exclude those for which a new contract has already been created for them
-            // vehicle_ids = self.env['fleet.vehicle']._search([
+            // return [
             //     ("log_contracts", "any", [
             //         ('expiration_date', '!=', False),
             //         ('expiration_date', '<', today),
@@ -502,9 +696,7 @@ namespace Bamboo.Core.Application.Services
             //             ('expiration_date', '>=', today),
             //             ('state', 'in', ['open', 'futur'])
             //         ]),
-            // ])
-            // res.append(('id', search_operator, vehicle_ids))
-            // return res
+            // ]
             */
             return default;
         }
@@ -533,11 +725,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _set_odometer(self):
-            // for record in self:
-            //     if record.odometer:
-            //         date = fields.Date.context_today(record)
-            //         data = {'value': record.odometer, 'date': date, 'vehicle_id': record.id}
-            //         self.env['fleet.vehicle.odometer'].create(data)
+            // self.env['fleet.vehicle.odometer'].create([
+            //     {
+            //         'value': vehicle.odometer,
+            //         'date': fields.Date.context_today(vehicle),
+            //         'vehicle_id': vehicle.id,
+            //         'driver_id': vehicle.driver_id.id
+            //     } for vehicle in self if vehicle.odometer
+            // ])
             */
             return default;
         }
@@ -639,22 +834,26 @@ namespace Bamboo.Core.Application.Services
             //                 note=_('Specify the End date of %s', vehicle.driver_id.name))
             // 
             // if 'future_driver_id' in vals and vals['future_driver_id']:
+            //     future_driver = vals['future_driver_id']
             //     state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
-            //     states = self.mapped('state_id').ids if 'state_id' not in vals else [vals['state_id']]
-            //     if not state_waiting_list or state_waiting_list.id not in states:
-            //         future_driver = self.env['res.partner'].browse(vals['future_driver_id'])
-            //         if self.vehicle_type == 'bike':
-            //             future_driver.sudo().write({'plan_to_change_bike': True})
-            //         if self.vehicle_type == 'car':
-            //             future_driver.sudo().write({'plan_to_change_car': True})
+            //     state_new_request = self.env.ref('fleet.fleet_vehicle_state_new_request', raise_if_not_found=False)
+            //     vehicle_types = set(self.filtered(lambda vehicle: not state_waiting_list or\
+            //                         vals.get('state_id', vehicle.state_id.id) not in [state_waiting_list.id, state_new_request.id]).mapped('vehicle_type'))
+            //     if vehicle_types:
+            //         vehicle_read_group = dict(self.env['fleet.vehicle']._read_group(
+            //             domain=[('driver_id', '=', future_driver), ('vehicle_type', 'in', vehicle_types), ('id', 'not in', self.ids)],
+            //             groupby=['vehicle_type'],
+            //             aggregates=['id:recordset'])
+            //         )
+            //         if 'bike' in vehicle_read_group:
+            //             vehicle_read_group['bike'].write({'plan_to_change_bike': True})
+            //         if 'car' in vehicle_read_group:
+            //             vehicle_read_group['car'].write({'plan_to_change_car': True})
             // 
             // if 'active' in vals and not vals['active']:
             //     self.env['fleet.vehicle.log.contract'].search([('vehicle_id', 'in', self.ids)]).active = False
             //     self.env['fleet.vehicle.log.services'].search([('vehicle_id', 'in', self.ids)]).active = False
             // 
-            // su_vals = self._clean_vals_internal_user(vals)
-            // if su_vals:
-            //     self.sudo().write(su_vals)
             // res = super(FleetVehicle, self).write(vals)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle.py) ---

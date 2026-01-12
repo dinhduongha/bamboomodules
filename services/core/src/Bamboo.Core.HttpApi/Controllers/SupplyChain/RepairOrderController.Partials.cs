@@ -43,6 +43,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-generate-serial")]
+        public async Task<IActionResult> ActionGenerateSerialAsync(Guid id)
+        {
+            var result = await _appService.GenerateSerialAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-repair-cancel")]
         public async Task<IActionResult> ActionRepairCancelAsync(Guid id)
         {
@@ -135,6 +143,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ComputeProductUomAsync(Guid id)
         {
             var result = await _appService.ComputeProductUomAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid id)
+        {
+            var result = await _appService.MessagePostAsync(id);
             return Ok(result);
         }
         

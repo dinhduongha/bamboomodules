@@ -26,6 +26,21 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<ProductSupplierinfo> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_display_name(self):
+            // if self.env.context.get('use_simplified_supplier_name'):
+            //     super()._compute_display_name()
+            // else:
+            //     for supplier in self:
+            //         price_str = formatLang(self.env, supplier.price, currency_obj=supplier.currency_id)
+            //         supplier.display_name = f'{supplier.partner_id.display_name} ({supplier.min_qty} {supplier.product_uom_id.name} - {price_str})'
+            */
+            return default;
+        }
+
         protected async Task<ProductSupplierinfo> ComputeIsSubcontractorInternalAsync()
         {
             /*
@@ -46,7 +61,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_last_purchase_date(self):
             // self.last_purchase_date = False
             // purchases = self.env['purchase.order'].search([
-            //     ('state', 'in', ('purchase', 'done')),
+            //     ('state', '=', 'purchase'),
             //     ('order_line.product_id', 'in',
             //      self.product_tmpl_id.product_variant_ids.ids),
             //     ('partner_id', 'in', self.partner_id.ids),
@@ -70,7 +85,57 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
             // def _compute_price_discounted(self):
             // for rec in self:
-            //     rec.price_discounted = rec.price * (1 - rec.discount / 100)
+            //     product_uom = (rec.product_id or rec.product_tmpl_id).uom_id
+            //     rec.price_discounted = rec.product_uom_id._compute_price(rec.price, product_uom) * (1 - rec.discount / 100)
+            */
+            return default;
+        }
+
+        protected async Task<ProductSupplierinfo> ComputePriceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
+            // def _compute_price(self):
+            // for rec in self:
+            //     rec.price = rec.product_id.standard_price if rec.product_id else rec.product_tmpl_id.standard_price if rec.product_tmpl_id else 0.0
+            */
+            return default;
+        }
+
+        protected async Task<ProductSupplierinfo> ComputeProductIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
+            // def _compute_product_id(self):
+            // for rec in self:
+            //     if self.env.get('default_product_id'):
+            //         rec.product_id = self.env.get('default_product_id')
+            //     elif not rec.product_id and rec.product_variant_count == 1:
+            //         rec.product_id = rec.product_tmpl_id.product_variant_id
+            */
+            return default;
+        }
+
+        protected async Task<ProductSupplierinfo> ComputeProductTmplIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
+            // def _compute_product_tmpl_id(self):
+            // for rec in self:
+            //     if rec.product_id:
+            //         rec.product_tmpl_id = rec.product_id.product_tmpl_id
+            */
+            return default;
+        }
+
+        protected async Task<ProductSupplierinfo> ComputeProductUomIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
+            // def _compute_product_uom_id(self):
+            // for rec in self:
+            //     if not rec.product_uom_id:
+            //         rec.product_uom_id = rec.product_id.uom_id if rec.product_id else rec.product_tmpl_id.uom_id
             */
             return default;
         }
@@ -81,27 +146,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
             // def _compute_show_set_supplier_button(self):
             // self.show_set_supplier_button = True
-            // orderpoint_id = self.env.context.get('default_orderpoint_id')
-            // orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
+            // orderpoint_id = self.env.context.get('orderpoint_id', self.env.context.get('default_orderpoint_id'))
             // if orderpoint_id:
+            //     orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
             //     self.filtered(
             //         lambda s: s.id == orderpoint.supplier_id.id
             //     ).show_set_supplier_button = False
-            */
-            return default;
-        }
-
-        protected async Task<ProductSupplierinfo> DefaultProductIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
-            // def _default_product_id(self):
-            // product_id = self.env.get('default_product_id')
-            // if not product_id:
-            //     model, active_id = [self.env.context.get(k) for k in ['model', 'active_id']]
-            //     if model == 'product.product' and active_id:
-            //         product_id = self.env[model].browse(active_id).exists()
-            // return product_id
             */
             return default;
         }
@@ -113,7 +163,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_filtered_supplier(self, company_id, product_id, params=False):
             // return self.filtered(lambda s: (not s.company_id or s.company_id.id == company_id.id) and (s.partner_id.active and (not s.product_id or s.product_id == product_id)))
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
-            // def _get_filtered_supplier(self, company_id, product_id, params):
+            // def _get_filtered_supplier(self, company_id, product_id, params=False):
             // if params and 'order_id' in params and params['order_id'].company_id:
             //     company_id = params['order_id'].company_id
             // return super()._get_filtered_supplier(company_id, product_id, params)
@@ -177,17 +227,24 @@ namespace Bamboo.Core.Application.Services
             // def action_set_supplier(self):
             // self.ensure_one()
             // orderpoint_id = self.env.context.get('orderpoint_id')
-            // orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
-            // if not orderpoint:
+            // if not orderpoint_id:
             //     return
+            // orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
             // if 'buy' not in orderpoint.route_id.rule_ids.mapped('action'):
-            //     orderpoint.route_id = self.env['stock.rule'].search([('action', '=', 'buy')], limit=1).route_id.id
+            //     domain = Domain.AND([
+            //         [('action', '=', 'buy')],
+            //         Domain.OR([
+            //             [('company_id', '=', orderpoint.company_id.id)],
+            //             [('company_id', '=', False)],
+            //         ]),
+            //     ])
+            //     orderpoint.route_id = self.env['stock.rule'].search(domain, limit=1).route_id.id
             // orderpoint.supplier_id = self
-            // supplier_min_qty = self.product_uom._compute_quantity(self.min_qty, orderpoint.product_id.uom_id)
+            // supplier_min_qty = self.product_uom_id._compute_quantity(self.min_qty, orderpoint.product_id.uom_id)
             // if orderpoint.qty_to_order < supplier_min_qty:
             //     orderpoint.qty_to_order = supplier_min_qty
-            // if self._context.get('replenish_id'):
-            //     replenish = self.env['product.replenish'].browse(self._context.get('replenish_id'))
+            // if self.env.context.get('replenish_id'):
+            //     replenish = self.env['product.replenish'].browse(self.env.context.get('replenish_id'))
             //     replenish.supplier_id = self
             //     return {
             //         'type': 'ir.actions.act_window',
@@ -197,6 +254,7 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'new',
             //         'view_mode': 'form',
             //     }
+            // return orderpoint.action_stock_replenishment_info()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

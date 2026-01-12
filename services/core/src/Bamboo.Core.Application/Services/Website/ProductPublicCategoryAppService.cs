@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery" })]
+    [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery", "html_builder" })]
     public class ProductPublicCategoryAppService : GenericApplicationService<ProductPublicCategory>, IProductPublicCategoryAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
@@ -56,6 +56,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductPublicCategory> ComputeHasPublishedProductsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _compute_has_published_products(self):
+            // grouped_product_templates = self.env['product.template']._read_group(
+            //     domain=[('public_categ_ids', 'in', self.ids), ('is_published', '=', True)],
+            //     groupby=['public_categ_ids']
+            // )
+            // published_category_ids = {group[0].id for group in grouped_product_templates}
+            // for category in self:
+            //     has_published = category.id in published_category_ids
+            //     category.has_published_products = (
+            //         has_published or any(c.has_published_products for c in category.child_id)
+            //     )
+            */
+            return default;
+        }
+
         protected async Task<ProductPublicCategory> ComputeParentsAndSelfInternalAsync()
         {
             /*
@@ -83,6 +102,50 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductPublicCategory> GetAvailableCategoryDomainInternalAsync(Guid website_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _get_available_category_domain(self, website_id):
+            // """Build a search domain for product categories to be used in dynamic snippets.
+            // 
+            // :param int website_id: ID of the current website
+            // :return: A domain to filter product categories for the given website
+            // :rtype: Domain
+            // """
+            // domain = Domain('website_id', 'in', [False, website_id])
+            // # Public and portal users should only see categories with published products.
+            // if not self.env.user.has_group('website.group_website_designer'):
+            //     domain &= Domain('has_published_products', '=', True)
+            // return domain
+            */
+            return default;
+        }
+
+        public async Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(Guid id, ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def get_available_snippet_categories(self, website_id):
+            // """Return parent categories available for selection in the dynamic category snippet.
+            // 
+            // :param int website_id: ID of the current website
+            // :return: Available parent categories
+            // :rtype: list[dict]
+            // """
+            // child_count_by_parent = self._read_group(
+            //     domain=self._get_available_category_domain(website_id),
+            //     aggregates=['id:count'],
+            //     groupby=['parent_id'],
+            // )
+            // return [{
+            //     'id': parent_category.id,
+            //     'name': f'{parent_category.name} ({child_count})',
+            // } for parent_category, child_count in child_count_by_parent if parent_category]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<ProductPublicCategory> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -108,6 +171,26 @@ namespace Bamboo.Core.Application.Services
             //     'icon': 'fa-folder-o',
             //     'order': 'name desc, id desc' if 'name desc' in order else 'name asc, id desc',
             // }
+            */
+            return default;
+        }
+
+        protected async Task<ProductPublicCategory> SearchHasPublishedProductsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _search_has_published_products(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
+            // published_categ_ids = self._search(
+            //     [('product_tmpl_ids.is_published', 'in', True)]
+            // ).get_result_ids()
+            // # Note that if the `value` is False, the ORM will invert the domain below
+            // return [
+            //     '|',
+            //     ('id', 'in', published_categ_ids),
+            //     ('id', 'parent_of', published_categ_ids),
+            // ]
             */
             return default;
         }

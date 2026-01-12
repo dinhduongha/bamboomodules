@@ -219,8 +219,8 @@ namespace Bamboo.Core.Application.Services
             //         WHERE program.id = ANY(%s)
             //             GROUP BY program.id
             //         """
-            // self._cr.execute(query, (self.ids,))
-            // res = self._cr.dictfetchall()
+            // self.env.cr.execute(query, (self.ids,))
+            // res = self.env.cr.dictfetchall()
             // res = {k['id']: k['sum'] for k in res}
             // 
             // for rec in self:
@@ -236,6 +236,20 @@ namespace Bamboo.Core.Application.Services
             // def _compute_pos_report_print_id(self):
             // for program in self:
             //     program.pos_report_print_id = program.communication_plan_ids.pos_report_print_id[:1]
+            */
+            return default;
+        }
+
+        protected async Task<LoyaltyProgram> ComputeShowNonPublishedProductWarningInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_program.py) ---
+            // def _compute_show_non_published_product_warning(self):
+            // for program in self:
+            //     program.show_non_published_product_warning = (
+            //         program.program_type == 'ewallet'
+            //         and any(not product.website_published for product in program.trigger_product_ids)
+            //     )
             */
             return default;
         }
@@ -268,7 +282,7 @@ namespace Bamboo.Core.Application.Services
             // if self.env.context.get('loyalty_skip_reward_check'):
             //     return
             // if any(not program.reward_ids for program in self):
-            //     raise ValidationError(_('A program must have at least one reward.'))
+            //     raise ValidationError(_("A program must have at least one reward."))
             */
             return default;
         }
@@ -385,47 +399,47 @@ namespace Bamboo.Core.Application.Services
             // product = self.env['product.product'].search([('sale_ok', '=', True)], limit=1)
             // return {
             //     'gift_card': {
-            //         'name': _('Gift Card'),
+            //         'name': _("Gift Card"),
             //         'program_type': 'gift_card',
             //         **program_type_defaults['gift_card']
             //     },
             //     'ewallet': {
-            //         'name': _('eWallet'),
+            //         'name': _("eWallet"),
             //         'program_type': 'ewallet',
             //         **program_type_defaults['ewallet'],
             //     },
             //     'loyalty': {
-            //         'name': _('Loyalty Cards'),
+            //         'name': _("Loyalty Cards"),
             //         'program_type': 'loyalty',
             //         **program_type_defaults['loyalty'],
             //     },
             //     'coupons': {
-            //         'name': _('Coupons'),
+            //         'name': _("Coupons"),
             //         'program_type': 'coupons',
             //         **program_type_defaults['coupons'],
             //     },
             //     'promotion': {
-            //         'name': _('Promotional Program'),
+            //         'name': _("Promotional Program"),
             //         'program_type': 'promotion',
             //         **program_type_defaults['promotion'],
             //     },
             //     'promo_code': {
-            //         'name': _('Discount code'),
+            //         'name': _("Discount code"),
             //         'program_type': 'promo_code',
             //         **program_type_defaults['promo_code'],
             //     },
             //     'buy_x_get_y': {
-            //         'name': _('2+1 Free'),
+            //         'name': _("2+1 Free"),
             //         'program_type': 'buy_x_get_y',
             //         **program_type_defaults['buy_x_get_y'],
             //     },
             //     'next_order_coupons': {
-            //         'name': _('Next Order Coupons'),
+            //         'name': _("Next Order Coupons"),
             //         'program_type': 'next_order_coupons',
             //         **program_type_defaults['next_order_coupons'],
             //     },
             //     'fidelity': {
-            //         'name': _('Fidelity Cards'),
+            //         'name': _("Fidelity Cards"),
             //         'program_type': 'loyalty',
             //         'applies_on': 'both',
             //         'trigger': 'auto',
@@ -467,7 +481,7 @@ namespace Bamboo.Core.Application.Services
             //     domain = rule._get_valid_product_domain()
             //     if domain:
             //         rule_products[rule] = products.filtered_domain(domain)
-            //     elif not domain and rule.program_type != "gift_card":
+            //     elif not domain and rule.program_type != 'gift_card':
             //         rule_products[rule] = products
             //     else:
             //         continue
@@ -482,7 +496,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _inverse_mail_template_id(self):
             // for program in self:
-            //     if program.program_type not in ("gift_card", "ewallet"):
+            //     if program.program_type not in ('gift_card', 'ewallet'):
             //         continue
             //     if not program.mail_template_id:
             //         program.communication_plan_ids = [(5, 0, 0)]
@@ -536,22 +550,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyProgram> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<LoyaltyProgram> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // return [('id', 'in', config_id._get_program_ids().ids)]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', 'in', config._get_program_ids().ids)]
             */
             return default;
         }
 
-        protected async Task<LoyaltyProgram> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<LoyaltyProgram> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return [
             //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
             //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
@@ -561,17 +574,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyProgram> LoadPosDataInternalAsync(object data)
+        protected async Task<LoyaltyProgram> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(data['pos.config']['data'][0]['id'])
-            // return {
-            //     'data': self.sudo().search_read(domain, fields, load=False),
-            //     'fields': fields,
-            // }
+            // def _load_pos_data_read(self, records, config):
+            // return super()._load_pos_data_read(records.sudo(), config)
             */
             return default;
         }
@@ -582,7 +590,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def action_open_loyalty_cards(self):
             // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id("loyalty.loyalty_card_action")
+            // action = self.env['ir.actions.act_window']._for_xml_id('loyalty.loyalty_card_action')
             // action['name'] = self._program_items_name()[self.program_type]
             // action['display_name'] = action['name']
             // action['context'] = {
@@ -603,14 +611,14 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _program_items_name(self):
             // return {
-            //     'coupons': _('Coupons'),
-            //     'promotion': _('Promos'),
-            //     'gift_card': _('Gift Cards'),
-            //     'loyalty': _('Loyalty Cards'),
-            //     'ewallet': _('eWallets'),
-            //     'promo_code': _('Discounts'),
-            //     'buy_x_get_y': _('Promos'),
-            //     'next_order_coupons': _('Coupons'),
+            //     'coupons': _("Coupons"),
+            //     'promotion': _("Promos"),
+            //     'gift_card': _("Gift Cards"),
+            //     'loyalty': _("Loyalty Cards"),
+            //     'ewallet': _("eWallets"),
+            //     'promo_code': _("Discounts"),
+            //     'buy_x_get_y': _("Promos"),
+            //     'next_order_coupons': _("Coupons"),
             // }
             */
             return default;
@@ -640,7 +648,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'current',
             //         'trigger': 'with_code',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Coupon point(s)'),
+            //         'portal_point_name': _("Coupon point(s)"),
             //         'rule_ids': [(5, 0, 0)],
             //         'reward_ids': [(5, 0, 0), (0, 0, {
             //             'required_points': 1,
@@ -655,7 +663,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'current',
             //         'trigger': 'auto',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Promo point(s)'),
+            //         'portal_point_name': _("Promo point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_amount': 1,
             //             'reward_point_mode': 'order',
@@ -686,7 +694,7 @@ namespace Bamboo.Core.Application.Services
             //             'discount': 1,
             //             'discount_applicability': 'order',
             //             'required_points': 1,
-            //             'description': _('Gift Card'),
+            //             'description': _("Gift Card"),
             //         })],
             //         'communication_plan_ids': [(5, 0, 0), (0, 0, {
             //             'trigger': 'create',
@@ -697,7 +705,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'both',
             //         'trigger': 'auto',
             //         'portal_visible': True,
-            //         'portal_point_name': _('Loyalty point(s)'),
+            //         'portal_point_name': _("Loyalty point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_mode': 'money',
             //         })],
@@ -724,7 +732,7 @@ namespace Bamboo.Core.Application.Services
             //             'discount': 1,
             //             'discount_applicability': 'order',
             //             'required_points': 1,
-            //             'description': _('eWallet'),
+            //             'description': _("eWallet"),
             //         })],
             //         'communication_plan_ids': [(5, 0, 0)],
             //     },
@@ -732,7 +740,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'current',
             //         'trigger': 'with_code',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Discount point(s)'),
+            //         'portal_point_name': _("Discount point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'mode': 'with_code',
             //             'code': 'PROMO_CODE_' + str(uuid4())[:4], # We should try not to trigger any unicity constraint
@@ -750,7 +758,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'current',
             //         'trigger': 'auto',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Credit(s)'),
+            //         'portal_point_name': _("Credit(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_mode': 'unit',
             //             'product_ids': first_sale_product,
@@ -767,7 +775,7 @@ namespace Bamboo.Core.Application.Services
             //         'applies_on': 'future',
             //         'trigger': 'auto',
             //         'portal_visible': True,
-            //         'portal_point_name': _('Coupon point(s)'),
+            //         'portal_point_name': _("Coupon point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'minimum_amount': 100,
             //             'minimum_qty': 0,
@@ -801,30 +809,24 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyProgram> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
-            // def toggle_active(self):
-            // res = super().toggle_active()
-            // # Propagate active state to children
-            // for program in self.with_context(active_test=False):
-            //     program.rule_ids.active = program.active
-            //     program.reward_ids.active = program.active
-            //     program.communication_plan_ids.active = program.active
-            //     program.reward_ids.with_context(active_test=True).discount_line_product_id.active = program.active
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<LoyaltyProgram> UnlinkExceptActiveInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _unlink_except_active(self):
             // if any(program.active for program in self):
-            //     raise UserError(_('You can not delete a program in an active state'))
+            //     raise UserError(_("You can not delete a program in an active state"))
+            */
+            return default;
+        }
+
+        protected async Task<LoyaltyProgram> UnrelevantRecordsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            // def _unrelevant_records(self, config):
+            // valid_record = config._get_program_ids()
+            // return self.filtered(lambda record: record.id not in valid_record.ids).ids
             */
             return default;
         }

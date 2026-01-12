@@ -11,6 +11,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IStockRouteAppService : IGenericApplicationService<StockRoute>
     {
         Task<StockRoute> CopyDataAsync(Guid id, StockRouteCopyDataRequestDto input);
-        Task<StockRoute> ToggleActiveAsync(Guid id);
     }
 }

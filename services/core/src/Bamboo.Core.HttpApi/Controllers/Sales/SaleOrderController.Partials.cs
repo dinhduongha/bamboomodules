@@ -179,6 +179,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-view-gift-cards")]
+        public async Task<IActionResult> ActionViewGiftCardsAsync(Guid id)
+        {
+            var result = await _appService.ViewGiftCardsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-invoice")]
         public async Task<IActionResult> ActionViewInvoiceAsync(Guid id, [FromBody] SaleOrderViewInvoiceRequestDto input)
         {
@@ -227,14 +235,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-view-task")]
-        public async Task<IActionResult> ActionViewTaskAsync(Guid id)
-        {
-            var result = await _appService.ViewTaskAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-view-timesheet")]
         public async Task<IActionResult> ActionViewTimesheetAsync(Guid id)
         {
@@ -263,6 +263,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] SaleOrderGetEmptyListHelpRequestDto input)
         {
             var result = await _appService.GetEmptyListHelpAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-first-service-line")]
+        public async Task<IActionResult> GetFirstServiceLineAsync(Guid id)
+        {
+            var result = await _appService.GetFirstServiceLineAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
             return Ok(result);
         }
         
@@ -307,10 +323,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/load-sale-order-from-pos")]
+        public async Task<IActionResult> LoadSaleOrderFromPosAsync(Guid id, [FromBody] SaleOrderLoadSaleOrderFromPosRequestDto input)
         {
-            var result = await _appService.InitAsync(id);
+            var result = await _appService.LoadSaleOrderFromPosAsync(id, input);
             return Ok(result);
         }
         
@@ -343,22 +359,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> PaymentActionVoidAsync(Guid id)
         {
             var result = await _appService.PaymentVoidAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/save-included-pdf")]
-        public async Task<IActionResult> SaveIncludedPdfAsync(Guid id, [FromBody] SaleOrderSaveIncludedPdfRequestDto input)
-        {
-            var result = await _appService.SaveIncludedPdfAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/save-new-custom-content")]
-        public async Task<IActionResult> SaveNewCustomContentAsync(Guid id, [FromBody] SaleOrderSaveNewCustomContentRequestDto input)
-        {
-            var result = await _appService.SaveNewCustomContentAsync(id, input);
             return Ok(result);
         }
         

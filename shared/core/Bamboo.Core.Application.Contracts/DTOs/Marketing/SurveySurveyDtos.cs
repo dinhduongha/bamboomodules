@@ -14,6 +14,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object AccessUid { get; set; }
     }
     
+    public class SurveySurveyLoadSurveyTemplateSampleRequestDto
+    {
+        public object TemplateKey { get; set; }
+    }
+    
     public class SurveySurveyPrintSurveyRequestDto
     {
         public object Answer { get; set; }

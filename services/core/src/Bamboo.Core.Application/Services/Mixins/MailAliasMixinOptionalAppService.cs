@@ -141,6 +141,48 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ButtonFetchInEinvoicesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def button_fetch_in_einvoices(self):
+            // # TO OVERRIDE
+            // """
+            // Abstract method to fetch e-invoices.
+            // Should fetch vendor bill invoices synchronously and doesn't return anything.
+            // """
+            // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ButtonRefreshOutEinvoicesStatusAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def button_refresh_out_einvoices_status(self):
+            // # TO OVERRIDE
+            // """
+            // Abstract method to fetch e-invoice statuses.
+            // Should fetch customer invoices statuses synchronously and doesn't return anything.
+            // """
+            // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ButtonUnsubscribeFromInvoiceNotificationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def button_unsubscribe_from_invoice_notifications(self):
+            // # deprecated, to remove in master
+            // self.ensure_one()
+            // self.incoming_einvoice_notification_email = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckAutoPostDraftEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
@@ -191,6 +233,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         '!', ('company_id', 'child_of', company.id)
             //     ], limit=1):
             //         raise UserError(_("You can't change the company of your journal since there are some journal entries linked to it."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckIncomingEinvoiceNotificationEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _check_incoming_einvoice_notification_email(self):
+            // # to remove in master
+            // pass
             */
             return default;
         }
@@ -307,6 +360,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeAvailableInvoiceTemplatePdfReportIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_available_invoice_template_pdf_report_ids(self):
+            // for journal in self:
+            //     journal.available_invoice_template_pdf_report_ids = self.env['account.move']._get_available_invoice_template_pdf_report_ids()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeAvailablePaymentMethodIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
@@ -378,8 +442,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_code(self):
             // cache = defaultdict(list)
             // for record in self:
-            //     if not record.code and record.type in ('bank', 'cash', 'credit'):
-            //         record.code = self.get_next_bank_cash_default_code(
+            //     if not record.code and record.type:
+            //         record.code = self._get_next_journal_default_code(
             //             record.type,
             //             record.company_id,
             //             cache.get(record.company_id)
@@ -432,6 +496,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeHasInvalidStatementsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_has_invalid_statements(self):
+            // journals_with_invalid_statements = self.env['account.bank.statement'].search([
+            //     ('journal_id', 'in', self.ids),
+            //     '|',
+            //     ('is_valid', '=', False),
+            //     ('is_complete', '=', False),
+            // ]).journal_id
+            // journals_with_invalid_statements.has_invalid_statements = True
+            // (self - journals_with_invalid_statements).has_invalid_statements = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeInboundPaymentMethodLineIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
@@ -440,12 +521,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for journal in self:
             //     pay_method_line_ids_commands = [Command.clear()]
             //     if journal.type in ('bank', 'cash', 'credit'):
+            //         existing_method_lines = journal.inbound_payment_method_line_ids
             //         default_methods = journal._default_inbound_payment_methods()
-            //         pay_method_line_ids_commands += [Command.create({
-            //             'name': pay_method.name,
-            //             'payment_method_id': pay_method.id,
-            //         }) for pay_method in default_methods]
+            //         for pay_method in default_methods:
+            //             payment_account = existing_method_lines.filtered(lambda m: m.payment_method_id == pay_method)[:1].payment_account_id
+            //             pay_method_line_ids_commands += [
+            //                 Command.create({
+            //                     'name': pay_method.name,
+            //                     'payment_method_id': pay_method.id,
+            //                     'payment_account_id': (
+            //                         payment_account.id
+            //                         if not payment_account.currency_id or payment_account.currency_id == journal.currency_id
+            //                         else False
+            //                     ),
+            //                 })
+            //             ]
             //     journal.inbound_payment_method_line_ids = pay_method_line_ids_commands
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIncomingEinvoiceNotificationEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_incoming_einvoice_notification_email(self):
+            // for journal in self:
+            //     if (
+            //         journal.type == 'purchase'
+            //         and not journal.incoming_einvoice_notification_email
+            //         and journal.company_id.email
+            //     ):
+            //         journal.incoming_einvoice_notification_email = journal.company_id.email
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeNamePlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_name_placeholder(self):
+            // type_to_default_name = {
+            //     'sale': _('Customer Invoices'),
+            //     'purchase': _('Vendor Bills'),
+            //     'cash': _('Cash'),
+            //     'bank': _('Bank'),
+            //     'credit': _('Credit Card'),
+            //     'general': _('Miscellaneous Operations'),
+            // }
+            // for journal in self:
+            //     if not journal.type:
+            //         journal.name_placeholder = _("Select a type")
+            //     else:
+            //         match = re.search(r'[0-9]+$', journal.code or '')
+            //         code_suffix = match.group() if match else '1'
+            //         journal.name_placeholder = f"{type_to_default_name[journal.type]} ({code_suffix})"
             */
             return default;
         }
@@ -458,11 +589,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for journal in self:
             //     pay_method_line_ids_commands = [Command.clear()]
             //     if journal.type in ('bank', 'cash', 'credit'):
+            //         existing_method_lines = journal.outbound_payment_method_line_ids
             //         default_methods = journal._default_outbound_payment_methods()
-            //         pay_method_line_ids_commands += [Command.create({
-            //             'name': pay_method.name,
-            //             'payment_method_id': pay_method.id,
-            //         }) for pay_method in default_methods]
+            //         for pay_method in default_methods:
+            //             payment_account = existing_method_lines.filtered(lambda m: m.payment_method_id == pay_method)[:1].payment_account_id
+            //             pay_method_line_ids_commands += [
+            //                 Command.create({
+            //                     'name': pay_method.name,
+            //                     'payment_method_id': pay_method.id,
+            //                     'payment_account_id': (
+            //                         payment_account.id
+            //                         if not payment_account.currency_id or payment_account.currency_id == journal.currency_id
+            //                         else False
+            //                     ),
+            //                 })
+            //             ]
             //     journal.outbound_payment_method_line_ids = pay_method_line_ids_commands
             */
             return default;
@@ -506,6 +647,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeShowFetchInEinvoicesButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_show_fetch_in_einvoices_button(self):
+            // # TO OVERRIDE
+            // self.show_fetch_in_einvoices_button = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowRefreshOutEinvoicesStatusButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _compute_show_refresh_out_einvoices_status_button(self):
+            // # TO OVERRIDE
+            // self.show_refresh_out_einvoices_status_button = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeSuspenseAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
@@ -520,27 +683,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         journal.suspense_account_id = journal.company_id.account_journal_suspense_account_id
             //     else:
             //         journal.suspense_account_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConstrainsAccountControlIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
-            // def _constrains_account_control_ids(self):
-            // self.env['account.move.line'].flush_model(['account_id', 'journal_id', 'display_type'])
-            // self.flush_recordset(['account_control_ids'])
-            // self._cr.execute("""
-            //     SELECT aml.id
-            //     FROM account_move_line aml
-            //     WHERE aml.journal_id in %s
-            //     AND EXISTS (SELECT 1 FROM journal_account_control_rel rel WHERE rel.journal_id = aml.journal_id)
-            //     AND NOT EXISTS (SELECT 1 FROM journal_account_control_rel rel WHERE rel.account_id = aml.account_id AND rel.journal_id = aml.journal_id)
-            //     AND aml.display_type NOT IN ('line_section', 'line_note')
-            // """, [tuple(self.ids)])
-            // if self._cr.fetchone():
-            //     raise ValidationError(_('Some journal items already exist in this journal but with other accounts than the allowed ones.'))
             */
             return default;
         }
@@ -728,7 +870,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'domain': [('id', 'in', invoices.ids)],
             //     'res_model': 'account.move',
             //     'type': 'ir.actions.act_window',
-            //     'context': self._context
+            //     'context': self.env.context
             // }
             // if len(invoices) == 1:
             //     action_vals.update({
@@ -753,8 +895,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _create_document_from_attachment(self, attachment_ids):
             // """ Create the invoices from files."""
             // if not self:
-            //     self = self.env['account.journal'].browse(self._context.get("default_journal_id"))
-            // move_type = self._context.get("default_move_type", "entry")
+            //     self = self.env['account.journal'].browse(self.env.context.get("default_journal_id"))  # noqa: PLW0642
+            // move_type = self.env.context.get("default_move_type", "entry")
             // if not self:
             //     if move_type in self.env['account.move'].get_sale_types(include_receipts=True):
             //         journal_type = "sale"
@@ -762,7 +904,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         journal_type = "purchase"
             //     else:
             //         raise UserError(_("The journal in which to upload the invoice is not specified. "))
-            //     self = self.env['account.journal'].search([
+            //     self = self.env['account.journal'].search([  # noqa: PLW0642
             //         *self.env['account.journal']._check_company_domain(self.env.company),
             //         ('type', '=', journal_type),
             //     ], limit=1)
@@ -774,28 +916,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self:
             //     raise UserError(self.env['account.journal']._build_no_journal_error_msg(self.env.company.display_name, [journal_type]))
             // 
-            // # As we are coming from the journal, we assume that each attachments
-            // # will create an invoice with a tentative to enhance with EDI / OCR..
-            // all_invoices = self.env['account.move']
-            // for attachment in attachments:
-            //     invoice = self.env['account.move'].with_context(skip_is_manually_modified=True).create({
-            //         'journal_id': self.id,
-            //         'move_type': move_type,
-            //     })
+            // # Create one invoice per group.
+            // invoices = self.env['account.move'] \
+            //     .with_context(
+            //         default_journal_id=self.id,
+            //         skip_is_manually_modified=True,
+            //     ) \
+            //     ._create_records_from_attachments(attachments)
             // 
-            //     invoice.with_context(skip_is_manually_modified=True)._extend_with_attachments(attachment, new=True)
-            // 
-            //     all_invoices |= invoice
-            // 
-            //     invoice.with_context(
-            //         account_predictive_bills_disable_prediction=True,
-            //         no_new_invoice=True,
-            //     ).message_post(attachment_ids=attachment.ids)
-            // 
-            //     attachment.write({'res_model': 'account.move', 'res_id': invoice.id})
+            // for invoice in invoices:
             //     invoice._autopost_bill()
             // 
-            // return all_invoices
+            // return invoices
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DefaultDisplayInvoiceTemplatePdfReportIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _default_display_invoice_template_pdf_report_id(self):
+            // """ Show PDF template selection if there are more than 1 template available for invoices. """
+            // return len(self.available_invoice_template_pdf_report_ids) > 1
             */
             return default;
         }
@@ -851,7 +994,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // domain = [('alias_name', '=', alias_name)]
             // if alias_domain_name:
-            //     domain.append(('alias_domain', '=', alias_domain_name))
+            //     domain.extend(['|', ('alias_domain', '=', alias_domain_name), ('alias_domain_id', '=', False)])
             // 
             // existing_alias = self.env['mail.alias'].search_count(domain, limit=1)
             // 
@@ -887,7 +1030,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     has_loss_account = vals.get('loss_account_id')
             // 
             //     # === Fill missing name ===
-            //     vals['name'] = vals.get('name') or vals.get('bank_acc_number')
+            //     vals['name'] = vals.get('name') or vals.get('bank_acc_number') or vals.get('name_placeholder')
             // 
             //     # === Fill missing accounts ===
             //     if not has_liquidity_accounts:
@@ -911,7 +1054,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if is_import and not vals.get('code'):
             //     code = vals['name'][:5]
-            //     vals['code'] = code if not protected_codes or code not in protected_codes else self.get_next_bank_cash_default_code(journal_type, company, protected_codes)
+            //     vals['code'] = code if not protected_codes or code not in protected_codes else self._get_next_journal_default_code(journal_type, company, protected_codes)
             //     if not vals['code']:
             //         raise UserError(_("Cannot generate an unused journal code. Please change the name for journal %s.", vals['name']))
             // 
@@ -922,6 +1065,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         False, vals.get('name'), vals.get('code'), journal_type, company
             //     )
             //     vals['alias_name'] = self._ensure_unique_alias(vals, company)
+            // 
+            // if not vals.get('name') and vals.get('name_placeholder'):
+            //     vals['name'] = vals['name_placeholder']
             */
             return default;
         }
@@ -966,7 +1112,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
             // def _get_default_account_domain(self):
             // return """[
-            //     ('deprecated', '=', False),
             //     ('account_type', 'in', ('asset_cash', 'liability_credit_card') if type == 'bank'
             //                            else ('liability_credit_card',) if type == 'credit'
             //                            else ('asset_cash',) if type == 'cash'
@@ -1000,7 +1145,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // nb_lines, balance, amount_currency = self.env['account.move.line']._read_group(
             //     domain=([
             //         ('account_id', 'in', tuple(self.default_account_id.ids)),
-            //         ('display_type', 'not in', ('line_section', 'line_note')),
+            //         ('display_type', 'not in', ('line_section', 'line_subsection', 'line_note')),
             //         ('parent_state', '!=', 'cancel'),
             //     ] + (domain or [])),
             //     aggregates=('__count', 'balance:sum', 'amount_currency:sum'),
@@ -1026,6 +1171,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for line in self.inbound_payment_method_line_ids:
             //     account_ids.add(line.payment_account_id.id)
             // return self.env['account.account'].browse(account_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetJournalNotificationUnsubscribeScopeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _get_journal_notification_unsubscribe_scope(self):
+            // return 'account_journal_notification_unsubscribe'
             */
             return default;
         }
@@ -1090,7 +1245,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         fnames.append('payment_provider_id')
             //     self.env['account.payment.method.line'].flush_model(fnames=fnames)
             // 
-            //     self._cr.execute(
+            //     self.env.cr.execute(
             //         f'''
             //             SELECT
             //                 apm.id,
@@ -1104,7 +1259,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ''',
             //         [tuple(unique_electronic_ids)],
             //     )
-            //     for pay_method_id, company_id, journal_id, provider_id in self._cr.fetchall():
+            //     for pay_method_id, company_id, journal_id, provider_id in self.env.cr.fetchall():
             //         values = method_information_mapping[pay_method_id]
             //         is_electronic = manage_providers and values['mode'] == 'electronic'
             //         if is_electronic:
@@ -1122,12 +1277,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetNextBankCashDefaultCodeAsync<TEntity>(IEnumerable<TEntity> entities, object journal_type, object company, object cache, object protected_codes) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        public async Task<TEntity> GetNextJournalDefaultCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object journal_type, object company, object cache, object protected_codes) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
-            // def get_next_bank_cash_default_code(self, journal_type, company, cache=None, protected_codes=False):
-            // prefix_map = {'cash': 'CSH', 'general': 'GEN', 'bank': 'BNK', 'credit': 'CCD'}
+            // def _get_next_journal_default_code(self, journal_type, company, cache=None, protected_codes=False):
+            // prefix_map = {
+            //     'sale': 'INV',
+            //     'purchase': 'BILL',
+            //     'cash': 'CSH',
+            //     'bank': 'BNK',
+            //     'credit': 'CCD',
+            //     'general': 'MISC',
+            // }
             // journal_code_base = prefix_map.get(journal_type)
             // existing_codes = set(self.env['account.journal'].with_context(active_test=False).search([
             //     *self.env['account.journal']._check_company_domain(company),
@@ -1156,8 +1318,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // child_model = self.sudo().with_context(child_ctx)
             // 
             // for record in child_model.search([('alias_id', '=', False)]):
-            //     # create the alias, and link it to the current record
-            //     alias = self.env['mail.alias'].sudo().create(record._alias_get_creation_values())
+            //     # create the alias associated with its company if one exists,
+            //     # and link it to the current record
+            //     record_company = record._mail_get_companies()[record.id]
+            //     alias = self.env['mail.alias'].sudo().with_company(record_company).create(record._alias_get_creation_values())
             //     record.with_context(mail_notrack=True).alias_id = alias
             //     _logger.info('Mail alias created for %s %s (id %s)',
             //                  record._name, record.display_name, record.id)
@@ -1197,17 +1361,107 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OnchangeTypeForAliasInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        public async Task<TEntity> NotifyEinvoicesReceivedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
-            // def _onchange_type_for_alias(self):
+            // def _notify_einvoices_received(self, moves):
+            // self.ensure_one()
+            // # legacy if module was not upgraded
+            // new_mail_template = self.env.ref('account.mail_template_invoice_subscriber', raise_if_not_found=False)
+            // if new_mail_template:
+            //     # if module was upgraded, this is handled in _notify_invoice_subscribers
+            //     return
+            // 
+            // emails = set(email_normalize_all(self.incoming_einvoice_notification_email or ''))
+            // if not moves or not emails:
+            //     return
+            // 
+            // if not (mail_template := self.env.ref('account.mail_template_einvoice_notification', raise_if_not_found=False)):
+            //     return
+            // 
+            // mail_template.with_context(einvoices=moves).send_mail(self.id, force_send=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> NotifyInvoiceSubscribersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object mail_params) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _notify_invoice_subscribers(self, invoice, mail_params=None):
+            // self.ensure_one()
+            // invoice.ensure_one()
+            // 
+            // recipients = set(email_normalize_all(self.incoming_einvoice_notification_email or ''))
+            // if not recipients:
+            //     return
+            // 
+            // if not (template := self.env.ref('account.mail_template_invoice_subscriber', raise_if_not_found=False)):
+            //     # we add the template in stable, thus this might happen if the module was not upgraded
+            //     self._notify_einvoices_received(invoice)
+            //     return
+            // 
+            // base_url = self.get_base_url()
+            // for recipient in recipients:
+            //     unsubscribe_token = hash_sign(
+            //         self.sudo().env,
+            //         scope=self._get_journal_notification_unsubscribe_scope(),
+            //         message_values={'email_to_unsubscribe': recipient, 'journal_id': self.id},
+            //     )
+            //     unsubscribe_url = urls.urljoin(base_url, f'/my/journal/{self.id}/unsubscribe?{urlencode({"token": unsubscribe_token})}')
+            // 
+            //     template.with_context(unsubscribe_url=unsubscribe_url).send_mail(
+            //         invoice.id,
+            //         email_values={
+            //             **(mail_params or {}),
+            //             'email_to': recipient,
+            //         },
+            //         force_send=True,
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeIncomingEinvoiceNotificationEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _onchange_incoming_einvoice_notification_email(self):
+            // for journal in self:
+            //     journal.incoming_einvoice_notification_email = ', '.join(email_normalize_all(journal.incoming_einvoice_notification_email or ''))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _onchange_type(self):
             // self.filtered(lambda journal: journal.type not in {'sale', 'purchase'}).alias_name = False
             // for journal in self.filtered(lambda journal: (
             //     not journal.alias_name and journal.type in {'sale', 'purchase'})
             // ):
             //     journal.alias_name = self._alias_prepare_alias_name(
             //         False, journal.name, journal.code, journal.type, journal.company_id)
+            // 
+            // for journal in self:
+            //     journal.code = False
+            //     journal.default_account_id = False
+            //     journal.profit_account_id = False
+            //     journal.loss_account_id = False
+            //     if journal.type == 'sale':
+            //         journal.default_account_id = journal.company_id.income_account_id
+            //     elif journal.type == 'purchase':
+            //         journal.default_account_id = journal.company_id.expense_account_id
+            //     elif journal.type in ('cash', 'bank'):
+            //         journal.profit_account_id = journal.company_id.default_cash_difference_income_account_id
+            //         journal.loss_account_id = journal.company_id.default_cash_difference_expense_account_id
+            // 
+            // # codes are reset and recomputed whenever the
+            // # journal type changes through the form view
+            // self._compute_code()
             */
             return default;
         }
@@ -1335,6 +1589,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> UnsubscribeInvoiceNotificationEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_to_remove) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def _unsubscribe_invoice_notification_email(self, email_to_remove):
+            // self.ensure_one()
+            // normalized_to_remove = email_normalize(email_to_remove, strict=False)
+            // subscribed_emails = set(email_normalize_all(self.incoming_einvoice_notification_email or ''))
+            // if not normalized_to_remove or normalized_to_remove not in subscribed_emails:
+            //     return False
+            // remaining = subscribed_emails - {normalized_to_remove}
+            // self.incoming_einvoice_notification_email = ', '.join(remaining or [])
+            // return True
+            */
+            return default;
+        }
+
         public async Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
         {
             /*
@@ -1376,7 +1647,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // result = super(AccountJournal, self).write(vals)
             // 
             // # Ensure alias coherency when changing type
-            // if 'type' in vals and not self._context.get('account_journal_skip_alias_sync'):
+            // if 'type' in vals and not self.env.context.get('account_journal_skip_alias_sync'):
             //     for journal in self:
             //         alias_vals = journal._alias_get_creation_values()
             //         alias_vals = {

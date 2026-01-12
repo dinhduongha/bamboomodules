@@ -24,6 +24,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
+            // def action_archive(self):
+            // self.filtered('active').website_published = False
+            // return super().action_archive()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionAssignLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -36,7 +47,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // See sub methods for more details about assign process.
             // 
-            // :return action: a client notification giving some insights on assign
+            // :returns: action, a client notification giving some insights on assign
             //   process;
             // """
             // teams_data, members_data = self._action_assign_leads(force_quota=True, creation_delta_days=0)
@@ -85,9 +96,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param int creation_delta_days: Take into account all leads created in the last nb days (by default 7).
             //                                 If set to zero we take all the past leads.
             // 
-            // :return teams_data, members_data: structure-based result of assignment
-            //   process. For more details about data see ``CrmTeam._allocate_leads()``
-            //   and ``CrmTeam._assign_and_convert_leads``;
+            // :returns: 2-elements tuple (teams_data, members_data) as a
+            //   structure-based result of assignment process. For more details
+            //   about data see :meth:`CrmTeam._allocate_leads` and
+            //   :meth:`CrmTeam._assign_and_convert_leads`;
             // """
             // if not (self.env.user.has_group('sales_team.group_sale_manager') or self.env.is_system()):
             //     raise exceptions.UserError(_('Lead/Opportunities automatic assignment is limited to managers or administrators'))
@@ -116,8 +128,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param teams_data: see ``CrmTeam._allocate_leads()``;
             // :param members_data: see ``CrmTeam._assign_and_convert_leads()``;
             // 
-            // :return list: list of formatted logs, ready to be formatted into a nice
+            // :returns: list of formatted logs, ready to be formatted into a nice
             // plaintext or html message at caller's will
+            // :rtype: list[str]
             // """
             // # extract some statistics
             // assigned = sum(len(teams_data[team]['assigned']) + len(teams_data[team]['merged']) for team in teams_data)
@@ -179,31 +192,89 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionCloseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def action_close(self):
+            // self.ensure_one()
+            // self.is_closed = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateFromTemplateAsync<TEntity>(IEnumerable<TEntity> entities, object values, object role_to_users_mapping) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_create_from_template(self, values=None, role_to_users_mapping=None):
+            // self.ensure_one()
+            // values = values or {}
+            // 
+            // if self.date_start and self.date:
+            //     if not values.get("date_start"):
+            //         values["date_start"] = fields.Date.today()
+            //     if not values.get("date"):
+            //         values["date"] = values["date_start"] + (self.date - self.date_start)
+            // 
+            // default = {
+            //     key.removeprefix('default_'): value
+            //     for key, value in self.env.context.items()
+            //     if key.startswith('default_') and key.removeprefix('default_') in self._get_template_default_context_whitelist()
+            // } | values
+            // project = self.with_context(copy_from_template=True, copy_from_project_template=True).copy(default=default)
+            // project.message_post(body=self.env._("Project created from template %(name)s.", name=self.name))
+            // 
+            // # Tasks dispatching using project roles
+            // if role_to_users_mapping and (mapping := role_to_users_mapping.filtered(lambda entry: entry.user_ids)):
+            //     for new_task in project.task_ids:
+            //         for entry in mapping:
+            //             if entry.role_id in new_task.role_ids:
+            //                 new_task.user_ids |= entry.user_ids
+            // 
+            // project.task_ids.role_ids = False
+            // return project
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateTemplateFromProjectAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_create_template_from_project(self):
+            // self.ensure_one()
+            // template = self.copy(default={"is_template": True, "partner_id": False})
+            // template._toggle_template_mode(True)
+            // template.message_post(body=self.env._("Template created from %s.", self.name))
+            // config = {
+            //     "tag": "project_template_show_notification",
+            //     "params": {
+            //         "project_id": template.id,
+            //         "undo_method": "unlink",
+            //     },
+            // }
+            // if callbacks := self._get_template_from_project_undo_callbacks():
+            //     config["params"]["callback_data"] = {
+            //         "method": "create_template_from_project_undo_callback",
+            //         "args": [self.id, callbacks],
+            //     }
+            // return {
+            //     "type": "ir.actions.client",
+            //     **config,
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionGetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def action_get_list_view(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("%(name)s's Milestones", name=self.name),
-            //     'domain': [('project_id', '=', self.id)],
-            //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
-            //     'view_mode': 'list',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             No milestones found. Let's create one!
-            //         </p><p>
-            //             Track major progress points that must be reached to achieve success.
-            //         </p>
-            //     """),
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         **self.env.context
-            //     }
-            // }
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_milestone_action')
+            // action['display_name'] = _("%(name)s's Milestones", name=self.name)
+            // return action
             */
             return default;
         }
@@ -214,6 +285,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
             // def action_join(self):
             // self.check_access('read')
+            // if self.is_closed:
+            //     raise UserError(_("You can not join a closed group."))
             // partner = self.env.user.partner_id
             // self.sudo()._join_group(partner.email, partner.id)
             // 
@@ -248,7 +321,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "data/scenarios/hr_recruitment_scenario.xml",
             //     None,
             //     mode="init",
-            //     kind="data",
             // )
             // 
             // return {
@@ -292,7 +364,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // views = ['activity'] + [view for view in action['view_mode'].split(',') if view != 'activity']
             // action['view_mode'] = ','.join(views)
             // action['views'] = [(False, view) for view in views]
+            // action['context'] = {
+            //     'default_job_id': self.id,
+            //     'search_default_job_id': self.id,
+            //     'search_default_running_applicant_activities': True,
+            // }
             // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def action_open(self):
+            // self.ensure_one()
+            // self.is_closed = False
             */
             return default;
         }
@@ -325,18 +413,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionOpenLateActivitiesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ActionOpenEmployeesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def action_open_late_activities(self):
-            // action = self.action_open_activities()
-            // action['context'] = {
-            //     'default_job_id': self.id,
-            //     'search_default_job_id': self.id,
-            //     'search_default_activities_overdue': True,
-            //     'search_default_running_applicant_activities': True,
+            // def action_open_employees(self):
+            // self.ensure_one()
+            // if self.env['hr.employee'].has_access('read'):
+            //     res_model = "hr.employee"
+            // else:
+            //     res_model = "hr.employee.public"
+            // 
+            // return {
+            //     'name': _("Related Employees"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': res_model,
+            //     'view_mode': 'list,kanban,form',
+            //     'views': [(False, 'list'), (False, 'kanban'), (False, 'form')],
+            //     'context': {
+            //         'default_job_id': self.id,
+            //         'search_default_group_job': 1,
+            //         'search_default_job_id': self.id,
+            //         'expand': 1
+            //     },
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
+            // def action_open_leads(self):
+            // action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
+            // rcontext = {
+            //     'team': self,
+            // }
+            // action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
             // return action
             */
             return default;
@@ -364,17 +478,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionOpenTodayActivitiesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ActionOpenUnassignedLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def action_open_today_activities(self):
-            // action = self.action_open_activities()
-            // action['context'] = {
-            //     'default_job_id': self.id,
-            //     'search_default_job_id': self.id,
-            //     'search_default_activities_today': True,
-            // }
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
+            // def action_open_unassigned_leads(self):
+            // action = self.action_open_leads()
+            // context_str = action.get('context', '{}')
+            // if context_str:
+            //     try:
+            //         context = safe_eval(action['context'], {'active_id': self.id, 'uid': self.env.uid})
+            //     except (NameError, ValueError):
+            //         context = {}
+            // else:
+            //     context = {}
+            // action['context'] = context | {'search_default_unassigned': True}
             // return action
             */
             return default;
@@ -398,13 +516,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_primary_channel_button(self):
             // self.ensure_one()
             // if self.use_opportunities:
-            //     action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
-            //     rcontext = {
-            //         'team': self,
-            //     }
-            //     action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
-            //     return action
-            // return super(Team,self).action_primary_channel_button()
+            //     return self.action_open_leads()
+            // return super().action_primary_channel_button()
             */
             return default;
         }
@@ -442,26 +555,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionSearchMatchingCandidatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ActionSearchMatchingApplicantsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment_skills, FILE: hr_job.py) ---
-            // def action_search_matching_candidates(self):
+            // def action_search_matching_applicants(self):
             // self.ensure_one()
-            // help_message_1 = _("No Matching Candidates")
-            // help_message_2 = _("We do not have any candidates who meet the skill requirements for this job position in the database at the moment.")
-            // action = self.env['ir.actions.actions']._for_xml_id('hr_recruitment.action_hr_candidate')
+            // help_message_1 = self.env._("No Matching Applicants")
+            // help_message_2 = self.env._("We do not have any applicants who meet the skill requirements for this job position in the database at the moment.")
+            // action = self.env['ir.actions.actions']._for_xml_id('hr_recruitment.crm_case_categ0_act_job')
             // context = literal_eval(action['context'])
-            // context['active_id'] = self.id
-            // matching_candidates = self.env['hr.candidate'].search([('skill_ids', 'in', self.skill_ids.ids)]).filtered(lambda c: self.id not in c.applicant_ids.job_id.ids)
+            // context['matching_job_id'] = self.id
             // action.update({
-            //     'name': _("Matching Candidates"),
+            //     'name': self.env._("Matching Applicants"),
             //     'views': [
-            //         (self.env.ref('hr_recruitment_skills.hr_candidate_view_tree').id, 'list'),
+            //         (self.env.ref('hr_recruitment_skills.crm_case_tree_view_inherit_hr_recruitment_skills').id, 'list'),
             //         (False, 'form'),
             //     ],
             //     'context': context,
-            //     'domain': [('id', 'in', matching_candidates.ids)],
+            //     'domain': [
+            //         ('job_id', '!=', self.id),
+            //         ('skill_ids', 'in', self.job_skill_ids.skill_id.ids),
+            //     ],
             //     'help': Markup("<p class='o_view_nocontent_empty_folder'>%s</p><p>%s</p>") % (help_message_1, help_message_2),
             // })
             // return action
@@ -482,6 +597,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if not self.moderation_guidelines_msg:
             //     raise UserError(_('The guidelines description is empty.'))
+            // 
+            // if self.is_closed:
+            //     raise UserError(_("You can not send guidelines for a closed group."))
             // 
             // template = self.env.ref('mail_group.mail_template_guidelines', raise_if_not_found=False)
             // if not template:
@@ -524,6 +642,66 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionToggleProjectTemplateModeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_toggle_project_template_mode(self):
+            // self.ensure_one()
+            // config = {
+            //     "params": {
+            //         "project_id": self.id,
+            //     },
+            // }
+            // if self.is_template:
+            //     config["tag"] = "project_template_show_undo_confirmation_dialog"
+            //     if callbacks := self._get_template_to_project_confirmation_callbacks():
+            //         config["params"]["callback_data"] = {
+            //             "method": "template_to_project_confirmation_callback",
+            //             "args": [self.id, callbacks],
+            //         }
+            //     if warning_messages := self._get_template_to_project_warnings():
+            //         config["params"]["message"] = self.env._(
+            //             "%(warning_messages)s\nAre you sure you want to continue?",
+            //             warning_messages="\n".join(warning_messages),
+            //         )
+            //     else:
+            //         config["params"]["message"] = self.env._(
+            //             "This project is currently a template. Would you like to convert it back into a regular project?",
+            //         )
+            // else:
+            //     config["tag"] = "project_to_template_redirection_action"
+            // return {
+            //     "type": "ir.actions.client",
+            //     **config,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUndoConvertToTemplateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_undo_convert_to_template(self):
+            // self.ensure_one()
+            // self._toggle_template_mode(False)
+            // self.message_post(body=self.env._("Template converted back to regular project."))
+            // return {
+            //     "type": "ir.actions.client",
+            //     "tag": "display_notification",
+            //     "params": {
+            //         "message": self.env._("Template converted back to regular project."),
+            //         "next": {
+            //             "type": "ir.actions.client",
+            //             "tag": "soft_reload",
+            //         },
+            //     },
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionUpdateToPipelineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object action) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -542,7 +720,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         else:
             //             action['help'] += "<p>%s</p>" % _("""As you are a member of no Sales Team, you are showed the Pipeline of the <b>first team by default.</b>
             //                                 To work with the CRM, you should join a team.""")
-            // action_context = safe_eval(action['context'], {'uid': self.env.uid})
+            // try:
+            //     action_context = safe_eval(action['context'], {'uid': self.env.uid})
+            // except (NameError, ValueError):
+            //     action_context = {}
             // action['context'] = action_context
             // return action
             */
@@ -558,7 +739,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
             // action['display_name'] = _("%(name)s's Rating", name=self.name)
             // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context.update(self._context)
+            // action_context.update(self.env.context)
             // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
             // action_context.pop('group_by', None)
             // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
@@ -599,9 +780,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             // context = ast.literal_eval(context)
             // context.update({
             //     'create': self.active,
-            //     'active_test': self.active
+            //     'active_test': self.active,
+            //     'active_id': self.id,
+            //     'allow_milestones': self.allow_milestones,
+            //     'allow_task_dependencies': self.allow_task_dependencies,
             //     })
             // action['context'] = context
+            // if self.is_template:
+            //     action['context'].update({'template_project': True})
+            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type not in ('pivot', 'graph')]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksFromProjectMilestoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks_from_project_milestone(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_milestone_action_view_tasks')
+            // action['display_name'] = _("Tasks")
+            // action['domain'] = [('milestone_id', 'in', self.milestone_ids.ids)]
             // return action
             */
             return default;
@@ -693,7 +893,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _alias_get_creation_values(self):
-            // values = super(Team, self)._alias_get_creation_values()
+            // values = super()._alias_get_creation_values()
             // values['alias_model_id'] = self.env['ir.model']._get('crm.lead').id
             // if self.id:
             //     if not self.use_leads and not self.use_opportunities:
@@ -712,7 +912,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     defaults.update({
             //         'job_id': self.id,
             //         'department_id': self.department_id.id,
-            //         'company_id': self.department_id.company_id.id if self.department_id else self.company_id.id,
+            //         'company_id': self.department_id.company_id.id or self.company_id.id,
             //         'user_id': self.user_id.id,
             //     })
             // return values
@@ -726,15 +926,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return values
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
             // def _alias_get_creation_values(self):
-            // values = super(MaintenanceEquipmentCategory, self)._alias_get_creation_values()
+            // values = super()._alias_get_creation_values()
             // values['alias_model_id'] = self.env['ir.model']._get('maintenance.request').id
             // if self.id:
             //     values['alias_defaults'] = defaults = ast.literal_eval(self.alias_defaults or "{}")
-            //     defaults['category_id'] = self.id
+            //     defaults['maintenance_team_id'] = self.id
             // return values
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _alias_get_creation_values(self):
-            // values = super(Project, self)._alias_get_creation_values()
+            // values = super()._alias_get_creation_values()
             // values['alias_model_id'] = self.env['ir.model']._get('project.task').id
             // if self.id:
             //     values['alias_defaults'] = defaults = ast.literal_eval(self.alias_defaults or "{}")
@@ -755,7 +955,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # Error Case: Selected group of users, but no user found for that email
             // email = email_normalize(message_dict.get('email_from', ''))
-            // email_has_access = self.search_count([('id', '=', self.id), ('access_group_id.users.email_normalized', '=', email)])
+            // email_has_access = self.search_count([('id', '=', self.id), ('access_group_id.user_ids.email_normalized', '=', email)])
             // if self.access_mode == 'groups' and not email_has_access:
             //     return AliasError('error_mail_group_members_restricted',
             //                           _('Only selected groups of users can send email to the mailing list.'))
@@ -842,8 +1042,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // Heuristic of this method is the following:
             //   * find unassigned leads for each team, aka leads being
             //     * without team, without user -> not assigned;
-            //     * not in a won stage, and not having False/0 (lost) or 100 (won)
-            //       probability) -> live leads;
+            //     * not won nor inactive -> live leads;
             //     * created in the last creation_delta_days (in the last week by default)
             //       This avoid to take into account old leads in the allocation.
             //     * if set, a delay after creation can be applied (see BUNDLE_HOURS_DELAY)
@@ -873,34 +1072,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             // allocation will be proportional to their size (assignment of their
             // members).
             // 
-            // :config int crm.assignment.bundle: deprecated
-            // :config int crm.assignment.commit.bundle: optional config parameter allowing
-            //   to set size of lead batch to be committed together. By default 100
-            //   which is a good trade-off between transaction time and speed
-            // :config float crm.assignment.delay: optional config parameter giving a
-            //   delay before taking a lead into assignment process (BUNDLE_HOURS_DELAY)
-            //   given in hours. Purpose if to allow other crons or automation rules
-            //   to make their job. This option is mainly historic as its purpose was
-            //   to let automation rules prepare leads and score before PLS was added
-            //   into CRM. This is now not required anymore but still supported;
+            // Supported ``ir.config_parameter`` settings.
+            // 
+            // ``crm.assignment.bundle``
+            //     deprecated
+            // 
+            // ``crm.assignment.commit.bundle`` (``int``)
+            //     Allow to set size of lead batch to be committed together. By
+            //     default 100 which is a good trade-off between transaction time and
+            //     speed.
+            // 
+            // ``crm.assignment.delay`` (``float``)
+            //     Give a delay before taking a lead into assignment process
+            //     (BUNDLE_HOURS_DELAY) given in hours. Purpose if to allow other
+            //     crons or automation rules to make their job. This option is mainly
+            //     historic as its purpose was to let automation rules prepare leads
+            //     and score before PLS was added into CRM. This is now not required
+            //     anymore but still supported;
             // 
             // :param int creation_delta_days: see ``CrmTeam._action_assign_leads()``;
             // 
-            // :return teams_data: dict() with each team assignment result:
-            //   team: {
-            //     'assigned': set of lead IDs directly assigned to the team (no
-            //       duplicate or merged found);
-            //     'merged': set of lead IDs merged and assigned to the team (main
-            //       leads being results of merge process);
-            //     'duplicates': set of lead IDs found as duplicates and merged into
-            //       other leads. Those leads are unlinked during assign process and
-            //       are already removed at return of this method;
-            //   }, ...
+            // :rtype: dict[str, Any]
+            // :return: dictionary mapping each team with assignment result:
+            // 
+            //     ``assigned`` (``set[int]``)
+            //         Lead IDs directly assigned to the team
+            //         (no duplicate or merged found)
+            // 
+            //     ``merged`` (``set[int]``)
+            //         Lead IDs merged and assigned to the team
+            //         (main leads being results of merge process)
+            // 
+            //     ``duplicates`` (``set[int]``)
+            //         Lead IDs found as duplicates and merged into other leads.
+            //         Those leads are unlinked during assign process and are already
+            //         removed at return of this method
+            // 
             // """
             // 
             // BUNDLE_HOURS_DELAY = float(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.delay', default=0))
             // BUNDLE_COMMIT_SIZE = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // 
             // # leads
             // max_create_dt = self.env.cr.now() - datetime.timedelta(hours=BUNDLE_HOURS_DELAY)
@@ -912,21 +1124,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not team.assignment_max:
             //         continue
             // 
-            //     lead_domain = expression.AND([
+            //     lead_domain = Domain.AND([
             //         literal_eval(team.assignment_domain or '[]'),
             //         [('create_date', '<=', max_create_dt)],
             //         ['&', ('team_id', '=', False), ('user_id', '=', False)],
-            //         ['|', ('stage_id', '=', False), ('stage_id.is_won', '=', False)]
+            //         [('won_status', '!=', 'won')]
             //     ])
             //     if creation_delta_days > 0:
-            //         lead_domain = expression.AND([
-            //             lead_domain,
-            //             [('create_date', '>', self.env.cr.now() - datetime.timedelta(days=creation_delta_days))]
-            //         ])
+            //         lead_domain &= Domain('create_date', '>', self.env.cr.now() - datetime.timedelta(days=creation_delta_days))
             // 
             //     leads = self.env["crm.lead"].search(lead_domain)
-            //     # Fill duplicate cache: search for duplicate lead before the assignation
-            //     # avoid to flush during the search at every assignation
+            //     # Fill duplicate cache: search for duplicate lead before the assignment
+            //     # avoid to flush during the search at every assignment
             //     for lead in leads:
             //         if lead not in duplicates_lead_cache:
             //             duplicates_lead_cache[lead] = lead._get_lead_duplicates(email=lead.email_from)
@@ -945,7 +1154,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # and the first commit occur at the end of the bundle,
             // # the first transaction can be long which we want to avoid
             // if auto_commit:
-            //     self._cr.commit()
+            //     self.env.cr.commit()
             // 
             // # assignment process data
             // global_data = dict(assigned=set(), merged=set(), duplicates=set())
@@ -977,13 +1186,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         # unlink duplicates once
             //         self.env['crm.lead'].browse(lead_unlink_ids).unlink()
             //         lead_unlink_ids = set()
-            //         self._cr.commit()
+            //         self.env.cr.commit()
             // 
             // # unlink duplicates once
             // self.env['crm.lead'].browse(lead_unlink_ids).unlink()
             // 
             // if auto_commit:
-            //     self._cr.commit()
+            //     self.env.cr.commit()
             // 
             // # some final log
             // _logger.info('## Assigned %s leads', (len(global_data['assigned']) + len(global_data['merged'])))
@@ -1023,13 +1232,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :param bool force_quota: see ``CrmTeam._action_assign_leads()``;
             // 
-            // :return members_data: dict() with each member assignment result:
+            // :returns: dict() with each member assignment result:
             //   membership: {
             //     'assigned': set of lead IDs directly assigned to the member;
             //   }, ...
             // 
             // """
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // result_data = {}
             // commit_bundle_size = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
             // teams_with_members = self.filtered(lambda team: team.crm_team_member_ids)
@@ -1043,6 +1252,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # and make sure we need them before fetching them
             //     ['id:array_agg'],
             // ))
+            // 
+            // def _assign_lead(lead, members, member_leads, members_quota, assign_lst, optional_lst=None):
+            //     """ Find relevant member whose domain(s) accept the lead. If found convert
+            //     and update internal structures accordingly. """
+            //     member_found = next((member for member in members if lead in member_leads[member]), False)
+            //     if not member_found:
+            //         return
+            //     lead.with_context(mail_auto_subscribe_no_notify=True).convert_opportunity(
+            //         lead.partner_id,
+            //         user_ids=member_found.user_id.ids
+            //     )
+            //     result_data[member_found]['assigned'] += lead
+            // 
+            //     # if member still has quota, move at end of list; otherwise just remove
+            //     assign_lst.remove(member_found)
+            //     if optional_lst is not None:
+            //         optional_lst.remove(member_found)
+            //     members_quota[member_found] -= 1
+            //     if members_quota[member_found] > 0:
+            //         assign_lst.append(member_found)
+            //         if optional_lst is not None:
+            //             optional_lst.append(member_found)
+            //     return member_found
+            // 
             // for team, leads_to_assign_ids in leads_per_team.items():
             //     members_to_assign = list(team.crm_team_member_ids.filtered(lambda member:
             //         not member.assignment_optout and quota_per_member.get(member, 0) > 0
@@ -1053,41 +1286,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         member: {"assigned": self.env["crm.lead"], "quota": quota_per_member[member]}
             //         for member in members_to_assign
             //     })
-            //     # Need to check that record still exists since the ids have been fetched at the begining of the process
-            //     # Previous iteration has commited the change, records may have been deleted in the meanwhile
-            //     leads_to_assign = self.env['crm.lead'].browse(leads_to_assign_ids).exists()
-            //     leads_per_member = {
-            //         member: leads_to_assign.filtered_domain(literal_eval(member.assignment_domain or '[]'))
-            //         for member in members_to_assign
+            //     # Need to check that record still exists since the ids have been fetched at the beginning of the process
+            //     # Previous iteration has committed the change, records may have been deleted in the meanwhile
+            //     to_assign = self.env['crm.lead'].browse(leads_to_assign_ids).exists()
+            // 
+            //     members_to_assign_wpref = [
+            //         m for m in members_to_assign
+            //         if m.assignment_domain_preferred and literal_eval(m.assignment_domain_preferred or '')
+            //     ]
+            //     preferred_leads_per_member = {
+            //         member: to_assign.filtered_domain(
+            //             Domain.AND([
+            //                 literal_eval(member.assignment_domain or '[]'),
+            //                 literal_eval(member.assignment_domain_preferred)
+            //             ])
+            //         ) for member in members_to_assign_wpref
             //     }
-            //     for lead in leads_to_assign.sorted(lambda lead: (-lead.probability, id)):
+            //     preferred_leads = self.env['crm.lead'].concat(*[lead for lead in preferred_leads_per_member.values()])
+            //     assigned_preferred_leads = self.env['crm.lead']
+            // 
+            //     # first assign loop: preferred leads, always priority
+            //     for lead in preferred_leads.sorted(lambda lead: (-lead.probability, id)):
             //         counter += 1
-            //         member_found = next((member for member in members_to_assign if lead in leads_per_member[member]), False)
+            //         member_found = _assign_lead(lead, members_to_assign_wpref, preferred_leads_per_member, quota_per_member, members_to_assign, members_to_assign_wpref)
             //         if not member_found:
             //             continue
-            //         lead.with_context(mail_auto_subscribe_no_notify=True).convert_opportunity(
-            //             lead.partner_id,
-            //             user_ids=member_found.user_id.ids
-            //         )
-            //         result_data[member_found]['assigned'] += lead
-            //         members_to_assign.remove(member_found)
-            //         quota_per_member[member_found] -= 1
-            //         if quota_per_member[member_found] > 0:
-            //             # If the member should receive more lead, send him back at the end of the list
-            //             members_to_assign.append(member_found)
-            // 
+            //         assigned_preferred_leads += lead
             //         if auto_commit and counter % commit_bundle_size == 0:
             //             self.env.cr.commit()
+            // 
+            //     # second assign loop: fill up with other leads
+            //     to_assign = to_assign - assigned_preferred_leads
+            //     leads_per_member = {
+            //         member: to_assign.filtered_domain(literal_eval(member.assignment_domain or '[]'))
+            //         for member in members_to_assign
+            //     }
+            //     for lead in to_assign.sorted(lambda lead: (-lead.probability, id)):
+            //         counter += 1
+            //         member_found = _assign_lead(lead, members_to_assign, leads_per_member, quota_per_member, members_to_assign)
+            //         if not member_found:
+            //             continue
+            //         if auto_commit and counter % commit_bundle_size == 0:
+            //             self.env.cr.commit()
+            // 
             //     # Make sure we commit at least at the end of the team
             //     if auto_commit:
             //         self.env.cr.commit()
             //     # Once we are done with a team we don't need to keep the leads in memory
             //     # Try to avoid to explode memory usage
             //     self.env.invalidate_all()
-            // 
-            // _logger.info('Assigned %s leads to %s salesmen', sum(len(r['assigned']) for r in result_data.values()), len(result_data))
+            //     _logger.info(
+            //         'Team %s: Assigned %s leads based on preference, on a potential of %s (limited by quota)',
+            //         team.name, len(assigned_preferred_leads), len(preferred_leads)
+            //     )
+            // _logger.info(
+            //     'Assigned %s leads to %s salesmen',
+            //     sum(len(r['assigned']) for r in result_data.values()), len(result_data)
+            // )
             // for member, member_info in result_data.items():
-            //     _logger.info('-> member %s of team %s: assigned %d/%d leads (%s)', member.id, member.crm_team_id.id, len(member_info["assigned"]), member_info["quota"], member_info["assigned"])
+            //     _logger.info(
+            //         '-> member %s of team %s: assigned %d/%d leads (%s)',
+            //         member.id, member.crm_team_id.id, len(member_info["assigned"]), member_info["quota"], member_info["assigned"]
+            //     )
             // return result_data
             */
             return default;
@@ -1106,11 +1366,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for project in self:
             //     if project.privacy_visibility == new_visibility:
             //         continue
-            //     if new_visibility == 'portal':
+            //     if new_visibility in ['invited_users', 'portal']:
             //         project.message_subscribe(partner_ids=project.partner_id.ids)
             //         for task in project.task_ids.filtered('partner_id'):
             //             task.message_subscribe(partner_ids=task.partner_id.ids)
-            //     elif project.privacy_visibility == 'portal':
+            //     elif project.privacy_visibility in ['invited_users', 'portal']:
             //         portal_users = project.message_partner_ids.user_ids.filtered('share')
             //         project.message_unsubscribe(partner_ids=portal_users.partner_id.ids)
             //         project.tasks._unsubscribe_portal_users()
@@ -1139,6 +1399,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _check_account_id(self):
             // # Overriden from 'analytic.plan.fields.mixin'
             // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckFeaturesEnabledAsync<TEntity>(IEnumerable<TEntity> entities, object updated_features) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def check_features_enabled(self, updated_features=None):
+            // if not self.env.user.has_group('project.group_project_user'):
+            //     return {}
+            // if updated_features:
+            //     return {
+            //         field_name: self.env.user.has_group(group)
+            //         for field_name, group in self._get_project_features_mapping().items()
+            //         if field_name in updated_features
+            //     }
+            // return {
+            //     field_name: self.env.user.has_group(group)
+            //     for field_name, group in self._get_project_features_mapping().items()
+            // }
             */
             return default;
         }
@@ -1187,13 +1468,59 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckProjectGroupAtRemovalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _check_project_group_at_removal(self):
+            // self._check_project_group_with_field('allow_task_dependencies', 'project.group_project_task_dependencies')
+            // self._check_project_group_with_field('allow_milestones', 'project.group_project_milestone')
+            // self._check_project_group_with_field('allow_recurring_tasks', 'project.group_project_recurring_tasks')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckProjectGroupWithFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object group_name) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _check_project_group_with_field(self, field_name, group_name):
+            // """ Check if the user has the group 'group_name' and if there is a project with the field 'field_name' set to True.
+            // If not, remove the group 'group_name' from the user base group.
+            // Otherwise, add the group 'group_name' to the user base group.
+            // Returns True if the group was added, False if it was removed, None if no change was made.
+            // """
+            // has_user_group = bool(self.env.user.has_group(group_name))
+            // group = self.env.ref(group_name)
+            // base_group_user = self.env.ref('base.group_user')
+            // has_project_field_set = bool(self.env['project.project'].search_count([(field_name, '=', True)], limit=1))
+            // res = None
+            // 
+            // if not has_user_group and has_project_field_set:
+            //     # add the group to the base user group if there is at least one project with field_name=True
+            //     base_group_user.sudo().write({
+            //         'implied_ids': [Command.link(group.id)]
+            //     })
+            //     res = True
+            // elif has_user_group and not has_project_field_set:
+            //     # remove the group from the base user group if there is no project with field_name=True
+            //     base_group_user.sudo().write({
+            //         'implied_ids': [Command.unlink(group.id)]
+            //     })
+            //     group.sudo().write({'user_ids': [Command.clear()]})
+            //     res = False
+            // return res
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckProjectSharingAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _check_project_sharing_access(self):
             // self.ensure_one()
-            // if self.privacy_visibility != 'portal':
+            // if self.privacy_visibility not in ['invited_users', 'portal']:
             //     return False
             // if self.env.user._is_portal():
             //     return self.env['project.collaborator'].search([('project_id', '=', self.sudo().id), ('partner_id', '=', self.env.user.partner_id.id)])
@@ -1216,16 +1543,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         parent_footer.remove(footer)
             // 
             // return lxml.etree.tostring(tree, encoding='utf-8').decode()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CloseDialogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def close_dialog(self):
-            // return {'type': 'ir.actions.act_window_close'}
             */
             return default;
         }
@@ -1260,9 +1577,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_access_instruction_message(self):
             // for project in self:
             //     if project.privacy_visibility == 'portal':
-            //         project.access_instruction_message = _('Grant portal users access to your project by adding them as followers (the tasks of the project are not included). To grant access to tasks to a portal user, add them as followers for these tasks.')
+            //         project.access_instruction_message = self.env._('To give portal users access to your project, add them as followers. For task access, add them as followers for each task.')
             //     elif project.privacy_visibility == 'followers':
-            //         project.access_instruction_message = _('Grant employees access to your project or tasks by adding them as followers. Employees automatically get access to the tasks they are assigned to.')
+            //         project.access_instruction_message = self.env._('Grant employees access to your project or tasks by adding them as followers. Employees automatically get access to the tasks they are assigned to.')
+            //     elif project.privacy_visibility == 'invited_users':
+            //         project.access_instruction_message = self.env._("Grant users access by adding them as followers — either to the project or individual tasks. Internal users automatically gain access to tasks they are assigned to.")
             //     else:
             //         project.access_instruction_message = ''
             */
@@ -1274,22 +1593,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_access_url(self):
-            // super(Project, self)._compute_access_url()
+            // super()._compute_access_url()
             // for project in self:
             //     project.access_url = f'/my/projects/{project.id}'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeAccessWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _compute_access_warning(self):
-            // super(Project, self)._compute_access_warning()
-            // for project in self.filtered(lambda x: x.privacy_visibility != 'portal'):
-            //     project.access_warning = _(
-            //         "This project is currently restricted to \"Invited internal users\". The project's visibility will be changed to \"invited portal users and all internal users (public)\" in order to make it accessible to the recipients.")
             */
             return default;
         }
@@ -1302,30 +1608,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.env.cr.execute("""
             //     SELECT
             //         app.job_id,
-            //         COUNT(*) AS act_count,
-            //         CASE
-            //             WHEN %(today)s::date - act.date_deadline::date = 0 THEN 'today'
-            //             WHEN %(today)s::date - act.date_deadline::date > 0 THEN 'overdue'
-            //         END AS act_state
+            //         COUNT(*) AS act_count
             //      FROM mail_activity act
             //      JOIN hr_applicant app ON app.id = act.res_id
             //      JOIN hr_recruitment_stage sta ON app.stage_id = sta.id
             //     WHERE act.user_id = %(user_id)s AND act.res_model = 'hr.applicant'
-            //       AND act.date_deadline <= %(today)s::date AND app.active
+            //       AND app.active
             //       AND app.job_id IN %(job_ids)s
             //       AND sta.hired_stage IS NOT TRUE
-            //     GROUP BY app.job_id, act_state
+            //       AND COALESCE(act.active, TRUE) = TRUE
+            //     GROUP BY app.job_id
             // """, {
             //     'today': fields.Date.context_today(self),
             //     'user_id': self.env.uid,
-            //     'job_ids': tuple(self.ids),
+            //     'job_ids': tuple(self.ids or [0]),
+            //     # or [0] is used in case we only have newIds (web studio)
             // })
             // job_activities = defaultdict(dict)
             // for activity in self.env.cr.dictfetchall():
-            //     job_activities[activity['job_id']][activity['act_state']] = activity['act_count']
+            //     job_activities[activity['job_id']] = activity['act_count']
             // for job in self:
-            //     job.activities_overdue = job_activities[job.id].get('overdue', 0)
-            //     job.activities_today = job_activities[job.id].get('today', 0)
+            //     job.activity_count = job_activities[job.id]
             */
             return default;
         }
@@ -1349,6 +1652,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeAllowedUserIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_job.py) ---
+            // def _compute_allowed_user_ids(self):
+            // company_ids = self.mapped("company_id.id")
+            // domain = [("share", "=", False)]
+            // if company_ids:
+            //     domain += [("company_ids", "in", company_ids)]
+            // 
+            // users_by_company = dict(
+            //     self.env["res.users"]._read_group(
+            //         domain=domain,
+            //         groupby=["company_id"],
+            //         aggregates=["id:recordset"],
+            //     ),
+            // )
+            // 
+            // all_users = self.env["res.users"]
+            // for users in users_by_company.values():
+            //     all_users |= users
+            // 
+            // for job in self:
+            //     job.allowed_user_ids = users_by_company.get(job.company_id, all_users)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeApplicantHiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -1362,6 +1693,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             // job_hires = {job.id: count for job, count in hired_data}
             // for job in self:
             //     job.applicant_hired = job_hires.get(job.id, 0)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeApplicantMatchingScoreInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment_skills, FILE: hr_job.py) ---
+            // def _compute_applicant_matching_score(self):
+            // active_applicant_id = self.env.context.get("active_applicant_id")
+            // if not active_applicant_id:
+            //     for job in self:
+            //         job.applicant_matching_score = False
+            //     return
+            // 
+            // applicant = self.env["hr.applicant"].browse(active_applicant_id)
+            // for job in self:
+            //     if not job.job_skill_ids:
+            //         job.applicant_matching_score = False
+            //         continue
+            //     job_skills = job.job_skill_ids
+            //     job_degree = job.expected_degree.score * 100
+            //     job_total = sum(job.job_skill_ids.mapped("level_progress")) + job_degree
+            //     job_skill_map = {js.skill_id.id: js.level_progress for js in job_skills}
+            // 
+            //     matching_applicant_skills = applicant.current_applicant_skill_ids.filtered(
+            //         lambda a: a.skill_id.id in job_skill_map,
+            //     )
+            //     applicant_degree = applicant.type_id.score * 100 if job_degree > 1 else 0
+            //     applicant_total = (
+            //         sum(
+            //             min(skill.level_progress, job_skill_map[skill.skill_id.id] * 2)
+            //             for skill in matching_applicant_skills
+            //         )
+            //         + applicant_degree
+            //     )
+            // 
+            //     job.applicant_matching_score = applicant_total / job_total * 100
             */
             return default;
         }
@@ -1384,7 +1753,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _compute_assignment_enabled(self):
-            // assign_enabled = self.env['ir.config_parameter'].sudo().get_param('crm.lead.auto.assignment', False)
+            // assign_enabled = self.env['crm.lead']._is_rule_based_assignment_activated()
             // auto_assign_enabled = False
             // if assign_enabled:
             //     assign_cron = self.sudo().env.ref('crm.ir_cron_crm_lead_assign', raise_if_not_found=False)
@@ -1436,7 +1805,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_collaborator_count(self):
-            // project_sharings = self.filtered(lambda project: project.privacy_visibility == 'portal')
+            // project_sharings = self.filtered(lambda project: project.privacy_visibility in ['invited_users', 'portal'])
             // collaborator_read_group = self.env['project.collaborator']._read_group(
             //     [('project_id', 'in', project_sharings.ids)],
             //     ['project_id'],
@@ -1476,25 +1845,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeCurrentJobSkillIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _compute_current_job_skill_ids(self):
+            // for job in self:
+            //     job.current_job_skill_ids = job.job_skill_ids.filtered(
+            //         lambda skill: not skill.valid_to or skill.valid_to >= fields.Date.today()
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeDashboardButtonNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _compute_dashboard_button_name(self):
-            // super(Team, self)._compute_dashboard_button_name()
+            // super()._compute_dashboard_button_name()
             // team_with_pipelines = self.filtered(lambda el: el.use_opportunities)
             // team_with_pipelines.update({'dashboard_button_name': _("Pipeline")})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeDashboardGraphInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _compute_dashboard_graph(self):
-            // for team in self:
-            //     team.dashboard_graph_data = json.dumps(team._get_dashboard_graph_data())
             */
             return default;
         }
@@ -1524,6 +1895,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeEmployeeCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
+            // def _compute_employee_count(self):
+            // res = {
+            //     job.id: count
+            //     for job, count in self.env['hr.employee'].sudo()._read_group(
+            //         domain=[
+            //             ('job_id', 'in', self.ids),
+            //         ],
+            //         groupby=['job_id'],
+            //         aggregates=['__count'],
+            //     )
+            // }
+            // for job in self:
+            //     job.employee_count = res.get(job.id, 0)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeEmployeesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -1538,15 +1930,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeEquipmentCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ComputeEquipmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def _compute_equipment_count(self):
-            // equipment_data = self.env['maintenance.equipment']._read_group([('category_id', 'in', self.ids)], ['category_id'], ['__count'])
-            // mapped_data = {category.id: count for category, count in equipment_data}
-            // for category in self:
-            //     category.equipment_count = mapped_data.get(category.id, 0)
+            // def _compute_equipment(self):
+            // for team in self:
+            //     team.equipment_count = len(team.equipment_ids)
             */
             return default;
         }
@@ -1570,20 +1960,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeFoldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def _compute_fold(self):
-            // # fix mutual dependency: 'fold' depends on 'equipment_count', which is
-            // # computed with a read_group(), which retrieves 'fold'!
-            // self.fold = False
-            // for category in self:
-            //     category.fold = False if category.equipment_count else True
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeFullUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -1600,28 +1976,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
             // def _compute_invoiced(self):
-            // if not self:
-            //     return
+            // if self.ids:
+            //     today = fields.Date.today()
+            //     data_map = dict(self.env.execute_query(SQL(
+            //         ''' SELECT
+            //                 move.team_id AS team_id,
+            //                 SUM(move.amount_untaxed_signed) AS amount_untaxed_signed
+            //             FROM account_move move
+            //             WHERE move.move_type IN ('out_invoice', 'out_refund', 'out_receipt')
+            //             AND move.payment_state IN ('in_payment', 'paid', 'reversed')
+            //             AND move.state = 'posted'
+            //             AND move.team_id IN %s
+            //             AND move.date BETWEEN %s AND %s
+            //             GROUP BY move.team_id
+            //         ''',
+            //         tuple(self.ids),
+            //         fields.Date.to_string(today.replace(day=1)),
+            //         fields.Date.to_string(today),
+            //     )))
+            // else:
+            //     data_map = {}
             // 
-            // query = '''
-            //     SELECT
-            //         move.team_id AS team_id,
-            //         SUM(move.amount_untaxed_signed) AS amount_untaxed_signed
-            //     FROM account_move move
-            //     WHERE move.move_type IN ('out_invoice', 'out_refund', 'out_receipt')
-            //     AND move.payment_state IN ('in_payment', 'paid', 'reversed')
-            //     AND move.state = 'posted'
-            //     AND move.team_id IN %s
-            //     AND move.date BETWEEN %s AND %s
-            //     GROUP BY move.team_id
-            // '''
-            // today = fields.Date.today()
-            // params = [tuple(self.ids), fields.Date.to_string(today.replace(day=1)), fields.Date.to_string(today)]
-            // self._cr.execute(query, params)
-            // 
-            // data_map = dict((v[0], v[1]) for v in self._cr.fetchall())
             // for team in self:
-            //     team.invoiced = data_map.get(team.id, 0.0)
+            //     team.invoiced = data_map.get(team._origin.id, 0.0)
             */
             return default;
         }
@@ -1635,8 +2012,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     job.is_favorite = self.env.user in job.favorite_user_ids
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_is_favorite(self):
+            // favorite_project_ids = self.env.user.favorite_project_ids
             // for project in self:
-            //     project.is_favorite = self.env.user in project.favorite_user_ids
+            //     project.is_favorite = project in favorite_project_ids
             */
             return default;
         }
@@ -1743,7 +2121,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_lead_unassigned_count(self):
             // leads_data = self.env['crm.lead']._read_group([
             //     ('team_id', 'in', self.ids),
-            //     ('type', '=', 'lead'),
             //     ('user_id', '=', False),
             // ], ['team_id'], ['__count'])
             // counts = {team.id: count for team, count in leads_data}
@@ -1822,20 +2199,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeMaintenanceCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def _compute_maintenance_count(self):
-            // maintenance_data = self.env['maintenance.request']._read_group([('category_id', 'in', self.ids)], ['category_id', 'archive'], ['__count'])
-            // mapped_data = {(category.id, archive): count for category, archive, count in maintenance_data}
-            // for category in self:
-            //     category.maintenance_open_count = mapped_data.get((category.id, False), 0)
-            //     category.maintenance_count = category.maintenance_open_count + mapped_data.get((category.id, True), 0)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeMemberCompanyIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -1897,18 +2260,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // # done in a loop, but to be used in form view only -> not optimized
             // for team in self:
-            //     member_warning = False
             //     other_memberships = self.env['crm.team.member'].search([
             //         ('crm_team_id', '!=', team._origin.id if team.ids else False),
             //         ('user_id', 'in', team.member_ids.ids)
             //     ])
             //     if other_memberships:
-            //         member_warning = _("Adding %(user_names)s in this team will remove them from %(team_names)s.",
+            //         team.member_warning = _("%(user_names)s already in other teams (%(team_names)s).",
             //                            user_names=", ".join(other_memberships.mapped('user_id.name')),
             //                            team_names=", ".join(other_memberships.mapped('crm_team_id.name'))
             //                           )
-            //     if member_warning:
-            //         team.member_warning = member_warning + " " + _("Working in multiple teams? Activate the option under Configuration>Settings.")
             */
             return default;
         }
@@ -1986,7 +2346,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //          WHERE a.company_id in %s
             //             OR a.company_id is NULL
             //       GROUP BY s.job_id
-            //     """, [tuple(self.ids), tuple(self.env.companies.ids)]
+            //     """, [tuple(self.ids or [0]), tuple(self.env.companies.ids)]
+            //     # or [0] is used in case we only have newIds (web studio)
             // )
             // 
             // new_applicant_count = dict(self.env.cr.fetchall())
@@ -2001,19 +2362,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_next_milestone_id(self):
-            // milestone_ids_per_project_id = {
-            //     project.id: milestone_ids
-            //     for project, milestone_ids in self.env['project.milestone']._read_group(
+            // milestones_per_project_id = {
+            //     project.id: milestones
+            //     for project, milestones in self.env['project.milestone']._read_group(
             //         [('project_id', 'in', self.ids), ('is_reached', '=', False)],
             //         ['project_id'],
             //         ['id:recordset'],
             //     )
             // }
+            // milestones = self.env['project.milestone'].concat(*milestones_per_project_id.values())
+            // task_read_group = self.env['project.task']._read_group(
+            //     [('milestone_id', 'in', milestones.ids)],
+            //     ['milestone_id', 'state'],
+            //     ['__count'],
+            // )
+            // task_count_per_milestones = defaultdict(lambda: (0, 0))
+            // for milestone, state, count in task_read_group:
+            //     opened_task_count, closed_task_count = task_count_per_milestones[milestone.id]
+            //     if state in CLOSED_STATES:
+            //         closed_task_count += count
+            //     else:
+            //         opened_task_count += count
+            //     task_count_per_milestones[milestone.id] = opened_task_count, closed_task_count
             // for project in self:
-            //     milestone = milestone_ids_per_project_id.get(project.id, self.env['project.milestone'])[:1]
-            //     project.next_milestone_id = milestone
-            //     project.can_mark_milestone_as_done = milestone.can_be_marked_as_done
-            //     project.is_milestone_deadline_exceeded = milestone.is_deadline_exceeded
+            //     milestones = milestones_per_project_id.get(project.id, self.env['project.milestone'])
+            //     project.next_milestone_id = milestones[:1]
+            //     milestone_deadline_exceeded = False
+            //     milestone_marked_as_done = False
+            //     for m in milestones:
+            //         opened_task_count, closed_task_count = task_count_per_milestones[m.id]
+            //         if (
+            //             not milestone_deadline_exceeded
+            //             and m.is_deadline_exceeded
+            //             and (opened_task_count > 0 or closed_task_count == 0)
+            //         ):
+            //             milestone_deadline_exceeded = True
+            //             break
+            //         if not milestone_marked_as_done and opened_task_count == 0 and closed_task_count > 0:
+            //             milestone_marked_as_done = True
+            //     project.is_milestone_deadline_exceeded = milestone_deadline_exceeded
+            //     project.can_mark_milestone_as_done = milestone_marked_as_done
             */
             return default;
         }
@@ -2050,6 +2438,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeOpenApplicationCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
+            // def _compute_open_application_count(self):
+            // hired_stages = self.env['hr.recruitment.stage'].search([('hired_stage', '=', True)])
+            // result = dict(self.env['hr.applicant']._read_group([
+            //     ('job_id', 'in', self.ids),
+            //     ('stage_id', 'not in', hired_stages.ids),
+            // ], ['job_id'], ['__count']))
+            // for job in self:
+            //     job.open_application_count = result.get(job, 0)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeOpenTaskCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -2063,71 +2467,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeOpportunitiesDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _compute_opportunities_data(self):
-            // opportunity_data = self.env['crm.lead']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('probability', '<', 100),
-            //     ('type', '=', 'opportunity'),
-            // ], ['team_id'], ['__count', 'expected_revenue:sum'])
-            // counts_amounts = {team.id: (count, expected_revenue_sum) for team, count, expected_revenue_sum in opportunity_data}
-            // for team in self:
-            //     team.opportunities_count, team.opportunities_amount = counts_amounts.get(team.id, (0, 0))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeOpportunitiesOverdueDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _compute_opportunities_overdue_data(self):
-            // opportunity_data = self.env['crm.lead']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('probability', '<', 100),
-            //     ('type', '=', 'opportunity'),
-            //     ('date_deadline', '<', fields.Date.to_string(fields.Datetime.now()))
-            // ], ['team_id'], ['__count', 'expected_revenue:sum'])
-            // counts_amounts = {team.id: (count, expected_revenue_sum) for team, count, expected_revenue_sum in opportunity_data}
-            // for team in self:
-            //     team.opportunities_overdue_count, team.opportunities_overdue_amount = counts_amounts.get(team.id, (0, 0))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePosOrderAmountTotalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: crm_team.py) ---
-            // def _compute_pos_order_amount_total(self):
-            // data = self.env['report.pos.order']._read_group([
-            //     ('session_id.state', '=', 'opened'),
-            //     ('config_id.crm_team_id', 'in', self.ids),
-            // ], ['config_id'], ['price_total:sum'])
-            // rg_results = {config.id: price_total_sum for config, price_total_sum in data}
-            // for team in self:
-            //     team.pos_order_amount_total = sum([
-            //         rg_results.get(config.id, 0.0)
-            //         for config in team.pos_config_ids
-            //     ])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePosSessionsOpenCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: crm_team.py) ---
-            // def _compute_pos_sessions_open_count(self):
-            // for team in self:
-            //     team.pos_sessions_open_count = self.env['pos.session'].search_count([('config_id.crm_team_id', '=', team.id), ('state', '=', 'opened')])
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputePrivacyVisibilityWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -2136,9 +2475,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for project in self:
             //     if not project.ids:
             //         project.privacy_visibility_warning = ''
-            //     elif project.privacy_visibility == 'portal' and project._origin.privacy_visibility != 'portal':
+            //     elif project.privacy_visibility in ['invited_users', 'portal'] and project._origin.privacy_visibility not in ['invited_users', 'portal']:
             //         project.privacy_visibility_warning = _('Customers will be added to the followers of their project and tasks.')
-            //     elif project.privacy_visibility != 'portal' and project._origin.privacy_visibility == 'portal':
+            //     elif project.privacy_visibility not in ['invited_users', 'portal'] and project._origin.privacy_visibility in ['invited_users', 'portal']:
             //         project.privacy_visibility_warning = _('Portal users will be removed from the followers of the project and its tasks.')
             //     else:
             //         project.privacy_visibility_warning = ''
@@ -2153,54 +2492,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_published_date(self):
             // for job in self:
             //     job.published_date = job.website_published and fields.Date.today()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeQuotationsToInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _compute_quotations_to_invoice(self):
-            // query = self.env['sale.order']._where_calc([
-            //     ('team_id', 'in', self.ids),
-            //     ('state', 'in', ['draft', 'sent']),
-            // ])
-            // self.env['sale.order']._apply_ir_rules(query, 'read')
-            // select_sql = SQL("""
-            //     SELECT team_id, count(*), sum(amount_total /
-            //         CASE COALESCE(currency_rate, 0)
-            //         WHEN 0 THEN 1.0
-            //         ELSE currency_rate
-            //         END
-            //     ) as amount_total
-            //     FROM sale_order
-            //     WHERE %s
-            //     GROUP BY team_id
-            // """, query.where_clause or SQL("TRUE"))
-            // self.env.cr.execute(select_sql)
-            // quotation_data = self.env.cr.dictfetchall()
-            // teams = self.browse()
-            // for datum in quotation_data:
-            //     team = self.browse(datum['team_id'])
-            //     team.quotations_amount = datum['amount_total']
-            //     team.quotations_count = datum['count']
-            //     teams |= team
-            // remaining = (self - teams)
-            // remaining.quotations_amount = 0
-            // remaining.quotations_count = 0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeRatingRequestDeadlineInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _compute_rating_request_deadline(self):
-            // periods = {'daily': 1, 'weekly': 7, 'bimonthly': 15, 'monthly': 30, 'quarterly': 90, 'yearly': 365}
-            // for project in self:
-            //     project.rating_request_deadline = fields.datetime.now() + timedelta(days=periods.get(project.rating_status_period, 0))
             */
             return default;
         }
@@ -2232,18 +2523,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeSalesToInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ComputeShowRatingsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _compute_sales_to_invoice(self):
-            // sale_order_data = self.env['sale.order']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('invoice_status','=','to invoice'),
-            // ], ['team_id'], ['__count'])
-            // data_map = {team.id: count for team, count in sale_order_data}
-            // for team in self:
-            //     team.sales_to_invoice_count = data_map.get(team.id,0.0)
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _compute_show_ratings(self):
+            // projects_with_rating_active = self.env['project.task.type'].search_fetch(
+            //     domain=[
+            //         ('project_ids', 'in', self.ids),
+            //         ('rating_active', '=', True),
+            //     ],
+            //     field_names=['project_ids'],
+            // ).project_ids
+            // for project in self:
+            //     project.show_ratings = project in projects_with_rating_active
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeSkillIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _compute_skill_ids(self):
+            // for job in self:
+            //     job.skill_ids = job.job_skill_ids.skill_id
             */
             return default;
         }
@@ -2265,6 +2569,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _compute_task_count(self):
             // self.__compute_task_count()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTodoRequestsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            // def _compute_todo_requests(self):
+            // for team in self:
+            //     team.todo_request_ids = self.env['maintenance.request'].search([('maintenance_team_id', '=', team.id), ('stage_id.done', '=', False), ('archive', '=', False)])
+            //     data = self.env['maintenance.request']._read_group(
+            //         [('maintenance_team_id', '=', team.id), ('stage_id.done', '=', False), ('archive', '=', False)],
+            //         ['schedule_date:year', 'priority', 'kanban_state'],
+            //         ['__count']
+            //     )
+            //     team.todo_request_count = sum(count for (_, _, _, count) in data)
+            //     team.todo_request_count_date = sum(count for (schedule_date, _, _, count) in data if schedule_date)
+            //     team.todo_request_count_high_priority = sum(count for (_, priority, _, count) in data if priority == 3)
+            //     team.todo_request_count_block = sum(count for (_, _, kanban_state, count) in data if kanban_state == 'blocked')
+            //     team.todo_request_count_unscheduled = team.todo_request_count - team.todo_request_count_date
             */
             return default;
         }
@@ -2292,8 +2617,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
             // def _compute_website_url(self):
-            // super(Job, self)._compute_website_url()
+            // super()._compute_website_url()
             // for job in self:
+            //     # _slug call will fail with newId records.
+            //     if not job.id:
+            //         continue
             //     job.website_url = f'/jobs/{self.env["ir.http"]._slug(job)}'
             */
             return default;
@@ -2315,6 +2643,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ConstrainsCompanyMembersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
+            // def _constrains_company_members(self):
+            // for team in self.filtered('company_id'):
+            //     invalid_members = team.crm_team_member_ids.filtered(
+            //         lambda m: team.company_id not in m.user_id.company_ids
+            //     )
+            //     if invalid_members:
+            //         raise UserError(_("The following team members are not allowed in company '%(company)s' of the Sales Team '%(team)s': %(users)s",
+            //             company=team.company_id.display_name,
+            //             team=team.name,
+            //             users=", ".join(invalid_members.mapped('user_id.name'))
+            //         ))
+            */
+            return default;
+        }
+
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -2329,18 +2676,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //      mail_create_nosubscribe=True,
             //  )
             // copy_context.pop("default_stage_id", None)
-            // new_projects = super(Project, self.with_context(copy_context)).copy(default=default)
+            // new_projects = super(ProjectProject, self.with_context(copy_context)).copy(default=default)
             // if 'milestone_mapping' not in self.env.context:
             //     self = self.with_context(milestone_mapping={})
-            // actions_per_project = dict(self.env['ir.embedded.actions']._read_group(
-            //     domain=[
-            //         ('parent_res_id', 'in', self.ids),
-            //         ('parent_res_model', '=', 'project.project'),
-            //         ('user_id', '=', False),
-            //     ],
-            //     groupby=['parent_res_id'],
-            //     aggregates=['id:recordset'],
-            // ))
             // for old_project, new_project in zip(self, new_projects):
             //     for follower in old_project.message_follower_ids:
             //         new_project.message_subscribe(partner_ids=follower.partner_id.ids, subtype_ids=follower.subtype_ids.ids)
@@ -2350,12 +2688,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         old_project.map_tasks(new_project.id)
             //     if not old_project.active:
             //         new_project.with_context(active_test=False).tasks.active = True
-            //     # Copy the shared embedded actions in the new project
-            //     shared_embedded_actions = actions_per_project.get(old_project.id)
-            //     if shared_embedded_actions:
-            //         copy_shared_embedded_actions = shared_embedded_actions.copy({'parent_res_id': new_project.id})
-            //         for original_action, copied_action in zip(shared_embedded_actions, copy_shared_embedded_actions):
-            //             copied_action.filter_ids = original_action.filter_ids.copy({'embedded_parent_res_id': new_project.id})
+            // # Copy the shared embedded actions and config in the new projects
+            // shared_embedded_actions_mapping = self._copy_shared_embedded_actions(new_projects)
+            // self._copy_embedded_actions_config(new_projects, shared_embedded_actions_mapping)
             // return new_projects
             */
             return default;
@@ -2366,10 +2701,95 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def copy_data(self, default=None):
+            // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
-            // if default and 'name' in default:
-            //     return vals_list
-            // return [dict(vals, name=self.env._("%s (copy)", project.name)) for project, vals in zip(self, vals_list)]
+            // copy_from_template = self.env.context.get('copy_from_template')
+            // for project, vals in zip(self, vals_list):
+            //     if project.is_template and not copy_from_template:
+            //         vals['is_template'] = True
+            //     if copy_from_template:
+            //         for field in self._get_template_field_blacklist():
+            //             if field in vals and field not in default:
+            //                 del vals[field]
+            //     if copy_from_template or (not project.is_template and vals.get('is_template')):
+            //         vals['name'] = default.get('name', project.name)
+            //     else:
+            //         vals['name'] = default.get('name', self.env._('%s (copy)', project.name))
+            // return vals_list
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CopyEmbeddedActionsConfigInternalAsync<TEntity>(IEnumerable<TEntity> entities, object new_projects, object shared_embedded_actions_mapping) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _copy_embedded_actions_config(self, new_projects, shared_embedded_actions_mapping=None):
+            // shared_embedded_actions_mapping = shared_embedded_actions_mapping or {}
+            // embedded_action_configs_per_project = dict(
+            //     self.env['res.users.settings.embedded.action'].sudo()._read_group(
+            //         [('res_id', 'in', self.ids), ('res_model', '=', self._name)],
+            //         ['res_id'],
+            //         ['id:recordset'],
+            //     )
+            // )
+            // valid_embedded_action_ids = self.env['ir.embedded.actions'].sudo().search(
+            //     domain=[
+            //         ('parent_res_model', '=', self._name),
+            //         ('user_id', '=', False),
+            //     ],
+            // ).ids + [False]
+            // new_embedded_actions_config_vals_list = []
+            // for project, new_project in zip(self, new_projects):
+            //     configs = embedded_action_configs_per_project.get(project.id, self.env['res.users.settings.embedded.action'])
+            //     config_vals_list = configs.copy_data({'res_id': new_project.id})
+            //     for config_vals in config_vals_list:
+            //         # Apply the mapping of shared embedded actions and filter the visibility and order by excluding the user-specific actions
+            //         if config_vals['embedded_actions_visibility']:
+            //             embedded_actions_visibility = [
+            //                 shared_embedded_actions_mapping.get(action_id, action_id)
+            //                 for action_id in [False if x == 'false' else int(x) for x in config_vals['embedded_actions_visibility'].split(',')]
+            //                 if action_id in valid_embedded_action_ids
+            //             ]
+            //             config_vals['embedded_actions_visibility'] = ','.join('false' if action_id is False else str(action_id) for action_id in embedded_actions_visibility)
+            //         if config_vals['embedded_actions_order']:
+            //             embedded_actions_order = [
+            //                 shared_embedded_actions_mapping.get(action_id, action_id)
+            //                 for action_id in [False if x == 'false' else int(x) for x in config_vals['embedded_actions_order'].split(',')]
+            //                 if action_id in valid_embedded_action_ids
+            //             ]
+            //             config_vals['embedded_actions_order'] = ','.join('false' if action_id is False else str(action_id) for action_id in embedded_actions_order)
+            //         new_embedded_actions_config_vals_list.append(config_vals)
+            // # sudo is needed to update the user settings for all users using the projects to duplicate
+            // self.env['res.users.settings.embedded.action'].sudo().create(new_embedded_actions_config_vals_list)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CopySharedEmbeddedActionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object new_projects) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _copy_shared_embedded_actions(self, new_projects):
+            // shared_embedded_actions_per_record = dict(self.env['ir.embedded.actions'].sudo()._read_group(
+            //     domain=[
+            //         ('parent_res_id', 'in', self.ids),
+            //         ('parent_res_model', '=', self._name),
+            //         ('user_id', '=', False),
+            //     ],
+            //     groupby=['parent_res_id'],
+            //     aggregates=['id:recordset'],
+            // ))
+            // shared_embedded_actions_mapping = dict()
+            // for project, new_project in zip(self, new_projects):
+            //     # Copy the shared embedded actions in the new record
+            //     shared_embedded_actions = shared_embedded_actions_per_record.get(project.id)
+            //     if shared_embedded_actions:
+            //         copy_shared_embedded_actions = shared_embedded_actions.copy({'parent_res_id': new_project.id})
+            //         for original_action, copied_action in zip(shared_embedded_actions, copy_shared_embedded_actions):
+            //             shared_embedded_actions_mapping[original_action.id] = copied_action.id
+            //             copied_action.filter_ids = original_action.filter_ids.copy({'embedded_parent_res_id': new_project.id})
+            // return shared_embedded_actions_mapping
             */
             return default;
         }
@@ -2395,20 +2815,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for vals in vals_list:
             //     vals["favorite_user_ids"] = vals.get("favorite_user_ids", [])
             // jobs = super().create(vals_list)
-            // utm_linkedin = self.env.ref("utm.utm_source_linkedin", raise_if_not_found=False)
-            // if utm_linkedin:
-            //     source_vals = [{
-            //         'source_id': utm_linkedin.id,
-            //         'job_id': job.id,
-            //     } for job in jobs]
-            //     self.env['hr.recruitment.source'].create(source_vals)
             // jobs.sudo().interviewer_ids._create_recruitment_interviewers()
-            // # Automatically subscribe the department manager and the recruiter to a job position.
-            // for job in jobs:
-            //     job.message_subscribe(
-            //         job.manager_id._get_related_partners().ids + job.user_id.partner_id.ids
-            //     )
-            // 
             // return jobs
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def create(self, vals_list):
@@ -2420,8 +2827,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if 'label_tasks' in vals and not vals['label_tasks']:
             //             vals['label_tasks'] = task_label
             // if self.env.user.has_group('project.group_project_stages'):
-            //     if 'default_stage_id' in self._context:
-            //         stage = self.env['project.project.stage'].browse(self._context['default_stage_id'])
+            //     if 'default_stage_id' in self.env.context:
+            //         stage = self.env['project.project.stage'].browse(self.env.context['default_stage_id'])
             //         # The project's company_id must be the same as the stage's company_id
             //         if stage.company_id:
             //             for vals in vals_list:
@@ -2448,6 +2855,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CreateTemplateFromProjectUndoCallbackAsync<TEntity>(IEnumerable<TEntity> entities, object callbacks) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def create_template_from_project_undo_callback(self, callbacks):
+            // self.ensure_one()
+            // if callbacks.get("unarchive_project"):
+            //     self.action_unarchive()
+            */
+            return default;
+        }
+
         public async Task<TEntity> CreationSubtypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -2469,7 +2888,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // The cron is designed to run at least once a day or more.
             // A number of leads will be assigned each time depending on the daily leads
             // already assigned.
-            // This allows the assignation process based on the cron to work on a daily basis
+            // This allows the assignment process based on the cron to work on a daily basis
             // without allocating too much leads on members if the cron is executed multiple
             // times a day.
             // The daily quota of leads can be forcefully assigned with force_quota
@@ -2537,24 +2956,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> EditDialogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def edit_dialog(self):
-            // form_view = self.env.ref('hr.view_hr_job_form')
-            // return {
-            //     'name': _('Job'),
-            //     'res_model': 'hr.job',
-            //     'res_id': self.id,
-            //     'views': [(form_view.id, 'form')],
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'inline'
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> EnsureStageHasSameCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -2572,18 +2973,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'There are a couple of options to consider: either change the project\'s company '
             //             'to align with the stage\'s company or remove the company designation from the stage', project.stage_id.company_id.name)
             //         )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ExtraSqlConditionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _extra_sql_conditions(self):
-            // if self.use_opportunities:
-            //     return SQL("type LIKE 'opportunity'")
-            // return super(Team,self)._extra_sql_conditions()
             */
             return default;
         }
@@ -2629,18 +3018,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # empty email should match nobody
             //     return {}
             // 
-            // domain = [('email_normalized', '=', email_normalize(email))]
+            // domain = Domain('email_normalized', '=', email_normalize(email))
             // if partner_id:
-            //     domain = expression.OR([
-            //         expression.AND([
-            //             [('partner_id', '=', False)],
-            //             domain,
-            //         ]),
-            //         [('partner_id', '=', partner_id)],
-            //     ])
+            //     domain = (Domain('partner_id', '=', False) & domain) | Domain('partner_id', '=', partner_id)
             //     order = 'partner_id DESC'
             // 
-            // domain = expression.AND([domain, [('mail_group_id', 'in', self.ids)]])
+            // domain &= Domain('mail_group_id', 'in', self.ids)
             // members_data = self.env['mail.group.member'].sudo().search(domain, order=order)
             // return {
             //     member.mail_group_id.id: member
@@ -2689,7 +3072,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     })
             // )
             // base_url = self.get_base_url()
-            // confirm_action_url = urls.url_join(base_url, confirm_action_url)
+            // confirm_action_url = tools.urls.urljoin(base_url, confirm_action_url)
             // return confirm_action_url
             */
             return default;
@@ -2785,56 +3168,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDashboardGraphDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> GetDefaultColorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _get_dashboard_graph_data(self):
-            // def get_week_name(start_date, locale):
-            //     """ Generates a week name (string) from a datetime according to the locale:
-            //         E.g.: locale    start_date (datetime)      return string
-            //               "en_US"      November 16th           "16-22 Nov"
-            //               "en_US"      December 28th           "28 Dec-3 Jan"
-            //     """
-            //     if (start_date + relativedelta(days=6)).month == start_date.month:
-            //         short_name_from = format_date(start_date, 'd', locale=locale)
-            //     else:
-            //         short_name_from = format_date(start_date, 'd MMM', locale=locale)
-            //     short_name_to = format_date(start_date + relativedelta(days=6), 'd MMM', locale=locale)
-            //     return short_name_from + '-' + short_name_to
-            // 
-            // self.ensure_one()
-            // values = []
-            // today = fields.Date.from_string(fields.Date.context_today(self))
-            // start_date, end_date = self._graph_get_dates(today)
-            // graph_data = self._graph_data(start_date, end_date)
-            // x_field = 'label'
-            // y_field = 'value'
-            // 
-            // # generate all required x_fields and update the y_values where we have data for them
-            // locale = self._context.get('lang') or 'en_US'
-            // 
-            // weeks_in_start_year = int(date(start_date.year, 12, 28).isocalendar()[1]) # This date is always in the last week of ISO years
-            // week_count = (end_date.isocalendar()[1] - start_date.isocalendar()[1]) % weeks_in_start_year + 1
-            // for week in range(week_count):
-            //     short_name = get_week_name(start_date + relativedelta(days=7 * week), locale)
-            //     values.append({x_field: short_name, y_field: 0, 'type': 'future' if week + 1 == week_count else 'past'})
-            // 
-            // for data_item in graph_data:
-            //     index = int((data_item.get('x_value') - start_date.isocalendar()[1]) % weeks_in_start_year)
-            //     values[index][y_field] = data_item.get('y_value')
-            // 
-            // [graph_title, graph_key] = self._graph_title_and_key()
-            // color = '#875A7B' if '+e' in version else '#7c7bad'
-            // 
-            // # If no actual data available, show some sample data
-            // if not graph_data:
-            //     graph_key = _('Sample data')
-            //     for value in values:
-            //         value['type'] = 'o_sample_data'
-            //         # we use unrealistic values for the sample data
-            //         value['value'] = random.randint(0, 20)
-            // return [{'values': values, 'area': True, 'title': graph_title, 'key': graph_key, 'color': color}]
+            // def _get_default_color(self):
+            // return random.randint(1, 11)
             */
             return default;
         }
@@ -2888,7 +3227,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //   5- any team matching my company (based on company rule)
             // 
             // :param user_id: salesperson to target, fallback on env.uid;
-            // :domain: optional domain to filter teams (like use_lead = True);
+            // :param domain: optional domain to filter teams (like use_lead = True);
             // """
             // if not user_id:
             //     user = self.env.user
@@ -2957,9 +3296,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'email': email_to,
             //     'token': self._generate_email_access_token(email_to),
             // })
-            // return urls.url_join(
+            // return tools.urls.urljoin(
             //     self.get_base_url(),
-            //     f'group/{self.id}/unsubscribe_oneclick?{params}'
+            //     f'group/{self.id}/unsubscribe_oneclick?{params}',
             // )
             */
             return default;
@@ -3106,7 +3445,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _get_plan_domain(self, plan):
-            // return AND([super()._get_plan_domain(plan), ['|', ('company_id', '=', False), ('company_id', '=?', unquote('company_id'))]])
+            // return Domain.AND([super()._get_plan_domain(plan), ['|', ('company_id', '=', False), ('company_id', '=?', unquote('company_id'))]])
             */
             return default;
         }
@@ -3151,6 +3490,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetProfitabilityValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_profitability_values(self):
+            // if not self.env.user.has_group('project.group_project_manager'):
+            //     return {}, False
+            // profitability_items = self._get_profitability_items(False)
+            // if profitability_items and 'revenues' in profitability_items and 'costs' in profitability_items:  # sort the data values
+            //     profitability_items['revenues']['data'] = sorted(profitability_items['revenues']['data'], key=lambda k: k['sequence'])
+            //     profitability_items['costs']['data'] = sorted(profitability_items['costs']['data'], key=lambda k: k['sequence'])
+            // costs = sum(profitability_items['costs']['total'].values())
+            // revenues = sum(profitability_items['revenues']['total'].values())
+            // margin = revenues + costs
+            // to_bill_to_invoice = profitability_items['costs']['total']['to_bill'] + profitability_items['revenues']['total']['to_invoice']
+            // billed_invoiced = profitability_items['costs']['total']['billed'] + profitability_items['revenues']['total']['invoiced']
+            // expected_percentage, to_bill_to_invoice_percentage, billed_invoiced_percentage = 0, 0, 0
+            // if revenues:
+            //     expected_percentage = formatLang(self.env, (margin / revenues) * 100, digits=0)
+            // if profitability_items['revenues']['total']['to_invoice']:
+            //     to_bill_to_invoice_percentage = formatLang(self.env, (to_bill_to_invoice / profitability_items['revenues']['total']['to_invoice']) * 100, digits=0)
+            // if profitability_items['revenues']['total']['invoiced']:
+            //     billed_invoiced_percentage = formatLang(self.env, (billed_invoiced / profitability_items['revenues']['total']['invoiced']) * 100, digits=0)
+            // profitability_values_dict = {
+            //     'account_id': self.account_id,
+            //     'costs': profitability_items['costs'],
+            //     'revenues': profitability_items['revenues'],
+            //     'expected_percentage': expected_percentage,
+            //     'to_bill_to_invoice_percentage': to_bill_to_invoice_percentage,
+            //     'billed_invoiced_percentage': billed_invoiced_percentage,
+            //     'total': {
+            //         'costs': costs,
+            //         'revenues': revenues,
+            //         'margin': margin,
+            //         'margin_percentage': formatLang(self.env,
+            //                                         not float_utils.float_is_zero(costs, precision_digits=2) and (margin / -costs) * 100 or 0.0,
+            //                                         digits=0),
+            //     },
+            //     'labels': self._get_profitability_labels(),
+            // }
+            // show_profitability = bool(profitability_values_dict.get('account_id')
+            //     and (profitability_values_dict.get('costs') or profitability_values_dict.get('revenues'))
+            // )
+            // return profitability_values_dict, show_profitability
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetProjectFeaturesMappingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_project_features_mapping(self):
+            // return {
+            //     'allow_task_dependencies': 'project.group_project_task_dependencies',
+            //     'allow_milestones': 'project.group_project_milestone',
+            //     'allow_recurring_tasks': 'project.group_project_recurring_tasks',
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetProjectsToMakeBillableDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -3183,14 +3584,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     )
             // buttons = [{
             //     'icon': 'check',
-            //     'text': self.env._('Tasks'),
+            //     'text': self.label_tasks,
             //     'number': number,
             //     'action_type': 'object',
             //     'action': 'action_view_tasks',
             //     'show': True,
             //     'sequence': 1,
             // }]
-            // if self.rating_count != 0 and self.env.user.has_group('project.group_project_rating'):
+            // if self.rating_count != 0:
             //     if self.rating_avg >= rating_data.RATING_AVG_TOP:
             //         icon = 'smile-o text-success'
             //     elif self.rating_avg >= rating_data.RATING_AVG_OK:
@@ -3203,7 +3604,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'number': f'{int(self.rating_avg) if self.rating_avg.is_integer() else round(self.rating_avg, 1)} / 5',
             //         'action_type': 'object',
             //         'action': 'action_view_all_rating',
-            //         'show': self.rating_active,
+            //         'show': self.show_ratings,
             //         'sequence': 15,
             //     })
             // if self.env.user.has_group('project.group_project_user'):
@@ -3225,6 +3626,87 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'sequence': 60,
             //     })
             // return buttons
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateDefaultContextWhitelistInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_default_context_whitelist(self):
+            // """
+            // Whitelist of fields that can be set through the `default_` context keys when creating a project from a template.
+            // """
+            // return [
+            //     "allow_milestones",
+            // ]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateFieldBlacklistInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_field_blacklist(self):
+            // """
+            // Blacklist of fields to not copy when creating a project from a template.
+            // """
+            // return [
+            //     "partner_id",
+            // ]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateFromProjectUndoCallbacksInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_from_project_undo_callbacks(self):
+            // self.ensure_one()
+            // callbacks = {}
+            // if self.active:
+            //     self.action_archive()
+            //     callbacks["unarchive_project"] = True
+            // return callbacks
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def get_template_tasks(self):
+            // self.ensure_one()
+            // return self.env['project.task'].search_read(
+            //     [('project_id', '=', self.id), ('is_template', '=', True)],
+            //     ['id', 'name'],
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateToProjectConfirmationCallbacksInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_to_project_confirmation_callbacks(self):
+            // self.ensure_one()
+            // return {}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetTemplateToProjectWarningsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _get_template_to_project_warnings(self):
+            // self.ensure_one()
+            // return []
             */
             return default;
         }
@@ -3257,144 +3739,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GraphDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start_date, object end_date) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_data(self, start_date, end_date):
-            // """ return format should be an iterable of dicts that contain {'x_value': ..., 'y_value': ...}
-            //     x_values should be weeks.
-            //     y_values are floats.
-            // """
-            // # apply rules
-            // extra_conditions = self._extra_sql_conditions() or SQL("TRUE")
-            // dashboard_graph_model = self._graph_get_model()
-            // GraphModel = self.env[dashboard_graph_model]
-            // where_query = GraphModel._where_calc([])
-            // GraphModel._apply_ir_rules(where_query, 'read')
-            // if where_clause := where_query.where_clause:
-            //     extra_conditions = SQL("%s AND (%s)", extra_conditions, where_clause)
-            // 
-            // sql = SQL(
-            //     """
-            //     SELECT %(x_query)s as x_value, %(y_query)s as y_value
-            //     FROM %(table)s
-            //     WHERE team_id = %(team_id)s
-            //         AND DATE(%(date_column)s) >= %(start_date)s
-            //         AND DATE(%(date_column)s) <= %(end_date)s
-            //         AND %(extra_conditions)s
-            //     GROUP BY x_value
-            //     """,
-            //     x_query=self._graph_x_query(),
-            //     y_query=self._graph_y_query(),
-            //     table=self._graph_get_table(GraphModel),
-            //     team_id=self.id,
-            //     date_column=self._graph_date_column(),
-            //     start_date=start_date,
-            //     end_date=end_date,
-            //     extra_conditions=extra_conditions,
-            // )
-            // 
-            // self._cr.execute(sql)
-            // return self.env.cr.dictfetchall()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GraphDateColumnInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_date_column(self):
-            // if self.use_opportunities:
-            //     return SQL('create_date')
-            // return super(Team,self)._graph_date_column()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GraphGetDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object today) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_get_dates(self, today):
-            // """ return a coherent start and end date for the dashboard graph covering a month period grouped by week.
-            // """
-            // start_date = today - relativedelta(months=1)
-            // # we take the start of the following week if we group by week
-            // # (to avoid having twice the same week from different month)
-            // start_date += relativedelta(days=8 - start_date.isocalendar()[2])
-            // return [start_date, today]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GraphGetModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_get_model(self):
-            // if self.use_opportunities:
-            //     return 'crm.lead'
-            // return super(Team,self)._graph_get_model()
-            */
-            return default;
-        }
-
-        public async Task<object> GraphGetTableInternalAsync<TEntity>(IEnumerable<TEntity> entities, object GraphModel) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_get_table(self, GraphModel):
-            // if self._in_sale_scope():
-            //     # For a team not shared between company, we make sure the amounts are expressed
-            //     # in the currency of the team company and not converted to the current company currency,
-            //     # as the amounts of the sale report are converted in the currency
-            //     # of the current company (for multi-company reporting, see #83550)
-            //     GraphModel = GraphModel.with_company(self.company_id)
-            //     return SQL(f"({GraphModel._table_query}) AS {GraphModel._table}")
-            // return super()._graph_get_table(GraphModel)
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_get_table(self, GraphModel) -> SQL:
-            // return SQL(GraphModel._table)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GraphTitleAndKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_title_and_key(self):
-            // if self.use_opportunities:
-            //     return ['', _('New Opportunities')] # no more title
-            // return super(Team, self)._graph_title_and_key()
-            */
-            return default;
-        }
-
-        public async Task<object> GraphXQueryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_x_query(self) -> SQL:
-            // return SQL('EXTRACT(WEEK FROM %s)', self._graph_date_column())
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GraphYQueryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_y_query(self):
-            // if self.use_opportunities:
-            //     return SQL('count(*)')
-            // return super(Team,self)._graph_y_query()
-            */
-            return default;
-        }
-
         public async Task<TEntity> InSaleScopeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -3418,8 +3762,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // child_model = self.sudo().with_context(child_ctx)
             // 
             // for record in child_model.search([('alias_id', '=', False)]):
-            //     # create the alias, and link it to the current record
-            //     alias = self.env['mail.alias'].sudo().create(record._alias_get_creation_values())
+            //     # create the alias associated with its company if one exists,
+            //     # and link it to the current record
+            //     record_company = record._mail_get_companies()[record.id]
+            //     alias = self.env['mail.alias'].sudo().with_company(record_company).create(record._alias_get_creation_values())
             //     record.with_context(mail_notrack=True).alias_id = alias
             //     _logger.info('Mail alias created for %s %s (id %s)',
             //                  record._name, record.display_name, record.id)
@@ -3438,6 +3784,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # as 'mail.alias' records refer to 'ir.model' records, create
             //     # aliases after the reflection of models
             //     self.pool.post_init(self._init_column_alias_id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseAllowMilestonesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _inverse_allow_milestones(self):
+            // self._check_project_group_with_field('allow_milestones', 'project.group_project_milestone')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseAllowRecurringTasksInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _inverse_allow_recurring_tasks(self):
+            // self._check_project_group_with_field('allow_recurring_tasks', 'project.group_project_recurring_tasks')
             */
             return default;
         }
@@ -3474,6 +3840,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     )
             // ):
             //     waiting_tasks.state = '01_in_progress'
+            // res = self._check_project_group_with_field('allow_task_dependencies', 'project.group_project_task_dependencies')
+            // # Hide/Show task waiting subtype when task dependencies feature is disabled/enabled
+            // if res or res is False:
+            //     self.env.ref('project.mt_task_waiting').hidden = not res
+            //     self.env.ref('project.mt_project_task_waiting').hidden = not res
             */
             return default;
         }
@@ -3489,7 +3860,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // for project in self:
             //     account = project.account_id
-            //     if project.partner_id and project.partner_id.company_id and project.company_id != project.partner_id.company_id:
+            //     if (
+            //         project.partner_id
+            //         and project.partner_id.company_id
+            //         and project.company_id
+            //         and project.company_id != project.partner_id.company_id
+            //     ):
             //         raise UserError(_('The project and the associated partner must be linked to the same company.'))
             //     if not account or not account.company_id:
             //         continue
@@ -3497,7 +3873,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if (account.project_count > 1 or account.line_ids) and project.company_id != account.company_id:
             //         raise UserError(
             //             _("The project's company cannot be changed if its analytic account has analytic lines or if more than one project is linked to it."))
-            //     account.company_id = project.company_id
+            //     account.company_id = project.company_id or project.partner_id.company_id
             */
             return default;
         }
@@ -3610,8 +3986,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _mail_get_message_subtypes(self):
             // res = super()._mail_get_message_subtypes()
-            // if not self.rating_active:
-            //     res -= self.env.ref('project.mt_project_task_rating')
             // if len(self) == 1:
             //     waiting_subtype = self.env.ref('project.mt_project_task_waiting')
             //     if not self.allow_task_dependencies and waiting_subtype in res:
@@ -3628,7 +4002,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def map_tasks(self, new_project_id):
             // """ copy and map tasks from old to new project """
             // project = self.browse(new_project_id)
-            // new_tasks = self.env['project.task']
             // # We want to copy archived task, but do not propagate an active_test context key
             // tasks = self.env['project.task'].with_context(active_test=False).search([('project_id', '=', self.id), ('parent_id', '=', False)])
             // if self.allow_task_dependencies and 'task_mapping' not in self.env.context:
@@ -3637,17 +4010,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // defaults = self._map_tasks_default_values(project)
             // new_tasks = tasks.with_context(copy_project=True).copy(defaults)
             // all_subtasks = new_tasks._get_all_subtasks()
-            // project.write({'tasks': [Command.set(new_tasks.ids)]})
-            // subtasks_not_displayed = all_subtasks.filtered(
-            //     lambda task: not task.display_in_project
-            // )
             // all_subtasks.filtered(
             //     lambda child: child.project_id == self
             // ).write({
             //     'project_id': project.id
-            // })
-            // subtasks_not_displayed.write({
-            //     'display_in_project': False
             // })
             // return True
             */
@@ -3696,13 +4062,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     format used in mail groups;
             //   * apply moderation rules;
             // 
-            // :return message: newly-created mail.message
+            // :returns: newly-created mail.message
             // """
             // self.ensure_one()
             // # First create the <mail.message>
             // Mailthread = self.env['mail.thread']
             // values = dict((key, val) for key, val in kwargs.items() if key in self.env['mail.message']._fields)
-            // author_id, email_from = Mailthread._message_compute_author(author_id, email_from, raise_on_email=True)
+            // author_id, email_from = Mailthread._message_compute_author(author_id, email_from)
             // 
             // values.update({
             //     'author_id': author_id,
@@ -3789,7 +4155,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // User update notification preference of project its propagated to all the tasks that the user is
             // currently following.
             // """
-            // res = super(Project, self).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            // res = super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             // if subtype_ids:
             //     project_subtypes = self.env['mail.message.subtype'].browse(subtype_ids)
             //     task_subtypes = (project_subtypes.mapped('parent_id') | project_subtypes.filtered(lambda sub: sub.internal or sub.default)).ids
@@ -3809,6 +4175,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def message_unsubscribe(self, partner_ids=None):
+            // self.task_ids.message_unsubscribe(partner_ids=partner_ids)
             // super().message_unsubscribe(partner_ids=partner_ids)
             // if partner_ids:
             //     self.env['project.collaborator'].search([('partner_id', 'in', partner_ids), ('project_id', 'in', self.ids)]).unlink()
@@ -3845,14 +4212,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // """ Give access to the portal user/customer if the project visibility is portal. """
             // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals=msg_vals)
             // if not self:
             //     return groups
             // 
             // self.ensure_one()
-            // portal_privacy = self.privacy_visibility == 'portal'
+            // portal_privacy = self.privacy_visibility in ['invited_users', 'portal']
             // for group_name, _group_method, group_data in groups:
             //     if group_name in ['portal', 'portal_customer'] and not portal_privacy:
             //         group_data['has_button_access'] = False
@@ -3978,7 +4345,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             body=body,
             //             email_from=email_from,
             //             model='mail.group',
-            //             notify_author=True,
             //             res_id=group.id,
             //         )
             */
@@ -4099,6 +4465,52 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> RoutingCheckRouteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object route, object raise_exception) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
+            // def _routing_check_route(self, message, message_dict, route, raise_exception=True):
+            // """Bounce the incoming emails if the group is closed."""
+            // if route[0] == 'mail.group' and self.browse(route[1]).is_closed:
+            //     body = self.env["ir.qweb"]._render(
+            //         "mail_group.email_template_mail_group_closed"
+            //     )
+            //     self.env['mail.thread']._routing_create_bounce_email(
+            //         message_dict["from"],
+            //         body,
+            //         message,
+            //         references=message_dict.get("message_id", ""),
+            //     )
+            //     return ()
+            // return self.env['mail.thread']._routing_check_route(message, message_dict, route, raise_exception)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchCurrentJobSkillIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _search_current_job_skill_ids(self, operator, value):
+            // if operator not in ('in', 'not in', 'any'):
+            //     raise NotImplementedError()
+            // job_skill_ids = []
+            // domain = Domain.OR([
+            //     Domain('valid_to', '=', False),
+            //     Domain('valid_to', '>=', fields.Date.today()),
+            // ])
+            // if operator == 'any' and isinstance(value, Domain):
+            //     domain = Domain.AND([domain, value])
+            // 
+            // elif operator in ('in', 'not in'):
+            //     domain = Domain.AND([domain, Domain('id', 'in', value)])
+            // 
+            // job_skill_ids = self.env['hr.job.skill']._search(domain)
+            // return Domain('job_skill_ids', 'in', job_skill_ids)
+            */
+            return default;
+        }
+
         public async Task<TEntity> SearchGetDetailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website, object order, object options) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
@@ -4164,9 +4576,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _search_is_favorite(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // return [('favorite_user_ids', 'in' if (operator == '=') == value else 'not in', self.env.uid)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('favorite_user_ids', 'in', [self.env.uid])]
             */
             return default;
         }
@@ -4176,10 +4588,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _search_is_milestone_exceeded(self, operator, value):
-            // if not isinstance(value, bool):
-            //     raise ValueError(_('Invalid value: %s', value))
-            // if operator not in ['=', '!=']:
-            //     raise ValueError(_('Invalid operator: %s', operator))
+            // if operator != 'in':
+            //     return NotImplemented
             // 
             // sql = SQL("""(
             //     SELECT P.id
@@ -4189,11 +4599,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //        AND P.allow_milestones IS true
             //        AND M.deadline <= CAST(now() AS date)
             // )""")
-            // if (operator == '=' and value is True) or (operator == '!=' and value is False):
-            //     operator_new = 'in'
-            // else:
-            //     operator_new = 'not in'
-            // return [('id', operator_new, sql)]
+            // return [('id', 'any', sql)]
             */
             return default;
         }
@@ -4220,24 +4626,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ('partner_id', operator, operand)
             //     ])
             // )]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendRatingAllInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _send_rating_all(self):
-            // projects = self.search([
-            //     ('rating_active', '=', True),
-            //     ('rating_status', '=', 'periodic'),
-            //     ('rating_request_deadline', '<=', fields.Datetime.now())
-            // ])
-            // for project in projects:
-            //     project.task_ids._send_task_rating_mail()
-            //     project._compute_rating_request_deadline()
-            //     self.env.cr.commit()
             */
             return default;
         }
@@ -4316,7 +4704,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
             // def set_open(self):
             // self.write({'website_published': False})
-            // return super(Job, self).set_open()
+            // return super().set_open()
             */
             return default;
         }
@@ -4342,29 +4730,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        protected async Task<object> ThreadToStoreInternalAsync()
+        public async Task<TEntity> TemplateToProjectConfirmationCallbackAsync<TEntity>(IEnumerable<TEntity> entities, object callbacks) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def _thread_to_store(self, store: Store, /, *, request_list=None, **kwargs):
-            // super()._thread_to_store(store, request_list=request_list, **kwargs)
-            // if request_list and "followers" in request_list:
-            //     store.add(
-            //         self,
-            //         {"collaborator_ids": Store.many(self.collaborator_ids.partner_id, only_id=True)},
-            //         as_thread=True,
-            //     )
+            // def template_to_project_confirmation_callback(self, callbacks):
+            // self.ensure_one()
+            // pass
             */
             return default;
         }
 
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        public async Task<TEntity> ThreadToStoreInternalAsync<TEntity>(IEnumerable<TEntity> entities, object store, object fields) where TEntity : IEntity<Guid>, IMailAliasMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
-            // def toggle_active(self):
-            // self.filtered('active').website_published = False
-            // return super().toggle_active()
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _thread_to_store(self, store: Store, fields, *, request_list=None):
+            // super()._thread_to_store(store, fields, request_list=request_list)
+            // if request_list and "followers" in request_list:
+            //     store.add(
+            //         self,
+            //         {"collaborator_ids": Store.Many(self.collaborator_ids.partner_id, [])},
+            //         as_thread=True,
+            //     )
             */
             return default;
         }
@@ -4384,6 +4772,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Project User has no write access for project.
             // not_fav_projects.write({'favorite_user_ids': [(4, self.env.uid)]})
             // favorite_projects.write({'favorite_user_ids': [(3, self.env.uid)]})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ToggleTemplateModeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object is_template) where TEntity : IEntity<Guid>, IMailAliasMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def _toggle_template_mode(self, is_template):
+            // self.ensure_one()
+            // self.is_template = is_template
+            // if not is_template:
+            //     self.task_ids.role_ids = False
             */
             return default;
         }
@@ -4457,30 +4858,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 'variable': frequency.variable,
             //                 'won_count': frequency.won_count if float_compare(frequency.won_count, 0.1, 2) == 1 else 0.1,
             //             })
-            // return super(Team, self).unlink()
+            // return super().unlink()
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def unlink(self):
+            // # Delete the embedded action configs related to the deleted projects
+            // self.env['res.users.settings.embedded.action'].sudo().search(
+            //     domain=[('res_id', 'in', self.ids), ('res_model', '=', self._name)],
+            // ).unlink()
             // # Delete the empty related analytic account
             // analytic_accounts_to_delete = self.env['account.analytic.account']
             // for project in self:
             //     if project.account_id and not project.account_id.line_ids:
             //         analytic_accounts_to_delete |= project.account_id
             // self.with_context(active_test=False).tasks.unlink()
-            // result = super(Project, self).unlink()
+            // result = super().unlink()
             // analytic_accounts_to_delete.unlink()
             // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkExceptContainsMaintenanceRequestsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def _unlink_except_contains_maintenance_requests(self):
-            // for category in self:
-            //     if category.equipment_ids or category.maintenance_ids:
-            //         raise UserError(_("You cannot delete an equipment category containing equipment or maintenance requests."))
             */
             return default;
         }
@@ -4536,7 +4929,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def write(self, vals):
-            // result = super(Team, self).write(vals)
+            // result = super().write(vals)
             // if 'use_leads' in vals or 'use_opportunities' in vals:
             //     for team in self:
             //         alias_vals = team._alias_get_creation_values()
@@ -4561,17 +4954,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     interviewers_to_clean._remove_recruitment_interviewers()
             //     self.sudo().interviewer_ids._create_recruitment_interviewers()
             // 
-            // # Subscribe the department manager if the department has changed
-            // if "department_id" in vals:
-            //     for job in self:
-            //         to_unsubscribe = [
-            //             partner
-            //             for partner in old_managers[job]._get_related_partners().ids
-            //             if partner not in job.user_id.partner_id.ids
-            //         ]
-            //         job.message_unsubscribe(to_unsubscribe)
-            //         job.message_subscribe(job.manager_id._get_related_partners().ids)
-            // 
             // # Subscribe the recruiter if it has changed.
             // if "user_id" in vals:
             //     for job in self:
@@ -4581,14 +4963,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if partner not in job.manager_id._get_related_partners().ids
             //         ]
             //         job.message_unsubscribe(to_unsubscribe)
-            //         job.message_subscribe(job.user_id.partner_id.ids)
-            // 
-            // # Update the availability on all hired candidates if the mission end date is changed
-            // if "date_to" in vals:
-            //     for job in self:
-            //         hired_candidates = job.application_ids.filtered(lambda a: a.application_status == 'hired')
-            //         for candidate in hired_candidates:
-            //             candidate.availability = job.date_to + relativedelta(days=1)
+            //         application_ids = job.application_ids.filtered(
+            //             lambda x:
+            //                 x.user_id == old_recruiters[job] and
+            //                 x.application_status == 'ongoing'
+            //         )
+            //         if application_ids:
+            //             application_ids.message_unsubscribe(to_unsubscribe)
+            //             application_ids.with_context(mail_auto_subscribe_no_notify=True).user_id = job.user_id
             // 
             // # Since the alias is created upon record creation, the default values do not reflect the current values unless
             // # specifically rewritten
@@ -4603,7 +4985,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def write(self, vals):
             // if vals.get('access_token'):
             //     self.ensure_one()  # We are not supposed to add a single access token to multiple project
-            //     if self.privacy_visibility != 'portal':
+            //     if self.privacy_visibility not in ['invited_users', 'portal']:
             //         vals['access_token'] = ''
             // 
             // # Here we modify the project's stage according to the selected company (selecting the first
@@ -4653,10 +5035,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif (date_end_update and no_current_date_begin and not date_start_update):
             //         del vals['date']
             // 
-            // res = super(Project, self).write(vals) if vals else True
+            // res = super().write(vals) if vals else True
             // 
             // if 'allow_task_dependencies' in vals and not vals.get('allow_task_dependencies'):
             //     self.env['project.task'].search([('project_id', 'in', self.ids), ('state', '=', '04_waiting_normal')]).write({'state': '01_in_progress'})
+            // 
+            // if 'allow_recurring_tasks' in vals and not vals['allow_recurring_tasks']:
+            //     self.env['project.task'].search([('project_id', 'in', self.ids), ('recurring_task', '=', True)]).write({'recurring_task': False})
             // 
             // if 'active' in vals:
             //     # archiving/unarchiving a project does it on its tasks, too
@@ -4684,12 +5069,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // count_fields = {fname for fname in self._fields if 'count' in fname}
             // if count_field not in count_fields:
             //     raise ValueError(f"Parameter 'count_field' can only be one of {count_fields}, got {count_field} instead.")
-            // domain = [('project_id', 'in', self.ids), ('display_in_project', '=', True)]
+            // domain = Domain('project_id', 'in', self.ids) & Domain('is_template', '=', False)
             // if additional_domain:
-            //     domain = AND([domain, additional_domain])
-            // tasks_count_by_project = dict(self.env['project.task'].with_context(
-            //     active_test=any(project.active for project in self)
-            // )._read_group(domain, ['project_id'], ['__count']))
+            //     domain &= Domain(additional_domain)
+            // ProjectTask = self.env['project.task'].with_context(active_test=any(project.active for project in self))
+            // tasks_count_by_project = dict(ProjectTask._read_group(domain, ['project_id'], ['__count']))
             // for project in self:
             //     project.update({count_field: tasks_count_by_project.get(project, 0)})
             */

@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Gs1Date { get; set; }
     }
     
-    public class BarcodeNomenclatureGs1DecomposeExtandedRequestDto
+    public class BarcodeNomenclatureGs1DecomposeExtendedRequestDto
     {
         public object Barcode { get; set; }
     }

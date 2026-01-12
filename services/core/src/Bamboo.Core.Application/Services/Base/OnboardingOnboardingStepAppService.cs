@@ -139,7 +139,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
             // def action_open_step_chart_of_accounts(self):
             // """ Called by the 'Chart of Accounts' button of the dashboard onboarding panel."""
-            // company = self.env['account.journal'].browse(self._context.get('journal_id', None)).company_id or self.env.company
+            // company = self.env['account.journal'].browse(self.env.context.get('journal_id', None)).company_id or self.env.company
             // self.sudo().with_company(company).action_validate_step('account.onboarding_onboarding_step_chart_of_accounts')
             // 
             // # If an opening move has already been posted, we open the list view showing all the accounts
@@ -173,7 +173,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
             // def action_open_step_company_data(self):
             // """Set company's basic information."""
-            // company = self.env['account.journal'].browse(self._context.get('journal_id', None)).company_id or self.env.company
+            // company = self.env['account.journal'].browse(self.env.context.get('journal_id', None)).company_id or self.env.company
             // action = {
             //     'type': 'ir.actions.act_window',
             //     'name': _('Set your company data'),
@@ -208,7 +208,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
             // def action_open_step_fiscal_year(self):
-            // company = self.env['account.journal'].browse(self._context.get('journal_id', None)).company_id or self.env.company
+            // company = self.env['account.journal'].browse(self.env.context.get('journal_id', None)).company_id or self.env.company
             // new_wizard = self.env['account.financial.year.op'].create({'company_id': company.id})
             // view_id = self.env.ref('account.setup_financial_year_opening_form').id
             // 
@@ -224,19 +224,6 @@ namespace Bamboo.Core.Application.Services
             //         'dialog_size': 'medium',
             //     }
             // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<OnboardingOnboardingStep> OpenStepPaymentProviderAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: onboarding_onboarding_step.py) ---
-            // def action_open_step_payment_provider(self):
-            // self.env.company.payment_onboarding_payment_method = 'stripe'
-            // menu = self.env.ref('account_payment.payment_provider_menu', raise_if_not_found=False)
-            // menu_id = menu.id if menu else None
-            // return self.env.company._run_payment_onboarding_step(menu_id)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -297,22 +284,6 @@ namespace Bamboo.Core.Application.Services
             // if not step or not self.env.company.external_report_layout_id:
             //     return False
             // return self.action_validate_step('account.onboarding_onboarding_step_base_document_layout')
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<OnboardingOnboardingStep> ValidateStepPaymentProviderAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: onboarding_onboarding_step.py) ---
-            // def action_validate_step_payment_provider(self):
-            // validation_response = super().action_validate_step_payment_provider()
-            // self.action_validate_step("account_payment.onboarding_onboarding_step_payment_provider")
-            // return validation_response
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: onboarding_step.py) ---
-            // def action_validate_step_payment_provider(self):
-            // """ Override of `onboarding` to validate other steps as well. """
-            // return self.action_validate_step('payment.onboarding_onboarding_step_payment_provider')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-show-all-users")]
+        public async Task<IActionResult> ActionShowAllUsersAsync(Guid id)
+        {
+            var result = await _appService.ShowAllUsersAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResGroupsCopyDataRequestDto input)
         {
@@ -23,14 +31,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetApplicationGroupsAsync(Guid id, [FromBody] ResGroupsGetApplicationGroupsRequestDto input)
         {
             var result = await _appService.GetApplicationGroupsAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-groups-by-application")]
-        public async Task<IActionResult> GetGroupsByApplicationAsync(Guid id)
-        {
-            var result = await _appService.GetGroupsByApplicationAsync(id);
             return Ok(result);
         }
     }

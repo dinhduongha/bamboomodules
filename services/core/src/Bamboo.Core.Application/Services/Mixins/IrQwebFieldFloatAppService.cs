@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldFloatable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // lang = self.user_lang()
             // value = element.text_content().strip()
@@ -42,7 +42,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(FloatConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     precision=dict(type='integer', string=_('Rounding precision')),
             // )
@@ -59,7 +59,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if 'precision' not in options and 'decimal_precision' not in options:
             //     _, precision = record._fields[field_name].get_digits(record.env) or (None, None)
             //     options = dict(options, precision=precision)
-            // return super(FloatConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             */
             return default;
         }

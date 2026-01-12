@@ -11,7 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
     public interface IMicrosoftServiceAppService : IMixinAppService
     {
         Task<TEntity> DoRequestInternalAsync<TEntity>(IEnumerable<TEntity> entities, object uri, object @params, object headers, object method, object preuri, object timeout) where TEntity : IEntity<Guid>, IMicrosoftServiceable;
-        Task<TEntity> GenerateRefreshTokenAsync<TEntity>(IEnumerable<TEntity> entities, object service, object authorization_code) where TEntity : IEntity<Guid>, IMicrosoftServiceable;
         Task<TEntity> GetAuthEndpointInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftServiceable;
         Task<TEntity> GetAuthorizeUriInternalAsync<TEntity>(IEnumerable<TEntity> entities, object from_url, object service, object scope, object redirect_uri) where TEntity : IEntity<Guid>, IMicrosoftServiceable;
         Task<TEntity> GetCalendarScopeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftServiceable;

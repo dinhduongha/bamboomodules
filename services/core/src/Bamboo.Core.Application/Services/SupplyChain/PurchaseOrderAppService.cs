@@ -20,16 +20,28 @@ namespace Bamboo.Core.Application.Services
     [Module("Purchase", Category = "SupplyChain", Depends = new[] { "account" })]
     public class PurchaseOrderAppService : GenericApplicationService<PurchaseOrder>, IPurchaseOrderAppService
     {
+        private readonly IAccountDocumentImportMixinAppService _accountDocumentImportMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;
         private readonly IProductCatalogMixinAppService _productCatalogMixinAppService;
-        public PurchaseOrderAppService(IRepository<PurchaseOrder, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IProductCatalogMixinAppService productCatalogMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public PurchaseOrderAppService(IRepository<PurchaseOrder, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAccountDocumentImportMixinAppService accountDocumentImportMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IProductCatalogMixinAppService productCatalogMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
+            _accountDocumentImportMixinAppService = accountDocumentImportMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
             _portalMixinAppService = portalMixinAppService;
             _productCatalogMixinAppService = productCatalogMixinAppService;
+        }
+
+        public async Task<PurchaseOrder> AcknowledgeAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_acknowledge(self):
+            // self.acknowledged = True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseOrder> ActivityCancelOnSaleInternalAsync()
@@ -66,8 +78,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
-            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // kanban_view_id = self.env.ref('purchase.product_view_kanban_catalog_purchase_only').id
+            // res['views'][0] = (kanban_view_id, 'kanban')
+            // res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // res['context']['partner_id'] = self.partner_id.id
             // return res
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def action_add_from_catalog(self):
@@ -100,6 +114,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> AddReferenceInternalAsync(object reference)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _add_reference(self, reference):
+            // """ link the given references to the list of references. """
+            // self.ensure_one()
+            // self.reference_ids = [Command.link(stock_reference.id) for stock_reference in reference]
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> AddSupplierToProductInternalAsync()
         {
             /*
@@ -115,21 +141,17 @@ namespace Bamboo.Core.Application.Services
             //     if line.product_id and not already_seller and len(line.product_id.seller_ids) <= 10:
             //         price = line.price_unit
             //         # Compute the price for the template's UoM, because the supplier's UoM is related to that UoM.
-            //         if line.product_id.product_tmpl_id.uom_po_id != line.product_uom:
-            //             default_uom = line.product_id.product_tmpl_id.uom_po_id
-            //             price = line.product_uom._compute_price(price, default_uom)
+            //         if line.product_id.product_tmpl_id.uom_id != line.product_uom_id:
+            //             default_uom = line.product_id.product_tmpl_id.uom_id
+            //             price = line.product_uom_id._compute_price(price, default_uom)
             // 
             //         supplierinfo = self._prepare_supplier_info(partner, line, price, line.currency_id)
             //         # In case the order partner is a contact address, a new supplierinfo is created on
             //         # the parent company. In this case, we keep the product name and code.
-            //         seller = line.product_id._select_seller(
-            //             partner_id=line.partner_id,
-            //             quantity=line.product_qty,
-            //             date=line.order_id.date_order and line.order_id.date_order.date(),
-            //             uom_id=line.product_uom)
-            //         if seller:
-            //             supplierinfo['product_name'] = seller.product_name
-            //             supplierinfo['product_code'] = seller.product_code
+            //         if line.selected_seller_id:
+            //             supplierinfo['product_name'] = line.selected_seller_id.product_name
+            //             supplierinfo['product_code'] = line.selected_seller_id.product_code
+            //             supplierinfo['product_uom_id'] = line.product_uom.id
             //         vals = {
             //             'seller_ids': [(0, 0, supplierinfo)],
             //         }
@@ -240,7 +262,6 @@ namespace Bamboo.Core.Application.Services
             //                 product_no_variant_attribute_value_ids=no_variant_attribute_values.ids)
             //             ))
             //     if product_ids:
-            //         res = False
             //         if new_lines:
             //             # Add new PO lines
             //             self.update(dict(order_line=new_lines))
@@ -248,8 +269,6 @@ namespace Bamboo.Core.Application.Services
             //         # Recompute prices for new/modified lines:
             //         for line in self.order_line.filtered(lambda line: line.product_id.id in product_ids):
             //             line._product_id_change()
-            //             res = line.onchange_product_id_warning() or res
-            //         return res
             */
             return default;
         }
@@ -283,7 +302,7 @@ namespace Bamboo.Core.Application.Services
             //     'name': _("Bill Matching"),
             //     'res_model': 'purchase.bill.line.match',
             //     'domain': [
-            //         ('partner_id', '=', self.partner_id.id),
+            //         ('partner_id', 'in', (self.partner_id | self.partner_id.commercial_partner_id).ids),
             //         ('company_id', 'in', self.env.company.ids),
             //         ('purchase_order_id', 'in', [self.id, False]),
             //     ],
@@ -300,7 +319,7 @@ namespace Bamboo.Core.Application.Services
             // def button_approve(self, force=False):
             // self = self.filtered(lambda order: order._approval_allowed())
             // self.write({'state': 'purchase', 'date_approve': fields.Datetime.now()})
-            // self.filtered(lambda p: p.company_id.po_lock == 'lock').write({'state': 'done'})
+            // self.filtered(lambda p: p.lock_confirmed_po == 'lock').write({'locked': True})
             // return {}
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def button_approve(self, force=False):
@@ -316,34 +335,40 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_cancel(self):
+            // locked_purchase_orders = self.filtered(lambda po: po.locked)
+            // if locked_purchase_orders:
+            //     raise UserError(self.env._("Unable to cancel purchase order(s): %s. You must first unlock them.", locked_purchase_orders.mapped('display_name')))
+            // 
             // purchase_orders_with_invoices = self.filtered(lambda po: any(i.state not in ('cancel', 'draft') for i in po.invoice_ids))
             // if purchase_orders_with_invoices:
-            //     raise UserError(_("Unable to cancel purchase order(s): %s. You must first cancel their related vendor bills.", format_list(self.env, purchase_orders_with_invoices.mapped('display_name'))))
-            // self.write({'state': 'cancel', 'mail_reminder_confirmed': False})
+            //     raise UserError(_("Unable to cancel purchase order(s): %s. You must first cancel their related vendor bills.", purchase_orders_with_invoices.mapped('display_name')))
+            // self.write({'state': 'cancel'})
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def button_cancel(self):
             // order_lines_ids = OrderedSet()
             // pickings_to_cancel_ids = OrderedSet()
             // 
-            // purchase_orders_with_receipt = self.filtered(lambda po: any(move.state == 'done' for move in po.order_line.move_ids))
-            // if purchase_orders_with_receipt:
-            //     raise UserError(_("Unable to cancel purchase order(s): %s since they have receipts that are already done.", format_list(self.env, purchase_orders_with_receipt.mapped('display_name'))))
             // for order in self:
             //     # If the product is MTO, change the procure_method of the closest move to purchase to MTS.
             //     # The purpose is to link the po that the user will manually generate to the existing moves's chain.
             //     if order.state in ('draft', 'sent', 'to approve', 'purchase'):
             //         order_lines_ids.update(order.order_line.ids)
+            //     pickings_to_cancel_ids.update(order.picking_ids.filtered(lambda r: r.state not in ('cancel', 'done')).ids)
+            //     # We can't cancel pickings that are already done, so we leave them untouched but log a note about it.
+            //     for picking in order.picking_ids:
+            //         if picking.state == 'done':
+            //             picking.message_post(body=self.env._("The purchase order %s this receipt is linked to was cancelled.", order._get_html_link()))
             // 
-            //     pickings_to_cancel_ids.update(order.picking_ids.filtered(lambda r: r.state != 'cancel').ids)
+            //     if order.reference_ids:
+            //         order.reference_ids.purchase_ids = [Command.unlink(order.id)]
             // 
             // order_lines = self.env['purchase.order.line'].browse(order_lines_ids)
-            // 
             // moves_to_cancel_ids = OrderedSet()
             // moves_to_recompute_ids = OrderedSet()
             // for order_line in order_lines:
-            //     moves_to_cancel_ids.update(order_line.move_ids.ids)
+            //     moves_to_cancel_ids.update(order_line.move_ids.filtered(lambda move: move.state != 'done').ids)
             //     if order_line.move_dest_ids:
-            //         move_dest_ids = order_line.move_dest_ids.filtered(lambda move: move.state != 'done' and not move.scrapped)
+            //         move_dest_ids = order_line.move_dest_ids.filtered(lambda move: move.state != 'done' and move.location_dest_usage != 'inventory')
             //         moves_to_mts = move_dest_ids.filtered(lambda move: move.rule_id.route_id != move.location_dest_id.warehouse_id.reception_route_id)
             //         move_dest_ids -= moves_to_mts
             //         moves_to_recompute_ids.update(moves_to_mts.ids)
@@ -355,8 +380,6 @@ namespace Bamboo.Core.Application.Services
             //             moves_to_cancel_ids.update(move_dest_ids.ids)
             //         else:
             //             moves_to_recompute_ids.update(move_dest_ids.ids)
-            //     if order_line.group_id:
-            //         order_line.group_id.purchase_line_ids = [Command.unlink(order_line.id)]
             // 
             // if moves_to_cancel_ids:
             //     moves_to_cancel = self.env['stock.move'].browse(moves_to_cancel_ids)
@@ -392,6 +415,9 @@ namespace Bamboo.Core.Application.Services
             // for order in self:
             //     if order.state not in ['draft', 'sent']:
             //         continue
+            //     error_msg = order._confirmation_error_message()
+            //     if error_msg:
+            //         raise UserError(error_msg)
             //     order.order_line._validate_analytic_distribution()
             //     order._add_supplier_to_product()
             //     # Deal with double validation process
@@ -399,8 +425,6 @@ namespace Bamboo.Core.Application.Services
             //         order.button_approve()
             //     else:
             //         order.write({'state': 'to approve'})
-            //     if order.partner_id not in order.message_partner_ids:
-            //         order.message_subscribe([order.partner_id.id])
             // return True
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
             // def button_confirm(self):
@@ -423,16 +447,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PurchaseOrder> ButtonDoneAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def button_done(self):
-            // self.write({'state': 'done', 'priority': '0'})
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<PurchaseOrder> ButtonDraftAsync(Guid id)
         {
             /*
@@ -444,12 +458,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<PurchaseOrder> ButtonLockAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def button_lock(self):
+            // self.locked = True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<PurchaseOrder> ButtonUnlockAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_unlock(self):
-            // self.write({'state': 'purchase'})
+            // self.locked = False
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -524,6 +548,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> ComputeCurrencyIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_currency_id(self):
+            // for order in self:
+            //     order = order.with_company(order.company_id)
+            //     if not order.partner_id:
+            //         order.currency_id = order.company_id.currency_id
+            //     else:
+            //         order.currency_id = order.partner_id.property_purchase_currency_id or order.company_id.currency_id
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> ComputeCurrencyRateInternalAsync()
         {
             /*
@@ -546,7 +585,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _compute_date_calendar_start(self):
             // for order in self:
-            //     order.date_calendar_start = order.date_approve if (order.state in ['purchase', 'done']) else order.date_order
+            //     order.date_calendar_start = order.date_approve if (order.state == 'purchase') else order.date_order
             */
             return default;
         }
@@ -567,6 +606,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> ComputeDefaultLocationDestIdIsSubcontractingLocInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: purchase.py) ---
+            // def _compute_default_location_dest_id_is_subcontracting_loc(self):
+            // for order in self:
+            //     order.default_location_dest_id_is_subcontracting_loc = order.picking_type_id.default_location_dest_id.is_subcontract()
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> ComputeDestAddressIdInternalAsync()
         {
             /*
@@ -575,11 +625,18 @@ namespace Bamboo.Core.Application.Services
             // dropship_subcontract_pos = self.filtered(lambda po: po.default_location_dest_id_is_subcontracting_loc)
             // for order in dropship_subcontract_pos:
             //     subcontractor_ids = order.picking_type_id.default_location_dest_id.subcontractor_ids
-            //     order.dest_address_id = subcontractor_ids if len(subcontractor_ids) == 1 else False
+            //     if len(subcontractor_ids) == 1:
+            //         order.dest_address_id = subcontractor_ids
             // super(PurchaseOrder, self - dropship_subcontract_pos)._compute_dest_address_id()
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def _compute_dest_address_id(self):
             // self.filtered(lambda po: po.picking_type_id.default_location_dest_id.usage != 'customer').dest_address_id = False
+            --- ODOO METHOD SOURCE (MODULE: sale_purchase, FILE: purchase_order.py) ---
+            // def _compute_dest_address_id(self):
+            // po_with_address = self.filtered(lambda po: po.dest_address_id and len(po._get_sale_orders().partner_shipping_id) == 1)
+            // for order in po_with_address:
+            //     order.dest_address_id = order._get_sale_orders().partner_shipping_id
+            // super(PurchaseOrder, self - po_with_address)._compute_dest_address_id()
             */
             return default;
         }
@@ -600,6 +657,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> ComputeDuplicatedOrderIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_duplicated_order_ids(self):
+            // """Compute duplicated purchase orders based on key fields."""
+            // draft_orders = self.filtered(lambda o: o.state == 'draft')
+            // order_to_duplicate_orders = draft_orders._fetch_duplicate_orders()
+            // for order in draft_orders:
+            //     duplicate_ids = order_to_duplicate_orders.get(order.id, [])
+            //     order.duplicated_order_ids = [Command.set(duplicate_ids)]
+            // (self - draft_orders).duplicated_order_ids = False
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> ComputeEffectiveDateInternalAsync()
         {
             /*
@@ -608,18 +681,6 @@ namespace Bamboo.Core.Application.Services
             // for order in self:
             //     pickings = order.picking_ids.filtered(lambda x: x.state == 'done' and x.location_dest_id.usage != 'supplier' and x.date_done)
             //     order.effective_date = min(pickings.mapped('date_done'), default=False)
-            */
-            return default;
-        }
-
-        protected async Task<PurchaseOrder> ComputeHasAlternativesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
-            // def _compute_has_alternatives(self):
-            // self.has_alternatives = False
-            // if self.env.user.has_group('purchase_requisition.group_purchase_alternatives'):
-            //     self.filtered(lambda po: po.purchase_group_id).has_alternatives = True
             */
             return default;
         }
@@ -705,6 +766,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> ComputePurchaseWarningTextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_purchase_warning_text(self):
+            // if not self.env.user.has_group('purchase.group_warning_purchase'):
+            //     self.purchase_warning_text = ''
+            //     return
+            // for order in self:
+            //     warnings = OrderedSet()
+            //     if partner_msg := order.partner_id.purchase_warn_msg:
+            //         warnings.add((order.partner_id.name or order.partner_id.display_name) + ' - ' + partner_msg)
+            //     for line in order.order_line:
+            //         if product_msg := line.purchase_line_warn_msg:
+            //             warnings.add(line.product_id.display_name + ' - ' + product_msg)
+            //     order.purchase_warning_text = '\n'.join(warnings)
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> ComputeReceiptReminderEmailInternalAsync()
         {
             /*
@@ -753,9 +834,28 @@ namespace Bamboo.Core.Application.Services
             // def _compute_sale_order_count(self):
             // for purchase in self:
             //     purchase.sale_order_count = len(purchase._get_sale_orders())
+            //     purchase.has_sale_order = bool(purchase.sale_order_count)
             --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: purchase_order.py) ---
             // def _compute_sale_order_count(self):
             // super()._compute_sale_order_count()
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> ComputeShowComparisonInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_show_comparison(self):
+            // line_groupby_product = self.env['purchase.order.line']._read_group(
+            //     [('product_id', 'in', self.order_line.product_id.ids), ('state', '=', 'purchase')],
+            //     ['product_id'],
+            //     ['order_id:array_agg']
+            // )
+            // 
+            // order_by_product = {p: set(o_ids) for p, o_ids in line_groupby_product}
+            // for record in self:
+            //     record.show_comparison = any(set(record.ids) != order_by_product[p] for p in record.order_line.product_id if p in order_by_product)
             */
             return default;
         }
@@ -818,39 +918,48 @@ namespace Bamboo.Core.Application.Services
             //         company=order.company_id,
             //     )
             //     if order.currency_id != order.company_currency_id:
-            //         order.tax_totals['amount_total_cc'] = f"({formatLang(self.env, order.amount_total_cc, currency_obj=self.company_currency_id)})"
+            //         order.tax_totals['amount_total_cc'] = f"({formatLang(self.env, order.amount_total_cc, currency_obj=order.company_currency_id)})"
             */
             return default;
         }
 
-        protected async Task<PurchaseOrder> ConfirmReceptionMailInternalAsync()
+        protected async Task<PurchaseOrder> ConfirmationErrorMessageInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _confirm_reception_mail(self):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reception_confirmed:
-            //         order.mail_reception_confirmed = True
-            //         order.message_post(body=_("The order receipt has been acknowledged by %s.", order.partner_id.name))
-            //     elif order.state == 'sent' and not order.mail_reception_confirmed:
-            //         order.mail_reception_confirmed = True
-            //         order.message_post(body=_("The RFQ has been acknowledged by %s.", order.partner_id.name))
+            // def _confirmation_error_message(self):
+            // """ Return whether order can be confirmed or not if not then return error message. """
+            // self.ensure_one()
+            // if any(
+            //     not line.display_type
+            //     and not line.is_downpayment
+            //     and not line.product_id
+            //     for line in self.order_line
+            // ):
+            //     return _("Some order lines are missing a product, you need to correct them before going further.")
+            // 
+            // return False
             */
             return default;
         }
 
-        public async Task<PurchaseOrder> ConfirmReminderMailAsync(Guid id, PurchaseOrderConfirmReminderMailRequestDto input)
+        protected async Task<PurchaseOrder> CreateActivitySetDetailsInternalAsync(object body)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def confirm_reminder_mail(self, confirmed_date=False):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reminder_confirmed:
-            //         order.mail_reminder_confirmed = True
-            //         date_planned = order.get_localized_date_planned(confirmed_date).date()
-            //         order.message_post(body=_("%(vendor)s confirmed the receipt will take place on %(date)s.", vendor=order.partner_id.name, date=date_planned))
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_order.py) ---
+            // def _create_activity_set_details(self, body):
+            // """ Create activity on purchase order to set details.
+            // :return: None.
+            // """
+            // activity_message = _("Some information could not be imported:")
+            // activity_message += body
+            // self.activity_schedule(
+            //     'mail.mail_activity_data_todo',
+            //     user_id=self.env.user.id,
+            //     note=activity_message,
+            // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<PurchaseOrder> CreateAlternativeAsync(Guid id)
@@ -878,7 +987,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def create(self, vals_list):
             // orders = self.browse()
-            // partner_vals_list = []
             // for vals in vals_list:
             //     company_id = vals.get('company_id', self.default_get(['company_id'])['company_id'])
             //     # Ensures default picking type and currency are taken from the right company.
@@ -888,12 +996,7 @@ namespace Bamboo.Core.Application.Services
             //         if 'date_order' in vals:
             //             seq_date = fields.Datetime.context_timestamp(self, fields.Datetime.to_datetime(vals['date_order']))
             //         vals['name'] = self_comp.env['ir.sequence'].next_by_code('purchase.order', sequence_date=seq_date) or '/'
-            //     vals, partner_vals = self._write_partner_values(vals)
-            //     partner_vals_list.append(partner_vals)
             //     orders |= super(PurchaseOrder, self_comp).create(vals)
-            // for order, partner_vals in zip(orders, partner_vals_list):
-            //     if partner_vals:
-            //         order.sudo().write(partner_vals)  # Because the purchase user doesn't have write on `res.partner`
             // return orders
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
             // def create(self, vals_list):
@@ -915,6 +1018,28 @@ namespace Bamboo.Core.Application.Services
             // return orders
             */
             return await base.CreateAsync(entity, fields);
+        }
+
+        public async Task<PurchaseOrder> CreateDocumentFromAttachmentAsync(Guid id, PurchaseOrderCreateDocumentFromAttachmentRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def create_document_from_attachment(self, attachment_ids):
+            // """ Create the purchase orders from given attachment_ids
+            // and redirect newly create order view.
+            // 
+            // :param list attachment_ids: List of attachments process.
+            // :return: An action redirecting to related sale order view.
+            // :rtype: dict
+            // """
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     raise UserError(_("No attachment was provided"))
+            // 
+            // orders = self.with_context(default_partner_id=self.env.user.partner_id.id)._create_records_from_attachments(attachments)
+            // return orders._get_records_action(name=_("Generated Orders"))
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseOrder> CreateDownpaymentsInternalAsync(object line_vals)
@@ -946,53 +1071,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> CreateInvoiceAsync(Guid id)
+        public async Task<PurchaseOrder> CreateInvoiceAsync(Guid id, PurchaseOrderCreateInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_create_invoice(self):
+            // def action_create_invoice(self, attachment_ids=False):
             // """Create the invoice associated to the PO.
             // """
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // 
             // # 1) Prepare invoice vals and clean-up the section lines
             // invoice_vals_list = []
             // sequence = 10
             // for order in self:
-            //     if order.invoice_status != 'to invoice':
-            //         continue
-            // 
             //     order = order.with_company(order.company_id)
             //     pending_section = None
             //     # Invoice values.
             //     invoice_vals = order._prepare_invoice()
             //     # Invoice line values (keep only necessary sections).
             //     for line in order.order_line:
-            //         if line.display_type == 'line_section':
+            //         if line.display_type in ('line_section', 'line_subsection'):
             //             pending_section = line
             //             continue
-            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
-            //             if pending_section:
-            //                 line_vals = pending_section._prepare_account_move_line()
-            //                 line_vals.update({'sequence': sequence})
-            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //                 sequence += 1
-            //                 pending_section = None
-            //             line_vals = line._prepare_account_move_line()
+            //         if pending_section:
+            //             line_vals = pending_section._prepare_account_move_line()
             //             line_vals.update({'sequence': sequence})
             //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
             //             sequence += 1
+            //             pending_section = None
+            //         line_vals = line._prepare_account_move_line()
+            //         line_vals.update({'sequence': sequence})
+            //         invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //         sequence += 1
             //     invoice_vals_list.append(invoice_vals)
-            // 
-            // if not invoice_vals_list:
-            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
             // 
             // # 2) group by (company_id, partner_id, currency_id) for batch creation
             // new_invoice_vals_list = []
-            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
+            // for _grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
             //     origins = set()
-            //     payment_refs = set()
-            //     refs = set()
             //     ref_invoice_vals = None
             //     for invoice_vals in invoices:
             //         if not ref_invoice_vals:
@@ -1000,28 +1116,39 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
             //         origins.add(invoice_vals['invoice_origin'])
-            //         payment_refs.add(invoice_vals['payment_reference'])
-            //         refs.add(invoice_vals['ref'])
             //     ref_invoice_vals.update({
-            //         'ref': ', '.join(refs)[:2000],
             //         'invoice_origin': ', '.join(origins),
-            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
             //     })
             //     new_invoice_vals_list.append(ref_invoice_vals)
             // invoice_vals_list = new_invoice_vals_list
             // 
             // # 3) Create invoices.
-            // moves = self.env['account.move']
+            // invoices = self.env['account.move']
             // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
             // for vals in invoice_vals_list:
-            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
+            //     invoices |= AccountMove.with_company(vals['company_id']).create(vals)
             // 
             // # 4) Some moves might actually be refunds: convert them if the total amount is negative
             // # We do this after the moves have been created since we need taxes, etc. to know if the total
             // # is actually negative or not
-            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
+            // invoices.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
             // 
-            // return self.action_view_invoice(moves)
+            // # 5) Link the attachments to the invoice
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     return self.action_view_invoice(invoices)
+            // 
+            // if len(invoices) != 1:
+            //     raise ValidationError(_("You can only upload a bill for a single vendor at a time."))
+            // invoices.with_context(skip_is_manually_modified=True)._extend_with_attachments(
+            //     invoices._to_files_data(attachments),
+            //     new=True,
+            // )
+            // 
+            // invoices.message_post(attachment_ids=attachments.ids)
+            // 
+            // attachments.write({'res_model': 'account.move', 'res_id': invoices.id})
+            // return self.action_view_invoice(invoices)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1032,7 +1159,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def _create_picking(self):
             // StockPicking = self.env['stock.picking']
-            // for order in self.filtered(lambda po: po.state in ('purchase', 'done')):
+            // for order in self.filtered(lambda po: po.state == 'purchase'):
             //     if any(product.type == 'consu' for product in order.order_line.product_id):
             //         order = order.with_company(order.company_id)
             //         pickings = order.picking_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
@@ -1093,25 +1220,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrder> DeclineReceptionMailInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _decline_reception_mail(self):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reception_declined:
-            //         order.mail_reception_declined = True
-            //         order.activity_schedule(
-            //             'mail.mail_activity_data_todo',
-            //             note=_('The vendor asked to decline this confirmed RfQ, if you agree on that, cancel this PO'))
-            //         order.message_post(body=_("The order receipt has been declined by %s.", order.partner_id.name))
-            //     elif order.state  == 'sent' and not order.mail_reception_declined:
-            //         order.mail_reception_declined = True
-            //         order.message_post(body=_("The RFQ has been declined by %s.", order.partner_id.name))
-            */
-            return default;
-        }
-
         protected async Task<PurchaseOrder> DefaultOrderLineValuesInternalAsync(object child_field)
         {
             /*
@@ -1134,6 +1242,55 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> FetchDuplicateOrdersInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _fetch_duplicate_orders(self):
+            // """ Fetch duplicated orders.
+            // 
+            // :return: Dictionary mapping order to its related duplicated orders.
+            // :rtype: dict
+            // """
+            // orders = self.filtered(lambda order: order.id and order.partner_ref)
+            // if not orders:
+            //     return {}
+            // 
+            // self.env['purchase.order'].flush_model(['company_id', 'partner_id', 'partner_ref', 'origin', 'state'])
+            // 
+            // result = self.env.execute_query(SQL("""
+            //     SELECT
+            //         po.id AS order_id,
+            //         array_agg(duplicate_po.id) AS duplicate_ids
+            //     FROM purchase_order po
+            //     JOIN purchase_order AS duplicate_po
+            //         ON po.company_id = duplicate_po.company_id
+            //         AND po.id != duplicate_po.id
+            //         AND duplicate_po.state != 'cancel'
+            //         AND po.partner_id = duplicate_po.partner_id
+            //         AND (
+            //             po.origin = duplicate_po.name
+            //             OR po.partner_ref = duplicate_po.partner_ref
+            //         )
+            //     WHERE po.id IN %(orders)s
+            //     GROUP BY po.id
+            // """, orders=tuple(orders.ids)))
+            // 
+            // return {order_id: set(duplicate_ids) for order_id, duplicate_ids in result}
+            */
+            return default;
+        }
+
+        public async Task<PurchaseOrder> GetAcknowledgeUrlAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def get_acknowledge_url(self):
+            // return self.get_portal_url(query_string='&acknowledge=True')
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<PurchaseOrder> GetActionAddFromCatalogExtraContextInternalAsync()
         {
             /*
@@ -1141,11 +1298,22 @@ namespace Bamboo.Core.Application.Services
             // def _get_action_add_from_catalog_extra_context(self):
             // return {
             //     **super()._get_action_add_from_catalog_extra_context(),
-            //     'display_uom': self.env.user.has_group('uom.group_uom'),
-            //     'precision': self.env['decimal.precision'].precision_get('Product Unit of Measure'),
+            //     'precision': self.env['decimal.precision'].precision_get('Product Unit'),
             //     'product_catalog_currency_id': self.currency_id.id,
             //     'product_catalog_digits': self.order_line._fields['price_unit'].get_digits(self.env),
             //     'search_default_seller_ids': self.partner_id.name,
+            //     'show_sections': bool(self.id),
+            // }
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _get_action_add_from_catalog_extra_context(self):
+            // return {
+            //     **super()._get_action_add_from_catalog_extra_context(),
+            //     'warehouse_id': self.picking_type_id.warehouse_id.id if self.picking_type_id else False,
+            //     'vendor_name': self.partner_id.display_name,
+            //     'vendor_suggest_days': self.partner_id.suggest_days,
+            //     'vendor_suggest_based_on': self.partner_id.suggest_based_on,
+            //     'vendor_suggest_percent': self.partner_id.suggest_percent,
+            //     'product_catalog_order_state': self.state,
             // }
             */
             return default;
@@ -1181,16 +1349,29 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def get_confirm_url(self, confirm_type=None):
             // """Create url for confirm reminder or purchase reception email for sending
-            // in mail."""
+            // in mail. Unsuported anymore. We only use the acknowledge mechanism. Keep it
+            // for backward compatibility"""
             // if confirm_type in ['reminder', 'reception', 'decline']:
-            //     param = url_encode({
-            //         'confirm': confirm_type,
-            //         'confirmed_date': self.date_planned and self.date_planned.date(),
-            //     })
-            //     return self.get_portal_url(query_string='&%s' % param)
+            //     return self.get_acknowledge_url()
             // return self.get_portal_url()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PurchaseOrder> GetDefaultCreateSectionValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_default_create_section_values(self):
+            // """ Return the default values for creating a section line in the purchase order through
+            // catalog.
+            // 
+            // :return: A dictionary with default values for creating a new section.
+            // :rtype: dict
+            // """
+            // return {'product_qty': 0}
+            */
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetDestinationLocationInternalAsync()
@@ -1212,6 +1393,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> GetDomainIsLateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_domain_is_late(self, operator, value):
+            // return Domain([('state', '=', 'purchase'), ('date_planned', '<=', fields.Datetime.now())])
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _get_domain_is_late(self, operator, value):
+            // domain = super()._get_domain_is_late(operator, value)
+            // if operator == "=" and value or operator == "!=" and not value:
+            //     domain &= Domain.OR([Domain('picking_ids', '=', False), Domain('picking_ids.state', '!=', 'done')])
+            // return domain
+            */
+            return default;
+        }
+
         protected async Task<PurchaseOrder> GetEdiBuildersInternalAsync()
         {
             /*
@@ -1221,6 +1418,25 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_order.py) ---
             // def _get_edi_builders(self):
             // return super()._get_edi_builders() + [self.env['purchase.edi.xml.ubl_bis3']]
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> GetEdiDecoderInternalAsync(object file_data, object @new)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_order.py) ---
+            // def _get_edi_decoder(self, file_data, new=False):
+            // """ Override of purchase to add edi decoder for xml files.
+            // 
+            // :param dict file_data: File data to decode.
+            // """
+            // if file_data['import_file_type'] == 'purchase.edi.xml.ubl_bis3':
+            //     return {
+            //         'priority': 20,
+            //         'decoder': self.env['purchase.edi.xml.ubl_bis3']._import_order_ubl,
+            //     }
+            // return super()._get_edi_decoder(file_data, new)
             */
             return default;
         }
@@ -1240,14 +1456,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PurchaseOrder> GetImportFileTypeInternalAsync(object file_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_order.py) ---
+            // def _get_import_file_type(self, file_data):
+            // """ Identify UBL files. """
+            // # EXTENDS 'account'
+            // if (tree := file_data['xml_tree']) is not None:
+            //     customization_id = tree.find('{*}CustomizationID')
+            //     if customization_id is not None:
+            //         if customization_id.text == 'urn:fdc:peppol.eu:poacc:trns:order:3':
+            //             return 'purchase.edi.xml.ubl_bis3'
+            // return super()._get_import_file_type(file_data)
+            */
+            return default;
+        }
+
+        public async Task<PurchaseOrder> GetImportTemplatesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def get_import_templates(self):
+            // return [{
+            //     'label': _('Import Template for Requests for Quotation'),
+            //     'template': '/purchase/static/xls/requests_for_quotation_import_template.xlsx',
+            // }]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<PurchaseOrder> GetInvoicedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _get_invoiced(self):
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // for order in self:
-            //     if order.state not in ('purchase', 'done'):
+            //     if order.state != 'purchase':
             //         order.invoice_status = 'no'
             //         continue
             // 
@@ -1266,6 +1512,27 @@ namespace Bamboo.Core.Application.Services
             //         order.invoice_status = 'invoiced'
             //     else:
             //         order.invoice_status = 'no'
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> GetLineValsListInternalAsync(object lines_vals)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_order.py) ---
+            // def _get_line_vals_list(self, lines_vals):
+            // """ Get purchases order line values list.
+            // :param list line_vals: List of values [name, qty, price, tax].
+            // :return: List of dict values.
+            // """
+            // 
+            // return [{
+            //     'sequence': 0,  # be sure to put these lines above the 'real' order lines
+            //     'name': name,
+            //     'product_qty': quantity,
+            //     'price_unit': price_unit,
+            //     'taxes_id': [Command.set(tax_ids)],
+            // } for name, quantity, price_unit, tax_ids in lines_vals]
             */
             return default;
         }
@@ -1330,11 +1597,7 @@ namespace Bamboo.Core.Application.Services
             // return productions
             --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
             // def _get_mrp_productions(self, **kwargs):
-            // linked_mo = self.order_line.move_dest_ids.group_id.mrp_production_ids \
-            //           | self.env['stock.move'].browse(self.order_line.move_ids._rollup_move_dests()).group_id.mrp_production_ids
-            // group_mo = self.order_line.group_id.mrp_production_ids
-            // 
-            // return linked_mo | group_mo
+            // return self.reference_ids.production_ids
             */
             return default;
         }
@@ -1361,15 +1624,25 @@ namespace Bamboo.Core.Application.Services
             // order and not all products are service."""
             // return self.search([
             //     ('partner_id', '!=', False),
-            //     ('state', 'in', ['purchase', 'done']),
-            //     ('mail_reminder_confirmed', '=', False)
-            // ]).filtered(lambda p: p.partner_id.with_company(p.company_id).receipt_reminder_email and\
-            //     p.mapped('order_line.product_id.product_tmpl_id.type') != ['service'])
+            //     ('state', '=', 'purchase'),
+            //     ('acknowledged', '=', False),
+            //     ('receipt_reminder_email', '=', True)
+            // ]).filtered(lambda p: p.mapped('order_line.product_id.product_tmpl_id.type') != ['service'])
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def _get_orders_to_remind(self):
             // """When auto sending reminder mails, don't send for purchase order with
             // validated receipts."""
             // return super()._get_orders_to_remind().filtered(lambda p: not p.effective_date)
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> GetParentFieldOnChildModelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'order_id'
             */
             return default;
         }
@@ -1394,7 +1667,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('purchase_ok', '=', True)]])
+            // return super()._get_product_catalog_domain() & Domain('purchase_ok', '=', True)
             */
             return default;
         }
@@ -1412,14 +1685,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrder> GetProductCatalogRecordLinesInternalAsync(List<Guid> product_ids, object child_field)
+        protected async Task<PurchaseOrder> GetProductCatalogOrderLineInfoInternalAsync(List<Guid> product_ids, object child_field)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _get_product_catalog_order_line_info(self, product_ids, child_field=False, **kwargs):
+            // """ Add suggest_ctx to env in order to trigger product.product suggest compute fields"""
+            // if kwargs.get('suggest_based_on'):
+            //     suggest_keys = ('suggest_days', 'suggest_based_on', 'suggest_percent', 'warehouse_id')
+            //     suggest_ctx = {k: v for k, v in kwargs.items() if k in suggest_keys}
+            //     return super(PurchaseOrder, self.with_context(suggest_ctx))._get_product_catalog_order_line_info(
+            //         product_ids, child_field=child_field, **kwargs
+            //     )
+            // return super()._get_product_catalog_order_line_info(product_ids, child_field=child_field, **kwargs)
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> GetProductCatalogRecordLinesInternalAsync(List<Guid> product_ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['purchase.order.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.order_line[:1].id
+            //         if self.order_line[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.order_line:
-            //     if line.display_type or line.product_id.id not in product_ids:
+            //     if (
+            //         line.display_type
+            //         or line.product_id.id not in product_ids
+            //         or line.get_parent_section_line().id != section_id
+            //     ):
             //         continue
             //     grouped_lines[line.product_id] |= line
             // return grouped_lines
@@ -1441,20 +1741,8 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // product_infos = {
             //     'price': product.standard_price,
-            //     'uom': {
-            //         'display_name': product.uom_id.display_name,
-            //         'id': product.uom_id.id,
-            //     },
+            //     'uomDisplayName': product.uom_id.display_name
             // }
-            // if product.purchase_line_warn_msg:
-            //     product_infos['warning'] = product.purchase_line_warn_msg
-            // if product.purchase_line_warn == "block":
-            //     product_infos['readOnly'] = True
-            // if product.uom_id != product.uom_po_id:
-            //     product_infos['purchase_uom'] = {
-            //         'display_name': product.uom_po_id.display_name,
-            //         'id': product.uom_po_id.id,
-            //     }
             // params = {'order_id': self}
             // # Check if there is a price and a minimum quantity for the order's vendor.
             // seller = product._select_seller(
@@ -1466,24 +1754,28 @@ namespace Bamboo.Core.Application.Services
             //     params=params
             // )
             // if seller:
+            //     product_uom = (seller.product_id or seller.product_tmpl_id).uom_id
+            //     price = seller.price_discounted
+            //     if seller.currency_id != self.currency_id:
+            //         price = seller.currency_id._convert(price, self.currency_id)
+            //     if seller.product_uom_id != product_uom:
+            //         # The discounted price is expressed in the product's UoM, not in the vendor
+            //         # price's UoM, so we need to convert it into to match the displayed UoM.
+            //         price = product_uom._compute_price(price, seller.product_uom_id)
+            //         product_infos.update(uomFactor=seller.product_uom_id.factor / product_uom.factor)
             //     product_infos.update(
-            //         price=seller.price_discounted,
+            //         price=price,
             //         min_qty=seller.min_qty,
+            //         uomDisplayName=seller.product_uom_id.display_name,
             //     )
-            // # Check if the product uses some packaging.
-            // packaging = self.env['product.packaging'].search(
-            //     [('product_id', '=', product.id), ('purchase', '=', True)], limit=1
-            // )
-            // if packaging:
-            //     qty = packaging.product_uom_id._compute_quantity(packaging.qty, product.uom_po_id)
-            //     product_infos.update(
-            //         packaging={
-            //             'id': packaging.id,
-            //             'name': packaging.display_name,
-            //             'qty': qty,
-            //         }
-            //     )
+            // 
             // return product_infos
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _get_product_price_and_data(self, product):
+            // """ Fetch the product's data used by the purchase's catalog."""
+            // res = super()._get_product_price_and_data(product)
+            // res["suggested_qty"] = product.suggested_qty
+            // return res
             */
             return default;
         }
@@ -1532,11 +1824,7 @@ namespace Bamboo.Core.Application.Services
             // return self.order_line.sale_order_id
             --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: purchase_order.py) ---
             // def _get_sale_orders(self):
-            // linked_so = self.order_line.move_dest_ids.group_id.sale_id \
-            //           | self.env['stock.move'].browse(self.order_line.move_ids._rollup_move_dests()).group_id.sale_id
-            // group_so = self.order_line.group_id.sale_id
-            // 
-            // return super()._get_sale_orders() | linked_so | group_so
+            // return super()._get_sale_orders() | self.reference_ids.sale_ids
             */
             return default;
         }
@@ -1564,7 +1852,7 @@ namespace Bamboo.Core.Application.Services
             // po_alternatives = self | self.alternative_po_ids
             // 
             // for line in po_alternatives.order_line:
-            //     if not line.product_qty or not line.price_total_cc or line.state in ['cancel', 'purchase', 'done']:
+            //     if not line.product_qty or not line.price_total_cc or line.state in ['cancel', 'purchase']:
             //         continue
             // 
             //     # if no best price line => no best price unit line either
@@ -1616,6 +1904,27 @@ namespace Bamboo.Core.Application.Services
             // return self.get_portal_url(query_string='&%s' % update_param)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PurchaseOrder> IsDisplayStockInCatalogInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return True
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> IsDropshippedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: purchase.py) ---
+            // def _is_dropshipped(self):
+            // self.ensure_one()
+            // return self.picking_type_id and self.picking_type_id.code == 'dropship'
+            */
+            return default;
         }
 
         protected async Task<PurchaseOrder> IsReadonlyInternalAsync()
@@ -1709,6 +2018,8 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
             // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
             // 
+            // merged_rfq_ids = []
+            // 
             // for rfqs in bunches_of_rfq_to_be_merge:
             //     if len(rfqs) <= 1:
             //         continue
@@ -1717,11 +2028,9 @@ namespace Bamboo.Core.Application.Services
             //         # Merge RFQs into the oldest purchase order
             //         rfqs -= oldest_rfq
             //         for rfq_line in rfqs.order_line:
-            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
+            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_section', 'line_subsection', 'line_note'] and
             //                                                                         l.product_id == rfq_line.product_id and
-            //                                                                         l.product_uom == rfq_line.product_uom and
-            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
-            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
+            //                                                                         l.product_uom_id == rfq_line.product_uom_id and
             //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
             //                                                                         l.discount == rfq_line.discount and
             //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
@@ -1755,15 +2064,21 @@ namespace Bamboo.Core.Application.Services
             //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
             //         oldest_rfq._merge_alternative_po(rfqs)
             // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'success',
-            //         'message': _('purchase orders merged'),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //     }
+            //         # Keep the oldest RFQ IDs
+            //         merged_rfq_ids.append(oldest_rfq.id)
+            // 
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'list,kanban,form',
+            //     'res_model': 'purchase.order',
             // }
+            // if len(merged_rfq_ids) == 1:
+            //     action['res_id'] = merged_rfq_ids[0]
+            //     action['view_mode'] = 'form'
+            // else:
+            //     action['name'] = _("Merged RFQs")
+            //     action['domain'] = [('id', 'in', merged_rfq_ids)]
+            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1775,10 +2090,8 @@ namespace Bamboo.Core.Application.Services
             // def message_post(self, **kwargs):
             // if self.env.context.get('mark_rfq_as_sent'):
             //     self.filtered(lambda o: o.state == 'draft').write({'state': 'sent'})
-            // po_ctx = {'mail_post_autofollow': self.env.context.get('mail_post_autofollow', True)}
-            // if self.env.context.get('mark_rfq_as_sent') and 'notify_author' not in kwargs:
-            //     kwargs['notify_author'] = self.env.user.partner_id.id in (kwargs.get('partner_ids') or [])
-            // return super(PurchaseOrder, self.with_context(**po_ctx)).message_post(**kwargs)
+            //     kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1797,15 +2110,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrder> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang)
+        protected async Task<PurchaseOrder> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // subtitles = [render_context['record'].name]
             // # don't show price on RFQ mail
@@ -1825,9 +2140,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Tweak 'view document' button for portal customers, calling directly
-            // routes for confirm specific to PO model. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
+            // # Tweak 'view document' button for portal customers, calling directly routes for confirm specific to PO model.
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -1843,14 +2157,11 @@ namespace Bamboo.Core.Application.Services
             //     access_opt = customer_portal_group[2].setdefault('button_access', {})
             //     if self.env.context.get('is_reminder'):
             //         access_opt['title'] = _('View')
-            //         actions = customer_portal_group[2].setdefault('actions', list())
-            //         actions.extend([
-            //             {'url': self.get_confirm_url(confirm_type='reminder'), 'title': _('Accept')},
-            //             {'url': self.get_update_url(), 'title': _('Update Dates')},
-            //         ])
             //     else:
-            //         access_opt['title'] = _('View Quotation') if self.state in ('draft', 'sent') else _('View Order')
-            //         access_opt['url'] = self.get_confirm_url()
+            //         access_opt.update(
+            //             title=_("View Quotation") if self.state in ('draft', 'sent') else _("View Order"),
+            //             url=self.get_base_url() + self.get_confirm_url(),
+            //         )
             // 
             // return groups
             */
@@ -1889,48 +2200,13 @@ namespace Bamboo.Core.Application.Services
             // # are taken with the company of the order
             // # if not defined, with_company doesn't change anything.
             // self = self.with_company(self.company_id)
-            // default_currency = self._context.get("default_currency_id")
             // if not self.partner_id:
             //     self.fiscal_position_id = False
-            //     self.currency_id = default_currency or self.env.company.currency_id.id
             // else:
             //     self.fiscal_position_id = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id)
             //     self.payment_term_id = self.partner_id.property_supplier_payment_term_id.id
-            //     self.currency_id = default_currency or self.partner_id.property_purchase_currency_id.id or self.env.company.currency_id.id
             //     if self.partner_id.buyer_id:
             //         self.user_id = self.partner_id.buyer_id
-            // return {}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<PurchaseOrder> OnchangePartnerIdWarningAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def onchange_partner_id_warning(self):
-            // if not self.partner_id or not self.env.user.has_group('purchase.group_warning_purchase'):
-            //     return
-            // 
-            // partner = self.partner_id
-            // 
-            // # If partner has no warning, check its company
-            // if partner.purchase_warn == 'no-message' and partner.parent_id:
-            //     partner = partner.parent_id
-            // 
-            // if partner.purchase_warn and partner.purchase_warn != 'no-message':
-            //     # Block if partner only has warning but parent company is blocked
-            //     if partner.purchase_warn != 'block' and partner.parent_id and partner.parent_id.purchase_warn == 'block':
-            //         partner = partner.parent_id
-            //     title = _("Warning for %s", partner.name)
-            //     message = partner.purchase_warn_msg
-            //     warning = {
-            //         'title': title,
-            //         'message': message
-            //     }
-            //     if partner.purchase_warn == 'block':
-            //         self.update({'partner_id': False})
-            //     return {'warning': warning}
             // return {}
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1979,13 +2255,16 @@ namespace Bamboo.Core.Application.Services
             //             self.origin = self.origin + ', ' + requisition.name
             //     else:
             //         self.origin = requisition.name
-            // self.notes = requisition.description
+            // self.note = requisition.description
             // if requisition.date_start:
             //     self.date_order = max(fields.Datetime.now(), fields.Datetime.to_datetime(requisition.date_start))
             // else:
             //     self.date_order = fields.Datetime.now()
             // 
             // # Create PO lines if necessary
+            // # Do not clobber existing lines if the PO is already confirmed
+            // if self.state != 'draft':
+            //     return
             // order_lines = []
             // for line in requisition.line_ids:
             //     # Compute name
@@ -2000,20 +2279,10 @@ namespace Bamboo.Core.Application.Services
             //     # Compute taxes
             //     taxes_ids = fpos.map_tax(line.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == requisition.company_id)).ids
             // 
-            //     # Compute quantity and price_unit
-            //     if line.product_uom_id != line.product_id.uom_po_id:
-            //         product_qty = line.product_uom_id._compute_quantity(line.product_qty, line.product_id.uom_po_id)
-            //         price_unit = line.product_uom_id._compute_price(line.price_unit, line.product_id.uom_po_id)
-            //     else:
-            //         product_qty = line.product_qty
-            //         price_unit = line.price_unit
-            // 
-            //     if requisition.requisition_type != 'purchase_template':
-            //         product_qty = 0
-            // 
+            //     product_qty = line.product_qty if requisition.requisition_type == 'purchase_template' else 0
             //     # Create PO line
             //     order_line_values = line._prepare_purchase_order_line(
-            //         name=name, product_qty=product_qty, price_unit=price_unit,
+            //         name=name, product_qty=product_qty, price_unit=line.price_unit,
             //         taxes_ids=taxes_ids)
             //     order_lines.append((0, 0, order_line_values))
             // self.order_line = order_lines
@@ -2024,6 +2293,23 @@ namespace Bamboo.Core.Application.Services
             //     self.picking_type_id = self.requisition_id.picking_type_id.id
             */
             return default;
+        }
+
+        public async Task<PurchaseOrder> OpenBusinessDocAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Order"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'purchase.order',
+            //     'res_id': self.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseOrder> PrepareDownPaymentSectionValuesInternalAsync()
@@ -2042,27 +2328,6 @@ namespace Bamboo.Core.Application.Services
             //     'name': _("Down Payments"),
             // }
             // del context
-            // return res
-            */
-            return default;
-        }
-
-        protected async Task<PurchaseOrder> PrepareGroupValsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
-            // def _prepare_group_vals(self):
-            // self.ensure_one()
-            // return {
-            //     'name': self.name,
-            //     'partner_id': self.partner_id.id,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: purchase.py) ---
-            // def _prepare_group_vals(self):
-            // res = super()._prepare_group_vals()
-            // sale_orders = self.order_line.sale_order_id
-            // if len(sale_orders) == 1:
-            //     res['sale_id'] = sale_orders.id
             // return res
             */
             return default;
@@ -2094,19 +2359,17 @@ namespace Bamboo.Core.Application.Services
             // """Prepare the dict of values to create the new invoice for a purchase order.
             // """
             // self.ensure_one()
-            // move_type = self._context.get('default_move_type', 'in_invoice')
+            // move_type = self.env.context.get('default_move_type', 'in_invoice')
             // 
             // partner_invoice = self.env['res.partner'].browse(self.partner_id.address_get(['invoice'])['invoice'])
             // partner_bank_id = self.partner_id.commercial_partner_id.bank_ids.filtered_domain(['|', ('company_id', '=', False), ('company_id', '=', self.company_id.id)])[:1]
             // 
             // invoice_vals = {
-            //     'ref': self.partner_ref or '',
             //     'move_type': move_type,
-            //     'narration': self.notes,
+            //     'narration': self.note,
             //     'currency_id': self.currency_id.id,
             //     'partner_id': partner_invoice.id,
             //     'fiscal_position_id': (self.fiscal_position_id or self.fiscal_position_id._get_fiscal_position(partner_invoice)).id,
-            //     'payment_reference': self.partner_ref or '',
             //     'partner_bank_id': partner_bank_id.id,
             //     'invoice_origin': self.name,
             //     'invoice_payment_term_id': self.payment_term_id.id,
@@ -2137,21 +2400,41 @@ namespace Bamboo.Core.Application.Services
             // }
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
             // def _prepare_picking(self):
-            // if not self.group_id:
-            //     self.group_id = self.group_id.create(self._prepare_group_vals())
+            // if not self.reference_ids:
+            //     self.reference_ids = self.reference_ids.create(self._prepare_reference_vals())
             // if not self.partner_id.property_stock_supplier.id:
             //     raise UserError(_("You must set a Vendor Location for this partner %s", self.partner_id.name))
             // return {
             //     'picking_type_id': self.picking_type_id.id,
             //     'partner_id': self.partner_id.id,
             //     'user_id': False,
-            //     'date': self.date_order,
             //     'origin': self.name,
             //     'location_dest_id': self._get_destination_location(),
             //     'location_id': self.partner_id.property_stock_supplier.id,
             //     'company_id': self.company_id.id,
             //     'state': 'draft',
+            //     'reference_ids': [Command.set(self.reference_ids.ids)],
             // }
+            */
+            return default;
+        }
+
+        protected async Task<PurchaseOrder> PrepareReferenceValsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _prepare_reference_vals(self):
+            // self.ensure_one()
+            // return {
+            //     'name': self.name,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: purchase.py) ---
+            // def _prepare_reference_vals(self):
+            // res = super()._prepare_reference_vals()
+            // sale_orders = self.order_line.sale_order_id
+            // if len(sale_orders) == 1:
+            //     res['sale_ids'] = [Command.link(sale_orders.id)]
+            // return res
             */
             return default;
         }
@@ -2180,10 +2463,89 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def print_quotation(self):
-            // self.write({'state': "sent"})
+            // self.filtered(lambda po: po.state == 'draft').write({'state': "sent"})
             // return self.env.ref('purchase.report_purchase_quotation').report_action(self)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PurchaseOrder> PurchaseComparisonAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_purchase_comparison(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
+            // action['domain'] = [('product_id', 'in', self.order_line.product_id.ids)]
+            // action['display_name'] = _("Purchase Comparison for %s", self.display_name)
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PurchaseOrder> PurchaseOrderSuggestAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def action_purchase_order_suggest(self):
+            // """ Adds suggested products to PO, removing products with no suggested_qty, and
+            // collapsing existing po_lines into at most 1 orderline. Saves suggestion params
+            // (eg. number_of_days) to partner table. """
+            // self.ensure_one()
+            // ctx = self.env.context
+            // domain = [('type', '=', 'consu')]
+            // if ctx.get("suggest_domain"):
+            //     domain = fields.Domain.AND([domain, ctx.get("suggest_domain")])
+            // products = self.env['product.product'].search(domain)
+            // 
+            // self.partner_id.write({
+            //     'suggest_days': ctx.get('suggest_days'),
+            //     'suggest_based_on': ctx.get('suggest_based_on'),
+            //     'suggest_percent': ctx.get('suggest_percent'),
+            // })
+            // 
+            // po_lines_commands = []
+            // for product in products:
+            //     suggest_line = self.env['purchase.order.line']._prepare_purchase_order_line(
+            //         product,
+            //         product.suggested_qty,
+            //         product.uom_id,
+            //         self.company_id,
+            //         self.partner_id,
+            //         self
+            //     )
+            //     existing_lines = self.order_line.filtered(lambda pol: pol.product_id == product)
+            //     if section_id := ctx.get("section_id"):
+            //         existing_lines = existing_lines.filtered(lambda pol: pol.get_parent_section_line().id == section_id)
+            //         suggest_line["sequence"] = self._get_new_line_sequence("order_line", section_id)
+            //     else:
+            //         existing_lines = existing_lines.filtered(lambda pol: not pol.parent_id)  # lines with no sections
+            //     if existing_lines:
+            //         # Collapse into 1 or 0 po line, discarding previous data in favor of suggested qtys
+            //         to_unlink = existing_lines if product.suggested_qty == 0 else existing_lines[:-1]
+            //         po_lines_commands += [Command.unlink(line.id) for line in to_unlink]
+            //         if product.suggested_qty > 0:
+            //             po_lines_commands.append(Command.update(existing_lines[-1].id, suggest_line))
+            //     elif product.suggested_qty > 0:
+            //         po_lines_commands.append(Command.create(suggest_line))
+            // 
+            // self.order_line = po_lines_commands
+            // # Return the change in number of po_lines for the given section
+            // return sum({"CREATE": 1, "UNLINK": -1}.get(line[0].name, 0) for line in po_lines_commands)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PurchaseOrder> RemoveReferenceInternalAsync(object reference)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def _remove_reference(self, reference):
+            // """ remove the given references from the list of references. """
+            // self.ensure_one()
+            // self.reference_ids = [Command.unlink(stock_reference.id) for stock_reference in reference]
+            */
+            return default;
         }
 
         public async Task<PurchaseOrder> RetrieveDashboardAsync(Guid id)
@@ -2194,64 +2556,112 @@ namespace Bamboo.Core.Application.Services
             // """ This function returns the values to populate the custom dashboard in
             //     the purchase order views.
             // """
+            // if not self.env.user._is_internal():
+            //     raise AccessDenied()
             // self.browse().check_access('read')
             // 
             // result = {
-            //     'all_to_send': 0,
-            //     'all_waiting': 0,
-            //     'all_late': 0,
-            //     'my_to_send': 0,
-            //     'my_waiting': 0,
-            //     'my_late': 0,
-            //     'all_avg_order_value': 0,
-            //     'all_avg_days_to_purchase': 0,
-            //     'all_total_last_7_days': 0,
-            //     'all_sent_rfqs': 0,
-            //     'company_currency_symbol': self.env.company.currency_id.symbol
+            //     'global': {
+            //         'draft': {'all': 0, 'priority': 0},
+            //         'sent':  {'all': 0, 'priority': 0},
+            //         'late':  {'all': 0, 'priority': 0},
+            //         'not_acknowledged': {'all': 0, 'priority': 0},
+            //         'late_receipt': {'all': 0, 'priority': 0},
+            //         'days_to_order': 0,
+            //     },
+            //     'my': {
+            //         'draft': {'all': 0, 'priority': 0},
+            //         'sent':  {'all': 0, 'priority': 0},
+            //         'late':  {'all': 0, 'priority': 0},
+            //         'not_acknowledged': {'all': 0, 'priority': 0},
+            //         'late_receipt': {'all': 0, 'priority': 0},
+            //         'days_to_order': 0,
+            //     },
+            //     'days_to_purchase': 0,
             // }
             // 
-            // one_week_ago = fields.Datetime.to_string(fields.Datetime.now() - relativedelta(days=7))
-            // 
-            // query = """SELECT COUNT(1)
-            //            FROM mail_message m
-            //            JOIN purchase_order po ON (po.id = m.res_id)
-            //            WHERE m.create_date >= %s
-            //              AND m.model = 'purchase.order'
-            //              AND m.message_type = 'notification'
-            //              AND m.subtype_id = %s
-            //              AND po.company_id = %s;
-            //         """
-            // 
-            // self.env.cr.execute(query, (one_week_ago, self.env.ref('purchase.mt_rfq_sent').id, self.env.company.id))
-            // res = self.env.cr.fetchone()
-            // result['all_sent_rfqs'] = res[0] or 0
+            // def _update(key, dict_to_update, group):
+            //     for priority, user_id, count in group:
+            //         my = user_id == self.env.user
+            //         dict_to_update['global'][key]['all'] += count
+            //         if priority != '0':
+            //             dict_to_update['global'][key]['priority'] += count
+            //         if not my:
+            //             continue
+            //         dict_to_update['my'][key]['all'] += count
+            //         if priority != '0':
+            //             dict_to_update['my'][key]['priority'] += count
             // 
             // # easy counts
-            // po = self.env['purchase.order']
-            // result['all_to_send'] = po.search_count([('state', '=', 'draft')])
-            // result['my_to_send'] = po.search_count([('state', '=', 'draft'), ('user_id', '=', self.env.uid)])
-            // result['all_waiting'] = po.search_count([('state', '=', 'sent'), ('date_order', '>=', fields.Datetime.now())])
-            // result['my_waiting'] = po.search_count([('state', '=', 'sent'), ('date_order', '>=', fields.Datetime.now()), ('user_id', '=', self.env.uid)])
-            // result['all_late'] = po.search_count([('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now())])
-            // result['my_late'] = po.search_count([('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now()), ('user_id', '=', self.env.uid)])
+            // groupby = ['priority', 'user_id']
+            // aggregate = ['id:count_distinct']
+            // rfq_draft_domain = [('state', '=', 'draft')]
+            // rfq_draft_group = self.env['purchase.order']._read_group(rfq_draft_domain, groupby, aggregate)
+            // _update('draft', result, rfq_draft_group)
             // 
-            // # Calculated values ('avg order value', 'avg days to purchase', and 'total last 7 days') note that 'avg order value' and
-            // # 'total last 7 days' takes into account exchange rate and current company's currency's precision.
-            // # This is done via SQL for scalability reasons
-            // query = """SELECT AVG(COALESCE(po.amount_total / NULLIF(po.currency_rate, 0), po.amount_total)),
-            //                   AVG(extract(epoch from age(po.date_approve,po.create_date)/(24*60*60)::decimal(16,2))),
-            //                   SUM(CASE WHEN po.date_approve >= %s THEN COALESCE(po.amount_total / NULLIF(po.currency_rate, 0), po.amount_total) ELSE 0 END)
-            //            FROM purchase_order po
-            //            WHERE po.state in ('purchase', 'done')
-            //              AND po.company_id = %s
-            //         """
-            // self._cr.execute(query, (one_week_ago, self.env.company.id))
-            // res = self.env.cr.fetchone()
-            // result['all_avg_days_to_purchase'] = round(res[1] or 0, 2)
-            // currency = self.env.company.currency_id
-            // result['all_avg_order_value'] = format_amount(self.env, res[0] or 0, currency)
-            // result['all_total_last_7_days'] = format_amount(self.env, res[2] or 0, currency)
+            // rfq_sent_domain = [('state', '=', 'sent')]
+            // rfq_sent_group = self.env['purchase.order']._read_group(rfq_sent_domain, groupby, aggregate)
+            // _update('sent', result, rfq_sent_group)
             // 
+            // rfq_late_domain = [('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now())]
+            // rfq_late_group = self.env['purchase.order']._read_group(rfq_late_domain, groupby, aggregate)
+            // _update('late', result, rfq_late_group)
+            // 
+            // rfq_not_acknowledge = [('state', 'in', ['purchase', 'done']), ('acknowledged', '=', False)]
+            // rfq_not_acknowledge_group = self.env['purchase.order']._read_group(rfq_not_acknowledge, groupby, aggregate)
+            // _update('not_acknowledged', result, rfq_not_acknowledge_group)
+            // 
+            // rfq_late_receipt = [('state', 'in', ['purchase', 'done']), ('is_late', '=', True)]
+            // rfq_late_receipt_group = self.env['purchase.order']._read_group(rfq_late_receipt, groupby, aggregate)
+            // _update('late_receipt', result, rfq_late_receipt_group)
+            // 
+            // three_months_ago = fields.Datetime.to_string(fields.Datetime.now() - relativedelta(months=3))
+            // 
+            // purchases = self.env['purchase.order'].search_fetch(
+            //     [('state', '=', 'purchase'), ('create_date', '>=', three_months_ago), ('date_approve', '!=', False)],
+            //     ['create_date', 'date_approve', 'user_id'])
+            // 
+            // global_deliveries_seconds = 0
+            // my_deliveries_seconds = 0
+            // my_deliveries_count = 0
+            // 
+            // for po in purchases:
+            //     delivery_seconds = (po.date_approve - po.create_date).total_seconds()
+            //     global_deliveries_seconds += delivery_seconds
+            //     if po.user_id == self.env.user:
+            //         my_deliveries_seconds += delivery_seconds
+            //         my_deliveries_count += 1
+            // 
+            // avg_global_deliveries_seconds = global_deliveries_seconds / len(purchases) if purchases else 0
+            // avg_my_deliveries_seconds = my_deliveries_seconds / my_deliveries_count if my_deliveries_count else 0
+            // result['global']['days_to_order'] = float_repr(avg_global_deliveries_seconds / 60 / 60 / 24, precision_digits=2)
+            // result['my']['days_to_order'] = float_repr(avg_my_deliveries_seconds / 60 / 60 / 24, precision_digits=2)
+            // 
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
+            // def retrieve_dashboard(self):
+            // result = super().retrieve_dashboard()
+            // three_months_ago = fields.Datetime.to_string(fields.Datetime.now() - relativedelta(months=3))
+            // 
+            // purchases = self.env['purchase.order'].search_fetch(
+            //     [('state', '=', 'purchase'), ('date_planned', '>=', three_months_ago)],
+            //     ['date_planned', 'effective_date', 'user_id'])
+            // 
+            // otd_purchase_count = 0
+            // my_purchase_count = 0
+            // my_otd_purchase_count = 0
+            // for po in purchases:
+            //     if po.user_id == self.env.user:
+            //         my_purchase_count += 1
+            //     if not po.effective_date or po.effective_date > po.date_planned:
+            //         continue
+            //     otd_purchase_count += 1
+            //     if po.user_id == self.env.user:
+            //         my_otd_purchase_count += 1
+            // 
+            // result['global']['otd'] = _("%(otd)s %%", otd=float_repr(otd_purchase_count / len(purchases) * 100 if purchases else 100, precision_digits=0))
+            // result['my']['otd'] = _("%(otd)s %%", otd=float_repr(my_otd_purchase_count / my_purchase_count * 100 if my_purchase_count else 100, precision_digits=0))
+            // result['days_to_purchase'] = self.env.company.days_to_purchase
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2287,6 +2697,7 @@ namespace Bamboo.Core.Application.Services
             //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
             //     'email_notification_allow_footer': True,
             //     'force_email': True,
+            //     'hide_mail_template_management_options': True,
             //     'mark_rfq_as_sent': True,
             // })
             // 
@@ -2317,6 +2728,36 @@ namespace Bamboo.Core.Application.Services
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PurchaseOrder> SearchIsLateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _search_is_late(self, operator, value):
+            // if operator not in ["=", "!="]:
+            //     raise ValidationError(self.env._("Unsupported operator"))
+            // purchase_domain = self._get_domain_is_late(operator, value)
+            // if operator == "=" and value or operator == "!=" and not value:
+            //     purchase_lines_late = Domain('order_id', 'any', purchase_domain) & Domain.custom(
+            //         to_sql=lambda model, alias, query: SQL(
+            //             "%s < %s",
+            //             model._field_to_sql(alias, 'qty_received', query),
+            //             model._field_to_sql(alias, 'product_qty', query),
+            //         )
+            //     )
+            //     return Domain('order_line', 'any', purchase_lines_late)
+            // else:
+            //     purchase_lines_on_time = Domain('order_id', 'any', purchase_domain) & Domain.custom(
+            //         to_sql=lambda model, alias, query: SQL(
+            //             "%s >= %s",
+            //             model._field_to_sql(alias, 'qty_received', query),
+            //             model._field_to_sql(alias, 'product_qty', query),
+            //         )
+            //     )
+            //     return Domain('order_line', 'any', purchase_lines_on_time)
+            */
+            return default;
         }
 
         protected async Task<PurchaseOrder> SendReminderMailInternalAsync(object send_single)
@@ -2433,8 +2874,6 @@ namespace Bamboo.Core.Application.Services
             //     return self.env.ref('purchase.mt_rfq_confirmed')
             // elif 'state' in init_values and self.state == 'to approve':
             //     return self.env.ref('purchase.mt_rfq_confirmed')
-            // elif 'state' in init_values and self.state == 'done':
-            //     return self.env.ref('purchase.mt_rfq_done')
             // elif 'state' in init_values and self.state == 'sent':
             //     return self.env.ref('purchase.mt_rfq_sent')
             // return super(PurchaseOrder, self)._track_subtype(init_values)
@@ -2481,46 +2920,48 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update purchase order line information for a given product or create
-            // a new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :return: The unit price of the product, based on the pricelist of the
-            //          purchase order and the quantity selected.
-            // :rtype: float
-            // """
-            // self.ensure_one()
-            // product_packaging_qty = kwargs.get('product_packaging_qty', False)
-            // product_packaging_id = kwargs.get('product_packaging_id', False)
-            // pol = self.order_line.filtered(lambda line: line.product_id.id == product_id)
-            // if pol:
-            //     if product_packaging_qty:
-            //         pol.product_packaging_id = product_packaging_id
-            //         pol.product_packaging_qty = product_packaging_qty
-            //     elif quantity != 0:
-            //         pol.product_qty = quantity
-            //     elif self.state in ['draft', 'sent']:
-            //         price_unit = self._get_product_price_and_data(pol.product_id)['price']
-            //         pol.unlink()
-            //         return price_unit
-            //     else:
-            //         pol.product_qty = 0
-            // elif quantity > 0:
-            //     pol = self.env['purchase.order.line'].create({
-            //         'order_id': self.id,
-            //         'product_id': product_id,
-            //         'product_qty': quantity,
-            //         'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),  # put it at the end of the order
-            //     })
-            //     seller = pol.product_id._select_seller(
-            //         partner_id=pol.partner_id,
-            //         quantity=pol.product_qty,
-            //         date=pol.order_id.date_order and pol.order_id.date_order.date() or fields.Date.context_today(pol),
-            //         uom_id=pol.product_uom)
-            //     if seller:
-            //         # Fix the PO line's price on the seller's one.
-            //         pol.price_unit = seller.price_discounted
-            // return pol.price_unit_discounted
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='order_line', **kwargs
+            // ):
+            //     """ Update purchase order line information for a given product or create
+            //     a new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog.
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              purchase order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     self.ensure_one()
+            //     pol = self.order_line.filtered(
+            //         lambda l: l.product_id.id == product_id
+            //         and l.get_parent_section_line().id == section_id
+            //     )
+            //     if pol:
+            //         if quantity != 0:
+            //             pol.product_qty = quantity
+            //         elif self.state in ['draft', 'sent']:
+            //             price_unit = self._get_product_price_and_data(pol.product_id)['price']
+            //             pol.unlink()
+            //             return price_unit
+            //         else:
+            //             pol.product_qty = 0
+            //     elif quantity > 0:
+            //         pol = self.env['purchase.order.line'].create({
+            //             'order_id': self.id,
+            //             'product_id': product_id,
+            //             'product_qty': quantity,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //         if pol.selected_seller_id:
+            //             # Fix the PO line's price on the seller's one.
+            //             seller = pol.selected_seller_id
+            //             price = seller.price
+            //             if seller.currency_id != self.currency_id:
+            //                 price = seller.currency_id._convert(price, self.currency_id)
+            //             pol.price_unit = pol.technical_price_unit = price
+            //             pol.discount = seller.discount
+            //     return pol.price_unit_discounted
             */
             return default;
         }
@@ -2587,6 +3028,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     result = {'type': 'ir.actions.act_window_close'}
             // 
+            // result['context'] = literal_eval(result['context'])
+            // if len(self.partner_id) == 1:
+            //     result['context']['default_partner_id'] = self.partner_id.id
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2695,13 +3139,6 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, PurchaseOrder entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def write(self, vals):
-            // vals, partner_vals = self._write_partner_values(vals)
-            // res = super().write(vals)
-            // if partner_vals:
-            //     self.partner_id.sudo().write(partner_vals)  # Because the purchase user doesn't have write on `res.partner`
-            // return res
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
             // def write(self, vals):
             // if vals.get('purchase_group_id', False):
@@ -2743,28 +3180,13 @@ namespace Bamboo.Core.Application.Services
             //     for order in self:
             //         to_log = {}
             //         for order_line in order.order_line:
-            //             if pre_order_line_qty.get(order_line, False) and float_compare(pre_order_line_qty[order_line], order_line.product_qty, precision_rounding=order_line.product_uom.rounding) > 0:
+            //             if pre_order_line_qty.get(order_line) and order_line.product_uom_id.compare(pre_order_line_qty[order_line], order_line.product_qty) > 0:
             //                 to_log[order_line] = (order_line.product_qty, pre_order_line_qty[order_line])
             //         if to_log:
             //             order._log_decrease_ordered_quantity(to_log)
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);
-        }
-
-        protected async Task<PurchaseOrder> WritePartnerValuesInternalAsync(object vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _write_partner_values(self, vals):
-            // partner_values = {}
-            // if 'receipt_reminder_email' in vals:
-            //     partner_values['receipt_reminder_email'] = vals.pop('receipt_reminder_email')
-            // if 'reminder_date_before_receipt' in vals:
-            //     partner_values['reminder_date_before_receipt'] = vals.pop('reminder_date_before_receipt')
-            // return vals, partner_values
-            */
-            return default;
         }
     }
 }

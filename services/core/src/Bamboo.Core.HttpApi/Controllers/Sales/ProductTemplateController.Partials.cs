@@ -91,14 +91,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-update-quantity-on-hand")]
-        public async Task<IActionResult> ActionUpdateQuantityOnHandAsync(Guid id)
-        {
-            var result = await _appService.UpdateQuantityOnHandAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-used-in-bom")]
         public async Task<IActionResult> ActionUsedInBomAsync(Guid id)
         {
@@ -195,6 +187,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/create-product-variant-from-pos")]
+        public async Task<IActionResult> CreateProductVariantFromPosAsync(Guid id, [FromBody] ProductTemplateCreateProductVariantFromPosRequestDto input)
+        {
+            var result = await _appService.CreateProductVariantFromPosAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-contextual-price")]
         public async Task<IActionResult> GetContextualPriceAsync(Guid id, [FromBody] ProductTemplateGetContextualPriceRequestDto input)
         {
@@ -227,6 +227,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-product-info-pos")]
+        public async Task<IActionResult> GetProductInfoPosAsync(Guid id, [FromBody] ProductTemplateGetProductInfoPosRequestDto input)
+        {
+            var result = await _appService.GetProductInfoPosAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-single-product-variant")]
         public async Task<IActionResult> GetSingleProductVariantAsync(Guid id)
         {
@@ -243,10 +251,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/open-pricelist-rules")]
-        public async Task<IActionResult> OpenPricelistRulesAsync(Guid id)
+        [Route("{id}/load-product-from-pos")]
+        public async Task<IActionResult> LoadProductFromPosAsync(Guid id, [FromBody] ProductTemplateLoadProductFromPosRequestDto input)
         {
-            var result = await _appService.OpenPricelistRulesAsync(id);
+            var result = await _appService.LoadProductFromPosAsync(id, input);
             return Ok(result);
         }
         

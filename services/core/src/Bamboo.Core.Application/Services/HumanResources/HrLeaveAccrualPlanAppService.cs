@@ -25,26 +25,14 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<HrLeaveAccrualPlan> ComputeAddedValueTypeInternalAsync()
+        protected async Task<HrLeaveAccrualPlan> ComputeCarryoverDayInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
-            // def _compute_added_value_type(self):
+            // def _compute_carryover_day(self):
             // for plan in self:
-            //     if plan.level_ids:
-            //         plan.added_value_type = plan.level_ids[0].added_value_type
-            */
-            return default;
-        }
-
-        protected async Task<HrLeaveAccrualPlan> ComputeCarryoverDayDisplayInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
-            // def _compute_carryover_day_display(self):
-            // days_select = _get_selection_days(self)
-            // for plan in self:
-            //     plan.carryover_day_display = days_select[min(plan.carryover_day - 1, 28)][0]
+            //     # 2020 is a leap year, so monthrange(2020, february) will return [2, 29]
+            //     plan.carryover_day = str(min(monthrange(2020, int(plan.carryover_month))[1], int(plan.carryover_day)))
             */
             return default;
         }
@@ -131,18 +119,30 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<HrLeaveAccrualPlan> InverseCarryoverDayDisplayInternalAsync()
+        public async Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
-            // def _inverse_carryover_day_display(self):
-            // for plan in self:
-            //     if plan.carryover_day_display == 'last':
-            //         plan.carryover_day = 31
-            //     else:
-            //         plan.carryover_day = DAY_SELECT_VALUES.index(plan.carryover_day_display) + 1
+            // def action_create_accrual_plan_level(self):
+            // return {
+            //     'name': self.env._('New Milestone'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'hr.leave.accrual.level',
+            //     'view_mode': 'form',
+            //     'views': [[False, 'form']],
+            //     'view_id': self.env.ref('hr_holidays.hr_accrual_level_view_form').id,
+            //     'target': 'new',
+            //     'context': dict(
+            //         self.env.context,
+            //         new=True,
+            //         default_can_be_carryover=self.can_be_carryover,
+            //         default_accrued_gain_time=self.accrued_gain_time,
+            //         default_can_modify_value_type=not self.time_off_type_id and not self.level_ids,
+            //         default_added_value_type=self.added_value_type,
+            //     ),
+            // }
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid id)
@@ -151,13 +151,30 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
             // def action_open_accrual_plan_employees(self):
             // self.ensure_one()
-            // 
             // return {
             //     'name': _("Accrual Plan's Employees"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'kanban,list,form',
             //     'res_model': 'hr.employee',
             //     'domain': [('id', 'in', self.allocation_ids.employee_id.ids)],
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(Guid id, HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
+            // def action_open_accrual_plan_level(self, level_id):
+            // return {
+            //     'name': self.env._('Milestone Edition'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'hr.leave.accrual.level',
+            //     'view_mode': 'form',
+            //     'views': [[False, 'form']],
+            //     'target': 'new',
+            //     'res_id': level_id,
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;

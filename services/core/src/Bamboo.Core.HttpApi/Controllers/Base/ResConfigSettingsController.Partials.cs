@@ -11,26 +11,18 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-activate-stripe")]
-        public async Task<IActionResult> ActionActivateStripeAsync(Guid id)
-        {
-            var result = await _appService.ActivateStripeAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-configure-first-provider")]
-        public async Task<IActionResult> ActionConfigureFirstProviderAsync(Guid id)
-        {
-            var result = await _appService.ConfigureFirstProviderAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-crm-assign-leads")]
         public async Task<IActionResult> ActionCrmAssignLeadsAsync(Guid id)
         {
             var result = await _appService.CrmAssignLeadsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-eu-oss-tax-mapping")]
+        public async Task<IActionResult> ActionEuOssTaxMappingAsync(Guid id)
+        {
+            var result = await _appService.EuOssTaxMappingAsync(id);
             return Ok(result);
         }
         
@@ -51,6 +43,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-cloud-storage-migration-configurations")]
+        public async Task<IActionResult> ActionOpenCloudStorageMigrationConfigurationsAsync(Guid id)
+        {
+            var result = await _appService.OpenCloudStorageMigrationConfigurationsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-open-extra-info")]
         public async Task<IActionResult> ActionOpenExtraInfoAsync(Guid id)
         {
@@ -63,6 +63,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionOpenPeppolFormAsync(Guid id)
         {
             var result = await _appService.OpenPeppolFormAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-product-feeds")]
+        public async Task<IActionResult> ActionOpenProductFeedsAsync(Guid id)
+        {
+            var result = await _appService.OpenProductFeedsAsync(id);
             return Ok(result);
         }
         
@@ -83,6 +91,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-sms-twilio-account-manage")]
+        public async Task<IActionResult> ActionOpenSmsTwilioAccountManageAsync(Guid id)
+        {
+            var result = await _appService.OpenSmsTwilioAccountManageAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-open-template-user")]
         public async Task<IActionResult> ActionOpenTemplateUserAsync(Guid id)
         {
@@ -99,10 +115,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-pos-printer-dialog")]
+        public async Task<IActionResult> ActionPosPrinterDialogAsync(Guid id)
+        {
+            var result = await _appService.PosPrinterDialogAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-update-terms")]
         public async Task<IActionResult> ActionUpdateTermsAsync(Guid id)
         {
             var result = await _appService.UpdateTermsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-view-delivery-provider-modules")]
+        public async Task<IActionResult> ActionViewDeliveryProviderModulesAsync(Guid id)
+        {
+            var result = await _appService.ViewDeliveryProviderModulesAsync(id);
             return Ok(result);
         }
         
@@ -115,6 +147,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-w-payment-start-payment-onboarding")]
+        public async Task<IActionResult> ActionWPaymentStartPaymentOnboardingAsync(Guid id)
+        {
+            var result = await _appService.WPaymentStartPaymentOnboardingAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-website-create-new")]
         public async Task<IActionResult> ActionWebsiteCreateNewAsync(Guid id)
         {
@@ -123,42 +163,42 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-account-peppol-configure-services")]
-        public async Task<IActionResult> ButtonAccountPeppolConfigureServicesAsync(Guid id)
+        [Route("{id}/button-disconnect-this-database")]
+        public async Task<IActionResult> ButtonDisconnectThisDatabaseAsync(Guid id)
         {
-            var result = await _appService.ButtonAccountPeppolConfigureServicesAsync(id);
+            var result = await _appService.ButtonDisconnectThisDatabaseAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-deregister-peppol-participant")]
-        public async Task<IActionResult> ButtonDeregisterPeppolParticipantAsync(Guid id)
+        [Route("{id}/button-open-peppol-config-wizard")]
+        public async Task<IActionResult> ButtonOpenPeppolConfigWizardAsync(Guid id)
         {
-            var result = await _appService.ButtonDeregisterPeppolParticipantAsync(id);
+            var result = await _appService.ButtonOpenPeppolConfigWizardAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-migrate-peppol-registration")]
-        public async Task<IActionResult> ButtonMigratePeppolRegistrationAsync(Guid id)
+        [Route("{id}/button-peppol-disconnect-branch-from-parent")]
+        public async Task<IActionResult> ButtonPeppolDisconnectBranchFromParentAsync(Guid id)
         {
-            var result = await _appService.ButtonMigratePeppolRegistrationAsync(id);
+            var result = await _appService.ButtonPeppolDisconnectBranchFromParentAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-peppol-smp-registration")]
-        public async Task<IActionResult> ButtonPeppolSmpRegistrationAsync(Guid id)
+        [Route("{id}/button-peppol-register-sender-as-receiver")]
+        public async Task<IActionResult> ButtonPeppolRegisterSenderAsReceiverAsync(Guid id)
         {
-            var result = await _appService.ButtonPeppolSmpRegistrationAsync(id);
+            var result = await _appService.ButtonPeppolRegisterSenderAsReceiverAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-update-peppol-user-data")]
-        public async Task<IActionResult> ButtonUpdatePeppolUserDataAsync(Guid id)
+        [Route("{id}/button-reconnect-this-database")]
+        public async Task<IActionResult> ButtonReconnectThisDatabaseAsync(Guid id)
         {
-            var result = await _appService.ButtonUpdatePeppolUserDataAsync(id);
+            var result = await _appService.ButtonReconnectThisDatabaseAsync(id);
             return Ok(result);
         }
         
@@ -235,6 +275,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-pos-qr-stands")]
+        public async Task<IActionResult> GetPosQrStandsAsync(Guid id)
+        {
+            var result = await _appService.GetPosQrStandsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-uri")]
         public async Task<IActionResult> GetUriAsync(Guid id)
         {
@@ -267,14 +315,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/onchange-module")]
-        public async Task<IActionResult> OnchangeModuleAsync(Guid id, [FromBody] ResConfigSettingsOnchangeModuleRequestDto input)
-        {
-            var result = await _appService.OnchangeModuleAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/onchange-module-account-budget")]
         public async Task<IActionResult> OnchangeModuleAccountBudgetAsync(Guid id)
         {
@@ -287,14 +327,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OpenCompanyAsync(Guid id)
         {
             var result = await _appService.OpenCompanyAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/open-default-user")]
-        public async Task<IActionResult> OpenDefaultUserAsync(Guid id)
-        {
-            var result = await _appService.OpenDefaultUserAsync(id);
             return Ok(result);
         }
         
@@ -319,6 +351,30 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OpenMailTemplatesAsync(Guid id)
         {
             var result = await _appService.OpenMailTemplatesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-new-user-default-groups")]
+        public async Task<IActionResult> OpenNewUserDefaultGroupsAsync(Guid id)
+        {
+            var result = await _appService.OpenNewUserDefaultGroupsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-payment-method-form")]
+        public async Task<IActionResult> OpenPaymentMethodFormAsync(Guid id)
+        {
+            var result = await _appService.OpenPaymentMethodFormAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/pos-close-ui")]
+        public async Task<IActionResult> PosCloseUiAsync(Guid id)
+        {
+            var result = await _appService.PosCloseUiAsync(id);
             return Ok(result);
         }
         
@@ -359,158 +415,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ReloadTemplateAsync(Guid id)
         {
             var result = await _appService.ReloadTemplateAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-account")]
-        public async Task<IActionResult> RemoveAccountAsync(Guid id)
-        {
-            var result = await _appService.RemoveAccountAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-account-chart")]
-        public async Task<IActionResult> RemoveAccountChartAsync(Guid id)
-        {
-            var result = await _appService.RemoveAccountChartAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-all")]
-        public async Task<IActionResult> RemoveAllAsync(Guid id)
-        {
-            var result = await _appService.RemoveAllAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-data")]
-        public async Task<IActionResult> RemoveDataAsync(Guid id, [FromBody] ResConfigSettingsRemoveDataRequestDto input)
-        {
-            var result = await _appService.RemoveDataAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-expense")]
-        public async Task<IActionResult> RemoveExpenseAsync(Guid id)
-        {
-            var result = await _appService.RemoveExpenseAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-inventory")]
-        public async Task<IActionResult> RemoveInventoryAsync(Guid id)
-        {
-            var result = await _appService.RemoveInventoryAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-message")]
-        public async Task<IActionResult> RemoveMessageAsync(Guid id)
-        {
-            var result = await _appService.RemoveMessageAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-mrp")]
-        public async Task<IActionResult> RemoveMrpAsync(Guid id)
-        {
-            var result = await _appService.RemoveMrpAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-mrp-bom")]
-        public async Task<IActionResult> RemoveMrpBomAsync(Guid id)
-        {
-            var result = await _appService.RemoveMrpBomAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-pos")]
-        public async Task<IActionResult> RemovePosAsync(Guid id)
-        {
-            var result = await _appService.RemovePosAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-product")]
-        public async Task<IActionResult> RemoveProductAsync(Guid id)
-        {
-            var result = await _appService.RemoveProductAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-product-attribute")]
-        public async Task<IActionResult> RemoveProductAttributeAsync(Guid id)
-        {
-            var result = await _appService.RemoveProductAttributeAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-project")]
-        public async Task<IActionResult> RemoveProjectAsync(Guid id)
-        {
-            var result = await _appService.RemoveProjectAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-purchase")]
-        public async Task<IActionResult> RemovePurchaseAsync(Guid id)
-        {
-            var result = await _appService.RemovePurchaseAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-quality")]
-        public async Task<IActionResult> RemoveQualityAsync(Guid id)
-        {
-            var result = await _appService.RemoveQualityAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-quality-setting")]
-        public async Task<IActionResult> RemoveQualitySettingAsync(Guid id)
-        {
-            var result = await _appService.RemoveQualitySettingAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-sales")]
-        public async Task<IActionResult> RemoveSalesAsync(Guid id)
-        {
-            var result = await _appService.RemoveSalesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/remove-website")]
-        public async Task<IActionResult> RemoveWebsiteAsync(Guid id)
-        {
-            var result = await _appService.RemoveWebsiteAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/reset-cat-loc-name")]
-        public async Task<IActionResult> ResetCatLocNameAsync(Guid id)
-        {
-            var result = await _appService.ResetCatLocNameAsync(id);
             return Ok(result);
         }
         

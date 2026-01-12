@@ -24,6 +24,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        public async Task<TEntity> ActionAcknowledgeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_acknowledge(self):
+            // self.acknowledged = True
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -40,8 +50,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'account.move':
-            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
             // return res
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
             // def action_add_from_catalog(self):
@@ -60,15 +69,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
-            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // kanban_view_id = self.env.ref('purchase.product_view_kanban_catalog_purchase_only').id
+            // res['views'][0] = (kanban_view_id, 'kanban')
+            // res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // res['context']['partner_id'] = self.partner_id.id
             // return res
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'repair.order':
-            //     res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
+            // res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
             // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_archive(self):
+            // self.with_context(active_test=False).operation_ids.action_archive()
+            // return super().action_archive()
             */
             return default;
         }
@@ -99,7 +120,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'name': _("Bill Matching"),
             //     'res_model': 'purchase.bill.line.match',
             //     'domain': [
-            //         ('partner_id', '=', self.partner_id.id),
+            //         ('partner_id', 'in', (self.partner_id | self.partner_id.commercial_partner_id).ids),
             //         ('company_id', 'in', self.env.company.ids),
             //         ('purchase_order_id', 'in', [self.id, False]),
             //     ],
@@ -116,46 +137,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_cancel(self):
             // """ Cancels production order, unfinished stock moves and set procurement
             // orders in exception """
+            // if any(mo.state == 'done' for mo in self):
+            //     raise UserError(_("You cannot cancel a manufacturing order that is already done."))
             // self._action_cancel()
             // return True
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_cancel(self):
-            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
-            // 
-            // For post-cancel operations, please only override :meth:`_action_cancel`.
-            // 
-            // note: self.ensure_one() if the wizard is shown.
-            // """
+            // """ Cancel sales order and related draft invoices. """
             // if any(order.locked for order in self):
             //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // cancel_warning = self._show_cancel_wizard()
-            // if cancel_warning:
-            //     self.ensure_one()
-            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
-            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
-            //     )
-            //     lang = self.env.context.get('lang')
-            //     template = self.env['mail.template'].browse(template_id)
-            //     if template.lang:
-            //         lang = template._render_lang(self.ids)[self.id]
-            //     ctx = {
-            //         'default_template_id': template_id,
-            //         'default_order_id': self.id,
-            //         'mark_so_as_canceled': True,
-            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     }
-            //     return {
-            //         'name': _('Cancel %s', self.type_name),
-            //         'view_mode': 'form',
-            //         'res_model': 'sale.order.cancel',
-            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
-            //         'type': 'ir.actions.act_window',
-            //         'context': ctx,
-            //         'target': 'new'
-            //     }
-            // else:
-            //     return self._action_cancel()
+            // return self._action_cancel()
             */
             return default;
         }
@@ -183,11 +174,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if finish_moves:
             //         production._log_downside_manufactured_quantity({finish_move: (production.product_uom_qty, 0.0) for finish_move in finish_moves}, cancel=True)
             // 
-            // self.workorder_ids.filtered(lambda x: x.state not in ['done', 'cancel']).action_cancel()
+            // if self._has_workorders():
+            //     self.workorder_ids.filtered(lambda x: x.state not in ['done', 'cancel']).action_cancel()
             // finish_moves = self.move_finished_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
             // raw_moves = self.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
-            // (finish_moves | raw_moves)._action_cancel()
-            // picking_ids = self.picking_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
+            // (finish_moves | raw_moves).with_context(skip_mo_check=True)._action_cancel()
+            // picking_ids = self.picking_ids.filtered(lambda x: x.state not in ('done', 'cancel') and not x.move_ids.move_dest_ids)
             // picking_ids.action_cancel()
             // 
             // for production, documents in documents_by_production.items():
@@ -207,7 +199,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # However, if the user clicks on 'Cancel', it is expected that the MO is either done or
             // # canceled. If the MO is still in progress at this point, it means that the move raws
             // # are either all done or a mix of done / canceled => the MO should be done.
-            // self.filtered(lambda p: p.state not in ['done', 'cancel'] and p.bom_id.consumption == 'flexible').write({'state': 'done'})
+            // mos_to_mark_as_done = self.filtered(lambda p: p.state not in ['done', 'cancel'] and p.bom_id.consumption == 'flexible')
+            // if mos_to_mark_as_done:
+            //     mos_to_mark_as_done.write({'state': 'done'})
             // 
             // return True
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -215,6 +209,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // inv = self.invoice_ids.filtered(lambda inv: inv.state == 'draft')
             // inv.button_cancel()
             // return self.write({'state': 'cancel'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionClearLotProducingIdsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_clear_lot_producing_ids(self):
+            // self.lot_producing_ids = [Command.clear()]
+            // self.qty_producing = 0
+            // self._set_qty_producing(False)
             */
             return default;
         }
@@ -276,11 +282,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // moves_to_confirm = self.env['stock.move'].browse(sorted(moves_ids_to_confirm))
             // workorder_to_confirm = self.env['mrp.workorder'].browse(sorted(workorder_ids_to_confirm))
             // 
-            // move_raws_to_adjust._adjust_procure_method()
-            // moves_to_confirm._action_confirm(merge=False)
-            // workorder_to_confirm._action_confirm()
-            // # run scheduler for moves forecasted to not have enough in stock
             // ignored_mo_ids = self.env.context.get('ignore_mo_ids', [])
+            // move_raws_to_adjust._adjust_procure_method()
+            // moves_to_confirm._action_confirm(merge=False, create_proc=not self.env.context.get('no_procurement'))
+            // workorder_to_confirm._action_confirm()
+            // workorder_to_confirm._set_cost_mode()
+            // # run scheduler for moves forecasted to not have enough in stock
             // self.move_raw_ids.with_context(ignore_mo_ids=ignored_mo_ids + self.ids)._trigger_scheduler()
             // self.picking_ids.filtered(
             //     lambda p: p.state not in ['cancel', 'done']).action_confirm()
@@ -305,24 +312,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // self.order_line._validate_analytic_distribution()
             // 
-            // for order in self:
-            //     if order.partner_id in order.message_partner_ids:
-            //         continue
-            //     order.message_subscribe([order.partner_id.id])
-            // 
             // self.write(self._prepare_confirmation_values())
             // 
             // # Context key 'default_name' is sometimes propagated up to here.
             // # We don't need it and it creates issues in the creation of linked records.
-            // context = self._context.copy()
+            // context = self.env.context.copy()
             // context.pop('default_name', None)
             // context.pop('default_user_id', None)
             // 
             // self.with_context(context)._action_confirm()
-            // user = self[:1].create_uid
-            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
-            //     # Public user can confirm SO, so we check the group on any record creator.
-            //     self.action_lock()
+            // self.filtered(lambda so: so._should_be_locked()).action_lock()
             // 
             // if self.env.context.get('send_email'):
             //     self._send_order_confirmation_mail()
@@ -341,7 +340,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     This method should be extended when the confirmation should generated
             //     other documents. In this method, the SO are in 'sale' state (not yet 'done').
             // """
-            // pass
             */
             return default;
         }
@@ -356,53 +354,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionCreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ActionCreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> attachment_ids) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_create_invoice(self):
+            // def action_create_invoice(self, attachment_ids=False):
             // """Create the invoice associated to the PO.
             // """
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // 
             // # 1) Prepare invoice vals and clean-up the section lines
             // invoice_vals_list = []
             // sequence = 10
             // for order in self:
-            //     if order.invoice_status != 'to invoice':
-            //         continue
-            // 
             //     order = order.with_company(order.company_id)
             //     pending_section = None
             //     # Invoice values.
             //     invoice_vals = order._prepare_invoice()
             //     # Invoice line values (keep only necessary sections).
             //     for line in order.order_line:
-            //         if line.display_type == 'line_section':
+            //         if line.display_type in ('line_section', 'line_subsection'):
             //             pending_section = line
             //             continue
-            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
-            //             if pending_section:
-            //                 line_vals = pending_section._prepare_account_move_line()
-            //                 line_vals.update({'sequence': sequence})
-            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //                 sequence += 1
-            //                 pending_section = None
-            //             line_vals = line._prepare_account_move_line()
+            //         if pending_section:
+            //             line_vals = pending_section._prepare_account_move_line()
             //             line_vals.update({'sequence': sequence})
             //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
             //             sequence += 1
+            //             pending_section = None
+            //         line_vals = line._prepare_account_move_line()
+            //         line_vals.update({'sequence': sequence})
+            //         invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //         sequence += 1
             //     invoice_vals_list.append(invoice_vals)
-            // 
-            // if not invoice_vals_list:
-            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
             // 
             // # 2) group by (company_id, partner_id, currency_id) for batch creation
             // new_invoice_vals_list = []
-            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
+            // for _grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
             //     origins = set()
-            //     payment_refs = set()
-            //     refs = set()
             //     ref_invoice_vals = None
             //     for invoice_vals in invoices:
             //         if not ref_invoice_vals:
@@ -410,28 +399,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         else:
             //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
             //         origins.add(invoice_vals['invoice_origin'])
-            //         payment_refs.add(invoice_vals['payment_reference'])
-            //         refs.add(invoice_vals['ref'])
             //     ref_invoice_vals.update({
-            //         'ref': ', '.join(refs)[:2000],
             //         'invoice_origin': ', '.join(origins),
-            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
             //     })
             //     new_invoice_vals_list.append(ref_invoice_vals)
             // invoice_vals_list = new_invoice_vals_list
             // 
             // # 3) Create invoices.
-            // moves = self.env['account.move']
+            // invoices = self.env['account.move']
             // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
             // for vals in invoice_vals_list:
-            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
+            //     invoices |= AccountMove.with_company(vals['company_id']).create(vals)
             // 
             // # 4) Some moves might actually be refunds: convert them if the total amount is negative
             // # We do this after the moves have been created since we need taxes, etc. to know if the total
             // # is actually negative or not
-            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
+            // invoices.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
             // 
-            // return self.action_view_invoice(moves)
+            // # 5) Link the attachments to the invoice
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     return self.action_view_invoice(invoices)
+            // 
+            // if len(invoices) != 1:
+            //     raise ValidationError(_("You can only upload a bill for a single vendor at a time."))
+            // invoices.with_context(skip_is_manually_modified=True)._extend_with_attachments(
+            //     invoices._to_files_data(attachments),
+            //     new=True,
+            // )
+            // 
+            // invoices.message_post(attachment_ids=attachments.ids)
+            // 
+            // attachments.write({'res_model': 'account.move', 'res_id': invoices.id})
+            // return self.action_view_invoice(invoices)
             */
             return default;
         }
@@ -466,6 +466,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         "partner_id": self.partner_id.id,
             //         "warehouse_id": self.picking_type_id.warehouse_id.id,
             //         "repair_order_ids": [Command.link(repair.id)],
+            //         "origin": repair.name,
             //     })
             // self.env['sale.order'].create(sale_order_values_list)
             // # Add Sale Order Lines for 'add' move_ids
@@ -601,26 +602,56 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_generate_serial(self, workorder=False):
+            // self.ensure_one()
+            // if self.product_tracking == 'lot':
+            //     if self.lot_producing_ids:
+            //         raise UserError(_("You cannot set more than 1 lot per product"))
+            //     self.lot_producing_ids = [Command.create(self._prepare_stock_lot_values())]
+            //     if self.picking_type_id.auto_print_generated_mrp_lot:
+            //         return self._autoprint_generated_lot(self.lot_producing_ids[-1])
+            // elif self.product_tracking == 'serial':
+            //     if self.product_qty == 1 and not self.lot_producing_ids:
+            //         self.lot_producing_ids = [Command.create(self._prepare_stock_lot_values())]
+            //         self.qty_producing = 1
+            //         (workorder or self).set_qty_producing()
+            //         if self.picking_type_id.auto_print_generated_mrp_lot:
+            //             return self._autoprint_generated_lot(self.lot_producing_ids[-1])
+            //         return
+            //     action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_assign_serial_numbers")
+            //     action['context'] = {
+            //         'default_production_id': self.id,
+            //     }
+            //     if workorder:
+            //         action['context']['default_workorder_id'] = workorder.id
+            //     return action
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def action_generate_serial(self):
             // self.ensure_one()
-            // self._set_lot_producing()
-            // if self.product_id.tracking == 'serial':
-            //     self._set_qty_producing(False)
-            // if self.picking_type_id.auto_print_generated_mrp_lot:
-            //     return self._autoprint_generated_lot(self.lot_producing_id)
+            // name = self.product_id.lot_sequence_id.next_by_id()
+            // exist_lot = not name or self.env['stock.lot'].search([
+            //     ('product_id', '=', self.product_id.id),
+            //     '|', ('company_id', '=', False), ('company_id', '=', self.company_id.id),
+            //     ('name', '=', name),
+            // ], limit=1)
+            // if exist_lot:
+            //     name = self.env['stock.lot']._get_next_serial(self.company_id, self.product_id)
+            // if not name:
+            //     raise UserError(_("Please set the first Serial Number or a default sequence"))
+            // self.lot_id = self.env['stock.lot'].create({'product_id': self.product_id.id, 'name': name})
             */
             return default;
         }
 
-        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_download_pdf(self):
+            // def action_invoice_download_pdf(self, target = "download"):
             // return {
             //     'type': 'ir.actions.act_url',
             //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
-            //     'target': 'download',
+            //     'target': target,
             // }
             */
             return default;
@@ -647,13 +678,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     message loaded by default
             // """
             // self.ensure_one()
-            // 
             // report_action = self.action_send_and_print()
-            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-            // 
-            // return report_action
+            // report_action['context'].update({'allow_partners_without_mail': True})
+            // return self._get_action_with_base_document_layout_configurator(report_action)
             */
             return default;
         }
@@ -664,26 +691,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_lock(self):
             // self.locked = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ActionMassProduceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_mass_produce(self):
-            // self.ensure_one()
-            // self._check_company()
-            // if self.state not in ['draft', 'confirmed', 'progress', 'to_close'] or\
-            //         self._auto_production_checks():
-            //     return
-            // 
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_mrp_batch_produce")
-            // action['context'] = {
-            //     'default_production_id': self.id,
-            // }
-            // return action
             */
             return default;
         }
@@ -714,8 +721,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'product_qty': sum(production.product_uom_qty for production in self),
             //     'product_uom_id': product_id.uom_id.id,
             //     'user_id': user_id.id,
+            //     'reference_ids': [Command.link(r.id) for r in self.reference_ids],
             //     'origin': ",".join(sorted([production.name for production in self])),
             // })
+            // 
+            // # update linked picking
+            // self.env['stock.move'].search([
+            //     ('production_group_id', 'in', self.production_group_id.ids),
+            // ]).production_group_id = production.production_group_id
+            // 
+            // # update linked mos
+            // production.production_group_id.parent_ids = [Command.set(self.production_group_id.parent_ids.ids)]
+            // production.production_group_id.child_ids = [Command.set(self.production_group_id.child_ids.ids)]
             // 
             // for move in production.move_raw_ids:
             //     for field, vals in origs[move.bom_line_id.id].items():
@@ -726,14 +743,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // self.move_dest_ids.created_production_id = production.id
             // 
-            // self.procurement_group_id.stock_move_ids.group_id = production.procurement_group_id
-            // 
             // if 'confirmed' in self.mapped('state'):
             //     production.move_raw_ids._adjust_procure_method()
             //     (production.move_raw_ids | production.move_finished_ids).write({'state': 'confirmed'})
             //     production.action_confirm()
             // 
             // self.with_context(skip_activity=True)._action_cancel()
+            // self.sudo().production_group_id.unlink()
             // # set the new deadline of origin moves (stock to pre prod)
             // production.move_raw_ids.move_orig_ids.with_context(date_deadline_propagate_ids=set(production.move_raw_ids.ids)).write({'date_deadline': production.date_start})
             // for p in self:
@@ -765,6 +781,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
             // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
             // 
+            // merged_rfq_ids = []
+            // 
             // for rfqs in bunches_of_rfq_to_be_merge:
             //     if len(rfqs) <= 1:
             //         continue
@@ -773,11 +791,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         # Merge RFQs into the oldest purchase order
             //         rfqs -= oldest_rfq
             //         for rfq_line in rfqs.order_line:
-            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
+            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_section', 'line_subsection', 'line_note'] and
             //                                                                         l.product_id == rfq_line.product_id and
-            //                                                                         l.product_uom == rfq_line.product_uom and
-            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
-            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
+            //                                                                         l.product_uom_id == rfq_line.product_uom_id and
             //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
             //                                                                         l.discount == rfq_line.discount and
             //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
@@ -811,14 +827,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
             //         oldest_rfq._merge_alternative_po(rfqs)
             // 
+            //         # Keep the oldest RFQ IDs
+            //         merged_rfq_ids.append(oldest_rfq.id)
+            // 
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'list,kanban,form',
+            //     'res_model': 'purchase.order',
+            // }
+            // if len(merged_rfq_ids) == 1:
+            //     action['res_id'] = merged_rfq_ids[0]
+            //     action['view_mode'] = 'form'
+            // else:
+            //     action['name'] = _("Merged RFQs")
+            //     action['domain'] = [('id', 'in', merged_rfq_ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMoveDownloadAllAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_move_download_all(self):
             // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'success',
-            //         'message': _('purchase orders merged'),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //     }
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/account/download_move_attachments/{",".join(str(move_id) for move_id in self.ids)}',
+            //     'target': 'download',
             // }
             */
             return default;
@@ -851,6 +887,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'res_model': res_model,
             //     'res_id': res_id,
             //     'target': 'current',
+            // }
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Order"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'purchase.order',
+            //     'res_id': self.id,
+            //     'views': [(False, 'form')],
             // }
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_open_business_doc(self):
@@ -925,6 +971,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionOpenOperationFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_open_operation_form(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mrp.routing.workcenter',
+            //     'context': {
+            //         'default_bom_id': self.id,
+            //         'search_default_bom_id': self.id,
+            //         'bom_id_invisible': True,
+            //     },
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionPlanWithComponentsAvailabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -993,7 +1059,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_print_pdf(self):
             // self.ensure_one()
-            // return self.env.ref('account.account_invoices').report_action(self.id)
+            // invoice_template = self.env['account.move.send']._get_default_pdf_report_id(self)
+            // report_action = invoice_template.report_action(self.id, config=False)
+            // return self._get_action_with_base_document_layout_configurator(report_action)
             */
             return default;
         }
@@ -1018,6 +1086,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionPurchaseComparisonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_purchase_comparison(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
+            // action['domain'] = [('product_id', 'in', self.order_line.product_id.ids)]
+            // action['display_name'] = _("Purchase Comparison for %s", self.display_name)
+            // return action
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionQuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -1025,7 +1107,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_quotation_send(self):
             // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
             // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
-            // lang = self.env.context.get('lang')
             // 
             // ctx = {
             //     'default_model': 'sale.order',
@@ -1033,6 +1114,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'default_composition_mode': 'comment',
             //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
             //     'email_notification_allow_footer': True,
+            //     'hide_mail_template_management_options': True,
             //     'proforma': self.env.context.get('proforma', False),
             // }
             // 
@@ -1041,7 +1123,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     ctx.update({
             //         'force_email': True,
-            //         'model_description': self.with_context(lang=lang).type_name,
             //     })
             //     if not self.env.context.get('hide_default_template'):
             //         mail_template = self._find_mail_template()
@@ -1050,13 +1131,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 'default_template_id': mail_template.id,
             //                 'mark_so_as_sent': True,
             //             })
-            //         if mail_template and mail_template.lang:
-            //             lang = mail_template._render_lang(self.ids)[self.id]
             //     else:
             //         for order in self:
             //             order._portal_ensure_token()
             // 
             // action = {
+            //     'name': _('Send'),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'res_model': 'mail.compose.message',
@@ -1094,9 +1174,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // if any(order.state != 'draft' for order in self):
             //     raise UserError(_("Only draft orders can be marked as sent directly."))
-            // 
-            // for order in self:
-            //     order.message_subscribe(partner_ids=order.partner_id.ids)
             // 
             // self.write({'state': 'sent'})
             */
@@ -1138,7 +1215,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_repair_cancel_draft(self):
             // if self.filtered(lambda repair: repair.state != 'cancel'):
             //     self.action_repair_cancel()
-            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and float_is_zero(l.product_uom_qty, precision_rounding=l.product_uom.rounding))
+            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and l.product_uom_id.is_zero(l.product_uom_qty))
             // sale_line_to_update.move_ids._update_repair_sale_order_line()
             // self.move_ids.state = 'draft'
             // self.state = 'draft'
@@ -1179,11 +1256,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // @return: True
             // """
             // 
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // product_move_vals = []
             // 
             // # Cancel moves with 0 quantity
-            // self.move_ids.filtered(lambda m: float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding))._action_cancel()
+            // self.move_ids.filtered(lambda m: m.product_uom.is_zero(m.quantity))._action_cancel()
             // 
             // no_service_policy = 'service_policy' not in self.env['product.template']
             // #SOL qty delivered = repair.move_ids.quantity
@@ -1211,7 +1288,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         owner_id = repair.partner_id.id
             // 
             //     product_move_vals.append({
-            //         'name': repair.name,
             //         'product_id': repair.product_id.id,
             //         'product_uom': repair.product_uom.id or repair.product_id.uom_id.id,
             //         'product_uom_qty': repair.product_qty,
@@ -1270,7 +1346,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // partial_moves = set()
             // picked_moves = set()
             // for move in self.move_ids:
-            //     if float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0:
+            //     if move.product_uom.compare(move.quantity, move.product_uom_qty) < 0:
             //         partial_moves.add(move.id)
             //     if move.picked:
             //         picked_moves.add(move.id)
@@ -1338,6 +1414,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
             //     'email_notification_allow_footer': True,
             //     'force_email': True,
+            //     'hide_mail_template_management_options': True,
             //     'mark_rfq_as_sent': True,
             // })
             // 
@@ -1378,7 +1455,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_stock_scrap")
             // action['domain'] = [('production_id', '=', self.id)]
-            // action['context'] = dict(self._context, default_origin=self.name)
+            // action['context'] = dict(self.env.context, default_origin=self.name)
             // return action
             */
             return default;
@@ -1389,9 +1466,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_send_and_print(self):
-            // self.env['account.move.send']._check_move_constrains(self)
+            // self.env['account.move.send']._check_move_constraints(self)
             // return {
-            //     'name': _("Print & Send"),
+            //     'name': _("Send"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
@@ -1401,6 +1478,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'active_ids': self.ids,
             //     },
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetBomOnOrderpointAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_set_bom_on_orderpoint(self):
+            // self.ensure_one()
+            // orderpoint_id = self.env.context.get('orderpoint_id')
+            // if not orderpoint_id:
+            //     return
+            // orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
+            // if 'manufacture' not in orderpoint.route_id.rule_ids.mapped('action'):
+            //     domain = Domain.AND([
+            //         [('action', '=', 'manufacture')],
+            //         Domain.OR([
+            //             [('company_id', '=', orderpoint.company_id.id)],
+            //             [('company_id', '=', False)],
+            //         ]),
+            //     ])
+            //     orderpoint.route_id = self.env['stock.rule'].search(domain, limit=1).route_id.id
+            // orderpoint.bom_id = self
+            // bom_qty = self.product_uom_id._compute_quantity(self.product_qty, orderpoint.product_id.uom_id)
+            // if orderpoint.qty_to_order < bom_qty:
+            //     orderpoint.qty_to_order = bom_qty
+            // return orderpoint.action_stock_replenishment_info()
             */
             return default;
         }
@@ -1446,7 +1551,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_switch_move_type(self):
             // if any(move.posted_before for move in self):
-            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
+            //     raise ValidationError(_("Once a document has been posted once, its type is set in stone and you can't change it anymore."))
             // if any(move.move_type == "entry" for move in self):
             //     raise ValidationError(_("This action isn't available for this document."))
             // 
@@ -1460,13 +1565,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'fiscal_position_id': move.fiscal_position_id.id,
             //     })
             //     if move.amount_total < 0:
-            //         move.write({
-            //             'line_ids': [
-            //                 Command.update(line.id, {'quantity': -line.quantity})
-            //                 for line in move.line_ids
-            //                 if line.display_type == 'product'
-            //             ]
-            //         })
+            //         line_ids_commands = []
+            //         for line in move.line_ids:
+            //             if line.display_type != 'product':
+            //                 continue
+            //             line_ids_commands.append(Command.update(line.id, {
+            //                 'quantity': -line.quantity,
+            //                 'extra_tax_data': self.env['account.tax']._reverse_quantity_base_line_extra_tax_data(line.extra_tax_data),
+            //             }))
+            //         move.write({'line_ids': line_ids_commands})
             */
             return default;
         }
@@ -1496,6 +1603,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // self.is_locked = not self.is_locked
             // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnarchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_unarchive(self):
+            // self.with_context(active_test=False).operation_ids.action_unarchive()
+            // return super().action_unarchive()
             */
             return default;
         }
@@ -1538,7 +1656,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_update_fpos_values(self):
-            // self.invoice_line_ids._compute_price_unit()
+            // lines_to_recompute = self.env['account.move.line']
+            // for line in self.invoice_line_ids:
+            //     if line.display_type in ('line_section', 'line_note'):
+            //         continue
+            //     if not line.price_unit:
+            //         lines_to_recompute |= line
+            //         continue
+            //     new_taxes = line._get_computed_taxes()
+            //     if line.tax_ids.filtered('price_include') != new_taxes.filtered('price_include'):
+            //         line.price_unit = line.product_id._get_tax_included_unit_price_from_price(
+            //             line.price_unit,
+            //             line.tax_ids,
+            //             fiscal_position=line.move_id.fiscal_position_id,
+            //             product_taxes_after_fp=new_taxes,
+            //         )
+            // lines_to_recompute._compute_price_unit()
             // self.invoice_line_ids._compute_tax_ids()
             // self.line_ids._compute_account_id()
             */
@@ -1591,7 +1724,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise UserError(_("You can not enter negative quantities."))
             // if not self.product_id or not self.product_id.is_storable:
             //     return self._action_repair_confirm()
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // available_qty_owner = sum(self.env['stock.quant'].search([
             //     ('product_id', '=', self.product_id.id),
             //     ('location_id', '=', self.product_location_src_id.id),
@@ -1628,6 +1761,42 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionValidateMovesWithConfirmationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_validate_moves_with_confirmation(self):
+            // """
+            // If 'restrict_mode_hash_table' is enabled or future-dated moves, open a confirmation wizard;
+            // otherwise, validate moves directly.
+            // """
+            // draft_moves = self.filtered(lambda m: m.state == 'draft' and m.line_ids)
+            // if not draft_moves:
+            //     raise UserError(_('There are no journal items in the draft state to post.'))
+            // 
+            // need_confirmation_moves = draft_moves._get_moves_requiring_confirmation()
+            // 
+            // direct_validate_moves = draft_moves - need_confirmation_moves
+            // if direct_validate_moves:
+            //     direct_validate_moves._post(soft=False)
+            // if need_confirmation_moves:
+            //     wizard = self.env['validate.account.move'].create({
+            //         'move_ids': [Command.set(need_confirmation_moves.ids)],
+            //     })
+            //     return {
+            //         'name': _("Confirm Entries"),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'validate.account.move',
+            //         'res_id': wizard.id,
+            //         'view_mode': 'form',
+            //         'view_id': self.env.ref('account.validate_account_move_view').id,
+            //         'target': 'new',
+            //     }
+            // return False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -1656,6 +1825,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     result = {'type': 'ir.actions.act_window_close'}
             // 
+            // result['context'] = literal_eval(result['context'])
+            // if len(self.partner_id) == 1:
+            //     result['context']['default_partner_id'] = self.partner_id.id
             // return result
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_view_invoice(self, invoices=False):
@@ -1682,7 +1854,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'default_partner_id': self.partner_id.id,
             //         'default_partner_shipping_id': self.partner_shipping_id.id,
             //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
-            //         'default_invoice_origin': self.name,
             //     })
             // action['context'] = context
             // return action
@@ -1707,7 +1878,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     picking_form = self.env.ref('stock.view_picking_form', False)
             //     picking_form_view = [(picking_form and picking_form.id or False, 'form')]
             //     action['views'] = picking_form_view + [(state, view) for state, view in action.get('views', []) if view != 'form']
-            // action['context'] = dict(self._context, default_origin=self.name)
+            // action['context'] = dict(self.env.context, default_origin=self.name)
             // return action
             */
             return default;
@@ -1718,7 +1889,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def action_view_mrp_production_backorders(self):
-            // backorder_ids = self.procurement_group_id.mrp_production_ids.ids
+            // backorder_ids = self.production_group_id.production_ids.ids
             // return {
             //     'res_model': 'mrp.production',
             //     'type': 'ir.actions.act_window',
@@ -1829,6 +2000,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionViewSerialNumbersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_serial_numbers(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_production_lot_form")
+            // action['domain'] = [('id', 'in', self.lot_producing_ids.ids)]
+            // action['name'] = _("Serial Numbers")
+            // action['context'] = {
+            //     'create': False,
+            //     'delete': False,
+            // }
+            // return action
+            */
+            return default;
+        }
+
         public async Task<TEntity> AddBaseLinesForEarlyPaymentDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -1849,7 +2037,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ):
             //     percentage = self.payment_term_id.discount_percentage
             //     currency = self.currency_id or self.company_id.currency_id
-            //     for line in self.order_line.filtered(lambda x: not x.display_type):
+            //     for line in self._get_priced_lines():
             //         line_amount_after_discount = (line.price_subtotal / 100) * percentage
             //         epd_lines.append(self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //             record=self,
@@ -1858,7 +2046,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             currency_id=currency,
             //             sign=1,
             //             special_type='early_payment',
-            //             tax_ids=line.tax_id,
+            //             tax_ids=line.tax_ids.flatten_taxes_hierarchy().filtered(lambda tax: tax.amount_type != 'fixed'),
             //         ))
             //         epd_lines.append(self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //             record=self,
@@ -1869,6 +2057,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             special_type='early_payment',
             //         ))
             // return epd_lines
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reference) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _add_reference(self, reference):
+            // """ link the given references to the list of references. """
+            // self.ensure_one()
+            // self.reference_ids = [Command.link(stock_reference.id) for stock_reference in reference]
             */
             return default;
         }
@@ -1888,21 +2088,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if line.product_id and not already_seller and len(line.product_id.seller_ids) <= 10:
             //         price = line.price_unit
             //         # Compute the price for the template's UoM, because the supplier's UoM is related to that UoM.
-            //         if line.product_id.product_tmpl_id.uom_po_id != line.product_uom:
-            //             default_uom = line.product_id.product_tmpl_id.uom_po_id
-            //             price = line.product_uom._compute_price(price, default_uom)
+            //         if line.product_id.product_tmpl_id.uom_id != line.product_uom_id:
+            //             default_uom = line.product_id.product_tmpl_id.uom_id
+            //             price = line.product_uom_id._compute_price(price, default_uom)
             // 
             //         supplierinfo = self._prepare_supplier_info(partner, line, price, line.currency_id)
             //         # In case the order partner is a contact address, a new supplierinfo is created on
             //         # the parent company. In this case, we keep the product name and code.
-            //         seller = line.product_id._select_seller(
-            //             partner_id=line.partner_id,
-            //             quantity=line.product_qty,
-            //             date=line.order_id.date_order and line.order_id.date_order.date(),
-            //             uom_id=line.product_uom)
-            //         if seller:
-            //             supplierinfo['product_name'] = seller.product_name
-            //             supplierinfo['product_code'] = seller.product_code
+            //         if line.selected_seller_id:
+            //             supplierinfo['product_name'] = line.selected_seller_id.product_name
+            //             supplierinfo['product_code'] = line.selected_seller_id.product_code
+            //             supplierinfo['product_uom_id'] = line.product_uom.id
             //         vals = {
             //             'seller_ids': [(0, 0, supplierinfo)],
             //         }
@@ -1977,30 +2173,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> AreFinishedSerialsAlreadyProducedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lots, object excluded_sml) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _are_finished_serials_already_produced(self, lots, excluded_sml=None):
+            // if not lots:
+            //     return False
+            // excluded_sml = excluded_sml or self.env['stock.move.line']
+            // domain = [
+            //     ('lot_id', 'in', lots.ids),
+            //     ('quantity', '=', 1),
+            //     ('state', '=', 'done')
+            // ]
+            // co_prod_move_lines = self.move_finished_ids.move_line_ids - excluded_sml
+            // domain_unbuild = domain + [
+            //     ('production_id', '=', False),
+            //     ('location_dest_id.usage', '=', 'production')
+            // ]
+            // # Check presence of same sn in previous productions
+            // duplicates = self.env['stock.move.line'].search_count(domain + [
+            //     ('location_id.usage', '=', 'production'),
+            //     ('move_id.unbuild_id', '=', False)
+            // ])
+            // if duplicates:
+            //     # Maybe some move lines have been compensated by unbuild
+            //     duplicates_unbuild = self.env['stock.move.line'].search_count(domain_unbuild + [
+            //         ('move_id.unbuild_id', '!=', False)
+            //     ])
+            //     removed = self.env['stock.move.line'].search_count([
+            //         ('lot_id', 'in', lots.ids),
+            //         ('state', '=', 'done'),
+            //         ('location_id.usage', '!=', 'inventory'),
+            //         ('location_dest_id.usage', '=', 'inventory'),
+            //     ])
+            //     unremoved = self.env['stock.move.line'].search_count([
+            //         ('lot_id', 'in', lots.ids),
+            //         ('state', '=', 'done'),
+            //         ('location_id.usage', '=', 'inventory'),
+            //         ('location_dest_id.usage', '!=', 'inventory'),
+            //     ])
+            //     # Either removed or unbuild
+            //     if not ((duplicates_unbuild or removed) and duplicates - duplicates_unbuild - removed + unremoved == 0):
+            //         return True
+            // # Check presence of same sn in current production
+            // duplicates = co_prod_move_lines.filtered(lambda ml: ml.quantity and ml.lot_id.id in lots.ids)
+            // return bool(duplicates)
+            */
+            return default;
+        }
+
         public async Task<TEntity> AutoInitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _auto_init(self):
             // super()._auto_init()
-            // if not index_exists(self.env.cr, 'account_move_checked_idx'):
-            //     self.env.cr.execute("""
-            //         CREATE INDEX account_move_checked_idx
-            //                   ON account_move(journal_id)
-            //                WHERE checked = false
-            //     """)
-            // if not index_exists(self.env.cr, 'account_move_payment_idx'):
-            //     self.env.cr.execute("""
-            //         CREATE INDEX account_move_payment_idx
-            //                   ON account_move(journal_id, state, payment_state, move_type, date)
-            //     """)
-            // if not index_exists(self.env.cr, 'account_move_unique_name'):
-            //     self.env.cr.execute("""
-            //         CREATE UNIQUE INDEX account_move_unique_name
-            //                          ON account_move(name, journal_id)
-            //                       WHERE (state = 'posted' AND name != '/')
-            //     """)
-            // 
             // if not column_exists(self.env.cr, "account_move", "preferred_payment_method_line_id"):
             //     create_column(self.env.cr, "account_move", "preferred_payment_method_line_id", "int4")
             */
@@ -2076,38 +2304,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> AutopostDraftEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> AutopostDraftEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object batch_size) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _autopost_draft_entries(self):
+            // def _autopost_draft_entries(self, batch_size=100):
             // ''' This method is called from a cron job.
             // It is used to post entries such as those created by the module
             // account_asset and recurring entries created in _post().
             // '''
-            // moves = self.search([
+            // domain = [
             //     ('state', '=', 'draft'),
             //     ('date', '<=', fields.Date.context_today(self)),
             //     ('auto_post', '!=', 'no'),
-            //     '|', ('checked', '=', True), ('journal_id.autocheck_on_post', '=', True)
-            // ], limit=100)
+            // ]
+            // moves = self.search(domain, limit=batch_size)
+            // remaining = len(moves) if len(moves) < batch_size else self.search_count(domain)
+            // self.env['ir.cron']._commit_progress(remaining=remaining)
             // 
             // try:  # try posting in batch
-            //     with self.env.cr.savepoint():
-            //         moves._post()
+            //     moves._post()
+            //     self.env['ir.cron']._commit_progress(len(moves))
+            //     return
             // except UserError:  # if at least one move cannot be posted, handle moves one by one
-            //     for move in moves:
-            //         try:
-            //             with self.env.cr.savepoint():
-            //                 move._post()
-            //         except UserError as e:
-            //             move.checked = False
-            //             move.auto_post = 'no'
-            //             msg = _('The move could not be posted for the following reason: %(error_message)s', error_message=e)
-            //             move.message_post(body=msg, message_type='comment')
+            //     self.env.cr.rollback()
             // 
-            // if len(moves) == 100:  # assumes there are more whenever search hits limit
-            //     self.env.ref('account.ir_cron_auto_post_draft_entry')._trigger()
+            // for move in moves:
+            //     try:
+            //         move = move.try_lock_for_update().filtered_domain(domain)
+            //         if not move:
+            //             continue
+            //         move._post()
+            //         self.env['ir.cron']._commit_progress(1)
+            //     except UserError as e:
+            //         self.env.cr.rollback()
+            //         msg = _('The move could not be posted for the following reason: %(error_message)s', error_message=e)
+            //         move.message_post(body=msg, message_type='comment')
+            //         self.env['ir.cron']._commit_progress()
             */
             return default;
         }
@@ -2130,18 +2363,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> AutoprintMassGeneratedLotsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _autoprint_mass_generated_lots(self):
+            // actions = []
+            // productions_to_print = self.filtered(lambda p: p.picking_type_id.auto_print_generated_mrp_lot)
+            // productions_by_print_formats = productions_to_print.grouped(lambda p: p.picking_type_id.generated_mrp_lot_label_to_print)
+            // for print_format in productions_to_print.picking_type_id.mapped('generated_mrp_lot_label_to_print'):
+            //     grouped_productions = productions_by_print_formats.get(print_format)
+            //     lots_to_print = grouped_productions.mapped('lot_producing_ids')
+            //     if print_format == 'pdf':
+            //         action = self.env.ref("stock.action_report_lot_label").report_action(lots_to_print.ids, config=False)
+            //     elif print_format == 'zpl':
+            //         action = self.env.ref("stock.label_lot_template").report_action(lots_to_print.ids, config=False)
+            //     clean_action(action, self.env)
+            //     actions.append(action)
+            // return actions
+            */
+            return default;
+        }
+
         public async Task<TEntity> BomFindDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object products, object picking_type, Guid company_id, object bom_type) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _bom_find_domain(self, products, picking_type=None, company_id=False, bom_type=False):
-            // domain = ['&', '|', ('product_id', 'in', products.ids), '&', ('product_id', '=', False), ('product_tmpl_id', 'in', products.product_tmpl_id.ids), ('active', '=', True)]
+            // domain = (
+            //     Domain('product_id', 'in', products.ids) | (
+            //         Domain('product_id', '=', False) & Domain('product_tmpl_id', 'in', products.product_tmpl_id.ids)
+            //     )
+            // ) & Domain('active', '=', True)
             // if company_id or self.env.context.get('company_id'):
-            //     domain = AND([domain, ['|', ('company_id', '=', False), ('company_id', '=', company_id or self.env.context.get('company_id'))]])
+            //     domain &= Domain('company_id', 'in', [False, company_id or self.env.context.get('company_id')])
             // if picking_type:
-            //     domain = AND([domain, ['|', ('picking_type_id', '=', picking_type.id), ('picking_type_id', '=', False)]])
+            //     domain &= Domain('picking_type_id', 'in', [picking_type.id, False])
             // if bom_type:
-            //     domain = AND([domain, [('type', '=', bom_type)]])
+            //     domain &= Domain('type', '=', bom_type)
             // return domain
             */
             return default;
@@ -2193,16 +2452,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Build the warning message that will be displayed in a yellow banner on top of the current record
             //     if the partner exceeds a credit limit (set on the company or the partner itself).
             //     :param record:                  The record where the warning will appear (Invoice, Sales Order...).
-            //     :param current_amount (float):  The partner's outstanding credit amount from the current document.
-            //     :param exclude_current (bool):  DEPRECATED in favor of parameter `exclude_amount`:
+            //     :param float current_amount:    The partner's outstanding credit amount from the current document.
+            //     :param bool exclude_current:    DEPRECATED in favor of parameter `exclude_amount`:
             //                                     Whether to exclude `current_amount` from the credit to invoice.
-            //     :param exclude_amount (float):  The amount to subtract from the partner's `credit_to_invoice`.
+            //     :param float exclude_amount:    The amount to subtract from the partner's `credit_to_invoice`.
             //                                     Consider the warning on a draft invoice created from a sales order.
             //                                     After confirming the invoice the (partial) amount (on the invoice)
             //                                     stemming from sales orders will be substracted from the `credit_to_invoice`.
             //                                     This will reduce the total credit of the partner.
             //                                     This parameter is used to reflect this amount.
-            //     :return (str):                  The warning message to be showed.
+            //     :return:                        The warning message to be showed.
+            //     :rtype: str
             // """
             // partner_id = record.partner_id.commercial_partner_id
             // credit_to_invoice = partner_id.credit_to_invoice - exclude_amount
@@ -2246,7 +2506,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def button_approve(self, force=False):
             // self = self.filtered(lambda order: order._approval_allowed())
             // self.write({'state': 'purchase', 'date_approve': fields.Datetime.now()})
-            // self.filtered(lambda p: p.company_id.po_lock == 'lock').write({'state': 'done'})
+            // self.filtered(lambda p: p.lock_confirmed_po == 'lock').write({'locked': True})
             // return {}
             */
             return default;
@@ -2266,14 +2526,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if any(move.state != 'draft' for move in self):
             //     raise UserError(_("Only draft journal entries can be cancelled."))
             // 
+            // self.line_ids.remove_move_reconcile()
             // self.payment_ids.state = "canceled"
             // self.write({'auto_post': 'no', 'state': 'cancel'})
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_cancel(self):
+            // locked_purchase_orders = self.filtered(lambda po: po.locked)
+            // if locked_purchase_orders:
+            //     raise UserError(self.env._("Unable to cancel purchase order(s): %s. You must first unlock them.", locked_purchase_orders.mapped('display_name')))
+            // 
             // purchase_orders_with_invoices = self.filtered(lambda po: any(i.state not in ('cancel', 'draft') for i in po.invoice_ids))
             // if purchase_orders_with_invoices:
-            //     raise UserError(_("Unable to cancel purchase order(s): %s. You must first cancel their related vendor bills.", format_list(self.env, purchase_orders_with_invoices.mapped('display_name'))))
-            // self.write({'state': 'cancel', 'mail_reminder_confirmed': False})
+            //     raise UserError(_("Unable to cancel purchase order(s): %s. You must first cancel their related vendor bills.", purchase_orders_with_invoices.mapped('display_name')))
+            // self.write({'state': 'cancel'})
             */
             return default;
         }
@@ -2286,6 +2551,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for order in self:
             //     if order.state not in ['draft', 'sent']:
             //         continue
+            //     error_msg = order._confirmation_error_message()
+            //     if error_msg:
+            //         raise UserError(error_msg)
             //     order.order_line._validate_analytic_distribution()
             //     order._add_supplier_to_product()
             //     # Deal with double validation process
@@ -2293,19 +2561,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         order.button_approve()
             //     else:
             //         order.write({'state': 'to approve'})
-            //     if order.partner_id not in order.message_partner_ids:
-            //         order.message_subscribe([order.partner_id.id])
             // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ButtonDoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def button_done(self):
-            // self.write({'state': 'done', 'priority': '0'})
             */
             return default;
         }
@@ -2323,8 +2579,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._check_draftable()
             // # We remove all the analytics entries for this journal
             // self.line_ids.analytic_line_ids.with_context(skip_analytic_sync=True).unlink()
-            // self.mapped('line_ids').remove_move_reconcile()
             // self.state = 'draft'
+            // self.sending_data = False
             // 
             // self._detach_attachments()
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2341,6 +2597,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def button_hash(self):
             // self._hash_moves(force_hash=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ButtonLockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def button_lock(self):
+            // self.locked = True
             */
             return default;
         }
@@ -2437,11 +2703,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if another_action:
             //         return another_action
             //     return True
-            // context = self.env.context.copy()
-            // context = {k: v for k, v in context.items() if not k.startswith('default_')}
-            // for k, v in context.items():
-            //     if k.startswith('skip_'):
-            //         context[k] = False
+            // context = {
+            //     k: False if k.startswith('skip_') else v
+            //     for k, v in self.env.context.items()
+            //     if not k.startswith('default_')
+            // }
             // another_action = {
             //     'res_model': 'mrp.production',
             //     'type': 'ir.actions.act_window',
@@ -2542,8 +2808,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def button_set_checked(self):
-            // for move in self:
-            //     move.checked = True
+            // self.set_moves_checked()
             */
             return default;
         }
@@ -2561,7 +2826,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_id': self.env.ref('mrp.mrp_unbuild_form_view_simplified').id,
             //     'type': 'ir.actions.act_window',
             //     'context': {'default_product_id': self.product_id.id,
-            //                 'default_lot_id': self.lot_producing_id.id,
+            //                 'default_lot_id': self.lot_producing_ids[:1].id,
             //                 'default_mo_id': self.id,
             //                 'default_company_id': self.company_id.id,
             //                 'default_location_id': self.location_dest_id.id,
@@ -2578,7 +2843,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_unlock(self):
-            // self.write({'state': 'purchase'})
+            // self.locked = False
             */
             return default;
         }
@@ -2624,7 +2889,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // :return: dict of move_id: hash
             // """
-            // hash_version = self._context.get('hash_version', MAX_HASH_VERSION)
+            // hash_version = self.env.context.get('hash_version', MAX_HASH_VERSION)
             // 
             // def _getattrstring(obj, field_name):
             //     field_value = obj[field_name]
@@ -2657,6 +2922,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CanBeEditedOnPortalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _can_be_edited_on_portal(self):
+            // self.ensure_one()
+            // return self.state in ('draft', 'sent')
+            */
+            return default;
+        }
+
         public async Task<TEntity> CanBeUnlinkedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -2664,7 +2940,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _can_be_unlinked(self):
             // self.ensure_one()
             // lock_date = self.company_id._get_user_fiscal_lock_date(self.journal_id)
-            // return not self.inalterable_hash and self.date > lock_date
+            // posted_caba_entry = self.state == 'posted' and (self.tax_cash_basis_rec_id or self.tax_cash_basis_origin_move_id)
+            // posted_exchange_diff_entry = self.state == 'posted' and self.exchange_diff_partial_ids
+            // return not self.inalterable_hash and self.date > lock_date and not posted_caba_entry and not posted_exchange_diff_entry
             */
             return default;
         }
@@ -2678,7 +2956,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :returns: True if commit is acceptable, False otherwise.
             // """
-            // return not tools.config['test_enable'] and not modules.module.current_test
+            // return not modules.module.current_test
             */
             return default;
         }
@@ -2697,52 +2975,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CanProduceSerialNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sn) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> CanProduceSerialNumbersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sns) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _can_produce_serial_number(self, sn=None):
+            // def _can_produce_serial_numbers(self, sns=None):
             // self.ensure_one()
-            // sn = sn or self.lot_producing_id
-            // if self.product_id.tracking == 'serial' and sn:
-            //     message, dummy = self.env['stock.quant'].sudo()._check_serial_number(self.product_id, sn, self.company_id)
-            //     if message:
-            //         return {'warning': {'title': _('Warning'), 'message': message}}
+            // sns = sns or self.lot_producing_ids
+            // if self.product_id.tracking == 'serial' and sns:
+            //     messages = []
+            //     for sn in sns:
+            //         message, _dummy = self.env['stock.quant'].sudo()._check_serial_number(self.product_id, sn, self.company_id)
+            //         if message:
+            //             messages.append(message)
+            //     if messages:
+            //         return {'warning': {'title': _('Warning'), 'message': ','.join(messages)}}
             // return True
             */
             return default;
         }
 
-        public async Task<TEntity> CheckAndDecodeAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ChangeProducingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _check_and_decode_attachment(self, attachments):
-            // if not attachments or self.env.context.get('no_new_invoice'):
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _change_producing(self):
+            // if self.state in ['draft', 'cancel'] or (self.state == 'done' and self.is_locked):
             //     return False
-            // if self.state != 'draft':
-            //     self.with_user(SUPERUSER_ID).message_post(
-            //         body=_('The invoice is not a draft, it was not updated from the attachment.'),
-            //         message_type='comment',
-            //     )
-            //     return False
-            // 
-            // # As we are coming from the mail, we assume that ONE of the attachments
-            // # will enhance the invoice thanks to EDI / OCR / .. capabilities
-            // move_per_decodable_attachment = self._extend_with_attachments(attachments, new=bool(self._context.get('from_alias')))
-            // if self.invoice_line_ids and not move_per_decodable_attachment:
-            //     self.with_user(SUPERUSER_ID).message_post(
-            //         body=_('The invoice already contains lines, it was not updated from the attachment.'),
-            //         message_type='comment',
-            //     )
-            //     return False
-            // attachments_in_invoices = self.env['ir.attachment']
-            // for attachment in move_per_decodable_attachment:
-            //     attachments_in_invoices += attachment
-            // # Unlink the unused attachments (prevents storing marketing images sent with emails)
-            // if self._context.get('from_alias'):
-            //     (attachments - attachments_in_invoices).unlink()
-            // return move_per_decodable_attachment
+            // if self.product_tracking == 'serial' and self.lot_producing_ids:
+            //     self.qty_producing = len(self.lot_producing_ids)
+            // productions_bypass_qty_producting = self.filtered(lambda p: p.lot_producing_ids and p.product_tracking == 'lot' and p._origin and p._origin.qty_producing == p.qty_producing)
+            // # sudo needed for portal users
+            // (self - productions_bypass_qty_producting).sudo()._set_qty_producing(False)
+            // return True
             */
             return default;
         }
@@ -2762,12 +3027,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if unbalanced_moves := self._get_unbalanced_moves(container):
             //     if len(unbalanced_moves) == 1:
-            //         raise UserError("The entry is not balanced.")
+            //         raise UserError(_("The entry is not balanced."))
             // 
             //     error_msg = _("The following entries are unbalanced:\n\n")
             //     for move in unbalanced_moves:
             //         error_msg += f"  - {self.browse(move[0]).name}\n"
-            //         raise UserError(error_msg)
+            // 
+            //     raise UserError(error_msg)
             */
             return default;
         }
@@ -2808,10 +3074,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // boms_to_check = self
             // if self.bom_line_ids.product_id:
-            //     boms_to_check |= self.search(OR([
+            //     boms_to_check |= self.search(Domain.OR(
             //         self._bom_find_domain(product)
             //         for product in self.bom_line_ids.product_id
-            //     ]))
+            //     ))
             // 
             // for bom in boms_to_check:
             //     if not bom.active:
@@ -2883,24 +3149,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _check_draftable(self):
             // exchange_move_ids = set()
             // if self:
-            //     self.env['account.full.reconcile'].flush_model(['exchange_move_id'])
             //     self.env['account.partial.reconcile'].flush_model(['exchange_move_id'])
             //     sql = SQL(
             //         """
-            //             SELECT DISTINCT sub.exchange_move_id
-            //             FROM (
-            //                 SELECT exchange_move_id
-            //                 FROM account_full_reconcile
-            //                 WHERE exchange_move_id IN %s
-            // 
-            //                 UNION ALL
-            // 
-            //                 SELECT exchange_move_id
-            //                 FROM account_partial_reconcile
-            //                 WHERE exchange_move_id IN %s
-            //             ) AS sub
+            //             SELECT DISTINCT exchange_move_id
+            //             FROM account_partial_reconcile
+            //             WHERE exchange_move_id IN %s
             //         """,
-            //         tuple(self.ids), tuple(self.ids),
+            //         tuple(self.ids),
             //     )
             //     exchange_move_ids = {id_ for id_, in self.env.execute_query(sql)}
             // 
@@ -2960,6 +3216,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckInvoiceCurrencyRateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _check_invoice_currency_rate(self):
+            // """Ensure the currency rate is strictly positive when invoice currency differs from company currency."""
+            // for move in self:
+            //     if (
+            //         move.currency_id
+            //         and move.company_id
+            //         and move.currency_id != move.company_id.currency_id
+            //         and move.is_invoice(include_receipts=True)
+            //         and move.invoice_currency_rate <= 0
+            //     ):
+            //         raise ValidationError(_("The currency rate must be strictly positive."))
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckJournalMoveTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -2983,6 +3258,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                    for pid in (bom.product_id.ids or bom.product_tmpl_id.product_variant_ids.ids)]
             // if self.env['stock.warehouse.orderpoint'].search_count([('product_id', 'in', product_ids)], limit=1):
             //     raise ValidationError(_("You can not create a kit-type bill of materials for products that have at least one reordering rule."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckLotProducingIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _check_lot_producing_ids(self):
+            // for record in self:
+            //     if record.product_tracking == 'lot' and len(record.lot_producing_ids) > 1:
+            //         raise UserError(_("You cannot set more than 1 lot"))
             */
             return default;
         }
@@ -3048,23 +3335,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckSelectedMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def check_selected_moves(self):
+            // self.env['account.move'].browse(self.env.context.get('active_ids', [])).set_moves_checked()
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckSnUniquenessInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _check_sn_uniqueness(self):
             // """ Alert the user if the serial number as already been consumed/produced """
-            // if self.product_tracking == 'serial' and self.lot_producing_id:
-            //     if self._is_finished_sn_already_produced(self.lot_producing_id):
-            //         raise UserError(_('This serial number for product %s has already been produced', self.product_id.name))
+            // self.ensure_one()
+            // if self.product_tracking == 'serial' and self.lot_producing_ids:
+            //     lots_to_check = self.lot_producing_ids.filtered(lambda l: l.id not in self.move_raw_ids.lot_ids.ids)
+            //     if lots_to_check and self._are_finished_serials_already_produced(lots_to_check):
+            //         raise UserError(_('Serial number(s) for product %(product_name)s already produced', product_name=self.product_id.name))
             // 
             // for move in self.move_finished_ids:
             //     if move.has_tracking != 'serial' or move.product_id == self.product_id:
             //         continue
             //     for move_line in move.move_line_ids:
-            //         if float_is_zero(move_line.quantity, precision_rounding=move_line.product_uom_id.rounding):
+            //         if move_line.product_uom_id.is_zero(move_line.quantity):
             //             continue
-            //         if self._is_finished_sn_already_produced(move_line.lot_id, excluded_sml=move_line):
+            //         if self._are_finished_serials_already_produced(move_line.lot_id, excluded_sml=move_line):
             //             raise UserError(_('The serial number %(number)s used for byproduct %(product_name)s has already been produced',
             //                               number=move_line.lot_id.name, product_name=move_line.product_id.name))
             // 
@@ -3074,8 +3373,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if move.has_tracking != 'serial' or not move.picked:
             //         continue
             //     for move_line in move.move_line_ids:
-            //         if not move_line.picked or float_is_zero(move_line.quantity, precision_rounding=move_line.product_uom_id.rounding) or\
-            //                 not move_line.lot_id:
+            //         if not move_line.picked or move_line.product_uom_id.is_zero(move_line.quantity) or not move_line.lot_id:
             //             continue
             //         sml_sn = move_line.lot_id
             //         message = _('The serial number %(number)s used for component %(component)s has already been consumed',
@@ -3108,7 +3406,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ('quantity', '=', 1),
             //     ('state', '=', 'done'),
             //     ('location_id.usage', '=', 'production'),
-            //     ('move_id.production_id', '=', False),
+            //     '|',
+            //         ('move_id.production_id', '=', False),
+            //         '&',
+            //             ('move_id.production_id', '!=', False),
+            //             ('move_id.production_id.product_id', '=', self.product_id.id),
             // ], ['lot_id'], ['quantity:sum'])
             // cancelled_qties = defaultdict(float, {lot.id: qty for lot, qty in cancelled_sml_groups})
             // 
@@ -3145,6 +3447,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             totals['total_amount_currency'] = amount_total
             //             self.tax_totals = totals
             //             break
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckValidBatchSizeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _check_valid_batch_size(self):
+            // if any(bom.enable_batch_size and bom.product_uom_id.compare(bom.batch_size, 0.0) <= 0 for bom in self):
+            //     raise ValidationError(self.env._("The batch size must be positive!"))
             */
             return default;
         }
@@ -3363,16 +3676,78 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeAdjustingEntriesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entries_count(self):
+            // for move in self:
+            //     move.adjusting_entries_count = len(move.adjusting_entries_move_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAdjustingEntryOriginLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entry_origin_label(self):
+            // for move in self:
+            //     if len(move.adjusting_entry_origin_move_ids) == 1:
+            //         move.adjusting_entry_origin_label = dict(self._fields['move_type'].selection)[move.adjusting_entry_origin_move_ids.move_type]
+            //     else:
+            //         move.adjusting_entry_origin_label = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAdjustingEntryOriginMovesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_adjusting_entry_origin_moves_count(self):
+            // for move in self:
+            //     move.adjusting_entry_origin_moves_count = len(move.adjusting_entry_origin_move_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAlertsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_alerts(self):
+            // for move in self:
+            //     move.alerts = move._get_alerts()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeAllowedLotIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _compute_allowed_lot_ids(self):
             // for repair in self:
-            //     domain = [('product_id', '=', repair.product_id.id)]
+            //     domain = Domain('product_id', '=', repair.product_id.id)
             //     if repair.picking_id:
-            //         domain = expression.AND([domain, [('id', 'in', repair.picking_id.move_ids.lot_ids.ids)]])
+            //         domain &= Domain('id', 'in', repair.picking_id.move_ids.lot_ids.ids)
             //     repair.allowed_lot_ids = self.env['stock.lot'].search(domain)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeAllowedUomIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for production in self:
+            //     production.allowed_uom_ids = production.product_id.uom_id | production.product_id.uom_ids | production.product_id.bom_ids.product_uom_id
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for repair in self:
+            //     repair.allowed_uom_ids = repair.product_id.uom_id | repair.product_id.uom_ids | repair.product_id.seller_ids.product_uom_id
             */
             return default;
         }
@@ -3398,6 +3773,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_amount(self):
+            // self.line_ids.fetch([
+            //     'debit',
+            //     'balance',
+            //     'amount_currency',
+            //     'amount_residual',
+            //     'amount_residual_currency',
+            //     'display_type',
+            //     'tax_repartition_line_id'
+            // ])
             // for move in self:
             //     total_untaxed, total_untaxed_currency = 0.0, 0.0
             //     total_tax, total_tax_currency = 0.0, 0.0
@@ -3407,13 +3791,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for line in move.line_ids:
             //         if move.is_invoice(True):
             //             # === Invoices ===
-            //             if line.display_type == 'tax' or (line.display_type == 'rounding' and line.tax_repartition_line_id):
+            //             if line.display_type in ('tax', 'non_deductible_tax') or (line.display_type == 'rounding' and line.tax_repartition_line_id):
             //                 # Tax amount.
             //                 total_tax += line.balance
             //                 total_tax_currency += line.amount_currency
             //                 total += line.balance
             //                 total_currency += line.amount_currency
-            //             elif line.display_type in ('product', 'rounding'):
+            //             elif line.display_type in ('product', 'rounding', 'non_deductible_product', 'non_deductible_product_total'):
             //                 # Untaxed amount.
             //                 total_untaxed += line.balance
             //                 total_untaxed_currency += line.amount_currency
@@ -3523,7 +3907,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_amounts(self):
             // AccountTax = self.env['account.tax']
             // for order in self:
-            //     order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            //     order_lines = order._get_priced_lines()
             //     base_lines = [line._prepare_base_line_for_taxes_computation() for line in order_lines]
             //     base_lines += order._add_base_lines_for_early_payment_discount()
             //     AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
@@ -3547,6 +3931,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_authorized_transaction_ids(self):
             // for trans in self:
             //     trans.authorized_transaction_ids = trans.transaction_ids.filtered(lambda t: t.state == 'authorized')
+            //     trans.has_authorized_transaction_ids = bool(trans.authorized_transaction_ids)
             */
             return default;
         }
@@ -3607,7 +3992,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     mo_by_company_id[mo.company_id.id] |= mo
             // 
             // for company_id, productions in mo_by_company_id.items():
-            //     picking_type_id = self._context.get('default_picking_type_id')
+            //     picking_type_id = self.env.context.get('default_picking_type_id')
             //     picking_type = picking_type_id and self.env['stock.picking.type'].browse(picking_type_id)
             //     boms_by_product = self.env['mrp.bom'].with_context(active_test=True)._bom_find(productions.product_id, picking_type=picking_type, company_id=company_id, bom_type='normal')
             //     for production in productions:
@@ -3615,6 +4000,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             bom = boms_by_product[production.product_id]
             //             production.bom_id = bom.id or False
             //             self.env.add_to_compute(production._fields['picking_type_id'], production)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCheckedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_checked(self):
+            // for move in self:
+            //     move.checked = move.state == 'posted' and (move.journal_id.type == 'general' or move._is_user_able_to_review())
             */
             return default;
         }
@@ -3659,7 +4055,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Force to prefetch more than 1000 by 1000
             // all_raw_moves._fields['forecast_availability'].compute_value(all_raw_moves)
             // for production in productions:
-            //     if any(float_compare(move.forecast_availability, 0 if move.state == 'draft' else move.product_qty, precision_rounding=move.product_id.uom_id.rounding) == -1 for move in production.move_raw_ids):
+            //     if any(
+            //         move.product_id
+            //         and move.product_id.uom_id.compare(
+            //             move.forecast_availability,
+            //             0 if move.state == 'draft' else move.product_qty,
+            //         ) == -1
+            //         for move in production.move_raw_ids
+            //     ):
+            // 
             //         production.components_availability = _('Not Available')
             //         production.components_availability_state = 'unavailable'
             //     else:
@@ -3685,6 +4089,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         or invoice.journal_id.company_id.currency_id
             //     )
             //     invoice.currency_id = currency
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_currency_id(self):
+            // for order in self:
+            //     order = order.with_company(order.company_id)
+            //     if not order.partner_id:
+            //         order.currency_id = order.company_id.currency_id
+            //     else:
+            //         order.currency_id = order.partner_id.property_purchase_currency_id or order.company_id.currency_id
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_currency_id(self):
             // for order in self:
@@ -3724,7 +4136,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _compute_date_calendar_start(self):
             // for order in self:
-            //     order.date_calendar_start = order.date_approve if (order.state in ['purchase', 'done']) else order.date_order
+            //     order.date_calendar_start = order.date_approve if (order.state == 'purchase') else order.date_order
             */
             return default;
         }
@@ -3735,7 +4147,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _compute_date_deadline(self):
             // for production in self:
-            //     production.date_deadline = min(production.move_finished_ids.filtered('date_deadline').mapped('date_deadline'), default=production.date_deadline or False)
+            //     if not production.date_deadline:
+            //         production.date_deadline = min(production.move_finished_ids.filtered('date_deadline').mapped('date_deadline'), default=False)
             */
             return default;
         }
@@ -3764,13 +4177,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_date(self):
             // for move in self:
-            //     if not move.invoice_date or not move.is_invoice(include_receipts=True):
+            //     accounting_date = move._get_accounting_date_source()
+            //     if not accounting_date or not move.is_invoice(include_receipts=True):
             //         if not move.date:
             //             move.date = fields.Date.context_today(self)
             //         continue
-            //     accounting_date = move.invoice_date
             //     if not move.is_sale_document(include_receipts=True):
-            //         accounting_date = move._get_accounting_date(move.invoice_date, move._affect_tax_report())
+            //         accounting_date = move._get_accounting_date(accounting_date, move._affect_tax_report())
             //     if accounting_date and accounting_date != move.date:
             //         move.date = accounting_date
             //         # _affect_tax_report may trigger premature recompute of line_ids.date
@@ -3845,6 +4258,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeDisplayLinkQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_display_link_qr_code(self):
+            // for move in self:
+            //     move.display_link_qr_code = (
+            //         move.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
+            //         and move.company_id.link_qr_code
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -3855,7 +4282,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _compute_display_name(self):
             // for bom in self:
-            //     bom.display_name = f"{bom.code + ': ' if bom.code else ''}{bom.product_tmpl_id.display_name}"
+            //     display_name = f"{bom.code + ': ' if bom.code else ''}{bom.product_tmpl_id.display_name}"
+            //     if self.env.context.get('display_bom_uom_qty') and (bom.product_qty > 1 or bom.product_uom_id != bom.product_tmpl_id.uom_id):
+            //         display_name += f" ({bom.product_qty} {bom.product_uom_id.name})"
+            //     bom.display_name = _('%(display_name)s', display_name=display_name)
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _compute_display_name(self):
             // for po in self:
@@ -3867,7 +4297,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     po.display_name = name
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_display_name(self):
-            // if not self._context.get('sale_show_partner_name'):
+            // if not self.env.context.get('sale_show_partner_name'):
             //     return super()._compute_display_name()
             // for order in self:
             //     name = order.name
@@ -3892,14 +4322,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeDisplaySendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_display_send_button(self):
+            // for move in self:
+            //     move.display_send_button = move.is_sale_document() and move.state == 'posted'
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeDuplicatedOrderIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_duplicated_order_ids(self):
+            // """Compute duplicated purchase orders based on key fields."""
+            // draft_orders = self.filtered(lambda o: o.state == 'draft')
+            // order_to_duplicate_orders = draft_orders._fetch_duplicate_orders()
+            // for order in draft_orders:
+            //     duplicate_ids = order_to_duplicate_orders.get(order.id, [])
+            //     order.duplicated_order_ids = [Command.set(duplicate_ids)]
+            // (self - draft_orders).duplicated_order_ids = False
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_duplicated_order_ids(self):
-            // order_to_duplicate_orders = self._fetch_duplicate_orders()
-            // for order in self:
+            // draft_orders = self.filtered(lambda o: o.state == 'draft')
+            // order_to_duplicate_orders = draft_orders._fetch_duplicate_orders()
+            // for order in draft_orders:
             //     order.duplicated_order_ids = [Command.set(order_to_duplicate_orders.get(order.id, []))]
+            // (self - draft_orders).duplicated_order_ids = False
             */
             return default;
         }
@@ -3963,7 +4415,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_expected_date(self):
-            // """ For service and consumable, we only take the min dates. This method is extended in sale_stock to
+            // """ For service and combo (non-goods) products, we avoid computing the expected date. This method is extended in sale_stock to
             //     take the picking_policy of SO into account.
             // """
             // self.mapped("order_line")  # Prefetch indication
@@ -3972,7 +4424,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         order.expected_date = False
             //         continue
             //     dates_list = order.order_line.filtered(
-            //         lambda line: not line.display_type and not line._is_delivery()
+            //         lambda line: line.product_id.type == 'consu' and not line.display_type and not line._is_delivery()
             //     ).mapped(lambda line: line and line._expected_date())
             //     if dates_list:
             //         order.expected_date = order._select_expected_date(dates_list)
@@ -4008,6 +4460,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_fiscal_position_id(self):
             // for move in self:
+            //     receipt_fiscal_position = {
+            //         'in_receipt': move.company_id.account_purchase_receipt_fiscal_position_id,
+            //     }.get(move.move_type)
+            //     if receipt_fiscal_position:
+            //         move.fiscal_position_id = receipt_fiscal_position
+            //         continue
             //     delivery_partner = self.env['res.partner'].browse(
             //         move.partner_shipping_id.id
             //         or move.partner_id.address_get(['delivery'])['delivery']
@@ -4099,7 +4557,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _compute_has_uncomplete_moves(self):
             // for repair in self:
-            //     repair.has_uncomplete_moves = any(float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0 for move in repair.move_ids)
+            //     repair.has_uncomplete_moves = any(move.product_uom and move.product_uom.compare(move.quantity, move.product_uom_qty) < 0 for move in repair.move_ids)
             */
             return default;
         }
@@ -4124,6 +4582,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_highest_name(self):
             // for record in self:
             //     record.highest_name = record._get_last_sequence()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHighlightSendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_highlight_send_button(self):
+            // for move in self:
+            //     move.highlight_send_button = not move.is_being_sent and not move.invoice_pdf_report_id
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeIncotermInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_incoterm(self):
+            // for move in self:
+            //     if move.move_type.startswith('out_'):
+            //         move.invoice_incoterm_id = move.company_id.incoterm_id
             */
             return default;
         }
@@ -4193,12 +4674,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_invoice_filter_type_domain(self):
             // for move in self:
-            //     if move.is_sale_document(include_receipts=True):
-            //         move.invoice_filter_type_domain = 'sale'
-            //     elif move.is_purchase_document(include_receipts=True):
-            //         move.invoice_filter_type_domain = 'purchase'
-            //     else:
-            //         move.invoice_filter_type_domain = False
+            //     move.invoice_filter_type_domain = self._get_invoice_filter_type_domain(move.move_type)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeInvoiceHasOutstandingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_invoice_has_outstanding(self):
+            // for move in self:
+            //     move.invoice_has_outstanding = bool(move.invoice_outstanding_credits_debits_widget)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeInvoiceIncotermPlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_invoice_incoterm_placeholder(self):
+            // for move in self:
+            //     move.invoice_incoterm_placeholder = move.company_id.incoterm_id.display_name if move.company_id.incoterm_id else _('Define a default in the settings')
             */
             return default;
         }
@@ -4359,14 +4857,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeIsReturnedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ComputeIsSaleInstalledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def _compute_is_returned(self):
-            // self.is_returned = False
-            // returned = self.filtered(lambda r: r.picking_id and r.picking_id.state == 'done')
-            // returned.is_returned = True
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_is_sale_installed(self):
+            // self.is_sale_installed = 'sale_management' in self.env['ir.module.module']._installed()
             */
             return default;
         }
@@ -4377,7 +4873,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_is_storno(self):
             // for move in self:
-            //     move.is_storno = move.is_storno or (move.move_type in ('out_refund', 'in_refund') and move.company_id.account_storno)
+            //     is_refund = move.move_type in ('out_refund', 'in_refund')
+            //     move.is_storno = move.is_storno or (is_refund and move.company_id.account_storno)
             */
             return default;
         }
@@ -4527,7 +5024,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _compute_move_finished_ids(self):
             // production_with_move_finished_ids_to_unlink_ids = OrderedSet()
+            // ignored_mo_ids = self.env.context.get('ignore_mo_ids', [])
             // for production in self:
+            //     if production.id in ignored_mo_ids:
+            //         continue
             //     if production.state != 'draft':
             //         updated_values = {}
             //         if production.date_finished:
@@ -4549,7 +5049,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // for production in production_with_move_finished_ids_to_unlink:
             //     if production.product_id:
-            //         production.with_context(never_attribute_ids=production.never_product_template_attribute_value_ids)._create_update_move_finished()
+            //         production._create_update_move_finished()
             //     else:
             //         production.move_finished_ids = [
             //             Command.delete(move.id) for move in production.move_finished_ids if move.bom_line_id
@@ -4607,7 +5107,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _compute_mrp_production_backorder(self):
             // for production in self:
-            //     production.mrp_production_backorder_count = len(production.procurement_group_id.mrp_production_ids)
+            //     production.mrp_production_backorder_count = len(production.production_group_id.production_ids)
             */
             return default;
         }
@@ -4729,7 +5229,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 base_lines, _tax_lines = invoice._get_rounded_base_and_tax_lines(round_from_tax_lines=False)
             //                 AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines, invoice.company_id, include_caba_tags=invoice.always_tax_exigible)
             //                 tax_results = AccountTax._prepare_tax_lines(base_lines, invoice.company_id)
-            //                 for base_line, to_update in tax_results['base_lines_to_update']:
+            //                 for _base_line, to_update in tax_results['base_lines_to_update']:
             //                     untaxed_amount_currency += sign * to_update['amount_currency']
             //                     untaxed_amount += sign * to_update['balance']
             //                 for tax_line_vals in tax_results['tax_lines_to_add']:
@@ -4795,6 +5295,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_no_followup(self):
+            // for move in self:
+            //     if move.is_invoice():
+            //         lines = move.line_ids.filtered(
+            //             lambda line: line.account_type in ('asset_receivable', 'liability_payable'),
+            //         )
+            //         move.no_followup = lines[0].no_followup if lines else True
+            //     else:
+            //         move.no_followup = True
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeNoteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -4818,28 +5335,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeOperationCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _compute_operation_count(self):
+            // for bom in self:
+            //     bom.operation_count = len(bom.operation_ids)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputePartnerBankIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_partner_bank_id(self):
+            // def _bank_selection_key(bank):
+            //     """Sorting priority:
+            //     0. Same currency as the move or no currency
+            //     1. Different currency
+            //     Then: prefer banks allowing outgoing payments (trusted ones)
+            //     """
+            //     if bank.currency_id == move.currency_id or not bank.currency_id:
+            //         currency_priority = 0
+            //     else:
+            //         currency_priority = 1
+            //     return (currency_priority, not bank.allow_out_payment)
+            // 
             // for move in self:
-            //     # This will get the bank account from the partner in an order with the trusted first
-            //     bank_ids = move.bank_partner_id.bank_ids.filtered(
+            //     if move.is_inbound() and (
+            //         payment_method := (
+            //             move.preferred_payment_method_line_id
+            //             or move.bank_partner_id.property_inbound_payment_method_line_id
+            //         )
+            //     ) and payment_method.journal_id:
+            //         move.partner_bank_id = payment_method.journal_id.bank_account_id
+            //         continue
+            // 
+            //     move.partner_bank_id = move.bank_partner_id.bank_ids.filtered(
             //         lambda bank: not bank.company_id or bank.company_id == move.company_id
-            //     ).sorted(lambda bank: not bank.allow_out_payment)
-            //     move.partner_bank_id = bank_ids[:1]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePartnerCreditInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _compute_partner_credit(self):
-            // for move in self:
-            //     move.partner_credit = move.partner_id.commercial_partner_id.credit
+            //     ).sorted(key=_bank_selection_key)[:1]
             */
             return default;
         }
@@ -4937,7 +5473,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Force to prefetch more than 1000 by 1000
             // all_moves._fields['forecast_availability'].compute_value(all_moves)
             // for repair in repairs:
-            //     if any(float_compare(move.forecast_availability, move.product_qty, precision_rounding=move.product_id.uom_id.rounding) < 0 for move in repair.move_ids):
+            //     if any(move.product_id.uom_id.compare(move.forecast_availability, move.product_qty) < 0 for move in repair.move_ids):
             //         repair.parts_availability = _('Not Available')
             //         repair.parts_availability_state = 'late'
             //         continue
@@ -4957,7 +5493,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payment_count(self):
             // for invoice in self:
-            //     invoice.payment_count = len(invoice.matched_payment_ids)
+            //     invoice.payment_count = len(invoice.reconciled_payment_ids)
             */
             return default;
         }
@@ -4983,16 +5519,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payment_state(self):
+            // def _invoice_qualifies(move):
+            //     currency = move.currency_id or move.company_id.currency_id or self.env.company.currency_id
+            //     return move.is_invoice(True) and (
+            //         move.state == 'posted'
+            //         or (move.state == 'draft' and not currency.is_zero(move.amount_total))
+            //     )
+            // 
             // groups = self.grouped(lambda move:
             //     'legacy' if move.payment_state == 'invoicing_legacy' else
-            //     'posted_invoice' if move.state == 'posted' and move.is_invoice(True) else
             //     'blocked' if move.payment_state == 'blocked' else
+            //     'invoices' if _invoice_qualifies(move) else
             //     'unpaid'
             // )
             // groups.get('unpaid', self.browse()).payment_state = 'not_paid'
-            // posted_invoices = groups.get('posted_invoice', self.browse())
+            // invoices = groups.get('invoices', self.browse())
             // 
-            // stored_ids = tuple(posted_invoices.ids)
+            // stored_ids = tuple(invoices.ids)
             // if stored_ids:
             //     self.env['account.partial.reconcile'].flush_model()
             //     self.env['account.payment'].flush_model(['is_matched'])
@@ -5028,9 +5571,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     payment_data = {}
             // 
-            // for invoice in posted_invoices:
-            //     currencies = invoice._get_lines_onchange_currency().currency_id
-            //     currency = currencies if len(currencies) == 1 else invoice.company_id.currency_id
+            // for invoice in invoices:
+            //     currency = invoice.currency_id or invoice.company_id.currency_id or self.env.company.currency_id
             //     reconciliation_vals = payment_data.get(invoice.id, [])
             // 
             //     # Restrict on 'receivable'/'payable' lines for invoices/expense entries.
@@ -5062,11 +5604,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                             and reverse_move_types == {'entry'})
             //             if in_reverse or out_reverse or misc_reverse:
             //                 new_pmt_state = 'reversed'
-            //     elif invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'in_process'):
+            //     elif invoice.state == 'posted' and invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'in_process'):
             //         new_pmt_state = invoice._get_invoice_in_payment_state()
             //     elif reconciliation_vals:
             //         new_pmt_state = 'partial'
-            //     elif invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'paid'):
+            //     elif invoice.state == 'posted' and invoice.matched_payment_ids.filtered(lambda p: not p.move_id and p.state == 'paid'):
             //         new_pmt_state = invoice._get_invoice_in_payment_state()
             //     invoice.payment_state = new_pmt_state
             */
@@ -5116,7 +5658,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for move in self:
             //     payments_widget_vals = {'title': _('Less Payment'), 'outstanding': False, 'content': []}
             // 
-            //     if move.state == 'posted' and move.is_invoice(include_receipts=True):
+            //     if move.state in {'draft', 'posted'} and move.is_invoice(include_receipts=True):
             //         reconciled_vals = []
             //         reconciled_partials = move.sudo()._get_all_reconciled_invoice_partials()
             //         for reconciled_partial in reconciled_partials:
@@ -5163,11 +5705,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_payments_widget_to_reconcile_info(self):
+            // 
             // for move in self:
             //     move.invoice_outstanding_credits_debits_widget = False
-            //     move.invoice_has_outstanding = False
             // 
-            //     if move.state != 'posted' \
+            //     if move.state not in {'draft', 'posted'} \
             //             or move.payment_state not in ('not_paid', 'partial') \
             //             or not move.is_invoice(include_receipts=True):
             //         continue
@@ -5180,17 +5722,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ('parent_state', '=', 'posted'),
             //         ('partner_id', '=', move.commercial_partner_id.id),
             //         ('reconciled', '=', False),
+            //         ('balance', '<' if move.is_inbound() else '>', 0.0),
             //         '|', ('amount_residual', '!=', 0.0), ('amount_residual_currency', '!=', 0.0),
             //     ]
             // 
-            //     payments_widget_vals = {'outstanding': True, 'content': [], 'move_id': move.id}
-            // 
-            //     if move.is_inbound():
-            //         domain.append(('balance', '<', 0.0))
-            //         payments_widget_vals['title'] = _('Outstanding credits')
-            //     else:
-            //         domain.append(('balance', '>', 0.0))
-            //         payments_widget_vals['title'] = _('Outstanding debits')
+            //     payments_widget_vals = {
+            //         'outstanding': True,
+            //         'content': [],
+            //         'move_id': move.id,
+            //         'title': _('Outstanding credits') if move.is_inbound() else _('Outstanding debits')
+            //     }
             // 
             //     for line in self.env['account.move.line'].search(domain):
             // 
@@ -5219,11 +5760,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'account_payment_id': line.payment_id.id,
             //         })
             // 
-            //     if not payments_widget_vals['content']:
-            //         continue
-            // 
-            //     move.invoice_outstanding_credits_debits_widget = payments_widget_vals
-            //     move.invoice_has_outstanding = True
+            //     if payments_widget_vals['content']:
+            //         move.invoice_outstanding_credits_debits_widget = payments_widget_vals
             */
             return default;
         }
@@ -5233,17 +5771,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _compute_picking_ids(self):
-            // grouped_stock_pickings = self.env['stock.picking']._read_group(
-            //     domain=[('group_id', 'in', self.procurement_group_id.ids), ('group_id', '!=', False)],
-            //     aggregates=['id:recordset'],
-            //     groupby=['group_id'],
+            // move_per_production_group = self.env['stock.move']._read_group(
+            //     [('production_group_id', 'in', self.production_group_id.ids)],
+            //     ['production_group_id'],
+            //     ['picking_id:recordset'],
             // )
-            // pickings_per_procurement_group = {
-            //     group_id.id: picking_ids.sorted() for group_id, picking_ids in grouped_stock_pickings
-            // }
+            // move_per_production = {}
+            // for group, pickings in move_per_production_group:
+            //     move_per_production[group] = pickings
             // for order in self:
-            //     order.picking_ids = pickings_per_procurement_group.get(order.procurement_group_id.id, [])
-            //     order.picking_ids |= order.move_raw_ids.move_orig_ids.picking_id
+            //     order.picking_ids = move_per_production.get(order.production_group_id, False)
             //     order.delivery_count = len(order.picking_ids)
             */
             return default;
@@ -5271,11 +5808,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ]
             // picking_types = self.env['stock.picking.type'].search_read(domain, ['company_id'], load=False, limit=1)
             // picking_type_by_company = {pt['company_id']: pt['id'] for pt in picking_types}
-            // default_picking_type_id = self._context.get('default_picking_type_id')
+            // default_picking_type_id = self.env.context.get('default_picking_type_id')
             // default_picking_type = default_picking_type_id and self.env['stock.picking.type'].browse(default_picking_type_id)
+            // if not default_picking_type:
+            //     default_warehouse_id = self.env.context.get('force_warehouse_id')
+            //     default_picking_type = default_warehouse_id and self.env['stock.warehouse'].browse(default_warehouse_id).manu_type_id
             // for mo in self:
             //     if default_picking_type and default_picking_type.company_id == mo.company_id:
-            //         mo.picking_type_id = default_picking_type_id
+            //         mo.picking_type_id = default_picking_type
             //         continue
             //     if mo.bom_id and mo.bom_id.picking_type_id:
             //         mo.picking_type_id = mo.bom_id.picking_type_id
@@ -5292,6 +5832,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for ro in self:
             //     ro.picking_type_id = picking_type_by_company.get((ro.company_id, ro.user_id)) or\
             //         picking_type_by_company.get((ro.company_id, False))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePickingTypeVisibleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _compute_picking_type_visible(self):
+            // repair_type_by_company = dict(self.env['stock.picking.type']._read_group([
+            //         ('code', '=', 'repair_operation'),
+            //         ('company_id', 'in', self.company_id.ids)
+            //     ], groupby=['company_id'], aggregates=['__count']))
+            // for ro in self:
+            //     ro.picking_type_visible = repair_type_by_company.get(ro.company_id, 0) > 1
             */
             return default;
         }
@@ -5318,6 +5873,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.preferred_payment_method_line_id = partner.property_inbound_payment_method_line_id
             //     else:
             //         move.preferred_payment_method_line_id = partner.property_outbound_payment_method_line_id
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _compute_preferred_payment_method_line_id(self):
+            // for order in self:
+            //     order = order.with_company(order.company_id)
+            //     order.preferred_payment_method_line_id = order.partner_id.property_inbound_payment_method_line_id
             */
             return default;
         }
@@ -5424,7 +5984,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for repair in self:
             //     if not repair.product_id:
             //         repair.product_uom = False
-            //     elif not repair.product_uom or repair.product_uom.category_id != repair.product_id.uom_id.category_id:
+            //     elif not repair.product_uom:
             //         repair.product_uom = repair.product_id.uom_id
             */
             return default;
@@ -5454,7 +6014,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     moves = production.move_raw_ids.filtered(lambda move: move.unit_factor and move.product_id.type != 'consu')
             //     if moves:
             //         production_capacity = min(moves.mapped(lambda move: move.product_id.uom_id._compute_quantity(move.product_id.qty_available, move.product_uom) / move.unit_factor))
-            //         production.production_capacity = min(production.product_qty, float_round(production_capacity, precision_rounding=production.product_id.uom_id.rounding))
+            //         production.production_capacity = min(production.product_qty, production.product_id.uom_id.round(production_capacity))
             */
             return default;
         }
@@ -5475,6 +6035,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     prod_loc = production.product_id.with_company(production.company_id).property_stock_production
             //     comp_locs = location_by_company.get(production.company_id.id)
             //     production.production_location_id = prod_loc or (comp_locs and comp_locs[0])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePurchaseWarningTextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_purchase_warning_text(self):
+            // if not self.env.user.has_group('purchase.group_warning_purchase'):
+            //     self.purchase_warning_text = ''
+            //     return
+            // for order in self:
+            //     warnings = OrderedSet()
+            //     if partner_msg := order.partner_id.purchase_warn_msg:
+            //         warnings.add((order.partner_id.name or order.partner_id.display_name) + ' - ' + partner_msg)
+            //     for line in order.order_line:
+            //         if product_msg := line.purchase_line_warn_msg:
+            //             warnings.add(line.product_id.display_name + ' - ' + product_msg)
+            //     order.purchase_warning_text = '\n'.join(warnings)
             */
             return default;
         }
@@ -5515,6 +6095,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for order in self:
             //     order.receipt_reminder_email = order.partner_id.with_company(order.company_id).receipt_reminder_email
             //     order.reminder_date_before_receipt = order.partner_id.with_company(order.company_id).reminder_date_before_receipt
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeReconciledPaymentIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_reconciled_payment_ids(self):
+            // ''' Retrieve the payments reconciled to the invoices through the reconciliation (account.partial.reconcile) '''
+            // self.env['account.payment'].flush_model(fnames=['move_id'])
+            // self.env['account.move'].flush_model(fnames=['move_type'])
+            // self.env['account.move.line'].flush_model(fnames=['move_id', 'account_id'])
+            // self.env['account.partial.reconcile'].flush_model(fnames=['debit_move_id', 'credit_move_id'])
+            // self.env['account.account'].flush_model(fnames=['account_type'])
+            // 
+            // invoice_payment_links = dict(self.env.execute_query(SQL(
+            //     """
+            //     SELECT
+            //         invoice.id,
+            //         ARRAY_AGG(DISTINCT payment.id) AS payment_ids
+            //     FROM account_payment payment
+            //     JOIN account_move move ON move.id = payment.move_id
+            //     JOIN account_move_line line ON line.move_id = move.id
+            //     JOIN account_partial_reconcile part ON
+            //         part.debit_move_id = line.id
+            //         OR
+            //         part.credit_move_id = line.id
+            //     JOIN account_move_line counterpart_line ON
+            //         part.debit_move_id = counterpart_line.id
+            //         OR
+            //         part.credit_move_id = counterpart_line.id
+            //     JOIN account_move invoice ON invoice.id = counterpart_line.move_id
+            //     JOIN account_account account ON account.id = line.account_id
+            //     WHERE account.account_type IN ('asset_receivable', 'liability_payable')
+            //         AND invoice.id IN %(invoice_ids)s
+            //         AND line.id != counterpart_line.id
+            //     GROUP BY invoice.id, invoice.move_type
+            //     """,
+            //     invoice_ids=tuple(self.ids),
+            // ))) if self.ids else {}
+            // for move in self:
+            //     move.reconciled_payment_ids = self.env['account.payment'].browse(invoice_payment_links.get(move.id)) | move.matched_payment_ids
             */
             return default;
         }
@@ -5561,7 +6184,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if production.state in ('draft', 'done', 'cancel'):
             //         production.reservation_state = False
             //         continue
-            //     relevant_move_state = production.move_raw_ids.filtered(lambda m: not (m.picked or float_is_zero(m.product_uom_qty, precision_rounding=m.product_uom.rounding)))._get_relevant_state_among_moves()
+            //     relevant_move_state = production.move_raw_ids.filtered(
+            //         lambda m: (
+            //             m.product_id
+            //             and not (
+            //                 m.picked
+            //                 or m.product_uom.is_zero(
+            //                     m.product_uom_qty,
+            //                 )
+            //             )
+            //         )
+            //     )._get_relevant_state_among_moves()
             //     # Compute reservation state according to its component's moves.
             //     if relevant_move_state == 'partially_available':
             //         if production.workorder_ids.operation_id and production.bom_id.ready_to_produce == 'asap':
@@ -5572,6 +6205,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         production.reservation_state = relevant_move_state
             //     else:
             //         production.reservation_state = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeSaleWarningTextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _compute_sale_warning_text(self):
+            // if not self.env.user.has_group('sale.group_warning_sale'):
+            //     self.sale_warning_text = ''
+            //     return
+            // for order in self:
+            //     warnings = OrderedSet()
+            //     if partner_msg := order.partner_id.sale_warn_msg:
+            //         warnings.add((order.partner_id.name or order.partner_id.display_name) + ' - ' + partner_msg)
+            //     for line in order.order_line:
+            //         if product_msg := line.sale_line_warn_msg:
+            //             warnings.add(line.product_id.display_name + ' - ' + product_msg)
+            //     order.sale_warning_text = '\n'.join(warnings)
             */
             return default;
         }
@@ -5600,6 +6253,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeSerialNumbersCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _compute_serial_numbers_count(self):
+            // for production in self:
+            //     if production.product_tracking != 'serial':
+            //         production.serial_numbers_count = 0
+            //         continue
+            //     production.serial_numbers_count = len(production.lot_producing_ids)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeShowAllocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -5621,11 +6288,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             ('state', 'in', allowed_states),
             //             ('product_qty', '>', 0),
             //             ('location_id', 'in', wh_location_ids),
-            //             ('raw_material_production_id', '!=', mo.id),
+            //             ('raw_material_production_id', 'not in', mo.ids),
             //             ('product_id', 'in', lines.product_id.ids),
             //             '|', ('move_orig_ids', '=', False),
             //                 ('move_orig_ids', 'in', lines.ids)], limit=1):
             //             mo.show_allocation = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowComparisonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _compute_show_comparison(self):
+            // line_groupby_product = self.env['purchase.order.line']._read_group(
+            //     [('product_id', 'in', self.order_line.product_id.ids), ('state', '=', 'purchase')],
+            //     ['product_id'],
+            //     ['order_id:array_agg']
+            // )
+            // 
+            // order_by_product = {p: set(o_ids) for p, o_ids in line_groupby_product}
+            // for record in self:
+            //     record.show_comparison = any(set(record.ids) != order_by_product[p] for p in record.order_line.product_id if p in order_by_product)
             */
             return default;
         }
@@ -5637,6 +6322,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_show_delivery_date(self):
             // for move in self:
             //     move.show_delivery_date = move.delivery_date and move.is_sale_document()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowGenerateBomInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _compute_show_generate_bom(self):
+            // for production in self:
+            //     production.show_generate_bom = not production.bom_id and production.product_id and (
+            //         (production.move_raw_ids and production.product_id not in production.move_raw_ids.product_id)
+            //         or (not production.move_raw_ids and production.workorder_ids)
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowJournalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_show_journal(self):
+            // for move in self:
+            //     move.show_journal = len(move.suitable_journal_ids) > 1
             */
             return default;
         }
@@ -5689,7 +6399,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // - whether or not there is an early pay discount in this invoice that should be displayed
             // '''
             // for invoice in self:
-            //     if invoice.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt') and invoice.payment_state in ('not_paid', 'partial'):
+            //     if invoice.move_type in self._early_payment_discount_move_types() and invoice.payment_state in ('not_paid', 'partial'):
             //         payment_term_lines = invoice.line_ids.filtered(lambda l: l.display_type == 'payment_term')
             //         invoice.show_discount_details = invoice.invoice_payment_term_id.early_discount
             //         invoice.show_payment_term_details = len(payment_term_lines) > 1 or invoice.show_discount_details
@@ -5729,6 +6439,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeShowSetBomButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _compute_show_set_bom_button(self):
+            // self.show_set_bom_button = True
+            // orderpoint_id = self.env.context.get('orderpoint_id', self.env.context.get('default_orderpoint_id'))
+            // if orderpoint_id:
+            //     orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
+            //     self.filtered(
+            //         lambda s: s.id == orderpoint.bom_id.id
+            //     ).show_set_bom_button = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowTaxableSupplyDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_show_taxable_supply_date(self):
+            // for move in self:
+            //     move.show_taxable_supply_date = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -5756,13 +6493,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         production.state = 'done'
             //     elif production.workorder_ids and all(wo_state in ('done', 'cancel') for wo_state in production.workorder_ids.mapped('state')):
             //         production.state = 'to_close'
-            //     elif not production.workorder_ids and float_compare(production.qty_producing, production.product_qty, precision_rounding=production.product_uom_id.rounding) >= 0:
+            //     elif not production.workorder_ids and production.product_uom_id.compare(production.qty_producing, production.product_qty) >= 0:
             //         production.state = 'to_close'
-            //     elif any(wo_state in ('progress', 'done') for wo_state in production.workorder_ids.mapped('state')):
-            //         production.state = 'progress'
-            //     elif production.product_uom_id and not float_is_zero(production.qty_producing, precision_rounding=production.product_uom_id.rounding):
-            //         production.state = 'progress'
-            //     elif any(production.move_raw_ids.mapped('picked')):
+            //     elif (
+            //         any(wo_state in ('progress', 'done') for wo_state in production.workorder_ids.mapped('state'))
+            //         or production.product_uom_id and not production.product_uom_id.is_zero(production.qty_producing)
+            //         or any(production.move_raw_ids.mapped('picked'))
+            //     ):
             //         production.state = 'progress'
             */
             return default;
@@ -5774,7 +6511,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_status_in_payment(self):
             // for move in self:
-            //     move.status_in_payment = move.state if move.state in ('draft', 'cancel') else move.payment_state
+            //     if move.state == 'posted':
+            //         if move.payment_state in ('partial', 'in_payment', 'paid', 'reversed'):
+            //             move.status_in_payment = move.payment_state
+            //         elif move.is_move_sent:
+            //             move.status_in_payment = 'sent'
+            //     elif move.state == 'draft':
+            //         if move.payment_state in ('partial', 'in_payment', 'paid'):
+            //             move.status_in_payment = move.payment_state
+            // 
+            //     if not move.status_in_payment:
+            //         move.status_in_payment = move.state
             */
             return default;
         }
@@ -5785,12 +6532,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_suitable_journal_ids(self):
             // for m in self:
-            //     journal_type = m.invoice_filter_type_domain or 'general'
-            //     company = m.company_id or self.env.company
-            //     m.suitable_journal_ids = self.env['account.journal'].search([
-            //         *self.env['account.journal']._check_company_domain(company),
-            //         ('type', '=', journal_type),
-            //     ])
+            //     m.suitable_journal_ids = self._get_suitable_journal_ids(m.move_type, m.company_id)
             */
             return default;
         }
@@ -5811,6 +6553,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_tax_country_id(self):
+            // self.fetch(['fiscal_position_id', 'company_id'])
             // foreign_vat_records = self.filtered(lambda r: r.fiscal_position_id.foreign_vat)
             // for fiscal_position_id, record_group in groupby(foreign_vat_records, key=lambda r: r.fiscal_position_id):
             //     self.env['account.move'].concat(*record_group).tax_country_id = fiscal_position_id.country_id
@@ -5903,12 +6646,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         company=order.company_id,
             //     )
             //     if order.currency_id != order.company_currency_id:
-            //         order.tax_totals['amount_total_cc'] = f"({formatLang(self.env, order.amount_total_cc, currency_obj=self.company_currency_id)})"
+            //         order.tax_totals['amount_total_cc'] = f"({formatLang(self.env, order.amount_total_cc, currency_obj=order.company_currency_id)})"
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_tax_totals(self):
             // AccountTax = self.env['account.tax']
             // for order in self:
-            //     order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            //     order_lines = order._get_priced_lines()
             //     base_lines = [line._prepare_base_line_for_taxes_computation() for line in order_lines]
             //     base_lines += order._add_base_lines_for_early_payment_discount()
             //     AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
@@ -5918,6 +6661,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         currency=order.currency_id or order.company_id.currency_id,
             //         company=order.company_id,
             //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTaxableSupplyDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_taxable_supply_date(self):
+            // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTaxableSupplyDatePlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _compute_taxable_supply_date_placeholder(self):
+            // for move in self:
+            //     move.taxable_supply_date_placeholder = ''
             */
             return default;
         }
@@ -5944,7 +6708,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_team_id(self):
             // cached_teams = {}
             // for order in self:
-            //     default_team_id = self.env.context.get('default_team_id', False) or order.team_id.id
+            //     default_team_id = order._default_team_id()
             //     user_id = order.user_id.id
             //     company_id = order.company_id.id
             //     key = (default_team_id, user_id, company_id)
@@ -6091,7 +6855,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not production.bom_id and not production._origin.product_id:
             //         production.workorder_ids = workorders_list
             //     # if the product has changed or if in a second onchange with bom resets the relations
-            //     if production.product_id != production._origin.product_id or (production._origin.bom_id != production.bom_id and production._origin.bom_id.operation_ids and not production.workorder_ids.filtered(lambda wo: wo.ids and wo.operation_id)):
+            //     if production.product_id != production._origin.product_id \
+            //         or (not production._origin.bom_id and production.bom_id) \
+            //         or (production._origin.bom_id != production.bom_id and production._origin.bom_id.operation_ids and not production.workorder_ids.filtered(lambda wo: wo.ids and wo.operation_id)):
             //         production.workorder_ids = [Command.clear()]
             //     if production.bom_id and production.product_id and production.product_qty > 0:
             //         # keep manual entries
@@ -6105,7 +6871,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if not (bom.operation_ids and (not bom_data['parent_line'] or bom_data['parent_line'].bom_id.operation_ids != bom.operation_ids)):
             //                 continue
             //             for operation in bom.operation_ids:
-            //                 if operation.with_context(never_attribute_ids=production.never_product_template_attribute_value_ids)._skip_operation_line(bom_data['product']):
+            //                 if operation._skip_operation_line(bom_data['product'] if not bom_data['parent_line'] else bom_data['parent_line']['product_id'], production.never_product_template_attribute_value_ids):
             //                     workorder = production.workorder_ids.filtered(lambda wo: wo.operation_id == operation and wo.operation_id.bom_id == bom)
             //                     if workorder:
             //                         # If for some reason a non-relevant workorder is still there, e.g. after a change in never_product_template_attribute_value_ids
@@ -6117,7 +6883,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                     'workcenter_id': operation.workcenter_id.id,
             //                     'product_uom_id': production.product_uom_id.id,
             //                     'operation_id': operation.id,
-            //                     'state': 'pending',
+            //                     'state': 'ready',
             //                 }]
             //         workorders_dict = {wo.operation_id.id: wo for wo in production.workorder_ids.filtered(
             //             lambda wo: wo.operation_id and wo.ids and wo.id not in deleted_workorders_ids)}
@@ -6152,39 +6918,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ConfirmReceptionMailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _confirm_reception_mail(self):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reception_confirmed:
-            //         order.mail_reception_confirmed = True
-            //         order.message_post(body=_("The order receipt has been acknowledged by %s.", order.partner_id.name))
-            //     elif order.state == 'sent' and not order.mail_reception_confirmed:
-            //         order.mail_reception_confirmed = True
-            //         order.message_post(body=_("The RFQ has been acknowledged by %s.", order.partner_id.name))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConfirmReminderMailAsync<TEntity>(IEnumerable<TEntity> entities, object confirmed_date) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def confirm_reminder_mail(self, confirmed_date=False):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reminder_confirmed:
-            //         order.mail_reminder_confirmed = True
-            //         date_planned = order.get_localized_date_planned(confirmed_date).date()
-            //         order.message_post(body=_("%(vendor)s confirmed the receipt will take place on %(date)s.", vendor=order.partner_id.name, date=date_planned))
-            */
-            return default;
-        }
-
         public async Task<TEntity> ConfirmationErrorMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _confirmation_error_message(self):
+            // """ Return whether order can be confirmed or not if not then return error message. """
+            // self.ensure_one()
+            // if any(
+            //     not line.display_type
+            //     and not line.is_downpayment
+            //     and not line.product_id
+            //     for line in self.order_line
+            // ):
+            //     return _("Some order lines are missing a product, you need to correct them before going further.")
+            // 
+            // return False
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _confirmation_error_message(self):
             // """ Return whether order can be confirmed or not if not then returm error message. """
@@ -6197,7 +6946,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     and not line.product_id
             //     for line in self.order_line
             // ):
-            //     return _("A line on these orders missing a product, you cannot confirm it.")
+            //     return _("Some order lines are missing a product, you need to correct them before going further.")
             // 
             // return False
             */
@@ -6215,7 +6964,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for old_move, new_move in zip(self, new_moves):
             //     message_origin = '' if not new_move.auto_post_origin_id else \
             //         (Markup('<br/>') + _('This recurring entry originated from %s', new_move.auto_post_origin_id._get_html_link()))
-            //     message_content = _('This entry has been reversed from %s', old_move._get_html_link()) if default.get('reversed_entry_id') else _('This entry has been duplicated from %s', old_move._get_html_link())
+            //     message_content = old_move._get_copy_message_content(default)
             //     bodies[new_move.id] = message_content + message_origin
             // new_moves._message_log_batch(bodies=bodies)
             // return new_moves
@@ -6249,10 +6998,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // new_pos = super().copy(default=default)
             // for line in new_pos.order_line:
             //     if line.product_id:
-            //         seller = line.product_id._select_seller(
-            //             partner_id=line.partner_id, quantity=line.product_qty,
-            //             date=line.order_id.date_order and line.order_id.date_order.date(), uom_id=line.product_uom)
-            //         line.date_planned = line._get_date_planned(seller)
+            //         line.date_planned = line._get_date_planned(line.selected_seller_id)
             // return new_pos
             */
             return default;
@@ -6274,7 +7020,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if command == Command.CREATE
             //         ]
             //     elif move.move_type == 'entry':
-            //         if 'partner_id' not in vals:
+            //         if 'partner_id' not in vals or not self.env.context.get('move_reverse_cancel', False):
             //             vals['partner_id'] = False
             //     user_fiscal_lock_date = move.company_id._get_user_fiscal_lock_date(move.journal_id)
             //     if (default_date or move.date) <= user_fiscal_lock_date:
@@ -6374,8 +7120,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // parent_production_id = self.env.context.get('parent_production_id')
             // if parent_production_id:  # In this case, assign the newly created BoM to the MO.
             //     # Clean context to avoid parasitic default values.
-            //     self.env.context = clean_context(self.env.context)
-            //     production = self.env['mrp.production'].browse(parent_production_id)
+            //     env = self.env(context=clean_context(self.env.context))
+            //     production = env['mrp.production'].browse(parent_production_id)
             //     production._link_bom(res[0])
             // return res
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -6393,12 +7139,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             picking_type_id = self._get_default_picking_type_id(vals.get('company_id', self.env.company.id))
             //             vals['picking_type_id'] = picking_type_id
             //         vals['name'] = self.env['stock.picking.type'].browse(picking_type_id).sequence_id.next_by_id()
-            //     if not vals.get('procurement_group_id'):
-            //         procurement_group_vals = self._prepare_procurement_group_vals(vals)
-            //         vals['procurement_group_id'] = self.env["procurement.group"].create(procurement_group_vals).id
+            //     if not vals.get('production_group_id'):
+            //         vals['production_group_id'] = self.env["mrp.production.group"].create({'name': vals['name']}).id
             // res = super().create(vals_list)
             // # Make sure that the date passed in vals_list are taken into account and not modified by a compute
+            // reference_vals_list = []
             // for rec, vals in zip(res, vals_list):
+            //     (rec.move_raw_ids | rec.move_finished_ids).production_group_id = rec.production_group_id
+            //     if not rec.reference_ids:
+            //         reference_vals_list.append({
+            //             'name': rec.name,
+            //             'production_ids': [Command.set(rec.ids)],
+            //             'move_ids': [Command.set(rec.move_raw_ids.ids + rec.move_finished_ids.ids)],
+            //         })
             //     if (rec.move_raw_ids
             //         and rec.move_raw_ids[0].date
             //         and vals.get('date_start')
@@ -6418,11 +7171,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //           and not vals.get('date_finished')):
             //         # if no value is specified, do take the workorder duration (etc) into account
             //         rec.move_finished_ids.write({'date': rec.date_finished})
+            // if reference_vals_list:
+            //     self.env['stock.reference'].create(reference_vals_list)
             // return res
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def create(self, vals_list):
             // orders = self.browse()
-            // partner_vals_list = []
             // for vals in vals_list:
             //     company_id = vals.get('company_id', self.default_get(['company_id'])['company_id'])
             //     # Ensures default picking type and currency are taken from the right company.
@@ -6432,12 +7186,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if 'date_order' in vals:
             //             seq_date = fields.Datetime.context_timestamp(self, fields.Datetime.to_datetime(vals['date_order']))
             //         vals['name'] = self_comp.env['ir.sequence'].next_by_code('purchase.order', sequence_date=seq_date) or '/'
-            //     vals, partner_vals = self._write_partner_values(vals)
-            //     partner_vals_list.append(partner_vals)
             //     orders |= super(PurchaseOrder, self_comp).create(vals)
-            // for order, partner_vals in zip(orders, partner_vals_list):
-            //     if partner_vals:
-            //         order.sudo().write(partner_vals)  # Because the purchase user doesn't have write on `res.partner`
             // return orders
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def create(self, vals_list):
@@ -6450,8 +7199,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         vals['picking_type_id'] = picking_type.id
             //     if not vals.get('name', False) or vals['name'] == 'New':
             //         vals['name'] = picking_type.sequence_id.next_by_id()
-            //     if not vals.get('procurement_group_id'):
-            //         vals['procurement_group_id'] = self.env["procurement.group"].create({'name': vals['name']}).id
+            //     if not vals.get('reference_ids'):
+            //         vals['reference_ids'] = [Command.link(self.env["stock.reference"].create({'name': vals['name']}).id)]
             // return super().create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def create(self, vals_list):
@@ -6471,6 +7220,21 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CreateDocumentFromAttachmentAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> attachment_ids) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def create_document_from_attachment(self, attachment_ids):
+            // """ Create the purchase orders from given attachment_ids
+            // and redirect newly create order view.
+            // 
+            // :param list attachment_ids: List of attachments process.
+            // :return: An action redirecting to related sale order view.
+            // :rtype: dict
+            // """
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     raise UserError(_("No attachment was provided"))
+            // 
+            // orders = self.with_context(default_partner_id=self.env.user.partner_id.id)._create_records_from_attachments(attachments)
+            // return orders._get_records_action(name=_("Generated Orders"))
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def create_document_from_attachment(self, attachment_ids):
             // """ Create the sale orders from given attachment_ids and redirect newly create order view.
@@ -6479,8 +7243,65 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return: An action redirecting to related sale order view.
             // :rtype: dict
             // """
-            // orders = self._create_order_from_attachment(attachment_ids)
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     raise UserError(_("No attachment was provided"))
+            // 
+            // orders = self.with_context(default_partner_id=self.env.user.partner_id.id)._create_records_from_attachments(attachments)
+            // 
             // return orders._get_records_action(name=_("Generated Orders"))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateDownPaymentLinesFromBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object down_payment_base_lines) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _create_down_payment_lines_from_base_lines(self, down_payment_base_lines):
+            // """ Add the base lines passed as parameter as sale order lines into the current sale order.
+            // 
+            // :param down_payment_base_lines: A list of base lines
+            //                                 (see '_prepare_base_line_for_taxes_computation').
+            // :return The newly created SO lines.
+            // """
+            // self.ensure_one()
+            // sequence = max(self.order_line.mapped('sequence') or [10]) + 1
+            // return self.env['sale.order.line'] \
+            //     .with_context(sale_no_log_for_new_lines=True) \
+            //     .create([
+            //         {
+            //             **self._prepare_down_payment_line_values_from_base_line(base_line),
+            //             'sequence': sequence + index,
+            //         }
+            //         for index, base_line in enumerate(down_payment_base_lines)
+            //     ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateDownPaymentSectionLineIfNeededInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _create_down_payment_section_line_if_needed(self):
+            // """ Add the down section line if not already there on the current SO.
+            // 
+            // :return The newly created SO line or None if the section was already there.
+            // """
+            // self.ensure_one()
+            // # If a down payment is already there, then the section is not needed and
+            // # has already been created.
+            // if any(line.display_type and line.is_downpayment for line in self.order_line):
+            //     return
+            // 
+            // sequence = max(self.order_line.mapped('sequence') or [10]) + 1
+            // return self.env['sale.order.line'] \
+            //     .with_context(sale_no_log_for_new_lines=True) \
+            //     .create({
+            //         **self._prepare_down_payment_line_section_values(),
+            //         'sequence': sequence,
+            //     })
             */
             return default;
         }
@@ -6546,7 +7367,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     invoice_vals = order._prepare_invoice()
             //     invoiceable_lines = order._get_invoiceable_lines(final)
             // 
-            //     if not any(not line.display_type for line in invoiceable_lines):
+            //     if all(line.display_type for line in invoiceable_lines):
             //         continue
             // 
             //     invoice_line_vals = []
@@ -6562,20 +7383,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             )
             //             down_payment_section_added = True
             //             invoice_item_sequence += 1
-            //         invoice_line_vals.append(
-            //             Command.create(
-            //                 line._prepare_invoice_line(sequence=invoice_item_sequence)
-            //             ),
-            //         )
+            // 
+            //         optional_values = {'sequence': invoice_item_sequence}
+            // 
+            //         # When creating the final invoice, we want to express the lines representing
+            //         # the full order but negate the already created down payment lines.
+            //         # At this point, on the sale order, the down payment lines have a non-empty
+            //         # 'extra_tax_data' containing a price unit greater than zero and a quantity of 0.0.
+            //         if line.is_downpayment:
+            //             optional_values['quantity'] = -1.0
+            //             optional_values['extra_tax_data'] = self.env['account.tax']\
+            //                 ._reverse_quantity_base_line_extra_tax_data(line.extra_tax_data)
+            // 
+            //         for vals in line._prepare_invoice_lines_vals_list(**optional_values):
+            //             invoice_line_vals.append(Command.create(vals))
+            // 
             //         invoice_item_sequence += 1
             // 
             //     invoice_vals['invoice_line_ids'] += invoice_line_vals
             //     invoice_vals_list.append(invoice_vals)
             // 
-            // if not invoice_vals_list and self._context.get('raise_if_nothing_to_invoice', True):
+            // if not invoice_vals_list and self.env.context.get('raise_if_nothing_to_invoice', True):
             //     raise UserError(self._nothing_to_invoice_error_message())
             // 
-            // # 2) Manage 'grouped' parameter: group by (partner_id, currency_id).
+            // # 2) Manage 'grouped' parameter: group by (partner_id, partner_shipping_id, currency_id).
             // if not grouped:
             //     new_invoice_vals_list = []
             //     invoice_grouping_keys = self._get_invoice_grouping_keys()
@@ -6645,59 +7476,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.invoice_ids._set_reversed_entry(moves_to_switch)
             // 
             // for move in moves:
-            //     if final:
-            //         # Downpayment might have been determined by a fixed amount set by the user.
-            //         # This amount is tax included. This can lead to rounding issues.
-            //         # E.g. a user wants a 100€ DP on a product with 21% tax.
-            //         # 100 / 1.21 = 82.64, 82.64 * 1,21 = 99.99
-            //         # This is already corrected by adding/removing the missing cents on the DP invoice,
-            //         # but must also be accounted for on the final invoice.
-            // 
-            //         delta_amount = 0
-            //         for order_line in self.order_line:
-            //             if not order_line.is_downpayment:
-            //                 continue
-            //             inv_amt = order_amt = 0
-            //             for invoice_line in order_line.invoice_lines:
-            //                 sign = 1 if invoice_line.move_id.is_inbound() else -1
-            //                 if invoice_line.move_id == move:
-            //                     inv_amt += invoice_line.price_total * sign
-            //                 elif invoice_line.move_id.state != 'cancel':  # filter out canceled dp lines
-            //                     order_amt += invoice_line.price_total * sign
-            //             if inv_amt and order_amt:
-            //                 # if not inv_amt, this order line is not related to current move
-            //                 # if no order_amt, dp order line was not invoiced
-            //                 delta_amount += inv_amt + order_amt
-            // 
-            //         if not move.currency_id.is_zero(delta_amount):
-            //             receivable_line = move.line_ids.filtered(
-            //                 lambda aml: aml.account_id.account_type == 'asset_receivable')[:1]
-            //             product_lines = move.line_ids.filtered(
-            //                 lambda aml: aml.display_type == 'product' and aml.is_downpayment)
-            //             tax_lines = move.line_ids.filtered(
-            //                 lambda aml: aml.tax_line_id.amount_type not in (False, 'fixed'))
-            //             if tax_lines and product_lines and receivable_line:
-            //                 line_commands = [Command.update(receivable_line.id, {
-            //                     'amount_currency': receivable_line.amount_currency + delta_amount,
-            //                 })]
-            //                 delta_sign = 1 if delta_amount > 0 else -1
-            //                 for lines, attr, sign in (
-            //                     (product_lines, 'price_total', -1 if move.is_inbound() else 1),
-            //                     (tax_lines, 'amount_currency', 1),
-            //                 ):
-            //                     remaining = delta_amount
-            //                     lines_len = len(lines)
-            //                     for line in lines:
-            //                         if move.currency_id.compare_amounts(remaining, 0) != delta_sign:
-            //                             break
-            //                         amt = delta_sign * max(
-            //                             move.currency_id.rounding,
-            //                             abs(move.currency_id.round(remaining / lines_len)),
-            //                         )
-            //                         remaining -= amt
-            //                         line_commands.append(Command.update(line.id, {attr: line[attr] + amt * sign}))
-            //                 move.line_ids = line_commands
-            // 
             //     move.message_post_with_source(
             //         'mail.message_origin_link',
             //         render_values={'self': move, 'origin': move.line_ids.sale_line_ids.order_id},
@@ -6708,32 +7486,48 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateOrderFromAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> attachment_ids) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> CreateSectionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object child_field, object name, object position) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _create_order_from_attachment(self, attachment_ids):
-            // """ Create the sale orders from given attachment_ids and fill data by extracting detail
-            // from attachments and return generated orders.
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _create_section(self, child_field, name, position, **kwargs):
+            // """Create a new section in order.
             // 
-            // :param list attachment_ids: List of attachments process.
-            // :return: Recordset of order.
+            // :param str child_field: Field name of the order's lines (e.g., 'order_line').
+            // :param str name: The name of the section to create.
+            // :param str position: The position of the section where it should be created, either 'top'
+            //                       or 'bottom'.
+            // :param dict kwargs: Additional values given for inherited models.
+            // 
+            // :return: A dictionary with newly created section's 'id' and 'sequence'.
+            // :rtype: dict
             // """
-            // attachments = self.env['ir.attachment'].browse(attachment_ids)
-            // if not attachments:
-            //     raise UserError(_("No attachment was provided"))
+            // parent_field = self._get_parent_field_on_child_model()
             // 
-            // orders = self.browse()
-            // for attachment in attachments:
-            //     order = self.create({
-            //         'partner_id': self.env.user.partner_id.id,
-            //     })
-            //     order._extend_with_attachments(attachment)
-            //     orders |= order
-            //     order.message_post(attachment_ids=attachment.ids)
-            //     attachment.write({'res_model': self._name, 'res_id': order.id})
+            // if not parent_field:
+            //     return {}
             // 
-            // return orders
+            // lines = self[child_field].sorted('sequence')
+            // line_model = lines._name
+            // sequence = 10
+            // if lines:
+            //     sequence = (
+            //         lines[0].sequence - 1 if position == 'top'
+            //         else lines[-1].sequence + 1
+            //     )
+            // 
+            // section = self.env[line_model].create({
+            //     parent_field: self.id,
+            //     'name': name,
+            //     'display_type': 'line_section',
+            //     'sequence': sequence,
+            //     **self._get_default_create_section_values(),
+            // })
+            // 
+            // return {
+            //     'id': section.id,
+            //     'sequence': section.sequence,
+            // }
             */
             return default;
         }
@@ -6800,12 +7594,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self:
             //     return
             // 
-            // self.activity_unlink(['sale.mail_act_sale_upsell'])
+            // self.activity_unlink(['mail.mail_activity_data_todo'])
             // for order in self:
             //     order_ref = order._get_html_link()
             //     customer_ref = order.partner_id._get_html_link()
             //     order.activity_schedule(
-            //         'sale.mail_act_sale_upsell',
+            //         'mail.mail_activity_data_todo',
             //         user_id=order.user_id.id or order.partner_id.user_id.id,
             //         note=_("Upsell %(order)s for customer %(customer)s", order=order_ref, customer=customer_ref))
             */
@@ -6854,97 +7648,74 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Process invoices generation and sending asynchronously.
             // :param job_count: maximum number of jobs to process if specified.
             // """
-            // def get_account_notification(moves, is_success: bool):
-            //     _ = self.env._
-            //     return [
-            //         'account_notification',
-            //         {
-            //             'type': 'success' if is_success else 'warning',
-            //             'title': _('Invoices sent') if is_success else _('Invoices in error'),
-            //             'message': _('Invoices sent successfully.') if is_success else _(
-            //                 "One or more invoices couldn't be processed."),
-            //             'action_button': {
-            //                 'name': _('Open'),
-            //                 'action_name': _('Sent invoices') if is_success else _('Invoices in error'),
-            //                 'model': 'account.move',
-            //                 'res_ids': moves.ids,
-            //             },
-            //         },
-            //     ]
-            // 
-            // limit = job_count + 1
-            // to_process = self.env['account.move'].search(
-            //     [('sending_data', '!=', False)],
-            //     limit=limit,
-            // )
-            // total_to_process = self.env['account.move'].search_count(
-            //     [('sending_data', '!=', False)],
-            // )
-            // 
-            // need_retrigger = len(to_process) > job_count
+            // domain = [
+            //     ('sending_data', '!=', False),
+            //     ('state', '=', 'posted'),
+            // ]
+            // to_process = self.search(
+            //     domain,
+            //     order='date asc, invoice_date asc, sequence_number asc, id asc',
+            //     limit=job_count)
+            // to_process.try_lock_for_update()
             // if not to_process:
             //     return
-            // 
-            // to_process = to_process[:job_count]
-            // if not self.env['res.company']._with_locked_records(to_process, allow_raising=False):
-            //     return
-            // 
-            // # Collect moves by res.partner that executed the Send & Print wizard, must be done before the _process
-            // # that modify sending_data.
-            // moves_by_partner = to_process.grouped(lambda m: m.sending_data['author_partner_id'])
             // 
             // self.env['account.move.send']._generate_and_send_invoices(
             //     to_process,
             //     from_cron=True,
             // )
-            // self.env['ir.cron']._notify_progress(done=len(to_process),
-            //                                      remaining=total_to_process - len(to_process))
-            // 
-            // for partner_id, partner_moves in moves_by_partner.items():
-            //     partner = self.env['res.partner'].browse(partner_id)
-            //     partner_moves_error = partner_moves.filtered(lambda m: m.sending_data and m.sending_data.get('error'))
-            //     if partner_moves_error:
-            //         partner._bus_send(*get_account_notification(partner_moves_error, False))
-            //     partner_moves_success = partner_moves - partner_moves_error
-            //     if partner_moves_success:
-            //         partner._bus_send(*get_account_notification(partner_moves_success, True))
-            //     partner_moves_error.sending_data = False
-            // 
-            // if need_retrigger:
-            //     self.env.ref('account.ir_cron_account_move_send')._trigger()
+            // self.env['ir.cron']._commit_progress(len(to_process), remaining=self.search_count(domain))
             */
             return default;
         }
 
-        public async Task<TEntity> DeclineReceptionMailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> CronSendPendingEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _decline_reception_mail(self):
-            // for order in self:
-            //     if order.state in ['purchase', 'done'] and not order.mail_reception_declined:
-            //         order.mail_reception_declined = True
-            //         order.activity_schedule(
-            //             'mail.mail_activity_data_todo',
-            //             note=_('The vendor asked to decline this confirmed RfQ, if you agree on that, cancel this PO'))
-            //         order.message_post(body=_("The order receipt has been declined by %s.", order.partner_id.name))
-            //     elif order.state  == 'sent' and not order.mail_reception_declined:
-            //         order.mail_reception_declined = True
-            //         order.message_post(body=_("The RFQ has been declined by %s.", order.partner_id.name))
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _cron_send_pending_emails(self):
+            // """ Find and send pending order status emails asynchronously.
+            // 
+            // :return: None
+            // """
+            // pending_email_orders = self.search([('pending_email_template_id', '!=', False)])
+            // self.env['ir.cron']._commit_progress(remaining=len(pending_email_orders))
+            // for order in pending_email_orders:
+            //     order = order[0]  # Avoid pre-fetching after each cache invalidation due to committing.
+            //     order._send_order_notification_mail(
+            //         order.pending_email_template_id, allow_deferred_sending=False
+            //     )  # Resume the email sending.
+            //     order.pending_email_template_id = None
+            //     remaining_time = self.env['ir.cron']._commit_progress(processed=1)
+            //     if not remaining_time:
+            //         break
             */
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def default_get(self, fields):
+            // context = dict(self.env.context)
+            // product_qty = context.pop('bom_overview_product_qty', False)
+            // picking_type_id = context.pop('bom_overview_picking_type_id', False)
+            // defaults = super(MrpProduction, self.with_context(context)).default_get(fields)
+            // 
+            // if product_qty:
+            //     defaults['product_qty'] = product_qty
+            // if picking_type_id:
+            //     defaults['picking_type_id'] = picking_type_id
+            // 
+            // return defaults
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def default_get(self, fields_list):
+            // def default_get(self, fields):
             // # Adds the picking_id if it comes from a return. Avoids having a default_picking_id pollute the context for further move creation.
-            // res = super().default_get(fields_list)
-            // if 'picking_id' not in res and 'picking_id' in fields_list and 'default_repair_picking_id' in self.env.context:
+            // res = super().default_get(fields)
+            // if 'picking_id' not in res and 'picking_id' in fields and 'default_repair_picking_id' in self.env.context:
             //     res['picking_id'] = self.env.context.get('default_repair_picking_id')
-            // if 'lot_id' not in res and 'lot_id' in fields_list and 'default_repair_lot_id' in self.env.context:
+            // if 'lot_id' not in res and 'lot_id' in fields and 'default_repair_lot_id' in self.env.context:
             //     res['lot_id'] = self.env.context.get('default_repair_lot_id')
             // return res
             */
@@ -7003,6 +7774,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _default_picking_type_id(self):
             // return self._get_picking_type().get((self.env.company, self.env.user))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DefaultTeamIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _default_team_id(self):
+            // return self.env.context.get('default_team_id', False) or self.team_id.id
             */
             return default;
         }
@@ -7112,6 +7893,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> EarlyPaymentDiscountMoveTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _early_payment_discount_move_types(self):
+            // return ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
+            */
+            return default;
+        }
+
         public async Task<TEntity> ExplodeAsync<TEntity>(IEnumerable<TEntity> entities, object product, object quantity, object picking_type, object never_attribute_values) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -7132,7 +7923,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for product in products:
             //         product_boms.setdefault(product, self.env['mrp.bom'])
             // 
-            // boms_done = [(self, {'qty': quantity, 'product': product, 'original_qty': quantity, 'parent_line': False})]
+            // boms_done = [(self, self.env['mrp.bom.line']._prepare_bom_done_values(quantity, product, quantity, []))]
             // lines_done = []
             // 
             // bom_lines = []
@@ -7162,168 +7953,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         for bom_line in bom.bom_line_ids:
             //             if bom_line.product_id not in product_boms:
             //                 product_ids.add(bom_line.product_id.id)
-            //         boms_done.append((bom, {'qty': converted_line_quantity, 'product': current_product, 'original_qty': quantity, 'parent_line': current_line}))
+            //         boms_done.append((bom, current_line._prepare_bom_done_values(converted_line_quantity, current_product, quantity, boms_done)))
             //     else:
             //         # We round up here because the user expects that if he has to consume a little more, the whole UOM unit
             //         # should be consumed.
-            //         rounding = current_line.product_uom_id.rounding
-            //         line_quantity = float_round(line_quantity, precision_rounding=rounding, rounding_method='UP')
-            //         lines_done.append((current_line, {'qty': line_quantity, 'product': current_product, 'original_qty': quantity, 'parent_line': parent_line}))
+            //         line_quantity = current_line.product_uom_id.round(line_quantity, rounding_method='UP')
+            //         lines_done.append((current_line, current_line._prepare_line_done_values(line_quantity, current_product, quantity, parent_line, boms_done)))
             // 
+            // lines_done = self._round_last_line_done(lines_done)
             // return boms_done, lines_done
             */
             return default;
         }
 
-        public async Task<TEntity> ExtendWithAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachment) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ExtendWithAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object files_data, object @new) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _extend_with_attachments(self, attachments, new=False):
-            // """Main entry point to extend/enhance invoices with attachments.
+            // def _extend_with_attachments(self, files_data, new=False):
+            // existing_lines = self.invoice_line_ids
+            // res = super()._extend_with_attachments(files_data, new)
             // 
-            // Either coming from:
-            // - The chatter when the user drops an attachment on an existing invoice.
-            // - The journal when the user drops one or multiple attachments from the dashboard.
-            // - The server mail alias when an alias is configured on the journal.
+            // if new_lines := (self.invoice_line_ids - existing_lines):
+            //     new_lines.is_imported = True
+            //     if not existing_lines:
+            //         self.with_context(default_move_type=self.move_type)._link_bill_origin_to_purchase_orders(timeout=4)
             // 
-            // It will unwrap all attachments by priority then try to decode until it succeed.
-            // 
-            // :param attachments: A recordset of ir.attachment.
-            // :param new:         Indicate if the current invoice is a fresh one or an existing one.
-            // :returns:           True if at least one document is successfully imported
-            // """
-            // def close_file(file_data):
-            //     if file_data.get('on_close'):
-            //         file_data['on_close']()
-            // 
-            // def add_file_data_results(file_data, invoice):
-            //     passed_file_data_list.append(file_data)
-            //     attachment = file_data.get('attachment') or file_data.get('originator_pdf')
-            //     if attachment:
-            //         if attachments_by_invoice.get(attachment):
-            //             attachments_by_invoice[attachment] |= invoice
-            //         else:
-            //             attachments_by_invoice[attachment] = invoice
-            //         if not attachment.res_id:
-            //             attachment.write({
-            //                 'res_id': invoice.id,
-            //                 'res_model': invoice._name,
-            //             })
-            // 
-            // file_data_list = attachments._unwrap_edi_attachments()
-            // attachments_by_invoice = {}
-            // invoices = self
-            // current_invoice = self
-            // passed_file_data_list = []
-            // for file_data in file_data_list:
-            // 
-            //     # Rogue binaries from mail alias are skipped and unlinked.
-            //     if (
-            //         file_data['type'] == 'binary'
-            //         and self._context.get('from_alias')
-            //         and not attachments_by_invoice.get(file_data['attachment'])
-            //         and file_data['attachment'].mimetype not in ALLOWED_MIMETYPES
-            //     ):
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     # The invoice has already been decoded by an embedded file.
-            //     if attachments_by_invoice.get(file_data['attachment']):
-            //         add_file_data_results(file_data, attachments_by_invoice[file_data['attachment']])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     # When receiving multiple files, if they have a different type, we supposed they are all linked
-            //     # to the same invoice.
-            //     if (
-            //         passed_file_data_list
-            //         and passed_file_data_list[-1]['filename'] != file_data['filename']
-            //         and passed_file_data_list[-1]['sort_weight'] != file_data['sort_weight']
-            //     ):
-            //         add_file_data_results(file_data, invoices[-1])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     if passed_file_data_list and not new:
-            //         add_file_data_results(file_data, invoices[-1])
-            //         close_file(file_data)
-            //         continue
-            // 
-            //     extend_with_existing_lines = file_data.get('process_if_existing_lines', False)
-            //     if current_invoice.invoice_line_ids and not extend_with_existing_lines:
-            //         continue
-            // 
-            //     decoder = (current_invoice or current_invoice.new(self.default_get(['move_type', 'journal_id'])))._get_edi_decoder(file_data, new=new)
-            //     current_invoice.flush_recordset()
-            //     if decoder or file_data['type'] in ('pdf', 'binary'):
-            //         try:
-            //             with self.env.cr.savepoint():
-            //                 invoice = current_invoice or self.create({})
-            //                 existing_lines = invoice.invoice_line_ids
-            //                 if not decoder and file_data['type'] in ('pdf', 'binary'):
-            //                     success = False
-            //                 else:
-            //                     success = decoder(invoice, file_data, new)
-            // 
-            //                 if success or file_data['type'] == 'pdf' or file_data['attachment'].mimetype in ALLOWED_MIMETYPES:
-            //                     (invoice.invoice_line_ids - existing_lines).is_imported = True
-            //                     if not extend_with_existing_lines:
-            //                         invoice._link_bill_origin_to_purchase_orders(timeout=4)
-            //                     invoices |= invoice
-            //                     current_invoice = self.env['account.move']
-            //                     add_file_data_results(file_data, invoice)
-            // 
-            //         except RedirectWarning:
-            //             raise
-            //         except Exception as e:
-            //             message = _(
-            //                 "Error importing attachment '%(file_name)s' as invoice (decoder=%(decoder)s)",
-            //                 file_name=file_data['filename'],
-            //                 decoder=decoder.__name__,
-            //             )
-            //             _logger.exception(message)
-            //             if isinstance(e, UserError):
-            //                 message = Markup("%s<br/><br/>%s<br/>%s") % (
-            //                     message,
-            //                     _("This specific error occurred during the import:"),
-            //                     str(e),
-            //                 )
-            //             current_invoice.sudo().message_post(body=message)
-            // 
-            //     passed_file_data_list.append(file_data)
-            //     close_file(file_data)
-            // 
-            // return attachments_by_invoice
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _extend_with_attachments(self, attachment):
-            // """ Main entry point to extend/enhance order with attachment.
-            // 
-            // :param attachment: A recordset of ir.attachment.
-            // :returns: None
-            // """
-            // self.ensure_one()
-            // 
-            // file_data = attachment._unwrap_edi_attachments()[0]
-            // decoder = self._get_order_edi_decoder(file_data)
-            // if decoder:
+            // if new and res:
             //     try:
-            //         with self.env.cr.savepoint():
-            //             decoder(self, file_data)
-            //     except RedirectWarning:
-            //         raise
-            //     except Exception:
-            //         message = _(
-            //             "Error importing attachment '%(file_name)s' as order (decoder=%(decoder)s)",
-            //             file_name=file_data['filename'],
-            //             decoder=decoder.__name__,
+            //         attachments = self._from_files_data(files_data + self._unwrap_attachments(files_data))
+            //         self.journal_id._notify_invoice_subscribers(
+            //             invoice=self,
+            //             mail_params={
+            //                 'attachment_ids': [
+            //                     Command.create({
+            //                         'name': f"MAIL_{attachment['name']}",
+            //                         'mimetype': attachment['mimetype'],
+            //                         'raw': attachment['raw'],
+            //                     }) for attachment in attachments
+            //                 ]
+            //             },
             //         )
-            //         self.with_user(SUPERUSER_ID).message_post(body=message)
-            //         _logger.exception(message)
+            //     except Exception:
+            //         _logger.exception("Failed to notify invoice subscribers after EDI import.")
             // 
-            // if file_data.get('on_close'):
-            //     file_data['on_close']()
-            // return True
+            // return res
             */
             return default;
         }
@@ -7331,26 +8005,50 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FetchDuplicateOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _fetch_duplicate_orders(self):
+            // """ Fetch duplicated orders.
+            // 
+            // :return: Dictionary mapping order to its related duplicated orders.
+            // :rtype: dict
+            // """
+            // orders = self.filtered(lambda order: order.id and order.partner_ref)
+            // if not orders:
+            //     return {}
+            // 
+            // self.env['purchase.order'].flush_model(['company_id', 'partner_id', 'partner_ref', 'origin', 'state'])
+            // 
+            // result = self.env.execute_query(SQL("""
+            //     SELECT
+            //         po.id AS order_id,
+            //         array_agg(duplicate_po.id) AS duplicate_ids
+            //     FROM purchase_order po
+            //     JOIN purchase_order AS duplicate_po
+            //         ON po.company_id = duplicate_po.company_id
+            //         AND po.id != duplicate_po.id
+            //         AND duplicate_po.state != 'cancel'
+            //         AND po.partner_id = duplicate_po.partner_id
+            //         AND (
+            //             po.origin = duplicate_po.name
+            //             OR po.partner_ref = duplicate_po.partner_ref
+            //         )
+            //     WHERE po.id IN %(orders)s
+            //     GROUP BY po.id
+            // """, orders=tuple(orders.ids)))
+            // 
+            // return {order_id: set(duplicate_ids) for order_id, duplicate_ids in result}
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _fetch_duplicate_orders(self):
-            // """ Fectch duplicated orders.
+            // """ Fetch duplicated orders.
             // 
-            // :return: Dictionary mapping order to it's related duplicated orders.
+            // :return: Dictionary mapping order to its related duplicated orders.
             // :rtype: dict
             // """
             // orders = self.filtered(lambda order: order.id and order.client_order_ref)
             // if not orders:
             //     return {}
             // 
-            // used_fields = (
-            //     'company_id',
-            //     'partner_id',
-            //     'client_order_ref',
-            //     'origin',
-            //     'date_order',
-            //     'state',
-            // )
-            // self.env['sale.order'].flush_model(used_fields)
+            // self.env['sale.order'].flush_model(['company_id', 'partner_id', 'client_order_ref', 'origin', 'state'])
             // 
             // result = self.env.execute_query(SQL("""
             //     SELECT
@@ -7362,11 +8060,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //          AND sale_order.id != duplicate_order.id
             //          AND duplicate_order.state != 'cancel'
             //          AND sale_order.partner_id = duplicate_order.partner_id
-            //          AND sale_order.date_order = duplicate_order.date_order
-            //          AND sale_order.client_order_ref = duplicate_order.client_order_ref
             //          AND (
-            //             sale_order.origin = duplicate_order.origin
-            //             OR (sale_order.origin IS NULL AND duplicate_order.origin IS NULL)
+            //             sale_order.origin = duplicate_order.name
+            //             OR sale_order.client_order_ref = duplicate_order.client_order_ref
             //         )
             //      WHERE sale_order.id IN %(orders)s
             //      GROUP BY sale_order.id
@@ -7396,23 +8092,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.env["account.move"].flush_model(used_fields)
             // 
             // move_table_and_alias = SQL("account_move AS move")
-            // if not moves[0].id:  # check if record is under creation/edition in UI
+            // if not all(move.id for move in moves):  # check if record is under creation/edition in UI
             //     # New record aren't searchable in the DB and record in edition aren't up to date yet
             //     # Replace the table by safely injecting the values in the query
-            //     values = {
-            //         field_name: moves._fields[field_name].convert_to_write(moves[field_name], moves) or None
-            //         for field_name in used_fields
-            //     }
-            //     values["id"] = moves._origin.id or 0
-            //     # The amount total depends on the field line_ids and is calculated upon saving, we needed a way to get it even when the
-            //     # invoices has not been saved yet.
-            //     values['amount_total'] = self.tax_totals.get('total_amount_currency', 0)
-            //     casted_values = SQL(', ').join(
-            //         SQL("%s::%s", value, SQL.identifier(moves._fields[field_name].column_type[0]))
-            //         for field_name, value in values.items()
-            //     )
-            //     column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in values)
-            //     move_table_and_alias = SQL("(VALUES (%s)) AS move(%s)", casted_values, column_names)
+            //     all_values = []
+            //     for move in moves:
+            //         values = {
+            //             field_name: move._fields[field_name].convert_to_write(move[field_name], move) or None
+            //             for field_name in used_fields
+            //         }
+            //         values["id"] = move._origin.id or 0
+            //         # The amount total depends on the field line_ids and is calculated upon saving,
+            //         # we needed a way to get it even when the invoices has not been saved yet.
+            //         values['amount_total'] = move.tax_totals.get('total_amount_currency', 0)
+            //         casted_values = SQL(', ').join(
+            //             SQL("%s::%s", value, SQL.identifier(move._fields[field_name].column_type[0]))
+            //             for field_name, value in values.items()
+            //         )
+            //         all_values.append(SQL("(%s)", casted_values))
+            //     column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in used_fields + ("id",))
+            //     move_table_and_alias = SQL("(VALUES %s) AS move(%s)", SQL(', ').join(all_values), column_names)
             // 
             // to_query = []
             // out_moves = moves.filtered(lambda m: m.move_type in ('out_invoice', 'out_refund'))
@@ -7472,6 +8171,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.env['account.move'].browse(move_id): self.env['account.move'].browse(duplicate_ids)
             //     for move_id, duplicate_ids in result
             // }
+            */
+            return default;
+        }
+
+        public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string fname, object query) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _field_to_sql(self, alias: str, fname: str, query=None) -> SQL:
+            // if fname == 'status_in_payment':
+            //     return SQL(
+            //         "CASE "
+            //         f"WHEN {alias}.state = 'draft' THEN 'draft' "
+            //         f"WHEN {alias}.state = 'cancel' THEN 'cancel' "
+            //         f"ELSE {alias}.payment_state "
+            //         "END"
+            //     )
+            // elif fname == 'move_sent_values':
+            //     return SQL(
+            //         "CASE "
+            //         f"WHEN {alias}.is_move_sent THEN 'sent' "
+            //         f"ELSE 'not_sent' "
+            //         "END"
+            //     )
+            // return super()._field_to_sql(alias, fname, query=query)
             */
             return default;
         }
@@ -7542,7 +8266,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :rtype: record of `mail.template` or `None` if not found
             // """
             // self.ensure_one()
-            // if self.env.context.get('proforma') or self.state != 'sale':
+            // if self.env.context.get('proforma'):
+            //     return self.env.ref('sale.email_template_proforma', raise_if_not_found=False)
+            // elif self.state != 'sale':
             //     return self.env.ref('sale.email_template_edi_sale', raise_if_not_found=False)
             // else:
             //     return self._get_confirmation_template()
@@ -7627,6 +8353,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GeneratePortalPaymentQrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _generate_portal_payment_qr(self):
+            // # This method is designed to prevent traceback.
+            // # Scenario: A traceback occurs when `account.payment` is not installed, and the user attempts to
+            // # preview or print the invoice.
+            // self.ensure_one()
+            // return None
+            */
+            return default;
+        }
+
         public async Task<TEntity> GenerateQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object silent_errors) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -7663,7 +8403,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # No eligible method could be found; we can't generate the QR-code
             //     return None
             // 
-            // unstruct_ref = self.ref if self.ref else self.name
+            // unstruct_ref = self.payment_reference or self.name
             // rslt = self.partner_bank_id.build_qr_code_base64(self.amount_residual, unstruct_ref, self.payment_reference, self.currency_id, self.partner_id, qr_code_method, silent_errors=silent_errors)
             // 
             // # We only set qr_code_method after generating the url; otherwise, it
@@ -7691,7 +8431,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param has_tax (bool): Iff any taxes are involved in the lines of the invoice
             // :param lock_dates: Like result from `_get_violated_lock_dates`;
             //                    Can be used to avoid recomputing them in case they are already known.
-            // :return (datetime.date):
+            // :rtype: datetime.date
             // """
             // self.ensure_one()
             // lock_dates = lock_dates or self._get_violated_lock_dates(invoice_date, has_tax)
@@ -7722,6 +8462,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAccountingDateSourceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_accounting_date_source(self):
+            // self.ensure_one()
+            // return self.invoice_date or self.date
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAcknowledgeUrlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def get_acknowledge_url(self):
+            // return self.get_portal_url(query_string='&acknowledge=True')
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetActionAddFromCatalogExtraContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -7733,10 +8494,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // res['product_catalog_currency_id'] = self.currency_id.id
             // res['product_catalog_digits'] = self.line_ids._fields['price_unit'].get_digits(self.env)
+            // res['show_sections'] = bool(self.id)
             // return res
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _get_action_add_from_catalog_extra_context(self):
+            // return {
+            //     **super()._get_action_add_from_catalog_extra_context(),
+            //     'product_catalog_currency_id': self.env.company.currency_id.id,
+            // }
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
             // def _get_action_add_from_catalog_extra_context(self):
             // return {
+            //     'display_uom': self.env.user.has_group('uom.group_uom'),
             //     'product_catalog_order_id': self.id,
             //     'product_catalog_order_model': self._name,
             // }
@@ -7744,11 +8513,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_action_add_from_catalog_extra_context(self):
             // return {
             //     **super()._get_action_add_from_catalog_extra_context(),
-            //     'display_uom': self.env.user.has_group('uom.group_uom'),
-            //     'precision': self.env['decimal.precision'].precision_get('Product Unit of Measure'),
+            //     'precision': self.env['decimal.precision'].precision_get('Product Unit'),
             //     'product_catalog_currency_id': self.currency_id.id,
             //     'product_catalog_digits': self.order_line._fields['price_unit'].get_digits(self.env),
             //     'search_default_seller_ids': self.partner_id.name,
+            //     'show_sections': bool(self.id),
             // }
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_action_add_from_catalog_extra_context(self):
@@ -7756,7 +8525,105 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     **super()._get_action_add_from_catalog_extra_context(),
             //     'product_catalog_currency_id': self.currency_id.id,
             //     'product_catalog_digits': self.order_line._fields['price_unit'].get_digits(self.env),
+            //     'show_sections': bool(self.id),
             // }
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product_catalog_mixin.py) ---
+            // def _get_action_add_from_catalog_extra_context(self):
+            // return {
+            //     **super()._get_action_add_from_catalog_extra_context(),
+            //     'display_stock': self._is_display_stock_in_catalog(),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetActionWithBaseDocumentLayoutConfiguratorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_action) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_action_with_base_document_layout_configurator(self, report_action):
+            // if (
+            //     self.env.is_admin()
+            //     and not self.env.company.external_report_layout_id
+            //     and not self.env.context.get('discard_logo_check')
+            // ):
+            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+            //         report_action,
+            //         "account.action_base_document_layout_configurator",
+            //     )
+            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+            // return report_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAlertsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_alerts(self):
+            // self.ensure_one()
+            // alerts = {}
+            // has_account_group = self.env.user.has_groups('account.group_account_readonly,account.group_account_invoice')
+            // 
+            // if self.state == 'draft':
+            //     if has_account_group and self.tax_lock_date_message:
+            //         alerts['account_tax_lock_date'] = {
+            //             'level': 'warning',
+            //             'message': self.tax_lock_date_message,
+            //         }
+            //     if self.auto_post == 'at_date':
+            //         alerts['account_auto_post_at_date'] = {
+            //             'level': 'info',
+            //             'message': _("This move is configured to be posted automatically at the accounting date: %s.", self.date),
+            //         }
+            //     if self.auto_post in ('yearly', 'quarterly', 'monthly'):
+            //         message = _(
+            //             "%(auto_post_name)s auto-posting enabled. Next accounting date: %(move_date)s.",
+            //             auto_post_name=self.auto_post,
+            //             move_date=self.date,
+            //         )
+            //         if self.auto_post_until:
+            //             message += " "
+            //             message += _("The recurrence will end on %s (included).", self.auto_post_until)
+            //         alerts['account_auto_post_on_period'] = {
+            //             'level': 'info',
+            //             'message': message,
+            //         }
+            //     if (
+            //         self.is_purchase_document(include_receipts=True)
+            //         and (zero_lines := self.invoice_line_ids.filtered(lambda line: line.price_total == 0))
+            //         and len(zero_lines) >= 2
+            //     ):
+            //         alerts['account_remove_empty_lines'] = {
+            //             'level': 'info',
+            //             'message': _("We've noticed some empty lines on your invoice."),
+            //             'action_text': _("Remove empty lines"),
+            //             'action_call': ('account.move.line', 'unlink', zero_lines.ids),
+            //         }
+            // 
+            // if self.is_being_sent:
+            //     alerts['account_is_being_sent'] = {
+            //         'level': 'info',
+            //         'message': _("This invoice is being sent in the background."),
+            //     }
+            // if has_account_group and self.partner_credit_warning:
+            //     alerts['account_partner_credit_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.partner_credit_warning,
+            //     }
+            // if self.abnormal_amount_warning:
+            //     alerts['account_abnormal_amount_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.abnormal_amount_warning,
+            //     }
+            // if self.abnormal_date_warning:
+            //     alerts['account_abnormal_date_warning'] = {
+            //         'level': 'warning',
+            //         'message': self.abnormal_date_warning,
+            //     }
+            // 
+            // return alerts
             */
             return default;
         }
@@ -7768,7 +8635,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_all_reconciled_invoice_partials(self):
             // self.ensure_one()
             // reconciled_lines = self.line_ids.filtered(lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable'))
-            // if not reconciled_lines:
+            // if not reconciled_lines.ids:
             //     return {}
             // 
             // self.env['account.partial.reconcile'].flush_model([
@@ -7931,20 +8798,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAvailableActionReportsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object is_invoice_report) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_available_action_reports(self, is_invoice_report=True):
+            // domain = [('model', '=', 'account.move')]
+            // 
+            // if is_invoice_report:
+            //     domain += [('is_invoice_report', '=', 'True')]
+            // 
+            // model_reports = self.env['ir.actions.report'].search(domain)
+            // 
+            // available_reports = model_reports.filtered(
+            //     lambda model_template: len(self.filtered_domain(ast.literal_eval(model_template.domain or '[]'))) == len(self)
+            // )
+            // 
+            // return available_reports
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvailableInvoiceTemplatePdfReportIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_available_invoice_template_pdf_report_ids(self):
+            // """
+            // Helper to get available invoice template pdf reports
+            // """
+            // moves = self
+            // 
+            // for move_type in ['out_invoice', 'out_refund', 'out_receipt']:
+            //     moves += self.new({'move_type': move_type})
+            // 
+            // available_reports = moves._get_available_action_reports()
+            // 
+            // if not available_reports:
+            //     raise UserError(_("There is no template that applies to invoices."))
+            // 
+            // return available_reports
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetBackorderMoValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _get_backorder_mo_vals(self):
             // self.ensure_one()
-            // if not self.procurement_group_id:
-            //     # in the rare case that the procurement group has been removed somehow, create a new one
-            //     self.procurement_group_id = self.env["procurement.group"].create({'name': self.name})
             // return {
-            //     'procurement_group_id': self.procurement_group_id.id,
+            //     'reference_ids': self.reference_ids.ids,
+            //     'production_group_id': self.production_group_id.id,
             //     'move_raw_ids': None,
             //     'move_finished_ids': None,
-            //     'lot_producing_id': False,
+            //     'lot_producing_ids': False,
             //     'origin': self.origin,
             //     'state': 'draft' if self.state == 'draft' else 'confirmed',
             //     'date_deadline': self.date_deadline,
@@ -8012,7 +8921,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // if not self:
             //     return False
-            // last_move_in_chain = max(self, key=lambda m: m.sequence_number)
+            // 
+            // # Delegate to the database, instead of max(self, key=lambda m: m.sequence_number)
+            // last_move_in_chain = (
+            //     self.env['account.move']
+            //     .sudo()
+            //     .search_fetch(
+            //         domain=[('id', 'in', self.ids)],
+            //         field_names=[
+            //             'sequence_prefix',
+            //             'sequence_number',
+            //             'journal_id',
+            //             # Pre-emptive fetching for `_is_move_restricted`
+            //             'state',
+            //             'restrict_mode_hash_table',
+            //         ],
+            //         order='sequence_number desc',
+            //         limit=1,
+            //     )
+            // )
             // journal = last_move_in_chain.journal_id
             // if not self._is_move_restricted(last_move_in_chain, force_hash=force_hash):
             //     return False
@@ -8021,10 +8948,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ('journal_id', '=', journal.id),
             //     ('sequence_prefix', '=', last_move_in_chain.sequence_prefix),
             // ]
-            // last_move_hashed = self.env['account.move'].search([
+            // last_move_hashed = self.env['account.move'].search_fetch([
             //     *common_domain,
             //     ('inalterable_hash', '!=', False),
-            // ], order='sequence_number desc', limit=1)
+            // ], ['sequence_number', 'inalterable_hash'], order='sequence_number desc', limit=1)
             // 
             // domain = self.env['account.move']._get_move_hash_domain([
             //     *common_domain,
@@ -8033,40 +8960,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ], force_hash=True)
             // if last_move_hashed and not include_pre_last_hash:
             //     # Hash moves only after the last hashed move, not the ones that may have been posted before the journal was set on restrict mode
-            //     domain.extend([('sequence_number', '>', last_move_hashed.sequence_number)])
+            //     domain &= Domain('sequence_number', '>', last_move_hashed.sequence_number)
             // 
             // # On the accounting dashboard, we are only interested on whether there are documents to hash or not
             // # so we can stop the computation early if we find at least one document to hash
             // if early_stop:
             //     return self.env['account.move'].sudo().search_count(domain, limit=1)
-            // moves_to_hash = self.env['account.move'].sudo().search(domain, order='sequence_number')
-            // warnings = set()
-            // if moves_to_hash:
-            //     # gap warning
-            //     if last_move_hashed:
-            //         first = last_move_hashed.sequence_number
-            //         difference = len(moves_to_hash)
-            //     else:
-            //         first = moves_to_hash[0].sequence_number
-            //         difference = len(moves_to_hash) - 1
-            //     last = moves_to_hash[-1].sequence_number
-            //     if first + difference != last:
-            //         warnings.add('gap')
-            // 
-            //     # unreconciled warning
-            //     unreconciled = False in moves_to_hash.statement_line_ids.mapped('is_reconciled')
-            //     if unreconciled:
-            //         warnings.add('unreconciled')
-            // else:
-            //     warnings.add('no_document')
-            // moves = moves_to_hash.sudo(False)
-            // return {
+            // moves_to_hash = self.env['account.move'].sudo().search_fetch(domain, ['sequence_number'], order='sequence_number')
+            // info = {
             //     'previous_hash': last_move_hashed.inalterable_hash,
             //     'last_move_hashed': last_move_hashed,
+            // }
+            // if self.env.context.get('chain_info_warnings', True):
+            //     warnings = set()
+            //     if moves_to_hash:
+            //         # gap warning
+            //         if last_move_hashed:
+            //             first = last_move_hashed.sequence_number
+            //             difference = len(moves_to_hash)
+            //         else:
+            //             first = moves_to_hash[0].sequence_number
+            //             difference = len(moves_to_hash) - 1
+            //         last = moves_to_hash[-1].sequence_number
+            //         if first + difference != last:
+            //             warnings.add('gap')
+            // 
+            //         # unreconciled warning
+            //         has_unreconciled = bool(self.env['account.bank.statement.line'].search_count([
+            //             ('move_id', 'in', moves_to_hash.ids),
+            //             ('is_reconciled', '=', False),
+            //         ], limit=1))
+            //         if has_unreconciled:
+            //             warnings.add('unreconciled')
+            //     else:
+            //         warnings.add('no_document')
+            // 
+            //     info['warnings'] = warnings
+            // 
+            // moves = moves_to_hash.sudo(False)
+            // info.update({
             //     'moves': moves,
             //     'remaining_moves': self - moves,
-            //     'warnings': warnings,
-            // }
+            // })
+            // return info
             */
             return default;
         }
@@ -8128,11 +9064,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _get_children(self):
             // self.ensure_one()
-            // procurement_moves = self.procurement_group_id.stock_move_ids
-            // child_moves = procurement_moves.move_orig_ids
-            // return ((procurement_moves | child_moves).created_production_id.procurement_group_id.mrp_production_ids\
-            //         | child_moves.production_id)\
-            //         .filtered(lambda p: p.origin != self.origin) - self
+            // return self.production_group_id.child_ids.production_ids
             */
             return default;
         }
@@ -8143,13 +9075,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def get_confirm_url(self, confirm_type=None):
             // """Create url for confirm reminder or purchase reception email for sending
-            // in mail."""
+            // in mail. Unsuported anymore. We only use the acknowledge mechanism. Keep it
+            // for backward compatibility"""
             // if confirm_type in ['reminder', 'reception', 'decline']:
-            //     param = url_encode({
-            //         'confirm': confirm_type,
-            //         'confirmed_date': self.date_planned and self.date_planned.date(),
-            //     })
-            //     return self.get_portal_url(query_string='&%s' % param)
+            //     return self.get_acknowledge_url()
             // return self.get_portal_url()
             */
             return default;
@@ -8208,9 +9137,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     done_qty_by_product = defaultdict(float)
             //     for move in order.move_raw_ids:
             //         quantity = move.product_uom._compute_quantity(move._get_picked_quantity(), move.product_id.uom_id)
-            //         rounding = move.product_id.uom_id.rounding
             //         # extra lines with non-zero qty picked
-            //         if move.product_id not in expected_qty_by_product and move.picked and not float_is_zero(quantity, precision_rounding=rounding):
+            //         if move.product_id not in expected_qty_by_product and move.picked and not move.product_id.uom_id.is_zero(quantity):
             //             issues.append((order, move.product_id, quantity, 0.0))
             //             continue
             //         done_qty_by_product[move.product_id] += quantity if move.picked else 0.0
@@ -8218,7 +9146,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # origin lines from bom with different qty
             //     for product, qty_to_consume in expected_qty_by_product.items():
             //         quantity = done_qty_by_product.get(product, 0.0)
-            //         if float_compare(qty_to_consume, quantity, precision_rounding=product.uom_id.rounding) != 0:
+            //         if product.uom_id.compare(qty_to_consume, quantity) != 0:
             //             issues.append((order, product, quantity, qty_to_consume))
             // 
             // return issues
@@ -8237,6 +9165,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetCopyMessageContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_copy_message_content(self, default):
+            // """Hook method to customize the message content when copying a move.
+            // This method can be overridden by other modules to add custom logic.
+            // :param default: The default values dict passed to copy method
+            // :return: The message content string
+            // """
+            // return _('This entry has been reversed from %s', self._get_html_link()) if default.get('reversed_entry_id') else _('This entry has been duplicated from %s', self._get_html_link())
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetCurrencyRateAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid to_currency_id, object date) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -8251,6 +9194,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     company=company,
             //     date=date,
             // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetDefaultCreateSectionValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _get_default_create_section_values(self):
+            // """Return default values for creating a new section in order through catalog.
+            // 
+            // :return: A dictionary with default values for creating a new section.
+            // :rtype: dict
+            // """
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_default_create_section_values(self):
+            // """ Return the default values for creating a section line in the purchase order through
+            // catalog.
+            // 
+            // :return: A dictionary with default values for creating a new section.
+            // :rtype: dict
+            // """
+            // return {'product_qty': 0}
             */
             return default;
         }
@@ -8298,29 +9265,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_default_payment_link_values(self):
+            // """ Override of `payment` to compute the default values of the payment link wizard. """
             // self.ensure_one()
-            // amount_max = self.amount_total - self.amount_paid
             // 
-            // # Always default to the minimum value needed to confirm the order:
-            // # - order is not confirmed yet
-            // # - can be confirmed online
-            // # - we have still not paid enough for confirmation.
             // prepayment_amount = self._get_prepayment_required_amount()
-            // if (
-            //     self.state in ('draft', 'sent')
-            //     and self.require_payment
-            //     and self.currency_id.compare_amounts(prepayment_amount, self.amount_paid) > 0
-            // ):
-            //     amount = prepayment_amount - self.amount_paid
-            // else:
-            //     amount = amount_max
-            // 
+            // remaining_balance = self.amount_total - self.amount_paid
+            // if self.state in ('draft', 'sent') and self.require_payment:
+            //     suggested_amount = prepayment_amount  # Suggest the amount needed to confirm the quote.
+            // else:  # The order is confirmed or doesn't require payment.
+            //     suggested_amount = remaining_balance
             // return {
             //     'currency_id': self.currency_id.id,
             //     'partner_id': self.partner_invoice_id.id,
-            //     'amount': amount,
-            //     'amount_max': amount_max,
+            //     'amount': suggested_amount,
+            //     'amount_max': remaining_balance,
             //     'amount_paid': self.amount_paid,
+            //     'prepayment_amount': prepayment_amount,
             // }
             */
             return default;
@@ -8349,6 +9309,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetDefaultReadFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_default_read_fields(self):
+            // weirdos = {'needed_terms', 'quick_encoding_vals', 'payment_term_details'}
+            // return [fname for fname in self.fields_get(attributes=()) if fname not in weirdos]
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetDiscountAllocationAccountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -8373,10 +9344,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetDomainIsLateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_domain_is_late(self, operator, value):
+            // return Domain([('state', '=', 'purchase'), ('date_planned', '<=', fields.Datetime.now())])
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetEdiBuildersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_edi_builders(self):
+            // return []
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_edi_builders(self):
             // return []
             */
@@ -8405,25 +9389,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetEdiDecoderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data, object @new) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_edi_decoder(self, file_data, new=False):
-            // """To be extended with decoding capabilities.
-            // :returns:  Function to be later used to import the file.
-            //            Function' args:
-            //            - invoice: account.move
-            //            - file_data: attachemnt information / value
-            //            - new: whether the invoice is newly created
-            //            returns True if was able to process the invoice
-            // """
-            // return None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, object help_msg) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, object help_message) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -8433,11 +9399,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // )
             // return super(MrpProduction, self).get_empty_list_help(help_message)
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def get_empty_list_help(self, help_msg):
+            // def get_empty_list_help(self, help_message):
             // self = self.with_context(
             //     empty_list_help_document_name=_("sale order"),
             // )
-            // return super().get_empty_list_help(help_msg)
+            // return super().get_empty_list_help(help_message)
             */
             return default;
         }
@@ -8447,24 +9413,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _get_extra_attachments(self):
-            // final_domain = []
-            // bom_domain = [('attached_on_mrp', '=', 'bom')]
             // is_byproduct = self.env.user.has_group('mrp.group_mrp_byproducts')
+            // product_ids, template_ids = OrderedSet(), OrderedSet()
             // for bom in self:
-            //     product_subdomain = ['|',
-            //         '&', ('res_model', '=', 'product.product'), ('res_id', '=', bom.product_id.id),
-            //         '&', ('res_model', '=', 'product.template'), ('res_id', '=', bom.product_tmpl_id.id)]
+            //     product_ids.add(bom.product_id.id)
+            //     template_ids.add(bom.product_tmpl_id.id)
             //     if is_byproduct:
-            //         product_domain = OR([product_subdomain, [
-            //             '|',
-            //             '&', ('res_model', '=', 'product.product'), ('res_id', 'in', bom.byproduct_ids.product_id.ids),
-            //             '&', ('res_model', '=', 'product.template'), ('res_id', 'in', bom.byproduct_ids.product_id.product_tmpl_id.ids)]])
-            //     else:
-            //         product_domain = product_subdomain
-            //     prod_final_domain = AND([bom_domain, product_domain])
-            //     final_domain = OR([final_domain, prod_final_domain]) if final_domain else prod_final_domain
+            //         product_ids.update(bom.byproduct_ids.product_id.ids)
+            //         template_ids.update(bom.byproduct_ids.product_id.product_tmpl_id.ids)
             // 
-            // attachements = self.env['product.document'].search(final_domain).ir_attachment_id
+            // domain = Domain('attached_on_mrp', '=', 'bom') & (
+            //     (Domain('res_model', '=', 'product.product') & Domain('res_id', 'in', product_ids))
+            //     | (Domain('res_model', '=', 'product.template') & Domain('res_id', 'in', template_ids))
+            // )
+            // attachements = self.env['product.document'].search(domain).ir_attachment_id
             // return attachements
             */
             return default;
@@ -8476,14 +9438,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_extra_print_items(self):
             // """ Helper to dynamically add items in the 'Print' menu of list and form of account.move.
-            // This is necessary to avoid the re-generation of the PDF through the action_report.
-            // Indeed, once a legal PDF is generated, it should be used and not re-generated.
             // """
-            // return [{
-            //     'key': 'download_pdf',
-            //     'description': _('PDF'),
-            //     **self.action_invoice_download_pdf()
-            // }]
+            // if moves_to_export := self.filtered(lambda m: m._get_move_zip_export_docs()):
+            //     return [
+            //         {
+            //             'key': 'download_all',
+            //             'description': _("Export ZIP"),
+            //             **moves_to_export.action_move_download_all(),
+            //         },
+            //     ]
+            // return []
             */
             return default;
         }
@@ -8541,7 +9505,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // domain = [
             //     *self.env['account.move.line']._check_company_domain(company_id),
             //     ('partner_id', '=', partner_id),
-            //     ('account_id.deprecated', '=', False),
             //     ('date', '>=', date.today() - timedelta(days=365 * 2)),
             // ]
             // if move_type in self.env['account.move'].get_inbound_types(include_receipts=True):
@@ -8549,7 +9512,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif move_type in self.env['account.move'].get_outbound_types(include_receipts=True):
             //     domain.append(('account_id.internal_group', '=', 'expense'))
             // 
-            // query = self.env['account.move.line']._where_calc(domain)
+            // query = self.env['account.move.line']._search(domain, bypass_access=True)
             // account_code = self.env['account.account']._field_to_sql('account_move_line__account_id', 'code', query)
             // rows = self.env.execute_query(SQL("""
             //     SELECT COUNT(foo.id), foo.account_id, foo.taxes
@@ -8581,11 +9544,54 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def get_import_templates(self):
+            // move_type = self.env.context.get('default_move_type')
+            // match move_type:
+            //     case 'entry':
+            //         return [{
+            //             'label': _('Import Template for Misc. Operations'),
+            //             'template': '/account/static/xls/misc_operations_import_template.xlsx',
+            //         }]
+            //     case 'out_invoice':
+            //         return [{
+            //             'label': _('Import Template for Invoices'),
+            //             'template': '/account/static/xls/customer_invoices_credit_notes_import_template.xlsx',
+            //         }]
+            //     case 'out_refund':
+            //         return [{
+            //             'label': _('Import Template for Credit Notes'),
+            //             'template': '/account/static/xls/customer_invoices_credit_notes_import_template.xlsx',
+            //         }]
+            //     case 'in_invoice':
+            //         return [{
+            //             'label': _('Import Template for Bills'),
+            //             'template': '/account/static/xls/vendor_bills_refunds_import_template.xlsx',
+            //         }]
+            //     case 'in_refund':
+            //         return [{
+            //             'label': _('Import Template for Refunds'),
+            //             'template': '/account/static/xls/vendor_bills_refunds_import_template.xlsx',
+            //         }]
+            //     case _:
+            //         return []
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def get_import_templates(self):
             // return [{
             //     'label': _('Import Template for Bills of Materials'),
             //     'template': '/mrp/static/xls/mrp_bom.xls'
+            // }]
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def get_import_templates(self):
+            // return [{
+            //     'label': _('Import Template for Requests for Quotation'),
+            //     'template': '/purchase/static/xls/requests_for_quotation_import_template.xlsx',
+            // }]
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def get_import_templates(self):
+            // return [{
+            //     'label': _('Import Template for Quotations'),
+            //     'template': '/sale/static/xls/quotations_import_template.xlsx',
             // }]
             */
             return default;
@@ -8629,7 +9635,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_integrity_hash_fields(self):
             // # Use the latest hash version by default, but keep the old one for backward compatibility when generating the integrity report.
-            // hash_version = self._context.get('hash_version', MAX_HASH_VERSION)
+            // hash_version = self.env.context.get('hash_version', MAX_HASH_VERSION)
             // if hash_version == 1:
             //     return ['date', 'journal_id', 'company_id']
             // elif hash_version in (2, 3, 4):
@@ -8645,8 +9651,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_computed_reference(self):
             // self.ensure_one()
-            // if self.journal_id.invoice_reference_type == 'none':
-            //     return ''
             // ref_function = getattr(self, f'_get_invoice_reference_{self.journal_id.invoice_reference_model}_{self.journal_id.invoice_reference_type}', None)
             // if ref_function is None:
             //     raise UserError(_("The combination of reference model and reference type on the journal is not implemented"))
@@ -8697,7 +9701,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 **vals,
             //                 'amount_currency': 0.0,
             //                 'balance': 0.0,
-            //                 'display_type': 'epd',  # Used to compute tax_tag_invert for early payment discount lines
             //             })
             //             line_vals['amount_currency'] += vals['amount_currency']
             //             line_vals['balance'] += vals['balance']
@@ -8811,6 +9814,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     cash_discount_account = company.account_journal_early_pay_discount_gain_account_id
             // 
+            // epd_analytic_distribution = self.env['account.analytic.distribution.model']._get_distribution({
+            //     'account_prefix': cash_discount_account.code,
+            //     'company_id': self.company_id.id,
+            //     'partner_id': self.commercial_partner_id.id,
+            //     'partner_category_id': self.partner_id.category_id.ids,
+            // })
+            // 
             // bases_details = {}
             // 
             // term_amount_currency = payment_term_line.amount_currency - payment_term_line.discount_amount_currency
@@ -8829,7 +9839,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'partner_id': base_line['partner_id'].id,
             //             'currency_id': base_line['currency_id'].id,
             //             'account_id': cash_discount_account.id,
-            //             'analytic_distribution': base_line['analytic_distribution'],
+            //             'analytic_distribution': base_line['analytic_distribution'] or epd_analytic_distribution,
             //         }
             //         base_detail = resulting_delta_base_details.setdefault(frozendict(grouping_dict), {
             //             'balance': 0.0,
@@ -8908,6 +9918,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'currency_id': payment_term_line.currency_id.id,
             //         'amount_currency': term_amount_currency,
             //         'balance': term_balance,
+            //         'analytic_distribution': epd_analytic_distribution,
             //     }
             // 
             // return res
@@ -8926,12 +9937,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetInvoiceFilterTypeDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_filter_type_domain(self, move_type):
+            // if self.is_sale_document(include_receipts=True, move_type=move_type):
+            //     return 'sale'
+            // elif self.is_purchase_document(include_receipts=True, move_type=move_type):
+            //     return 'purchase'
+            // else:
+            //     return False
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetInvoiceGroupingKeysInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_invoice_grouping_keys(self):
-            // return ['company_id', 'partner_id', 'currency_id']
+            // return ['company_id', 'partner_id', 'partner_shipping_id', 'currency_id', 'fiscal_position_id']
             */
             return default;
         }
@@ -8982,7 +10008,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_legal_documents(self, filetype, allow_fallback=False):
             // """ Retrieve the invoice legal document of type filetype.
-            // :param filetype: the type of legal document to retrieve. Example: 'pdf', 'all'.
+            // :param filetype: the type of legal document to retrieve. Example: 'pdf'.
             // :param bool allow_fallback: if True, returns a Proforma if the PDF invoice doesn't exist.
             // :return dict: the invoice PDF data such as
             // {'filename': 'INV_2024_0001.pdf', 'filetype': 'pdf', 'content':...}
@@ -8998,8 +10024,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         }
             //     elif allow_fallback:
             //         return self._get_invoice_pdf_proforma()
-            // elif filetype == 'all':
-            //     return self._get_invoice_legal_documents_all(allow_fallback=allow_fallback)
             */
             return default;
         }
@@ -9168,12 +10192,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_invoice_reference_euro_invoice(self):
             // """ This computes the reference based on the RF Creditor Reference.
-            //     The data of the reference is the database id number of the invoice.
-            //     For instance, if an invoice is issued with id 43, the check number
-            //     is 07 so the reference will be 'RF07 43'.
+            //     The data of the reference is the journal short code and the database
+            //     id number of the invoice. For instance, if a journal code is INV and
+            //     an invoice is issued with id 37, the check number is 67 so the
+            //     reference will be 'RF67 INV0 0003 7'.
             // """
             // self.ensure_one()
-            // return format_structured_reference_iso(self.id)
+            // journal_identifier = self.journal_id.code if self.journal_id.code.isascii() and self.journal_id.code.isalnum() else self.journal_id.id
+            // return format_structured_reference_iso(f'{journal_identifier}{str(self.id).zfill(6)}')
             */
             return default;
         }
@@ -9194,10 +10220,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     be used.
             // """
             // self.ensure_one()
+            // journal_identifier = self.journal_id.code if self.journal_id.code.isascii() and self.journal_id.code.isalnum() else self.journal_id.id
             // partner_ref = self.partner_id.ref
             // partner_ref_nr = re.sub(r'\D', '', partner_ref or '')[-21:] or str(self.partner_id.id)[-21:]
-            // partner_ref_nr = partner_ref_nr[-21:]
+            // partner_ref_nr = f'{journal_identifier}{partner_ref_nr}'[-21:]
             // return format_structured_reference_iso(partner_ref_nr)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetInvoiceReferenceNumberInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_reference_number_invoice(self):
+            // """ This computes the reference based on the Number format.
+            //     Return the number of the invoice, defined on the journal sequence.
+            // """
+            // ref = self._get_invoice_reference_odoo_invoice() or ''
+            // return ''.join(char for char in ref if char.isdigit())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetInvoiceReferenceNumberPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_invoice_reference_number_partner(self):
+            // """ This computes the reference based on the Number format.
+            //     The data used is the reference set on the partner or its database
+            //     id otherwise. For instance if the reference of the customer is
+            //     'customer 97', the reference will be '97'.
+            // """
+            // ref = self._get_invoice_reference_odoo_partner()
+            // return ''.join(char for char in ref if char.isdigit())
             */
             return default;
         }
@@ -9234,14 +10291,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoiceReportFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extension) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> GetInvoiceReportFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extension, object report) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_invoice_report_filename(self, extension='pdf'):
+            // def _get_invoice_report_filename(self, extension='pdf', report=None):
             // """ Get the filename of the generated invoice report with extension file. """
             // self.ensure_one()
-            // return f"{self.name.replace('/', '_')}.{extension}"
+            // if not report:
+            //     report = self.partner_id.invoice_template_pdf_report_id or self.env.ref('account.account_invoices')
+            // if report.print_report_name and isinstance(report.print_report_name, str):
+            //     file_name = safe_eval(report.print_report_name, {'object': self})
+            // else:
+            //     file_name = self.name
+            // return f"{file_name.replace('/', '_')}.{extension}"
             */
             return default;
         }
@@ -9264,13 +10327,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Return the invoiceable lines for order `self`."""
             // down_payment_line_ids = []
             // invoiceable_line_ids = []
-            // pending_section = None
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // section_line_ids = []
+            // subsection_line_ids = []
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // 
             // for line in self.order_line:
             //     if line.display_type == 'line_section':
-            //         # Only invoice the section if one of its lines is invoiceable
-            //         pending_section = line
+            //         section_line_ids = [line.id]  # Start a new section.
+            //         subsection_line_ids = []
+            //         continue
+            //     if line.display_type == 'line_subsection':
+            //         subsection_line_ids = [line.id]  # Start a new subsection.
             //         continue
             //     if line.display_type != 'line_note' and float_is_zero(line.qty_to_invoice, precision_digits=precision):
             //         continue
@@ -9280,9 +10347,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             # at the end of the invoice, in a specific dedicated section.
             //             down_payment_line_ids.append(line.id)
             //             continue
-            //         if pending_section:
-            //             invoiceable_line_ids.append(pending_section.id)
-            //             pending_section = None
+            //         # If the invoicable line is under subsection
+            //         if subsection_line_ids:
+            //             if line.display_type:
+            //                 subsection_line_ids.append(line.id)
+            //                 continue
+            //             # Extend the subsection lines too if altleast one invoicable line is under subsection
+            //             invoiceable_line_ids.extend(section_line_ids + subsection_line_ids)
+            //             subsection_line_ids = []
+            //             section_line_ids = []
+            //         # If the invoicable line is under section
+            //         elif section_line_ids:
+            //             if line.display_type:
+            //                 section_line_ids.append(line.id)
+            //                 continue
+            //             invoiceable_line_ids.extend(section_line_ids)
+            //             section_line_ids = []
+            //             subsection_line_ids = []
             //         invoiceable_line_ids.append(line.id)
             // 
             // return self.env['sale.order.line'].browse(invoiceable_line_ids + down_payment_line_ids)
@@ -9295,9 +10376,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _get_invoiced(self):
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // for order in self:
-            //     if order.state not in ('purchase', 'done'):
+            //     if order.state != 'purchase':
             //         order.invoice_status = 'no'
             //         continue
             // 
@@ -9366,6 +10447,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         domain += [('move_type', 'in' if self.move_type in refund_types else 'not in', refund_types)]
             //     if self.journal_id.payment_sequence:
             //         domain += [('origin_payment_id', '!=' if is_payment else '=', False)]
+            //     if self.journal_id.is_self_billing:
+            //         if self.partner_id:
+            //             domain += [('commercial_partner_id', '=', self.partner_id.commercial_partner_id.id)]
+            //         else:
+            //             # If the partner id is not set, we can't compute the sequence, so we force a sequence reset.
+            //             domain += [(0, '=', 1)]
             //     reference_move_name = self.sudo().search(domain + [('date', '<=', self.date)], order='date desc', limit=1).name
             //     if not reference_move_name:
             //         reference_move_name = self.sudo().search(domain, order='date asc', limit=1).name
@@ -9407,6 +10494,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         where_string += " AND origin_payment_id IS NULL "
             // 
+            // if self.journal_id.is_self_billing:
+            //     if self.partner_id:
+            //         where_string += " AND commercial_partner_id = %(partner_id)s "
+            //         param['partner_id'] = self.partner_id.commercial_partner_id.id
+            //     else:
+            //         where_string += " AND false "
             // return where_string, param
             */
             return default;
@@ -9485,11 +10578,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // :return: the correct mail template based on the current move type
             // """
-            // return self.env.ref(
-            //     'account.email_template_edi_credit_note'
-            //     if all(move.move_type == 'out_refund' for move in self)
-            //     else 'account.email_template_edi_invoice'
-            // )
+            // template_xmlid = 'account.email_template_edi_invoice'
+            // if all(move.move_type == 'out_refund' for move in self):
+            //     template_xmlid = 'account.email_template_edi_credit_note'
+            // elif all(move.move_type == 'in_invoice' and move.journal_id.is_self_billing for move in self):
+            //     template_xmlid = 'account.email_template_edi_self_billing_invoice'
+            // elif all(move.move_type == 'in_refund' and move.journal_id.is_self_billing for move in self):
+            //     template_xmlid = 'account.email_template_edi_self_billing_credit_note'
+            // return self.env.ref(template_xmlid)
             */
             return default;
         }
@@ -9554,7 +10650,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _get_move_finished_values(self, product_id, product_uom_qty, product_uom, operation_id=False, byproduct_id=False, cost_share=0):
-            // group_orders = self.procurement_group_id.mrp_production_ids
+            // group_orders = self.production_group_id.production_ids
             // move_dest_ids = self.move_dest_ids
             // if len(group_orders) > 1:
             //     move_dest_ids |= group_orders[0].move_finished_ids.filtered(lambda m: m.product_id == self.product_id).move_dest_ids
@@ -9564,7 +10660,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'product_uom': product_uom,
             //     'operation_id': operation_id,
             //     'byproduct_id': byproduct_id,
-            //     'name': _('New'),
             //     'date': self.date_finished,
             //     'date_deadline': self.date_deadline,
             //     'picking_type_id': self.picking_type_id.id,
@@ -9574,10 +10669,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'production_id': self.id,
             //     'warehouse_id': self.location_dest_id.warehouse_id.id,
             //     'origin': self.product_id.partner_ref,
-            //     'group_id': self.procurement_group_id.id,
+            //     'reference_ids': self.reference_ids.ids,
             //     'propagate_cancel': self.propagate_cancel,
-            //     'move_dest_ids': [(4, x.id) for x in self.move_dest_ids if not byproduct_id],
+            //     'move_dest_ids': [(4, x.id) for x in move_dest_ids if not byproduct_id],
             //     'cost_share': cost_share,
+            //     'production_group_id': self.production_group_id.id,
             // }
             */
             return default;
@@ -9593,16 +10689,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param common_domain: a search domain that will be included in the returned domain in any case
             // :param force_hash: if True, we'll check all moves posted, independently of journal settings
             // """
-            // common_domain = expression.AND([
-            //     common_domain or [],
-            //     [('state', '=', 'posted')],
-            // ])
+            // domain = Domain(common_domain or Domain.TRUE) & Domain('state', '=', 'posted')
             // if force_hash:
-            //     return common_domain
-            // return expression.AND([
-            //     common_domain,
-            //     [('restrict_mode_hash_table', '=', True)],
-            // ])
+            //     return domain
+            // return domain & Domain('restrict_mode_hash_table', '=', True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetMoveLinesToReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_move_lines_to_report(self):
+            // def show_line(line):
+            //     return (
+            //         line.display_type == 'line_section'
+            //         or (
+            //             not any([line.parent_id.collapse_composition, line.parent_id.parent_id.collapse_composition]) and
+            //             not any([line.parent_id.collapse_prices, line.parent_id.parent_id.collapse_prices])
+            //         )
+            //     )
+            // 
+            // return self.invoice_line_ids.filtered(show_line).sorted('sequence')
             */
             return default;
         }
@@ -9616,10 +10725,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     - Manually added components, i.e. "default_" values in view
             //     - Moves from a copied MO, i.e. move.create
             //     - Existing moves during backorder creation """
+            // 
             // source_location = self.location_src_id
             // data = {
             //     'sequence': bom_line.sequence if bom_line else 10,
-            //     'name': _('New'),
             //     'date': self.date_start,
             //     'date_deadline': self.date_start,
             //     'bom_line_id': bom_line.id if bom_line else False,
@@ -9630,17 +10739,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'location_id': source_location.id,
             //     'location_dest_id': self.product_id.with_company(self.company_id).property_stock_production.id,
             //     'raw_material_production_id': self.id,
+            //     'production_group_id': self.production_group_id.id,
             //     'company_id': self.company_id.id,
             //     'operation_id': operation_id,
             //     'procure_method': 'make_to_stock',
             //     'origin': self._get_origin(),
             //     'state': 'draft',
             //     'warehouse_id': source_location.warehouse_id.id,
-            //     'group_id': self.procurement_group_id.id,
+            //     'reference_ids': self.reference_ids.ids,
             //     'propagate_cancel': self.propagate_cancel,
             //     'manual_consumption': self.env['stock.move']._determine_is_manual_consumption(bom_line),
             // }
             // return data
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetMoveZipExportDocsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_move_zip_export_docs(self):
+            // self.ensure_one()
+            // 
+            // if self.state != 'posted':
+            //     return []
+            // 
+            // if self.is_purchase_document(include_receipts=True):
+            //     attachment = self.message_main_attachment_id
+            //     return [{
+            //         'filename': attachment.name,
+            //         'filetype': attachment.mimetype,
+            //         'content': attachment.raw,
+            //     }] if attachment else []
+            // 
+            // return self._get_invoice_legal_documents_all()
             */
             return default;
         }
@@ -9658,7 +10791,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     finished_move_values['location_final_id'] = self.location_final_id.id
             //     moves.append(finished_move_values)
             //     for byproduct in production.bom_id.byproduct_ids:
-            //         if byproduct._skip_byproduct_line(production.product_id):
+            //         if byproduct._skip_byproduct_line(production.product_id, production.never_product_template_attribute_value_ids):
             //             continue
             //         product_uom_factor = production.product_uom_id._compute_quantity(production.product_qty, production.bom_id.product_uom_id)
             //         qty = byproduct.product_qty * (product_uom_factor / production.bom_id.product_qty)
@@ -9679,7 +10812,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for production in self:
             //     if not production.bom_id:
             //         continue
-            //     factor = production.product_uom_id._compute_quantity(production.product_qty, production.bom_id.product_uom_id) / production.bom_id.product_qty
+            //     factor = production.product_uom_id._compute_quantity(production.product_qty, production.bom_id.product_uom_id, round=False) / production.bom_id.product_qty
             //     _boms, lines = production.bom_id.explode(production.product_id, factor, picking_type=production.bom_id.picking_type_id, never_attribute_values=production.never_product_template_attribute_value_ids)
             //     for bom_line, line_data in lines:
             //         if bom_line.child_bom_id and bom_line.child_bom_id.type == 'phantom' or\
@@ -9698,6 +10831,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetMovesRequiringConfirmationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_moves_requiring_confirmation(self):
+            // """Return the subset of moves that require confirmation before validation."""
+            // return self.filtered(
+            //     lambda move: (move.date or move.invoice_date) > fields.Date.context_today(self)
+            //     or move.restrict_mode_hash_table,
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetNameBackorderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name, object sequence) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -9707,7 +10854,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return name
             // seq_back = "-" + "0" * (SIZE_BACK_ORDER_NUMERING - 1 - int(math.log10(sequence))) + str(sequence)
             // regex = re.compile(r"-\d+$")
-            // if regex.search(name) and (max(self.procurement_group_id.mrp_production_ids.mapped("backorder_sequence")) > 1 or sequence > 1):
+            // if regex.search(name) and (max(self.production_group_id.production_ids.mapped("backorder_sequence")) > 1 or sequence > 1):
             //     return regex.sub(seq_back, name)
             // return name + seq_back
             */
@@ -9763,32 +10910,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetNewLineSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object child_field, Guid section_id) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _get_new_line_sequence(self, child_field, section_id):
+            // """Compute the sequence number for inserting a new line into the order.
+            // 
+            // :param str child_field: Field name of the order's lines (e.g., 'order_line').
+            // :param int section_id: ID of the section line to insert after.
+            // :rtype: int
+            // :return: Computed sequence number.
+            // """
+            // lines = self[child_field].sorted('sequence')
+            // 
+            // if section_id:
+            //     # Insert after the selected section line
+            //     sequence = lines.filtered_domain([
+            //         ('display_type', '=', 'line_section'),
+            //         ('id', '=', section_id),
+            //     ]).sequence + 1
+            // elif (
+            //     section_lines := lines.filtered_domain([
+            //         ('display_type', '=', 'line_section'),
+            //     ])
+            // ):
+            //     # Insert before the first section (top of the order)
+            //     sequence = section_lines[0].sequence
+            // else:
+            //     # No sections exist, insert at the end
+            //     sequence = (lines and lines[-1].sequence + 1) or 10
+            // 
+            // for line in lines.filtered_domain([('sequence', '>=', sequence)]):
+            //     line.sequence += 1
+            // 
+            // return sequence
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetNoteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_note_url(self):
             // return self.env.company.get_base_url()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetOrderEdiDecoderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _get_order_edi_decoder(self, file_data):
-            // """ To be extended with decoding capabilities of order data from file data.
-            // 
-            // :returns:  Function to be later used to import the file.
-            //            Function' args:
-            //            - order: sale.order
-            //            - file_data: attachemnt information / value
-            //            returns True if was able to process the order
-            // """
-            // if file_data['type'] in ('pdf', 'binary'):
-            //     return lambda *args: False
-            // return
             */
             return default;
         }
@@ -9805,14 +10971,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // )
             // 
             // def show_line(line):
-            //     if not line.is_downpayment:
-            //         return True
-            //     elif line.display_type and down_payment_lines:
-            //         return True  # Only show the down payment section if down payments were posted
-            //     elif line in down_payment_lines:
-            //         return True  # Only show posted down payments
-            //     else:
-            //         return False
+            //     if line.is_downpayment:
+            //         return (
+            //             # Only show the down payment section if down payments were posted
+            //             (line.display_type and down_payment_lines)
+            //             # Only show posted down payments
+            //             or line in down_payment_lines
+            //         )
+            //     return (
+            //         line.display_type == 'line_section'
+            //         or not (
+            //             line.parent_id.collapse_composition
+            //             or line.parent_id.parent_id.collapse_composition
+            //         )
+            //     )
             // 
             // return self.order_line.filtered(show_line)
             */
@@ -9841,10 +11013,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // order and not all products are service."""
             // return self.search([
             //     ('partner_id', '!=', False),
-            //     ('state', 'in', ['purchase', 'done']),
-            //     ('mail_reminder_confirmed', '=', False)
-            // ]).filtered(lambda p: p.partner_id.with_company(p.company_id).receipt_reminder_email and\
-            //     p.mapped('order_line.product_id.product_tmpl_id.type') != ['service'])
+            //     ('state', '=', 'purchase'),
+            //     ('acknowledged', '=', False),
+            //     ('receipt_reminder_email', '=', True)
+            // ]).filtered(lambda p: p.mapped('order_line.product_id.product_tmpl_id.type') != ['service'])
             */
             return default;
         }
@@ -9856,8 +11028,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_origin(self):
             // origin = self.name
             // if self.orderpoint_id and self.origin:
-            //     origin = self.origin.replace(
-            //         '%s - ' % (self.orderpoint_id.display_name), '')
+            //     origin = self.origin
             //     origin = '%s,%s' % (origin, self.name)
             // return origin
             */
@@ -9870,6 +11041,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_outbound_types(self, include_receipts=True):
             // return ['in_invoice', 'out_refund'] + (include_receipts and ['in_receipt'] or [])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetParentFieldOnChildModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'move_id'
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // """Return the parent field for the order lines.
+            // 
+            // :return: parent field
+            // :rtype: str
+            // """
+            // return ''
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'order_id'
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'order_id'
             */
             return default;
         }
@@ -9900,7 +11095,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // picking_type_by_company_user = {}
             // without_default_warehouse_companies = set()
-            // for (company, user), dummy in groupby(self, lambda r: (r.company_id, r.user_id)):
+            // for company, user in unique((r.company_id, r.user_id) for r in self):
             //     default_warehouse = user.with_company(company.id)._get_default_warehouse_id()
             //     if default_warehouse and default_warehouse.repair_type_id:
             //         picking_type_by_company_user[(company, user)] = default_warehouse.repair_type_id
@@ -9930,7 +11125,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def get_portal_last_transaction(self):
             // self.ensure_one()
-            // return self.transaction_ids.sudo()._get_last()
+            // return self.sudo().transaction_ids._get_last()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetPortalPaymentLinkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_portal_payment_link(self):
+            // # This method is designed to prevent traceback.
+            // # Scenario: A traceback occurs when `account.payment` is not installed, and the user attempts to
+            // # preview or print the invoice.
+            // self.ensure_one()
+            // return None
             */
             return default;
         }
@@ -9952,18 +11161,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_prepayment_required_amount(self):
-            // """ Return the minimum amount needed to confirm automatically the quotation.
+            // """ Return the minimum amount needed to automatically confirm the quotation.
             // 
             // Note: self.ensure_one()
             // 
-            // :return: The minimum amount needed to confirm automatically the quotation.
+            // :return: The minimum amount needed to automatically confirm the quotation.
             // :rtype: float
             // """
             // self.ensure_one()
-            // if self.prepayment_percent == 1.0 or not self.require_payment:
-            //     return self.amount_total
+            // 
+            // if not self.require_payment:
+            //     return 0
             // else:
             //     return self.currency_id.round(self.amount_total * self.prepayment_percent)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetPricedLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _get_priced_lines(self):
+            // return self.order_line.filtered(lambda x: not x.display_type)
             */
             return default;
         }
@@ -9987,34 +11207,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_product_catalog_domain(self):
+            // domain = super()._get_product_catalog_domain()
             // if self.is_sale_document():
-            //     return expression.AND([super()._get_product_catalog_domain(), [('sale_ok', '=', True)]])
+            //     return domain & Domain('sale_ok', '=', True)
             // elif self.is_purchase_document():
-            //     return expression.AND([super()._get_product_catalog_domain(), [('purchase_ok', '=', True)]])
+            //     return domain & Domain('purchase_ok', '=', True)
             // else:  # In case of an entry
-            //     return super()._get_product_catalog_domain()
+            //     return domain
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('id', '!=', self.product_id.id)]])
+            // return super()._get_product_catalog_domain() & Domain('type', '=', 'consu')
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
-            // def _get_product_catalog_domain(self):
+            // def _get_product_catalog_domain(self) -> Domain:
             // """Get the domain to search for products in the catalog.
             // 
             // For a model that uses products that has to be hidden in the catalog, it
             // must override this method and extend the appropriate domain.
-            // :returns: A list of tuples that represents a domain.
-            // :rtype: list
+            // :returns: A domain.
             // """
-            // return ['|', ('company_id', '=', False), ('company_id', 'parent_of', self.company_id.id), ('type', '!=', 'combo')]
+            // return (
+            //     Domain('company_id', '=', False) | Domain('company_id', 'parent_of', self.company_id.id)
+            //  ) & Domain('type', '!=', 'combo')
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('purchase_ok', '=', True)]])
+            // return super()._get_product_catalog_domain() & Domain('purchase_ok', '=', True)
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('type', '=', 'consu')]])
+            // return super()._get_product_catalog_domain() & Domain('type', '=', 'consu')
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('sale_ok', '=', True)]])
+            // return super()._get_product_catalog_domain() & Domain('sale_ok', '=', True)
             */
             return default;
         }
@@ -10058,10 +11280,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'quantity': float (optional)
             //         'productType': string
             //         'price': float
+            //         'uomDisplayName': string
+            //         'code': string (optional)
             //         'readOnly': bool (optional)
             //     }
             // """
-            // return {product.id: {'productType': product.type} for product in products}
+            // return {
+            //     product.id: {
+            //         'productType': product.type,
+            //         'uomDisplayName': product.uom_id.display_name,
+            //         'code': product.code if product.code else '',
+            //     }
+            //     for product in products
+            // }
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _get_product_catalog_order_data(self, products, **kwargs):
             // res = super()._get_product_catalog_order_data(products, **kwargs)
@@ -10084,12 +11315,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     **kwargs,
             // )
             // res = super()._get_product_catalog_order_data(products, **kwargs)
+            // has_warning_group = self.env.user.has_group('sale.group_warning_sale')
             // for product in products:
             //     res[product.id]['price'] = pricelist.get(product.id)
-            //     if product.sale_line_warn != 'no-message' and product.sale_line_warn_msg:
+            //     if product.sale_line_warn_msg and has_warning_group:
             //         res[product.id]['warning'] = product.sale_line_warn_msg
-            //     if product.sale_line_warn == "block":
-            //         res[product.id]['readOnly'] = True
             // return res
             */
             return default;
@@ -10111,23 +11341,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'quantity': float (optional)
             //         'productType': string
             //         'price': float
+            //         'uomDisplayName': string
+            //         'code': string (optional)
             //         'readOnly': bool (optional)
             //     }
             // """
             // order_line_info = {}
-            // default_data = self._default_order_line_values(child_field)
             // 
             // for product, record_lines in self._get_product_catalog_record_lines(product_ids, child_field=child_field, **kwargs).items():
             //     order_line_info[product.id] = {
             //        **record_lines._get_product_catalog_lines_data(parent_record=self, **kwargs),
             //        'productType': product.type,
+            //        'code': product.code if product.code else '',
             //     }
-            //     product_ids.remove(product.id)
+            //     if not order_line_info[product.id]['uomDisplayName']:
+            //         order_line_info[product.id]['uomDisplayName'] = product.uom_id.display_name
             // 
+            // default_data = self._default_order_line_values(child_field)
             // products = self.env['product.product'].browse(product_ids)
             // product_data = self._get_product_catalog_order_data(products, **kwargs)
+            // 
             // for product_id, data in product_data.items():
+            //     if product_id in order_line_info:
+            //         continue
             //     order_line_info[product_id] = {**default_data, **data}
+            // 
             // return order_line_info
             */
             return default;
@@ -10137,26 +11375,36 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['account.move.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.line_ids[:1].id
+            //         if self.line_ids[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.line_ids:
-            //     if line.display_type == 'product' and line.product_id.id in product_ids:
+            //     if (
+            //         line.get_parent_section_line().id == section_id
+            //         and line.display_type == 'product'
+            //         and line.product_id.id in product_ids
+            //     ):
             //         grouped_lines[line.product_id] |= line
             // return grouped_lines
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, *, child_field=False, **kwargs):
             // if not child_field:
             //     return {}
             // lines = self[child_field].filtered(lambda line: line.product_id.id in product_ids)
             // return lines.grouped('product_id')
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, *, child_field=False, **kwargs):
             // if not child_field:
             //     return {}
             // lines = self[child_field].filtered(lambda line: line.product_id.id in product_ids)
             // return lines.grouped(lambda line: line.product_id)
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, **kwargs):
             // """ Returns the record's lines grouped by product.
             // Must be overrided by each model using this mixin.
             // 
@@ -10165,10 +11413,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // return {}
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['purchase.order.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.order_line[:1].id
+            //         if self.order_line[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.order_line:
-            //     if line.display_type or line.product_id.id not in product_ids:
+            //     if (
+            //         line.display_type
+            //         or line.product_id.id not in product_ids
+            //         or line.get_parent_section_line().id != section_id
+            //     ):
             //         continue
             //     grouped_lines[line.product_id] |= line
             // return grouped_lines
@@ -10182,10 +11440,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return grouped_lines
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['sale.order.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.order_line[:1].id
+            //         if self.order_line[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.order_line:
-            //     if line.display_type or line.product_id.id not in product_ids:
+            //     if (
+            //         line.display_type
+            //         or line.product_id.id not in product_ids
+            //         or line.get_parent_section_line().id != section_id
+            //     ):
             //         continue
             //     grouped_lines[line.product_id] |= line
             // return grouped_lines
@@ -10258,20 +11526,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // product_infos = {
             //     'price': product.standard_price,
-            //     'uom': {
-            //         'display_name': product.uom_id.display_name,
-            //         'id': product.uom_id.id,
-            //     },
+            //     'uomDisplayName': product.uom_id.display_name
             // }
-            // if product.purchase_line_warn_msg:
-            //     product_infos['warning'] = product.purchase_line_warn_msg
-            // if product.purchase_line_warn == "block":
-            //     product_infos['readOnly'] = True
-            // if product.uom_id != product.uom_po_id:
-            //     product_infos['purchase_uom'] = {
-            //         'display_name': product.uom_po_id.display_name,
-            //         'id': product.uom_po_id.id,
-            //     }
             // params = {'order_id': self}
             // # Check if there is a price and a minimum quantity for the order's vendor.
             // seller = product._select_seller(
@@ -10283,23 +11539,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     params=params
             // )
             // if seller:
+            //     product_uom = (seller.product_id or seller.product_tmpl_id).uom_id
+            //     price = seller.price_discounted
+            //     if seller.currency_id != self.currency_id:
+            //         price = seller.currency_id._convert(price, self.currency_id)
+            //     if seller.product_uom_id != product_uom:
+            //         # The discounted price is expressed in the product's UoM, not in the vendor
+            //         # price's UoM, so we need to convert it into to match the displayed UoM.
+            //         price = product_uom._compute_price(price, seller.product_uom_id)
+            //         product_infos.update(uomFactor=seller.product_uom_id.factor / product_uom.factor)
             //     product_infos.update(
-            //         price=seller.price_discounted,
+            //         price=price,
             //         min_qty=seller.min_qty,
+            //         uomDisplayName=seller.product_uom_id.display_name,
             //     )
-            // # Check if the product uses some packaging.
-            // packaging = self.env['product.packaging'].search(
-            //     [('product_id', '=', product.id), ('purchase', '=', True)], limit=1
-            // )
-            // if packaging:
-            //     qty = packaging.product_uom_id._compute_quantity(packaging.qty, product.uom_po_id)
-            //     product_infos.update(
-            //         packaging={
-            //             'id': packaging.id,
-            //             'name': packaging.display_name,
-            //             'qty': qty,
-            //         }
-            //     )
+            // 
             // return product_infos
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _get_product_price_and_data(self, product):
@@ -10343,7 +11597,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.env.context.get('skip_backorder', False):
             //     return quantity_issues
             // for order in self:
-            //     if not float_is_zero(order._get_quantity_to_backorder(), precision_rounding=order.product_uom_id.rounding):
+            //     if not order.product_uom_id.is_zero(order._get_quantity_to_backorder()):
             //         quantity_issues.append(order)
             // return quantity_issues
             */
@@ -10585,13 +11839,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     cash_rounding_amls = self.line_ids \
             //         .filtered(lambda line: line.display_type == 'rounding' and not line.tax_repartition_line_id)
             //     base_lines += [self._prepare_cash_rounding_base_line_for_taxes_computation(line) for line in cash_rounding_amls]
+            //     non_deductible_base_lines = self.line_ids.filtered(lambda line: line.display_type in ('non_deductible_product', 'non_deductible_product_total'))
+            //     base_lines += [self._prepare_non_deductible_base_line_for_taxes_computation(line) for line in non_deductible_base_lines]
             //     AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
             //     tax_amls = self.line_ids.filtered('tax_repartition_line_id')
             //     tax_lines = [self._prepare_tax_line_for_taxes_computation(tax_line) for tax_line in tax_amls]
+            //     if round_from_tax_lines == 'reapply_currency_rate':
+            //         for tax_line in tax_lines:
+            //             rate = tax_line['record'].currency_rate
+            //             if rate:
+            //                 tax_line['balance'] = self.company_currency_id.round(tax_line['amount_currency'] / rate)
             //     AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines if round_from_tax_lines else [])
             // else:
             //     # The move is not stored yet so the only thing we have is the invoice lines.
             //     base_lines += self._prepare_epd_base_lines_for_taxes_computation_from_base_lines(base_amls)
+            //     base_lines += self._prepare_non_deductible_base_lines_for_taxes_computation_from_base_lines(base_amls)
             //     AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
             //     AccountTax._round_base_lines_tax_details(base_lines, self.company_id)
             // return base_lines, tax_lines
@@ -10605,6 +11867,50 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_sale_types(self, include_receipts=False):
             // return ['out_invoice', 'out_refund'] + (include_receipts and ['out_receipt'] or [])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSectionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object child_field) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _get_sections(self, child_field, **kwargs):
+            // """Return section data for the product catalog display.
+            // 
+            // :param str child_field: Field name of the order's lines (e.g., 'order_line').
+            // :param dict kwargs: Additional values given for inherited models.
+            // :rtype: list
+            // :return: List of section dicts with 'id', 'name', 'sequence', and 'line_count'.
+            // """
+            // sections = {}
+            // no_section_count = 0
+            // lines = self[child_field]
+            // for line in lines.sorted('sequence'):
+            //     if line.display_type == 'line_section':
+            //         sections[line.id] = {
+            //             'id': line.id,
+            //             'name': line.name,
+            //             'sequence': line.sequence,
+            //             'line_count': 0,
+            //         }
+            //     elif self._is_line_valid_for_section_line_count(line):
+            //         sec_id = line.get_parent_section_line().id
+            //         if sec_id and sec_id in sections:
+            //             sections[sec_id]['line_count'] += 1
+            //         else:
+            //             no_section_count += 1
+            // 
+            // if no_section_count > 0 or not sections:
+            //     # If there are products outside of a section or no section at all
+            //     sections[False] = {
+            //         'id': False,
+            //         'name': self.env._("No Section"),
+            //         'sequence': lines[0].sequence - 1 if lines else 0,
+            //         'line_count': no_section_count,
+            //     }
+            // 
+            // return sorted(sections.values(), key=lambda x: x['sequence'])
             */
             return default;
         }
@@ -10650,9 +11956,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _get_sources(self):
             // self.ensure_one()
-            // dest_moves = self.procurement_group_id.mrp_production_ids.move_dest_ids
-            // parent_moves = self.procurement_group_id.stock_move_ids.move_dest_ids
-            // return (dest_moves | parent_moves).group_id.mrp_production_ids.filtered(lambda p: p.origin != self.origin) - self
+            // return self.production_group_id.parent_ids.production_ids
             */
             return default;
         }
@@ -10684,12 +11988,88 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # example). Note that it's already the case for monthly sequences.
             //     starting_sequence = "%s/%s/%s" % (self.journal_id.code, year_part, '0000' if is_staggered_year else '00000')
             // else:
-            //     starting_sequence = "%s/%s/%02d/0000" % (self.journal_id.code, year_part, move_date.month)
+            //     if self.journal_id.is_self_billing:
+            //         partner_identifier = str(self.partner_id.commercial_partner_id.id) if self.partner_id else _('[Partner id]')
+            //         starting_sequence = "%s%s/%s/%02d/0000" % (
+            //             self.journal_id.code,
+            //             partner_identifier.zfill(5),
+            //             year_part,
+            //             move_date.month,
+            //         )
+            //     else:
+            //         starting_sequence = "%s/%s/%02d/0000" % (self.journal_id.code, year_part, move_date.month)
+            // 
             // if self.journal_id.refund_sequence and self.move_type in ('out_refund', 'in_refund'):
             //     starting_sequence = "R" + starting_sequence
             // if self.journal_id.payment_sequence and self.origin_payment_id or self.env.context.get('is_payment'):
             //     starting_sequence = "P" + starting_sequence
             // return starting_sequence
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSuitableJournalIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type, object company) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_suitable_journal_ids(self, move_type, company=False):
+            // """Return the suitable journals for the given move type and company (current company if False)."""
+            // journal_type = self._get_invoice_filter_type_domain(move_type) or 'general'
+            // return self.env['account.journal'].search([
+            //     *self.env['account.journal']._check_company_domain(company or self.env.company),
+            //     ('type', '=', journal_type),
+            // ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSyncStackInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_sync_stack(self, container):
+            // tax_container, invoice_container, misc_container = ({} for _ in range(3))
+            // 
+            // def update_containers():
+            //     # Only invoice-like and journal entries in "auto tax mode" are synced
+            //     tax_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True) or m.line_ids.tax_ids or m.line_ids.tax_repartition_line_id)
+            //     invoice_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True))
+            //     misc_container['records'] = container['records'].filtered(lambda m: m.is_entry() and not m.tax_cash_basis_origin_move_id)
+            // 
+            //     return tax_container, invoice_container, misc_container
+            // 
+            // update_containers()
+            // 
+            // stack = [
+            //     (10, self._sync_dynamic_line(
+            //             existing_key_fname='term_key',
+            //             needed_vals_fname='needed_terms',
+            //             needed_dirty_fname='needed_terms_dirty',
+            //             line_type='payment_term',
+            //             container=invoice_container,
+            //         )),
+            //     (20, self._sync_unbalanced_lines(misc_container)),
+            //     (30, self._sync_rounding_lines(invoice_container)),
+            //     (40, self._sync_dynamic_line(
+            //             existing_key_fname='discount_allocation_key',
+            //             needed_vals_fname='line_ids.discount_allocation_needed',
+            //             needed_dirty_fname='line_ids.discount_allocation_dirty',
+            //             line_type='discount',
+            //             container=invoice_container,
+            //         )),
+            //     (50, self._sync_tax_lines(tax_container)),
+            //     (60, self._sync_non_deductible_base_lines(invoice_container)),
+            //     (70, self._sync_dynamic_line(
+            //             existing_key_fname='epd_key',
+            //             needed_vals_fname='line_ids.epd_needed',
+            //             needed_dirty_fname='line_ids.epd_dirty',
+            //             line_type='epd',
+            //             container=invoice_container,
+            //         )),
+            //     (80, self._sync_invoice(invoice_container)),
+            // ]
+            // 
+            // return stack, update_containers
             */
             return default;
         }
@@ -10728,13 +12108,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_unlink_logger_message(self):
-            // """ Before unlink, get a log message for audit trail if it's enabled.
+            // """ Before unlink, get a log message for audit trail if restricted.
             // Logger is added here because in api ondelete, account.move.line is deleted, and we can't get total amount """
-            // if not self._context.get('force_delete'):
+            // if not self.env.context.get('force_delete'):
             //     pass
             // 
             // moves_details = []
-            // for move in self.filtered(lambda m: m.posted_before and m.company_id.check_account_audit_trail):
+            // for move in self.filtered(lambda m: m.posted_before and m.company_id.restrictive_audit_trail):
             //     entry_details = f"{move.name} ({move.id}) amount {move.amount_total} {move.currency_id.name} and partner {move.partner_id.display_name}"
             //     account_balances_per_account = defaultdict(float)
             //     for line in move.line_ids:
@@ -10791,22 +12171,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif self.origin_payment_id or self.statement_line_id or self.env.context.get('is_payment') or self.env.context.get('is_statement_line'):
             //     return ['bank', 'cash', 'credit']
             // return ['general']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _get_view(self, view_id=None, view_type='form', **options):
-            // arch, view = super()._get_view(view_id, view_type, **options)
-            // if view_type == 'form':
-            //     if name_node := arch.xpath("""//field[@name="name"][@invisible="name == '/' and not posted_before and not quick_edit_mode"]"""):
-            //         name_node[0].set('invisible', "not (name or name_placeholder or quick_edit_mode)")
-            //     if draft_node := arch.xpath("""//span[@invisible="name == '/' and not posted_before and not quick_edit_mode"]"""):
-            //         draft_node[0].set('invisible', "name or name_placeholder or quick_edit_mode")
-            // return arch, view
             */
             return default;
         }
@@ -10902,7 +12266,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // chains_to_hash = self._get_chains_to_hash(**kwargs)
             // grant_secure_group_access = False
             // for chain in chains_to_hash:
-            //     move_hashes = chain['moves']._calculate_hashes(chain['previous_hash'])
+            //     move_hashes = chain['moves'].sudo()._calculate_hashes(chain['previous_hash'])
             //     for move, move_hash in move_hashes.items():
             //         move.inalterable_hash = move_hash
             //     # If any secured entries belong to journals without 'hash on post', the user should be granted access rights
@@ -10911,37 +12275,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     chain['moves']._message_log_batch(bodies={m.id: self.env._("This journal entry has been secured.") for m in chain['moves']})
             // if grant_secure_group_access:
             //     self.env['res.groups']._activate_group_account_secured()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(self.env.cr,
-            //              indexname='account_move_journal_id_company_id_idx',
-            //              tablename='account_move',
-            //              expressions=['journal_id', 'company_id', 'date'])
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_move_made_gaps',
-            //     tablename='account_move',
-            //     expressions=['journal_id', 'company_id', 'date'],
-            //     where="made_sequence_gap = TRUE",
-            // )  # used in <account.journal>._query_has_sequence_holes
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_move_duplicate_bills_idx',
-            //     tablename='account_move',
-            //     expressions=['ref'],
-            //     where="move_type IN ('in_invoice', 'in_refund')",
-            // )
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def init(self):
-            // create_index(self._cr, 'sale_order_date_order_id_idx', 'sale_order', ["date_order desc", "id desc"])
             */
             return default;
         }
@@ -11056,6 +12389,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> InverseNoFollowupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _inverse_no_followup(self):
+            // for move in self:
+            //     if move.is_invoice():
+            //         move.line_ids.filtered(
+            //             lambda line: line.account_type in ('asset_receivable', 'liability_payable'),
+            //         ).no_followup = move.no_followup
+            */
+            return default;
+        }
+
         public async Task<TEntity> InversePartnerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -11111,7 +12458,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                     first_tax_line = tax_lines[0]
             //                     tax_group_old_amount = sum(tax_lines.mapped('amount_currency'))
             //                     sign = -1 if move.is_inbound() else 1
-            //                     delta_amount = tax_group_old_amount * sign - tax_group['tax_amount_currency']
+            //                     delta_amount = (tax_group_old_amount - tax_group.get('non_deductible_tax_amount_currency', 0.0)) * sign - tax_group['tax_amount_currency']
             // 
             //                     if not move.currency_id.is_zero(delta_amount):
             //                         first_tax_line.amount_currency -= delta_amount * sign
@@ -11126,6 +12473,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _invoice_paid_hook(self):
             // ''' Hook to be overrided called when the invoice moves to the paid state. '''
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsActionReportAvailableInternalAsync<TEntity>(IEnumerable<TEntity> entities, object action_report, object is_invoice_report) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_action_report_available(self, action_report, is_invoice_report=True):
+            // assert len(action_report) == 1
+            // 
+            // self.ensure_one()
+            // 
+            // if available_report := action_report.filtered(lambda available_report: not (is_invoice_report^available_report.is_invoice_report)):
+            //     return bool(self.filtered_domain(ast.literal_eval(available_report.domain or '[]')))
+            // 
+            // return False
             */
             return default;
         }
@@ -11151,6 +12515,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> IsDisplayStockInCatalogInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product_catalog_mixin.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return False
+            */
+            return default;
+        }
+
         public async Task<TEntity> IsDownpaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -11172,12 +12552,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // payment_terms = self.line_ids.filtered(lambda line: line.display_type == 'payment_term')
             // return self.currency_id == currency \
-            //     and self.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt') \
+            //     and self.move_type in self._early_payment_discount_move_types() \
             //     and self.invoice_payment_term_id.early_discount \
             //     and (
             //         not reference_date
             //         or not self.invoice_date
-            //         or reference_date <= self.invoice_payment_term_id._get_last_discount_date(self.invoice_date)
+            //         or (
+            //             (existing_discount_date := next(iter(payment_terms)).discount_date)
+            //             and
+            //             reference_date <= existing_discount_date
+            //         )
             //     ) \
             //     and not (payment_terms.sudo().matched_debit_ids + payment_terms.sudo().matched_credit_ids)
             */
@@ -11190,56 +12574,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def is_entry(self):
             // return self.move_type == 'entry'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsFinishedSnAlreadyProducedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lot, object excluded_sml) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _is_finished_sn_already_produced(self, lot, excluded_sml=None):
-            // if not lot:
-            //     return False
-            // excluded_sml = excluded_sml or self.env['stock.move.line']
-            // domain = [
-            //     ('lot_id', '=', lot.id),
-            //     ('quantity', '=', 1),
-            //     ('state', '=', 'done')
-            // ]
-            // co_prod_move_lines = self.move_finished_ids.move_line_ids - excluded_sml
-            // domain_unbuild = domain + [
-            //     ('production_id', '=', False),
-            //     ('location_dest_id.usage', '=', 'production')
-            // ]
-            // # Check presence of same sn in previous productions
-            // duplicates = self.env['stock.move.line'].search_count(domain + [
-            //     ('location_id.usage', '=', 'production'),
-            //     ('move_id.unbuild_id', '=', False)
-            // ])
-            // if duplicates:
-            //     # Maybe some move lines have been compensated by unbuild
-            //     duplicates_unbuild = self.env['stock.move.line'].search_count(domain_unbuild + [
-            //         ('move_id.unbuild_id', '!=', False)
-            //     ])
-            //     removed = self.env['stock.move.line'].search_count([
-            //         ('lot_id', '=', lot.id),
-            //         ('state', '=', 'done'),
-            //         ('location_id.scrap_location', '=', False),
-            //         ('location_dest_id.scrap_location', '=', True),
-            //     ])
-            //     unremoved = self.env['stock.move.line'].search_count([
-            //         ('lot_id', '=', lot.id),
-            //         ('state', '=', 'done'),
-            //         ('location_id.scrap_location', '=', True),
-            //         ('location_dest_id.scrap_location', '=', False),
-            //     ])
-            //     # Either removed or unbuild
-            //     if not ((duplicates_unbuild or removed) and duplicates - duplicates_unbuild - removed + unremoved == 0):
-            //         return True
-            // # Check presence of same sn in current production
-            // duplicates = co_prod_move_lines.filtered(lambda ml: ml.quantity and ml.lot_id == lot)
-            // return bool(duplicates)
             */
             return default;
         }
@@ -11260,6 +12594,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def is_invoice(self, include_receipts=False):
             // return self.is_sale_document(include_receipts) or self.is_purchase_document(include_receipts)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsLineValidForSectionLineCountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_line_valid_for_section_line_count(self, line):
+            // """Check if a line is valid for inclusion in the section's line count.
+            // 
+            // :param recordset line: A record of a move line.
+            // :return: True if this line is a valid, else False.
+            // :rtype: bool
+            // """
+            // return (
+            //     line.product_id
+            //     and line.product_id.product_tmpl_id.type != 'combo'
+            //     and line.quantity > 0
+            // )
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _is_line_valid_for_section_line_count(self, line):
+            // """Check if a line is valid for inclusion in the section's line count.
+            // 
+            // :param recordset line: A record of an order line.
+            // :return: whether this line should be considered in the section lines count.
+            // :rtype: bool
+            // """
+            // return (
+            //     not line.display_type
+            //     and line.product_type != 'combo'
+            //     and line.product_uom_qty > 0
+            // )
             */
             return default;
         }
@@ -11313,17 +12680,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _is_protected_by_audit_trail(self):
-            // return any(move.posted_before and move.company_id.check_account_audit_trail for move in self)
+            // return any(move.posted_before and move.company_id.restrictive_audit_trail for move in self)
             */
             return default;
         }
 
-        public async Task<TEntity> IsPurchaseDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> IsPurchaseDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts, object move_type) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def is_purchase_document(self, include_receipts=False):
-            // return self.move_type in self.get_purchase_types(include_receipts)
+            // def is_purchase_document(self, include_receipts=False, move_type=False):
+            // return (move_type or self.move_type) in self.get_purchase_types(include_receipts)
             */
             return default;
         }
@@ -11386,12 +12753,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsSaleDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> IsReceiptAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def is_sale_document(self, include_receipts=False):
-            // return self.move_type in self.get_sale_types(include_receipts)
+            // def is_receipt(self):
+            // return self.move_type in ['out_receipt', 'in_receipt']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsSaleDocumentAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts, object move_type) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def is_sale_document(self, include_receipts=False, move_type=False):
+            // return (move_type or self.move_type) in self.get_sale_types(include_receipts)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsUserAbleToReviewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _is_user_able_to_review(self):
+            // # If only account is installed, we don't check user access rights.
+            // return True
             */
             return default;
         }
@@ -11436,7 +12824,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _link_bill_origin_to_purchase_orders(self, timeout=10):
             // for move in self.filtered(lambda m: m.move_type in self.get_purchase_types()):
-            //     references = [move.invoice_origin] if move.invoice_origin else []
+            //     references = [ref.strip() for ref in re.split(r"[ ,]+", move.invoice_origin)] if move.invoice_origin else []
             //     move._find_and_set_purchase_orders(references, move.partner_id.id, move.amount_total, timeout=timeout)
             // return self
             */
@@ -11522,7 +12910,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'operation_id': operation.id,
             //         'product_uom_id': self.product_uom_id.id,
             //         'production_id': self.id,
-            //         'state': 'pending',
+            //         'state': 'blocked',
             //         'workcenter_id': operation.workcenter_id.id,
             //     }
             //     workorders_values.append(workorder_vals)
@@ -11647,11 +13035,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.write({
             //             'workorder_id': workorder_per_operation[move.operation_id].id if move.operation_id in workorder_per_operation else False
             //         })
-            //     else:
-            //         bom = move.bom_line_id.bom_id if (move.bom_line_id and move.bom_line_id.bom_id in workorder_boms) else self.bom_id
-            //         move.write({
-            //             'workorder_id': last_workorder_per_bom[bom].id
-            //         })
             */
             return default;
         }
@@ -11726,6 +13109,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> MarkByproductsAsProducedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _mark_byproducts_as_produced(self):
+            // self.move_byproduct_ids.picked = True
+            */
+            return default;
+        }
+
         public async Task<TEntity> MergeAlternativePoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object rfqs) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -11736,29 +13129,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MessageGetSuggestedRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // if self.partner_id:
-            //     self._message_add_suggested_recipient(
-            //         recipients, partner=self.partner_id, reason=_("Customer")
-            //     )
-            // return recipients
-            */
-            return default;
-        }
-
         public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict, object custom_values) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def message_new(self, msg_dict, custom_values=None):
             // # EXTENDS mail mail.thread
+            // custom_values = custom_values or {}
             // # Add custom behavior when receiving a new invoice through the mail's gateway.
-            // if (custom_values or {}).get('move_type', 'entry') not in ('out_invoice', 'in_invoice', 'entry'):
+            // if custom_values.get('move_type', 'entry') not in ('out_invoice', 'in_invoice', 'entry'):
             //     return super().message_new(msg_dict, custom_values=custom_values)
             // 
             // self = self.with_context(skip_is_manually_modified=True)  # noqa: PLW0642
@@ -11772,32 +13151,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             or (partner.user_ids and all(user._is_internal() for user in partner.user_ids))
             //     )
             // 
-            // extra_domain = False
-            // if custom_values.get('company_id'):
-            //     extra_domain = ['|', ('company_id', '=', custom_values['company_id']), ('company_id', '=', False)]
-            // 
-            // # Search for partners in copy.
-            // cc_mail_addresses = email_split(msg_dict.get('cc', ''))
-            // followers = [partner for partner in self._mail_find_partner_from_emails(cc_mail_addresses, extra_domain=extra_domain) if partner]
+            // def is_right_company(partner):
+            //     if company:
+            //         return partner.company_id.id in [False, company.id]
+            //     return True
             // 
             // # Search for partner that sent the mail.
             // from_mail_addresses = email_split(msg_dict.get('from', ''))
-            // senders = partners = [partner for partner in self._mail_find_partner_from_emails(from_mail_addresses, extra_domain=extra_domain) if partner]
+            // partners = self._partner_find_from_emails_single(
+            //     from_mail_addresses, filter_found=lambda p: is_right_company(p) or not p.partner_share, no_create=True,
+            // )
+            // # if we are in the case when an internal user forwarded the mail manually
+            // # search for partners in mail's body
+            // if partners and is_internal_partner(partners[0]):
+            //     # Search for partners in the mail's body.
+            //     body_mail_addresses = set(email_re.findall(msg_dict.get('body')))
+            //     partners = self._partner_find_from_emails_single(
+            //         body_mail_addresses, filter_found=lambda p: is_right_company(p) or p.partner_share, no_create=True,
+            //     ) if body_mail_addresses else self.env['res.partner']
             // 
-            // # Search for partners using the user.
-            // if not senders:
-            //     senders = partners = list(self._mail_search_on_user(from_mail_addresses))
-            // 
-            // if partners:
-            //     # Check we are not in the case when an internal user forwarded the mail manually.
-            //     if is_internal_partner(partners[0]):
-            //         # Search for partners in the mail's body.
-            //         body_mail_addresses = set(email_re.findall(msg_dict.get('body')))
-            //         partners = [
-            //             partner
-            //             for partner in self._mail_find_partner_from_emails(body_mail_addresses, extra_domain=extra_domain)
-            //             if not is_internal_partner(partner) and partner.company_id.id in (False, company.id)
-            //         ]
             // # Little hack: Inject the mail's subject in the body.
             // if msg_dict.get('subject') and msg_dict.get('body'):
             //     msg_dict['body'] = Markup('<div><div><h3>%s</h3></div>%s</div>') % (msg_dict['subject'], msg_dict['body'])
@@ -11806,15 +13178,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // values = {
             //     'name': '/',  # we have to give the name otherwise it will be set to the mail's subject
             //     'invoice_source_email': from_mail_addresses[0],
-            //     'partner_id': partners and partners[0].id or False,
+            //     'partner_id': partners[0].id if partners else False,
             // }
-            // move_ctx = self.with_context(default_move_type=custom_values['move_type'], default_journal_id=custom_values['journal_id'])
+            // move_ctx = self.with_context(
+            //     from_alias=True,
+            //     default_move_type=custom_values.get('move_type', 'entry'),
+            //     default_journal_id=custom_values.get('journal_id'),
+            //     default_company_id=company.id,
+            // )
             // move = super(AccountMove, move_ctx).message_new(msg_dict, custom_values=values)
             // move._compute_name()  # because the name is given, we need to recompute in case it is the first invoice of the journal
             // 
-            // # Assign followers.
-            // all_followers_ids = set(partner.id for partner in followers + senders + partners if is_internal_partner(partner))
-            // move.message_subscribe(list(all_followers_ids))
             // return move
             */
             return default;
@@ -11825,42 +13199,84 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _message_post_after_hook(self, new_message, message_values):
+            // """ This method processes the attachments of a new mail.message. It handles the 3 following situations:
+            //     (1) receiving an e-mail from a mail alias. In that case, we potentially want to split the attachments into several invoices.
+            //     (2) receiving an e-mail / posting a message on an existing invoice via the webclient:
+            //         (2)(a): If the poster is an internal user, we enhance the invoice with the attachments.
+            //         (2)(b): Otherwise, we don't do any further processing.
+            //     (3) posting a message on an invoice in application code. In that case, don't do anything.
+            // 
+            //     Furthermore, in cases (1) and (2), we decide for each attachment whether to add it as an attachment on the invoice,
+            //     based on its mimetype.
+            // """
             // # EXTENDS mail mail.thread
-            // # When posting a message, check the attachment to see if it's an invoice and update with the imported data.
-            // res = super()._message_post_after_hook(new_message, message_values)
-            // if not self.env.user._is_internal():
-            //     return res
-            // 
             // attachments = new_message.attachment_ids
-            // attachments_per_invoice = defaultdict(lambda: self.env['ir.attachment'])
             // 
-            // checked_attachment = self._check_and_decode_attachment(attachments)
-            // if not checked_attachment:
+            // if not attachments or new_message.message_type not in {'email', 'comment'} or self.env.context.get('disable_attachment_import'):
+            //     # No attachments, or the message was created in application code, so don't do anything.
+            //     return super()._message_post_after_hook(new_message, message_values)
+            // 
+            // files_data = self._to_files_data(attachments)
+            // 
+            // # Extract embedded files. Note that `_unwrap_attachments` may create ir.attachment records - for example
+            // # see l10n_{es,it}_edi, so to retrieve those attachments you should use the `_from_files_data` method.
+            // files_data.extend(self._unwrap_attachments(files_data))
+            // 
+            // if self.env.context.get('from_alias'):
+            //     # This is a newly-created invoice from a mail alias.
+            //     # So dispatch the attachments into groups, and create a new invoice for each group beyond the first.
+            //     valid_files_data = []
+            //     extra_files_data = []
+            //     for file_data in files_data:
+            //         if self._should_attach_to_record(file_data['attachment']) or file_data['xml_tree'] is not None:
+            //             valid_files_data.append(file_data)
+            //         else:
+            //             extra_files_data.append(file_data)
+            // 
+            //     file_data_groups = self._group_files_data_into_groups_of_mixed_types(valid_files_data) or [[]]
+            //     invoices = self
+            //     if len(file_data_groups) > 1:
+            //         create_vals = (len(file_data_groups) - 1) * self.copy_data()
+            //         invoices |= self.with_context(skip_is_manually_modified=True).create(create_vals)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         attachment_records = self._from_files_data(file_data_group)
+            //         if invoice == self:
+            //             attachment_records |= self._from_files_data(extra_files_data)
+            //             new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //             message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //             res = super()._message_post_after_hook(new_message, message_values)
+            //         else:
+            //             sub_new_message = new_message.copy({
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.set(attachment_records.ids)],
+            //             })
+            //             sub_message_values = {
+            //                 **message_values,
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.link(attachment.id) for attachment in attachment_records],
+            //             }
+            //             super(AccountMove, invoice)._message_post_after_hook(sub_new_message, sub_message_values)
+            //         invoice._fix_attachments_on_record(attachment_records)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         if file_data_group:
+            //             invoice._extend_with_attachments(file_data_group, new=True)
+            // 
             //     return res
             // 
-            // for attachment_in_res, invoices in checked_attachment.items():
-            //     invoices = invoices or self
-            //     for invoice in invoices:
-            //         attachments_per_invoice[invoice] |= attachment_in_res
+            // else:
+            //     # This is an existing invoice on which a message was posted either by e-mail or via the webclient.
+            //     attachment_records = self._from_files_data(files_data)
+            //     self._fix_attachments_on_record(attachment_records)
             // 
-            // for invoice, attachments in attachments_per_invoice.items():
-            //     if invoice == self:
-            //         invoice.attachment_ids |= attachments
-            //         new_message.attachment_ids = attachments.ids
-            //         message_values.update({'res_id': self.id, 'attachment_ids': [Command.link(attachment.id) for attachment in attachments]})
-            //         super(AccountMove, invoice)._message_post_after_hook(new_message, message_values)
-            //     else:
-            //         sub_new_message = new_message.copy({'attachment_ids': attachments.ids})
-            //         sub_message_values = {
-            //             **message_values,
-            //             'res_id': invoice.id,
-            //             'attachment_ids': [Command.link(attachment.id) for attachment in attachments],
-            //         }
-            //         invoice.attachment_ids |= attachments
-            //         invoice.message_ids = [Command.set(sub_new_message.id)]
-            //         super(AccountMove, invoice)._message_post_after_hook(sub_new_message, sub_message_values)
+            //     # Only trigger decoding if the message was sent by an active internal user (note OdooBot is always inactive).
+            //     if self.env.user.active and self.env.user._is_internal():
+            //         self._extend_with_attachments(files_data)
             // 
-            // return res
+            //     new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //     message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //     return super()._message_post_after_hook(new_message, message_values)
             */
             return default;
         }
@@ -11872,18 +13288,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def message_post(self, **kwargs):
             // if self.env.context.get('mark_rfq_as_sent'):
             //     self.filtered(lambda o: o.state == 'draft').write({'state': 'sent'})
-            // po_ctx = {'mail_post_autofollow': self.env.context.get('mail_post_autofollow', True)}
-            // if self.env.context.get('mark_rfq_as_sent') and 'notify_author' not in kwargs:
-            //     kwargs['notify_author'] = self.env.user.partner_id.id in (kwargs.get('partner_ids') or [])
-            // return super(PurchaseOrder, self.with_context(**po_ctx)).message_post(**kwargs)
+            //     kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def message_post(self, **kwargs):
+            // kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def message_post(self, **kwargs):
             // if self.env.context.get('mark_so_as_sent'):
             //     self.filtered(lambda o: o.state == 'draft').with_context(tracking_disable=True).write({'state': 'sent'})
-            // so_ctx = {'mail_post_autofollow': self.env.context.get('mail_post_autofollow', True)}
-            // if self.env.context.get('mark_so_as_sent') and 'mail_notify_author' not in kwargs:
-            //     kwargs['notify_author'] = self.env.user.partner_id.id in (kwargs.get('partner_ids') or [])
-            // return super(SaleOrder, self.with_context(**so_ctx)).message_post(**kwargs)
+            //     kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
             */
             return default;
         }
@@ -11983,19 +13399,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> NotifyByEmailPrepareRenderingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals, object model_description, object force_email_company, object force_email_lang) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> NotifyByEmailPrepareRenderingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // # EXTENDS mail mail.thread
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // record = render_context['record']
-            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id else record.name]
+            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
             // if self.is_invoice(include_receipts=True):
             //     # Only show the amount in emails for non-miscellaneous moves. It might confuse recipients otherwise.
             //     if self.invoice_date_due and self.payment_state not in ('in_payment', 'paid'):
@@ -12010,10 +13428,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return render_context
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // subtitles = [render_context['record'].name]
             // # don't show price on RFQ mail
@@ -12027,14 +13447,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return render_context
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // lang_code = render_context.get('lang')
             // record = render_context['record']
-            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id else record.name]
+            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
             // if self.amount_total:
             //     # Do not show the price in subtitles if zero (e.g. e-commerce orders are created empty)
             //     subtitles.append(
@@ -12051,7 +13473,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals=msg_vals)
             // self.ensure_one()
             // 
@@ -12076,9 +13498,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return groups
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Tweak 'view document' button for portal customers, calling directly
-            // routes for confirm specific to PO model. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
+            // # Tweak 'view document' button for portal customers, calling directly routes for confirm specific to PO model.
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -12094,21 +13515,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     access_opt = customer_portal_group[2].setdefault('button_access', {})
             //     if self.env.context.get('is_reminder'):
             //         access_opt['title'] = _('View')
-            //         actions = customer_portal_group[2].setdefault('actions', list())
-            //         actions.extend([
-            //             {'url': self.get_confirm_url(confirm_type='reminder'), 'title': _('Accept')},
-            //             {'url': self.get_update_url(), 'title': _('Update Dates')},
-            //         ])
             //     else:
-            //         access_opt['title'] = _('View Quotation') if self.state in ('draft', 'sent') else _('View Order')
-            //         access_opt['url'] = self.get_confirm_url()
+            //         access_opt.update(
+            //             title=_("View Quotation") if self.state in ('draft', 'sent') else _("View Order"),
+            //             url=self.get_base_url() + self.get_confirm_url(),
+            //         )
             // 
             // return groups
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Give access button to users and portal customer as portal is integrated
-            // in sale. Customer and portal group have probably no right to see
-            // the document so they don't have the access button. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
+            // # Give access button to users and portal customer as portal is integrated
+            // # in sale. Customer and portal group have probably no right to see
+            // # the document so they don't have the access button.
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -12116,7 +13534,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return groups
             // 
             // self.ensure_one()
-            // if self._context.get('proforma'):
+            // if self.env.context.get('proforma'):
             //     for group in [g for g in groups if g[0] in ('portal_customer', 'portal', 'follower', 'customer')]:
             //         group[2]['has_button_access'] = False
             //     return groups
@@ -12159,6 +13577,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif 'invoice_line_ids' in field_names:
             //     values = {key: val for key, val in values.items() if key != 'line_ids'}
             //     fields_spec = {key: val for key, val in fields_spec.items() if key != 'line_ids'}
+            //     # When product_id and price_unit are in values, values is reordered to make sure
+            //     # that product_id is before price_unit because product_id is triggering an onchange
+            //     # of price_unit that could override the one defined here if the product_id is set
+            //     # after price_unit
+            //     invoice_line_ids = values.get('invoice_line_ids')
+            //     for invoice_line_idx, invoice_line in enumerate(invoice_line_ids):
+            //         if (len(invoice_line) == 3 and invoice_line[0] == 1 and isinstance(invoice_line[2], dict) and
+            //             'product_id' in invoice_line[2] and 'price_unit' in invoice_line[2]
+            //         ):
+            //             if isinstance(invoice_line, tuple):
+            //                 invoice_line_ids[invoice_line_idx] = invoice_line = list(invoice_line)
+            //             invoice_line[2] = dict(sorted(invoice_line[2].items(), key=lambda item: item[0] != 'product_id'))
             // return super().onchange(values, field_names, fields_spec)
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def onchange(self, values, field_names, fields_spec):
@@ -12175,8 +13605,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def onchange(self, values, field_names, fields_spec):
             // self_with_context = self
-            // if not field_names: # Some warnings should not be displayed for the first onchange
-            //     self_with_context = self.with_context(sale_onchange_first_call=True)
+            // if not field_names:
+            //     self_with_context = self.with_context(
+            //         # Some warnings should not be displayed for the first onchange
+            //         sale_onchange_first_call=True,
+            //         # invoice & delivery address with higher `customer_rank` should take priority
+            //         res_partner_search_mode='customer',
+            //     )
             // return super(SaleOrder, self_with_context).onchange(values, field_names, fields_spec)
             */
             return default;
@@ -12359,9 +13794,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _onchange_lot_producing(self):
-            // res = self._can_produce_serial_number()
-            // if res is not True:
-            //     return res
+            // if self._change_producing():
+            //     res = self._can_produce_serial_numbers()
+            //     if res is not True:
+            //         return res
             */
             return default;
         }
@@ -12446,12 +13882,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _onchange_order_line(self):
             // for index, line in enumerate(self.order_line):
-            //     if line.product_type == 'combo' and line.selected_combo_items:
-            //         linked_lines = line._get_linked_lines()
+            //     combo_item_lines = line._get_linked_lines().filtered('combo_item_id')
+            //     if line.product_template_id.type != 'combo':
+            //         if combo_item_lines:
+            //             # Delete any linked combo item lines if the line's product is no longer a combo
+            //             # product.
+            //             self.order_line = [
+            //                 Command.delete(linked_line.id) for linked_line in combo_item_lines
+            //             ]
+            //     elif line.selected_combo_items:
             //         selected_combo_items = json.loads(line.selected_combo_items)
             //         if (
             //             selected_combo_items
-            //             and len(selected_combo_items) != len(line.product_template_id.combo_ids)
+            //             and len(selected_combo_items) != len(line.product_template_id.sudo().combo_ids)
             //         ):
             //             raise ValidationError(_(
             //                 "The number of selected combo items must match the number of available"
@@ -12459,7 +13902,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             ))
             // 
             //         # Delete any existing combo item lines.
-            //         delete_commands = [Command.delete(linked_line.id) for linked_line in linked_lines]
+            //         delete_commands = [Command.delete(linked_line.id) for linked_line in combo_item_lines]
             //         # Create a new combo item line for each selected combo item.
             //         create_commands = [Command.create({
             //             'product_id': combo_item['product_id'],
@@ -12483,12 +13926,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         # come first.
             //         update_commands = [Command.update(
             //             order_line.id,
-            //             {'sequence': line.sequence + len(selected_combo_items) + line_index - index},
-            //         ) for line_index, order_line in enumerate(self.order_line) if line_index > index]
+            //             {'sequence': order_line.sequence + len(selected_combo_items)},
+            //         ) for order_line in self.order_line if order_line.sequence > line.sequence]
             // 
             //         # Clear `selected_combo_items` to avoid applying the same changes multiple times.
             //         line.selected_combo_items = False
             //         self.order_line = delete_commands + create_commands + update_commands
+            //     elif (
+            //         combo_item_lines
+            //         # Only update the combo item lines if the line's combo choices haven't changed.
+            //         and combo_item_lines.combo_item_id.combo_id == line.product_template_id.combo_ids
+            //     ):
+            //         combo_item_lines.update({
+            //             'product_uom_qty': line.product_uom_qty,
+            //             'discount': line.discount,
+            //         })
             */
             return default;
         }
@@ -12502,14 +13954,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # are taken with the company of the order
             // # if not defined, with_company doesn't change anything.
             // self = self.with_company(self.company_id)
-            // default_currency = self._context.get("default_currency_id")
             // if not self.partner_id:
             //     self.fiscal_position_id = False
-            //     self.currency_id = default_currency or self.env.company.currency_id.id
             // else:
             //     self.fiscal_position_id = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id)
             //     self.payment_term_id = self.partner_id.property_supplier_payment_term_id.id
-            //     self.currency_id = default_currency or self.partner_id.property_purchase_currency_id.id or self.env.company.currency_id.id
             //     if self.partner_id.buyer_id:
             //         self.user_id = self.partner_id.buyer_id
             // return {}
@@ -12524,7 +13973,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _onchange_partner_id(self):
             // self = self.with_company((self.journal_id.company_id or self.env.company)._accessible_branches()[:1])
             // 
-            // warning = {}
             // if self.partner_id:
             //     rec_account = self.partner_id.property_account_receivable_id
             //     pay_account = self.partner_id.property_account_payable_id
@@ -12532,84 +13980,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         action = self.env.ref('account.action_account_config')
             //         msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')
             //         raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
-            //     p = self.partner_id
-            //     if p.invoice_warn == 'no-message' and p.parent_id:
-            //         p = p.parent_id
-            //     if p.invoice_warn and p.invoice_warn != 'no-message':
-            //         # Block if partner only has warning but parent company is blocked
-            //         if p.invoice_warn != 'block' and p.parent_id and p.parent_id.invoice_warn == 'block':
-            //             p = p.parent_id
-            //         warning = {
-            //             'title': _("Warning for %s", p.name),
-            //             'message': p.invoice_warn_msg
-            //         }
-            //         if p.invoice_warn == 'block':
-            //             self.partner_id = False
-            //         return {'warning': warning}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangePartnerIdWarningAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def onchange_partner_id_warning(self):
-            // if not self.partner_id or not self.env.user.has_group('purchase.group_warning_purchase'):
-            //     return
-            // 
-            // partner = self.partner_id
-            // 
-            // # If partner has no warning, check its company
-            // if partner.purchase_warn == 'no-message' and partner.parent_id:
-            //     partner = partner.parent_id
-            // 
-            // if partner.purchase_warn and partner.purchase_warn != 'no-message':
-            //     # Block if partner only has warning but parent company is blocked
-            //     if partner.purchase_warn != 'block' and partner.parent_id and partner.parent_id.purchase_warn == 'block':
-            //         partner = partner.parent_id
-            //     title = _("Warning for %s", partner.name)
-            //     message = partner.purchase_warn_msg
-            //     warning = {
-            //         'title': title,
-            //         'message': message
-            //     }
-            //     if partner.purchase_warn == 'block':
-            //         self.update({'partner_id': False})
-            //     return {'warning': warning}
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangePartnerIdWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _onchange_partner_id_warning(self):
-            // if not self.partner_id:
-            //     return
-            // 
-            // partner = self.partner_id
-            // 
-            // # If partner has no warning, check its company
-            // if partner.sale_warn == 'no-message' and partner.parent_id:
-            //     partner = partner.parent_id
-            // 
-            // if partner.sale_warn and partner.sale_warn != 'no-message':
-            //     # Block if partner only has warning but parent company is blocked
-            //     if partner.sale_warn != 'block' and partner.parent_id and partner.parent_id.sale_warn == 'block':
-            //         partner = partner.parent_id
-            // 
-            //     if partner.sale_warn == 'block':
-            //         self.partner_id = False
-            // 
-            //     return {
-            //         'warning': {
-            //             'title': _("Warning for %s", partner.name),
-            //             'message': partner.sale_warn_msg,
-            //         }
-            //     }
             */
             return default;
         }
@@ -12635,20 +14005,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OnchangeProducingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _onchange_producing(self):
-            // if self.state in ['draft', 'cancel'] or (self.state == 'done' and self.is_locked):
-            //     return
-            // productions_bypass_qty_producting = self.filtered(lambda p: p.lot_producing_id and p.product_tracking == 'lot' and p._origin and p._origin.qty_producing == p.qty_producing)
-            // # sudo needed for portal users
-            // (self - productions_bypass_qty_producting).sudo()._set_qty_producing(False)
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangeProductIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -12670,13 +14026,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.byproduct_ids.bom_product_template_attribute_value_ids = False
             //     if warning:
             //         return warning
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _onchange_product_id(self):
-            // for move in self.move_raw_ids:
-            //     if self.product_id == move.product_id:
-            //         message = _("The component %s should not be the same as the product to produce.", self.product_id.display_name)
-            //         self.move_raw_ids = self.move_raw_ids - move
-            //         return {'warning': {'title': _('Warning'), 'message': message}}
             */
             return default;
         }
@@ -12699,7 +14048,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     }
             //     default_uom_id = self.env.context.get('default_product_uom_id')
             //     # Avoids updating the BoM's UoM in case a specific UoM was passed through as a default value.
-            //     if self.product_uom_id.category_id != self.product_tmpl_id.uom_id.category_id or self.product_uom_id.id != default_uom_id:
+            //     if self.product_uom_id.id != default_uom_id:
             //         self.product_uom_id = self.product_tmpl_id.uom_id.id
             //     if self.product_id.product_tmpl_id != self.product_tmpl_id:
             //         self.product_id = False
@@ -12727,25 +14076,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res = {}
             // if not self.product_id or not self.product_uom:
             //     return res
-            // if self.product_uom.category_id != self.product_id.uom_id.category_id:
-            //     res['warning'] = {'title': _('Warning'), 'message': _('The product unit of measure you chose has a different category than the product unit of measure.')}
             // return res
             */
             return default;
         }
 
-        public async Task<TEntity> OnchangeProductUomIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> OnchangeQtyProducingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def onchange_product_uom_id(self):
-            // res = {}
-            // if not self.product_uom_id or not self.product_tmpl_id:
-            //     return
-            // if self.product_uom_id.category_id.id != self.product_tmpl_id.uom_id.category_id.id:
-            //     self.product_uom_id = self.product_tmpl_id.uom_id.id
-            //     res['warning'] = {'title': _('Warning'), 'message': _('The Product Unit of Measure you chose has a different category than in the product form.')}
-            // return res
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _onchange_qty_producing(self):
+            // self._change_producing()
             */
             return default;
         }
@@ -12798,6 +14139,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> OpenAdjustingEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def open_adjusting_entries(self):
+            // self.ensure_one()
+            // return self.adjusting_entries_move_ids._get_records_action(name="Adjusting Entries")
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OpenAdjustingEntryOriginMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def open_adjusting_entry_origin_moves(self):
+            // self.ensure_one()
+            // label = self.adjusting_entry_origin_label if len(self.adjusting_entries_move_ids) == 1 else 'Invoices'
+            // return self.adjusting_entry_origin_move_ids._get_records_action(name=label)
+            */
+            return default;
+        }
+
         public async Task<TEntity> OpenCreatedCabaEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -12821,7 +14185,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def open_payments(self):
-            // return self.matched_payment_ids._get_records_action(name=_("Payments"))
+            // payments = self.reconciled_payment_ids
+            // return payments._get_records_action(name=_("Payments"))
             */
             return default;
         }
@@ -12846,7 +14211,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // payment_utils.check_rights_on_recordset(self)
             // 
             // # In sudo mode to bypass the checks on the rights on the transactions.
-            // return self.transaction_ids.sudo().action_capture()
+            // return self.sudo().transaction_ids.action_capture()
             */
             return default;
         }
@@ -12860,7 +14225,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // payment_utils.check_rights_on_recordset(self)
             // 
             // # In sudo mode to bypass the checks on the rights on the transactions.
-            // self.authorized_transaction_ids.sudo().action_void()
+            // self.sudo().authorized_transaction_ids.action_void()
             */
             return default;
         }
@@ -12885,7 +14250,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Plan all the production's workorders depending on the workcenters
             // work schedule.
             // 
-            // :param replan: If it is a replan, only ready and pending workorder will be taken into account
+            // :param replan: If it is a replan, only ready and blocked workorder will be taken into account
             // :type replan: bool.
             // """
             // self.ensure_one()
@@ -12906,8 +14271,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // 
             // self.with_context(force_date=True).write({
-            //     'date_start': min([workorder.leave_id.date_from for workorder in workorders]),
-            //     'date_finished': max([workorder.leave_id.date_to for workorder in workorders])
+            //     'date_start': min((workorder.leave_id.date_from for workorder in workorders if workorder.leave_id), default=None),
+            //     'date_finished': max((workorder.leave_id.date_to for workorder in workorders if workorder.leave_id), default=None),
             // })
             */
             return default;
@@ -12926,10 +14291,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // If the journal is locked with a hash table, it will be impossible to change
             // some fields afterwards.
             // 
-            // :param soft (bool): if True, future documents are not immediately posted,
+            // :param bool soft: if True, future documents are not immediately posted,
             //     but are set to be auto posted automatically at the set accounting date.
             //     Nothing will be performed on those documents before the accounting date.
-            // :return Model<account.move>: the documents that have been posted
+            // :returns: the Model<account.move> documents that have been posted
             // """
             // if not self.env.su and not self.env.user.has_group('account.group_account_invoice'):
             //     raise AccessError(_("You don't have the access rights to post an invoice."))
@@ -12965,23 +14330,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     if not invoice.partner_id:
             //         if invoice.is_sale_document():
-            //             validation_msgs.add(_("The field 'Customer' is required, please complete it to validate the Customer Invoice."))
+            //             validation_msgs.add(_(
+            //                 "The 'Customer' field is required to validate the invoice.\n"
+            //                 "You probably don't want to explain to your auditor that you invoiced an invisible man :)"
+            //             ))
             //         elif invoice.is_purchase_document():
             //             validation_msgs.add(_("The field 'Vendor' is required, please complete it to validate the Vendor Bill."))
             // 
             //     # Handle case when the invoice_date is not set. In that case, the invoice_date is set at today and then,
-            //     # lines are recomputed accordingly.
+            //     # lines are recomputed accordingly (if the user didnt' change the rate manually)
             //     if not invoice.invoice_date:
             //         if invoice.is_sale_document(include_receipts=True):
-            //             invoice.invoice_date = fields.Date.context_today(self)
+            //             is_manual_rate = invoice.invoice_currency_rate != invoice.expected_currency_rate
+            //             # keep the rate set by the user
+            //             with self.env.protecting([self._fields['invoice_currency_rate']], invoice) if is_manual_rate else nullcontext():
+            //                 invoice.invoice_date = fields.Date.context_today(self)
             //         elif invoice.is_purchase_document(include_receipts=True):
             //             validation_msgs.add(_("The Bill/Refund date is required to validate this document."))
             // 
             // for move in self:
             //     if move.state in ['posted', 'cancel']:
             //         validation_msgs.add(_('The entry %(name)s (id %(id)s) must be in draft.', name=move.name, id=move.id))
-            //     if not move.line_ids.filtered(lambda line: line.display_type not in ('line_section', 'line_note')):
-            //         validation_msgs.add(_('You need to add a line before posting.'))
+            //     if not move.line_ids.filtered(lambda line: line.display_type not in ('line_section', 'line_subsection', 'line_note')):
+            //         validation_msgs.add(_("Even magicians can't post nothing!"))
             //     if not soft and move.auto_post != 'no' and move.date > fields.Date.context_today(self):
             //         date_msg = move.date.strftime(get_lang(self.env).date_format)
             //         validation_msgs.add(_("This move is configured to be auto-posted on %(date)s", date=date_msg))
@@ -12996,12 +14367,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             move.currency_id.name
             //         ))
             // 
-            //     if move.line_ids.account_id.filtered(lambda account: account.deprecated) and not self._context.get('skip_account_deprecation_check'):
-            //         validation_msgs.add(_("A line of this move is using a deprecated account, you cannot post it."))
-            // 
-            //     # If the field autocheck_on_post is set, we want the checked field on the move to be checked
-            //     if move.journal_id.autocheck_on_post:
-            //         move.checked = move.journal_id.autocheck_on_post
+            //     if move.line_ids.account_id.filtered(lambda account: not account.active) and not self.env.context.get('skip_account_deprecation_check'):
+            //         validation_msgs.add(_("A line of this move is using a archived account, you cannot post it."))
             // 
             // if validation_msgs:
             //     msg = "\n".join([line for line in validation_msgs])
@@ -13022,7 +14389,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     affects_tax_report = move._affect_tax_report()
             //     lock_dates = move._get_violated_lock_dates(move.date, affects_tax_report)
             //     if lock_dates:
-            //         move.date = move._get_accounting_date(move.invoice_date or move.date, affects_tax_report, lock_dates=lock_dates)
+            //         move.date = move._get_accounting_date(move._get_accounting_date_source(), affects_tax_report, lock_dates=lock_dates)
             // 
             // # Create the analytic lines in batch is faster as it leads to less cache invalidation.
             // to_post.line_ids._create_analytic_lines()
@@ -13035,7 +14402,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # partner on the lines to be the same as the one on the move, because that's the only one the user can see/edit.
             //     wrong_lines = invoice.is_invoice() and invoice.line_ids.filtered(lambda aml:
             //         aml.partner_id != invoice.commercial_partner_id
-            //         and aml.display_type not in ('line_note', 'line_section')
+            //         and aml.display_type not in ('line_section', 'line_subsection', 'line_note')
             //     )
             //     if wrong_lines:
             //         wrong_lines.write({'partner_id': invoice.commercial_partner_id.id})
@@ -13043,18 +14410,55 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # reconcile if state is in draft and move has reversal_entry_id set
             // draft_reverse_moves = to_post.filtered(lambda move: move.reversed_entry_id and move.reversed_entry_id.state == 'posted')
             // 
+            // # deal with the eventually related draft moves to the ones we want to post
+            // partials_to_unlink = self.env['account.partial.reconcile']
+            // 
+            // for aml in self.line_ids:
+            //     for partials, counterpart_field in [(aml.matched_debit_ids, 'debit_move_id'), (aml.matched_credit_ids, 'credit_move_id')]:
+            //         for partial in partials:
+            //             counterpart_move =  partial[counterpart_field].move_id
+            //             if counterpart_move.state == 'posted' or counterpart_move in to_post:
+            //                 if partial.exchange_move_id:
+            //                     to_post |= partial.exchange_move_id
+            //                     # If the draft invoice changed since it was reconciled, in a way that would affect the exchange diff,
+            //                     # any existing reconcilation and draft exchange move would be deleted already (to force the user to
+            //                     # re-do the reconciliation).
+            //                     # This is ensured by the the checks in env['account.move.line'].write():
+            //                     #     see env[account.move.line]._get_lock_date_protected_fields()['reconciliation']
+            // 
+            //                 if partial._get_draft_caba_move_vals() != partial.draft_caba_move_vals:
+            //                     # draft invoice changed since it was reconciled, the cash basis entry isn't correct anymore
+            //                     # and the user has to re-do the reconciliation. Existing draft cash basis move will be unlinked
+            //                     partials_to_unlink |= partial
+            // 
+            //                 elif move.tax_cash_basis_created_move_ids:
+            //                     to_post |= move.tax_cash_basis_created_move_ids.filtered(lambda m: m.tax_cash_basis_rec_id == partial)
+            //                 elif counterpart_move.tax_cash_basis_created_move_ids:
+            //                     to_post |= counterpart_move.tax_cash_basis_created_move_ids.filtered(lambda m: m.tax_cash_basis_rec_id == partial)
+            // 
+            // if partials_to_unlink:
+            //     partials_to_unlink.unlink()
+            // 
             // to_post.write({
             //     'state': 'posted',
             //     'posted_before': True,
             // })
             // 
-            // draft_reverse_moves.reversed_entry_id._reconcile_reversed_moves(draft_reverse_moves, self._context.get('move_reverse_cancel', False))
-            // to_post.line_ids._reconcile_marked()
+            // if not self.env.user.has_group('account.group_partial_purchase_deductibility') and \
+            //         self.filtered(lambda move: move.move_type == 'in_invoice' and move.invoice_line_ids.filtered(lambda l: l.deductible_amount != 100)):
+            //     self.env.user.sudo().group_ids = [Command.link(self.env.ref('account.group_partial_purchase_deductibility').id)]
             // 
-            // for invoice in to_post:
-            //     partner_id = invoice.partner_id
-            //     subscribers = [partner_id.id] if partner_id and partner_id not in invoice.sudo().message_partner_ids else None
-            //     invoice.message_subscribe(subscribers)
+            // # Add the move number to the non_deductible lines for easier auditing
+            // if non_deductible_lines := self.line_ids.filtered(lambda line: (line.display_type in ('non_deductible_product_total', 'non_deductible_tax'))):
+            //     for line in non_deductible_lines:
+            //         line.name = (
+            //             _('%s - private part', line.move_id.name)
+            //             if line.display_type == 'non_deductible_product_total'
+            //             else _('%s - private part (taxes)', line.move_id.name)
+            //         )
+            // 
+            // draft_reverse_moves.reversed_entry_id._reconcile_reversed_moves(draft_reverse_moves, self.env.context.get('move_reverse_cancel', False))
+            // to_post.line_ids._reconcile_marked()
             // 
             // customer_count, supplier_count = defaultdict(int), defaultdict(int)
             // for invoice in to_post:
@@ -13110,7 +14514,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     finish_moves = order.move_finished_ids.filtered(lambda m: m.product_id == order.product_id and m.state not in ('done', 'cancel'))
             //     # the finish move can already be completed by the workorder.
             //     for move in finish_moves:
-            //         move.quantity = float_round(order.qty_producing - order.qty_produced, precision_rounding=order.product_uom_id.rounding, rounding_method='HALF-UP')
+            //         if move.has_tracking != 'none' and not move.lot_ids:
+            //             move.lot_ids = order.lot_producing_ids.ids
+            //         move.quantity = order.product_uom_id.round(order.qty_producing - order.qty_produced, rounding_method='HALF-UP')
             //         extra_vals = order._prepare_finished_extra_vals()
             //         if extra_vals:
             //             move.move_line_ids.write(extra_vals)
@@ -13118,7 +14524,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for workorder in order.workorder_ids:
             //         if workorder.state not in ('done', 'cancel'):
             //             workorder.duration_expected = workorder._get_duration_expected()
-            //         if workorder.duration == 0.0:
+            //         if workorder.state == 'cancel':
+            //             workorder.duration = 0.0
+            //         elif workorder.duration == 0.0:
             //             workorder.duration = workorder.duration_expected
             //             workorder.duration_unit = round(workorder.duration / max(workorder.qty_produced, 1), 2)
             //     order._cal_price(moves_to_do_by_order[order.id])
@@ -13139,10 +14547,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _post_run_manufacture(self, post_production_values):
             // note_subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note')
-            // for production in self:
+            // for production, procurement in zip(self, post_production_values):
+            //     if group_id := procurement.values.get('production_group_id'):
+            //         production.production_group_id.parent_ids = [Command.link(group_id)]
             //     orderpoint = production.orderpoint_id
             //     origin_production = production.move_dest_ids.raw_material_production_id
-            //     if orderpoint and orderpoint.create_uid.id == SUPERUSER_ID and orderpoint.trigger == 'manual':
+            //     if orderpoint and orderpoint.create_uid.id == api.SUPERUSER_ID and orderpoint.trigger == 'manual':
             //         production.message_post(
             //             body=_('This production order has been created from Replenishment Report.'),
             //             message_type='comment',
@@ -13205,20 +14615,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def pre_button_mark_done(self):
             // self._button_mark_done_sanity_checks()
-            // productions_auto = set()
+            // production_auto_ids = set()
+            // production_missing_lot_ids = set()
             // for production in self:
-            //     if not float_is_zero(production.qty_producing, precision_rounding=production.product_uom_id.rounding):
+            //     if not production.product_uom_id.is_zero(production.qty_producing):
             //         production.move_raw_ids.filtered(
             //             lambda move: move.manual_consumption and not move.picked
             //         ).picked = True
             //         continue
             //     if production._auto_production_checks():
-            //         productions_auto.add(production.id)
-            //     else:
-            //         return production.action_mass_produce()
+            //         production_auto_ids.add(production.id)
+            //     elif not production.lot_producing_ids:
+            //         production_missing_lot_ids.add(production.id)
             // 
-            // for production in self.env['mrp.production'].browse(productions_auto):
+            // if production_missing_lot_ids:
+            //     if len(production_missing_lot_ids) > 1:
+            //         raise UserError(_("You need to generate Lot/Serial Number(s) to mark as done some productions"))
+            //     return self.env['mrp.production'].browse(production_missing_lot_ids).action_generate_serial()
+            // 
+            // productions_auto = self.env['mrp.production'].browse(production_auto_ids)
+            // for production in productions_auto:
             //     production._set_quantities()
+            // # Produce by-products also for not auto productions.
+            // (self - productions_auto)._mark_byproducts_as_produced()
             // 
             // consumption_issues = self._get_consumption_issues()
             // if consumption_issues:
@@ -13317,6 +14736,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return {
             //     'state': 'sale',
             //     'date_order': fields.Datetime.now()
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareDownPaymentLineSectionValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _prepare_down_payment_line_section_values(self):
+            // """ Prepare the values to create a section line for the down payment on the current SO.
+            // 
+            // :return: A dictionary to create a new SO section line.
+            // """
+            // self.ensure_one()
+            // return {
+            //     'order_id': self.id,
+            //     'display_type': 'line_section',
+            //     'is_downpayment': True,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareDownPaymentLineValuesFromBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _prepare_down_payment_line_values_from_base_line(self, base_line):
+            // """ Convert the base line passed as parameter representing a down payment into a
+            // dictionary to be converted into a sale order line in the current sale order.
+            // 
+            // :param base_line: A base line (see '_prepare_base_line_for_taxes_computation').
+            // :return: A dictionary to create a new SO line.
+            // """
+            // self.ensure_one()
+            // extra_tax_data = self.env['account.tax']._export_base_line_extra_tax_data(base_line)
+            // return {
+            //     'order_id': self.id,
+            //     'is_downpayment': True,
+            //     'product_uom_qty': 0.0,
+            //     'price_unit': base_line['price_unit'],
+            //     'tax_ids': [Command.set(base_line['tax_ids'].ids)],
+            //     'analytic_distribution': base_line['analytic_distribution'],
+            //     'extra_tax_data': extra_tax_data,
             // }
             */
             return default;
@@ -13484,8 +14948,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _prepare_finished_extra_vals(self):
             // self.ensure_one()
-            // if self.lot_producing_id:
-            //     return {'lot_id' : self.lot_producing_id.id}
             // return {}
             */
             return default;
@@ -13623,19 +15085,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Prepare the dict of values to create the new invoice for a purchase order.
             // """
             // self.ensure_one()
-            // move_type = self._context.get('default_move_type', 'in_invoice')
+            // move_type = self.env.context.get('default_move_type', 'in_invoice')
             // 
             // partner_invoice = self.env['res.partner'].browse(self.partner_id.address_get(['invoice'])['invoice'])
             // partner_bank_id = self.partner_id.commercial_partner_id.bank_ids.filtered_domain(['|', ('company_id', '=', False), ('company_id', '=', self.company_id.id)])[:1]
             // 
             // invoice_vals = {
-            //     'ref': self.partner_ref or '',
             //     'move_type': move_type,
-            //     'narration': self.notes,
+            //     'narration': self.note,
             //     'currency_id': self.currency_id.id,
             //     'partner_id': partner_invoice.id,
             //     'fiscal_position_id': (self.fiscal_position_id or self.fiscal_position_id._get_fiscal_position(partner_invoice)).id,
-            //     'payment_reference': self.partner_ref or '',
             //     'partner_bank_id': partner_bank_id.id,
             //     'invoice_origin': self.name,
             //     'invoice_payment_term_id': self.payment_term_id.id,
@@ -13652,15 +15112,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // self.ensure_one()
             // 
-            // txs_to_be_linked = self.transaction_ids.sudo().filtered(
+            // txs_to_be_linked = self.sudo().transaction_ids.filtered(
             //     lambda tx: (
             //         tx.state in ('pending', 'authorized')
-            //         or tx.state == 'done' and not (tx.payment_id and tx.payment_id.is_reconciled)
+            //         or (tx.state == 'done' and not tx.payment_id.is_reconciled)
             //     )
             // )
             // 
             // values = {
-            //     'ref': self.client_order_ref or '',
+            //     'ref': self.client_order_ref or self.name,
             //     'move_type': 'out_invoice',
             //     'narration': self.note,
             //     'currency_id': self.currency_id.id,
@@ -13673,6 +15133,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'fiscal_position_id': (self.fiscal_position_id or self.fiscal_position_id._get_fiscal_position(self.partner_invoice_id)).id,
             //     'invoice_origin': self.name,
             //     'invoice_payment_term_id': self.payment_term_id.id,
+            //     'preferred_payment_method_line_id': self.preferred_payment_method_line_id.id,
             //     'invoice_user_id': self.user_id.id,
             //     'payment_reference': self.reference,
             //     'transaction_ids': [Command.set(txs_to_be_linked.ids)],
@@ -13706,12 +15167,86 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareProcurementGroupValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> PrepareNonDeductibleBaseLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object non_deductible_line) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _prepare_procurement_group_vals(self, values):
-            // return {'name': values['name']}
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _prepare_non_deductible_base_line_for_taxes_computation(self, non_deductible_line):
+            // """ Convert an account.move.line having display_type='non_deductible' into a base line for the taxes computation.
+            // 
+            // :param non_deductible_line: An account.move.line.
+            // :return: A base line returned by '_prepare_base_line_for_taxes_computation'.
+            // """
+            // self.ensure_one()
+            // sign = self.direction_sign
+            // rate = self.invoice_currency_rate
+            // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //     non_deductible_line,
+            //     price_unit=sign * non_deductible_line.amount_currency,
+            //     quantity=1.0,
+            //     sign=sign,
+            //     special_mode='total_excluded',
+            //     special_type='non_deductible',
+            // 
+            //     is_refund=self.move_type in ('out_refund', 'in_refund'),
+            //     rate=rate,
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareNonDeductibleBaseLinesForTaxesComputationFromBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _prepare_non_deductible_base_lines_for_taxes_computation_from_base_lines(self, base_lines):
+            // """ Anticipate the non deductible lines to be generated from the base lines passed as parameter.
+            // When the record is in draft (not saved), the accounting items are not there so we can't
+            // call '_prepare_non_deductible_base_line_for_taxes_computation'.
+            // 
+            // :param base_lines: The base lines generated by '_prepare_product_base_line_for_taxes_computation'.
+            // :return: A list of base lines representing the non deductible lines.
+            // """
+            // self.ensure_one()
+            // non_deductible_product_lines = base_lines.filtered(lambda line: line.display_type == 'product' and float_compare(line.deductible_amount, 100, precision_digits=2))
+            // if not non_deductible_product_lines:
+            //     return []
+            // 
+            // sign = self.direction_sign
+            // rate = self.invoice_currency_rate
+            // 
+            // non_deductible_lines_base_total_currency = 0.0
+            // non_deductible_lines = []
+            // for line in non_deductible_product_lines:
+            //     percentage = 1 - line.deductible_amount / 100
+            //     non_deductible_subtotal = line.currency_id.round(line.price_subtotal * percentage)
+            //     non_deductible_base_currency = line.company_currency_id.round(sign * non_deductible_subtotal / rate) if rate else 0.0
+            //     non_deductible_lines_base_total_currency += non_deductible_base_currency
+            // 
+            //     non_deductible_lines += [
+            //         self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //             None,
+            //             price_unit=-non_deductible_base_currency,
+            //             quantity=1.0,
+            //             sign=1,
+            //             special_mode='total_excluded',
+            //             special_type='non_deductible',
+            //             tax_ids=line.tax_ids.filtered(lambda tax: tax.amount_type != 'fixed'),
+            //             currency_id=self.currency_id,
+            //         )
+            //     ]
+            // non_deductible_lines += [
+            //     self.env['account.tax']._prepare_base_line_for_taxes_computation(
+            //         None,
+            //         price_unit=non_deductible_lines_base_total_currency,
+            //         quantity=1.0,
+            //         sign=1,
+            //         special_mode='total_excluded',
+            //         special_type=False,
+            //         currency_id=self.currency_id,
+            //     )
+            // ]
+            // return non_deductible_lines
             */
             return default;
         }
@@ -13742,6 +15277,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     rate=rate,
             //     sign=sign,
             //     special_mode=False if is_invoice else 'total_excluded',
+            //     name=product_line.name,
             // )
             */
             return default;
@@ -13753,7 +15289,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _prepare_stock_lot_values(self):
             // self.ensure_one()
-            // name = self.env['ir.sequence'].next_by_code('stock.lot.serial')
+            // if self.product_id.lot_sequence_id:
+            //     name = self.product_id.lot_sequence_id.next_by_id()
+            // else:
+            //     name = self.env['ir.sequence'].next_by_code('stock.lot.serial')
             // exist_lot = not name or self.env['stock.lot'].search([
             //     ('product_id', '=', self.product_id.id),
             //     '|', ('company_id', '=', False), ('company_id', '=', self.company_id.id),
@@ -13841,7 +15380,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def print_quotation(self):
-            // self.write({'state': "sent"})
+            // self.filtered(lambda po: po.state == 'draft').write({'state': "sent"})
             // return self.env.ref('purchase.report_purchase_quotation').report_action(self)
             */
             return default;
@@ -13878,12 +15417,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ReadAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object load) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def read(self, fields=None, load='_classic_read'):
+            // fields = fields or self._get_default_read_fields()
+            // return super().read(fields, load)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ReasonCannotDecodeHasInvoiceLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _reason_cannot_decode_has_invoice_lines(self):
+            // """ Helper to get a reason why an invoice cannot be decoded if it has invoice lines. """
+            // if self.invoice_line_ids:
+            //     return self.env._("The invoice already contains lines.")
+            */
+            return default;
+        }
+
         public async Task<TEntity> RecNamesSearchInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _rec_names_search(self):
-            // if self._context.get('sale_show_partner_name'):
+            // if self.env.context.get('sale_show_partner_name'):
             //     return ['name', 'partner_id.name']
             // return ['name']
             */
@@ -14040,7 +15602,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _recompute_taxes(self):
             // lines_to_recompute = self.order_line.filtered(lambda line: not line.display_type)
-            // lines_to_recompute._compute_tax_id()
+            // lines_to_recompute._compute_tax_ids()
             // self.show_update_fpos = False
             */
             return default;
@@ -14094,6 +15656,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> RemoveReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reference) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _remove_reference(self, reference):
+            // """ remove the given references from the list of references. """
+            // self.ensure_one()
+            // self.reference_ids = [Command.unlink(stock_reference.id) for stock_reference in reference]
+            */
+            return default;
+        }
+
         public async Task<TEntity> RequireBillDateForAutopostInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14103,6 +15677,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.auto_post != 'no' and record.is_purchase_document() and not record.invoice_date:
             //         raise ValidationError(_("For this entry to be automatically posted, it required a bill date."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ResequenceSectionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sections, object child_field) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product_catalog_mixin.py) ---
+            // def _resequence_sections(self, sections, child_field, **kwargs):
+            // """Resequence the order content based on the new sequence order.
+            // 
+            // :param list sections: A list of dictionaries containing move and target sections.
+            // :param str child_field: Field name of the order's lines (e.g., 'order_line').
+            // :param dict kwargs: Additional values given for inherited models.
+            // :return: A dictonary containing the new sequences of all the sections of order.
+            // :rtype: dict
+            // """
+            // lines = self[child_field].sorted('sequence')
+            // move_section, target_section = sections
+            // 
+            // move_block = lines.filtered(
+            //     lambda line: line.id == move_section['id']
+            //     or line.parent_id.id == move_section['id'],
+            // )
+            // 
+            // target_block = lines.filtered(
+            //     lambda line: line.id == target_section['id']
+            //     or line.parent_id.id == target_section['id'],
+            // )
+            // 
+            // remaining_lines = lines - move_block
+            // insert_after = move_section['sequence'] < target_section['sequence']
+            // insert_index = len(remaining_lines)
+            // for idx, line in enumerate(remaining_lines):
+            //     if line.id == (target_block[-1].id if insert_after else target_section['id']):
+            //         insert_index = idx + 1 if insert_after else idx
+            //         break
+            // 
+            // reordered_lines = (
+            //     remaining_lines[:insert_index] +
+            //     move_block +
+            //     remaining_lines[insert_index:]
+            // )
+            // 
+            // sections = {}
+            // for sequence, line in enumerate(reordered_lines, start=1):
+            //     line.sequence = sequence
+            //     if line.display_type == 'line_section':
+            //         sections[line.id] = sequence
+            // 
+            // return sections
             */
             return default;
         }
@@ -14135,63 +15760,86 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ This function returns the values to populate the custom dashboard in
             //     the purchase order views.
             // """
+            // if not self.env.user._is_internal():
+            //     raise AccessDenied()
             // self.browse().check_access('read')
             // 
             // result = {
-            //     'all_to_send': 0,
-            //     'all_waiting': 0,
-            //     'all_late': 0,
-            //     'my_to_send': 0,
-            //     'my_waiting': 0,
-            //     'my_late': 0,
-            //     'all_avg_order_value': 0,
-            //     'all_avg_days_to_purchase': 0,
-            //     'all_total_last_7_days': 0,
-            //     'all_sent_rfqs': 0,
-            //     'company_currency_symbol': self.env.company.currency_id.symbol
+            //     'global': {
+            //         'draft': {'all': 0, 'priority': 0},
+            //         'sent':  {'all': 0, 'priority': 0},
+            //         'late':  {'all': 0, 'priority': 0},
+            //         'not_acknowledged': {'all': 0, 'priority': 0},
+            //         'late_receipt': {'all': 0, 'priority': 0},
+            //         'days_to_order': 0,
+            //     },
+            //     'my': {
+            //         'draft': {'all': 0, 'priority': 0},
+            //         'sent':  {'all': 0, 'priority': 0},
+            //         'late':  {'all': 0, 'priority': 0},
+            //         'not_acknowledged': {'all': 0, 'priority': 0},
+            //         'late_receipt': {'all': 0, 'priority': 0},
+            //         'days_to_order': 0,
+            //     },
+            //     'days_to_purchase': 0,
             // }
             // 
-            // one_week_ago = fields.Datetime.to_string(fields.Datetime.now() - relativedelta(days=7))
-            // 
-            // query = """SELECT COUNT(1)
-            //            FROM mail_message m
-            //            JOIN purchase_order po ON (po.id = m.res_id)
-            //            WHERE m.create_date >= %s
-            //              AND m.model = 'purchase.order'
-            //              AND m.message_type = 'notification'
-            //              AND m.subtype_id = %s
-            //              AND po.company_id = %s;
-            //         """
-            // 
-            // self.env.cr.execute(query, (one_week_ago, self.env.ref('purchase.mt_rfq_sent').id, self.env.company.id))
-            // res = self.env.cr.fetchone()
-            // result['all_sent_rfqs'] = res[0] or 0
+            // def _update(key, dict_to_update, group):
+            //     for priority, user_id, count in group:
+            //         my = user_id == self.env.user
+            //         dict_to_update['global'][key]['all'] += count
+            //         if priority != '0':
+            //             dict_to_update['global'][key]['priority'] += count
+            //         if not my:
+            //             continue
+            //         dict_to_update['my'][key]['all'] += count
+            //         if priority != '0':
+            //             dict_to_update['my'][key]['priority'] += count
             // 
             // # easy counts
-            // po = self.env['purchase.order']
-            // result['all_to_send'] = po.search_count([('state', '=', 'draft')])
-            // result['my_to_send'] = po.search_count([('state', '=', 'draft'), ('user_id', '=', self.env.uid)])
-            // result['all_waiting'] = po.search_count([('state', '=', 'sent'), ('date_order', '>=', fields.Datetime.now())])
-            // result['my_waiting'] = po.search_count([('state', '=', 'sent'), ('date_order', '>=', fields.Datetime.now()), ('user_id', '=', self.env.uid)])
-            // result['all_late'] = po.search_count([('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now())])
-            // result['my_late'] = po.search_count([('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now()), ('user_id', '=', self.env.uid)])
+            // groupby = ['priority', 'user_id']
+            // aggregate = ['id:count_distinct']
+            // rfq_draft_domain = [('state', '=', 'draft')]
+            // rfq_draft_group = self.env['purchase.order']._read_group(rfq_draft_domain, groupby, aggregate)
+            // _update('draft', result, rfq_draft_group)
             // 
-            // # Calculated values ('avg order value', 'avg days to purchase', and 'total last 7 days') note that 'avg order value' and
-            // # 'total last 7 days' takes into account exchange rate and current company's currency's precision.
-            // # This is done via SQL for scalability reasons
-            // query = """SELECT AVG(COALESCE(po.amount_total / NULLIF(po.currency_rate, 0), po.amount_total)),
-            //                   AVG(extract(epoch from age(po.date_approve,po.create_date)/(24*60*60)::decimal(16,2))),
-            //                   SUM(CASE WHEN po.date_approve >= %s THEN COALESCE(po.amount_total / NULLIF(po.currency_rate, 0), po.amount_total) ELSE 0 END)
-            //            FROM purchase_order po
-            //            WHERE po.state in ('purchase', 'done')
-            //              AND po.company_id = %s
-            //         """
-            // self._cr.execute(query, (one_week_ago, self.env.company.id))
-            // res = self.env.cr.fetchone()
-            // result['all_avg_days_to_purchase'] = round(res[1] or 0, 2)
-            // currency = self.env.company.currency_id
-            // result['all_avg_order_value'] = format_amount(self.env, res[0] or 0, currency)
-            // result['all_total_last_7_days'] = format_amount(self.env, res[2] or 0, currency)
+            // rfq_sent_domain = [('state', '=', 'sent')]
+            // rfq_sent_group = self.env['purchase.order']._read_group(rfq_sent_domain, groupby, aggregate)
+            // _update('sent', result, rfq_sent_group)
+            // 
+            // rfq_late_domain = [('state', 'in', ['draft', 'sent', 'to approve']), ('date_order', '<', fields.Datetime.now())]
+            // rfq_late_group = self.env['purchase.order']._read_group(rfq_late_domain, groupby, aggregate)
+            // _update('late', result, rfq_late_group)
+            // 
+            // rfq_not_acknowledge = [('state', 'in', ['purchase', 'done']), ('acknowledged', '=', False)]
+            // rfq_not_acknowledge_group = self.env['purchase.order']._read_group(rfq_not_acknowledge, groupby, aggregate)
+            // _update('not_acknowledged', result, rfq_not_acknowledge_group)
+            // 
+            // rfq_late_receipt = [('state', 'in', ['purchase', 'done']), ('is_late', '=', True)]
+            // rfq_late_receipt_group = self.env['purchase.order']._read_group(rfq_late_receipt, groupby, aggregate)
+            // _update('late_receipt', result, rfq_late_receipt_group)
+            // 
+            // three_months_ago = fields.Datetime.to_string(fields.Datetime.now() - relativedelta(months=3))
+            // 
+            // purchases = self.env['purchase.order'].search_fetch(
+            //     [('state', '=', 'purchase'), ('create_date', '>=', three_months_ago), ('date_approve', '!=', False)],
+            //     ['create_date', 'date_approve', 'user_id'])
+            // 
+            // global_deliveries_seconds = 0
+            // my_deliveries_seconds = 0
+            // my_deliveries_count = 0
+            // 
+            // for po in purchases:
+            //     delivery_seconds = (po.date_approve - po.create_date).total_seconds()
+            //     global_deliveries_seconds += delivery_seconds
+            //     if po.user_id == self.env.user:
+            //         my_deliveries_seconds += delivery_seconds
+            //         my_deliveries_count += 1
+            // 
+            // avg_global_deliveries_seconds = global_deliveries_seconds / len(purchases) if purchases else 0
+            // avg_my_deliveries_seconds = my_deliveries_seconds / my_deliveries_count if my_deliveries_count else 0
+            // result['global']['days_to_order'] = float_repr(avg_global_deliveries_seconds / 60 / 60 / 24, precision_digits=2)
+            // result['my']['days_to_order'] = float_repr(avg_my_deliveries_seconds / 60 / 60 / 24, precision_digits=2)
             // 
             // return result
             */
@@ -14236,6 +15884,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     Command.update(line.id, {
             //         'balance': -line.balance,
             //         'amount_currency': -line.amount_currency,
+            //         **({'is_storno': not line.is_storno} if line.company_id.account_storno else {}),
             //     })
             //     for line in reverse_moves.line_ids
             //     if line.move_id.move_type == 'entry' or line.display_type == 'cogs'
@@ -14250,6 +15899,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> RoundLastLineDoneInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lines_done) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _round_last_line_done(self, lines_done):
+            // return lines_done
+            */
+            return default;
+        }
+
         public async Task<TEntity> RoutingCheckRouteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object route, object raise_exception) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14257,9 +15916,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _routing_check_route(self, message, message_dict, route, raise_exception=True):
             // if route[0] == 'account.move' and len(message_dict['attachments']) < 1:
             //     # Don't create the move if no attachment.
+            //     company_id = route[2].get('company_id', self.env.company.id)
+            //     if not isinstance(company_id, int):
+            //         raise ValueError(_("Default value for 'company_id' for %(record)s is not an integer",
+            //                           record=route[4]))
+            //     journal_alias_company = self.env['res.company'].search([['id', '=', company_id]])
             //     body = self.env['ir.qweb']._render('account.email_template_mail_gateway_failed', {
-            //         'company_email': self.env.company.email,
-            //         'company_name': self.env.company.name,
+            //         'company_email': journal_alias_company.email or self.env.company.email,
+            //         'company_name': journal_alias_company.name or self.env.company.name,
             //     })
             //     self._routing_create_bounce_email(
             //         message_dict['from'], body, message,
@@ -14304,28 +15968,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _search_components_availability_state(self, operator, value):
-            // if operator not in ('=', '!=', 'in', 'not in'):
-            //     raise UserError(_('Operation not supported'))
-            // 
-            // states = ['available', 'expected', 'late', 'unavailable']
-            // if operator in ('=', '!='):
-            //     value = [value]
-            // if operator in ('not in', '!='):
-            //     value = filter(lambda state: state not in value, states)
-            // if not all(state in states for state in value):
-            //     raise UserError(_('Selection not supported.'))
+            // if operator != 'in':
+            //     return NotImplemented
             // 
             // current_productions = self.search([('state', 'in', ('confirmed', 'progress', 'to_close'))])
+            // matching_productions = current_productions.filtered(lambda production: production.components_availability_state in value)
             // 
-            // productions_by_availability = dict.fromkeys(states, self.env['mrp.production'])
-            // for production in current_productions:
-            //     productions_by_availability[production.components_availability_state] |= production
-            // 
-            // matching_production_ids = []
-            // for state in value:
-            //     matching_production_ids.extend(productions_by_availability[state].ids)
-            // 
-            // return [('id', 'in', matching_production_ids)]
+            // return [('id', 'in', matching_productions.ids)]
             */
             return default;
         }
@@ -14335,20 +15984,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _search_date_category(self, operator, value):
-            // if operator != '=':
-            //     raise NotImplementedError(_('Operation not supported'))
-            // search_domain = self.env['stock.picking'].date_category_to_domain(value)
-            // return expression.AND([
-            //     [('date_start', operator, value)] for operator, value in search_domain
-            // ])
+            // if operator != 'in':
+            //     return NotImplemented
+            // dates = value
+            // return Domain.OR(
+            //     self.env['stock.picking'].date_category_to_domain('date_start', date)
+            //     for date in dates
+            // )
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _search_date_category(self, operator, value):
-            // if operator != '=':
-            //     raise NotImplementedError(_('Operation not supported'))
-            // search_domain = self.env['stock.picking'].date_category_to_domain(value)
-            // return expression.AND([
-            //     [('schedule_date', operator, value)] for operator, value in search_domain
-            // ])
+            // if operator != 'in':
+            //     return NotImplemented
+            // return Domain.OR(
+            //     self.env['stock.picking'].date_category_to_domain('schedule_date', item)
+            //     for item in value
+            // )
             */
             return default;
         }
@@ -14372,7 +16022,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # the currency is not a hard dependence, it triggers via manual add_to_compute
             // # avoid computing the currency before all it's dependences are set (like the journal...)
             // if self.env.cache.contains(self, self._fields['currency_id']):
-            //     currency_id = self.currency_id.id or self._context.get('default_currency_id')
+            //     currency_id = self.currency_id.id or self.env.context.get('default_currency_id')
             //     if currency_id and currency_id != company.currency_id.id:
             //         currency_domain = domain + [('currency_id', '=', currency_id)]
             //         journal = self.env['account.journal'].search(currency_domain, limit=1)
@@ -14394,6 +16044,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _search_delay_alert_date(self, operator, value):
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // late_stock_moves = self.env['stock.move'].search([('delay_alert_date', operator, value)])
             // return ['|', ('move_raw_ids', 'in', late_stock_moves.ids), ('move_finished_ids', 'in', late_stock_moves.ids)]
             */
@@ -14405,7 +16057,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _search_invoice_ids(self, operator, value):
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // if operator == 'in' and value:
+            //     falsy_domain = []
+            //     if False in value:
+            //         # special case for [('invoice_ids', '=', False)], i.e. "Invoices is not set"
+            //         #
+            //         # We cannot just search [('order_line.invoice_lines', '=', False)]
+            //         # because it returns orders with uninvoiced lines, which is not
+            //         # same "Invoices is not set" (some lines may have invoices and some
+            //         # don't)
+            //         #
+            //         # A solution is using the 'not any' operators with inverted search first
+            //         # ("orders with invoiced lines").
+            //         falsy_domain = [('order_line', 'not any', [
+            //             ('invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund'))
+            //         ])]
+            //         if len(value) == 1:
+            //             return falsy_domain
             //     self.env.cr.execute("""
             //         SELECT array_agg(so.id)
             //             FROM sale_order so
@@ -14418,27 +16088,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             am.id = ANY(%s)
             //     """, (list(value),))
             //     so_ids = self.env.cr.fetchone()[0] or []
-            //     return [('id', 'in', so_ids)]
-            // elif operator == '=' and not value:
-            //     # special case for [('invoice_ids', '=', False)], i.e. "Invoices is not set"
-            //     #
-            //     # We cannot just search [('order_line.invoice_lines', '=', False)]
-            //     # because it returns orders with uninvoiced lines, which is not
-            //     # same "Invoices is not set" (some lines may have invoices and some
-            //     # doesn't)
-            //     #
-            //     # A solution is making inverted search first ("orders with invoiced
-            //     # lines") and then invert results ("get all other orders")
-            //     #
-            //     # Domain below returns subset of ('order_line.invoice_lines', '!=', False)
-            //     order_ids = self._search([
-            //         ('order_line.invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund'))
-            //     ])
-            //     return [('id', 'not in', order_ids)]
-            // return [
-            //     ('order_line.invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund')),
-            //     ('order_line.invoice_lines.move_id', operator, value),
-            // ]
+            //     return [('id', 'in', so_ids)] + falsy_domain
+            // return [('order_line.invoice_lines', 'any', [
+            //     ('move_id.move_type', 'in', ('out_invoice', 'out_refund')),
+            //     ('move_id', operator, value),
+            // ])]
             */
             return default;
         }
@@ -14448,10 +16102,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def _search_is_delayed(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_('Operation not supported'))
-            // if operator != '=':
-            //     value = not value
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // sub_query = self._search([
             //     ('state', 'in', ['confirmed', 'progress', 'to_close']),
             //     ('date_deadline', '!=', False),
@@ -14459,7 +16111,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ('date_deadline', '<', self._field_to_sql('mrp_production', 'date_finished')),
             //         ('date_deadline', '<', fields.Datetime.now())
             // ])
-            // return [('id', 'in' if value else 'not in', sub_query)]
+            // return [('id', operator, sub_query)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchIsLateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def _search_is_late(self, operator, value):
+            // if operator not in ["=", "!="]:
+            //     raise ValidationError(self.env._("Unsupported operator"))
+            // purchase_domain = self._get_domain_is_late(operator, value)
+            // if operator == "=" and value or operator == "!=" and not value:
+            //     purchase_lines_late = Domain('order_id', 'any', purchase_domain) & Domain.custom(
+            //         to_sql=lambda model, alias, query: SQL(
+            //             "%s < %s",
+            //             model._field_to_sql(alias, 'qty_received', query),
+            //             model._field_to_sql(alias, 'product_qty', query),
+            //         )
+            //     )
+            //     return Domain('order_line', 'any', purchase_lines_late)
+            // else:
+            //     purchase_lines_on_time = Domain('order_id', 'any', purchase_domain) & Domain.custom(
+            //         to_sql=lambda model, alias, query: SQL(
+            //             "%s >= %s",
+            //             model._field_to_sql(alias, 'qty_received', query),
+            //             model._field_to_sql(alias, 'product_qty', query),
+            //         )
+            //     )
+            //     return Domain('order_line', 'any', purchase_lines_on_time)
             */
             return default;
         }
@@ -14471,7 +16153,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _search_journal_group_id(self, operator, value):
             // field = 'name' if 'like' in operator else 'id'
             // journal_groups = self.env['account.journal.group'].search([(field, operator, value)])
-            // return [('journal_id', 'not in', journal_groups.excluded_journal_ids.ids)]
+            // return Domain.OR([
+            //     Domain('journal_id', 'not in', group.excluded_journal_ids.ids)
+            //     & Domain('journal_id.company_id', '=?', group.company_id.id)
+            //     for group in journal_groups
+            // ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchMoveSentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _search_move_sent_values(self, operator, value):
+            // if operator != 'in' or value - {'sent', 'not_sent'}:
+            //     return NotImplemented
+            // return [('is_move_sent', 'in', [elem == 'sent' for elem in value])]
             */
             return default;
         }
@@ -14481,9 +16179,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _search_next_payment_date(self, operator, value):
-            // if operator not in ('=', '<', '<='):
-            //     raise UserError(self.env._('Operation not supported'))
+            // if operator not in ('in', '<', '<='):
+            //     return NotImplemented
             // return [('line_ids', 'any', [('reconciled', '=', False), ('payment_date', operator, value)])]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object offset, object limit, object order) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+            // fields = fields or self._get_default_read_fields()
+            // return super().search_read(domain, fields, offset, limit, order, **read_kwargs)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchReconciledPaymentIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _search_reconciled_payment_ids(self, operator, value):
+            // if operator not in ('in', '='):
+            //     return NotImplemented
+            // payment_ids = self.env['account.payment'].browse(value).reconciled_invoice_ids.ids
+            // return [('id', 'in', payment_ids)]
             */
             return default;
         }
@@ -14493,11 +16215,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _search_secured(self, operator, value):
-            // if operator not in ['=', '!='] or value not in [True, False]:
-            //     raise UserError(_('Operation not supported'))
-            // 
-            // want_secured = (operator == '=') == value
-            // return [('inalterable_hash', '!=' if want_secured else '=', False)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // assert list(value) == [True]
+            // return [('inalterable_hash', '!=', False)]
             */
             return default;
         }
@@ -14546,16 +16267,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SendOrderNotificationMailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_template) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> SendOrderNotificationMailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_template, object allow_deferred_sending) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _send_order_notification_mail(self, mail_template):
-            // """ Send a mail to the customer
+            // def _send_order_notification_mail(self, mail_template, allow_deferred_sending=True):
+            // """ Send a mail to the customer.
+            // 
+            // If the `sale.async_emails` ICP is set and `allow_deferred_sending` is true, order status
+            // emails are sent asynchronously through a cron.
             // 
             // Note: self.ensure_one()
             // 
             // :param mail.template mail_template: the template used to generate the mail
+            // :param bool allow_deferred_sending: Whether the email can be sent asynchronously.
             // :return: None
             // """
             // self.ensure_one()
@@ -14567,11 +16292,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # sending mail in sudo was meant for it being sent from superuser
             //     self = self.with_user(SUPERUSER_ID)
             // 
-            // self.with_context(force_send=True).message_post_with_source(
-            //     mail_template,
-            //     email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
-            //     subtype_xmlid='mail.mt_comment',
-            // )
+            // async_send = str2bool(self.env['ir.config_parameter'].sudo().get_param('sale.async_emails'))
+            // cron = self.env.ref('sale.send_pending_emails_cron', raise_if_not_found=False)
+            // cron_enabled = cron and cron.sudo().active
+            // if async_send and cron_enabled and allow_deferred_sending:
+            //     # Schedule the email to be sent asynchronously.
+            //     self.pending_email_template_id = mail_template
+            //     cron._trigger()
+            // else:  # Async emails are disabled, either by the user or we are in the cron job.
+            //     # Send the email synchronously.
+            //     self.with_context(force_send=True).message_post_with_source(
+            //         mail_template,
+            //         email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
+            //         subtype_xmlid='mail.mt_comment',
+            //     )
             */
             return default;
         }
@@ -14734,17 +16468,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetLotProducingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _set_lot_producing(self):
-            // self.ensure_one()
-            // self.lot_producing_id = self.env['stock.lot'].create(self._prepare_stock_lot_values())
-            */
-            return default;
-        }
-
         public async Task<TEntity> SetMoveByproductIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14753,6 +16476,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // move_finished_ids = self.move_finished_ids.filtered(lambda m: m.product_id == self.product_id)
             // # TODO: Try to create by-product moves here instead of moving them in the `create`.
             // self.move_finished_ids = move_finished_ids | self.move_byproduct_ids
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SetMovesCheckedAsync<TEntity>(IEnumerable<TEntity> entities, object is_checked) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def set_moves_checked(self, is_checked=True):
+            // for move in self.filtered(lambda m: m.state == 'posted'):
+            //     move.checked = is_checked
             */
             return default;
         }
@@ -14787,21 +16521,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _set_outdated_bom_in_productions(self):
+            // if not self:
+            //     return
             // # Searches for MOs using these BoMs to notify them that their BoM has been updated.
             // list_of_domain_by_bom = []
             // for bom in self:
-            //     domain_by_products = [('product_id', 'in', bom.product_tmpl_id.product_variant_ids.ids)]
             //     if bom.product_id:
-            //         domain_by_products = [('product_id', '=', bom.product_id.id)]
-            //     domain_for_confirmed_mo = AND([[('state', '=', 'confirmed')], domain_by_products])
+            //         domain_by_products = Domain('product_id', '=', bom.product_id.id)
+            //     else:
+            //         domain_by_products = Domain('product_id', 'in', bom.product_tmpl_id.product_variant_ids.ids)
+            //     domain_for_confirmed_mo = Domain('state', '=', 'confirmed') & domain_by_products
             //     # Avoid confirmed MOs if the BoM's product was changed.
-            //     domain_by_states = OR([[('state', '=', 'draft')], domain_for_confirmed_mo])
-            //     list_of_domain_by_bom.append(AND([[('bom_id', '=', bom.id)], domain_by_states]))
-            // if list_of_domain_by_bom:
-            //     domain = OR(list_of_domain_by_bom)
-            //     productions = self.env['mrp.production'].search(domain)
-            //     if productions:
-            //         productions.is_outdated_bom = True
+            //     domain_by_states = Domain('state', '=', 'draft') | domain_for_confirmed_mo
+            //     list_of_domain_by_bom.append(Domain('bom_id', '=', bom.id) & domain_by_states)
+            // productions = self.env['mrp.production'].search(Domain.OR(list_of_domain_by_bom))
+            // if productions:
+            //     productions.is_outdated_bom = True
             */
             return default;
         }
@@ -14811,7 +16546,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def set_qty_producing(self):
-            // # This method is used to call `_set_lot_producing` when the onchange doesn't apply.
             // self.ensure_one()
             // self._set_qty_producing(False)
             */
@@ -14825,9 +16559,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _set_qty_producing(self, pick_manual_consumption_moves=True):
             // if self.product_id.tracking == 'serial':
             //     qty_producing_uom = self.product_uom_id._compute_quantity(self.qty_producing, self.product_id.uom_id, rounding_method='HALF-UP')
+            //     qty_production_uom = self.product_uom_id._compute_quantity(self.product_qty, self.product_id.uom_id, rounding_method='HALF-UP')
             //     # allow changing a non-zero value to a 0 to not block mass produce feature
-            //     if qty_producing_uom != 1 and not (qty_producing_uom == 0 and self._origin.qty_producing != self.qty_producing):
-            //         self.qty_producing = self.product_id.uom_id._compute_quantity(1, self.product_uom_id, rounding_method='HALF-UP')
+            //     if qty_producing_uom != qty_production_uom and not (qty_producing_uom == 0 and self._origin.qty_producing != self.qty_producing):
+            //         self.qty_producing = self.product_id.uom_id._compute_quantity(len(self.lot_producing_ids), self.product_uom_id, rounding_method='HALF-UP')
             // 
             // # waiting for a preproduction move before assignement
             // is_waiting = self.warehouse_id.manufacture_steps != 'mrp_one_step' and self.picking_ids.filtered(lambda p: p.picking_type_id == self.warehouse_id.pbm_type_id and p.state not in ('done', 'cancel'))
@@ -14836,19 +16571,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.move_raw_ids.filtered(lambda m: not is_waiting or m.product_id.tracking == 'none')
             //     | self.move_finished_ids.filtered(lambda m: m.product_id != self.product_id or m.product_id.tracking == 'serial')
             // ):
-            //     # picked + manual means the user set the quantity manually
-            //     if move.manual_consumption and move.picked:
+            //     is_byproduct = move in self.move_byproduct_ids
+            //     # Never update already produced by-product moves.
+            //     if move.picked and (is_byproduct or move.manual_consumption):
             //         continue
             // 
             //     # sudo needed for portal users
             //     if move.sudo()._should_bypass_set_qty_producing():
             //         continue
             // 
-            //     new_qty = float_round((self.qty_producing - self.qty_produced) * move.unit_factor, precision_rounding=move.product_uom.rounding)
+            //     new_qty = move.product_uom.round((self.qty_producing - self.qty_produced) * move.unit_factor)
             //     move._set_quantity_done(new_qty)
             //     if (not move.manual_consumption or pick_manual_consumption_moves) \
             //             and move.quantity \
-            //             and (move.product_id != self.product_id or not move.production_id or move.product_id.tracking != 'serial'):
+            //             and not is_byproduct \
+            //             and (move.raw_material_production_id or move.product_id.tracking != 'serial'):
             //         move.picked = True
             */
             return default;
@@ -14861,18 +16598,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _set_quantities(self):
             // self.ensure_one()
             // missing_lot_id_products = ""
-            // if self.product_tracking in ('lot', 'serial') and not self.lot_producing_id:
+            // if self.product_tracking in ('lot', 'serial') and not self.lot_producing_ids:
             //     self.action_generate_serial()
-            // if self.product_tracking == 'serial' and float_compare(self.qty_producing, 1, precision_rounding=self.product_uom_id.rounding) == 1:
-            //     self.qty_producing = 1
-            // else:
-            //     self.qty_producing = self.product_qty - self.qty_produced
+            // self.qty_producing = self.product_qty - self.qty_produced
             // self._set_qty_producing()
+            // self._mark_byproducts_as_produced()
             // 
             // for move in self.move_raw_ids:
             //     if move.state in ('done', 'cancel') or not move.product_uom_qty:
             //         continue
-            //     rounding = move.product_uom.rounding
             //     if move.manual_consumption:
             //         if move.has_tracking in ('serial', 'lot') and (not move.picked or any(not line.lot_id for line in move.move_line_ids if line.quantity and line.picked)):
             //             missing_lot_id_products += "\n  - %s" % move.product_id.display_name
@@ -14910,8 +16644,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _should_be_locked(self):
             // self.ensure_one()
             // # Public user can confirm SO, so we check the group on any record creator.
-            // user = self[:1].create_uid
-            // return user and user.sudo().has_group('sale.group_auto_done_setting')
+            // return self.env['res.groups']._is_feature_enabled('sale.group_auto_done_setting')
             */
             return default;
         }
@@ -14980,23 +16713,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'views': [(False, 'form')],
             //     'target': 'new',
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowCancelWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _show_cancel_wizard(self):
-            // """ Decide whether the sale.order.cancel wizard should be shown to cancel specified orders.
-            // 
-            // :return: True if there is any non-draft order in the given orders
-            // :rtype: bool
-            // """
-            // if self.env.context.get('disable_cancel_warning'):
-            //     return False
-            // return any(so.state != 'draft' for so in self)
             */
             return default;
         }
@@ -15077,7 +16793,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         amounts[production] = _default_amounts(production)
             //         continue
             //     total_amount = sum(mo_amounts)
-            //     diff = float_compare(production.product_qty, total_amount, precision_rounding=production.product_uom_id.rounding)
+            //     diff = production.product_uom_id.compare(production.product_qty, total_amount)
             //     if diff > 0 and not cancel_remaining_qty:
             //         amounts[production].append(production.product_qty - total_amount)
             //         has_backorder_to_ignore[production] = True
@@ -15093,13 +16809,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if production.backorder_sequence == 0:  # Activate backorder naming
             //         production.backorder_sequence = 1
             //     production.name = self._get_name_backorder(production.name, production.backorder_sequence)
-            //     (production.move_raw_ids | production.move_finished_ids).name = production.name
             //     (production.move_raw_ids | production.move_finished_ids).origin = production._get_origin()
             //     backorder_vals = production.copy_data(default=production._get_backorder_mo_vals())[0]
             //     backorder_qtys = amounts[production][1:]
             //     production.with_context(skip_compute_move_raw_ids=True).product_qty = amounts[production][0]
             // 
-            //     next_seq = max(production.procurement_group_id.mrp_production_ids.mapped("backorder_sequence"), default=1)
+            //     next_seq = max(production.production_group_id.production_ids.mapped("backorder_sequence"), default=1)
             // 
             //     for qty_to_backorder in backorder_qtys:
             //         next_seq += 1
@@ -15186,9 +16901,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ml_by_move = []
             //     product_uom = initial_move.product_id.uom_id
             //     if not initial_move.picked:
-            //         for move_line in initial_move.move_line_ids.sorted(key=lambda ml: ml._sorting_move_lines()):
+            //         for move_line in initial_move.move_line_ids:
             //             available_qty = move_line.product_uom_id._compute_quantity(move_line.quantity, product_uom, rounding_method="HALF-UP")
-            //             if float_compare(available_qty, 0, precision_rounding=product_uom.rounding) <= 0:
+            //             if product_uom.compare(available_qty, 0) <= 0:
             //                 continue
             //             ml_by_move.append((available_qty, move_line, move_line.copy_data()[0]))
             // 
@@ -15200,7 +16915,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for index, (quantity, move_line, ml_vals) in enumerate(ml_by_move):
             //         taken_qty = min(quantity, move_qty_to_reserve)
             //         taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id, rounding_method="HALF-UP")
-            //         if float_is_zero(taken_qty_uom, precision_rounding=move_line.product_uom_id.rounding):
+            //         if move_line.product_uom_id.is_zero(taken_qty_uom):
             //             continue
             //         move_line.write({
             //             'quantity': taken_qty_uom,
@@ -15209,19 +16924,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move_qty_to_reserve -= taken_qty
             //         ml_by_move[index] = (quantity - taken_qty, move_line, ml_vals)
             // 
-            //         if float_compare(move_qty_to_reserve, 0, precision_rounding=move.product_uom.rounding) <= 0:
+            //         if move.product_uom.compare(move_qty_to_reserve, 0) <= 0:
             //             assigned_moves.add(move.id)
             //             move = moves and moves.pop(0)
             //             move_qty_to_reserve = move and move.product_qty or 0
             // 
             //     for quantity, move_line, ml_vals in ml_by_move:
-            //         while float_compare(quantity, 0, precision_rounding=product_uom.rounding) > 0 and move:
+            //         while product_uom.compare(quantity, 0) > 0 and move:
             //             # Do not create `stock.move.line` if there is no initial demand on `stock.move`
             //             taken_qty = min(move_qty_to_reserve, quantity)
             //             taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id, rounding_method="HALF-UP")
             //             if move == initial_move:
             //                 move_line.quantity += taken_qty_uom
-            //             elif not float_is_zero(taken_qty_uom, precision_rounding=move_line.product_uom_id.rounding):
+            //             elif not move_line.product_uom_id.is_zero(taken_qty_uom):
             //                 new_ml_vals = dict(
             //                     ml_vals,
             //                     quantity=taken_qty_uom,
@@ -15231,7 +16946,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             quantity -= taken_qty
             //             move_qty_to_reserve -= taken_qty
             // 
-            //             if float_compare(move_qty_to_reserve, 0, precision_rounding=move.product_uom.rounding) <= 0:
+            //             if move.product_uom.compare(move_qty_to_reserve, 0) <= 0:
             //                 assigned_moves.add(move.id)
             //                 move = moves and moves.pop(0)
             //                 move_qty_to_reserve = move and move.product_qty or 0
@@ -15454,40 +17169,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if disabled:
             //         yield
             //         return
-            //     def update_containers():
-            //         # Only invoice-like and journal entries in "auto tax mode" are synced
-            //         tax_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True) or m.line_ids.tax_ids or m.line_ids.tax_repartition_line_id)
-            //         invoice_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True))
-            //         misc_container['records'] = container['records'].filtered(lambda m: m.is_entry() and not m.tax_cash_basis_origin_move_id)
             // 
-            //     tax_container, invoice_container, misc_container = ({} for __ in range(3))
+            //     stack_list, update_containers = self._get_sync_stack(container)
             //     update_containers()
             //     with ExitStack() as stack:
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='term_key',
-            //             needed_vals_fname='needed_terms',
-            //             needed_dirty_fname='needed_terms_dirty',
-            //             line_type='payment_term',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_unbalanced_lines(misc_container))
-            //         stack.enter_context(self._sync_rounding_lines(invoice_container))
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='discount_allocation_key',
-            //             needed_vals_fname='line_ids.discount_allocation_needed',
-            //             needed_dirty_fname='line_ids.discount_allocation_dirty',
-            //             line_type='discount',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_tax_lines(tax_container))
-            //         stack.enter_context(self._sync_dynamic_line(
-            //             existing_key_fname='epd_key',
-            //             needed_vals_fname='line_ids.epd_needed',
-            //             needed_dirty_fname='line_ids.epd_dirty',
-            //             line_type='epd',
-            //             container=invoice_container,
-            //         ))
-            //         stack.enter_context(self._sync_invoice(invoice_container))
+            //         stack_list.sort()
+            //         for _seq, contextmgr in stack_list:
+            //             stack.enter_context(contextmgr)
+            // 
             //         line_container = {'records': self.line_ids}
             //         with self.line_ids._sync_invoice(line_container):
             //             yield
@@ -15524,6 +17213,107 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SyncNonDeductibleBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _sync_non_deductible_base_lines(self, container):
+            // def has_non_deductible_lines(move):
+            //     return (
+            //         move.state == 'draft'
+            //         and move.is_purchase_document()
+            //         and any(move.line_ids.filtered(lambda line: line.display_type == 'product' and line.deductible_amount < 100))
+            //     )
+            // 
+            // # Collect data to avoid recomputing value unecessarily
+            // product_lines_before = {
+            //     move: Counter(
+            //         (line.name, line.price_subtotal, line.tax_ids, line.deductible_amount, line.account_id)
+            //         for line in move.line_ids
+            //         if line.display_type == 'product'
+            //     )
+            //     for move in container['records']
+            // }
+            // 
+            // yield
+            // 
+            // to_delete = []
+            // to_create = []
+            // for move in container['records']:
+            //     product_lines_now = Counter(
+            //         (line.name, line.price_subtotal, line.tax_ids, line.deductible_amount, line.account_id)
+            //         for line in move.line_ids
+            //         if line.display_type == 'product'
+            //     )
+            // 
+            //     has_changed_product_lines = bool(
+            //         product_lines_before.get(move, Counter()) - product_lines_now
+            //         or product_lines_now - product_lines_before.get(move, Counter())
+            //     )
+            //     if not has_changed_product_lines:
+            //         # No difference between before and now, then nothing to do
+            //         continue
+            // 
+            //     non_deductible_base_lines = move.line_ids.filtered(lambda line: line.display_type in ('non_deductible_product', 'non_deductible_product_total'))
+            //     to_delete += non_deductible_base_lines.ids
+            // 
+            //     if not has_non_deductible_lines(move):
+            //         continue
+            // 
+            //     non_deductible_base_total = 0.0
+            //     non_deductible_base_currency_total = 0.0
+            // 
+            //     sign = move.direction_sign
+            //     rate = move.invoice_currency_rate
+            // 
+            //     for line in move.line_ids.filtered(lambda line: line.display_type == 'product'):
+            //         if float_compare(line.deductible_amount, 100, precision_rounding=2) == 0:
+            //             continue
+            // 
+            //         percentage = (1 - line.deductible_amount / 100)
+            //         non_deductible_subtotal = line.currency_id.round(line.price_subtotal * percentage)
+            //         non_deductible_base = line.currency_id.round(sign * non_deductible_subtotal)
+            //         non_deductible_base_currency = line.company_currency_id.round(sign * non_deductible_subtotal / rate) if rate else 0.0
+            //         non_deductible_base_total += non_deductible_base
+            //         non_deductible_base_currency_total += non_deductible_base_currency
+            // 
+            //         to_create.append({
+            //             'move_id': move.id,
+            //             'account_id': line.account_id.id,
+            //             'display_type': 'non_deductible_product',
+            //             'name': line.name,
+            //             'balance': -1 * non_deductible_base,
+            //             'amount_currency': -1 * non_deductible_base_currency,
+            //             'tax_ids': [Command.set(line.tax_ids.filtered(lambda tax: tax.amount_type != 'fixed').ids)],
+            //             'sequence': line.sequence + 1,
+            //         })
+            // 
+            //     to_create.append({
+            //         'move_id': move.id,
+            //         'account_id': (
+            //             move.journal_id.non_deductible_account_id
+            //             or move.journal_id.default_account_id
+            //         ).id,
+            //         'display_type': 'non_deductible_product_total',
+            //         'name': _('private part'),
+            //         'balance': non_deductible_base_total,
+            //         'amount_currency': non_deductible_base_currency_total,
+            //         'tax_ids': [Command.clear()],
+            //         'sequence': max(move.line_ids.mapped('sequence')) + 1,
+            //     })
+            // 
+            // while to_create and to_delete:
+            //     line_data = to_create.pop()
+            //     line_id = to_delete.pop()
+            //     self.env['account.move.line'].browse(line_id).write(line_data)
+            // if to_create:
+            //     self.env['account.move.line'].create(to_create)
+            // if to_delete:
+            //     self.env['account.move.line'].browse(to_delete).with_context(dynamic_unlink=True).unlink()
+            */
+            return default;
+        }
+
         public async Task<TEntity> SyncRoundingLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -15546,13 +17336,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // fake_base_line = AccountTax._prepare_base_line_for_taxes_computation(None)
             // 
             // def get_base_lines(move):
-            //     return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs'))
+            //     return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs', 'non_deductible_product'))
             // 
             // def get_tax_lines(move):
             //     return move.line_ids.filtered('tax_repartition_line_id')
             // 
             // def get_value(record, field):
-            //     return self.env['account.move.line']._fields[field].convert_to_write(record[field], record)
+            //     return record._fields[field].convert_to_write(record[field], record)
             // 
             // def get_tax_line_tracked_fields(line):
             //     return ('amount_currency', 'balance', 'analytic_distribution')
@@ -15588,7 +17378,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // moves_values_before = {
             //     move: {
             //         field: get_value(move, field)
-            //         for field in ('currency_id', 'partner_id', 'move_type')
+            //         for field in ('currency_id', 'partner_id', 'move_type', 'invoice_currency_rate', 'invoice_date')
             //     }
             //     for move in container['records']
             //     if move.state == 'draft'
@@ -15634,6 +17424,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ):
             //         # Changing the type of an invoice using 'switch to refund' feature or just changing the currency.
             //         round_from_tax_lines = False
+            //     elif any(line not in base_lines for line, values in move_base_lines_values_before.items() if values['tax_ids']):
+            //         # Removed a base line affecting the taxes.
+            //         round_from_tax_lines = any_field_has_changed(move_tax_lines_values_before, tax_lines)
+            //     elif field_has_changed(moves_values_before, move, 'invoice_currency_rate') and not field_has_changed(moves_values_before, move, 'invoice_date'):
+            //         # Changing the rate should preserve the tax amounts in foreign currency but reapply the currency rate.
+            //         round_from_tax_lines = 'reapply_currency_rate'
             //     elif changed_lines := list(get_changed_lines(move_base_lines_values_before, base_lines)):
             //         # A base line has been modified.
             //         round_from_tax_lines = (
@@ -15660,15 +17456,58 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             and any(line[field] for line in changed_lines for field in ('amount_currency', 'balance'))
             //         ):
             //             continue
-            //     elif any(line not in base_lines for line, values in move_base_lines_values_before.items() if values['tax_ids']):
-            //         # Removed a base line affecting the taxes.
-            //         round_from_tax_lines = any_field_has_changed(move_tax_lines_values_before, tax_lines)
             //     else:
             //         continue
             // 
             //     base_lines_values, tax_lines_values = move._get_rounded_base_and_tax_lines(round_from_tax_lines=round_from_tax_lines)
             //     AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines_values, move.company_id, include_caba_tags=move.always_tax_exigible)
             //     tax_results = AccountTax._prepare_tax_lines(base_lines_values, move.company_id, tax_lines=tax_lines_values)
+            // 
+            //     non_deductible_tax_line = move.line_ids.filtered(lambda line: line.display_type == 'non_deductible_tax')
+            //     non_deductible_lines_values = [
+            //         line_values
+            //         for line_values in base_lines_values
+            //         if line_values['special_type'] == 'non_deductible'
+            //         and line_values['tax_ids']
+            //     ]
+            // 
+            //     if not non_deductible_lines_values and non_deductible_tax_line:
+            //         to_delete.append(non_deductible_tax_line.id)
+            // 
+            //     elif non_deductible_lines_values:
+            //         non_deductible_tax_values = {
+            //             'tax_amount': 0.0,
+            //             'tax_amount_currency': 0.0,
+            //         }
+            //         for line_values in non_deductible_lines_values:
+            //             non_deductible_tax_values['tax_amount'] += -line_values['sign'] * (line_values['tax_details']['total_included'] - line_values['tax_details']['total_excluded'])
+            //             non_deductible_tax_values['tax_amount_currency'] += -line_values['sign'] * (line_values['tax_details']['total_included_currency'] - line_values['tax_details']['total_excluded_currency'])
+            // 
+            //         # Update the non-deductible tax lines values
+            //         non_deductable_tax_line_values = {
+            //             'move_id': move.id,
+            //             'account_id': (
+            //                 non_deductible_tax_line.account_id
+            //                 or move.journal_id.non_deductible_account_id
+            //                 or move.journal_id.default_account_id
+            //             ).id,
+            //             'display_type': 'non_deductible_tax',
+            //             'name': _('private part (taxes)'),
+            //             'balance': non_deductible_tax_values['tax_amount'],
+            //             'amount_currency': non_deductible_tax_values['tax_amount_currency'],
+            //             'sequence': max(move.line_ids.mapped('sequence')) + 1,
+            //         }
+            //         if non_deductible_tax_line:
+            //             tax_results['tax_lines_to_update'].append((
+            //                 {'record': non_deductible_tax_line},
+            //                 'unused_grouping_key',
+            //                 {
+            //                     'amount_currency': non_deductable_tax_line_values['amount_currency'],
+            //                     'balance': non_deductable_tax_line_values['balance'],
+            //                 }
+            //             ))
+            //         else:
+            //             to_create.append(non_deductable_tax_line_values)
             // 
             //     for base_line, to_update in tax_results['base_lines_to_update']:
             //         line = base_line['record']
@@ -15685,7 +17524,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'move_id': move.id,
             //         })
             // 
-            //     for tax_line_vals, grouping_key, to_update in tax_results['tax_lines_to_update']:
+            //     for tax_line_vals, _grouping_key, to_update in tax_results['tax_lines_to_update']:
             //         line = tax_line_vals['record']
             //         if is_write_needed(line, to_update):
             //             line.write(to_update)
@@ -15762,22 +17601,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :param changed_fields: A set containing all modified fields on account.move.
             // '''
-            // if self._context.get('skip_account_move_synchronization'):
+            // if self.env.context.get('skip_account_move_synchronization'):
             //     return
             // 
             // self_sudo = self.sudo()
             // self_sudo.statement_line_id._synchronize_from_moves(changed_fields)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def toggle_active(self):
-            // self.with_context({'active_test': False}).operation_ids.toggle_active()
-            // return super().toggle_active()
             */
             return default;
         }
@@ -15855,8 +17683,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return self.env.ref('purchase.mt_rfq_confirmed')
             // elif 'state' in init_values and self.state == 'to approve':
             //     return self.env.ref('purchase.mt_rfq_confirmed')
-            // elif 'state' in init_values and self.state == 'done':
-            //     return self.env.ref('purchase.mt_rfq_done')
             // elif 'state' in init_values and self.state == 'sent':
             //     return self.env.ref('purchase.mt_rfq_sent')
             // return super(PurchaseOrder, self)._track_subtype(init_values)
@@ -15877,12 +17703,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _unlink_account_audit_trail_except_once_post(self):
-            // if not self._context.get('force_delete') and any(
-            //         move.posted_before and move.company_id.check_account_audit_trail
+            // if not self.env.context.get('force_delete') and any(
+            //         move.posted_before and move.company_id.restrictive_audit_trail
             //         for move in self
             // ):
             //     raise UserError(_(
-            //         "To keep the audit trail, you can not delete journal entries once they have been posted.\n"
+            //         "To keep the restrictive audit trail, you can not delete journal entries once they have been posted.\n"
             //         "Instead, you can cancel the journal entry."
             //     ))
             */
@@ -15897,6 +17723,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._set_next_made_sequence_gap(True)
             // self = self.with_context(skip_invoice_sync=True, dynamic_unlink=True)  # no need to sync to delete everything
             // logger_message = self._get_unlink_logger_message()
+            // self.line_ids.remove_move_reconcile()
             // self.line_ids.unlink()
             // res = super().unlink()
             // if logger_message:
@@ -15979,7 +17806,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not (
             //     self.env.user.has_group('account.group_account_manager')
             //     or any(self.company_id.mapped('quick_edit_mode'))
-            //     or self._context.get('force_delete')
+            //     or self.env.context.get('force_delete')
             //     or self.check_move_sequence_chain()
             // ):
             //     raise UserError(_(
@@ -15998,6 +17825,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for order in self:
             //     if not order.state == 'cancel':
             //         raise UserError(_('In order to delete a purchase order, you must cancel it first.'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UnlinkIfNotDoneInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def _unlink_if_not_done(self):
+            // if any(mo.state == 'done' for mo in self):
+            //     raise UserError(_("You cannot delete a manufacturing order that is already done."))
             */
             return default;
         }
@@ -16021,7 +17859,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         to_unlink += move
             // to_unlink.filtered(lambda m: m.state in ('posted', 'cancel')).button_draft()
             // to_unlink.filtered(lambda m: m.state == 'draft').unlink()
-            // to_cancel.button_cancel()
+            // to_cancel.filtered(lambda m: m.state != 'cancel').button_cancel()
             // return to_reverse._reverse_moves(cancel=True)
             */
             return default;
@@ -16064,37 +17902,44 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update account_move_line information for a given product or create a
-            // new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :param int quantity: The quantity selected in the catalog
-            // :return: The unit price of the product, based on the pricelist of the
-            //          sale order and the quantity selected.
-            // :rtype: float
-            // """
-            // move_line = self.line_ids.filtered(lambda line: line.product_id.id == product_id)
-            // if move_line:
-            //     if quantity != 0:
-            //         move_line.quantity = quantity
-            //     elif self.state in {'draft', 'sent'}:
-            //         price_unit = self._get_product_price_and_data(move_line.product_id)['price']
-            //         # The catalog is designed to allow the user to select products quickly.
-            //         # Therefore, sometimes they may select the wrong product or decide to remove
-            //         # some of them from the quotation. The unlink is there for that reason.
-            //         move_line.unlink()
-            //         return price_unit
-            //     else:
-            //         move_line.quantity = 0
-            // elif quantity > 0:
-            //     move_line = self.env['account.move.line'].create({
-            //         'move_id': self.id,
-            //         'quantity': quantity,
-            //         'product_id': product_id,
-            //     })
-            // return move_line.price_unit
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='line_ids', **kwargs
+            // ):
+            //     """ Update account_move_line information for a given product or create a
+            //     new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              sale order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     move_line = self.line_ids.filtered(
+            //         lambda line: line.product_id.id == product_id
+            //         and line.get_parent_section_line().id == section_id,
+            //     )
+            //     if move_line:
+            //         if quantity != 0:
+            //             move_line.quantity = quantity
+            //         elif self.state in {'draft', 'sent'}:
+            //             price_unit = self._get_product_price_and_data(move_line.product_id)['price']
+            //             # The catalog is designed to allow the user to select products quickly.
+            //             # Therefore, sometimes they may select the wrong product or decide to remove
+            //             # some of them from the quotation. The unlink is there for that reason.
+            //             move_line.unlink()
+            //             return price_unit
+            //         else:
+            //             move_line.quantity = 0
+            //     elif quantity > 0:
+            //         move_line = self.env['account.move.line'].create({
+            //             'move_id': self.id,
+            //             'quantity': quantity,
+            //             'product_id': product_id,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //     return move_line.price_unit
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def _update_order_line_info(self, product_id, quantity, child_field=False, **kwargs):
+            // def _update_order_line_info(self, product_id, quantity, *, child_field=False, **kwargs):
             // if not child_field:
             //     return 0
             // entity = self[child_field].filtered(lambda line: line.product_id.id == product_id)
@@ -16112,7 +17957,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return self.env['product.product'].browse(product_id).standard_price
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def _update_order_line_info(self, product_id, quantity, child_field=False, **kwargs):
+            // def _update_order_line_info(self, product_id, quantity, *, child_field=False, **kwargs):
             // if not child_field:
             //     return 0
             // entity = self[child_field].filtered(lambda line: line.product_id.id == product_id)
@@ -16142,46 +17987,48 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // return 0
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update purchase order line information for a given product or create
-            // a new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :return: The unit price of the product, based on the pricelist of the
-            //          purchase order and the quantity selected.
-            // :rtype: float
-            // """
-            // self.ensure_one()
-            // product_packaging_qty = kwargs.get('product_packaging_qty', False)
-            // product_packaging_id = kwargs.get('product_packaging_id', False)
-            // pol = self.order_line.filtered(lambda line: line.product_id.id == product_id)
-            // if pol:
-            //     if product_packaging_qty:
-            //         pol.product_packaging_id = product_packaging_id
-            //         pol.product_packaging_qty = product_packaging_qty
-            //     elif quantity != 0:
-            //         pol.product_qty = quantity
-            //     elif self.state in ['draft', 'sent']:
-            //         price_unit = self._get_product_price_and_data(pol.product_id)['price']
-            //         pol.unlink()
-            //         return price_unit
-            //     else:
-            //         pol.product_qty = 0
-            // elif quantity > 0:
-            //     pol = self.env['purchase.order.line'].create({
-            //         'order_id': self.id,
-            //         'product_id': product_id,
-            //         'product_qty': quantity,
-            //         'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),  # put it at the end of the order
-            //     })
-            //     seller = pol.product_id._select_seller(
-            //         partner_id=pol.partner_id,
-            //         quantity=pol.product_qty,
-            //         date=pol.order_id.date_order and pol.order_id.date_order.date() or fields.Date.context_today(pol),
-            //         uom_id=pol.product_uom)
-            //     if seller:
-            //         # Fix the PO line's price on the seller's one.
-            //         pol.price_unit = seller.price_discounted
-            // return pol.price_unit_discounted
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='order_line', **kwargs
+            // ):
+            //     """ Update purchase order line information for a given product or create
+            //     a new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog.
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              purchase order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     self.ensure_one()
+            //     pol = self.order_line.filtered(
+            //         lambda l: l.product_id.id == product_id
+            //         and l.get_parent_section_line().id == section_id
+            //     )
+            //     if pol:
+            //         if quantity != 0:
+            //             pol.product_qty = quantity
+            //         elif self.state in ['draft', 'sent']:
+            //             price_unit = self._get_product_price_and_data(pol.product_id)['price']
+            //             pol.unlink()
+            //             return price_unit
+            //         else:
+            //             pol.product_qty = 0
+            //     elif quantity > 0:
+            //         pol = self.env['purchase.order.line'].create({
+            //             'order_id': self.id,
+            //             'product_id': product_id,
+            //             'product_qty': quantity,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //         if pol.selected_seller_id:
+            //             # Fix the PO line's price on the seller's one.
+            //             seller = pol.selected_seller_id
+            //             price = seller.price
+            //             if seller.currency_id != self.currency_id:
+            //                 price = seller.currency_id._convert(price, self.currency_id)
+            //             pol.price_unit = pol.technical_price_unit = price
+            //             pol.discount = seller.discount
+            //     return pol.price_unit_discounted
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _update_order_line_info(self, product_id, quantity, **kwargs):
             // move = self.move_ids.filtered(lambda e: e.product_id.id == product_id)
@@ -16202,39 +18049,55 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // return self.env['product.product'].browse(product_id).list_price
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update sale order line information for a given product or create a
-            // new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :return: The unit price of the product, based on the pricelist of the
-            //          sale order and the quantity selected.
-            // :rtype: float
-            // """
-            // request.update_context(catalog_skip_tracking=True)
-            // sol = self.order_line.filtered(lambda line: line.product_id.id == product_id)
-            // if sol:
-            //     if quantity != 0:
-            //         sol.product_uom_qty = quantity
-            //     elif self.state in ['draft', 'sent']:
-            //         price_unit = self.pricelist_id._get_product_price(
-            //             product=sol.product_id,
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='order_line', **kwargs
+            // ):
+            //     """ Update sale order line information for a given product or create a
+            //     new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog.
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              sale order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     request.update_context(catalog_skip_tracking=True)
+            //     sol = self.order_line.filtered(
+            //         lambda l: l.product_id.id == product_id
+            //         and l.get_parent_section_line().id == section_id,
+            //     )
+            //     if sol:
+            //         if quantity != 0:
+            //             sol.product_uom_qty = quantity
+            //         elif self.state in ['draft', 'sent']:
+            //             price_unit = self.pricelist_id._get_product_price(
+            //                 product=sol.product_id,
+            //                 quantity=1.0,
+            //                 currency=self.currency_id,
+            //                 date=self.date_order,
+            //                 **kwargs,
+            //             )
+            //             sol.unlink()
+            //             return price_unit
+            //         else:
+            //             sol.product_uom_qty = 0
+            //     elif quantity > 0:
+            //         sol = self.env['sale.order.line'].create({
+            //             'order_id': self.id,
+            //             'product_id': product_id,
+            //             'product_uom_qty': quantity,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //     else:  # quantity of 0, no line to update, return defaut pricelist price
+            //         return self.pricelist_id._get_product_price(
+            //             product=self.env['product.product'].browse(product_id),
             //             quantity=1.0,
             //             currency=self.currency_id,
             //             date=self.date_order,
             //             **kwargs,
             //         )
-            //         sol.unlink()
-            //         return price_unit
-            //     else:
-            //         sol.product_uom_qty = 0
-            // elif quantity > 0:
-            //     sol = self.env['sale.order.line'].create({
-            //         'order_id': self.id,
-            //         'product_id': product_id,
-            //         'product_uom_qty': quantity,
-            //         'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),  # put it at the end of the order
-            //     })
-            // return sol.price_unit * (1-(sol.discount or 0.0)/100.0)
+            // 
+            //     return sol._get_discounted_price()
             */
             return default;
         }
@@ -16248,11 +18111,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // update_info = []
             // for move in self.move_raw_ids.filtered(lambda m: m.state not in ('done', 'cancel')):
             //     old_qty = move.product_uom_qty
-            //     new_qty = float_round(old_qty * factor, precision_rounding=move.product_uom.rounding, rounding_method='UP')
+            //     new_qty = move.product_uom.round(old_qty * factor, rounding_method='UP')
             //     if new_qty > 0:
             //         # procurement and assigning is now run in write
             //         move.write({'product_uom_qty': new_qty})
             //         update_info.append((move, old_qty, new_qty))
+            //     if move.reference_ids != self.reference_ids:
+            //         move.reference_ids = self.reference_ids.ids
             // return update_info
             */
             return default;
@@ -16294,8 +18159,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _validate_order(self):
-            // """
-            // Confirm the sale order and send a confirmation email.
+            // """Confirm the sale order and send a confirmation email.
             // 
             // :return: None
             // """
@@ -16335,6 +18199,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._sanitize_vals(vals)
             // 
             // for move in self:
+            //     if vals.get('checked') and not move._is_user_able_to_review():
+            //         raise AccessError(_("You don't have the access rights to perform this action."))
+            //     if vals.get('state') == 'draft' and move.checked and not move._is_user_able_to_review():
+            //         raise ValidationError(_("Validated entries can only be changed by your accountant."))
+            // 
             //     violated_fields = set(vals).intersection(move._get_integrity_hash_fields() + ['inalterable_hash'])
             //     if move.inalterable_hash and violated_fields:
             //         raise UserError(_(
@@ -16376,7 +18245,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'invoice_line_ids', 'line_ids', 'invoice_date', 'date', 'partner_id',
             //         'invoice_payment_term_id', 'currency_id', 'fiscal_position_id', 'invoice_cash_rounding_id')
             //     readonly_fields = [val for val in vals if val in unmodifiable_fields]
-            //     if not self._context.get('skip_readonly_check') and move_state == "posted" and readonly_fields:
+            //     if not self.env.context.get('skip_readonly_check') and move_state == "posted" and readonly_fields:
             //         raise UserError(_("You cannot modify the following readonly fields on a posted move: %s", ', '.join(readonly_fields)))
             // 
             //     if move.journal_id.sequence_override_regex and vals.get('name') and vals['name'] != '/' and not re.match(move.journal_id.sequence_override_regex, vals['name']):
@@ -16438,6 +18307,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return res
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def write(self, vals):
+            // if 'product_id' in vals and self.state != 'draft':
+            //     vals.pop('product_id')
             // if 'move_byproduct_ids' in vals and 'move_finished_ids' not in vals:
             //     vals['move_finished_ids'] = vals.get('move_finished_ids', []) + vals['move_byproduct_ids']
             //     del vals['move_byproduct_ids']
@@ -16481,7 +18352,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             production.name = picking_type.sequence_id.next_by_id()
             //             moves_to_reassign |= production.move_raw_ids
             // 
-            // res = super().write(vals)
+            // res = super(MrpProduction, self).write(vals)
             // 
             // for production in self:
             //     if 'date_start' in vals and not self.env.context.get('force_date', False):
@@ -16497,16 +18368,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         production.with_context(no_procurement=True)._autoconfirm_production()
             //         if production in production_to_replan:
             //             production._plan_workorders()
-            //     if production.state == 'done' and ('lot_producing_id' in vals or 'qty_producing' in vals):
+            //     if production.state == 'done' and 'qty_producing' in vals:
             //         finished_move = production.move_finished_ids.filtered(
             //             lambda move: move.product_id == production.product_id and move.state == 'done')
-            //         finished_move_lines = finished_move.move_line_ids
-            //         if 'lot_producing_id' in vals:
-            //             finished_move_lines.write({'lot_id': vals.get('lot_producing_id')})
-            //         if 'qty_producing' in vals:
-            //             finished_move.quantity = vals.get('qty_producing')
+            //         finished_move.quantity = vals.get('qty_producing')
             //     if self._has_workorders() and not production.workorder_ids.operation_id and vals.get('date_start') and not vals.get('date_finished'):
-            //         new_date_start = production.date_start
+            //         new_date_start = fields.Datetime.to_datetime(vals.get('date_start'))
             //         if not production.date_finished or new_date_start >= production.date_finished:
             //             production.date_finished = new_date_start + datetime.timedelta(hours=1)
             // if moves_to_reassign:
@@ -16517,13 +18384,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             or move.picking_type_id.reservation_method == 'at_confirm'
             //             or (move.reservation_date and move.reservation_date <= fields.Date.today())))
             //     moves_to_reassign._action_assign()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def write(self, vals):
-            // vals, partner_vals = self._write_partner_values(vals)
-            // res = super().write(vals)
-            // if partner_vals:
-            //     self.partner_id.sudo().write(partner_vals)  # Because the purchase user doesn't have write on `res.partner`
             // return res
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def write(self, vals):
@@ -16561,27 +18421,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def write(self, vals):
             // if 'pricelist_id' in vals and any(so.state == 'sale' for so in self):
             //     raise UserError(_("You cannot change the pricelist of a confirmed order !"))
-            // res = super().write(vals)
-            // if vals.get('partner_id'):
-            //     self.filtered(lambda so: so.state in ('sent', 'sale')).message_subscribe(
-            //         partner_ids=[vals['partner_id']],
-            //     )
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WritePartnerValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def _write_partner_values(self, vals):
-            // partner_values = {}
-            // if 'receipt_reminder_email' in vals:
-            //     partner_values['receipt_reminder_email'] = vals.pop('receipt_reminder_email')
-            // if 'reminder_date_before_receipt' in vals:
-            //     partner_values['reminder_date_before_receipt'] = vals.pop('reminder_date_before_receipt')
-            // return vals, partner_values
+            // return super().write(vals)
             */
             return default;
         }

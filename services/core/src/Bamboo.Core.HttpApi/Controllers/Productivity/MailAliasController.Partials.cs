@@ -11,14 +11,6 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/open-document")]
         public async Task<IActionResult> OpenDocumentAsync(Guid id)
         {

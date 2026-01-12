@@ -72,11 +72,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
             // def _get_active_exceptions_domain(self, company, soft_lock_date_fields):
-            // return [
-            //     *expression.OR([(field, '<', company[field])] for field in soft_lock_date_fields if company[field]),
-            //     ('company_id', '=', company.id),
-            //     ('state', '=', 'active'),  # checks the datetime
-            // ]
+            // return (
+            //     Domain.OR(
+            //         Domain(field, '<', company[field])
+            //         for field in soft_lock_date_fields
+            //         if company[field]
+            //     )
+            //     & Domain('company_id', '=', company.id)
+            //     & Domain('state', '=', 'active'),  # checks the datetime
+            // )
             */
             return default;
         }
@@ -119,31 +123,14 @@ namespace Bamboo.Core.Application.Services
             //         ('audit_trail_message_ids', 'any', [
             //             ('tracking_value_ids.field_id', '=', self.env['ir.model.fields']._get('account.move', 'date').id),
             //             '|',
-            //                 *expression.AND(tracking_old_datetime_domain),
-            //                 *expression.AND(tracking_new_datetime_domain),
+            //                 *Domain.AND(tracking_old_datetime_domain),
+            //                 *Domain.AND(tracking_new_datetime_domain),
             //         ]),
             //         # The date of the move is inside the excepted period and sth. was changed on the move
-            //         *expression.AND(move_date_domain),
+            //         *Domain.AND(move_date_domain),
             // ]
             */
             return default;
-        }
-
-        public async Task<AccountLockException> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_lock_exception_company_id_end_datetime_idx',
-            //     tablename=self._table,
-            //     expressions=['company_id', 'user_id', 'end_datetime'],
-            //     where="active = TRUE"
-            // )
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<AccountLockException> InvalidateAffectedUserLockDatesInternalAsync()
@@ -185,7 +172,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
             // def action_revoke(self):
             // """Revokes an active exception."""
-            // if not self.env.user.has_group('account.group_account_manager'):
+            // if not self.env.user.has_group('account.group_account_manager') and not self.env.su:
             //     raise UserError(_("You cannot revoke Lock Date Exceptions. Ask someone with the 'Adviser' role."))
             // for record in self:
             //     if record.state == 'active':
@@ -213,7 +200,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
             // def _search_lock_date(self, field, operator, value):
             // if operator not in ['<', '<='] or not value:
-            //     raise UserError(_('Operation not supported'))
+            //     return NotImplemented
             // return ['&',
             //           ('lock_date_field', '=', field),
             //           '|',
@@ -249,32 +236,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
             // def _search_state(self, operator, value):
-            // if operator not in ['=', '!='] or value not in ['revoked', 'expired', 'active']:
-            //     raise UserError(_('Operation not supported'))
+            // if operator != 'in':
+            //     return NotImplemented
             // 
-            // normal_domain_for_equals = []
-            // if value == 'revoked':
-            //     normal_domain_for_equals = [
-            //         ('active', '=', False),
-            //     ]
-            // elif value == 'expired':
-            //     normal_domain_for_equals = [
-            //         '&',
-            //             ('active', '=', True),
-            //             ('end_datetime', '<', self.env.cr.now()),
-            //     ]
-            // elif value == 'active':
-            //     normal_domain_for_equals = [
-            //         '&',
-            //             ('active', '=', True),
-            //             '|',
-            //                 ('end_datetime', '=', None),
-            //                 ('end_datetime', '>=', self.env.cr.now()),
-            //     ]
-            // if operator == '=':
-            //     return normal_domain_for_equals
-            // else:
-            //     return ['!'] + normal_domain_for_equals
+            // domain = Domain.FALSE
+            // if 'revoked' in value:
+            //     domain |= Domain('active', '=', False)
+            // if 'expired' in value:
+            //     domain |= Domain('active', '=', True) & Domain('end_datetime', '<', self.env.cr.now())
+            // if 'active' in value:
+            //     domain |= Domain('active', '=', True) & (Domain('end_datetime', '=', False) | Domain('end_datetime', '>=', self.env.cr.now()))
+            // return domain
             */
             return default;
         }

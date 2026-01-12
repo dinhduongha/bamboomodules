@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes" })]
+    [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes", "base_geolocalize" })]
     public class HrAttendanceAppService : GenericApplicationService<HrAttendance>, IHrAttendanceAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -31,9 +31,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def action_approve_overtime(self):
-            // self.write({
-            //     'overtime_status': 'approved'
-            // })
+            // self.linked_overtime_ids.action_approve()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -115,6 +113,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrAttendance> ComputeDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
+            // def _compute_date(self):
+            // for attendance in self:
+            //     if not attendance.employee_id or not attendance.check_in:  # weird precompute edge cases. Never after creation
+            //         attendance.date = datetime.today()
+            //         continue
+            //     tz = timezone(attendance.employee_id._get_tz())
+            //     attendance.date = utc.localize(attendance.check_in).astimezone(tz).date()
+            */
+            return default;
+        }
+
         protected async Task<HrAttendance> ComputeDisplayNameInternalAsync()
         {
             /*
@@ -149,13 +162,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrAttendance> ComputeNoValidatedOvertimeHoursInternalAsync()
+        protected async Task<HrAttendance> ComputeIsManagerInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _compute_no_validated_overtime_hours(self):
+            // def _compute_is_manager(self):
+            // have_manager_right = self.env.user.has_group('hr_attendance.group_hr_attendance_user')
+            // have_officer_right = self.env.user.has_group('hr_attendance.group_hr_attendance_officer')
             // for attendance in self:
-            //     attendance.no_validated_overtime_hours = not float_compare(attendance.validated_overtime_hours, 0.0, precision_digits=5)
+            //     attendance.is_manager = have_manager_right or \
+            //         (have_officer_right and attendance.attendance_manager_id.id == self.env.user.id)
+            */
+            return default;
+        }
+
+        protected async Task<HrAttendance> ComputeLinkedOvertimeIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
+            // def _compute_linked_overtime_ids(self):
+            // overtimes_by_attendance = self._linked_overtimes().grouped(lambda ot: (ot.employee_id, ot.time_start))
+            // for attendance in self:
+            //     attendance.linked_overtime_ids = overtimes_by_attendance.get((attendance.employee_id, attendance.check_in), False)
             */
             return default;
         }
@@ -165,71 +193,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def _compute_overtime_hours(self):
-            // att_progress_values = dict()
-            // negative_overtime_attendances = defaultdict(lambda: False)
-            // if self.employee_id:
-            //     self.env['hr.attendance'].flush_model(['worked_hours'])
-            //     self.env['hr.attendance.overtime'].flush_model(['duration'])
-            //     self.env.cr.execute('''
-            //         WITH employee_time_zones AS (
-            //             SELECT employee.id AS employee_id,
-            //                    calendar.tz AS timezone
-            //               FROM hr_employee employee
-            //         INNER JOIN resource_calendar calendar
-            //                 ON calendar.id = employee.resource_calendar_id
-            //         )
-            //         SELECT att.id AS att_id,
-            //                att.worked_hours AS att_wh,
-            //                ot.id AS ot_id,
-            //                ot.duration AS ot_d,
-            //                ot.date AS od,
-            //                att.check_in AS ad
-            //           FROM hr_attendance att
-            //     INNER JOIN employee_time_zones etz
-            //             ON att.employee_id = etz.employee_id
-            //     INNER JOIN hr_attendance_overtime ot
-            //             ON date_trunc('day',
-            //                           CAST(att.check_in
-            //                                    AT TIME ZONE 'utc'
-            //                                    AT TIME ZONE etz.timezone
-            //                           as date)) = date_trunc('day', ot.date)
-            //            AND att.employee_id = ot.employee_id
-            //            AND att.employee_id IN %s
-            //            AND ot.adjustment IS false
-            //       ORDER BY att.check_in DESC
-            //     ''', (tuple(self.employee_id.ids),))
-            //     a = self.env.cr.dictfetchall()
-            //     grouped_dict = dict()
-            //     for row in a:
-            //         if row['ot_id'] and row['att_wh']:
-            //             if row['ot_id'] not in grouped_dict:
-            //                 grouped_dict[row['ot_id']] = {'attendances': [(row['att_id'], row['att_wh'])], 'overtime_duration': row['ot_d']}
-            //             else:
-            //                 grouped_dict[row['ot_id']]['attendances'].append((row['att_id'], row['att_wh']))
-            // 
-            //     for overtime in grouped_dict:
-            //         overtime_reservoir = grouped_dict[overtime]['overtime_duration']
-            //         if overtime_reservoir > 0:
-            //             for attendance in grouped_dict[overtime]['attendances']:
-            //                 if overtime_reservoir > 0:
-            //                     sub_time = attendance[1] - overtime_reservoir
-            //                     if sub_time < 0:
-            //                         att_progress_values[attendance[0]] = 0
-            //                         overtime_reservoir -= attendance[1]
-            //                     else:
-            //                         att_progress_values[attendance[0]] = float(((attendance[1] - overtime_reservoir) / attendance[1]) * 100)
-            //                         overtime_reservoir = 0
-            //                 else:
-            //                     att_progress_values[attendance[0]] = 100
-            //         elif overtime_reservoir < 0 and grouped_dict[overtime]['attendances']:
-            //             att_id = grouped_dict[overtime]['attendances'][0][0]
-            //             att_progress_values[att_id] = overtime_reservoir
-            //             negative_overtime_attendances[att_id] = True
             // for attendance in self:
-            //     if negative_overtime_attendances[attendance.id]:
-            //         attendance.overtime_hours = att_progress_values.get(attendance.id, 0)
-            //     else:
-            //         attendance.overtime_hours = attendance.worked_hours * ((100 - att_progress_values.get(attendance.id, 100)) / 100)
+            //     attendance.overtime_hours = sum(attendance.linked_overtime_ids.mapped('manual_duration'))
             */
             return default;
         }
@@ -240,8 +205,14 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def _compute_overtime_status(self):
             // for attendance in self:
-            //     if not attendance.overtime_status:
-            //         attendance.overtime_status = "to_approve" if attendance.employee_id.company_id.attendance_overtime_validation == 'by_manager' else "approved"
+            //     if not attendance.linked_overtime_ids:
+            //         attendance.overtime_status = False
+            //     elif all(attendance.linked_overtime_ids.mapped(lambda ot: ot.status == 'approved')):
+            //         attendance.overtime_status = 'approved'
+            //     elif all(attendance.linked_overtime_ids.mapped(lambda ot: ot.status == 'refused')):
+            //         attendance.overtime_status = 'refused'
+            //     else:
+            //         attendance.overtime_status = 'to_approve'
             */
             return default;
         }
@@ -251,17 +222,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def _compute_validated_overtime_hours(self):
-            // no_validation = self.filtered(lambda a: a.employee_id.company_id.attendance_overtime_validation == 'no_validation')
-            // with_validation = self - no_validation
-            // 
-            // for attendance in with_validation:
-            //     if attendance.overtime_status == 'to_approve':
-            //         attendance.validated_overtime_hours = attendance.overtime_hours
-            //     elif attendance.overtime_status == 'refused':
-            //         attendance.validated_overtime_hours = 0
-            // 
-            // for attendance in no_validation:
-            //     attendance.validated_overtime_hours = attendance.overtime_hours
+            // for attendance in self:
+            //     attendance.validated_overtime_hours = sum(attendance.linked_overtime_ids.filtered_domain([('status', '=', 'approved')]).mapped('manual_duration'))
             */
             return default;
         }
@@ -282,7 +244,7 @@ namespace Bamboo.Core.Application.Services
             //         check_in_tz = attendance.check_in.astimezone(tz)
             //         check_out_tz = attendance.check_out.astimezone(tz)
             //         lunch_intervals = []
-            //         if not attendance.employee_id.is_flexible:
+            //         if not resource._is_flexible():
             //             lunch_intervals = attendance.employee_id._employee_attendance_intervals(check_in_tz, check_out_tz, lunch=True)
             //         attendance_intervals = Intervals([(check_in_tz, check_out_tz, attendance)]) - lunch_intervals
             //         delta = sum((i[1] - i[0]).total_seconds() for i in attendance_intervals)
@@ -306,13 +268,15 @@ namespace Bamboo.Core.Application.Services
             // if not companies:
             //     return
             // 
-            // checked_in_employees = self.env['hr.attendance.overtime'].search([('date', '=', yesterday),
-            //                                                                   ('adjustment', '=', False)]).employee_id
+            // checked_in_employees = self.env['hr.attendance.overtime.line'].search([('date', '=', yesterday)]).employee_id
             // 
             // technical_attendances_vals = []
-            // absent_employees = self.env['hr.employee'].search([('id', 'not in', checked_in_employees.ids),
-            //                                                    ('company_id', 'in', companies.ids),
-            //                                                    ('resource_calendar_id.flexible_hours', '=', False)])
+            // absent_employees = self.env['hr.employee'].search([
+            //     ('id', 'not in', checked_in_employees.ids),
+            //     ('company_id', 'in', companies.ids),
+            //     ('resource_calendar_id.flexible_hours', '=', False),
+            //     ('current_version_id.contract_date_start', '<=', fields.Date.today() - relativedelta(days=1))
+            // ])
             // 
             // for emp in absent_employees:
             //     local_day_start = pytz.utc.localize(yesterday).astimezone(pytz.timezone(emp._get_tz()))
@@ -343,7 +307,7 @@ namespace Bamboo.Core.Application.Services
             // def _cron_auto_check_out(self):
             // def check_in_tz(attendance):
             //     """Returns check-in time in calendar's timezone."""
-            //     return attendance.check_in.astimezone(pytz.timezone(attendance.employee_id.resource_calendar_id.tz or 'UTC'))
+            //     return attendance.check_in.astimezone(pytz.timezone(attendance.employee_id._get_tz()))
             // 
             // to_verify = self.env['hr.attendance'].search(
             //     [('check_out', '=', False),
@@ -354,9 +318,10 @@ namespace Bamboo.Core.Application.Services
             // if not to_verify:
             //     return
             // 
+            // to_verify_min_date = min(to_verify.mapped('check_in')).replace(hour=0, minute=0, second=0)
             // previous_attendances = self.env['hr.attendance'].search([
             //             ('employee_id', 'in', to_verify.mapped('employee_id').ids),
-            //             ('check_in', '>', (fields.Datetime.now() - relativedelta(days=1)).replace(hour=0, minute=0, second=0)),
+            //             ('check_in', '>', to_verify_min_date),
             //             ('check_out', '!=', False)
             // ])
             // 
@@ -370,20 +335,32 @@ namespace Bamboo.Core.Application.Services
             //     max_tol = company.auto_check_out_tolerance
             //     to_verify_company = to_verify.filtered(lambda a: a.employee_id.company_id.id == company.id)
             // 
-            //     # Attendances where Last open attendance time + previously worked time on that day + tolerance greater than the attendances hours (including lunch) in his calendar
-            //     to_check_out = to_verify_company.filtered(lambda a: (fields.Datetime.now() - a.check_in).seconds / 3600 + mapped_previous_duration[a.employee_id][check_in_tz(a).date()] - max_tol >
-            //                                                         (sum(a.employee_id.resource_calendar_id.attendance_ids.filtered(lambda att: att.dayofweek == str(check_in_tz(a).weekday()) and (not att.two_weeks_calendar or att.week_type == str(att.get_week_type(check_in_tz(a).date())))).mapped(lambda at: at.hour_to - at.hour_from))))
-            //     body = _('This attendance was automatically checked out because the employee exceeded the allowed time for their scheduled work hours.')
+            //     for att in to_verify_company:
             // 
-            //     for att in to_check_out:
-            //         expected_worked_hours = sum(att.employee_id.resource_calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == str(check_in_tz(att).weekday()) and (not a.two_weeks_calendar or a.week_type == str(a.get_week_type(check_in_tz(att).date())))).mapped("duration_hours"))
-            //         att.check_out = fields.Datetime.now()
-            //         excess_hours = att.worked_hours - (expected_worked_hours + max_tol - mapped_previous_duration[att.employee_id][check_in_tz(att).date()])
-            //         att.write({
-            //             "check_out": max(att.check_out - relativedelta(hours=excess_hours), att.check_in + relativedelta(seconds=1)),
-            //             "out_mode": "auto_check_out"
-            //         })
-            //         att.message_post(body=body)
+            //         employee_timezone = pytz.timezone(att.employee_id._get_tz())
+            //         check_in_datetime = check_in_tz(att)
+            //         now_datetime = fields.Datetime.now().astimezone(employee_timezone)
+            //         current_attendance_duration = (now_datetime - check_in_datetime).total_seconds() / 3600
+            //         previous_attendances_duration = mapped_previous_duration[att.employee_id][check_in_datetime.date()]
+            // 
+            //         expected_worked_hours = sum(
+            //             att.employee_id.resource_calendar_id.attendance_ids.filtered(
+            //                 lambda a: a.dayofweek == str(check_in_datetime.weekday())
+            //                     and (not a.two_weeks_calendar or a.week_type == str(a.get_week_type(check_in_datetime.date())))
+            //             ).mapped("duration_hours")
+            //         )
+            // 
+            //         # Attendances where Last open attendance time + previously worked time on that day + tolerance greater than the attendances hours (including lunch) in his calendar
+            //         if (current_attendance_duration + previous_attendances_duration - max_tol) > expected_worked_hours:
+            //             att.check_out = att.check_in.replace(hour=23, minute=59, second=59)
+            //             excess_hours = att.worked_hours - (expected_worked_hours + max_tol - previous_attendances_duration)
+            //             att.write({
+            //                 "check_out": max(att.check_out - relativedelta(hours=excess_hours), att.check_in + relativedelta(seconds=1)),
+            //                 "out_mode": "auto_check_out"
+            //             })
+            //             att.message_post(
+            //                 body=_('This attendance was automatically checked out because the employee exceeded the allowed time for their scheduled work hours.')
+            //             )
             */
             return default;
         }
@@ -393,25 +370,55 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def _default_employee(self):
-            // return self.env.user.employee_id
+            // if self.env.user.has_group('hr_attendance.group_hr_attendance_user'):
+            //     return self.env.user.employee_id
             */
             return default;
         }
 
-        protected async Task<HrAttendance> GetAttendancesDatesInternalAsync()
+        protected async Task<HrAttendance> GetAttendanceByPeriodsByEmployeeInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _get_attendances_dates(self):
-            // # Returns a dictionnary {employee_id: set((datetimes, dates))}
-            // attendances_emp = defaultdict(set)
-            // for attendance in self.filtered(lambda a: a.check_in):
-            //     check_in_day_start = attendance._get_day_start_and_day(attendance.employee_id, attendance.check_in)
-            //     attendances_emp[attendance.employee_id].add(check_in_day_start)
-            //     if attendance.check_out:
-            //         check_out_day_start = attendance._get_day_start_and_day(attendance.employee_id, attendance.check_out)
-            //         attendances_emp[attendance.employee_id].add(check_out_day_start)
-            // return attendances_emp
+            // def _get_attendance_by_periods_by_employee(self):
+            // attendance_by_employee_by_day = defaultdict(lambda: defaultdict(lambda: Intervals([], keep_distinct=True)))
+            // attendance_by_employee_by_week = defaultdict(lambda: defaultdict(lambda: Intervals([], keep_distinct=True)))
+            // 
+            // for attendance in self.sorted('check_in'):
+            //     employee = attendance.employee_id
+            //     check_in, check_out = attendance._get_localized_times()
+            //     for day in rrule(dtstart=check_in.date(), until=check_out.date(), freq=DAILY):
+            //         week_date = day + relativedelta(days=6 - day.weekday())
+            // 
+            //         start_datetime = datetime.combine(day, time.min)
+            //         stop_datetime_for_day = datetime.combine(day, time.max)
+            //         day_interval = Intervals([(start_datetime, stop_datetime_for_day, self.env['resource.calendar'])])
+            // 
+            //         stop_datetime_for_week = datetime.combine(week_date, time.max)
+            //         week_interval = Intervals([(start_datetime, stop_datetime_for_week, self.env['resource.calendar'])])
+            // 
+            //         attendance_interval = Intervals([(check_in, check_out, attendance)])
+            //         attendance_by_employee_by_day[employee][day] |= attendance_interval & day_interval
+            //         attendance_by_employee_by_week[employee][week_date] |= attendance_interval & week_interval
+            // 
+            // return {
+            //     'day': attendance_by_employee_by_day,
+            //     'week': attendance_by_employee_by_week
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<HrAttendance> GetDatesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
+            // def _get_dates(self):
+            // result = {}
+            // for attendance in self:
+            //     localized_start, localized_end = attendance._get_localized_times()
+            //     result[attendance] = list(rrule(DAILY, dtstart=localized_start, until=localized_end))
+            // return result
             */
             return default;
         }
@@ -420,11 +427,12 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _get_day_start_and_day(self, employee, dt):
-            // #Returns a tuple containing the datetime in naive UTC of the employee's start of the day
+            // def _get_day_start_and_day(self, employee, dt):  # TODO probably no longer need by the end
+            // # Returns a tuple containing the datetime in naive UTC of the employee's start of the day
             // # and the date it was for that employee
             // if not dt.tzinfo:
-            //     date_employee_tz = pytz.utc.localize(dt).astimezone(pytz.timezone(employee._get_tz()))
+            //     calendar_tz = employee._get_calendar_tz_batch(dt)[employee.id]
+            //     date_employee_tz = pytz.utc.localize(dt).astimezone(pytz.timezone(calendar_tz))
             // else:
             //     date_employee_tz = dt
             // start_day_employee_tz = date_employee_tz.replace(hour=0, minute=0, second=0)
@@ -454,76 +462,49 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<HrAttendance> GetOvertimeLeaveDomainInternalAsync()
+        protected async Task<HrAttendance> GetLocalizedTimesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _get_overtime_leave_domain(self):
-            // return []
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_attendance.py) ---
-            // def _get_overtime_leave_domain(self):
-            // domain = super()._get_overtime_leave_domain()
-            // # resource_id = False => Public holidays
-            // return AND([domain, ['|', ('holiday_id.holiday_status_id.time_type', '=', 'leave'), ('resource_id', '=', False)]])
+            // def _get_localized_times(self):
+            // self.ensure_one()
+            // tz = timezone(self.employee_id.sudo()._get_version(self.check_in.date()).tz)
+            // localized_start = utc.localize(self.check_in).astimezone(tz).replace(tzinfo=None)
+            // localized_end = utc.localize(self.check_out).astimezone(tz).replace(tzinfo=None)
+            // return localized_start, localized_end
             */
             return default;
         }
 
-        protected async Task<HrAttendance> GetPrePostWorkTimeInternalAsync(object employee, object working_times, object attendance_date)
+        protected async Task<HrAttendance> GetOvertimesToUpdateDomainInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _get_pre_post_work_time(self, employee, working_times, attendance_date):
-            // pre_work_time, work_duration, post_work_time = 0, 0, 0
-            // company_threshold = employee.company_id.overtime_company_threshold / 60.0
-            // employee_threshold = employee.company_id.overtime_employee_threshold / 60.0
-            // # Compute start and end time for that day
-            // planned_start_dt, planned_end_dt = False, False
-            // planned_work_duration = 0
-            // for calendar_attendance in working_times[attendance_date]:
-            //     planned_start_dt = min(planned_start_dt, calendar_attendance[0]) if planned_start_dt else calendar_attendance[0]
-            //     planned_end_dt = max(planned_end_dt, calendar_attendance[1]) if planned_end_dt else calendar_attendance[1]
-            //     planned_work_duration += (calendar_attendance[1] - calendar_attendance[0]).total_seconds() / 3600.0
-            // for attendance in self:
-            //     # consider check_in as planned_start_dt if within threshold
-            //     # if delta_in < 0: Checked in after supposed start of the day
-            //     # if delta_in > 0: Checked in before supposed start of the day
-            //     local_check_in = pytz.utc.localize(attendance.check_in)
-            //     delta_in = (planned_start_dt - local_check_in).total_seconds() / 3600.0
-            // 
-            //     # Started before or after planned date within the threshold interval
-            //     if (delta_in > 0 and delta_in <= company_threshold) or\
-            //         (delta_in < 0 and abs(delta_in) <= employee_threshold):
-            //         local_check_in = planned_start_dt
-            //     local_check_out = pytz.utc.localize(attendance.check_out)
-            // 
-            //     # same for check_out as planned_end_dt
-            //     delta_out = (local_check_out - planned_end_dt).total_seconds() / 3600.0
-            //     # if delta_out < 0: Checked out before supposed start of the day
-            //     # if delta_out > 0: Checked out after supposed start of the day
-            // 
-            //     # Finised before or after planned date within the threshold interval
-            //     if (delta_out > 0 and delta_out <= company_threshold) or\
-            //         (delta_out < 0 and abs(delta_out) <= employee_threshold):
-            //         local_check_out = planned_end_dt
-            // 
-            //     # There is an overtime at the start of the day
-            //     if local_check_in < planned_start_dt:
-            //         pre_work_time += (min(planned_start_dt, local_check_out) - local_check_in).total_seconds() / 3600.0
-            //     # Interval inside the working hours -> Considered as working time
-            //     if local_check_in <= planned_end_dt and local_check_out >= planned_start_dt:
-            //         start_dt = max(planned_start_dt, local_check_in)
-            //         stop_dt = min(planned_end_dt, local_check_out)
-            //         work_duration += (stop_dt - start_dt).total_seconds() / 3600.0
-            //         # remove lunch time from work duration
-            //         if not employee.is_flexible:
-            //             lunch_intervals = employee._employee_attendance_intervals(start_dt, stop_dt, lunch=True)
-            //             work_duration -= sum((i[1] - i[0]).total_seconds() / 3600.0 for i in lunch_intervals)
-            // 
-            //     # There is an overtime at the end of the day
-            //     if local_check_out > planned_end_dt:
-            //         post_work_time += (local_check_out - max(planned_end_dt, local_check_in)).total_seconds() / 3600.0
-            // return pre_work_time, work_duration, post_work_time, planned_work_duration
+            // def _get_overtimes_to_update_domain(self):
+            // if not self:
+            //     return Domain.FALSE
+            // domain_list = [Domain.AND([
+            //     Domain('employee_id', '=', employee.id),
+            //     Domain('date', '<=', max(attendances.mapped('date')) + relativedelta(SU)),
+            //     Domain('date', '>=', min(attendances.mapped('date')) + relativedelta(MO(-1))),
+            // ]) for employee, attendances in self.grouped('employee_id').items()]
+            // domain = Domain.OR(domain_list) if len(domain_list) > 1 else domain_list[0]
+            // return domain
+            */
+            return default;
+        }
+
+        protected async Task<HrAttendance> GetWeekDateRangeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
+            // def _get_week_date_range(self):
+            // assert self
+            // dates = self.mapped('date')
+            // date_start, date_end = min(dates), max(dates)
+            // date_start = date_start - relativedelta(days=date_start.weekday())
+            // date_end = date_end + relativedelta(days=6 - date_end.weekday())
+            // return date_start, date_end
             */
             return default;
         }
@@ -533,7 +514,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def has_demo_data(self):
-            // if not self.env.user.has_group("hr_attendance.group_hr_attendance_manager"):
+            // if not self.env.user.has_group("hr_attendance.group_hr_attendance_user"):
             //     return True
             // # This record only exists if the scenario has been already launched
             // demo_tag = self.env.ref('hr_attendance.resource_calendar_std_38h', raise_if_not_found=False)
@@ -557,6 +538,19 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<HrAttendance> LinkedOvertimesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
+            // def _linked_overtimes(self):
+            // return self.env['hr.attendance.overtime.line'].search([
+            //     ('time_start', 'in', self.mapped('check_in')),
+            //     ('employee_id', 'in', self.employee_id.ids),
+            // ])
+            */
+            return default;
+        }
+
         protected async Task<HrAttendance> LoadDemoDataInternalAsync()
         {
             /*
@@ -564,9 +558,10 @@ namespace Bamboo.Core.Application.Services
             // def _load_demo_data(self):
             // if self.has_demo_data():
             //     return
-            // self.env['hr.employee']._load_scenario()
+            // env_sudo = self.sudo().with_context({}).env
+            // env_sudo['hr.employee']._load_scenario()
             // # Load employees, schedules, departments and partners
-            // convert.convert_file(self.env, 'hr_attendance', 'data/scenarios/hr_attendance_scenario.xml', None, mode='init', kind='data')
+            // convert.convert_file(env_sudo, 'hr_attendance', 'data/scenarios/hr_attendance_scenario.xml', None, mode='init')
             // 
             // employee_sj = self.env.ref('hr.employee_sj')
             // employee_mw = self.env.ref('hr.employee_mw')
@@ -645,8 +640,8 @@ namespace Bamboo.Core.Application.Services
             //         'out_longitude': city_data['longitude'],
             //         'in_latitude': city_data['latitude'],
             //         'out_latitude': city_data['latitude'],
-            //         'in_city': city_data['city'],
-            //         'out_city': city_data['city'],
+            //         'in_location': city_data['city'],
+            //         'out_location': city_data['city'],
             //         'in_ip_address': "127.0.0.1",
             //         'out_ip_address': "127.0.0.1",
             //         'in_browser': 'chrome',
@@ -661,8 +656,8 @@ namespace Bamboo.Core.Application.Services
             //         'out_longitude': city_data['longitude'],
             //         'in_latitude': city_data['latitude'],
             //         'out_latitude': city_data['latitude'],
-            //         'in_city': city_data['city'],
-            //         'out_city': city_data['city'],
+            //         'in_location': city_data['city'],
+            //         'out_location': city_data['city'],
             //         'in_ip_address': "127.0.0.1",
             //         'out_ip_address': "127.0.0.1",
             //         'in_browser': 'chrome',
@@ -711,18 +706,22 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def _read_group_employee_id(self, resources, domain):
-            // user_domain = self.env.context.get('user_domain')
-            // employee_domain = [('company_id', 'in', self.env.context.get('allowed_company_ids', []))]
-            // if not self.env.user.has_group('hr_attendance.group_hr_attendance_manager'):
-            //     employee_domain = AND([employee_domain, [('attendance_manager_id', '=', self.env.user.id)]])
-            // if not user_domain:
-            //     return self.env['hr.employee'].search(employee_domain)
+            // user_domain = Domain(self.env.context.get('user_domain') or Domain.TRUE)
+            // employee_domain = Domain('company_id', 'in', self.env.context.get('allowed_company_ids', []))
+            // if not self.env.user.has_group('hr_attendance.group_hr_attendance_user'):
+            //     employee_domain &= Domain('attendance_manager_id', '=', self.env.user.id)
+            // if user_domain.is_true():
+            //     # Workaround to make it work only for list view.
+            //     if 'gantt_start_date' in self.env.context:
+            //         return self.env['hr.employee'].search(employee_domain)
+            //     return resources & self.env['hr.employee'].search(employee_domain)
             // else:
-            //     employee_name_domain = []
-            //     for leaf in user_domain:
-            //         if len(leaf) == 3 and leaf[0] == 'employee_id':
-            //             employee_name_domain.append([('name', leaf[1], leaf[2])])
-            //     return resources | self.env['hr.employee'].search(AND([OR(employee_name_domain), employee_domain]))
+            //     employee_name_domain = Domain.OR(
+            //         Domain('name', condition.operator, condition.value)
+            //         for condition in user_domain.iter_conditions()
+            //         if condition.field_expr == 'employee_id'
+            //     )
+            //     return resources | self.env['hr.employee'].search(employee_name_domain & employee_domain)
             */
             return default;
         }
@@ -732,9 +731,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def action_refuse_overtime(self):
-            // self.write({
-            //     'overtime_status': 'refused'
-            // })
+            // self.linked_overtime_ids.action_refuse()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -744,7 +741,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def action_try_kiosk(self):
-            // if not self.env.user.has_group("hr_attendance.group_hr_attendance_manager"):
+            // if not self.env.user.has_group("hr_attendance.group_hr_attendance_user"):
             //     return {
             //             'type': 'ir.actions.client',
             //             'tag': 'display_notification',
@@ -762,124 +759,50 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<HrAttendance> UpdateOvertimeInternalAsync(object employee_attendance_dates)
+        protected async Task<HrAttendance> UpdateOvertimeInternalAsync(object attendance_domain)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
-            // def _update_overtime(self, employee_attendance_dates=None):
-            // if employee_attendance_dates is None:
-            //     employee_attendance_dates = self._get_attendances_dates()
+            // def _update_overtime(self, attendance_domain=None):
+            // if not attendance_domain:
+            //     attendance_domain = self._get_overtimes_to_update_domain()
+            // self.env['hr.attendance.overtime.line'].search(attendance_domain).unlink()
+            // all_attendances = (self | self.env['hr.attendance'].search(attendance_domain)).filtered_domain([('check_out', '!=', False)])
+            // if not all_attendances:
+            //     return
             // 
-            // overtime_to_unlink = self.env['hr.attendance.overtime']
-            // overtime_vals_list = []
-            // affected_employees = self.env['hr.employee']
-            // for emp, attendance_dates in employee_attendance_dates.items():
-            //     # get_attendances_dates returns the date translated from the local timezone without tzinfo,
-            //     # and contains all the date which we need to check for overtime
-            //     attendance_domain = []
-            //     for attendance_date in attendance_dates:
-            //         attendance_domain = OR([attendance_domain, [
-            //             ('check_in', '>=', attendance_date[0]), ('check_in', '<', attendance_date[0] + timedelta(hours=24)),
-            //         ]])
-            //     attendance_domain = AND([[('employee_id', '=', emp.id)], attendance_domain])
+            // start_check_in = min(all_attendances.mapped('check_in')).date() - relativedelta(days=1)  # for timezone
+            // min_check_in = utc.localize(datetime.combine(start_check_in, datetime.min.time()))
             // 
-            //     # Attendances per LOCAL day
-            //     attendances_per_day = defaultdict(lambda: self.env['hr.attendance'])
-            //     all_attendances = self.env['hr.attendance'].search(attendance_domain)
-            //     for attendance in all_attendances:
-            //         check_in_day_start = attendance._get_day_start_and_day(attendance.employee_id, attendance.check_in)
-            //         attendances_per_day[check_in_day_start[1]] += attendance
+            // start_check_out = max(all_attendances.mapped('check_out')).date() + relativedelta(days=1)
+            // max_check_out = utc.localize(datetime.combine(start_check_out, datetime.max.time()))  # for timezone
             // 
-            //     # As _attendance_intervals_batch and _leave_intervals_batch both take localized dates we need to localize those date
-            //     start = pytz.utc.localize(min(attendance_dates, key=itemgetter(0))[0])
-            //     stop = pytz.utc.localize(max(attendance_dates, key=itemgetter(0))[0] + timedelta(hours=24))
-            // 
-            //     # Retrieve expected attendance intervals
-            //     calendar = emp.resource_calendar_id or emp.company_id.resource_calendar_id
-            //     expected_attendances = emp._employee_attendance_intervals(start, stop)
-            // 
-            //     # working_times = {date: [(start, stop)]}
-            //     working_times = defaultdict(lambda: [])
-            //     for expected_attendance in expected_attendances:
-            //         # Exclude resource.calendar.attendance
-            //         working_times[expected_attendance[0].date()].append(expected_attendance[:2])
-            // 
-            //     overtimes = self.env['hr.attendance.overtime'].sudo().search([
-            //         ('employee_id', '=', emp.id),
-            //         ('date', 'in', [day_data[1] for day_data in attendance_dates]),
-            //         ('adjustment', '=', False),
-            //     ])
-            // 
-            //     company_threshold = emp.company_id.overtime_company_threshold / 60.0
-            //     employee_threshold = emp.company_id.overtime_employee_threshold / 60.0
-            // 
-            //     for day_data in attendance_dates:
-            //         attendance_date = day_data[1]
-            //         attendances = attendances_per_day.get(attendance_date, self.browse())
-            //         unfinished_shifts = attendances.filtered(lambda a: not a.check_out)
-            //         overtime_duration = 0
-            //         overtime_duration_real = 0
-            //         # Overtime is not counted if any shift is not closed or if there are no attendances for that day,
-            //         # this could happen when deleting attendances.
-            // 
-            //         # No overtime computed for fully flexible employees
-            //         if emp.is_fully_flexible:
+            // version_periods_by_employee = all_attendances.employee_id.sudo()._get_version_periods(min_check_in, max_check_out)
+            // attendances_by_employee = all_attendances.grouped('employee_id')
+            // attendances_by_ruleset = defaultdict(lambda: self.env['hr.attendance'])
+            // for employee, emp_attendance in attendances_by_employee.items():
+            //     for attendance in emp_attendance:
+            //         attendance_intervals = Intervals([(
+            //             utc.localize(attendance.check_in),
+            //             utc.localize(attendance.check_out),
+            //             self.env['hr.version'])])
+            //         inter = Intervals(version_periods_by_employee[employee]) & attendance_intervals
+            //         if not inter:
             //             continue
-            // 
-            //         if not unfinished_shifts and attendances:
-            //             # The employee usually doesn't work on that day
-            //             if not working_times[attendance_date]:
-            //                 # User does not have any resource_calendar_attendance for that day (week-end for example)
-            //                 overtime_duration = sum(attendances.mapped('worked_hours'))
-            //                 overtime_duration_real = overtime_duration
-            //             # The employee usually work on that day
-            //             else:
-            //                 # Count time before, during and after 'working hours'
-            //                 pre_work_time, work_duration, post_work_time, planned_work_duration = attendances._get_pre_post_work_time(emp, working_times, attendance_date)
-            //                 # Overtime within the planned work hours + overtime before/after work hours is > company threshold
-            //                 overtime_duration = work_duration - planned_work_duration
-            //                 if pre_work_time > company_threshold:
-            //                     overtime_duration += pre_work_time
-            //                 if post_work_time > company_threshold:
-            //                     overtime_duration += post_work_time
-            //                 # Global overtime including the thresholds
-            //                 overtime_duration_real = sum(attendances.mapped('worked_hours')) - planned_work_duration
-            // 
-            //         overtime = overtimes.filtered(lambda o: o.date == attendance_date)
-            //         if not float_is_zero(overtime_duration, 2) or unfinished_shifts:
-            //             # Do not create if any attendance doesn't have a check_out, update if exists
-            //             if unfinished_shifts:
-            //                 overtime_duration = 0
-            //             if not overtime and overtime_duration:
-            //                 overtime_vals_list.append({
-            //                     'employee_id': emp.id,
-            //                     'date': attendance_date,
-            //                     'duration': overtime_duration,
-            //                     'duration_real': overtime_duration_real,
-            //                 })
-            //             elif overtime:
-            //                 overtime.sudo().write({
-            //                     'duration': overtime_duration,
-            //                     'duration_real': overtime_duration
-            //                 })
-            //                 affected_employees |= overtime.employee_id
-            //         elif overtime:
-            //             overtime_to_unlink |= overtime
-            // created_overtimes = self.env['hr.attendance.overtime'].sudo().create(overtime_vals_list)
-            // employees_worked_hours_to_compute = (affected_employees.ids +
-            //                                      created_overtimes.employee_id.ids +
-            //                                      overtime_to_unlink.employee_id.ids)
-            // overtime_to_unlink.sudo().unlink()
-            // to_recompute = self.search([('employee_id', 'in', employees_worked_hours_to_compute)])
-            // # for automatically validated attendances, avoid recomputing extra hours if user has changed its value
-            // validated_modified = to_recompute.filtered(lambda att: att.employee_id.company_id.attendance_overtime_validation == 'no_validation'
-            //                                                 and float_compare(att.overtime_hours, att.validated_overtime_hours, precision_digits=2))
-            // self.env.add_to_compute(self._fields['overtime_hours'],
-            //                         to_recompute)
-            // self.env.add_to_compute(self._fields['validated_overtime_hours'],
-            //                         to_recompute - validated_modified)
-            // self.env.add_to_compute(self._fields['expected_hours'],
-            //                         to_recompute)
+            //         version = inter._items[0][2]
+            //         ruleset = version.ruleset_id
+            //         if ruleset:
+            //             attendances_by_ruleset[ruleset] += attendance
+            // employees = all_attendances.employee_id
+            // schedules_intervals_by_employee = employees._get_schedules_by_employee_by_work_type(min_check_in, max_check_out, version_periods_by_employee)
+            // overtime_vals_list = []
+            // for ruleset, ruleset_attendances in attendances_by_ruleset.items():
+            //     attendances_dates = list(chain(*ruleset_attendances._get_dates().values()))
+            //     overtime_vals_list.extend(
+            //         ruleset.rule_ids._generate_overtime_vals_v2(min(attendances_dates), max(attendances_dates), ruleset_attendances, schedules_intervals_by_employee)
+            //     )
+            // self.env['hr.attendance.overtime.line'].create(overtime_vals_list)
+            // self.env.add_to_compute(self._fields['overtime_hours'], all_attendances)
             */
             return default;
         }

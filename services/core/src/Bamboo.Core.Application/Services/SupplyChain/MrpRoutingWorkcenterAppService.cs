@@ -55,13 +55,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpRoutingWorkcenter> ComputeOperationCostInternalAsync()
+        protected async Task<MrpRoutingWorkcenter> ComputeCostInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
-            // def _compute_operation_cost(self):
-            // duration = self.env.context.get('op_duration', self.time_cycle)
-            // return (duration / 60.0) * (self.workcenter_id.costs_hour)
+            // def _compute_cost(self):
+            // for operation in self:
+            //     operation.cost = (operation.time_total / 60.0) * operation.workcenter_id.costs_hour
             */
             return default;
         }
@@ -101,13 +101,27 @@ namespace Bamboo.Core.Application.Services
             //     cycle_number = 0  # Never 0 unless infinite item['workcenter_id'].capacity
             //     for item in data:
             //         total_duration += item['duration']
-            //         capacity = item['workcenter_id']._get_capacity(item.product_id)
-            //         qty_produced = item.product_uom_id._compute_quantity(item['qty_produced'], item.product_id.uom_id)
-            //         cycle_number += float_round((qty_produced / capacity or 1.0), precision_digits=0, rounding_method='UP')
+            //         (capacity, _setup, _cleanup) = item['workcenter_id']._get_capacity(item.product_id, item.product_uom_id, operation.bom_id.product_qty or 1)
+            //         cycle_number += float_round((item['qty_produced'] / capacity), precision_digits=0, rounding_method='UP')
             //     if cycle_number:
             //         operation.time_cycle = total_duration / cycle_number
             //     else:
             //         operation.time_cycle = operation.time_cycle_manual
+            // 
+            // for operation in self:
+            //     workcenter = self.env.context.get('workcenter', operation.workcenter_id)
+            //     product = self.env.context.get('product', operation.bom_id.product_id or operation.bom_id.product_tmpl_id.product_variant_ids)
+            //     if len(product) > 1:
+            //         operation.cycle_number = 1
+            //         operation.time_total = workcenter.time_start + workcenter.time_stop + operation.time_cycle_manual
+            //         operation.show_time_total = False
+            //         continue
+            //     quantity = self.env.context.get('quantity', operation.bom_id.product_qty or 1)
+            //     unit = self.env.context.get('unit', operation.bom_id.product_uom_id)
+            //     (capacity, setup, cleanup) = workcenter._get_capacity(product, unit, operation.bom_id.product_qty or 1)
+            //     operation.cycle_number = float_round(quantity / capacity, precision_digits=0, rounding_method="UP")
+            //     operation.time_total = setup + cleanup + operation.cycle_number * operation.time_cycle * 100.0 / (workcenter.time_efficiency or 100.0)
+            //     operation.show_time_total = operation.cycle_number > 1 or not float_is_zero(setup + cleanup, precision_digits=0)
             */
             return default;
         }
@@ -167,29 +181,25 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<MrpRoutingWorkcenter> GetDurationExpectedInternalAsync(object product, object quantity, object unit, object workcenter)
+        public async Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
-            // def _get_duration_expected(self, product, quantity, unit=False, workcenter=False):
-            // product = product or self.bom_id.product_tmpl_id
-            // if self._skip_operation_line(product):
-            //     return 0
-            // unit = unit or product.uom_id
-            // quantity = self.bom_id.product_uom_id._compute_quantity(quantity, unit)
-            // workcenter = workcenter or self.workcenter_id
-            // capacity = workcenter._get_capacity(product)
-            // cycle_number = float_round(quantity / capacity, precision_digits=0, rounding_method='UP')
-            // return workcenter._get_expected_duration(product) + cycle_number * self.time_cycle * 100.0 / workcenter.time_efficiency
+            // def action_open_operation_form(self):
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mrp.routing.workcenter',
+            // }
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<MrpRoutingWorkcenter> SkipOperationLineInternalAsync(object product)
+        protected async Task<MrpRoutingWorkcenter> SkipOperationLineInternalAsync(object product, object never_attribute_values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
-            // def _skip_operation_line(self, product):
+            // def _skip_operation_line(self, product, never_attribute_values=False):
             // """ Control if a operation should be processed, can be inherited to add
             // custom control.
             // """
@@ -200,19 +210,7 @@ namespace Bamboo.Core.Application.Services
             // if not product or product._name == 'product.template':
             //     return False
             // 
-            // never_attribute_values = self.env.context.get('never_attribute_ids')
             // return self.env['mrp.bom']._skip_for_no_variant(product, self.bom_product_template_attribute_value_ids, never_attribute_values)
-            */
-            return default;
-        }
-
-        protected async Task<MrpRoutingWorkcenter> TotalCostPerHourInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_routing.py) ---
-            // def _total_cost_per_hour(self):
-            // self.ensure_one()
-            // return self.workcenter_id.costs_hour
             */
             return default;
         }

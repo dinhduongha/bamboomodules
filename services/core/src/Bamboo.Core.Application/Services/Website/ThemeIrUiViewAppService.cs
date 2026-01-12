@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class ThemeIrUiViewAppService : GenericApplicationService<ThemeIrUiView>, IThemeIrUiViewAppService
     {
 
@@ -30,9 +30,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
             // def compute_arch_fs(self):
-            // if 'install_filename' not in self._context:
+            // if 'install_filename' not in self.env.context:
             //     return ''
-            // path_info = get_resource_from_path(self._context['install_filename'])
+            // path_info = get_resource_from_path(self.env.context['install_filename'])
             // if path_info:
             //     return '/'.join(path_info[0:2])
             */

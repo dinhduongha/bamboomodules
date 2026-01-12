@@ -38,11 +38,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param bundle: name of the bundle from which to fetch the file paths
             // :param addons: list of addon names as strings
-            // :param css: boolean: whether or not to include style files
-            // :param js: boolean: whether or not to include script files
-            // :param xml: boolean: whether or not to include template files
             // :param asset_paths: the AssetPath object to fill
             // :param seen: a list of bundles already checked to avoid circularity
+            // :param assets_params: Keyword arguments:
+            // 
+            //     * css: bool: whether or not to include style files
+            //     * js: bool: whether or not to include script files
+            //     * xml: bool: whether or not to include template files
             // """
             // if bundle in seen:
             //     raise Exception("Circular assets bundle declaration: %s" % " > ".join(seen + [bundle]))
@@ -58,7 +60,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # 2. Process all addons' manifests.
             // for addon in addons:
-            //     for command in odoo.modules.module._get_manifest_cached(addon)['assets'].get(bundle, ()):
+            //     for command in Manifest.for_addon(addon)['assets'].get(bundle, ()):
             //         directive, target, path_def = self._process_command(command)
             //         self._process_path(bundle, directive, target, path_def, asset_paths, seen, addons, installed, bundle_start_index, **assets_params)
             // 
@@ -76,32 +78,33 @@ namespace Bamboo.Core.Application.Services
             // def filter_duplicate(self, website_id=None):
             // """ Filter current recordset only keeping the most suitable asset per distinct name.
             //     Every non-accessible asset will be removed from the set:
+            // 
             //       * In non website context, every asset with a website will be removed
             //       * In a website context, every asset from another website
             // """
-            // if website_id is not None:
-            //     current_website = self.env['website'].browse(website_id)
-            // else:
-            //     current_website = self.env['website'].get_current_website(fallback=False)
-            // if not current_website:
+            // if website_id is None:
+            //     website_id = self.env['website'].get_current_website(fallback=False).id
+            // if not website_id:
             //     return self.filtered(lambda asset: not asset.website_id)
             // 
-            // most_specific_assets = self.env['ir.asset']
+            // specific_asset_keys = {asset.key for asset in self if asset.website_id.id == website_id and asset.key}
+            // most_specific_assets = []
             // for asset in self:
-            //     if asset.website_id == current_website:
+            //     if asset.website_id:
             //         # specific asset: add it if it's for the current website and ignore
             //         # it if it's for another website
-            //         most_specific_assets += asset
-            //     elif not asset.website_id:
+            //         if asset.website_id.id == website_id:
+            //             most_specific_assets.append(asset)
+            //         continue
+            //     elif not asset.key:
             //         # no key: added either way
-            //         if not asset.key:
-            //             most_specific_assets += asset
+            //         most_specific_assets.append(asset)
+            //     elif asset.key not in specific_asset_keys:
             //         # generic asset: add it iff for the current website, there is no
             //         # specific asset for this asset (based on the same `key` attribute)
-            //         elif not any(asset.key == asset2.key and asset2.website_id == current_website for asset2 in self):
-            //             most_specific_assets += asset
+            //         most_specific_assets.append(asset)
             // 
-            // return most_specific_assets
+            // return self.browse().union(*most_specific_assets)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -110,7 +113,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_asset.py) ---
-            // def _get_active_addons_list(self, website_id=None, **params):
+            // def _get_active_addons_list(self, *, website_id=None, **params):
             // """Overridden to discard inactive themes."""
             // addons_list = super()._get_active_addons_list(**params)
             // 
@@ -124,7 +127,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return [name for name in addons_list if name not in to_remove]
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_asset.py) ---
-            // def _get_active_addons_list(self):
+            // def _get_active_addons_list(self, **kwargs):
             // """Can be overridden to filter the returned list of active modules."""
             // return self._get_installed_addons_list()
             */
@@ -216,9 +219,7 @@ namespace Bamboo.Core.Application.Services
             // Returns the list of all installed addons.
             // :returns: string[]: list of module names
             // """
-            // # Main source: the current registry list
-            // # Second source of modules: server wide modules
-            // return self.env.registry._init_modules.union(odoo.conf.server_wide_modules or [])
+            // return self.env.registry._init_modules.union(tools.config['server_wide_modules'])
             */
             return default;
         }
@@ -246,35 +247,32 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param path_def: the definition (glob) of file paths to match
             // :param installed: the list of installed addons
-            // :param extensions: a list of extensions that found files must match
             // :returns: a list of tuple: (path, full_path, modified)
             // """
             // paths = None
             // path_def = fs2web(path_def)  # we expect to have all path definition unix style or url style, this is a safety
             // path_parts = [part for part in path_def.split('/') if part]
             // addon = path_parts[0]
-            // addon_manifest = odoo.modules.module._get_manifest_cached(addon)
+            // addon_manifest = Manifest.for_addon(addon, display_warning=False)
             // 
-            // safe_path = True
+            // safe_path = False
             // if addon_manifest:
             //     if addon not in installed:
             //         # Assert that the path is in the installed addons
-            //         raise Exception(f"Unallowed to fetch files from addon {addon} for file {path_def}")
-            //     addons_path = addon_manifest['addons_path']
-            //     full_path = os.path.normpath(os.sep.join([addons_path, *path_parts]))
+            //         raise Exception(f"""Unallowed to fetch files from addon {addon} for file {path_def}. """
+            //                         f"""Addon {addon} is not installed""")
+            //     addons_path = addon_manifest.addons_path
+            //     full_path = os.path.normpath(os.path.join(addons_path, *path_parts))
             //     # forbid escape from the current addon
             //     # "/mymodule/../myothermodule" is forbidden
-            //     static_prefix = os.sep.join([addons_path, addon, 'static', ''])
+            //     static_prefix = os.path.join(addon_manifest.path, 'static', '')
             //     if full_path.startswith(static_prefix):
             //         paths_with_timestamps = _glob_static_file(full_path)
             //         paths = [
             //             (fs2web(absolute_path[len(addons_path):]), absolute_path, timestamp)
             //             for absolute_path, timestamp in paths_with_timestamps
             //         ]
-            //     else:
-            //         safe_path = False
-            // else:
-            //     safe_path = False
+            //         safe_path = True
             // 
             // if not paths and not can_aggregate(path_def):  # http:// or /web/content
             //     paths = [(path_def, EXTERNAL_ASSET, -1)]
@@ -297,13 +295,13 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_asset.py) ---
-            // def _get_related_assets(self, domain, website_id=None, **params):
+            // def _get_related_assets(self, domain, *, website_id=None, **params):
             // if website_id:
-            //     domain += self.env['website'].website_domain(website_id)
+            //     domain = Domain(domain) & self.env['website'].browse(website_id).website_domain()
             // assets = super()._get_related_assets(domain, **params)
             // return assets.filter_duplicate(website_id)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_asset.py) ---
-            // def _get_related_assets(self, domain):
+            // def _get_related_assets(self, domain, **kwargs):
             // """
             // Returns a set of assets matching the domain, regardless of their
             // active state. This method can be overridden to filter the results.
@@ -328,8 +326,8 @@ namespace Bamboo.Core.Application.Services
             // a specific asset and target the right bundle, i.e. the first one
             // defining the target path.
             // 
-            // :param target_path_def: string: path to match.
-            // :root_bundle: string: bundle from which to initiate the search.
+            // :param str target_path_def: path to match.
+            // :param str root_bundle: bundle from which to initiate the search.
             // :returns: the first matching bundle or None
             // """
             // installed = self._get_installed_addons_list()
@@ -353,11 +351,15 @@ namespace Bamboo.Core.Application.Services
             // def _parse_bundle_name(self, bundle_name, debug_assets):
             // bundle_name, asset_type = bundle_name.rsplit('.', 1)
             // rtl = False
+            // autoprefix = False
             // if not debug_assets:
             //     bundle_name, min_ = bundle_name.rsplit('.', 1)
             //     if min_ != 'min':
             //         raise ValueError("'min' expected in extension in non debug mode")
             // if asset_type == 'css':
+            //     if bundle_name.endswith('.autoprefixed'):
+            //         bundle_name = bundle_name[:-13]
+            //         autoprefix = True
             //     if bundle_name.endswith('.rtl'):
             //         bundle_name = bundle_name[:-4]
             //         rtl = True
@@ -365,7 +367,7 @@ namespace Bamboo.Core.Application.Services
             //     raise ValueError('Only js and css assets bundle are supported for now')
             // if len(bundle_name.split('.')) != 2:
             //     raise ValueError(f'{bundle_name} is not a valid bundle name, should have two parts')
-            // return bundle_name, rtl, asset_type
+            // return bundle_name, rtl, asset_type, autoprefix
             */
             return default;
         }
@@ -455,10 +457,10 @@ namespace Bamboo.Core.Application.Services
             // IrModule = self.env['ir.module.module']
             // 
             // def mapper(addon):
-            //     manif = odoo.modules.module._get_manifest_cached(addon)
+            //     manif = Manifest.for_addon(addon) or {}
             //     from_terp = IrModule.get_values_from_terp(manif)
             //     from_terp['name'] = addon
-            //     from_terp['depends'] = manif.get('depends', ['base'])
+            //     from_terp['depends'] = manif.get('depends') or ['base']
             //     return from_terp
             // 
             // manifs = map(mapper, addons_tuple)
@@ -508,10 +510,10 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_asset.py) ---
-            // def write(self, values):
+            // def write(self, vals):
             // if self:
             //     self.env.registry.clear_cache('assets')
-            // return super().write(values)
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

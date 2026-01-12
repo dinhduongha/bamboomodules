@@ -19,10 +19,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/open-website-url")]
-        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
+        [Route("{id}/get-base-url")]
+        public async Task<IActionResult> GetBaseUrlAsync(Guid id)
         {
-            var result = await _appService.OpenWebsiteUrlAsync(id);
+            var result = await _appService.GetBaseUrlAsync(id);
             return Ok(result);
         }
     }

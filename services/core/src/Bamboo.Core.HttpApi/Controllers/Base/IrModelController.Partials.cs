@@ -41,5 +41,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.GetCompatibleFormModelsAsync(id);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/has-searchable-parent-relation")]
+        public async Task<IActionResult> HasSearchableParentRelationAsync(Guid id, [FromBody] IrModelHasSearchableParentRelationRequestDto input)
+        {
+            var result = await _appService.HasSearchableParentRelationAsync(id, input);
+            return Ok(result);
+        }
     }
 }

@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("pos_hr", Category = "Misc", Depends = new[] { "point_of_sale", "hr" })]
+    [Module("pos_hr", Category = "Sales", Depends = new[] { "point_of_sale", "hr" })]
     public class ReportPosHrSingleEmployeeSalesReportAppService : ApplicationService, IReportPosHrSingleEmployeeSalesReportAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -32,7 +32,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // domain = super()._get_domain(config_ids=config_ids, session_ids=session_ids)
             // 
             // if (employee_id):
-            //     domain = AND([domain, [('employee_id', '=', employee_id)]])
+            //     domain = Domain.AND([domain, [('employee_id', '=', employee_id)]])
             // 
             // return domain
             */

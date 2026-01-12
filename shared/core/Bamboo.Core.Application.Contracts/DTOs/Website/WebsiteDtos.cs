@@ -9,6 +9,16 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Path { get; set; }
     }
     
+    public class WebsiteCheckExistingPageRequestDto
+    {
+        public object Page { get; set; }
+    }
+    
+    public class WebsiteConfiguratorAddonsApplyRequestDto
+    {
+        public object IndustryName { get; set; }
+    }
+    
     public class WebsiteConfiguratorMissingIndustryRequestDto
     {
         public object UnknownIndustry { get; set; }
@@ -48,6 +58,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Url { get; set; }
         public object ModeEdit { get; set; }
+        public object ModeDebug { get; set; }
     }
     
     public class WebsiteGetCtaDataRequestDto
@@ -114,6 +125,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object PageValues { get; set; }
         public object MenuValues { get; set; }
         public object SectionsArch { get; set; }
+        public object PageTitle { get; set; }
     }
     
     public class WebsitePagerRequestDto
@@ -129,11 +141,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class WebsiteRuleIsEnumerableRequestDto
     {
         public object Rule { get; set; }
-    }
-    
-    public class WebsiteSaleGetOrderRequestDto
-    {
-        public object ForceCreate { get; set; }
     }
     
     public class WebsiteSearchPagesRequestDto
@@ -152,10 +159,5 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public Guid ViewId { get; set; }
         public object RaiseIfNotFound { get; set; }
-    }
-    
-    public class WebsiteWebsiteDomainRequestDto
-    {
-        public Guid WebsiteId { get; set; }
     }
 }

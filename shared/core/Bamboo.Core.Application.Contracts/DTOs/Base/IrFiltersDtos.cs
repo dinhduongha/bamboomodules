@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Default { get; set; }
     }
     
-    public class IrFiltersCreateOrReplaceRequestDto
+    public class IrFiltersCreateFilterRequestDto
     {
         public object Vals { get; set; }
     }

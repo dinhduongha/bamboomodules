@@ -9,4 +9,15 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object TagList { get; set; }
         public object IdOrder { get; set; }
     }
+    
+    public class ProjectTagsFormattedReadGroupRequestDto
+    {
+        public object Domain { get; set; }
+        public object Groupby { get; set; }
+        public object Aggregates { get; set; }
+        public object Having { get; set; }
+        public object Offset { get; set; }
+        public object Limit { get; set; }
+        public object Order { get; set; }
+    }
 }

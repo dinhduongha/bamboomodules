@@ -35,6 +35,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-convert-to-template")]
+        public async Task<IActionResult> ActionConvertToTemplateAsync(Guid id)
+        {
+            var result = await _appService.ConvertToTemplateAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-create-from-template")]
+        public async Task<IActionResult> ActionCreateFromTemplateAsync(Guid id, [FromBody] ProjectTaskCreateFromTemplateRequestDto input)
+        {
+            var result = await _appService.CreateFromTemplateAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-dependent-tasks")]
         public async Task<IActionResult> ActionDependentTasksAsync(Guid id)
         {
@@ -131,6 +147,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-undo-convert-to-template")]
+        public async Task<IActionResult> ActionUndoConvertToTemplateAsync(Guid id)
+        {
+            var result = await _appService.UndoConvertToTemplateAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-unlink-recurrence")]
         public async Task<IActionResult> ActionUnlinkRecurrenceAsync(Guid id)
         {
@@ -163,18 +187,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/email-split")]
-        public async Task<IActionResult> EmailSplitAsync(Guid id, [FromBody] ProjectTaskEmailSplitRequestDto input)
-        {
-            var result = await _appService.EmailSplitAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] ProjectTaskGetEmptyListHelpRequestDto input)
         {
             var result = await _appService.GetEmptyListHelpAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
             return Ok(result);
         }
         
@@ -243,6 +267,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/plan-task-in-calendar")]
+        public async Task<IActionResult> PlanTaskInCalendarAsync(Guid id, [FromBody] ProjectTaskPlanTaskInCalendarRequestDto input)
+        {
+            var result = await _appService.PlanTaskInCalendarAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/project-sharing-toggle-is-follower")]
         public async Task<IActionResult> ProjectSharingToggleIsFollowerAsync(Guid id)
         {
@@ -259,26 +291,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/s-e-l-f-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> SELFREADABLEFIELDSAsync(Guid id)
-        {
-            var result = await _appService.SELFREADABLEFIELDSAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/s-e-l-f-w-r-i-t-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> SELFWRITABLEFIELDSAsync(Guid id)
-        {
-            var result = await _appService.SELFWRITABLEFIELDSAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/stage-find")]
         public async Task<IActionResult> StageFindAsync(Guid id, [FromBody] ProjectTaskStageFindRequestDto input)
         {
             var result = await _appService.StageFindAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/t-a-s-k-p-o-r-t-a-l-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> TASKPORTALREADABLEFIELDSAsync(Guid id)
+        {
+            var result = await _appService.TASKPORTALREADABLEFIELDSAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/t-a-s-k-p-o-r-t-a-l-w-r-i-t-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> TASKPORTALWRITABLEFIELDSAsync(Guid id)
+        {
+            var result = await _appService.TASKPORTALWRITABLEFIELDSAsync(id);
             return Ok(result);
         }
         

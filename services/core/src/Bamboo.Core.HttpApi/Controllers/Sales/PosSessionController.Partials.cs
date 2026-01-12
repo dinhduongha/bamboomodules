@@ -75,6 +75,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/delete-cash-in-out")]
+        public async Task<IActionResult> DeleteCashInOutAsync(Guid id, [FromBody] PosSessionDeleteCashInOutRequestDto input)
+        {
+            var result = await _appService.DeleteCashInOutAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/delete-opening-control-session")]
         public async Task<IActionResult> DeleteOpeningControlSessionAsync(Guid id)
         {
@@ -83,10 +91,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/filter-local-data")]
+        public async Task<IActionResult> FilterLocalDataAsync(Guid id, [FromBody] PosSessionFilterLocalDataRequestDto input)
+        {
+            var result = await _appService.FilterLocalDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/find-product-by-barcode")]
         public async Task<IActionResult> FindProductByBarcodeAsync(Guid id, [FromBody] PosSessionFindProductByBarcodeRequestDto input)
         {
             var result = await _appService.FindProductByBarcodeAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-cash-in-out-list")]
+        public async Task<IActionResult> GetCashInOutListAsync(Guid id)
+        {
+            var result = await _appService.GetCashInOutListAsync(id);
             return Ok(result);
         }
         
@@ -131,18 +155,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/log-partner-message")]
-        public async Task<IActionResult> LogPartnerMessageAsync(Guid id, [FromBody] PosSessionLogPartnerMessageRequestDto input)
+        [Route("{id}/load-data-params")]
+        public async Task<IActionResult> LoadDataParamsAsync(Guid id)
         {
-            var result = await _appService.LogPartnerMessageAsync(id, input);
+            var result = await _appService.LoadDataParamsAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/login")]
-        public async Task<IActionResult> LoginAsync(Guid id)
+        [Route("{id}/log-partner-message")]
+        public async Task<IActionResult> LogPartnerMessageAsync(Guid id, [FromBody] PosSessionLogPartnerMessageRequestDto input)
         {
-            var result = await _appService.LoginAsync(id);
+            var result = await _appService.LogPartnerMessageAsync(id, input);
             return Ok(result);
         }
         

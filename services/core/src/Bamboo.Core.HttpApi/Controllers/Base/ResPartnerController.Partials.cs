@@ -75,6 +75,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-view-livechat-sessions")]
+        public async Task<IActionResult> ActionViewLivechatSessionsAsync(Guid id)
+        {
+            var result = await _appService.ViewLivechatSessionsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-loyalty-cards")]
         public async Task<IActionResult> ActionViewLoyaltyCardsAsync(Guid id)
         {
@@ -99,14 +107,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-view-partner-with-same-bank")]
-        public async Task<IActionResult> ActionViewPartnerWithSameBankAsync(Guid id)
-        {
-            var result = await _appService.ViewPartnerWithSameBankAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-view-pos-order")]
         public async Task<IActionResult> ActionViewPosOrderAsync(Guid id)
         {
@@ -115,18 +115,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("{id}/action-view-stock-serial")]
+        public async Task<IActionResult> ActionViewStockSerialAsync(Guid id)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-view-stock-lots")]
-        public async Task<IActionResult> ActionViewStockLotsAsync(Guid id)
-        {
-            var result = await _appService.ViewStockLotsAsync(id);
+            var result = await _appService.ViewStockSerialAsync(id);
             return Ok(result);
         }
         
@@ -143,14 +135,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> AddressGetAsync(Guid id, [FromBody] ResPartnerAddressGetRequestDto input)
         {
             var result = await _appService.AddressGetAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/autocomplete")]
-        public async Task<IActionResult> AutocompleteAsync(Guid id, [FromBody] ResPartnerAutocompleteRequestDto input)
-        {
-            var result = await _appService.AutocompleteAsync(id, input);
             return Ok(result);
         }
         
@@ -183,22 +167,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CanEditVatAsync(Guid id)
         {
             var result = await _appService.CanEditVatAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/check-gst-in")]
-        public async Task<IActionResult> CheckGstInAsync(Guid id, [FromBody] ResPartnerCheckGstInRequestDto input)
-        {
-            var result = await _appService.CheckGstInAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/check-vat")]
-        public async Task<IActionResult> CheckVatAsync(Guid id)
-        {
-            var result = await _appService.CheckVatAsync(id);
             return Ok(result);
         }
         
@@ -243,6 +211,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/check-vat-do")]
+        public async Task<IActionResult> CheckVatDoAsync(Guid id, [FromBody] ResPartnerCheckVatDoRequestDto input)
+        {
+            var result = await _appService.CheckVatDoAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/check-vat-ec")]
         public async Task<IActionResult> CheckVatEcAsync(Guid id, [FromBody] ResPartnerCheckVatEcRequestDto input)
         {
@@ -255,6 +231,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CheckVatGrAsync(Guid id, [FromBody] ResPartnerCheckVatGrRequestDto input)
         {
             var result = await _appService.CheckVatGrAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/check-vat-gt")]
+        public async Task<IActionResult> CheckVatGtAsync(Guid id, [FromBody] ResPartnerCheckVatGtRequestDto input)
+        {
+            var result = await _appService.CheckVatGtAsync(id, input);
             return Ok(result);
         }
         
@@ -295,6 +279,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CheckVatInAsync(Guid id, [FromBody] ResPartnerCheckVatInRequestDto input)
         {
             var result = await _appService.CheckVatInAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/check-vat-jp")]
+        public async Task<IActionResult> CheckVatJpAsync(Guid id, [FromBody] ResPartnerCheckVatJpRequestDto input)
+        {
+            var result = await _appService.CheckVatJpAsync(id, input);
             return Ok(result);
         }
         
@@ -347,6 +339,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/check-vat-rs")]
+        public async Task<IActionResult> CheckVatRsAsync(Guid id, [FromBody] ResPartnerCheckVatRsRequestDto input)
+        {
+            var result = await _appService.CheckVatRsAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/check-vat-ru")]
         public async Task<IActionResult> CheckVatRuAsync(Guid id, [FromBody] ResPartnerCheckVatRuRequestDto input)
         {
@@ -363,10 +363,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-t")]
-        public async Task<IActionResult> CheckVatTAsync(Guid id, [FromBody] ResPartnerCheckVatTRequestDto input)
+        [Route("{id}/check-vat-th")]
+        public async Task<IActionResult> CheckVatThAsync(Guid id, [FromBody] ResPartnerCheckVatThRequestDto input)
         {
-            var result = await _appService.CheckVatTAsync(id, input);
+            var result = await _appService.CheckVatThAsync(id, input);
             return Ok(result);
         }
         
@@ -375,6 +375,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CheckVatTrAsync(Guid id, [FromBody] ResPartnerCheckVatTrRequestDto input)
         {
             var result = await _appService.CheckVatTrAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/check-vat-tw")]
+        public async Task<IActionResult> CheckVatTwAsync(Guid id, [FromBody] ResPartnerCheckVatTwRequestDto input)
+        {
+            var result = await _appService.CheckVatTwAsync(id, input);
             return Ok(result);
         }
         
@@ -423,14 +431,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CreateCompanyAsync(Guid id)
         {
             var result = await _appService.CreateCompanyAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/create-membership-invoice")]
-        public async Task<IActionResult> CreateMembershipInvoiceAsync(Guid id, [FromBody] ResPartnerCreateMembershipInvoiceRequestDto input)
-        {
-            var result = await _appService.CreateMembershipInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -499,14 +499,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/enrich-company")]
-        public async Task<IActionResult> EnrichCompanyAsync(Guid id, [FromBody] ResPartnerEnrichCompanyRequestDto input)
-        {
-            var result = await _appService.EnrichCompanyAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/fields-view-get")]
         public async Task<IActionResult> FieldsViewGetAsync(Guid id, [FromBody] ResPartnerFieldsViewGetRequestDto input)
         {
@@ -523,18 +515,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/fix-eu-vat-number")]
-        public async Task<IActionResult> FixEuVatNumberAsync(Guid id, [FromBody] ResPartnerFixEuVatNumberRequestDto input)
-        {
-            var result = await _appService.FixEuVatNumberAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/format-vat-ch")]
         public async Task<IActionResult> FormatVatChAsync(Guid id, [FromBody] ResPartnerFormatVatChRequestDto input)
         {
             var result = await _appService.FormatVatChAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/format-vat-cl")]
+        public async Task<IActionResult> FormatVatClAsync(Guid id, [FromBody] ResPartnerFormatVatClRequestDto input)
+        {
+            var result = await _appService.FormatVatClAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/format-vat-co")]
+        public async Task<IActionResult> FormatVatCoAsync(Guid id, [FromBody] ResPartnerFormatVatCoRequestDto input)
+        {
+            var result = await _appService.FormatVatCoAsync(id, input);
             return Ok(result);
         }
         
@@ -547,10 +547,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/format-vat-hu")]
+        public async Task<IActionResult> FormatVatHuAsync(Guid id, [FromBody] ResPartnerFormatVatHuRequestDto input)
+        {
+            var result = await _appService.FormatVatHuAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/format-vat-sm")]
         public async Task<IActionResult> FormatVatSmAsync(Guid id, [FromBody] ResPartnerFormatVatSmRequestDto input)
         {
             var result = await _appService.FormatVatSmAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/format-vat-vn")]
+        public async Task<IActionResult> FormatVatVnAsync(Guid id, [FromBody] ResPartnerFormatVatVnRequestDto input)
+        {
+            var result = await _appService.FormatVatVnAsync(id, input);
             return Ok(result);
         }
         
@@ -611,6 +627,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-new-partner")]
+        public async Task<IActionResult> GetNewPartnerAsync(Guid id, [FromBody] ResPartnerGetNewPartnerRequestDto input)
+        {
+            var result = await _appService.GetNewPartnerAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-partner-localisation-fields-required-to-invoice")]
         public async Task<IActionResult> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(Guid id, [FromBody] ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
         {
@@ -651,18 +675,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/iap-partner-autocomplete-add-tags")]
-        public async Task<IActionResult> IapPartnerAutocompleteAddTagsAsync(Guid id, [FromBody] ResPartnerIapPartnerAutocompleteAddTagsRequestDto input)
+        [Route("{id}/iap-partner-autocomplete-get-tag-ids")]
+        public async Task<IActionResult> IapPartnerAutocompleteGetTagIdsAsync(Guid id, [FromBody] ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
         {
-            var result = await _appService.IapPartnerAutocompleteAddTagsAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/im-search")]
-        public async Task<IActionResult> ImSearchAsync(Guid id, [FromBody] ResPartnerImSearchRequestDto input)
-        {
-            var result = await _appService.ImSearchAsync(id, input);
+            var result = await _appService.IapPartnerAutocompleteGetTagIdsAsync(id, input);
             return Ok(result);
         }
         
@@ -683,14 +699,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/onchange-email")]
-        public async Task<IActionResult> OnchangeEmailAsync(Guid id)
-        {
-            var result = await _appService.OnchangeEmailAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/onchange-parent-id")]
         public async Task<IActionResult> OnchangeParentIdAsync(Guid id)
         {
@@ -703,14 +711,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OpenCommercialEntityAsync(Guid id)
         {
             var result = await _appService.OpenCommercialEntityAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/read-by-vat")]
-        public async Task<IActionResult> ReadByVatAsync(Guid id, [FromBody] ResPartnerReadByVatRequestDto input)
-        {
-            var result = await _appService.ReadByVatAsync(id, input);
             return Ok(result);
         }
         
@@ -751,22 +751,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SignupPrepareAsync(Guid id, [FromBody] ResPartnerSignupPrepareRequestDto input)
         {
             var result = await _appService.SignupPrepareAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/simple-vat-check")]
-        public async Task<IActionResult> SimpleVatCheckAsync(Guid id, [FromBody] ResPartnerSimpleVatCheckRequestDto input)
-        {
-            var result = await _appService.SimpleVatCheckAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/update-address")]
-        public async Task<IActionResult> UpdateAddressAsync(Guid id, [FromBody] ResPartnerUpdateAddressRequestDto input)
-        {
-            var result = await _appService.UpdateAddressAsync(id, input);
             return Ok(result);
         }
         

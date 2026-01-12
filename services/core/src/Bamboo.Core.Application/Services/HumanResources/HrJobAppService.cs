@@ -20,13 +20,15 @@ namespace Bamboo.Core.Application.Services
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
     public class HrJobAppService : GenericApplicationService<HrJob>, IHrJobAppService
     {
+        private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
-        public HrJobAppService(IRepository<HrJob, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailAliasMixinAppService mailAliasMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public HrJobAppService(IRepository<HrJob, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailAliasMixinAppService mailAliasMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
+            _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailAliasMixinAppService = mailAliasMixinAppService;
             _mailThreadAppService = mailThreadAppService;
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
@@ -46,7 +48,6 @@ namespace Bamboo.Core.Application.Services
             //     "data/scenarios/hr_recruitment_scenario.xml",
             //     None,
             //     mode="init",
-            //     kind="data",
             // )
             // 
             // return {
@@ -81,7 +82,7 @@ namespace Bamboo.Core.Application.Services
             //     defaults.update({
             //         'job_id': self.id,
             //         'department_id': self.department_id.id,
-            //         'company_id': self.department_id.company_id.id if self.department_id else self.company_id.id,
+            //         'company_id': self.department_id.company_id.id or self.company_id.id,
             //         'user_id': self.user_id.id,
             //     })
             // return values
@@ -89,12 +90,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrJob> CloseDialogAsync(Guid id)
+        public async Task<HrJob> ArchiveAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def close_dialog(self):
-            // return {'type': 'ir.actions.act_window_close'}
+            --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
+            // def action_archive(self):
+            // self.filtered('active').website_published = False
+            // return super().action_archive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -107,30 +109,27 @@ namespace Bamboo.Core.Application.Services
             // self.env.cr.execute("""
             //     SELECT
             //         app.job_id,
-            //         COUNT(*) AS act_count,
-            //         CASE
-            //             WHEN %(today)s::date - act.date_deadline::date = 0 THEN 'today'
-            //             WHEN %(today)s::date - act.date_deadline::date > 0 THEN 'overdue'
-            //         END AS act_state
+            //         COUNT(*) AS act_count
             //      FROM mail_activity act
             //      JOIN hr_applicant app ON app.id = act.res_id
             //      JOIN hr_recruitment_stage sta ON app.stage_id = sta.id
             //     WHERE act.user_id = %(user_id)s AND act.res_model = 'hr.applicant'
-            //       AND act.date_deadline <= %(today)s::date AND app.active
+            //       AND app.active
             //       AND app.job_id IN %(job_ids)s
             //       AND sta.hired_stage IS NOT TRUE
-            //     GROUP BY app.job_id, act_state
+            //       AND COALESCE(act.active, TRUE) = TRUE
+            //     GROUP BY app.job_id
             // """, {
             //     'today': fields.Date.context_today(self),
             //     'user_id': self.env.uid,
-            //     'job_ids': tuple(self.ids),
+            //     'job_ids': tuple(self.ids or [0]),
+            //     # or [0] is used in case we only have newIds (web studio)
             // })
             // job_activities = defaultdict(dict)
             // for activity in self.env.cr.dictfetchall():
-            //     job_activities[activity['job_id']][activity['act_state']] = activity['act_count']
+            //     job_activities[activity['job_id']] = activity['act_count']
             // for job in self:
-            //     job.activities_overdue = job_activities[job.id].get('overdue', 0)
-            //     job.activities_today = job_activities[job.id].get('today', 0)
+            //     job.activity_count = job_activities[job.id]
             */
             return default;
         }
@@ -154,6 +153,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrJob> ComputeAllowedUserIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_job.py) ---
+            // def _compute_allowed_user_ids(self):
+            // company_ids = self.mapped("company_id.id")
+            // domain = [("share", "=", False)]
+            // if company_ids:
+            //     domain += [("company_ids", "in", company_ids)]
+            // 
+            // users_by_company = dict(
+            //     self.env["res.users"]._read_group(
+            //         domain=domain,
+            //         groupby=["company_id"],
+            //         aggregates=["id:recordset"],
+            //     ),
+            // )
+            // 
+            // all_users = self.env["res.users"]
+            // for users in users_by_company.values():
+            //     all_users |= users
+            // 
+            // for job in self:
+            //     job.allowed_user_ids = users_by_company.get(job.company_id, all_users)
+            */
+            return default;
+        }
+
         protected async Task<HrJob> ComputeApplicantHiredInternalAsync()
         {
             /*
@@ -171,6 +198,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrJob> ComputeApplicantMatchingScoreInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment_skills, FILE: hr_job.py) ---
+            // def _compute_applicant_matching_score(self):
+            // active_applicant_id = self.env.context.get("active_applicant_id")
+            // if not active_applicant_id:
+            //     for job in self:
+            //         job.applicant_matching_score = False
+            //     return
+            // 
+            // applicant = self.env["hr.applicant"].browse(active_applicant_id)
+            // for job in self:
+            //     if not job.job_skill_ids:
+            //         job.applicant_matching_score = False
+            //         continue
+            //     job_skills = job.job_skill_ids
+            //     job_degree = job.expected_degree.score * 100
+            //     job_total = sum(job.job_skill_ids.mapped("level_progress")) + job_degree
+            //     job_skill_map = {js.skill_id.id: js.level_progress for js in job_skills}
+            // 
+            //     matching_applicant_skills = applicant.current_applicant_skill_ids.filtered(
+            //         lambda a: a.skill_id.id in job_skill_map,
+            //     )
+            //     applicant_degree = applicant.type_id.score * 100 if job_degree > 1 else 0
+            //     applicant_total = (
+            //         sum(
+            //             min(skill.level_progress, job_skill_map[skill.skill_id.id] * 2)
+            //             for skill in matching_applicant_skills
+            //         )
+            //         + applicant_degree
+            //     )
+            // 
+            //     job.applicant_matching_score = applicant_total / job_total * 100
+            */
+            return default;
+        }
+
         protected async Task<HrJob> ComputeApplicationCountInternalAsync()
         {
             /*
@@ -180,6 +245,19 @@ namespace Bamboo.Core.Application.Services
             // result = {job.id: count for job, count in read_group_result}
             // for job in self:
             //     job.application_count = result.get(job.id, 0)
+            */
+            return default;
+        }
+
+        protected async Task<HrJob> ComputeCurrentJobSkillIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _compute_current_job_skill_ids(self):
+            // for job in self:
+            //     job.current_job_skill_ids = job.job_skill_ids.filtered(
+            //         lambda skill: not skill.valid_to or skill.valid_to >= fields.Date.today()
+            //     )
             */
             return default;
         }
@@ -205,6 +283,27 @@ namespace Bamboo.Core.Application.Services
             // for job in self:
             //     job.document_ids = result.get(job.id, False)
             //     job.documents_count = len(job.document_ids)
+            */
+            return default;
+        }
+
+        protected async Task<HrJob> ComputeEmployeeCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
+            // def _compute_employee_count(self):
+            // res = {
+            //     job.id: count
+            //     for job, count in self.env['hr.employee'].sudo()._read_group(
+            //         domain=[
+            //             ('job_id', 'in', self.ids),
+            //         ],
+            //         groupby=['job_id'],
+            //         aggregates=['__count'],
+            //     )
+            // }
+            // for job in self:
+            //     job.employee_count = res.get(job.id, 0)
             */
             return default;
         }
@@ -295,7 +394,8 @@ namespace Bamboo.Core.Application.Services
             //          WHERE a.company_id in %s
             //             OR a.company_id is NULL
             //       GROUP BY s.job_id
-            //     """, [tuple(self.ids), tuple(self.env.companies.ids)]
+            //     """, [tuple(self.ids or [0]), tuple(self.env.companies.ids)]
+            //     # or [0] is used in case we only have newIds (web studio)
             // )
             // 
             // new_applicant_count = dict(self.env.cr.fetchall())
@@ -337,6 +437,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrJob> ComputeOpenApplicationCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
+            // def _compute_open_application_count(self):
+            // hired_stages = self.env['hr.recruitment.stage'].search([('hired_stage', '=', True)])
+            // result = dict(self.env['hr.applicant']._read_group([
+            //     ('job_id', 'in', self.ids),
+            //     ('stage_id', 'not in', hired_stages.ids),
+            // ], ['job_id'], ['__count']))
+            // for job in self:
+            //     job.open_application_count = result.get(job, 0)
+            */
+            return default;
+        }
+
         protected async Task<HrJob> ComputePublishedDateInternalAsync()
         {
             /*
@@ -348,13 +464,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrJob> ComputeSkillIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _compute_skill_ids(self):
+            // for job in self:
+            //     job.skill_ids = job.job_skill_ids.skill_id
+            */
+            return default;
+        }
+
         protected async Task<HrJob> ComputeWebsiteUrlInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
             // def _compute_website_url(self):
-            // super(Job, self)._compute_website_url()
+            // super()._compute_website_url()
             // for job in self:
+            //     # _slug call will fail with newId records.
+            //     if not job.id:
+            //         continue
             //     job.website_url = f'/jobs/{self.env["ir.http"]._slug(job)}'
             */
             return default;
@@ -377,27 +507,20 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_job.py) ---
             // def create(self, vals_list):
             // """ We don't want the current user to be follower of all created job """
-            // return super(Job, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // return super(HrJob, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
             // def create(self, vals_list):
             // for vals in vals_list:
             //     vals["favorite_user_ids"] = vals.get("favorite_user_ids", [])
             // jobs = super().create(vals_list)
-            // utm_linkedin = self.env.ref("utm.utm_source_linkedin", raise_if_not_found=False)
-            // if utm_linkedin:
-            //     source_vals = [{
-            //         'source_id': utm_linkedin.id,
-            //         'job_id': job.id,
-            //     } for job in jobs]
-            //     self.env['hr.recruitment.source'].create(source_vals)
             // jobs.sudo().interviewer_ids._create_recruitment_interviewers()
-            // # Automatically subscribe the department manager and the recruiter to a job position.
-            // for job in jobs:
-            //     job.message_subscribe(
-            //         job.manager_id._get_related_partners().ids + job.user_id.partner_id.ids
-            //     )
-            // 
             // return jobs
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def create(self, vals_list):
+            // for vals in vals_list:
+            //     vals_job_skill = vals.pop("current_job_skill_ids", []) + vals.get("job_skill_ids", [])
+            //     vals["job_skill_ids"] = self.env["hr.job.skill"]._get_transformed_commands(vals_job_skill, self)
+            // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
         }
@@ -424,24 +547,6 @@ namespace Bamboo.Core.Application.Services
             //     return self.env.company.partner_id
             */
             return default;
-        }
-
-        public async Task<HrJob> EditDialogAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def edit_dialog(self):
-            // form_view = self.env.ref('hr.view_hr_job_form')
-            // return {
-            //     'name': _('Job'),
-            //     'res_model': 'hr.job',
-            //     'res_id': self.id,
-            //     'views': [(form_view.id, 'form')],
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'inline'
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<HrJob> GetBackendMenuIdAsync(Guid id)
@@ -569,6 +674,11 @@ namespace Bamboo.Core.Application.Services
             // views = ['activity'] + [view for view in action['view_mode'].split(',') if view != 'activity']
             // action['view_mode'] = ','.join(views)
             // action['views'] = [(False, view) for view in views]
+            // action['context'] = {
+            //     'default_job_id': self.id,
+            //     'search_default_job_id': self.id,
+            //     'search_default_running_applicant_activities': True,
+            // }
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -602,35 +712,30 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrJob> OpenLateActivitiesAsync(Guid id)
+        public async Task<HrJob> OpenEmployeesAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def action_open_late_activities(self):
-            // action = self.action_open_activities()
-            // action['context'] = {
-            //     'default_job_id': self.id,
-            //     'search_default_job_id': self.id,
-            //     'search_default_activities_overdue': True,
-            //     'search_default_running_applicant_activities': True,
+            // def action_open_employees(self):
+            // self.ensure_one()
+            // if self.env['hr.employee'].has_access('read'):
+            //     res_model = "hr.employee"
+            // else:
+            //     res_model = "hr.employee.public"
+            // 
+            // return {
+            //     'name': _("Related Employees"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': res_model,
+            //     'view_mode': 'list,kanban,form',
+            //     'views': [(False, 'list'), (False, 'kanban'), (False, 'form')],
+            //     'context': {
+            //         'default_job_id': self.id,
+            //         'search_default_group_job': 1,
+            //         'search_default_job_id': self.id,
+            //         'expand': 1
+            //     },
             // }
-            // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<HrJob> OpenTodayActivitiesAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
-            // def action_open_today_activities(self):
-            // action = self.action_open_activities()
-            // action['context'] = {
-            //     'default_job_id': self.id,
-            //     'search_default_job_id': self.id,
-            //     'search_default_activities_today': True,
-            // }
-            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -648,6 +753,30 @@ namespace Bamboo.Core.Application.Services
             //     return SQL("%s %s %s", sql_field, direction, nulls)
             // 
             // return super()._order_field_to_sql(alias, field_name, direction, nulls, query)
+            */
+            return default;
+        }
+
+        protected async Task<HrJob> SearchCurrentJobSkillIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def _search_current_job_skill_ids(self, operator, value):
+            // if operator not in ('in', 'not in', 'any'):
+            //     raise NotImplementedError()
+            // job_skill_ids = []
+            // domain = Domain.OR([
+            //     Domain('valid_to', '=', False),
+            //     Domain('valid_to', '>=', fields.Date.today()),
+            // ])
+            // if operator == 'any' and isinstance(value, Domain):
+            //     domain = Domain.AND([domain, value])
+            // 
+            // elif operator in ('in', 'not in'):
+            //     domain = Domain.AND([domain, Domain('id', 'in', value)])
+            // 
+            // job_skill_ids = self.env['hr.job.skill']._search(domain)
+            // return Domain('job_skill_ids', 'in', job_skill_ids)
             */
             return default;
         }
@@ -712,26 +841,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrJob> SearchMatchingCandidatesAsync(Guid id)
+        public async Task<HrJob> SearchMatchingApplicantsAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment_skills, FILE: hr_job.py) ---
-            // def action_search_matching_candidates(self):
+            // def action_search_matching_applicants(self):
             // self.ensure_one()
-            // help_message_1 = _("No Matching Candidates")
-            // help_message_2 = _("We do not have any candidates who meet the skill requirements for this job position in the database at the moment.")
-            // action = self.env['ir.actions.actions']._for_xml_id('hr_recruitment.action_hr_candidate')
+            // help_message_1 = self.env._("No Matching Applicants")
+            // help_message_2 = self.env._("We do not have any applicants who meet the skill requirements for this job position in the database at the moment.")
+            // action = self.env['ir.actions.actions']._for_xml_id('hr_recruitment.crm_case_categ0_act_job')
             // context = literal_eval(action['context'])
-            // context['active_id'] = self.id
-            // matching_candidates = self.env['hr.candidate'].search([('skill_ids', 'in', self.skill_ids.ids)]).filtered(lambda c: self.id not in c.applicant_ids.job_id.ids)
+            // context['matching_job_id'] = self.id
             // action.update({
-            //     'name': _("Matching Candidates"),
+            //     'name': self.env._("Matching Applicants"),
             //     'views': [
-            //         (self.env.ref('hr_recruitment_skills.hr_candidate_view_tree').id, 'list'),
+            //         (self.env.ref('hr_recruitment_skills.crm_case_tree_view_inherit_hr_recruitment_skills').id, 'list'),
             //         (False, 'form'),
             //     ],
             //     'context': context,
-            //     'domain': [('id', 'in', matching_candidates.ids)],
+            //     'domain': [
+            //         ('job_id', '!=', self.id),
+            //         ('skill_ids', 'in', self.job_skill_ids.skill_id.ids),
+            //     ],
             //     'help': Markup("<p class='o_view_nocontent_empty_folder'>%s</p><p>%s</p>") % (help_message_1, help_message_2),
             // })
             // return action
@@ -745,7 +876,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
             // def set_open(self):
             // self.write({'website_published': False})
-            // return super(Job, self).set_open()
+            // return super().set_open()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -762,17 +893,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrJob> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_job.py) ---
-            // def toggle_active(self):
-            // self.filtered('active').website_published = False
-            // return super().toggle_active()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public override async Task<List<object>> WriteAsync(List<Guid> ids, HrJob entity, List<string> fields)
         {
             /*
@@ -780,7 +900,7 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // if len(self) == 1:
             //     handle_history_divergence(self, 'description', vals)
-            // return super(Job, self).write(vals)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_job.py) ---
             // def write(self, vals):
             // old_interviewers = self.interviewer_ids
@@ -797,17 +917,6 @@ namespace Bamboo.Core.Application.Services
             //     interviewers_to_clean._remove_recruitment_interviewers()
             //     self.sudo().interviewer_ids._create_recruitment_interviewers()
             // 
-            // # Subscribe the department manager if the department has changed
-            // if "department_id" in vals:
-            //     for job in self:
-            //         to_unsubscribe = [
-            //             partner
-            //             for partner in old_managers[job]._get_related_partners().ids
-            //             if partner not in job.user_id.partner_id.ids
-            //         ]
-            //         job.message_unsubscribe(to_unsubscribe)
-            //         job.message_subscribe(job.manager_id._get_related_partners().ids)
-            // 
             // # Subscribe the recruiter if it has changed.
             // if "user_id" in vals:
             //     for job in self:
@@ -817,14 +926,14 @@ namespace Bamboo.Core.Application.Services
             //             if partner not in job.manager_id._get_related_partners().ids
             //         ]
             //         job.message_unsubscribe(to_unsubscribe)
-            //         job.message_subscribe(job.user_id.partner_id.ids)
-            // 
-            // # Update the availability on all hired candidates if the mission end date is changed
-            // if "date_to" in vals:
-            //     for job in self:
-            //         hired_candidates = job.application_ids.filtered(lambda a: a.application_status == 'hired')
-            //         for candidate in hired_candidates:
-            //             candidate.availability = job.date_to + relativedelta(days=1)
+            //         application_ids = job.application_ids.filtered(
+            //             lambda x:
+            //                 x.user_id == old_recruiters[job] and
+            //                 x.application_status == 'ongoing'
+            //         )
+            //         if application_ids:
+            //             application_ids.message_unsubscribe(to_unsubscribe)
+            //             application_ids.with_context(mail_auto_subscribe_no_notify=True).user_id = job.user_id
             // 
             // # Since the alias is created upon record creation, the default values do not reflect the current values unless
             // # specifically rewritten
@@ -835,6 +944,12 @@ namespace Bamboo.Core.Application.Services
             //         alias_default_vals = job._alias_get_creation_values().get('alias_defaults', '{}')
             //         job.alias_defaults = alias_default_vals
             // return res
+            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_job.py) ---
+            // def write(self, vals):
+            // if "current_job_skill_ids" in vals or "job_skill_ids" in vals:
+            //     vals_job_skill = vals.pop("current_job_skill_ids", []) + vals.get("job_skill_ids", [])
+            //     vals["job_skill_ids"] = self.env["hr.job.skill"]._get_transformed_commands(vals_job_skill, self)
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

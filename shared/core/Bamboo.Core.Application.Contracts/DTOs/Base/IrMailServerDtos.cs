@@ -4,40 +4,6 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class IrMailServerBuildEmailRequestDto
-    {
-        public object EmailFrom { get; set; }
-        public object EmailTo { get; set; }
-        public object Subject { get; set; }
-        public object Body { get; set; }
-        public object EmailCc { get; set; }
-        public object EmailBcc { get; set; }
-        public object ReplyTo { get; set; }
-        public object Attachments { get; set; }
-        public Guid MessageId { get; set; }
-        public object References { get; set; }
-        public Guid ObjectId { get; set; }
-        public object Subtype { get; set; }
-        public object Headers { get; set; }
-        public object BodyAlternative { get; set; }
-        public object SubtypeAlternative { get; set; }
-    }
-    
-    public class IrMailServerConnectRequestDto
-    {
-        public object Host { get; set; }
-        public object Port { get; set; }
-        public object User { get; set; }
-        public object Password { get; set; }
-        public object Encryption { get; set; }
-        public object SmtpFrom { get; set; }
-        public object SslCertificate { get; set; }
-        public object SslPrivateKey { get; set; }
-        public object SmtpDebug { get; set; }
-        public Guid MailServerId { get; set; }
-        public object AllowArchived { get; set; }
-    }
-    
     public class IrMailServerSendEmailRequestDto
     {
         public object Message { get; set; }

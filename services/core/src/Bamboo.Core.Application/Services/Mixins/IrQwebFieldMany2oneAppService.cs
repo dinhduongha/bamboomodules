@@ -27,9 +27,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldMany2oneable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def attributes(self, record, field_name, options, values):
-            // attrs = super(ManyToOne, self).attributes(record, field_name, options, values)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def attributes(self, record, field_name, options, values=None):
+            // field = record._fields[field_name]
+            // attrs = super().attributes(record, field_name, options, values)
             // if options.get('inherit_branding'):
             //     many2one = record[field_name]
             //     if many2one:
@@ -39,6 +40,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         attrs['data-oe-many2one-allowreset'] = 1
             //         if not many2one:
             //             attrs['data-oe-many2one-model'] = record._fields[field_name].comodel_name
+            //     attrs['data-oe-many2one-domain'] = json_safe.dumps(field._description_domain(self.env))
             // return attrs
             */
             return default;
@@ -47,7 +49,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldMany2oneable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // Model = self.env[element.get('data-oe-model')]
             // id = int(element.get('data-oe-id'))
@@ -76,12 +78,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(Contact, self).get_available_options()
+            // options = super().get_available_options()
             // contact_fields = [
             //     {'field_name': 'name', 'label': _('Name'), 'default': True},
             //     {'field_name': 'address', 'label': _('Address'), 'default': True},
             //     {'field_name': 'phone', 'label': _('Phone'), 'default': True},
-            //     {'field_name': 'mobile', 'label': _('Mobile'), 'default': True},
             //     {'field_name': 'email', 'label': _('Email'), 'default': True},
             //     {'field_name': 'vat', 'label': _('VAT')},
             // ]
@@ -143,7 +144,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return self.env['ir.qweb']._render('base.no_contact', val, **template_options)
             //     return ''
             // 
-            // opf = options.get('fields') or ["name", "address", "phone", "mobile", "email"]
+            // opf = options.get('fields') or ["name", "address", "phone", "email"]
             // sep = options.get('separator')
             // if sep:
             //     opsep = escape(sep)
@@ -166,7 +167,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'name': display_name.split("\n")[0],
             //     'address': address,
             //     'phone': value.phone,
-            //     'mobile': value.mobile,
             //     'city': value.city,
             //     'country_id': value.country_id.display_name,
             //     'website': value.website,

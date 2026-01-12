@@ -11,6 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface ISpreadsheetDashboardAppService : IGenericApplicationService<SpreadsheetDashboard>
     {
         Task<SpreadsheetDashboard> CopyDataAsync(Guid id, SpreadsheetDashboardCopyDataRequestDto input);
-        Task<SpreadsheetDashboard> GetReadonlyDashboardAsync(Guid id);
+        Task<SpreadsheetDashboard> ToggleFavoriteAsync(Guid id);
     }
 }

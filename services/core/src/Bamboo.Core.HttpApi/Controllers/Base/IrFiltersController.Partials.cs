@@ -19,10 +19,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/create-or-replace")]
-        public async Task<IActionResult> CreateOrReplaceAsync(Guid id, [FromBody] IrFiltersCreateOrReplaceRequestDto input)
+        [Route("{id}/create-filter")]
+        public async Task<IActionResult> CreateFilterAsync(Guid id, [FromBody] IrFiltersCreateFilterRequestDto input)
         {
-            var result = await _appService.CreateOrReplaceAsync(id, input);
+            var result = await _appService.CreateFilterAsync(id, input);
             return Ok(result);
         }
         

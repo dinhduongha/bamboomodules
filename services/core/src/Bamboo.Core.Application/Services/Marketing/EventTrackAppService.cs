@@ -23,12 +23,14 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
+        private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
-        public EventTrackAppService(IRepository<EventTrack, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public EventTrackAppService(IRepository<EventTrack, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
             _websitePublishedMixinAppService = websitePublishedMixinAppService;
+            _websiteSearchableMixinAppService = websiteSearchableMixinAppService;
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
         }
 
@@ -102,6 +104,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<EventTrack> ComputeDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _compute_date(self):
+            // for track in self:
+            //     if track.date_end:
+            //         delta = timedelta(minutes=60 * track.duration)
+            //         track.date = track.date_end - delta
+            //     else:
+            //         track.date = False
+            */
+            return default;
+        }
+
         protected async Task<EventTrack> ComputeEndDateInternalAsync()
         {
             /*
@@ -113,6 +130,25 @@ namespace Bamboo.Core.Application.Services
             //         track.date_end = track.date + delta
             //     else:
             //         track.date_end = False
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> ComputeFieldIsOneDayInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _compute_field_is_one_day(self):
+            // for track in self:
+            //     # Need to localize because it could begin late and finish early in
+            //     # another timezone
+            //     if not (track.date or track.date_end):
+            //         track.is_one_day = False
+            //         continue
+            //     track = track.with_context(tz=track.event_id.date_tz or 'UTC')
+            //     begin_tz = fields.Datetime.context_timestamp(track, track.date)
+            //     end_tz = fields.Datetime.context_timestamp(track, track.date_end)
+            //     track.is_one_day = (begin_tz.date() == end_tz.date())
             */
             return default;
         }
@@ -139,7 +175,7 @@ namespace Bamboo.Core.Application.Services
             //         domain = [('partner_id', '=', self.env.user.partner_id.id)]
             // 
             //     event_track_visitors = self.env['event.track.visitor'].sudo().search_read(
-            //         expression.AND([
+            //         Domain.AND([
             //             domain,
             //             [('track_id', 'in', self.ids)]
             //         ]), fields=['track_id', 'is_wishlisted', 'is_blacklisted']
@@ -333,7 +369,7 @@ namespace Bamboo.Core.Application.Services
             //             domain = [('partner_id', '=', self.env.user.partner_id.id)]
             // 
             //         event_track_visitors = self.env['event.track.visitor'].sudo().search_read(
-            //             expression.AND([
+            //             Domain.AND([
             //                 domain,
             //                 [('track_id', 'in', tracks_quiz.ids)]
             //             ]), fields=['track_id', 'quiz_completed', 'quiz_points']
@@ -387,7 +423,7 @@ namespace Bamboo.Core.Application.Services
             // UTC as we compute only time deltas here. """
             // now_utc = utc.localize(fields.Datetime.now().replace(microsecond=0))
             // for track in self:
-            //     if not track.date:
+            //     if not (track.date or track.date_end):
             //         track.is_track_live = track.is_track_soon = track.is_track_today = track.is_track_upcoming = track.is_track_done = False
             //         track.track_start_relative = track.track_start_remaining = 0
             //         continue
@@ -421,7 +457,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_event_track_live, FILE: event_track.py) ---
             // def _compute_website_image_url(self):
             // youtube_thumbnail_tracks = self.filtered(lambda track: not track.website_image and track.youtube_video_id)
-            // super(Track, self - youtube_thumbnail_tracks)._compute_website_image_url()
+            // super(EventTrack, self - youtube_thumbnail_tracks)._compute_website_image_url()
             // for track in youtube_thumbnail_tracks:
             //     track.website_image_url = f'https://img.youtube.com/vi/{track.youtube_video_id}/maxresdefault.jpg'
             */
@@ -433,7 +469,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
             // def _compute_website_url(self):
-            // super(Track, self)._compute_website_url()
+            // super()._compute_website_url()
             // for track in self:
             //     if track.id:
             //         track.website_url = '/event/%s/track/%s' % (self.env['ir.http']._slug(track.event_id), self.env['ir.http']._slug(track))
@@ -521,7 +557,7 @@ namespace Bamboo.Core.Application.Services
             //     domain = [('partner_id', '=', self.env.user.partner_id.id)]
             // 
             // track_visitors = self.env['event.track.visitor'].sudo().search(
-            //     expression.AND([domain, [('track_id', 'in', self.ids)]])
+            //     Domain.AND([domain, [('track_id', 'in', self.ids)]])
             // )
             // missing = self - track_visitors.track_id
             // if missing and force_create:
@@ -532,6 +568,120 @@ namespace Bamboo.Core.Application.Services
             //     } for track in missing])
             // 
             // return track_visitors
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> GetIcsFileInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _get_ics_file(self):
+            // """ Return iCalendar file for the event track.
+            //     :return: a dict of .ics file content for each event track """
+            // result = dict.fromkeys(self.ids, False)
+            // if not vobject:
+            //     return result
+            // 
+            // for track in self:
+            //     cal = vobject.iCalendar()
+            //     cal_track = cal.add('vevent')
+            // 
+            //     date_tz = track.event_id.date_tz
+            //     reminder_dates = track._get_track_calendar_reminder_dates()
+            //     cal_track.add('created').value = fields.Datetime.now().replace(tzinfo=timezone('UTC'))
+            //     cal_track.add('dtstart').value = reminder_dates['date_begin'].astimezone(timezone(date_tz))
+            //     cal_track.add('dtend').value = reminder_dates['date_end'].astimezone(timezone(date_tz))
+            //     cal_track.add('summary').value = track.name
+            //     cal_track.add('description').value = track._get_track_calendar_description()
+            //     if track.event_id.address_inline or track.location_id:
+            //         cal_track.add('location').value = ', '.join([track.event_id.address_inline, track.location_id.sudo().name or ''])
+            // 
+            //     result[track.id] = cal.serialize().encode('utf-8')
+            // return result
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> GetTrackCalendarDescriptionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _get_track_calendar_description(self):
+            // self.ensure_one()
+            // return Markup("<a href='%(event_track_url)s'>%(name)s</a>\n%(short_description)s\n\n%(reminder_times_warning)s") % {
+            //     'event_track_url': tools.urls.urljoin(self.get_base_url(), self.website_url),
+            //     'name': self.name,
+            //     'short_description': shorten(html_to_inner_content(self.description), 1900),
+            //     'reminder_times_warning': self._get_track_calendar_reminder_times_warning(),
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> GetTrackCalendarReminderDatesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _get_track_calendar_reminder_dates(self):
+            // """ Get dates of the event if the track does not have any. A warning is
+            // added in elements that display times of the event instead of those of
+            // the track. This way, visitors can add a reminder and check later if the
+            // track has been updated since the sending of the mail. """
+            // return {
+            //     'date_begin': self.date or self.event_id.date_begin,
+            //     'date_end': self.date_end or self.event_id.date_end,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> GetTrackCalendarReminderTimesWarningInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _get_track_calendar_reminder_times_warning(self):
+            // """ Generate a warning indicating that the times displayed correspond to those of
+            // the event because the track does not have any, to avoid misunderstanding from visitors. """
+            // return Markup('<strong><u>%(warning_title)s</u></strong>: %(warning_content)s') % {
+            //     'warning_title': _('Note'),
+            //     'warning_content': _(
+            //         'The start and end times of the talk were not specified when you asked to add them to your calendar, '
+            //         'therefore the times indicated in this reminder correspond to those of the event.'
+            //     )
+            // } if not self.date else ''
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> GetTrackCalendarUrlsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _get_track_calendar_urls(self):
+            // date_tz = self.event_id.date_tz
+            // reminder_dates = self._get_track_calendar_reminder_dates()
+            // url_date_begin = reminder_dates['date_begin'].astimezone(timezone(date_tz)).strftime('%Y%m%dT%H%M%S')
+            // url_date_end = reminder_dates['date_end'].astimezone(timezone(date_tz)).strftime('%Y%m%dT%H%M%S')
+            // 
+            // if self.event_id.address_inline or self.location_id:
+            //     location = ', '.join([self.event_id.sudo().address_inline, self.location_id.sudo().name or ''])
+            // else:
+            //     location = ''
+            // 
+            // google_params = {
+            //     'action': 'TEMPLATE',
+            //     'text': f'{self.event_id.name}: {self.name}',
+            //     'dates': f'{url_date_begin}/{url_date_end}',
+            //     'ctz': self.event_id.date_tz,
+            //     'details': self._get_track_calendar_description(),
+            //     'location': location,
+            // }
+            // 
+            // return {
+            //     'google_url': GOOGLE_CALENDAR_URL + werkzeug.urls.url_encode(google_params),
+            //     'iCal_url': f'{self.get_base_url()}/event/{self.event_id.id}/track/{self.id}/ics',
+            // }
             */
             return default;
         }
@@ -564,7 +714,7 @@ namespace Bamboo.Core.Application.Services
             //     ('id', '!=', self.id),
             // ]
             // if restrict_domain:
-            //     base_domain = expression.AND([
+            //     base_domain = Domain.AND([
             //         base_domain,
             //         restrict_domain
             //     ])
@@ -594,15 +744,36 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventTrack> MailGetTimezoneWithDefaultInternalAsync(object default_tz)
+        protected async Task<EventTrack> InverseDateInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
-            // def _mail_get_timezone_with_default(self, default_tz=True):
-            // tz = None
-            // if self:
-            //     tz = self.event_id._mail_get_timezone_with_default(default_tz=default_tz)
-            // return tz or super()._mail_get_timezone_with_default(default_tz=default_tz)
+            // def _inverse_date(self):
+            // for track in self:
+            //     if track.date and track.date_end:
+            //         track.duration = (track.date_end - track.date).total_seconds() / 3600
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> InverseEndDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _inverse_end_date(self):
+            // for track in self:
+            //     if track.date and track.date_end:
+            //         track.duration = (track.date_end - track.date).total_seconds() / 3600
+            */
+            return default;
+        }
+
+        protected async Task<EventTrack> MailGetTimezoneInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _mail_get_timezone(self):
+            // return self.event_id._mail_get_timezone() or super()._mail_get_timezone()
             */
             return default;
         }
@@ -617,37 +788,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<EventTrack> MessageGetDefaultRecipientsInternalAsync()
+        protected async Task<EventTrack> MessageAddDefaultRecipientsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
-            // def _message_get_default_recipients(self):
-            // return {
-            //     track.id: {
-            //         'partner_ids': [],
-            //         'email_to': ','.join(tools.email_normalize_all(track.contact_email or track.partner_email)) or track.contact_email or track.partner_email,
-            //         'email_cc': False
-            //     } for track in self
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<EventTrack> MessageGetSuggestedRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // if self.partner_id:
-            //     if self.partner_id not in recipients:
-            //         self._message_add_suggested_recipient(recipients, partner=self.partner_id, reason=_('Contact'))
-            // else:
-            //     #  Priority: contact information then speaker information
-            //     if self.contact_email and self.contact_email != self.partner_id.email:
-            //         self._message_add_suggested_recipient(recipients, email=self.contact_email, reason=_('Contact Email'))
-            //     if not self.contact_email and self.partner_email and self.partner_email != self.partner_id.email:
-            //         self._message_add_suggested_recipient(recipients, email=self.partner_email, reason=_('Speaker Email'))
+            // def _message_add_default_recipients(self):
+            // recipients = super()._message_add_default_recipients()
+            // for track in self.filtered(lambda t: not t.partner_id.email_normalized and not email_normalize(t.contact_email) and t.partner_email):
+            //     info = recipients[track.id]
+            //     info['email_to_lst'] = tools.mail.email_split_and_format_normalize(track.partner_email) or [track.partner_email]
             // return recipients
             */
             return default;
@@ -678,7 +827,7 @@ namespace Bamboo.Core.Application.Services
             //         self.search([
             //             ('partner_id', '=', False), email_domain, ('stage_id.is_cancel', '=', False),
             //         ]).write({'partner_id': new_partner[0].id})
-            // return super(Track, self)._message_post_after_hook(message, msg_vals)
+            // return super()._message_post_after_hook(message, msg_vals)
             */
             return default;
         }
@@ -700,19 +849,51 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<EventTrack> SearchGetDetailInternalAsync(object website, object order, object options)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
+            // def _search_get_detail(self, website, order, options):
+            // event_id = self.env['ir.http']._unslug(options['event'])[1]
+            // domain = [
+            //     '&',
+            //     ('event_id', '=', event_id),
+            //     '|',
+            //     ('is_published', '=', True),
+            //     ('stage_id.is_visible_in_agenda', '=', True),
+            // ]
+            // mapping = {
+            //     'description': {'name': 'description', 'type': 'text', 'truncate': True, 'html': True},
+            //     'name': {'name': 'name', 'type': 'text', 'match': True},
+            //     'partner_name': {'name': 'partner_name', 'type': 'text', 'match': True, 'html': True},
+            //     'website_url': {'name': 'website_url', 'type': 'text', 'truncate': False},
+            // }
+            // return {
+            //     'model': 'event.track',
+            //     'base_domain': [domain],
+            //     'search_fields': ['name', 'partner_name'],
+            //     'fetch_fields': ['name', 'website_url', 'partner_name', 'description'],
+            //     'mapping': mapping,
+            //     'icon': 'fa-microphone',
+            //     'order': order,
+            // }
+            */
+            return default;
+        }
+
         protected async Task<EventTrack> SearchWishlistVisitorIdsInternalAsync(object @operator, object operand)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
             // def _search_wishlist_visitor_ids(self, operator, operand):
-            // if operator == "not in":
-            //     raise NotImplementedError(self.env._("Unsupported 'Not In' operation on track wishlist visitors"))
+            // if operator in ('not in', 'not any'):
+            //     raise UserError(self.env._("Unsupported 'Not In' operation on track wishlist visitors"))
             // 
-            // track_visitors = self.env['event.track.visitor'].sudo().search([
+            // subquery = self.env['event.track.visitor'].sudo()._search([
             //     ('visitor_id', operator, operand),
             //     ('is_wishlisted', '=', True)
             // ])
-            // return [('id', 'in', track_visitors.track_id.ids)]
+            // return [('id', 'in', subquery.subselect('track_id'))]
             */
             return default;
         }
@@ -740,7 +921,7 @@ namespace Bamboo.Core.Application.Services
             //     return self.env.ref('website_event_track.mt_track_blocked')
             // elif 'kanban_state' in init_values and self.kanban_state == 'done':
             //     return self.env.ref('website_event_track.mt_track_ready')
-            // return super(Track, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             */
             return default;
         }
@@ -750,7 +931,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
             // def _track_template(self, changes):
-            // res = super(Track, self)._track_template(changes)
+            // res = super()._track_template(changes)
             // track = self[0]
             // if 'stage_id' in changes and track.stage_id.mail_template_id:
             //     res['stage_id'] = (track.stage_id.mail_template_id, {

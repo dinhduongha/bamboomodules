@@ -12,6 +12,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     {
         Task<ResCompany> AllCompanyBranchesAsync(Guid id);
         Task<ResCompany> CacheInvalidationFieldsAsync(Guid id);
+        Task<ResCompany> CloseStockValuationAsync(Guid id, ResCompanyCloseStockValuationRequestDto input);
         Task<ResCompany> ComputeAccountTaxFiscalCountryAsync(Guid id);
         Task<ResCompany> ComputeFiscalyearDatesAsync(Guid id, ResCompanyComputeFiscalyearDatesRequestDto input);
         Task<ResCompany> CreateMissingDropshipPickingTypeAsync(Guid id);
@@ -40,6 +41,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResCompany> SaveOnboardingCompanyDataAsync(Guid id);
         Task<ResCompany> SaveOnboardingSaleTaxAsync(Guid id);
         Task<ResCompany> SettingInitBankAccountActionAsync(Guid id);
+        Task<ResCompany> SettingInitCreditCardAccountActionAsync(Guid id);
+        Task<ResCompany> StockAccountingValueAsync(Guid id, ResCompanyStockAccountingValueRequestDto input);
+        Task<ResCompany> StockValueAsync(Guid id, ResCompanyStockValueRequestDto input);
         Task<ResCompany> ValidateLockDatesAsync(Guid id);
     }
 }

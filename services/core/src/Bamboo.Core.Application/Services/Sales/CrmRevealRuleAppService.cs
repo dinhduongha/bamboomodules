@@ -187,7 +187,7 @@ namespace Bamboo.Core.Application.Services
             // def action_get_lead_tree_view(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_all_leads")
             // action['domain'] = [('id', 'in', self.lead_ids.ids), ('type', '=', 'lead')]
-            // action['context'] = dict(self._context, create=False)
+            // action['context'] = dict(self.env.context, create=False)
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -200,7 +200,7 @@ namespace Bamboo.Core.Application.Services
             // def action_get_opportunity_tree_view(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
             // action['domain'] = [('id', 'in', self.lead_ids.ids), ('type', '=', 'opportunity')]
-            // action['context'] = dict(self._context, create=False)
+            // action['context'] = dict(self.env.context, create=False)
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -336,9 +336,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_reveal_rule.py) ---
             // def _perform_reveal_service(self, server_payload):
             // result = False
-            // account_token = self.env['iap.account'].get('reveal')
+            // account = self.env['iap.account'].get('reveal')
             // params = {
-            //     'account_token': account_token.account_token,
+            //     'account_token': account.sudo().account_token,
             //     'data': server_payload
             // }
             // result = self._iap_contact_reveal(params, timeout=300)
@@ -355,7 +355,7 @@ namespace Bamboo.Core.Application.Services
             //         views.flush_recordset()
             // 
             // if result.get('credit_error'):
-            //     self.env['crm.iap.lead.helpers'].notify_no_more_credit('reveal', self._name, 'reveal.already_notified')
+            //     self.env['crm.iap.lead.helpers']._notify_no_more_credit('reveal', self._name, 'reveal.already_notified')
             //     return False
             // else:
             //     # avoid loops if IAP return result is broken: otherwise some IP may create loops
@@ -417,7 +417,7 @@ namespace Bamboo.Core.Application.Services
             //     enough_credit = self._perform_reveal_service(server_payload)
             //     if autocommit:
             //         # auto-commit for batch processing
-            //         self._cr.commit()
+            //         self.env.cr.commit()
             //     if enough_credit:
             //         reveal_views = self._get_reveal_views_to_process()
             //     else:

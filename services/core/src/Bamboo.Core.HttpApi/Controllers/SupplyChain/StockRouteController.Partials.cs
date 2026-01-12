@@ -17,13 +17,5 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
-            return Ok(result);
-        }
     }
 }

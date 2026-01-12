@@ -83,7 +83,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ),
             //     # [BR-DE-6] The element "Seller contact telephone number" (BT-42) must be transmitted.
             //     'seller_phone': self._check_required_fields(
-            //         vals['record']['company_id']['partner_id']['commercial_partner_id'], ['phone', 'mobile'],
+            //         vals['record']['company_id']['partner_id']['commercial_partner_id'], ['phone'],
             //     ),
             //     # [BR-DE-7] The element "Seller contact email address" (BT-43) must be transmitted.
             //     'seller_email': self._check_required_fields(
@@ -149,6 +149,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
             // def _export_invoice_vals(self, invoice):
+            // customer = invoice.partner_id
+            // supplier = invoice.company_id.partner_id.commercial_partner_id
             // 
             // def format_date(dt):
             //     # Format the date in the Factur-x standard.
@@ -161,10 +163,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // def grouping_key_generator(base_line, tax_data):
             //     tax = tax_data['tax']
-            //     customer = invoice.commercial_partner_id
-            //     supplier = invoice.company_id.partner_id.commercial_partner_id
             //     grouping_key = {
-            //         **self._get_tax_unece_codes(customer, supplier, tax),
+            //         'tax_category_code': self._get_tax_category_code(customer.commercial_partner_id, supplier, tax),
+            //         **self._get_tax_exemption_reason(customer.commercial_partner_id, supplier, tax),
             //         'amount': tax.amount,
             //         'amount_type': tax.amount_type,
             //     }
@@ -192,14 +193,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tax_details['base_amount_currency'] += fixed_tax_details['tax_amount_currency']
             //     tax_details['base_amount'] += fixed_tax_details['tax_amount']
             // 
-            // if 'siret' in invoice.company_id._fields and invoice.company_id.siret:
-            //     seller_siret = invoice.company_id.siret
-            // else:
-            //     seller_siret = invoice.company_id.company_registry
-            // 
-            // buyer_siret = invoice.commercial_partner_id.company_registry
-            // if 'siret' in invoice.commercial_partner_id._fields and invoice.commercial_partner_id.siret:
-            //     buyer_siret = invoice.commercial_partner_id.siret
             // template_values = {
             //     **invoice._prepare_edi_vals_to_export(),
             //     'tax_details': tax_details,
@@ -209,8 +202,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'scheduled_delivery_time': self._get_scheduled_delivery_time(invoice),
             //     'intracom_delivery': False,
             //     'ExchangedDocument_vals': self._get_exchanged_document_vals(invoice),
-            //     'seller_specified_legal_organization': seller_siret,
-            //     'buyer_specified_legal_organization': buyer_siret,
+            //     'seller_specified_legal_organization': invoice.company_id.company_registry,
+            //     'buyer_specified_legal_organization': invoice.commercial_partner_id.company_registry,
             //     'ship_to_trade_party': invoice.partner_shipping_id if 'partner_shipping_id' in invoice._fields and invoice.partner_shipping_id
             //         else invoice.commercial_partner_id,
             //     # Chorus Pro fields
@@ -279,7 +272,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // template_values['tax_basis_total_amount'] = tax_details['base_amount_currency']
             // template_values['tax_total_amount'] = tax_details['tax_amount_currency']
             // 
-            // if self.env['account.payment']._fields.get('sdd_mandate_id') and invoice.matched_payment_ids.sdd_mandate_id:
+            // if self.env['account.payment']._fields.get('sdd_mandate_id') and invoice.reconciled_payment_ids.sdd_mandate_id:
             //     template_values['payment_means_code'] = PAYMENT_MEAN_CODES['SEPA direct debit']
             // else:
             //     template_values['payment_means_code'] = PAYMENT_MEAN_CODES['Payment to bank account']
@@ -417,6 +410,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetPostalAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object role) where TEntity : IEntity<Guid>, IAccountEdiXmlCiiable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
+            // def _get_postal_address(self, tree, role):
+            // return {
+            //     'country_code': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CountryID', tree),
+            //     'street': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:LineOne', tree),
+            //     'additional_street': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:LineTwo', tree),
+            //     'city': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CityName', tree),
+            //     'zip': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:PostcodeCode', tree),
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetScheduledDeliveryTimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlCiiable
         {
             /*
@@ -490,7 +499,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tree, invoice, invoice.journal_id.type, qty_factor,
             // )
             // logs += self._import_prepaid_amount(invoice, tree, './/{*}ApplicableHeaderTradeSettlement/{*}SpecifiedTradeSettlementHeaderMonetarySummation/{*}TotalPrepaidAmount', qty_factor)
-            // invoice_line_vals, line_logs = self._import_invoice_lines(invoice, tree, './{*}SupplyChainTradeTransaction/{*}IncludedSupplyChainTradeLineItem', qty_factor)
+            // invoice_line_vals, line_logs = self._import_lines(invoice, tree, './{*}SupplyChainTradeTransaction/{*}IncludedSupplyChainTradeLineItem',
+            //                                                   document_type=invoice.move_type, tax_type=invoice.journal_id.type, qty_factor=qty_factor)
             // line_vals = allowance_charges_line_vals + invoice_line_vals
             // 
             // invoice_values = {
@@ -514,7 +524,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'name': self._find_value(f".//ram:{role}/ram:Name", tree),
             //     'phone': self._find_value(f".//ram:{role}/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:CompleteNumber", tree),
             //     'email': self._find_value(f".//ram:{role}//ram:EmailURIUniversalCommunication/ram:URIID", tree),
-            //     'country_code': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CountryID', tree),
+            //     'postal_address': self._get_postal_address(tree, role),
             // }
             */
             return default;

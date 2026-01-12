@@ -81,7 +81,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_contact_phone(self):
             // for registration in self:
             //     if not registration.contact_phone:
-            //         registration.contact_phone = registration.partner_id.phone or registration.partner_id.mobile or False
+            //         registration.contact_phone = registration.partner_id.phone or False
             */
             return default;
         }
@@ -111,7 +111,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale_exhibitor, FILE: event_booth_registration.py) ---
             // def _get_fields_for_booth_confirmation(self):
             // return super(EventBoothRegistration, self)._get_fields_for_booth_confirmation() + \
-            //        ['sponsor_name', 'sponsor_email', 'sponsor_mobile', 'sponsor_phone', 'sponsor_subtitle',
+            //        ['sponsor_name', 'sponsor_email', 'sponsor_phone', 'sponsor_subtitle',
             //         'sponsor_website_description', 'sponsor_image_512']
             */
             return default;

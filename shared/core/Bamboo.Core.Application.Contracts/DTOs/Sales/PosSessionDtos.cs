@@ -9,6 +9,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object BankPaymentMethodDiffPairs { get; set; }
     }
     
+    public class PosSessionDeleteCashInOutRequestDto
+    {
+        public Guid AbslId { get; set; }
+        public Guid PartnerId { get; set; }
+    }
+    
+    public class PosSessionFilterLocalDataRequestDto
+    {
+        public object ModelsToFilter { get; set; }
+    }
+    
     public class PosSessionFindProductByBarcodeRequestDto
     {
         public object Barcode { get; set; }
@@ -25,7 +36,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class PosSessionLoadDataRequestDto
     {
         public object ModelsToLoad { get; set; }
-        public object OnlyData { get; set; }
     }
     
     public class PosSessionLogPartnerMessageRequestDto
@@ -72,6 +82,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object _Type { get; set; }
         public object Amount { get; set; }
         public object Reason { get; set; }
+        public Guid PartnerId { get; set; }
         public object Extras { get; set; }
     }
     

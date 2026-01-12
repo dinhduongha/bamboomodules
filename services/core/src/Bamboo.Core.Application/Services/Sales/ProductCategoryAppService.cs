@@ -39,22 +39,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductCategory> CheckValuationAccountsInternalAsync()
+        protected async Task<ProductCategory> ComputeAngloSaxonAccountingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _check_valuation_accounts(self):
-            // fnames = self._get_mandatory_stock_account_property_field_names()
-            // for category in self:
-            //     if category.property_valuation == 'real_time':
-            //         if any(not category[account] for account in fnames):
-            //             raise ValidationError(_('The stock accounts should be set in order to use the automatic valuation.'))
-            // 
-            //     # Prevent to set the valuation account as the input or output account.
-            //     valuation_account = category.property_stock_valuation_account_id
-            //     input_and_output_accounts = category.property_stock_account_input_categ_id | category.property_stock_account_output_categ_id
-            //     if valuation_account and valuation_account in input_and_output_accounts:
-            //         raise ValidationError(_('The Stock Input and/or Output accounts cannot be the same as the Stock Valuation account.'))
+            // def _compute_anglo_saxon_accounting(self):
+            // self.anglo_saxon_accounting = self.env.company.anglo_saxon_accounting
             */
             return default;
         }
@@ -129,107 +119,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductCategory> CreateDefaultStockAccountsPropertiesInternalAsync()
+        public async Task<ProductCategory> CopyDataAsync(Guid id, ProductCategoryCopyDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _create_default_stock_accounts_properties(self):
-            // IrDefault = self.env['ir.default']
-            // company = self.env.ref('base.main_company')
-            // output_field = self.env['ir.model.fields'].search([
-            //     ('model', '=', 'product.category'),
-            //     ('name', '=', 'property_stock_account_output_categ_id'),
-            // ])
-            // output_property = IrDefault.search([
-            //     ('field_id', '=', output_field.id),
-            //     ('company_id', '=', company.id),
-            // ])
-            // if not output_property:
-            //     IrDefault._load_records([{
-            //         'xml_id': 'stock_account.property_stock_account_output_categ_id',
-            //         'noupdate': True,
-            //         'values': {
-            //             'field_id': output_field.id,
-            //             'json_value': 'false',
-            //             'company_id': company.id,
-            //         },
-            //     }])
-            // 
-            // input_field = self.env['ir.model.fields'].search([
-            //     ('model', '=', 'product.category'),
-            //     ('name', '=', 'property_stock_account_input_categ_id'),
-            // ])
-            // input_property = IrDefault.search([
-            //     ('field_id', '=', input_field.id),
-            //     ('company_id', '=', company.id),
-            // ])
-            // if not input_property:
-            //     IrDefault._load_records([{
-            //         'xml_id': 'stock_account.property_stock_account_input_categ_id',
-            //         'noupdate': True,
-            //         'values': {
-            //             'field_id': input_field.id,
-            //             'json_value': 'false',
-            //             'company_id': company.id,
-            //         },
-            //     }])
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_category.py) ---
+            // def copy_data(self, default=None):
+            // default = dict(default or {})
+            // vals_list = super().copy_data(default=default)
+            // if 'name' not in default:
+            //     for category, vals in zip(self, vals_list):
+            //         vals['name'] = _("%s (copy)", category.name)
+            // return vals_list
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ProductCategory> GetMandatoryStockAccountPropertyFieldNamesInternalAsync()
+        protected async Task<ProductCategory> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _get_mandatory_stock_account_property_field_names(self):
-            // return [
-            //     'property_stock_account_input_categ_id',
-            //     'property_stock_account_output_categ_id',
-            //     'property_stock_valuation_account_id',
-            // ]
-            */
-            return default;
-        }
-
-        protected async Task<ProductCategory> GetStockAccountPropertyFieldNamesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: product.py) ---
-            // def _get_stock_account_property_field_names(self):
-            // return super()._get_stock_account_property_field_names() + ['property_stock_account_production_cost_id']
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _get_stock_account_property_field_names(self):
-            // return self._get_mandatory_stock_account_property_field_names()
-            */
-            return default;
-        }
-
-        protected async Task<ProductCategory> LoadPosDataFieldsInternalAsync(Guid config_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_category.py) ---
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'parent_id']
             */
             return default;
-        }
-
-        public async Task<ProductCategory> OnchangePropertyCostAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def onchange_property_cost(self):
-            // if not self._origin:
-            //     # don't display the warning when creating a product category
-            //     return
-            // return {
-            //     'warning': {
-            //         'title': _("Warning"),
-            //         'message': _("Changing your cost method is an important change that will impact your inventory valuation. Are you sure you want to make that change?"),
-            //     }
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ProductCategory> SearchFilterForStockPutawayRuleInternalAsync(object @operator, object @value)
@@ -237,16 +149,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _search_filter_for_stock_putaway_rule(self, operator, value):
-            // assert operator == '='
-            // assert value
+            // if operator != 'in':
+            //     return NotImplemented
             // 
+            // domain = Domain.TRUE
             // active_model = self.env.context.get('active_model')
             // if active_model in ('product.template', 'product.product') and self.env.context.get('active_id'):
             //     product = self.env[active_model].browse(self.env.context.get('active_id'))
             //     product = product.exists()
             //     if product:
-            //         return [('id', '=', product.categ_id.id)]
-            // return []
+            //         domain = Domain('id', '=', product.categ_id.id)
+            // return domain
             */
             return default;
         }
@@ -256,27 +169,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _search_total_route_ids(self, operator, value):
-            // categories = self.env['product.category'].sudo().search([])
+            // categories = self.with_context(active_test=False).search([])
             // categ_ids = categories.filtered_domain([('total_route_ids', operator, value)]).ids
             // return [('id', 'in', categ_ids)]
-            */
-            return default;
-        }
-
-        protected async Task<ProductCategory> UnlinkExceptDefaultCategoryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_category.py) ---
-            // def _unlink_except_default_category(self):
-            // main_category = self.env.ref('product.product_category_all', raise_if_not_found=False)
-            // if main_category and main_category in self:
-            //     raise UserError(_("You cannot delete this product category, it is the default generic category."))
-            // expense_category = self.env.ref('product.cat_expense', raise_if_not_found=False)
-            // if expense_category and expense_category in self:
-            //     raise UserError(_("You cannot delete the %s product category.", expense_category.name))
-            // saleable_category = self.env.ref('product.product_category_1', raise_if_not_found=False)
-            // if saleable_category and saleable_category in self:
-            //     raise UserError(_("You cannot delete the %s product category.", saleable_category.name))
             */
             return default;
         }
@@ -298,63 +193,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
             // def write(self, vals):
-            // impacted_categories = {}
-            // move_vals_list = []
-            // Product = self.env['product.product']
-            // SVL = self.env['stock.valuation.layer']
-            // 
-            // if 'property_cost_method' in vals or 'property_valuation' in vals:
-            //     categ_products = self.env['product.product'].search([('categ_id', 'in', self.ids)])
-            //     if any(p.lot_valuated and p.stock_valuation_layer_ids for p in categ_products):
-            //         raise UserError(_("You cannot change the costing method of product valuated by lot/serial number."))
-            //     # When the cost method or the valuation are changed on a product category, we empty
-            //     # out and replenish the stock for each impacted products.
-            //     new_cost_method = vals.get('property_cost_method')
-            //     new_valuation = vals.get('property_valuation')
-            // 
-            //     for product_category in self:
-            //         valuation_impacted = False
-            //         if new_cost_method and new_cost_method != product_category.property_cost_method:
-            //             valuation_impacted = True
-            //         if new_valuation and new_valuation != product_category.property_valuation:
-            //             valuation_impacted = True
-            //         if valuation_impacted is False:
-            //             continue
-            // 
-            //         # Empty out the stock with the current cost method.
-            //         if new_cost_method:
-            //             description = _(
-            //                 "Costing method change for product category %(category)s: from %(old_method)s to %(new_method)s.",
-            //                 category=product_category.display_name, old_method=product_category.property_cost_method, new_method=new_cost_method)
-            //         else:
-            //             description = _(
-            //                 "Valuation method change for product category %(category)s: from %(old_method)s to %(new_method)s.",
-            //                 category=product_category.display_name, old_method=product_category.property_valuation, new_method=new_valuation)
-            //         out_svl_vals_list, products_orig_quantity_svl, products = Product\
-            //             ._svl_empty_stock(description, product_category=product_category)
-            //         out_stock_valuation_layers = SVL.sudo().create(out_svl_vals_list)
-            //         if product_category.property_valuation == 'real_time':
-            // 
-            //             move_vals_list += Product.with_context(products_orig_quantity_svl=products_orig_quantity_svl)._svl_empty_stock_am(out_stock_valuation_layers)
-            //         impacted_categories[product_category] = (products, description, products_orig_quantity_svl)
-            // 
-            // res = super(ProductCategory, self).write(vals)
-            // 
-            // for product_category, (products, description, products_orig_quantity_svl) in impacted_categories.items():
-            //     # Replenish the stock with the new cost method.
-            //     in_svl_vals_list = products._svl_replenish_stock(description, products_orig_quantity_svl)
-            //     in_stock_valuation_layers = SVL.sudo().create(in_svl_vals_list)
-            //     if product_category.property_valuation == 'real_time':
-            //         move_vals_list += Product._svl_replenish_stock_am(in_stock_valuation_layers)
-            //     products._update_lots_standard_price()
-            // 
-            // # Check access right
-            // if move_vals_list and not self.env['stock.valuation.layer'].has_access('read'):
-            //     raise UserError(_("The action leads to the creation of a journal entry, for which you don't have the access rights."))
-            // # Create the account moves.
-            // if move_vals_list:
-            //     account_moves = self.env['account.move'].sudo().create(move_vals_list)
-            //     account_moves._post()
+            // products_to_update = self.env['product.product']
+            // if 'property_cost_method' in vals:
+            //     updated_categories = self.filtered(lambda c: c.property_cost_method != vals['property_cost_method'])
+            //     if updated_categories:
+            //         products_to_update = self.env['product.product'].search([('categ_id', 'in', updated_categories.ids)])
+            // res = super().write(vals)
+            // if products_to_update:
+            //     products_to_update._update_standard_price()
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

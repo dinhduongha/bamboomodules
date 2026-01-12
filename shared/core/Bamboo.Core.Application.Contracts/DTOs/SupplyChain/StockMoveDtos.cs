@@ -11,16 +11,22 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class StockMoveGenerateLotLineValsRequestDto
     {
-        public object Context { get; set; }
+        public object ContextData { get; set; }
         public object Mode { get; set; }
         public object FirstLot { get; set; }
         public object Count { get; set; }
         public object LotText { get; set; }
     }
     
-    public class StockMoveProductPriceUpdateBeforeDoneRequestDto
+    public class StockMoveSearchRemainingQtyRequestDto
     {
-        public object ForcedQty { get; set; }
+        public object Operator { get; set; }
+        public object Value { get; set; }
+    }
+    
+    public class StockMoveShowSubcontractDetailsRequestDto
+    {
+        public Guid LotId { get; set; }
     }
     
     public class StockMoveSplitLotsRequestDto

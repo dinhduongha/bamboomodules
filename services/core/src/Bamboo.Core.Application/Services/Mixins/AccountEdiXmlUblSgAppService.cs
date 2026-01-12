@@ -24,15 +24,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ExportInvoiceEcosioSchematronsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        public async Task<TEntity> AddInvoicePaymentMeansNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _export_invoice_ecosio_schematrons(self):
-            // return {
-            //     'invoice': 'eu.peppol.bis3.sg.ubl:invoice:1.0.3',
-            //     'credit_note': 'eu.peppol.bis3.sg.ubl:creditnote:1.0.3',
+            // def _add_invoice_payment_means_nodes(self, document_node, vals):
+            // """ https://www.peppolguide.sg/billing/bis/#_payment_means_information """
+            // super()._add_invoice_payment_means_nodes(document_node, vals)
+            // document_node['cac:PaymentMeans']['cbc:PaymentMeansCode'] = {
+            //     '_text': 54,
+            //     'name': 'Credit Card',
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddInvoiceTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
+            // def _add_invoice_tax_total_nodes(self, document_node, vals):
+            // # OVERRIDE
+            // document_node['cac:TaxTotal'] = [
+            //     self._ubl_get_tax_total_node(vals, tax_total)
+            //     for tax_total in vals['_ubl_values']['tax_totals_currency'].values()
+            // ]
             */
             return default;
         }
@@ -47,87 +63,77 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ExportInvoiceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        public async Task<TEntity> GetCustomizationIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object process_type) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _export_invoice_vals(self, invoice):
+            // def _get_customization_id(self, process_type='billing'):
+            // if process_type == 'billing':
+            //     return 'urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:sg:3.0'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetPartyNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
+            // def _get_party_node(self, vals):
             // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._export_invoice_vals(invoice)
-            // 
-            // vals['vals'].update({
-            //     'customization_id': self._get_customization_ids()['ubl_sg'],
-            // })
-            // 
-            // return vals
+            // party_node = super()._get_party_node(vals)
+            // party_node['cac:PartyTaxScheme'][0]['cac:TaxScheme']['cbc:ID']['_text'] = 'GST'
+            // return party_node
             */
             return default;
         }
 
-        public async Task<TEntity> GetInvoicePaymentMeansValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _get_invoice_payment_means_vals_list(self, invoice):
-            // """ https://www.peppolguide.sg/billing/bis/#_payment_means_information
-            // """
-            // vals_list = super()._get_invoice_payment_means_vals_list(invoice)
-            // for vals in vals_list:
-            //     vals.update({
-            //         'payment_means_code': 54,
-            //         'payment_means_code_attrs': {'name': 'Credit Card'},
-            //     })
-            // 
-            // return vals_list
+            // def _ubl_add_values_tax_currency_code(self, vals):
+            // # OVERRIDE account.edi.xml.ubl_bis3
+            // self._ubl_add_values_tax_currency_code_empty(vals)
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        public async Task<TEntity> UblDefaultTaxCategoryGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data, object vals, object currency) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _get_partner_party_vals(self, partner, role):
+            // def _ubl_default_tax_category_grouping_key(self, base_line, tax_data, vals, currency):
             // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._get_partner_party_vals(partner, role)
+            // grouping_key = super()._ubl_default_tax_category_grouping_key(base_line, tax_data, vals, currency)
+            // if not grouping_key:
+            //     return
             // 
-            // for party_tax_scheme in vals['party_tax_scheme_vals']:
-            //     party_tax_scheme['tax_scheme_vals'] = {'id': 'GST'}
+            // grouping_key['scheme_id'] = 'GST'
+            // grouping_key['tax_exemption_reason'] = None
+            // grouping_key['tax_exemption_reason_code'] = None
             // 
-            // return vals
+            // # For reference: https://www.peppolguide.sg/billing/bis/#_gst_category_codes
+            // if not tax_data or tax_data['tax'].amount == 0.0:
+            //     grouping_key['tax_category_code'] = 'ZR'
+            // else:
+            //     grouping_key['tax_category_code'] = 'SR'
+            // 
+            // return grouping_key
             */
             return default;
         }
 
-        public async Task<TEntity> GetTaxCategoryListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object taxes) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
+        public async Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _get_tax_category_list(self, customer, supplier, taxes):
-            // # OVERRIDE
-            // res = []
-            // for tax in taxes:
-            //     res.append({
-            //         'id': self._get_tax_sg_codes(tax),
-            //         'percent': tax.amount if tax.amount_type == 'percent' else False,
-            //         'tax_scheme_vals': {'id': 'GST'},
-            //     })
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxSgCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax) where TEntity : IEntity<Guid>, IAccountEdiXmlUblSgable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_sg.py) ---
-            // def _get_tax_sg_codes(self, tax):
-            // """ https://www.peppolguide.sg/billing/bis/#_gst_category_codes
-            // """
-            // tax_category_code = 'SR'
-            // if tax.amount == 0:
-            //     tax_category_code = 'ZR'
-            // return tax_category_code
+            // def _ubl_get_line_allowance_charge_discount_node(self, vals, discount_values):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // discount_node = super()._ubl_get_line_allowance_charge_discount_node(vals, discount_values)
+            // discount_node['cbc:AllowanceChargeReason'] = None
+            // discount_node['cbc:MultiplierFactorNumeric'] = None
+            // discount_node['cbc:BaseAmount'] = None
+            // return discount_node
             */
             return default;
         }

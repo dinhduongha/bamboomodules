@@ -43,41 +43,41 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<RestaurantFloor> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<RestaurantFloor> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('pos_config_ids', '=', data['pos.config']['data'][0]['id'])]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('pos_config_ids', '=', config.id)]
             */
             return default;
         }
 
-        protected async Task<RestaurantFloor> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<RestaurantFloor> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['name', 'background_color', 'table_ids', 'sequence', 'pos_config_ids', 'floor_background_image']
             */
             return default;
         }
 
-        protected async Task<RestaurantFloor> LoadPosSelfDataDomainInternalAsync(object data)
+        protected async Task<RestaurantFloor> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_restaurant.py) ---
-            // def _load_pos_self_data_domain(self, data):
-            // return [('id', 'in', data['pos.config']['data'][0]['floor_ids'])]
+            // def _load_pos_self_data_domain(self, data, config):
+            // return [('id', 'in', config.floor_ids.ids)]
             */
             return default;
         }
 
-        protected async Task<RestaurantFloor> LoadPosSelfDataFieldsInternalAsync(Guid config_id)
+        protected async Task<RestaurantFloor> LoadPosSelfDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_restaurant.py) ---
-            // def _load_pos_self_data_fields(self, config_id):
+            // def _load_pos_self_data_fields(self, config):
             // return ['name', 'table_ids']
             */
             return default;

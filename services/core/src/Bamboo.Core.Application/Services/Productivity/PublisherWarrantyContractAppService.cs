@@ -57,7 +57,7 @@ namespace Bamboo.Core.Application.Services
             //     "nbr_active_users": nbr_active_users,
             //     "nbr_share_users": nbr_share_users,
             //     "nbr_active_share_users": nbr_active_share_users,
-            //     "dbname": self._cr.dbname,
+            //     "dbname": self.env.cr.dbname,
             //     "db_create_date": db_create_date,
             //     "version": release.version,
             //     "language": user.lang,
@@ -71,7 +71,7 @@ namespace Bamboo.Core.Application.Services
             // return msg
             --- ODOO METHOD SOURCE (MODULE: website_mail, FILE: update.py) ---
             // def _get_message(self):
-            // msg = super(PublisherWarrantyContract, self)._get_message()
+            // msg = super()._get_message()
             // msg['website'] = True
             // return msg
             */

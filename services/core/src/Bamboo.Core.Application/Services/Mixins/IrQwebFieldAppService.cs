@@ -27,9 +27,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def attributes(self, record, field_name, options, values):
-            // attrs = super(Field, self).attributes(record, field_name, options, values)
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def attributes(self, record, field_name, options, values=None):
+            // attrs = super().attributes(record, field_name, options, values)
             // field = record._fields[field_name]
             // 
             // placeholder = options.get('placeholder') or getattr(field, 'placeholder', None)
@@ -88,7 +88,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // return self.value_from_string(element.text_content().strip()) or False
             */
@@ -100,24 +100,58 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // """
-            //     Get the available option informations.
+            // """ Get the available option informations.
             // 
-            //     Returns a dict of dict with:
-            //     * key equal to the option key.
-            //     * dict: type, params, name, description, default_value
-            //     * type:
-            //         'string'
-            //         'integer'
-            //         'float'
-            //         'model' (e.g. 'res.partner')
-            //         'array'
-            //         'selection' (e.g. [key1, key2...])
+            // :rtype: dict[str, dict[str, Any]]
+            // :return: A dictionnary that maps option names' to their settings.
+            // 
+            //     The settings are dict themselves and have the following keys:
+            // 
+            //     type
+            // 
+            //         Guaranteed, one of ``'string'``, ``'integer'``, ``'float'``,
+            //         ``'model'``, ``'array'``, or ``'selection'``.
+            // 
+            //     string
+            // 
+            //         Guaranteed
+            // 
+            //     description
+            // 
+            //         Optional
+            // 
+            //     required
+            // 
+            //         Optional, is assumed ``False`` when absent, otherwise
+            //         is either ``True`` or a string.
+            // 
+            //     params
+            // 
+            //         Optional
+            // 
+            //     default_value
+            // 
+            //         Optional, the default value, as a json-friendly type.
+            // 
+            //     Example::
+            // 
+            //         {
+            //             <option>: {
+            //                 # guaranteed
+            //                 'type': ...,
+            //                 'string': ...,
+            //                 # optional
+            //                 'default_value': ...,
+            //                 'description': ...,
+            //                 'params': ...,
+            //                 'required': ...,
+            //             }
+            //         }
             // """
             // return {}
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(IntegerConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     format_decimalized_number=dict(type='boolean', string=_('Decimalized number')),
             //     precision_digits=dict(type='integer', string=_('Precision Digits')),
@@ -125,21 +159,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(FloatConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     precision=dict(type='integer', string=_('Rounding precision')),
             // )
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(DateConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     format=dict(type='string', string=_('Date format'))
             // )
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(DateTimeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     format=dict(type='string', string=_('Pattern to format')),
             //     tz_name=dict(type='char', string=_('Optional timezone name')),
@@ -150,7 +184,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(SelectionConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     selection=dict(type='selection', string=_('Selection'), description=_('By default the widget uses the field information'), required=True)
             // )
@@ -160,7 +194,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(MonetaryConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     from_currency=dict(type='model', params='res.currency', string=_('Original currency')),
             //     display_currency=dict(type='model', params='res.currency', string=_('Display currency'), required="value_to_html"),
@@ -170,7 +204,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(DurationConverter, self).get_available_options()
+            // options = super().get_available_options()
             // unit = [(value, str(label)) for value, label, ratio in TIMEDELTA_UNITS]
             // options.update(
             //     digital=dict(type="boolean", string=_('Digital formatting')),
@@ -195,14 +229,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(RelativeDatetimeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     now=dict(type='datetime', string=_('Reference date'), description=_('Date to compare with the field value, by default use the current date.'))
             // )
             // return options
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(BarcodeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     symbology=dict(type='string', string=_('Barcode symbology'), description=_('Barcode type, eg: UPCA, EAN13, Code128'), default_value='Code128'),
             //     width=dict(type='integer', string=_('Width'), default_value=600),
@@ -226,18 +260,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // except binascii.Error:
             //     raise ValueError("Invalid image content") from None
             // 
-            // if img_b64 and guess_mimetype(img_b64, '') == 'image/webp':
+            // mimetype = guess_mimetype(img_b64, '') if img_b64 else None
+            // if mimetype == 'image/webp':
             //     return self.env["ir.qweb"]._get_converted_image_data_uri(value)
+            // elif mimetype != "image/svg+xml":
+            //     try:
+            //         image = Image.open(BytesIO(img_b64))
+            //         image.verify()
+            //         mimetype = Image.MIME[image.format]
+            //     except OSError as exc:
+            //         raise ValueError("Non-image binary fields can not be converted to HTML") from exc
+            //     except Exception as exc:  # noqa: BLE001
+            //         raise ValueError("Invalid image content") from exc
             // 
-            // try:
-            //     image = Image.open(BytesIO(img_b64))
-            //     image.verify()
-            // except IOError:
-            //     raise ValueError("Non-image binary fields can not be converted to HTML") from None
-            // except: # image.verify() throws "suitable exceptions", I have no idea what they are
-            //     raise ValueError("Invalid image content") from None
-            // 
-            // return "data:%s;base64,%s" % (Image.MIME[image.format], value.decode('ascii'))
+            // return "data:%s;base64,%s" % (mimetype, value.decode('ascii'))
             */
             return default;
         }
@@ -262,12 +298,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if 'precision' not in options and 'decimal_precision' not in options:
             //     _, precision = record._fields[field_name].get_digits(record.env) or (None, None)
             //     options = dict(options, precision=precision)
-            // return super(FloatConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def record_to_html(self, record, field_name, options):
             // if 'selection' not in options:
             //     options = dict(options, selection=dict(record._fields[field_name].get_description(self.env)['selection']))
-            // return super(SelectionConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def record_to_html(self, record, field_name, options):
             // options = dict(options)
@@ -283,16 +319,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if currency_fields:
             //         options['display_currency'] = record[currency_fields[0]]
             // if 'date' not in options:
-            //     options['date'] = record._context.get('date')
+            //     options['date'] = record.env.context.get('date')
             // if 'company_id' not in options:
-            //     options['company_id'] = record._context.get('company_id')
+            //     options['company_id'] = record.env.context.get('company_id')
             // 
-            // return super(MonetaryConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def record_to_html(self, record, field_name, options):
             // if 'now' not in options:
             //     options = dict(options, now=record._fields[field_name].now())
-            // return super(RelativeDatetimeConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             */
             return default;
         }
@@ -317,7 +353,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ValueFromStringAsync<TEntity>(IEnumerable<TEntity> entities, object @value) where TEntity : IEntity<Guid>, IIrQwebFieldable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def value_from_string(self, value):
             // return value
             */
@@ -435,6 +471,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return nl2br(text)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def value_to_html(self, value, options):
+            // if not value:
+            //     return False
+            // text = ', '.join(value.sudo().mapped('display_name'))
+            // return nl2br(text)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
+            // def value_to_html(self, value, options):
             // irQweb = self.env['ir.qweb']
             // # wrap value inside a body and parse it as HTML
             // body = etree.fromstring("<body>%s</body>" % value, etree.HTMLParser(encoding='utf-8'))[0]
@@ -471,6 +513,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         company = self.env.company
             //     value = options['from_currency']._convert(value, display_currency, company, date)
+            // 
+            // if float_is_zero(value, precision_digits=display_currency.decimal_places):
+            //     value = 0.0
             // 
             // lang = self.user_lang()
             // formatted_amount = lang.format(fmt, display_currency.round(value), grouping=True)\
@@ -525,7 +570,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     sign = '-'
             // 
             // if options.get('digital'):
-            //     for unit, label, secs_per_unit in TIMEDELTA_UNITS:
+            //     for _unit, _label, secs_per_unit in TIMEDELTA_UNITS:
             //         if secs_per_unit > 3600:
             //             continue
             //         v, r = divmod(r, secs_per_unit)
@@ -534,7 +579,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         sections.append(u"%02.0f" % int(round(v)))
             //     return sign + u':'.join(sections)
             // 
-            // for unit, label, secs_per_unit in TIMEDELTA_UNITS:
+            // for _unit, _label, secs_per_unit in TIMEDELTA_UNITS:
             //     v, r = divmod(r, secs_per_unit)
             //     if not v:
             //         continue

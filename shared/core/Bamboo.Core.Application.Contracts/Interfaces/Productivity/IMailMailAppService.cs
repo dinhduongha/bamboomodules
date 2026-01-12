@@ -16,6 +16,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MailMail> ProcessEmailQueueAsync(Guid id, MailMailProcessEmailQueueRequestDto input);
         Task<MailMail> RetryAsync(Guid id);
         Task<MailMail> SendAfterCommitAsync(Guid id);
+        Task<MailMail> SendAndCloseAsync(Guid id);
         Task<MailMail> SendAsync(Guid id, MailMailSendRequestDto input);
     }
 }

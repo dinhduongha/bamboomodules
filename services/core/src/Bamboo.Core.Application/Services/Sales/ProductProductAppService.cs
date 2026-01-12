@@ -30,18 +30,6 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        protected async Task<ProductProduct> AddMissingProductsInternalAsync(object products, Guid config_id, object data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _add_missing_products(self, products, config_id, data):
-            // product_ids_in_loaded_lines = {line['product_id'] for line in data['pos.order.line']['data']}
-            // not_loaded_product_ids = product_ids_in_loaded_lines - {product['id'] for product in products}
-            // products.extend(self._load_product_with_domain([('id', 'in', list(not_loaded_product_ids))], config_id, True))
-            */
-            return default;
-        }
-
         public async Task<ProductProduct> ArchiveAsync(Guid id)
         {
             /*
@@ -62,6 +50,18 @@ namespace Bamboo.Core.Application.Services
             //         },
             //     }
             // return res
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
+            // def action_archive(self):
+            // self.product_tmpl_id._ensure_unused_in_pos()
+            // return super().action_archive()
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def action_archive(self):
+            // records = self.filtered('active')
+            // super().action_archive()
+            // # We deactivate product templates which are active with no active variants.
+            // records.product_tmpl_id.filtered(
+            //     lambda product_tmpl: product_tmpl.active and not product_tmpl.product_variant_ids
+            // ).action_archive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -89,53 +89,78 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ProductProduct> ChangeStandardPriceInternalAsync(object new_price)
+        protected async Task<ProductProduct> CanReturnContentInternalAsync(object field_name, object access_token)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // if field_name == "image_128" and self.sudo().available_in_pos:
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // if field_name == "image_512" and self.sudo().self_order_available:
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: product.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // """ Override of `orm` to give public users access to the unpublished product image.
+            // 
+            // Give access to the public users to the unpublished product images if they are linked to an
+            // event ticket.
+            // 
+            // :param field_name: The name of the field to check.
+            // :param access_token: The access token.
+            // :return: Whether to allow the access to the image.
+            // :rtype: bool
+            // """
+            // if (
+            //     field_name in ["image_%s" % size for size in [1920, 1024, 512, 256, 128]]
+            //     and self.sudo().event_ticket_ids
+            // ):
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: product_product.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // """ Override of `orm` to give public users access to the unpublished product image.
+            // 
+            // Give access to the public users to the unpublished product images if they are linked to a
+            // reward.
+            // 
+            // :param field_name: The name of the field to check.
+            // :param access_token: The access token.
+            // :return: Whether to allow the access to the image.
+            // :rtype: bool
+            // """
+            // if (
+            //     field_name in ["image_%s" % size for size in [1920, 1024, 512, 256, 128]]
+            //     and self.env['loyalty.reward'].sudo().search_count([
+            //         ('discount_line_product_id', '=', self.id),
+            //     ], limit=1)
+            // ):
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> ChangeStandardPriceInternalAsync(object old_price)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _change_standard_price(self, new_price):
-            // """Helper to create the stock valuation layers and the account moves
-            // after an update of standard price.
-            // 
-            // :param new_price: new standard price
-            // """
-            // # Handle stock valuation layers.
-            // 
-            // if self.filtered(lambda p: p.valuation == 'real_time') and not self.env['stock.valuation.layer'].has_access('read'):
-            //     raise UserError(_("You cannot update the cost of a product in automated valuation as it leads to the creation of a journal entry, for which you don't have the access rights."))
-            // 
-            // svl_vals_list = []
-            // company_id = self.env.company
-            // price_unit_prec = self.env['decimal.precision'].precision_get('Product Price')
-            // rounded_new_price = float_round(new_price, precision_digits=price_unit_prec)
+            // def _change_standard_price(self, old_price):
             // for product in self:
-            //     if product.cost_method not in ('standard', 'average'):
+            //     if product.cost_method == 'fifo' or product.standard_price == old_price.get(product):
             //         continue
-            //     if product.lot_valuated:
-            //         self.env['stock.lot'].search([('product_id', '=', product.id)]).standard_price = new_price
-            //         continue
-            //     quantity_svl = product.sudo().quantity_svl
-            //     if float_compare(quantity_svl, 0.0, precision_rounding=product.uom_id.rounding) <= 0:
-            //         continue
-            //     value_svl = product.sudo().value_svl
-            //     value = company_id.currency_id.round((rounded_new_price * quantity_svl) - value_svl)
-            //     if company_id.currency_id.is_zero(value):
-            //         continue
-            // 
-            //     svl_vals = {
-            //         'company_id': company_id.id,
+            //     self.env['product.value'].sudo().create({
             //         'product_id': product.id,
-            //         'description': _(
-            //             'Product value manually modified (from %(original_price)s to %(new_price)s)',
-            //             original_price=product.standard_price,
-            //             new_price=rounded_new_price,
-            //         ),
-            //         'value': value,
-            //         'quantity': 0,
-            //     }
-            //     svl_vals_list.append(svl_vals)
-            // stock_valuation_layers = self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
-            // stock_valuation_layers._change_standart_price_accounting_entries(new_price)
+            //         'value': product.standard_price,
+            //         'company_id': product.company_id.id or self.env.company.id,
+            //         'date': fields.Datetime.now(),
+            //         'description': _('Price update from %(old_price)s to %(new_price)s by %(user)s',
+            //             old_price=old_price.get(product), new_price=product.standard_price, user=self.env.user.name)
+            //     })
+            // return
             */
             return default;
         }
@@ -148,9 +173,10 @@ namespace Bamboo.Core.Application.Services
             // """ With GS1 nomenclature, products and packagings use the same pattern. Therefore, we need
             // to ensure the uniqueness between products' barcodes and packagings' ones"""
             // # Barcodes should only be unique within a company
-            // for company_id, barcodes_within_company in self._get_barcodes_by_company():
-            //     self._check_duplicated_product_barcodes(barcodes_within_company, company_id)
-            //     self._check_duplicated_packaging_barcodes(barcodes_within_company, company_id)
+            // self_ctx = self.with_context(skip_preprocess_gs1=True)
+            // for company_id, barcodes_within_company in self_ctx._get_barcodes_by_company():
+            //     self_ctx._check_duplicated_product_barcodes(barcodes_within_company, company_id)
+            //     self_ctx._check_duplicated_packaging_barcodes(barcodes_within_company, company_id)
             */
             return default;
         }
@@ -186,7 +212,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _check_duplicated_packaging_barcodes(self, barcodes_within_company, company_id):
             // packaging_domain = self._get_barcode_search_domain(barcodes_within_company, company_id)
-            // if self.env['product.packaging'].sudo().search_count(packaging_domain, limit=1):
+            // if self.env['product.uom'].sudo().search_count(packaging_domain, limit=1):
             //     raise ValidationError(_("A packaging already uses the barcode"))
             */
             return default;
@@ -198,20 +224,58 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _check_duplicated_product_barcodes(self, barcodes_within_company, company_id):
             // domain = self._get_barcode_search_domain(barcodes_within_company, company_id)
-            // products_by_barcode = self.sudo().read_group(domain, ['barcode', 'id:array_agg'], ['barcode'])
+            // products_by_barcode = self.sudo()._read_group(
+            //     domain, ['barcode'], ['id:recordset'], having=[('__count', '>', 1)],
+            // )
             // 
             // duplicates_as_str = "\n".join(
-            //     _(
+            //     self.env._(
             //         "- Barcode \"%(barcode)s\" already assigned to product(s): %(product_list)s",
-            //         barcode=record['barcode'], product_list=format_list(self.env, [p.display_name for p in self.search([('id', 'in', record['id'])])]),
+            //         barcode=barcode, product_list=duplicate_products._filtered_access('read').mapped('display_name'),
             //     )
-            //     for record in products_by_barcode if len(record['id']) > 1
+            //     for barcode, duplicate_products in products_by_barcode
             // )
-            // if duplicates_as_str.strip():
+            // if duplicates_as_str:
             //     duplicates_as_str += _(
             //         "\n\nNote: products that you don't have access to will not be shown above."
             //     )
             //     raise ValidationError(_("Barcode(s) already assigned:\n\n%s", duplicates_as_str))
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> CheckEventTicketServiceTrackingInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_product, FILE: product_product.py) ---
+            // def _check_event_ticket_service_tracking(self):
+            // if any(product.service_tracking != 'event' for product in self if product.event_ticket_ids):
+            //     service_tracking = self.fields_get(['service_tracking'], ['string', 'selection'])['service_tracking']
+            //     raise ValidationError(_(
+            //         'Products linked to an event ticket must have "%(tracking)s" set to "%(event)s".',
+            //         tracking=service_tracking['string'],
+            //         event=dict(service_tracking['selection'])['event'],
+            //     ))
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> CheckServiceTrackingForEventBoothsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: product_product.py) ---
+            // def _check_service_tracking_for_event_booths(self):
+            // if product_not_event_booth := self.filtered(lambda p: p.service_tracking != 'event_booth'):
+            //     booth_category = self.env['event.booth.category'].search([('product_id', 'in', product_not_event_booth.ids)], limit=1)
+            //     if booth_category:
+            //         raise ValidationError(
+            //             _(
+            //                 "You cannot change the service_tracking of the product %(product_name)s because it is already assigned "
+            //                 "to %(booth_category_name)s. The service_tracking must remain 'event_booth'.",
+            //                 product_name=product_not_event_booth.name,
+            //                 booth_category_name=booth_category.name,
+            //             )
+            //         )
             */
             return default;
         }
@@ -225,85 +289,6 @@ namespace Bamboo.Core.Application.Services
             //     product.all_product_tag_ids = (
             //         product.product_tag_ids | product.additional_product_tag_ids
             //     ).sorted('sequence')
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> ComputeAveragePriceInternalAsync(object qty_invoiced, object qty_to_invoice, object stock_moves, object is_returned)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: product.py) ---
-            // def _compute_average_price(self, qty_invoiced, qty_to_invoice, stock_moves, is_returned=False):
-            // self.ensure_one()
-            // if stock_moves.product_id == self:
-            //     return super()._compute_average_price(qty_invoiced, qty_to_invoice, stock_moves, is_returned=is_returned)
-            // bom = self.env['mrp.bom']._bom_find(self, company_id=stock_moves.company_id.id, bom_type='phantom')[self]
-            // if not bom:
-            //     return super()._compute_average_price(qty_invoiced, qty_to_invoice, stock_moves, is_returned=is_returned)
-            // value = 0
-            // dummy, bom_lines = bom.explode(self, 1)
-            // bom_lines = {line: data for line, data in bom_lines}
-            // for bom_line, moves_list in groupby(stock_moves.filtered(lambda sm: sm.state != 'cancel'), lambda sm: sm.bom_line_id):
-            //     if bom_line not in bom_lines:
-            //         for move in moves_list:
-            //             component_quantity = next(
-            //                 (bml.product_qty for bml in move.product_id.bom_line_ids if bml in bom_lines),
-            //                 1
-            //             )
-            //             value += component_quantity * move.product_id._compute_average_price(qty_invoiced * move.product_qty, qty_to_invoice * move.product_qty, move, is_returned=is_returned)
-            //         continue
-            //     line_qty = bom_line.product_uom_id._compute_quantity(bom_lines[bom_line]['qty'], bom_line.product_id.uom_id)
-            //     moves = self.env['stock.move'].concat(*moves_list)
-            //     value += line_qty * bom_line.product_id._compute_average_price(qty_invoiced * line_qty, qty_to_invoice * line_qty, moves, is_returned=is_returned)
-            // return value
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _compute_average_price(self, qty_invoiced, qty_to_invoice, stock_moves, is_returned=False):
-            // """Go over the valuation layers of `stock_moves` to value `qty_to_invoice` while taking
-            // care of ignoring `qty_invoiced`. If `qty_to_invoice` is greater than what's possible to
-            // value with the valuation layers, use the product's standard price.
-            // 
-            // :param qty_invoiced: quantity already invoiced
-            // :param qty_to_invoice: quantity to invoice
-            // :param stock_moves: recordset of `stock.move`
-            // :param is_returned: if True, consider the incoming moves
-            // :returns: the anglo saxon price unit
-            // :rtype: float
-            // """
-            // self.ensure_one()
-            // if not qty_to_invoice:
-            //     return 0
-            // 
-            // candidates = self.env['stock.valuation.layer'].sudo()
-            // for move in stock_moves.sudo():
-            //     move_candidates = move._get_layer_candidates()
-            //     if is_returned != bool(move.origin_returned_move_id and sum(move_candidates.mapped('quantity')) >= 0):
-            //         continue
-            //     candidates |= move_candidates
-            // 
-            // if self.env.context.get('candidates_prefetch_ids'):
-            //     candidates = candidates.with_prefetch(self.env.context.get('candidates_prefetch_ids'))
-            // 
-            // if len(candidates) > 1:
-            //     # sort candidates by create_date > existing records by id > new records without origin
-            //     candidates = candidates.sorted(lambda svl: (svl.create_date, not bool(svl.ids), svl.ids[0] if svl.ids else 0))
-            // 
-            // value_invoiced = self.env.context.get('value_invoiced', 0)
-            // if 'value_invoiced' in self.env.context:
-            //     qty_valued, valuation = candidates._consume_all(qty_invoiced, value_invoiced, qty_to_invoice)
-            // else:
-            //     qty_valued, valuation = candidates._consume_specific_qty(qty_invoiced, qty_to_invoice)
-            // 
-            // # If there's still quantity to invoice but we're out of candidates, we chose the standard
-            // # price to estimate the anglo saxon price unit.
-            // missing = qty_to_invoice - qty_valued
-            // for sml in stock_moves.move_line_ids:
-            //     if not sml._should_exclude_for_valuation():
-            //         continue
-            //     missing -= sml.product_uom_id._compute_quantity(sml.quantity, self.uom_id, rounding_method='HALF-UP')
-            // if float_compare(missing, 0, precision_rounding=self.uom_id.rounding) > 0:
-            //     valuation += self.standard_price * missing
-            // 
-            // return valuation / qty_to_invoice
             */
             return default;
         }
@@ -339,7 +324,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _compute_bom_count(self):
             // for product in self:
-            //     product.bom_count = self.env['mrp.bom'].search_count(['|', '|', ('byproduct_ids.product_id', '=', product.id), ('product_id', '=', product.id), '&', ('product_id', '=', False), ('product_tmpl_id', '=', product.product_tmpl_id.id)])
+            //     product.bom_count = self.env['mrp.bom'].search_count([
+            //         '|', '|', ('byproduct_ids.product_id', 'in', product.ids), ('product_id', 'in', product.ids),
+            //         '&', ('product_id', '=', False), ('product_tmpl_id', 'in', product.product_tmpl_id.ids),
+            //     ])
             */
             return default;
         }
@@ -359,10 +347,7 @@ namespace Bamboo.Core.Application.Services
             //     if opt._skip_operation_line(self):
             //         continue
             // 
-            //     duration_expected = (
-            //         opt.workcenter_id._get_expected_duration(self) +
-            //         opt.time_cycle * 100 / opt.workcenter_id.time_efficiency)
-            //     total += (duration_expected / 60) * opt._total_cost_per_hour()
+            //     total += opt.cost
             // 
             // for line in bom.bom_line_ids:
             //     if line._skip_bom_line(self):
@@ -387,6 +372,7 @@ namespace Bamboo.Core.Application.Services
             //     if byproduct_cost_share:
             //         total *= float_round(1 - byproduct_cost_share / 100, precision_rounding=0.0001)
             //     return bom.product_uom_id._compute_price(total / bom.product_qty, self.uom_id)
+            // return 0.0
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_account, FILE: product_product.py) ---
             // def _compute_bom_price(self, bom, boms_to_recompute=False, byproduct_bom=False):
             // """ Add the price of the subcontracting supplier if it exists with the bom configuration.
@@ -396,7 +382,7 @@ namespace Bamboo.Core.Application.Services
             //     seller = self._select_seller(quantity=bom.product_qty, uom_id=bom.product_uom_id, params={'subcontractor_ids': bom.subcontractor_ids})
             //     if seller:
             //         seller_price = seller.currency_id._convert(seller.price, self.env.company.currency_id, (bom.company_id or self.env.company), fields.Date.today())
-            //         price += seller.product_uom._compute_price(seller_price, self.uom_id)
+            //         price += seller.product_uom_id._compute_price(seller_price, self.uom_id)
             // return price
             */
             return default;
@@ -443,11 +429,13 @@ namespace Bamboo.Core.Application.Services
             // def _compute_display_name(self):
             // 
             // def get_display_name(name, code):
-            //     if self._context.get('display_default_code', True) and code:
+            //     if self.env.context.get('display_default_code', True) and code:
+            //         if self.env.context.get('formatted_display_name'):
+            //             return f'{name}\t--{code}--'
             //         return f'[{code}] {name}'
             //     return name
             // 
-            // partner_id = self._context.get('partner_id')
+            // partner_id = self.env.context.get('partner_id')
             // if partner_id:
             //     partner_ids = [partner_id, self.env['res.partner'].browse(partner_id).commercial_partner_id.id]
             // else:
@@ -619,12 +607,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductProduct> ComputeMonthlyDemandInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_monthly_demand(self):
+            // based_on = self.env.context.get("suggest_based_on", "30_days")
+            // start_date, limit_date = self._get_monthly_demand_range(based_on)
+            // 
+            // move_domain = Domain([
+            //     ('product_id', 'in', self.ids),
+            //     ('state', 'in', ['assigned', 'confirmed', 'partially_available', 'done']),
+            //     ('date', '>=', start_date),
+            //     ('date', '<', limit_date),
+            // ])
+            // move_domain = Domain.AND([
+            //     move_domain,
+            //     self._get_monthly_demand_moves_location_domain(),
+            // ])
+            // 
+            // move_qty_by_products = self.env['stock.move']._read_group(move_domain, ['product_id'], ['product_qty:sum'])
+            // qty_by_product = {product.id: qty for product, qty in move_qty_by_products}
+            // 
+            // factor = 1
+            // if based_on == "one_year":
+            //     factor = 12
+            // elif based_on == "three_months" or based_on == "last_year_quarter":
+            //     factor = 3
+            // elif based_on == "one_week":
+            //     factor = 7 / (365.25 / 12)  # 7 days / (365.25 days/yr / 12 mth/yr) = 0.23 months
+            // for product in self:
+            //     product.monthly_demand = qty_by_product.get(product.id, 0) / factor
+            */
+            return default;
+        }
+
         protected async Task<ProductProduct> ComputeMrpProductQtyInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _compute_mrp_product_qty(self):
-            // date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
+            // date_from = fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=365))
             // #TODO: state = done?
             // domain = [('state', '=', 'done'), ('product_id', 'in', self.ids), ('date_start', '>', date_from)]
             // read_group_res = self.env['mrp.production']._read_group(domain, ['product_id'], ['product_uom_qty:sum'])
@@ -633,7 +656,7 @@ namespace Bamboo.Core.Application.Services
             //     if not product.id:
             //         product.mrp_product_qty = 0.0
             //         continue
-            //     product.mrp_product_qty = float_round(mapped_data.get(product.id, 0), precision_rounding=product.uom_id.rounding)
+            //     product.mrp_product_qty = product.uom_id.round(mapped_data.get(product.id, 0))
             */
             return default;
         }
@@ -690,12 +713,28 @@ namespace Bamboo.Core.Application.Services
             // def _compute_partner_ref(self):
             // for product in self:
             //     for supplier_info in product.seller_ids:
-            //         if supplier_info.partner_id.id == product._context.get('partner_id'):
+            //         if supplier_info.partner_id.id == product.env.context.get('partner_id'):
             //             product_name = supplier_info.product_name or product.default_code or product.name
             //             product.partner_ref = '%s%s' % (product.code and '[%s] ' % product.code or '', product_name)
             //             break
             //     else:
             //         product.partner_ref = product.display_name
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> ComputePricelistRuleIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def _compute_pricelist_rule_ids(self):
+            // for product in self:
+            //     if not product.id:
+            //         product.pricelist_rule_ids = False
+            //         continue
+            //     product.pricelist_rule_ids = product.product_tmpl_id.pricelist_rule_ids.filtered(
+            //         lambda rule: rule.product_id <= product,
+            //     )
             */
             return default;
         }
@@ -710,7 +749,7 @@ namespace Bamboo.Core.Application.Services
             //     product.code = product.default_code
             //     if read_access:
             //         for supplier_info in product.seller_ids:
-            //             if supplier_info.partner_id.id == product._context.get('partner_id'):
+            //             if supplier_info.partner_id.id == product.env.context.get('partner_id'):
             //                 if supplier_info.product_id and supplier_info.product_id != product:
             //                     # Supplier info specific for another variant.
             //                     continue
@@ -730,7 +769,7 @@ namespace Bamboo.Core.Application.Services
             // for product in self:
             //     product.product_document_count = product.env['product.document'].search_count([
             //         ('res_model', '=', 'product.product'),
-            //         ('res_id', '=', product.id),
+            //         ('res_id', 'in', product.ids),
             //     ])
             */
             return default;
@@ -787,8 +826,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _compute_product_lst_price(self):
             // to_uom = None
-            // if 'uom' in self._context:
-            //     to_uom = self.env['uom.uom'].browse(self._context['uom'])
+            // if 'uom' in self.env.context:
+            //     to_uom = self.env['uom.uom'].browse(self.env.context['uom'])
             // 
             // for product in self:
             //     if to_uom:
@@ -805,6 +844,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product_margin, FILE: product_product.py) ---
             // def _compute_product_margin_fields_values(self):
+            // if not self.ids:
+            //     for field_name, field in self._fields.items():
+            //         if field.compute == '_compute_product_margin_fields_values':
+            //             self[field_name] = False
+            //     return
+            // 
             // date_from = self.env.context.get('date_from', time.strftime('%Y-01-01'))
             // date_to = self.env.context.get('date_to', time.strftime('%Y-12-31'))
             // invoice_state = self.env.context.get('invoice_state', 'open_paid')
@@ -879,7 +924,7 @@ namespace Bamboo.Core.Application.Services
             // ctx['force_company'] = company_id
             // invoice_types = ('in_invoice', 'in_refund')
             // self.env.cr.execute(sqlstr, (tuple(self.ids), states, payment_states, invoice_types, date_from, date_to, company_id))
-            // for product_id, avg, qty, total, dummy in self.env.cr.fetchall():
+            // for product_id, avg, qty, total, _dummy in self.env.cr.fetchall():
             //     res[product_id]['purchase_avg_price'] = avg and avg or 0.0
             //     res[product_id]['purchase_num_invoiced'] = qty and qty or 0.0
             //     res[product_id]['total_cost'] = total and total or 0.0
@@ -907,33 +952,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> ComputeProductPriceWithPricelistInternalAsync(object products, Guid config_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _compute_product_price_with_pricelist(self, products, config_id):
-            // config = self.env['pos.config'].browse(config_id)
-            // pricelist = config.pricelist_id
-            // 
-            // product_ids = [product['id'] for product in products]
-            // product_objs = self.env['product.product'].browse(product_ids)
-            // 
-            // product_map = {product.id: product for product in product_objs}
-            // loaded_product_tmpl_ids = list({p['product_tmpl_id'] for p in products})
-            // archived_combinations = self._get_archived_combinations_per_product_tmpl_id(loaded_product_tmpl_ids)
-            // 
-            // for product in products:
-            //     product_obj = product_map.get(product['id'])
-            //     if product_obj:
-            //         product['lst_price'] = pricelist._get_product_price(
-            //             product_obj, 1.0, currency=config.currency_id
-            //         )
-            //     if archived_combinations.get(product['product_tmpl_id']):
-            //         product['_archived_combinations'] = archived_combinations[product['product_tmpl_id']]
-            */
-            return default;
-        }
-
         protected async Task<ProductProduct> ComputeProductWebsiteUrlInternalAsync()
         {
             /*
@@ -943,7 +961,7 @@ namespace Bamboo.Core.Application.Services
             //     url = product.product_tmpl_id.website_url
             //     if pavs := product.product_template_attribute_value_ids.product_attribute_value_id:
             //         pav_ids = [str(pav.id) for pav in pavs]
-            //         url = f'{url}#attribute_values={",".join(pav_ids)}'
+            //         url = f'{url}?attribute_values={",".join(pav_ids)}'
             //     product.website_url = url
             */
             return default;
@@ -956,7 +974,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_purchased_product_qty(self):
             // date_from = fields.Datetime.to_string(fields.Date.context_today(self) - relativedelta(years=1))
             // domain = [
-            //     ('order_id.state', 'in', ['purchase', 'done']),
+            //     ('order_id.state', '=', 'purchase'),
             //     ('product_id', 'in', self.ids),
             //     ('order_id.date_approve', '>=', date_from)
             // ]
@@ -966,7 +984,7 @@ namespace Bamboo.Core.Application.Services
             //     if not product.id:
             //         product.purchased_product_qty = 0.0
             //         continue
-            //     product.purchased_product_qty = float_round(purchased_data.get(product.id, 0), precision_rounding=product.uom_id.rounding)
+            //     product.purchased_product_qty = product.uom_id.round(purchased_data.get(product.id, 0))
             */
             return default;
         }
@@ -1022,7 +1040,7 @@ namespace Bamboo.Core.Application.Services
             //         component = component.with_context(mrp_compute_quantities=qties).with_prefetch(prefetch_component_ids)
             //         qty_per_kit = 0
             //         for bom_line, bom_line_data in bom_sub_lines:
-            //             if not component.is_storable or float_is_zero(bom_line_data['qty'], precision_rounding=bom_line.product_uom_id.rounding):
+            //             if not component.is_storable or bom_line.product_uom_id.is_zero(bom_line_data['qty']):
             //                 # As BoMs allow components with 0 qty, a.k.a. optionnal components, we simply skip those
             //                 # to avoid a division by zero. The same logic is applied to non-storable products as those
             //                 # products have 0 qty available.
@@ -1031,30 +1049,29 @@ namespace Bamboo.Core.Application.Services
             //             qty_per_kit += bom_line.product_uom_id._compute_quantity(uom_qty_per_kit, bom_line.product_id.uom_id, round=False, raise_if_failure=False)
             //         if not qty_per_kit:
             //             continue
-            //         rounding = component.uom_id.rounding
             //         component_res = (
             //             qties.get(component.id)
             //             if component.id in qties
             //             else {
-            //                 "virtual_available": float_round(component.virtual_available, precision_rounding=rounding),
-            //                 "qty_available": float_round(component.qty_available, precision_rounding=rounding),
-            //                 "incoming_qty": float_round(component.incoming_qty, precision_rounding=rounding),
-            //                 "outgoing_qty": float_round(component.outgoing_qty, precision_rounding=rounding),
-            //                 "free_qty": float_round(component.free_qty, precision_rounding=rounding),
+            //                 "virtual_available": component.uom_id.round(component.virtual_available),
+            //                 "qty_available": component.uom_id.round(component.qty_available),
+            //                 "incoming_qty": component.uom_id.round(component.incoming_qty),
+            //                 "outgoing_qty": component.uom_id.round(component.outgoing_qty),
+            //                 "free_qty": component.uom_id.round(component.free_qty),
             //             }
             //         )
-            //         ratios_virtual_available.append(float_round(component_res["virtual_available"] / qty_per_kit, precision_rounding=rounding, rounding_method='DOWN'))
-            //         ratios_qty_available.append(float_round(component_res["qty_available"] / qty_per_kit, precision_rounding=rounding, rounding_method='DOWN'))
-            //         ratios_incoming_qty.append(float_round(component_res["incoming_qty"] / qty_per_kit, precision_rounding=rounding, rounding_method='DOWN'))
-            //         ratios_outgoing_qty.append(float_round(component_res["outgoing_qty"] / qty_per_kit, precision_rounding=rounding, rounding_method='DOWN'))
-            //         ratios_free_qty.append(float_round(component_res["free_qty"] / qty_per_kit, precision_rounding=rounding, rounding_method='DOWN'))
+            //         ratios_virtual_available.append(component.uom_id.round(component_res["virtual_available"] / qty_per_kit, rounding_method='DOWN'))
+            //         ratios_qty_available.append(component.uom_id.round(component_res["qty_available"] / qty_per_kit, rounding_method='DOWN'))
+            //         ratios_incoming_qty.append(component.uom_id.round(component_res["incoming_qty"] / qty_per_kit, rounding_method='DOWN'))
+            //         ratios_outgoing_qty.append(component.uom_id.round(component_res["outgoing_qty"] / qty_per_kit, rounding_method='DOWN'))
+            //         ratios_free_qty.append(component.uom_id.round(component_res["free_qty"] / qty_per_kit, rounding_method='DOWN'))
             //     if bom_sub_lines and ratios_virtual_available:  # Guard against all cnsumable bom: at least one ratio should be present.
             //         res[product.id] = {
-            //             'virtual_available': float_round(min(ratios_virtual_available) * bom_kits[product].product_qty, precision_rounding=rounding) // 1,
-            //             'qty_available': float_round(min(ratios_qty_available) * bom_kits[product].product_qty, precision_rounding=rounding) // 1,
-            //             'incoming_qty': float_round(min(ratios_incoming_qty) * bom_kits[product].product_qty, precision_rounding=rounding) // 1,
-            //             'outgoing_qty': float_round(min(ratios_outgoing_qty) * bom_kits[product].product_qty, precision_rounding=rounding) // 1,
-            //             'free_qty': float_round(min(ratios_free_qty) * bom_kits[product].product_qty, precision_rounding=rounding) // 1,
+            //             'virtual_available': component.uom_id.round(min(ratios_virtual_available) * bom_kits[product].product_qty) // 1,
+            //             'qty_available': component.uom_id.round(min(ratios_qty_available) * bom_kits[product].product_qty) // 1,
+            //             'incoming_qty': component.uom_id.round(min(ratios_incoming_qty) * bom_kits[product].product_qty) // 1,
+            //             'outgoing_qty': component.uom_id.round(min(ratios_outgoing_qty) * bom_kits[product].product_qty) // 1,
+            //             'free_qty': component.uom_id.round(min(ratios_free_qty) * bom_kits[product].product_qty) // 1,
             //         }
             //     else:
             //         res[product.id] = {
@@ -1066,6 +1083,21 @@ namespace Bamboo.Core.Application.Services
             //         }
             // 
             // return res
+            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: product_product.py) ---
+            // def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
+            // return super(ProductProduct, self.with_context(with_expiration=datetime.date.today()))._compute_quantities_dict(lot_id, owner_id, package_id, from_date, to_date)
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
+            // if self.env.context.get("suggest_based_on") and "suggest_days" in self.env.context:
+            //     # Override to compute actual demand suggestion and update forecast on Kanban card
+            //     to_date = fields.Datetime.now() + relativedelta(days=self.env.context.get("suggest_days"))
+            // return super()._compute_quantities_dict(
+            //     lot_id=lot_id,
+            //     owner_id=owner_id,
+            //     package_id=package_id,
+            //     from_date=from_date,  # Keeping default which fetches all past deliveries
+            //     to_date=to_date,
+            // )
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
             // domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
@@ -1084,6 +1116,12 @@ namespace Bamboo.Core.Application.Services
             //     domain_quant += [('owner_id', '=', owner_id)]
             //     domain_move_in += [('restrict_partner_id', '=', owner_id)]
             //     domain_move_out += [('restrict_partner_id', '=', owner_id)]
+            // if 'owners' in self.env.context:
+            //     owners = self.env.context['owners']
+            //     if owners:
+            //         domain_quant += [('owner_id', 'in', self.env.context['owners'])]
+            //     else:
+            //         domain_quant += [('owner_id', '=', False)]
             // if package_id is not None:
             //     domain_quant += [('package_id', '=', package_id)]
             // if dates_in_the_past:
@@ -1097,7 +1135,6 @@ namespace Bamboo.Core.Application.Services
             //     date_date_expected_domain_to = [('date', '<=', to_date)]
             //     domain_move_in += date_date_expected_domain_to
             //     domain_move_out += date_date_expected_domain_to
-            // 
             // Move = self.env['stock.move'].with_context(active_test=False)
             // Quant = self.env['stock.quant'].with_context(active_test=False)
             // domain_move_in_todo = [('state', 'in', ('waiting', 'confirmed', 'assigned', 'partially_available'))] + domain_move_in
@@ -1105,17 +1142,22 @@ namespace Bamboo.Core.Application.Services
             // moves_in_res = {product.id: product_qty for product, product_qty in Move._read_group(domain_move_in_todo, ['product_id'], ['product_qty:sum'])}
             // moves_out_res = {product.id: product_qty for product, product_qty in Move._read_group(domain_move_out_todo, ['product_id'], ['product_qty:sum'])}
             // quants_res = {product.id: (quantity, reserved_quantity) for product, quantity, reserved_quantity in Quant._read_group(domain_quant, ['product_id'], ['quantity:sum', 'reserved_quantity:sum'])}
+            // expired_unreserved_quants_res = {}
+            // if self.env.context.get('with_expiration'):
+            //     max_date = self.env.context['to_date'] if self.env.context.get('to_date') else self.env.context['with_expiration']
+            //     domain_quant += [('removal_date', '<=', max_date)]
+            //     expired_unreserved_quants_res = {product.id: quantity - reserved_quantity for product, quantity, reserved_quantity in Quant._read_group(domain_quant, ['product_id'], ['quantity:sum', 'reserved_quantity:sum'])}
+            // moves_in_res_past = defaultdict(float)
+            // moves_out_res_past = defaultdict(float)
             // if dates_in_the_past:
             //     # Calculate the moves that were done before now to calculate back in time (as most questions will be recent ones)
             //     domain_move_in_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_in_done
             //     domain_move_out_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_out_done
             // 
             //     groupby = ['product_id', 'product_uom']
-            //     moves_in_res_past = defaultdict(float)
             //     for product, uom, quantity in Move._read_group(domain_move_in_done, groupby, ['quantity:sum']):
             //         moves_in_res_past[product.id] += uom._compute_quantity(quantity, product.uom_id)
             // 
-            //     moves_out_res_past = defaultdict(float)
             //     for product, uom, quantity in Move._read_group(domain_move_out_done, groupby, ['quantity:sum']):
             //         moves_out_res_past[product.id] += uom._compute_quantity(quantity, product.uom_id)
             // 
@@ -1123,26 +1165,33 @@ namespace Bamboo.Core.Application.Services
             // for product in self.with_context(prefetch_fields=False):
             //     origin_product_id = product._origin.id
             //     product_id = product.id
-            //     if not origin_product_id:
+            //     if not origin_product_id or (
+            //         origin_product_id not in quants_res
+            //         and origin_product_id not in moves_in_res
+            //         and origin_product_id not in moves_out_res
+            //         and origin_product_id not in moves_in_res_past
+            //         and origin_product_id not in moves_out_res_past
+            //         and origin_product_id not in expired_unreserved_quants_res
+            //     ):
             //         res[product_id] = dict.fromkeys(
             //             ['qty_available', 'free_qty', 'incoming_qty', 'outgoing_qty', 'virtual_available'],
             //             0.0,
             //         )
             //         continue
-            //     rounding = product.uom_id.rounding
             //     res[product_id] = {}
             //     if dates_in_the_past:
             //         qty_available = quants_res.get(origin_product_id, [0.0])[0] - moves_in_res_past.get(origin_product_id, 0.0) + moves_out_res_past.get(origin_product_id, 0.0)
             //     else:
             //         qty_available = quants_res.get(origin_product_id, [0.0])[0]
             //     reserved_quantity = quants_res.get(origin_product_id, [False, 0.0])[1]
-            //     res[product_id]['qty_available'] = float_round(qty_available, precision_rounding=rounding)
-            //     res[product_id]['free_qty'] = float_round(qty_available - reserved_quantity, precision_rounding=rounding)
-            //     res[product_id]['incoming_qty'] = float_round(moves_in_res.get(origin_product_id, 0.0), precision_rounding=rounding)
-            //     res[product_id]['outgoing_qty'] = float_round(moves_out_res.get(origin_product_id, 0.0), precision_rounding=rounding)
-            //     res[product_id]['virtual_available'] = float_round(
-            //         qty_available + res[product_id]['incoming_qty'] - res[product_id]['outgoing_qty'],
-            //         precision_rounding=rounding)
+            //     expired_unreserved_qty = expired_unreserved_quants_res.get(origin_product_id, 0.0)
+            //     res[product_id]['qty_available'] = product.uom_id.round(qty_available)
+            //     res[product_id]['free_qty'] = product.uom_id.round(qty_available - reserved_quantity - expired_unreserved_qty)
+            //     res[product_id]['incoming_qty'] = product.uom_id.round(moves_in_res.get(origin_product_id, 0.0))
+            //     res[product_id]['outgoing_qty'] = product.uom_id.round(moves_out_res.get(origin_product_id, 0.0))
+            //     res[product_id]['virtual_available'] = product.uom_id.round(
+            //         qty_available + res[product_id]['incoming_qty'] - res[product_id]['outgoing_qty'] - expired_unreserved_qty,
+            //     )
             // 
             // return res
             */
@@ -1152,19 +1201,21 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> ComputeQuantitiesInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_quantities(self):
+            // return super()._compute_quantities()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _compute_quantities(self):
             // products = self.with_context(prefetch_fields=False).filtered(lambda p: p.type != 'service').with_context(prefetch_fields=True)
-            // res = products._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'), self._context.get('package_id'), self._context.get('from_date'), self._context.get('to_date'))
+            // res = products._compute_quantities_dict(self.env.context.get('lot_id'), self.env.context.get('owner_id'), self.env.context.get('package_id'), self.env.context.get('from_date'), self.env.context.get('to_date'))
+            // # Set qty fields to 0 for all products as services have 0 quantities. Also skips calling __setitem__ on products with 0 quantites in res.
+            // self.with_context(skip_qty_available_update=True).qty_available = 0.0
+            // self.incoming_qty = 0.0
+            // self.outgoing_qty = 0.0
+            // self.virtual_available = 0.0
+            // self.free_qty = 0.0
             // for product in products:
-            //     product.update(res[product.id])
-            // # Services need to be set with 0.0 for all quantities
-            // services = self - products
-            // services.qty_available = 0.0
-            // services.incoming_qty = 0.0
-            // services.outgoing_qty = 0.0
-            // services.virtual_available = 0.0
-            // services.free_qty = 0.0
+            //     product.with_context(skip_qty_available_update=True).update({key: val for key, val in res[product.id].items() if val})
             */
             return default;
         }
@@ -1178,8 +1229,7 @@ namespace Bamboo.Core.Application.Services
             // self.sales_count = 0
             // if not self.env.user.has_group('sales_team.group_sale_salesman'):
             //     return r
-            // date_from = fields.Datetime.to_string(fields.datetime.combine(fields.datetime.now() - timedelta(days=365),
-            //                                                               time.min))
+            // date_from = fields.Date.today() - timedelta(days=365)
             // 
             // done_states = self.env['sale.report']._get_done_states()
             // 
@@ -1194,7 +1244,7 @@ namespace Bamboo.Core.Application.Services
             //     if not product.id:
             //         product.sales_count = 0.0
             //         continue
-            //     product.sales_count = float_round(r.get(product.id, 0), precision_rounding=product.uom_id.rounding)
+            //     product.sales_count = product.uom_id.round(r.get(product.id, 0))
             // return r
             */
             return default;
@@ -1219,16 +1269,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductProduct> ComputeShowQtyUpdateButtonInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
+            // def _compute_show_qty_update_button(self):
+            // for product in self:
+            //     product.show_qty_update_button = product.product_tmpl_id._should_open_product_quants()
+            */
+            return default;
+        }
+
         protected async Task<ProductProduct> ComputeStandardPriceUpdateWarningInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: product_product.py) ---
             // def _compute_standard_price_update_warning(self):
             // undone_expenses = self.env['hr.expense']._read_group(
-            //     domain=[('state', 'in', ['draft', 'reported']), ('product_id', 'in', self.ids)],
+            //     domain=[('state', '=', 'draft'), ('product_id', 'in', self.ids)],
             //     groupby=['price_unit'],
             //     )
-            // # The following list is composed of all the unit_amounts of expenses that use this product and should NOT trigger a warning.
+            // # The following list is composed of all the price_units of expenses that use this product and should NOT trigger a warning.
             // # Those are the amounts of any undone expense using this product and 0.0 which is the default unit_amount.
             // unit_amounts_no_warning = [self.env.company.currency_id.round(row[0]) for row in undone_expenses]
             // for product in self:
@@ -1240,6 +1301,54 @@ namespace Bamboo.Core.Application.Services
             //                     "There are unsubmitted expenses linked to this category. Updating the category cost will change expense amounts. "
             //                     "Make sure it is what you want to do."
             //                 )
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> ComputeSuggestEstimatedPriceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_suggest_estimated_price(self):
+            // seller_args = {
+            //     "partner_id": self.env['res.partner'].browse(self.env.context.get("partner_id")),
+            //     "params": {'order_id': self.env['purchase.order'].browse(self.env.context.get("order_id"))}
+            // }
+            // self.suggest_estimated_price = 0.0
+            // for product in self:
+            //     if product.suggested_qty <= 0:
+            //         continue
+            //     # Get lowest price pricelist for suggested_qty or lowest min_qty pricelist
+            //     seller = product._select_seller(quantity=product.suggested_qty, **seller_args) or \
+            //              product._select_seller(quantity=None, ordered_by="min_qty", **seller_args)
+            // 
+            //     price = seller.price_discounted if seller else product.standard_price
+            //     product.suggest_estimated_price = price * product.suggested_qty
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> ComputeSuggestedQuantityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _compute_suggested_quantity(self):
+            // ctx = self.env.context
+            // self.suggested_qty = 0
+            // if ctx.get("suggest_based_on") == "actual_demand":
+            //     for product in self:
+            //         if product.virtual_available >= 0:
+            //             continue
+            //         qty = - product.virtual_available * ctx.get("suggest_percent", 0) / 100
+            //         product.suggested_qty = max(float_round(qty, precision_digits=0, rounding_method="UP"), 0)
+            // elif ctx.get("suggest_based_on"):
+            //     for product in self:
+            //         if product.monthly_demand <= 0:
+            //             continue
+            //         monthly_ratio = ctx.get("suggest_days", 0) / (365.25 / 12)  # eg. 7 days / (365.25 days/yr / 12 mth/yr) = 0.23 months
+            //         qty = product.monthly_demand * monthly_ratio * ctx.get("suggest_percent", 0) / 100
+            //         qty -= max(product.qty_available, 0) + max(product.incoming_qty, 0)
+            //         product.suggested_qty = max(float_round(qty, precision_digits=0, rounding_method="UP"), 0)
             */
             return default;
         }
@@ -1261,7 +1370,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _compute_used_in_bom_count(self):
             // for product in self:
-            //     product.used_in_bom_count = self.env['mrp.bom'].search_count([('bom_line_ids.product_id', '=', product.id)])
+            //     product.used_in_bom_count = self.env['mrp.bom'].search_count(
+            //         [('bom_line_ids.product_id', 'in', product.ids)])
             */
             return default;
         }
@@ -1279,54 +1389,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> ComputeValueSvlInternalAsync()
+        protected async Task<ProductProduct> ComputeValueInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _compute_value_svl(self):
+            // def _compute_value(self):
             // """Compute totals of multiple svl related values"""
             // company_id = self.env.company
             // self.company_currency_id = company_id.currency_id
-            // domain = [
-            //     *self.env['stock.valuation.layer']._check_company_domain(company_id),
-            //     ('product_id', 'in', self.ids),
-            // ]
-            // if self.env.context.get('to_date'):
-            //     to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
-            //     domain.append(('create_date', '<=', to_date))
-            // groups = self.env['stock.valuation.layer']._read_group(
-            //     domain,
-            //     groupby=['product_id'],
-            //     aggregates=['value:sum', 'quantity:sum'],
-            // )
-            // # Browse all products and compute products' quantities_dict in batch.
-            // group_mapping = {product: aggregates for product, *aggregates in groups}
+            // 
             // for product in self:
-            //     value_sum, quantity_sum = group_mapping.get(product._origin, (0, 0))
-            //     value_svl = company_id.currency_id.round(value_sum)
-            //     avg_cost = value_svl / quantity_sum if quantity_sum else 0
-            //     product.value_svl = value_svl
-            //     product.quantity_svl = quantity_sum
-            //     product.avg_cost = avg_cost
-            //     product.total_value = avg_cost * product.sudo(False).qty_available
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> ComputeVariantItemCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def _compute_variant_item_count(self):
-            // for product in self:
-            //     domain = [
-            //         ('pricelist_id.active', '=', True),
-            //         '|',
-            //             '&', ('product_tmpl_id', '=', product.product_tmpl_id.id), ('applied_on', '=', '1_product'),
-            //             '&', ('product_id', '=', product.id), ('applied_on', '=', '0_product_variant'),
-            //         ('compute_price', '=', 'fixed'),
-            //     ]
-            //     product.pricelist_item_count = self.env['product.pricelist.item'].search_count(domain)
+            //     at_date = fields.Datetime.to_datetime(product.env.context.get('to_date'))
+            //     if at_date:
+            //         at_date = at_date.replace(hour=23, minute=59, second=59)
+            //         product = product.with_context(at_date=at_date)
+            //     valuated_product = product.sudo(False)._with_valuation_context()
+            //     qty_valued = valuated_product.qty_available
+            //     qty_available = valuated_product.with_context(warehouse_id=False).qty_available if self.env.context.get('warehouse_id') else qty_valued
+            //     if product.lot_valuated:
+            //         product.total_value = product._get_value_from_lots()
+            //     elif product.uom_id.is_zero(qty_valued):
+            //         product.total_value = 0
+            //     elif product.uom_id.is_zero(qty_available):
+            //         product.total_value = product.standard_price * qty_valued
+            //     elif product.cost_method == 'standard':
+            //         standard_price = product.standard_price
+            //         if at_date:
+            //             standard_price = product._get_standard_price_at_date(at_date)
+            //         product.total_value = standard_price * qty_valued
+            //     elif product.cost_method == 'average':
+            //         product.total_value = product._run_avco(at_date=at_date)[1] * qty_valued / qty_available
+            //     else:
+            //         product.total_value = product.with_context(warehouse_id=False)._run_fifo(qty_available, at_date=at_date) * qty_valued / qty_available
+            //     product.avg_cost = product.total_value / qty_valued if not product.uom_id.is_zero(qty_valued) else 0
             */
             return default;
         }
@@ -1354,8 +1449,14 @@ namespace Bamboo.Core.Application.Services
             // compute method is not subject to this restriction.  It therefore
             // works as intended :-)
             // """
+            // now = self.env.cr.now()
             // for record in self:
-            //     record.write_date = max(record.write_date or self.env.cr.now(), record.product_tmpl_id.write_date)
+            //     if not record.id:
+            //         record.write_date = record._origin.write_date
+            //         continue
+            //     record.write_date = max(
+            //         record.write_date or now, record.product_tmpl_id.write_date or now
+            //     )
             */
             return default;
         }
@@ -1382,13 +1483,11 @@ namespace Bamboo.Core.Application.Services
             // def _count_returned_sn_products_domain(self, sn_lot, or_domains):
             // if not or_domains:
             //     return None
-            // base_domain = [
+            // return Domain([
             //     ('lot_id', '=', sn_lot.id),
             //     ('quantity', '=', 1),
             //     ('state', '=', 'done'),
-            // ]
-            // or_domains = expression.OR(or_domains)
-            // return expression.AND([base_domain, or_domains])
+            // ]) & Domain.OR(or_domains)
             */
             return default;
         }
@@ -1406,115 +1505,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> CreateFifoVacuumAngloSaxonExpenseEntriesInternalAsync(object vacuum_pairs)
+        public override async Task<ProductProduct> CreateAsync(ProductProduct entity, List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def create(self, vals_list):
+            // products = super(ProductProduct, self.with_context(create_product_product=False)).create(vals_list)
+            // # `_get_variant_id_for_combination` depends on existing variants
+            // self.env.registry.clear_cache()
+            // return products
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _create_fifo_vacuum_anglo_saxon_expense_entries(self, vacuum_pairs):
-            // """ Batch version of _create_fifo_vacuum_anglo_saxon_expense_entry
-            // """
-            // AccountMove = self.env['account.move'].sudo()
-            // account_move_vals = []
-            // vacuum_pairs_to_reconcile = []
-            // svls_accounts = {}
-            // for vacuum_svl, svl_to_vacuum in vacuum_pairs:
-            //     if not vacuum_svl.company_id.anglo_saxon_accounting or not svl_to_vacuum.stock_move_id._is_out():
-            //         continue
-            //     account_move_lines = svl_to_vacuum.account_move_id.line_ids
-            //     # Find related customer invoice where product is delivered while you don't have units in stock anymore
-            //     reconciled_line_ids = list(set(account_move_lines._reconciled_lines()) - set(account_move_lines.ids))
-            //     account_move = AccountMove.search([('line_ids', 'in', reconciled_line_ids)], limit=1)
-            //     # If delivered quantity is not invoiced then no need to create this entry
-            //     if not account_move:
-            //         continue
-            //     accounts = svl_to_vacuum.product_id.product_tmpl_id.get_product_accounts(fiscal_pos=account_move.fiscal_position_id)
-            //     if not accounts.get('stock_output') or not accounts.get('expense'):
-            //         continue
-            //     svls_accounts[svl_to_vacuum.id] = accounts
-            //     description = "Expenses %s" % (vacuum_svl.description)
-            //     move_lines = vacuum_svl.stock_move_id._prepare_account_move_line(
-            //     vacuum_svl.quantity, vacuum_svl.value * -1,
-            //     accounts['stock_output'].id, accounts['expense'].id,
-            //     vacuum_svl.id, description)
-            //     account_move_vals.append({
-            //         'journal_id': accounts['stock_journal'].id,
-            //         'line_ids': move_lines,
-            //         'date': self._context.get('force_period_date', fields.Date.context_today(self)),
-            //         'ref': description,
-            //         'stock_move_id': vacuum_svl.stock_move_id.id,
-            //         'move_type': 'entry',
-            //     })
-            //     vacuum_pairs_to_reconcile.append((vacuum_svl, svl_to_vacuum))
-            // new_account_moves = AccountMove.create(account_move_vals)
-            // new_account_moves._post()
-            // for new_account_move, (vacuum_svl, svl_to_vacuum) in zip(new_account_moves, vacuum_pairs_to_reconcile):
-            //     account = svls_accounts[svl_to_vacuum.id]['stock_output']
-            //     to_reconcile_account_move_lines = vacuum_svl.account_move_id.line_ids.filtered(lambda l: not l.reconciled and l.account_id == account and l.account_id.reconcile)
-            //     to_reconcile_account_move_lines += new_account_move.line_ids.filtered(lambda l: not l.reconciled and l.account_id == account and l.account_id.reconcile)
-            //     to_reconcile_account_move_lines.reconcile()
+            // def create(self, vals_list):
+            // products = super().create(vals_list)
+            // products._change_standard_price({product: 0 for product in products if product.standard_price})
+            // return products
             */
-            return default;
-        }
-
-        protected async Task<ProductProduct> CreateFifoVacuumAngloSaxonExpenseEntryInternalAsync(object vacuum_svl, object svl_to_vacuum)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _create_fifo_vacuum_anglo_saxon_expense_entry(self, vacuum_svl, svl_to_vacuum):
-            // """ When product is delivered and invoiced while you don't have units in stock anymore, there are chances of that
-            //     product getting undervalued/overvalued. So, we should nevertheless take into account the fact that the product has
-            //     already been delivered and invoiced to the customer by posting the value difference in the expense account also.
-            //     Consider the below case where product is getting undervalued:
-            // 
-            //     You bought 8 units @ 10$ -> You have a stock valuation of 8 units, unit cost 10.
-            //     Then you deliver 10 units of the product.
-            //     You assumed the missing 2 should go out at a value of 10$ but you are not sure yet as it hasn't been bought in Odoo yet.
-            //     Afterwards, you buy missing 2 units of the same product at 12$ instead of expected 10$.
-            //     In case the product has been undervalued when delivered without stock, the vacuum entry is the following one (this entry already takes place):
-            // 
-            //     Account                         | Debit   | Credit
-            //     ===================================================
-            //     Stock Valuation                 | 0.00     | 4.00
-            //     Stock Interim (Delivered)       | 4.00     | 0.00
-            // 
-            //     So, on delivering product with different price, We should create additional journal items like:
-            //     Account                         | Debit    | Credit
-            //     ===================================================
-            //     Stock Interim (Delivered)       | 0.00     | 4.00
-            //     Expenses Revaluation            | 4.00     | 0.00
-            // """
-            // if not vacuum_svl.company_id.anglo_saxon_accounting or not svl_to_vacuum.stock_move_id._is_out():
-            //     return False
-            // AccountMove = self.env['account.move'].sudo()
-            // account_move_lines = svl_to_vacuum.account_move_id.line_ids
-            // # Find related customer invoice where product is delivered while you don't have units in stock anymore
-            // reconciled_line_ids = list(set(account_move_lines._reconciled_lines()) - set(account_move_lines.ids))
-            // account_move = AccountMove.search([('line_ids','in', reconciled_line_ids)], limit=1)
-            // # If delivered quantity is not invoiced then no need to create this entry
-            // if not account_move:
-            //     return False
-            // accounts = svl_to_vacuum.product_id.product_tmpl_id.get_product_accounts(fiscal_pos=account_move.fiscal_position_id)
-            // if not accounts.get('stock_output') or not accounts.get('expense'):
-            //     return False
-            // description = "Expenses %s" % (vacuum_svl.description)
-            // move_lines = vacuum_svl.stock_move_id._prepare_account_move_line(
-            //     vacuum_svl.quantity, vacuum_svl.value * -1,
-            //     accounts['stock_output'].id, accounts['expense'].id,
-            //     vacuum_svl.id, description)
-            // new_account_move = AccountMove.sudo().create({
-            //     'journal_id': accounts['stock_journal'].id,
-            //     'line_ids': move_lines,
-            //     'date': self._context.get('force_period_date', fields.Date.context_today(self)),
-            //     'ref': description,
-            //     'stock_move_id': vacuum_svl.stock_move_id.id,
-            //     'move_type': 'entry',
-            // })
-            // new_account_move._post()
-            // to_reconcile_account_move_lines = vacuum_svl.account_move_id.line_ids.filtered(lambda l: not l.reconciled and l.account_id == accounts['stock_output'] and l.account_id.reconcile)
-            // to_reconcile_account_move_lines += new_account_move.line_ids.filtered(lambda l: not l.reconciled and l.account_id == accounts['stock_output'] and l.account_id.reconcile)
-            // return to_reconcile_account_move_lines.reconcile()
-            */
-            return default;
+            return await base.CreateAsync(entity, fields);
         }
 
         public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
@@ -1523,8 +1529,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def fields_get(self, allfields=None, attributes=None):
             // res = super().fields_get(allfields, attributes)
-            // if self._context.get('location') and isinstance(self._context['location'], int):
-            //     location = self.env['stock.location'].browse(self._context['location'])
+            // context_location = self.env.context.get('location') or self.env.context.get('search_location')
+            // if context_location and isinstance(context_location, int):
+            //     location = self.env['stock.location'].browse(context_location)
             //     if location.usage == 'supplier':
             //         if res.get('virtual_available'):
             //             res['virtual_available']['string'] = _('Future Receipts')
@@ -1557,7 +1564,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _filter_applicable_attributes(self, attributes_by_ptal_id: Dict) -> List[Dict]:
+            // def _filter_applicable_attributes(self, attributes_by_ptal_id: dict) -> list[dict]:
             // """
             // The attributes_by_ptal_id is a dictionary that contains all the attributes that have
             // [('create_variant', '=', 'no_variant')]
@@ -1595,7 +1602,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def _filter_to_unlink(self, check_access=True):
+            // def _filter_to_unlink(self):
             // return self
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_product.py) ---
             // def _filter_to_unlink(self):
@@ -1608,26 +1615,7 @@ namespace Bamboo.Core.Application.Services
             // domain = [('product_id', 'in', self.ids)]
             // lines = self.env['stock.lot']._read_group(domain, ['product_id'])
             // linked_product_ids = [product.id for [product] in lines]
-            // return super(Product, self - self.browse(linked_product_ids))._filter_to_unlink()
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> GetArchivedCombinationsPerProductTmplIdInternalAsync(List<Guid> product_tmpl_ids)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _get_archived_combinations_per_product_tmpl_id(self, product_tmpl_ids):
-            // archived_combinations = {}
-            // for product_tmpl in self.env['product.template'].browse(product_tmpl_ids):
-            //     attribute_exclusions = product_tmpl._get_attribute_exclusions()
-            //     archived_combinations[product_tmpl.id] = attribute_exclusions['archived_combinations']
-            //     excluded = {}
-            //     for ptav_id, ptav_ids in attribute_exclusions['exclusions'].items():
-            //         for ptav_id2 in set(ptav_ids) - excluded.keys():
-            //             excluded[ptav_id] = ptav_id2
-            //     archived_combinations[product_tmpl.id].extend(excluded.items())
-            // return archived_combinations
+            // return super(ProductProduct, self - self.browse(linked_product_ids))._filter_to_unlink()
             */
             return default;
         }
@@ -1693,23 +1681,6 @@ namespace Bamboo.Core.Application.Services
             // def _get_base_unit_price(self, price):
             // self.ensure_one()
             // return self.base_unit_count and price / self.base_unit_count
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> GetCartQtyInternalAsync(object website)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: product_product.py) ---
-            // def _get_cart_qty(self, website=None):
-            // if not self.allow_out_of_stock_order:
-            //     website = website or self.env['website'].get_current_website()
-            //     # When the cron is run manually, request has no attribute website, and that would cause a crash
-            //     # so we check for it
-            //     cart = website and request and hasattr(request, 'website') and website.sale_get_order() or None
-            //     if cart:
-            //         return sum(cart._get_common_product_lines(product=self).mapped('product_uom_qty'))
-            // return 0
             */
             return default;
         }
@@ -1809,20 +1780,9 @@ namespace Bamboo.Core.Application.Services
             // rules = self._get_rules_from_location(location, route_ids=route_ids)
             // delays, _ = rules.with_context(bypass_delay_description=True)._get_lead_days(self)
             // return {
-            //     'date_planned': date - relativedelta(days=delays['security_lead_days']),
-            //     'date_order': date - relativedelta(days=delays['security_lead_days'] + delays['purchase_delay']),
+            //     'date_planned': date,
+            //     'date_order': date - relativedelta(days=delays['purchase_delay']),
             // }
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> GetDefaultUomIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: product_product.py) ---
-            // def _get_default_uom_id(self):
-            // # TODO remove me in master
-            // return self.env.ref('uom.product_uom_unit')
             */
             return default;
         }
@@ -1832,23 +1792,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _get_description(self, picking_type_id):
-            // """ return product receipt/delivery/picking description depending on
-            // picking type passed as argument.
+            // """
+            //     Return product description based on the picking type:
+            //     * For outgoing pickings, we always use the product name.
+            //     * For all other pickings, we try to use the product description (if one has been set),
+            //       otherwise we fall back to the product name.
             // """
             // self.ensure_one()
-            // picking_code = picking_type_id.code
-            // description = html2plaintext(self.description) if not is_html_empty(self.description) else self.name
-            // if picking_code == 'incoming':
-            //     return self.description_pickingin or description
-            // if picking_code == 'outgoing':
-            //     return self.description_pickingout or self.name
-            // if picking_code == 'internal':
-            //     return self.description_picking or description
-            // return description
+            // if picking_type_id.code == 'outgoing':
+            //     return self.display_name
+            // return html2plaintext(self.description) if not is_html_empty(self.description) else self.display_name
             --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: product.py) ---
             // def _get_description(self, picking_type_id):
             // if picking_type_id.code == 'dropship':
-            //     return self.description_pickingout or self.name
+            //     return self.description_pickingout or self.display_name
             // else:
             //     return super()._get_description(picking_type_id)
             */
@@ -1875,18 +1832,18 @@ namespace Bamboo.Core.Application.Services
             //         if isinstance(item, int):
             //             ids.add(item)
             //         else:
-            //             domains.append([(self.env[model]._rec_name, 'ilike', item)])
+            //             domains.append(Domain(self.env[model]._rec_name, 'ilike', item))
             //     if domains:
-            //         ids |= set(self.env[model].search(expression.OR(domains)).ids)
+            //         ids |= set(self.env[model].search(Domain.OR(domains)).ids)
             //     return ids
             // 
             // # We may receive a location or warehouse from the context, either by explicit
             // # python code or by the use of dummy fields in the search view.
             // # Normalize them into a list.
-            // location = self.env.context.get('location')
+            // location = self.env.context.get('location') or self.env.context.get('search_location')
             // if location and not isinstance(location, list):
             //     location = [location]
-            // warehouse = self.env.context.get('warehouse_id')
+            // warehouse = self.env.context.get('warehouse_id') or self.env.context.get('search_warehouse')
             // if warehouse and not isinstance(warehouse, list):
             //     warehouse = [warehouse]
             // # filter by location and/or warehouse
@@ -1919,31 +1876,47 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
-            // def _get_domain_locations_new(self, location_ids):
+            // def _get_domain_locations_new(self, location_ids) -> tuple[Domain, Domain, Domain]:
             // if not location_ids:
-            //     return [[expression.FALSE_LEAF]] * 3
+            //     return (Domain.FALSE,) * 3
             // locations = self.env['stock.location'].browse(location_ids)
-            // # TDE FIXME: should move the support of child_of + auto_join directly in expression
+            // # TDE FIXME: should move the support of child_of + bypass_search_access directly in expression
             // # this optimizes [('location_id', 'child_of', locations.ids)]
             // # by avoiding the ORM to search for children locations and injecting a
             // # lot of location ids into the main query
             // if self.env.context.get('strict'):
-            //     loc_domain = [('location_id', 'in', locations.ids)]
-            //     dest_loc_domain = [('location_dest_id', 'in', locations.ids)]
+            //     loc_domain = Domain('location_id', 'in', locations.ids)
+            //     dest_loc_domain = Domain('location_dest_id', 'in', locations.ids)
+            //     dest_loc_domain_out = Domain('location_dest_id', 'not in', locations.ids)
             // elif locations:
-            //     paths_domain = expression.OR([[('parent_path', '=like', loc.parent_path + '%')] for loc in locations])
-            //     loc_domain = [('location_id', 'any', paths_domain)]
-            //     dest_loc_domain = [
+            //     alias = locations._table + '_inner'
+            //     paths_query = Query(locations.env, alias, SQL.identifier(locations._table))
+            //     paths_query.add_where(alias + '.parent_path LIKE ANY(%s)', [[loc.parent_path + '%' for loc in locations]])
+            //     loc_domain = Domain('location_id', 'in', paths_query)
+            //     # The condition should be split for done and not-done moves as the final_dest_id only make sense
+            //     # for the part of the move chain that is not done yet.
+            //     dest_loc_domain_done = Domain('location_dest_id', 'in', paths_query)
+            //     dest_loc_domain_in_progress = Domain([
             //         '|',
-            //         '&', ('location_final_id', '!=', False), ('location_final_id', 'any', paths_domain),
-            //         '&', ('location_final_id', '=', False), ('location_dest_id', 'any', paths_domain),
-            //     ]
+            //             '&', ('location_final_id', '!=', False), ('location_final_id', 'in', paths_query),
+            //             '&', ('location_final_id', '=', False), ('location_dest_id', 'in', paths_query),
+            //     ])
+            //     dest_loc_domain = Domain([
+            //         '|',
+            //             '&', ('state', '=', 'done'), dest_loc_domain_done,
+            //             '&', ('state', '!=', 'done'), dest_loc_domain_in_progress,
+            //     ])
+            //     dest_loc_domain_out = Domain([
+            //         '|',
+            //             '&', ('state', '=', 'done'), ~dest_loc_domain_done,
+            //             '&', ('state', '!=', 'done'), ~dest_loc_domain_in_progress,
+            //     ])
             // 
             // # returns: (domain_quant_loc, domain_move_in_loc, domain_move_out_loc)
             // return (
             //     loc_domain,
-            //     dest_loc_domain + ['!'] + loc_domain,
-            //     loc_domain + ['!'] + dest_loc_domain,
+            //     dest_loc_domain & ~loc_domain,
+            //     loc_domain & dest_loc_domain_out,
             // )
             */
             return default;
@@ -1962,28 +1935,24 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ProductProduct> GetFifoCandidatesDomainInternalAsync(object company, object lot)
+        protected async Task<ProductProduct> GetExtraImage1920UrlsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _get_fifo_candidates_domain(self, company, lot=False):
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
+            // def _get_extra_image_1920_urls(self):
+            // """ Returns the local url of the product additional images, no videos. This includes the
+            // variant specific images first and then the template images.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :rtype: list[str]
+            // """
+            // self.ensure_one()
             // return [
-            //     ("product_id", "=", self.id),
-            //     ("remaining_qty", ">", 0),
-            //     ("company_id", "=", company.id),
-            //     ("lot_id", "=", lot.id if lot else False),
+            //     self.env['website'].image_url(extra_image, 'image_1920')
+            //     for extra_image in self.product_variant_image_ids + self.product_template_image_ids
+            //     if extra_image.image_128  # only images, no video urls
             // ]
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> GetFifoCandidatesInternalAsync(object company, object lot)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _get_fifo_candidates(self, company, lot=False):
-            // candidates_domain = self._get_fifo_candidates_domain(company, lot=lot)
-            // return self.env["stock.valuation.layer"].sudo().search(candidates_domain).sorted(lambda svl: svl._candidate_sort_key())
             */
             return default;
         }
@@ -1996,19 +1965,21 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // if not date:
             //     date = fields.Date.context_today(self)
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // 
             // sellers_filtered = self._prepare_sellers(params)
             // sellers = self.env['product.supplierinfo']
             // for seller in sellers_filtered:
             //     # Set quantity in UoM of seller
             //     quantity_uom_seller = quantity
-            //     if quantity_uom_seller and uom_id and uom_id != seller.product_uom:
-            //         quantity_uom_seller = uom_id._compute_quantity(quantity_uom_seller, seller.product_uom)
+            //     if quantity_uom_seller and uom_id and uom_id != seller.product_uom_id:
+            //         quantity_uom_seller = uom_id._compute_quantity(quantity_uom_seller, seller.product_uom_id)
             // 
             //     if seller.date_start and seller.date_start > date:
             //         continue
             //     if seller.date_end and seller.date_end < date:
+            //         continue
+            //     if params and params.get('force_uom') and seller.product_uom_id != uom_id and seller.product_uom_id != self.uom_id:
             //         continue
             //     if partner_id and seller.partner_id not in [partner_id, partner_id.parent_id]:
             //         continue
@@ -2018,6 +1989,38 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     sellers |= seller
             // return sellers
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetImage1024UrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_comparison, FILE: product_product.py) ---
+            // def _get_image_1024_url(self):
+            // """ Returns the local url of the product main image.
+            // Note: self.ensure_one()
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return self.env['website'].image_url(self, 'image_1024')
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetImage1920UrlInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
+            // def _get_image_1920_url(self):
+            // """ Returns the local url of the product main image.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return self.env['website'].image_url(self, 'image_1920')
             */
             return default;
         }
@@ -2057,18 +2060,32 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductProduct> GetLastInInternalAsync(object date)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _get_last_in(self, date=None):
+            // last_in_domain = Domain([('is_in', '=', True), ('product_id', '=', self.id)])
+            // if date:
+            //     last_in_domain &= Domain([('date', '<=', date)])
+            // last_in = self.env['stock.move'].search(last_in_domain, order='date desc, id desc', limit=1)
+            // return last_in
+            */
+            return default;
+        }
+
         protected async Task<ProductProduct> GetLinesDomainInternalAsync(List<Guid> location_ids, List<Guid> warehouse_ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
             // def _get_lines_domain(self, location_ids=False, warehouse_ids=False):
             // domains = []
-            // rfq_domain = [
-            //     ('state', 'in', ('draft', 'sent', 'to approve')),
-            //     ('product_id', 'in', self.ids)
-            // ]
+            // rfq_domain = (
+            //     Domain('state', 'in', ('draft', 'sent', 'to approve'))
+            //     & Domain('product_id', 'in', self.ids)
+            // )
             // if location_ids:
-            //     domains.append([
+            //     domains.append(Domain([
             //         '|',
             //             '&',
             //             ('orderpoint_id', '=', False),
@@ -2082,9 +2099,9 @@ namespace Bamboo.Core.Application.Services
             //             '&',
             //                 ('move_dest_ids', '=', False),
             //                 ('orderpoint_id.location_id', 'in', location_ids)
-            //     ])
+            //     ]))
             // if warehouse_ids:
-            //     domains.append([
+            //     domains.append(Domain([
             //         '|',
             //             '&',
             //                 ('orderpoint_id', '=', False),
@@ -2092,18 +2109,17 @@ namespace Bamboo.Core.Application.Services
             //             '&',
             //                 ('move_dest_ids', '=', False),
             //                 ('orderpoint_id.warehouse_id', 'in', warehouse_ids)
-            //     ])
-            // domains = expression.OR(domains) if domains else []
-            // return expression.AND([rfq_domain, domains])
+            //     ]))
+            // return rfq_domain & Domain.OR(domains or [Domain.TRUE])
             */
             return default;
         }
 
-        protected async Task<ProductProduct> GetMaxQuantityInternalAsync(object website)
+        protected async Task<ProductProduct> GetMaxQuantityInternalAsync(object website, object sale_order)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: product_product.py) ---
-            // def _get_max_quantity(self, website, **kwargs):
+            // def _get_max_quantity(self, website, sale_order, **kwargs):
             // """ The max quantity of a product is the difference between the quantity that's free to use
             // and the quantity that's already been added to the cart.
             // 
@@ -2116,9 +2132,83 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // if self.is_storable and not self.allow_out_of_stock_order:
             //     free_qty = website._get_product_available_qty(self.sudo(), **kwargs)
-            //     cart_qty = self._get_cart_qty(website)
+            //     cart_qty = sale_order._get_cart_qty(self.id)
             //     return free_qty - cart_qty
             // return None
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetMonthlyDemandMovesLocationDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_purchase, FILE: product_product.py) ---
+            // def _get_monthly_demand_moves_location_domain(self):
+            // subcontracting_location_ids = self.env.companies.subcontracting_location_id.child_internal_location_ids.ids
+            // domain = Domain.AND([
+            //     Domain.OR([
+            //         super()._get_monthly_demand_moves_location_domain(),
+            //         [('location_dest_id', 'in', subcontracting_location_ids)],
+            //     ]),
+            //     [('location_id', 'not in', subcontracting_location_ids)],
+            // ])
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _get_monthly_demand_moves_location_domain(self):
+            // """ Returns a domain on stock moves coming from the selected warehouse that are:
+            //         - going to customer locations or used in production
+            //         - going to other warehouses (eg. central warehouse dispatching to stores)
+            //     (We don't include returns in demand estimation - they come back on hand)
+            // """
+            // warehouse_id = self.env.context.get('warehouse_id')
+            // if not warehouse_id:
+            //     return Domain.OR([
+            //         [('location_dest_usage', 'in', ['customer', 'production'])],
+            //         [('location_final_id.usage', 'in', ['customer', 'production'])],
+            //     ])
+            // else:
+            //     return Domain.AND([
+            //         [('location_id.warehouse_id', '=', warehouse_id)],
+            //         Domain.OR([
+            //             [('location_dest_id.warehouse_id', '!=', warehouse_id)],
+            //             [('location_final_id.warehouse_id', '!=', warehouse_id)]
+            //         ]),  # includes moves going to customer or production
+            //         [('location_dest_id.usage', '!=', 'inventory')]  # exclude scrap
+            //     ])
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetMonthlyDemandRangeInternalAsync(object based_on)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _get_monthly_demand_range(self, based_on):
+            // start_date = limit_date = datetime.now()
+            // 
+            // if not based_on or based_on == 'actual_demand' or based_on == '30_days':
+            //     start_date = start_date - relativedelta(days=30)  # Default monthly demand
+            // elif based_on == 'one_week':
+            //     start_date = start_date - relativedelta(weeks=1)
+            // elif based_on == 'three_months':
+            //     start_date = start_date - relativedelta(months=3)
+            // elif based_on == 'one_year':
+            //     start_date = start_date - relativedelta(years=1)
+            // else:  # Relative period of time.
+            //     today = datetime.now()
+            //     start_date = datetime(year=today.year - 1, month=today.month, day=1)
+            // 
+            //     if based_on == 'last_year_m_plus_1':
+            //         start_date += relativedelta(months=1)
+            //     elif based_on == 'last_year_m_plus_2':
+            //         start_date += relativedelta(months=2)
+            // 
+            //     if based_on == 'last_year_quarter':
+            //         limit_date = start_date + relativedelta(months=3)
+            //     else:
+            //         limit_date = start_date + relativedelta(months=1)
+            // 
+            // return start_date, limit_date
             */
             return default;
         }
@@ -2152,11 +2242,28 @@ namespace Bamboo.Core.Application.Services
             // 
             // :rtype: defaultdict(float)
             // """
-            // domain_quant = expression.AND([self._get_domain_locations()[0], [('product_id', 'in', self.ids)]])
+            // domain_quant = Domain.AND([self._get_domain_locations()[0], [('product_id', 'in', self.ids)]])
             // quants_groupby = self.env['stock.quant']._read_group(domain_quant, ['product_id'], ['quantity:sum'])
             // currents = defaultdict(float)
             // currents.update({product.id: quantity for product, quantity in quants_groupby})
             // return currents
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetPickingDescriptionInternalAsync(Guid picking_type_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
+            // def _get_picking_description(self, picking_type_id):
+            // """
+            // Return product receipt/delivery/picking description depending on picking type passed as argument.
+            // """
+            // return {
+            //     'incoming': self.description_pickingin,
+            //     'outgoing': self.description_pickingout,
+            //     'internal': self.description_picking
+            // }.get(picking_type_id.code, '')
             */
             return default;
         }
@@ -2168,7 +2275,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_placeholder_filename(self, field):
             // image_fields = ['image_%s' % size for size in [1920, 1024, 512, 256, 128]]
             // if field in image_fields:
-            //     return 'product/static/img/placeholder_thumbnail.png'
+            //     return self._get_product_placeholder_filename()
             // return super()._get_placeholder_filename(field)
             */
             return default;
@@ -2184,101 +2291,53 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetProductInfoPosAsync(Guid id, ProductProductGetProductInfoPosRequestDto input)
+        protected async Task<ProductProduct> GetProductDomainSearchOrderInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def get_product_info_pos(self, price, quantity, pos_config_id):
-            // self.ensure_one()
-            // config = self.env['pos.config'].browse(pos_config_id)
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
+            // def _get_product_domain_search_order(self, **vals):
+            // """Gives the order of search for a product given the parameters.
             // 
-            // # Tax related
-            // tax_to_use = None
-            // company = config.company_id
-            // while not tax_to_use and company:
-            //     tax_to_use = self.taxes_id.filtered(lambda tax: tax.company_id.id == company.id)
-            //     if not tax_to_use:
-            //         company = company.parent_id
-            // taxes = tax_to_use.compute_all(price, config.currency_id, quantity, self)
-            // grouped_taxes = {}
-            // for tax in taxes['taxes']:
-            //     if tax['id'] in grouped_taxes:
-            //         grouped_taxes[tax['id']]['amount'] += tax['amount']/quantity if quantity else 0
-            //     else:
-            //         grouped_taxes[tax['id']] = {
-            //             'name': tax['name'],
-            //             'amount': tax['amount']/quantity if quantity else 0
-            //         }
+            // :param name:            The name of the product.
+            // :param default_code:    The default_code of the product.
+            // :param barcode:         The barcode of the product.
+            // :returns:               An ordered list of product domains and their associated priority.
+            // :rtype: list[tuple[int, Domain]]
+            // """
+            // sorted_domains = []
+            // if barcode := vals.get('barcode'):
+            //     sorted_domains.append((5, Domain('barcode', '=', barcode)))
+            // if default_code := vals.get('default_code'):
+            //     sorted_domains.append((10, Domain('default_code', '=', default_code)))
+            // if name := vals.get('name'):
+            //     name = name.split('\n', 1)[0]  # Cut sales description from the name
+            //     sorted_domains.append((15, Domain('name', '=', name)))
+            //     # avoid matching unrelated products whose names merely contain that short string
+            //     if len(name) > 4:
+            //         sorted_domains.append((20, Domain('name', 'ilike', name)))
+            // return sorted_domains
+            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: product_product.py) ---
+            // def _get_product_domain_search_order(self, **vals):
+            // """Override of `account` to include the variant identifiers in the search order.
             // 
-            // all_prices = {
-            //     'price_without_tax': taxes['total_excluded']/quantity if quantity else 0,
-            //     'price_with_tax': taxes['total_included']/quantity if quantity else 0,
-            //     'tax_details': list(grouped_taxes.values()),
-            // }
+            // If the product is not found using `*ItemIdentification:ID` elements, tries again with the
+            // `*ItemIdentification:ExtendedID` elements. `ExtendedID` could be used to identify a product
+            // variant.
             // 
-            // # Pricelists
-            // if config.use_pricelist:
-            //     pricelists = config.available_pricelist_ids
-            // else:
-            //     pricelists = config.pricelist_id
-            // price_per_pricelist_id = pricelists._price_get(self, quantity) if pricelists else False
-            // pricelist_list = [{'id': pl.id, 'name': pl.name, 'price': price_per_pricelist_id[pl.id]} for pl in pricelists]
+            // Example:
+            //     StandardItemIdentification::ID == product.template.barcode           (product ID)
+            //     StandardItemIdentification::ExtendedID == product.product.barcode    (variant ID)
+            // """
+            // domains = super()._get_product_domain_search_order(**vals)
             // 
-            // # Warehouses
-            // warehouse_list = [
-            //     {'id': w.id,
-            //     'name': w.name,
-            //     'available_quantity': self.with_context({'warehouse_id': w.id}).qty_available,
-            //     'forecasted_quantity': self.with_context({'warehouse_id': w.id}).virtual_available,
-            //     'uom': self.uom_name}
-            //     for w in self.env['stock.warehouse'].search([('company_id', '=', config.company_id.id)])]
+            // if variant_default_code := vals.get('variant_default_code'):
+            //     bisect.insort(domains, (12, Domain('default_code', '=', variant_default_code)))
+            // if variant_barcode := vals.get('variant_barcode'):
+            //     bisect.insort(domains, (14, Domain('barcode', '=', variant_barcode)))
             // 
-            // if config.picking_type_id.warehouse_id:
-            //     # Sort the warehouse_list, prioritizing config.picking_type_id.warehouse_id
-            //     warehouse_list = sorted(
-            //         warehouse_list,
-            //         key=lambda w: w['id'] != config.picking_type_id.warehouse_id.id
-            //     )
-            // 
-            // # Suppliers
-            // key = itemgetter('partner_id')
-            // supplier_list = []
-            // for key, group in groupby(sorted(self.seller_ids, key=key), key=key):
-            //     for s in list(group):
-            //         if not((s.date_start and s.date_start > date.today()) or (s.date_end and s.date_end < date.today()) or (s.min_qty > quantity)):
-            //             supplier_list.append({
-            //                 'id': s.id,
-            //                 'name': s.partner_id.name,
-            //                 'delay': s.delay,
-            //                 'price': s.price
-            //             })
-            //             break
-            // 
-            // # Variants
-            // variant_list = [{'name': attribute_line.attribute_id.name,
-            //                  'values': list(map(lambda attr_name: {'name': attr_name, 'search': '%s %s' % (self.name, attr_name)}, attribute_line.value_ids.mapped('name')))}
-            //                 for attribute_line in self.attribute_line_ids]
-            // 
-            // return {
-            //     'all_prices': all_prices,
-            //     'pricelists': pricelist_list,
-            //     'warehouses': warehouse_list,
-            //     'suppliers': supplier_list,
-            //     'variants': variant_list
-            // }
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: product_product.py) ---
-            // def get_product_info_pos(self, price, quantity, pos_config_id):
-            // res = super().get_product_info_pos(price, quantity, pos_config_id)
-            // 
-            // # Optional products
-            // res['optional_products'] = [
-            //     {'name': p.name, 'price': min(p.product_variant_ids.mapped('lst_price'))}
-            //     for p in self.optional_product_ids.filtered_domain(self._optional_product_pos_domain())
-            // ]
-            // 
-            // return res
+            // return domains
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<ProductProduct> GetProductMultilineDescriptionSaleAsync(Guid id)
@@ -2287,8 +2346,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def get_product_multiline_description_sale(self):
             // """ Compute a multiline description of this product, in the context of sales
-            //         (do not use for purchases or other display reasons that don't intend to use "description_sale").
-            //     It will often be used as the default description of a sale order line referencing this product.
+            // (do not use for purchases or other display reasons that don't intend to use "description_sale").
+            // It will often be used as the default description of a sale order line referencing this product.
             // """
             // name = self.display_name
             // if self.description_sale:
@@ -2300,12 +2359,41 @@ namespace Bamboo.Core.Application.Services
             // payment_channels = self.channel_ids.filtered(lambda course: course.enroll == 'payment')
             // 
             // if not payment_channels:
-            //     return super(Product, self).get_product_multiline_description_sale()
+            //     return super().get_product_multiline_description_sale()
             // 
             // new_line = '' if len(payment_channels) == 1 else '\n'
             // return _('Access to: %(new_line)s%(channel_list)s', new_line=new_line, channel_list='\n'.join(payment_channels.mapped('name')))
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProductProduct> GetProductPlaceholderFilenameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def _get_product_placeholder_filename(self):
+            // return self.product_tmpl_id._get_product_placeholder_filename()
+            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: product.py) ---
+            // def _get_product_placeholder_filename(self):
+            // if self.event_ticket_ids:
+            //     return 'website_event_sale/static/img/event_ticket_placeholder_thumbnail.png'
+            // return super()._get_product_placeholder_filename()
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: product_product.py) ---
+            // def _get_product_placeholder_filename(self):
+            // """ Override of `product` to set a default image for reward products. """
+            // # In sudo mode to allow eCommerce customers to see the placeholder
+            // if self.env['loyalty.reward'].sudo().search_count([
+            //     ('discount_line_product_id', '=', self.id),
+            // ], limit=1):
+            //     if self.env['loyalty.reward'].sudo().search_count([
+            //         ('program_type', '=', 'gift_card'),
+            //         ('discount_line_product_id', '=', self.id),
+            //     ], limit=1):
+            //         return 'loyalty/static/img/gift_card.png'
+            //     return 'loyalty/static/img/discount_placeholder_thumbnail.png'
+            // return super()._get_product_placeholder_filename()
+            */
+            return default;
         }
 
         protected async Task<ProductProduct> GetProductPriceContextInternalAsync(object combination)
@@ -2326,16 +2414,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> GetQtyTakenOnCandidateInternalAsync(object qty_to_take_on_candidates, object candidate)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _get_qty_taken_on_candidate(self, qty_to_take_on_candidates, candidate):
-            // return min(qty_to_take_on_candidates, candidate.remaining_qty)
-            */
-            return default;
-        }
-
         protected async Task<ProductProduct> GetQuantityInProgressInternalAsync(List<Guid> location_ids, List<Guid> warehouse_ids)
         {
             /*
@@ -2349,7 +2427,7 @@ namespace Bamboo.Core.Application.Services
             // qty_by_product_location, qty_by_product_wh = super()._get_quantity_in_progress(location_ids, warehouse_ids)
             // domain = self._get_lines_domain(location_ids, warehouse_ids)
             // groups = self.env['purchase.order.line'].sudo()._read_group(domain,
-            //     ['order_id', 'product_id', 'product_uom', 'orderpoint_id', 'location_final_id'],
+            //     ['order_id', 'product_id', 'product_uom_id', 'orderpoint_id', 'location_final_id'],
             //     ['product_qty:sum'])
             // for order, product, uom, orderpoint, location_final, product_qty_sum in groups:
             //     if orderpoint:
@@ -2369,6 +2447,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProductProduct> GetRemainingMovesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _get_remaining_moves(self):
+            // moves_qty_by_product = {}
+            // for product in self:
+            //     moves, remaining_qty = product._run_fifo_get_stack()
+            //     moves = self.env['stock.move'].concat(*moves)
+            //     if not moves:
+            //         continue
+            //     qty_by_move = {m: m.quantity for m in moves[1:]}
+            //     qty_by_move[moves[0]] = remaining_qty
+            //     moves_qty_by_product[product] = qty_by_move
+            // return moves_qty_by_product
+            */
+            return default;
+        }
+
         protected async Task<ProductProduct> GetRulesFromLocationInternalAsync(object location, List<Guid> route_ids, object seen_rules)
         {
             /*
@@ -2377,9 +2474,7 @@ namespace Bamboo.Core.Application.Services
             // if not seen_rules:
             //     seen_rules = self.env['stock.rule']
             // warehouse = location.warehouse_id
-            // if not warehouse and seen_rules:
-            //     warehouse = seen_rules[-1].propagate_warehouse_id
-            // rule = self.env['procurement.group'].with_context(active_test=True)._get_rule(self, location, {
+            // rule = self.env['stock.rule'].with_context(active_test=True)._get_rule(self, location, {
             //     'route_ids': route_ids,
             //     'warehouse_id': warehouse,
             // })
@@ -2391,6 +2486,31 @@ namespace Bamboo.Core.Application.Services
             //     return seen_rules | rule
             // else:
             //     return self._get_rules_from_location(rule.location_src_id, seen_rules=seen_rules | rule)
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> GetStandardPriceAtDateInternalAsync(object date)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _get_standard_price_at_date(self, date=None):
+            // """ Get Last Price History """
+            // self.ensure_one()
+            // if not date or date == fields.Date.today():
+            //     return self.standard_price
+            // if self.cost_method != 'standard':
+            //     raise ValidationError(_("You can only get the standard price at a given date for products with 'Standard Price' as cost method."))
+            // product_value_domain = Domain([
+            //     ('product_id', '=', self.id),
+            //     ('move_id', '=', False),
+            //     ('lot_id', '=', False),
+            // ])
+            // product_value = self.env['product.value'].search(product_value_domain & Domain([('date', '<=', date)]), limit=1, order="date DESC, id DESC")
+            // if not product_value:
+            //     # If there is no history then get the value at creation
+            //     product_value = self.env['product.value'].search(product_value_domain, limit=1, order="date, id")
+            // return product_value.value if product_value else self.standard_price
             */
             return default;
         }
@@ -2481,15 +2601,43 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> HasOptionalProductInPosAsync(Guid id)
+        public async Task<ProductProduct> GetTotalRoutesAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: product_product.py) ---
-            // def has_optional_product_in_pos(self):
-            // self.ensure_one()
-            // return bool(self.optional_product_ids.filtered_domain(self._optional_product_pos_domain()))
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
+            // def get_total_routes(self):
+            // routes = super().get_total_routes()
+            // if self.bom_ids:
+            //     manufacture_routes = self.env['stock.rule'].search([('action', '=', 'manufacture')]).route_id
+            //     routes |= manufacture_routes
+            // return routes
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def get_total_routes(self):
+            // routes = super().get_total_routes()
+            // if self.seller_ids:
+            //     buy_routes = self.env['stock.rule'].search([('action', '=', 'buy')]).route_id
+            //     routes |= buy_routes
+            // return routes
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
+            // def get_total_routes(self):
+            // # Extend the total routes in other modules
+            // return self.env['stock.route']
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProductProduct> GetValueFromLotsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _get_value_from_lots(self):
+            // lots = self.env['stock.lot'].search([
+            //     ('product_id', 'in', self.ids),
+            //     ('product_qty', '!=', 0),
+            // ])
+            // return sum(lots.mapped('total_value'))
+            */
+            return default;
         }
 
         protected async Task<ProductProduct> HasStockNotificationInternalAsync(object partner)
@@ -2503,19 +2651,52 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> InitAsync(Guid id)
+        protected async Task<ProductProduct> InversePricelistRuleIdsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def init(self):
-            // """Ensure there is at most one active variant for each combination.
-            // 
-            // There could be no variant for a combination if using dynamic attributes.
-            // """
-            // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS product_product_combination_unique ON %s (product_tmpl_id, combination_indices) WHERE active is true"
-            //     % self._table)
+            // def _inverse_pricelist_rule_ids(self):
+            // for product in self:
+            //     template = product.product_tmpl_id
+            //     template.pricelist_rule_ids = (
+            //         product.pricelist_rule_ids
+            //         # We have to manually keep the rules the current variant
+            //         # wasn't aware of because they targeted other variants.
+            //         | template.pricelist_rule_ids.filtered(
+            //             lambda rule: rule.product_id and rule.product_id != product
+            //         )
+            //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<ProductProduct> InverseQtyAvailableInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
+            // def _inverse_qty_available(self):
+            // """
+            // Inverse method for the 'qty_available' field, enabling manual adjustment of stock on hand quantity
+            // in the product form. To prevent the automatic creation of stock quants when the
+            // 'compute_quantities' method is triggered, this method skips quant creation by custom context key.
+            // """
+            // if self.env.context.get('skip_qty_available_update', False):
+            //     return
+            // for product in self:
+            //     if (
+            //         product.type == "consu" and product.is_storable and float_compare(product.qty_available,
+            //              0.0, precision_rounding=product.uom_id.rounding) >= 0
+            //     ):
+            //         warehouse = self.env['stock.warehouse'].search(
+            //             [('company_id', '=', self.env.company.id)], limit=1
+            //         )
+            //         self.env['stock.quant'].with_context(inventory_mode=True, from_inverse_qty=True).create({
+            //             'product_id': product.id,
+            //             'location_id': warehouse.lot_stock_id.id,
+            //             'inventory_quantity': product.qty_available,
+            //         })._apply_inventory()
+            */
+            return default;
         }
 
         protected async Task<ProductProduct> InverseServicePolicyInternalAsync()
@@ -2534,24 +2715,18 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> IsAddToCartAllowedInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale, FILE: product_product.py) ---
-            // def _is_add_to_cart_allowed(self):
-            // # `event_booth_registration_confirm` calls `_cart_update` with specific products, allow those aswell.
-            // return super()._is_add_to_cart_allowed() or\
-            //         self.env['event.booth.category'].sudo().search_count([('product_id', '=', self.id)])
-            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: product.py) ---
-            // def _is_add_to_cart_allowed(self):
-            // # Allow adding event tickets to the cart regardless of product's rules
-            // self.ensure_one()
-            // res = super()._is_add_to_cart_allowed()
-            // return res or any(event.website_published for event in self.event_ticket_ids.event_id)
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
             // def _is_add_to_cart_allowed(self):
             // self.ensure_one()
-            // is_product_salable = self.active and self.sale_ok and self.website_published
-            // website = self.env['website'].get_current_website()
-            // return (is_product_salable and website.has_ecommerce_access()) \
-            //        or self.env.user.has_group('base.group_system')
+            // if self.env.user.has_group('base.group_system'):
+            //     return True
+            // if not self.active or not self.website_published:
+            //     return False
+            // if not self.filtered_domain(self.env['website']._product_domain()):
+            //     return False
+            // if request.website.prevent_zero_price_sale and not self._get_contextual_price():
+            //     return False
+            // return request.website.has_ecommerce_access()
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: product_product.py) ---
             // def _is_add_to_cart_allowed(self):
             // """Override to allow published course related products to the cart regardless of product's rules."""
@@ -2593,8 +2768,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: product_product.py) ---
             // def _is_sold_out(self):
+            // """Return whether the product is sold out (no available quantity).
+            // 
+            // If a product inventory is not tracked, or if it's allowed to be sold regardless
+            // of availabilities, the product is never considered sold out.
+            // 
+            // :return: whether the product can still be sold
+            // :rtype: bool
+            // """
             // self.ensure_one()
-            // if not self.is_storable:
+            // if not self.is_storable or self.allow_out_of_stock_order:
             //     return False
             // free_qty = self.env['website'].get_current_website()._get_product_available_qty(self.sudo())
             // return free_qty <= 0
@@ -2625,207 +2808,61 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ProductProduct> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // return config_id._get_available_product_domain()
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // return [('product_tmpl_id', 'in', [p['id'] for p in data['product.template']])]
             */
             return default;
         }
 
-        protected async Task<ProductProduct> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ProductProduct> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return [
-            //     'id', 'display_name', 'lst_price', 'standard_price', 'categ_id', 'pos_categ_ids', 'taxes_id', 'barcode', 'name',
-            //     'default_code', 'to_weight', 'uom_id', 'description_sale', 'description', 'product_tmpl_id', 'tracking', 'type', 'service_tracking', 'is_storable',
-            //     'write_date', 'color', 'available_in_pos', 'attribute_line_ids', 'active', 'image_128', 'combo_ids', 'product_template_variant_value_ids', 'product_tag_ids',
-            // ]
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
+            // def _load_pos_data_fields(self, config):
+            // taxes = self.env['account.tax'].search(self.env['account.tax']._check_company_domain(config.company_id.id))
+            // product_fields = taxes._eval_taxes_computation_prepare_product_fields()
+            // return list(product_fields.union({
+            //     'id', 'lst_price', 'display_name', 'product_tmpl_id', 'product_template_variant_value_ids',
+            //     'product_template_attribute_value_ids', 'barcode', 'product_tag_ids', 'default_code', 'standard_price'
+            // }))
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: product_product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // result = super()._load_pos_data_fields(config_id)
+            // def _load_pos_data_fields(self, config):
+            // result = super()._load_pos_data_fields(config)
             // result.append('all_product_tag_ids')
             // return result
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: product_product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
             // params += ['all_product_tag_ids']
             // 
             // # add missing product fields used in the reward_product_domain
-            // missing_fields = self.env['loyalty.reward']._get_reward_product_domain_fields(config_id) - set(params)
+            // missing_fields = self.env['loyalty.reward']._get_reward_product_domain_fields(config) - set(params)
             // 
             // if missing_fields:
             //     params.extend([field for field in missing_fields if field in self._fields])
             // 
             // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: product_product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // params += ['invoice_policy', 'optional_product_ids', 'type']
-            // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // params += ['self_order_available']
-            // return params
             */
             return default;
         }
 
-        protected async Task<ProductProduct> LoadPosDataInternalAsync(object data)
+        protected async Task<ProductProduct> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data(self, data):
-            // # Add custom fields for 'formula' taxes.
-            // fields = set(self._load_pos_data_fields(data['pos.config']['data'][0]['id']))
-            // taxes = self.env['account.tax'].search(self.env['account.tax']._load_pos_data_domain(data))
-            // product_fields = taxes._eval_taxes_computation_prepare_product_fields()
-            // fields = list(fields.union(product_fields))
-            // 
-            // config = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // limit_count = config.get_limited_product_count()
-            // if limit_count:
-            //     products = config.with_context(display_default_code=False).get_limited_products_loading(fields)
-            // else:
-            //     domain = self._load_pos_data_domain(data)
-            //     products = self._load_product_with_domain(domain, config.id)
-            // 
-            // self._add_missing_products(products, config.id, data)
-            // 
-            // data['pos.config']['data'][0]['_product_default_values'] = \
-            //     self.env['account.tax']._eval_taxes_computation_prepare_product_default_values(product_fields)
-            // 
-            // self._process_pos_ui_product_product(products, config)
-            // return {
-            //     'data': products,
-            //     'fields': fields,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: pos_discount, FILE: product_product.py) ---
-            // def _load_pos_data(self, data):
-            // res = super()._load_pos_data(data)
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // discount_product_id = config_id.discount_product_id.id
-            // product_ids_set = {product['id'] for product in res['data']}
-            // 
-            // if config_id.module_pos_discount and discount_product_id not in product_ids_set:
-            //     productModel = self.env['product.product'].with_context({**self.env.context, 'display_default_code': False})
-            //     product = productModel.search_read([('id', '=', discount_product_id)], fields=res['fields'], load=False)
-            //     self._process_pos_ui_product_product(product, config_id)
-            //     res['data'].extend(product)
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: product_product.py) ---
-            // def _load_pos_data(self, data):
-            // res = super()._load_pos_data(data)
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // try:
-            //     rewards = config_id._get_program_ids().reward_ids
-            //     reward_products = rewards.discount_line_product_id | rewards.reward_product_ids | rewards.reward_product_id
-            //     trigger_products = config_id._get_program_ids().filtered(lambda p: p.program_type in ['ewallet', 'gift_card']).trigger_product_ids
-            // 
-            //     loyalty_product_ids = set(reward_products.ids + trigger_products.ids)
-            //     classic_product_ids = {product['id'] for product in res['data']}
-            //     products = self.env['product.product'].browse(list(loyalty_product_ids - classic_product_ids))
-            //     products = products.read(fields=res['fields'], load=False)
-            //     self._process_pos_ui_product_product(products, config_id)
-            // 
-            //     data['pos.session']['data'][0]['_pos_special_products_ids'] += [product.id for product in reward_products if product.id not in [p["id"] for p in res['data']]]
-            //     res['data'].extend(products)
-            // except AccessError as e:
-            //     _logger.warning('Cannot load loyalty products into the PoS \n%s', e)
-            // 
-            // return res
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> LoadPosSelfDataDomainInternalAsync(object data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _load_pos_self_data_domain(self, data):
-            // domain = super()._load_pos_self_data_domain(data)
-            // return AND([domain, [('self_order_available', '=', True)]])
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> LoadPosSelfDataFieldsInternalAsync(Guid config_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _load_pos_self_data_fields(self, config_id):
-            // params = super()._load_pos_self_data_fields(config_id)
-            // params += ['public_description', 'list_price']
-            // return params
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> LoadPosSelfDataInternalAsync(object data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def _load_pos_self_data(self, data):
-            // domain = self._load_pos_self_data_domain(data)
-            // config_id = data['pos.config']['data'][0]['id']
-            // 
-            // # Add custom fields for 'formula' taxes.
-            // fields = set(self._load_pos_self_data_fields(config_id))
-            // taxes = self.env['account.tax'].search(self.env['account.tax']._load_pos_data_domain(data))
-            // product_fields = taxes._eval_taxes_computation_prepare_product_fields()
-            // fields = list(fields.union(product_fields))
-            // 
-            // config = self.env['pos.config'].browse(config_id)
-            // products = self.with_context(display_default_code=False).search_read(
-            //     domain,
-            //     fields,
-            //     limit=config.get_limited_product_count(),
-            //     order='sequence,default_code,name',
-            //     load=False
-            // )
-            // combo_products = self.browse((p['id'] for p in products if p["type"]=="combo"))
-            // combo_products_choice = self.with_context(display_default_code=False).search_read(
-            //     [("id", 'in', combo_products.combo_ids.combo_item_ids.product_id.ids), ("id", "not in", [p['id'] for p in products])],
-            //     fields,
-            //     limit=config.get_limited_product_count(),
-            //     order='sequence,default_code,name',
-            //     load=False
-            // )
-            // products.extend(combo_products_choice)
-            // for product in products:
-            //     product['image_128'] = bool(product['image_128'])
-            // 
-            // data['pos.config']['data'][0]['_product_default_values'] = \
-            //     self.env['account.tax']._eval_taxes_computation_prepare_product_default_values(product_fields)
-            // 
-            // self._compute_product_price_with_pricelist(products, config_id)
-            // return {
-            //     'data': products,
-            //     'fields': fields,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> LoadProductWithDomainInternalAsync(object domain, Guid config_id, object load_archived)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_product_with_domain(self, domain, config_id, load_archived=False):
-            // fields = self._load_pos_data_fields(config_id)
-            // context = {**self.env.context, 'display_default_code': False, 'active_test': not load_archived}
-            // return self.with_context(context).search_read(
-            //     domain,
-            //     fields,
-            //     order='sequence,default_code,name',
-            //     load=False)
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
+            // def _load_pos_data_read(self, records, config):
+            // read_records = super()._load_pos_data_read(records, config)
+            // different_currency = config.currency_id != self.env.company.currency_id
+            // if different_currency:
+            //     for product in read_records:
+            //         product['lst_price'] = self.env.company.currency_id._convert(
+            //             product['lst_price'], config.currency_id, self.env.company, fields.Date.today()
+            //         )
+            // return read_records
             */
             return default;
         }
@@ -2891,21 +2928,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: product_product.py) ---
             // def _onchange_service_fields(self):
             // for record in self:
-            //     default_uom_id = self.env['ir.default']._get_model_defaults('product.product').get('uom_id')
-            //     default_uom = self.env['uom.uom'].browse(default_uom_id)
             //     if record.type == 'service' and record.service_type == 'timesheet' and \
             //        not (record._origin.service_policy and record.service_policy == record._origin.service_policy):
-            //         if default_uom and default_uom.category_id == self.env.ref('uom.uom_categ_wtime'):
-            //             record.uom_id = default_uom
-            //         else:
-            //             record.uom_id = self.env.ref('uom.product_uom_hour')
+            //         record.uom_id = self.env.ref('uom.product_uom_hour')
             //     elif record._origin.uom_id:
             //         record.uom_id = record._origin.uom_id
-            //     elif default_uom:
-            //         record.uom_id = default_uom
             //     else:
             //         record.uom_id = self.product_tmpl_id.default_get(['uom_id']).get('uom_id')
-            //     record.uom_po_id = record.uom_id
             */
             return default;
         }
@@ -2945,16 +2974,10 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> OnchangeStandardPriceInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _onchange_standard_price(self):
-            //         if self.lot_valuated:
-            //             return {
-            //                 'warning': {
-            //                     'title': _("Warning"),
-            //                     'message': _("This product is valuated by lot/serial number. Changing the cost \
-            // will update the cost of every lot/serial number in stock."),
-            //                 }
-            //             }
+            // if self.standard_price < 0:
+            //     raise ValidationError(_("The cost of a product can't be negative."))
             */
             return default;
         }
@@ -3003,19 +3026,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _onchange_uom_id(self):
-            // if self.uom_id:
-            //     self.uom_po_id = self.uom_id.id
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> OnchangeUomInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def _onchange_uom(self):
-            // if self.uom_id and self.uom_po_id and self.uom_id.category_id != self.uom_po_id.category_id:
-            //     self.uom_po_id = self.uom_id
+            // if self._origin.uom_id == self.uom_id or not self._trigger_uom_warning():
+            //     return
+            // message = _(
+            //     'Changing the unit of measure for your product will apply a conversion 1 %(old_uom_name)s = 1 %(new_uom_name)s.\n'
+            //     'All existing records (Sales orders, Purchase orders, etc.) using this product will be updated by replacing the unit name.',
+            //     old_uom_name=self._origin.uom_id.display_name, new_uom_name=self.uom_id.display_name)
+            // return {
+            //     'warning': {
+            //         'title': _('What to expect ?'),
+            //         'message': message,
+            //     }
+            // }
             */
             return default;
         }
@@ -3041,38 +3063,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def action_open_label_layout(self):
+            // if any(product.type == 'service' for product in self):
+            //     raise ValidationError(_('Labels cannot be printed for products of service type'))
             // action = self.env['ir.actions.act_window']._for_xml_id('product.action_open_label_layout')
             // action['context'] = {'default_product_ids': self.ids}
             // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ProductProduct> OpenPricelistRulesAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def open_pricelist_rules(self):
-            // self.ensure_one()
-            // domain = ['|',
-            //     '&', ('product_tmpl_id', '=', self.product_tmpl_id.id), ('applied_on', '=', '1_product'),
-            //     '&', ('product_id', '=', self.id), ('applied_on', '=', '0_product_variant'),
-            //     ('compute_price', '=', 'fixed'),
-            // ]
-            // return {
-            //     'name': _('Price Rules'),
-            //     'view_mode': 'list,form',
-            //     'views': [(self.env.ref('product.product_pricelist_item_tree_view_from_product').id, 'list')],
-            //     'res_model': 'product.pricelist.item',
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'current',
-            //     'domain': domain,
-            //     'context': {
-            //         'default_product_id': self.id,
-            //         'default_applied_on': '0_product_variant',
-            //         'search_default_visible': True,
-            //     }
-            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3087,7 +3082,7 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [
             //     ('product_id', '=', self.id),
             //     '|', ('location_id', '=', False),
-            //          ('location_id', 'any', self.env['stock.location']._check_company_domain(self._context['allowed_company_ids']))
+            //          ('location_id', 'any', self.env['stock.location']._check_company_domain(self.env.context['allowed_company_ids']))
             // ]
             // action['context'] = {
             //     'default_product_id': self.id,
@@ -3129,22 +3124,15 @@ namespace Bamboo.Core.Application.Services
             //     components |= self.env['product.product'].concat(*[l[0].product_id for l in bom_sub_lines])
             // res = super(ProductProduct, components).action_open_quants()
             // if bom_kits:
-            //     res['context']['single_product'] = False
             //     res['context'].pop('default_product_tmpl_id', None)
             // return res
-            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: product_product.py) ---
-            // def action_open_quants(self):
-            // # Override to hide the `removal_date` column if not needed.
-            // if not any(product.use_expiration_date for product in self):
-            //     self = self.with_context(hide_removal_date=True)
-            // return super().action_open_quants()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def action_open_quants(self):
             // hide_location = not self.env.user.has_group('stock.group_stock_multi_locations')
             // hide_lot = all(product.tracking == 'none' for product in self)
             // self = self.with_context(
             //     hide_location=hide_location, hide_lot=hide_lot,
-            //     no_at_date=True, search_default_on_hand=True,
+            //     no_at_date=True,
             // )
             // 
             // # If user have rights to write on quant, we define the view as editable.
@@ -3189,20 +3177,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ProductProduct> OptionalProductPosDomainInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: product_product.py) ---
-            // def _optional_product_pos_domain(self):
-            // return [
-            //     *self.env['product.product']._check_company_domain(self.env.company),
-            //     ['sale_ok', '=', True],
-            //     ['available_in_pos', '=', True],
-            // ]
-            */
-            return default;
-        }
-
         protected async Task<ProductProduct> PrepareCategoriesForDisplayInternalAsync()
         {
             /*
@@ -3230,91 +3204,12 @@ namespace Bamboo.Core.Application.Services
             // for pa in attributes:
             //     categories[pa.category_id][pa] = OrderedDict([(
             //         product,
+            //         product.product_template_attribute_value_ids.filtered(
+            //             lambda ptav: ptav.attribute_id == pa
+            //         ) or  # If no_variant, show all possible values
             //         product.attribute_line_ids.filtered(lambda ptal: ptal.attribute_id == pa).value_ids
             //     ) for product in self])
             // return categories
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> PrepareInSvlValsInternalAsync(object quantity, object unit_cost, object lot)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _prepare_in_svl_vals(self, quantity, unit_cost, lot=False):
-            // """Prepare the values for a stock valuation layer created by a receipt.
-            // 
-            // :param quantity: the quantity to value, expressed in `self.uom_id`
-            // :param unit_cost: the unit cost to value `quantity`
-            // :return: values to use in a call to create
-            // :rtype: dict
-            // """
-            // self.ensure_one()
-            // company_id = self.env.context.get('force_company', self.env.company.id)
-            // company = self.env['res.company'].browse(company_id)
-            // value = company.currency_id.round(unit_cost * quantity)
-            // return {
-            //     'product_id': self.id,
-            //     'value': value,
-            //     'unit_cost': unit_cost,
-            //     'quantity': quantity,
-            //     'remaining_qty': quantity,
-            //     'remaining_value': value,
-            //     'company_id': company_id,
-            //     'lot_id': lot.id if lot else False,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> PrepareOutSvlValsInternalAsync(object quantity, object company, object lot)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _prepare_out_svl_vals(self, quantity, company, lot=False):
-            // """Prepare the values for a stock valuation layer created by a delivery.
-            // 
-            // :param quantity: the quantity to value, expressed in `self.uom_id`
-            // :return: values to use in a call to create
-            // :rtype: dict
-            // """
-            // self.ensure_one()
-            // company_id = self.env.context.get('force_company', self.env.company.id)
-            // company = self.env['res.company'].browse(company_id)
-            // currency = company.currency_id
-            // # Quantity is negative for out valuation layers.
-            // quantity = -1 * quantity
-            // cost = self.standard_price
-            // if lot and lot.standard_price:
-            //     cost = lot.standard_price
-            // vals = {
-            //     'product_id': self.id,
-            //     'value': currency.round(quantity * cost),
-            //     'unit_cost': cost,
-            //     'quantity': quantity,
-            //     'lot_id': lot.id if lot else False,
-            // }
-            // fifo_vals = self._run_fifo(abs(quantity), company, lot=lot)
-            // vals['remaining_qty'] = fifo_vals.get('remaining_qty')
-            // # In case of AVCO, fix rounding issue of standard price when needed.
-            // if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
-            //     rounding_error = currency.round(
-            //         (cost * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
-            //     )
-            // 
-            //     # If it is bigger than the (smallest number of the currency * quantity) / 2,
-            //     # then it isn't a rounding error but a stock valuation error, we shouldn't fix it under the hood ...
-            //     threshold = currency.round(max((abs(quantity) * currency.rounding) / 2, currency.rounding))
-            //     if rounding_error and abs(rounding_error) <= threshold:
-            //         vals['value'] += rounding_error
-            //         vals['rounding_adjustment'] = '\nRounding Adjustment: %s%s %s' % (
-            //             '+' if rounding_error > 0 else '',
-            //             float_repr(rounding_error, precision_digits=currency.decimal_places),
-            //             currency.symbol
-            //         )
-            // if self.product_tmpl_id.cost_method == 'fifo':
-            //     vals.update(fifo_vals)
-            // return vals
             */
             return default;
         }
@@ -3393,50 +3288,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> ProcessPosUiProductProductInternalAsync(object products, Guid config_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _process_pos_ui_product_product(self, products, config_id):
-            // 
-            // def filter_taxes_on_company(product_taxes, taxes_by_company):
-            //     """
-            //     Filter the list of tax ids on a single company starting from the current one.
-            //     If there is no tax in the result, it's filtered on the parent company and so
-            //     on until a non empty result is found.
-            //     """
-            //     taxes, comp = None, self.env.company
-            //     while not taxes and comp:
-            //         taxes = list(set(product_taxes) & set(taxes_by_company[comp.id]))
-            //         comp = comp.parent_id
-            //     return taxes
-            // 
-            // taxes = self.env['account.tax'].search(self.env['account.tax']._check_company_domain(self.env.company))
-            // # group all taxes by company in a dict where:
-            // # - key: ID of the company
-            // # - values: list of tax ids
-            // taxes_by_company = defaultdict(set)
-            // if self.env.company.parent_id:
-            //     for tax in taxes:
-            //         taxes_by_company[tax.company_id.id].add(tax.id)
-            // 
-            // loaded_product_tmpl_ids = list({p['product_tmpl_id'] for p in products})
-            // archived_combinations = self._get_archived_combinations_per_product_tmpl_id(loaded_product_tmpl_ids)
-            // different_currency = config_id.currency_id != self.env.company.currency_id
-            // for product in products:
-            //     if different_currency:
-            //         product['lst_price'] = self.env.company.currency_id._convert(product['lst_price'], config_id.currency_id, self.env.company, fields.Date.today())
-            //     product['image_128'] = bool(product['image_128'])
-            // 
-            //     if len(taxes_by_company) > 1 and len(product['taxes_id']) > 1:
-            //         product['taxes_id'] = filter_taxes_on_company(product['taxes_id'], taxes_by_company)
-            // 
-            //     if archived_combinations.get(product['product_tmpl_id']):
-            //         product['_archived_combinations'] = archived_combinations[product['product_tmpl_id']]
-            */
-            return default;
-        }
-
         public async Task<ProductProduct> ProductForecastReportAsync(Guid id)
         {
             /*
@@ -3491,284 +3342,291 @@ namespace Bamboo.Core.Application.Services
             // # the purpose of this override is to flag the aggregates above as such:
             // # field._description_aggregator() should simply not fail
             // if aggregate_spec in self._SPECIAL_SUM_AGGREGATES:
-            //     return SQL()
+            //     return SQL("NULL")
             // return super()._read_group_select(aggregate_spec, query)
             */
             return default;
         }
 
-        protected async Task<ProductProduct> RetrieveProductInternalAsync(object name, object default_code, object barcode, object company, object extra_domain)
+        protected async Task<ProductProduct> ReadGroupingSetsInternalAsync(object domain, object grouping_sets, object aggregates, object order)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product_margin, FILE: product_product.py) ---
+            // def _read_grouping_sets(self, domain, grouping_sets, aggregates=(), order=None):
+            // if self._SPECIAL_SUM_AGGREGATES.isdisjoint(aggregates):
+            //     return super()._read_grouping_sets(domain, grouping_sets, aggregates, order)
+            // 
+            // base_aggregates = [*(agg for agg in aggregates if agg not in self._SPECIAL_SUM_AGGREGATES), 'id:recordset']
+            // base_result = super()._read_grouping_sets(domain, grouping_sets, base_aggregates, order)
+            // 
+            // # Force the compute of all records to bypass the limit compute batching (PREFETCH_MAX)
+            // all_records = self.concat(*(item[-1] for row in base_result for item in row))
+            // # This line will compute all fields having _compute_product_margin_fields_values
+            // # as compute method.
+            // all_records._compute_product_margin_fields_values()
+            // 
+            // # base_result = [[(a1, b1, records), (a2, b2, records), ...], [(a1, b1, c1, records), (a2, b2, c2, records), ...] ...]
+            // result = []
+            // for grouping_spec, grouping in zip(grouping_sets, base_result):
+            //     row = []
+            //     for *other, records in grouping:
+            //         for index, spec in enumerate(itertools.chain(grouping_spec, aggregates)):
+            //             if spec in self._SPECIAL_SUM_AGGREGATES:
+            //                 field_name = spec.split(':')[0]
+            //                 other.insert(index, sum(records.mapped(field_name)))
+            //         row.append(tuple(other))
+            //     result.append(row)
+            // 
+            // return result
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> RetrieveProductInternalAsync(object company, object extra_domain)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
-            // def _retrieve_product(self, name=None, default_code=None, barcode=None, company=None, extra_domain=None):
+            // def _retrieve_product(self, company=None, extra_domain=None, **product_vals):
             // '''Search all products and find one that matches one of the parameters.
             // 
-            // :param name:            The name of the product.
-            // :param default_code:    The default_code of the product.
-            // :param barcode:         The barcode of the product.
             // :param company:         The company of the product.
             // :param extra_domain:    Any extra domain to add to the search.
+            // :param product_vals:    Values the product should match.
             // :returns:               A product or an empty recordset if not found.
             // '''
-            // if name and '\n' in name:
-            //     # cut Sales Description from the name
-            //     name = name.split('\n')[0]
-            // domains = []
-            // if barcode:
-            //     domains.append([('barcode', '=', barcode)])
-            // if default_code:
-            //     domains.append([('default_code', '=', default_code)])
-            // if name:
-            //     domains += [[('name', '=', name)], [('name', 'ilike', name)]]
-            // 
+            // domains = self._get_product_domain_search_order(**product_vals)
             // company = company or self.env.company
-            // for company_domain in (
-            //     [*self.env['res.partner']._check_company_domain(company), ('company_id', '!=', False)],
-            //     [('company_id', '=', False)],
-            // ):
-            //     products = self.env['product.product'].search(
-            //         expression.AND([
-            //             expression.OR(domains),
-            //             company_domain,
-            //             extra_domain or [],
-            //         ]),
-            //     )
-            //     for domain in domains:
-            //         if products_by_domain := products.filtered_domain(domain):
-            //             return products_by_domain[0]
+            // for _priority, domain in domains:
+            //     for company_domain in (
+            //         [*self.env['res.partner']._check_company_domain(company), ('company_id', '!=', False)],
+            //         [('company_id', '=', False)],
+            //     ):
+            //         if product := self.env['product.product'].search(
+            //             Domain.AND([domain, company_domain, extra_domain or Domain.TRUE]), limit=1,
+            //         ):
+            //             return product
             // return self.env['product.product']
             */
             return default;
         }
 
-        public async Task<ProductProduct> RevaluationAsync(Guid id)
+        protected async Task<ProductProduct> RunAvcoInternalAsync(object at_date, object lot, object method)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def action_revaluation(self):
+            // def _run_avco(self, at_date=None, lot=None, method="realtime"):
+            // """ Recompute the average cost of the product base on the last closing
+            // inventory value and all the incoming moves during the period."""
+            // # TODO remove at the end and do at real time
             // self.ensure_one()
-            // ctx = dict(self._context, default_product_id=self.id, default_company_id=self.env.company.id)
-            // return {
-            //     'name': _("Product Revaluation"),
-            //     'view_mode': 'form',
-            //     'res_model': 'stock.valuation.layer.revaluation',
-            //     'view_id': self.env.ref('stock_account.stock_valuation_layer_revaluation_form_view').id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': ctx,
-            //     'target': 'new'
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ProductProduct> RunFifoInternalAsync(object quantity, object company, object lot)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _run_fifo(self, quantity, company, lot=False):
-            // self.ensure_one()
+            // # Get value and quantity from last closing
+            // quantity = 0
+            // # Get value and quantity for all incoming
+            // moves_domain = Domain([
+            //     ('product_id', '=', self.id),
+            //     ('company_id', '=', self.env.company.id),
+            // ])
+            // if lot:
+            //     moves_domain &= Domain([
+            //         ('move_line_ids.lot_id', 'in', lot.id),
+            //     ])
+            // if at_date:
+            //     moves_domain &= Domain([
+            //         ('date', '<=', at_date),
+            //     ])
             // 
-            // # Find back incoming stock valuation layers (called candidates here) to value `quantity`.
-            // qty_to_take_on_candidates = quantity
-            // candidates = self._get_fifo_candidates(company, lot=lot)
-            // new_standard_price = 0
-            // tmp_value = 0  # to accumulate the value taken on the candidates
-            // for candidate in candidates:
-            //     qty_taken_on_candidate = self._get_qty_taken_on_candidate(qty_to_take_on_candidates, candidate)
-            // 
-            //     candidate_unit_cost = candidate.remaining_value / candidate.remaining_qty
-            //     new_standard_price = candidate_unit_cost
-            //     value_taken_on_candidate = qty_taken_on_candidate * candidate_unit_cost
-            //     value_taken_on_candidate = candidate.currency_id.round(value_taken_on_candidate)
-            //     new_remaining_value = candidate.remaining_value - value_taken_on_candidate
-            // 
-            //     candidate_vals = {
-            //         'remaining_qty': candidate.remaining_qty - qty_taken_on_candidate,
-            //         'remaining_value': new_remaining_value,
-            //     }
-            // 
-            //     candidate.write(candidate_vals)
-            // 
-            //     qty_to_take_on_candidates -= qty_taken_on_candidate
-            //     tmp_value += value_taken_on_candidate
-            // 
-            //     if float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
-            //         if float_is_zero(candidate.remaining_qty, precision_rounding=self.uom_id.rounding):
-            //             next_candidates = candidates.filtered(lambda svl: svl.remaining_qty > 0)
-            //             new_standard_price = next_candidates and next_candidates[0].unit_cost or new_standard_price
-            //         break
-            // 
-            // # Fifo out will change the AVCO value of the product. So in case of out,
-            // # we recompute it base on the remaining value and quantities.
-            // if self.cost_method == 'fifo':
-            //     quantity_svl = sum(candidates.mapped('remaining_qty'))
-            //     value_svl = sum(candidates.mapped('remaining_value'))
-            //     product = self.sudo().with_company(company.id).with_context(disable_auto_svl=True)
-            //     if float_compare(quantity_svl, 0.0, precision_rounding=self.uom_id.rounding) > 0:
-            //         product.standard_price = value_svl / quantity_svl
-            //     elif candidates and not float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
-            //         product.standard_price = new_standard_price
-            // 
-            // # If there's still quantity to value but we're out of candidates, we fall in the
-            // # negative stock use case. We chose to value the out move at the price of the
-            // # last out and a correction entry will be made once `_fifo_vacuum` is called.
-            // vals = {}
-            // if float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
-            //     vals = {
-            //         'value': -tmp_value,
-            //         'unit_cost': tmp_value / quantity,
-            //     }
+            // # PERF avoid memoryerror
+            // move_fields = ['date', 'is_dropship', 'is_in', 'is_out', 'location_dest_id', 'location_id', 'move_line_ids', 'picked', 'value']
+            // # load in before in case of quick return
+            // moves_in = self.env['stock.move'].search_fetch(
+            //     moves_domain & Domain(['|', ('is_in', '=', True), ('is_dropship', '=', True)]),
+            //     field_names=move_fields,
+            //     order='date, id'
+            // )
+            // # TODO convert to company UoM
+            // product_value_domain = Domain([('product_id', '=', self.id)])
+            // if lot:
+            //     product_value_domain &= Domain(['|', ('lot_id', '=', lot.id), ('lot_id', '=', False)])
             // else:
-            //     assert qty_to_take_on_candidates > 0
-            //     last_fifo_price = new_standard_price or self.standard_price
-            //     negative_stock_value = last_fifo_price * -qty_to_take_on_candidates
-            //     tmp_value += abs(negative_stock_value)
-            //     vals = {
-            //         'remaining_qty': -qty_to_take_on_candidates,
-            //         'value': -tmp_value,
-            //         'unit_cost': last_fifo_price,
-            //     }
-            // return vals
+            //     product_value_domain &= Domain([('lot_id', '=', False)])
+            // if at_date:
+            //     product_value_domain &= Domain([('date', '<=', at_date)])
+            // 
+            // product_values = self.env['product.value'].sudo().search(product_value_domain, order="date, id")
+            // 
+            // # If the last value was defined by the user just return it
+            // if product_values and not moves_in:
+            //     quantity = self._with_valuation_context().with_context(to_date=at_date).qty_available
+            //     last_value = product_values[-1]
+            //     return last_value.value, last_value.value * quantity
+            // if product_values and moves_in and product_values[-1].date > moves_in[-1].date:
+            //     quantity = self._with_valuation_context().with_context(to_date=at_date).qty_available
+            //     if lot:
+            //         quantity = lot.product_qty
+            //     avco_value = product_values[-1].value
+            //     return avco_value, avco_value * quantity
+            // 
+            // avco_value = 0
+            // avco_total_value = 0
+            // 
+            // if method == "realtime":
+            //     moves_full_domain = moves_domain & Domain([
+            //         '|',
+            //         '|', ('is_in', '=', True),
+            //         ('is_out', '=', True),
+            //         ('is_dropship', '=', True)
+            //     ])
+            //     moves = self.env['stock.move'].search_fetch(moves_full_domain, field_names=move_fields, order='date, id')
+            // else:
+            //     # no needed to join + reorder
+            //     moves = moves_in
+            // 
+            // # PERF avoid memoryerror
+            // moves.move_line_ids.fetch(['company_id', 'location_id', 'location_dest_id', 'lot_id', 'owner_id', 'picked', 'quantity_product_uom'])
+            // 
+            // # TODO Only browse from last product_value
+            // for move in moves:
+            //     while product_values and move.date >= product_values[0].date:
+            //         product_value = product_values[0]
+            //         product_values = product_values[1:]
+            //         avco_value = product_value.value
+            //         avco_total_value = avco_value * quantity
+            //     if move.is_in or move.is_dropship:
+            //         in_qty = move._get_valued_qty()
+            //         in_value = move.value
+            //         if at_date or move.is_dropship:
+            //             in_value = move._get_value(at_date=at_date)
+            //         if lot:
+            //             lot_qty = move._get_valued_qty(lot)
+            //             in_value = (in_value * lot_qty / in_qty) if in_qty else 0
+            //             in_qty = lot_qty
+            //         if quantity < 0 and quantity + in_qty >= 0:
+            //             positive_qty = quantity + in_qty
+            //             ratio = positive_qty / in_qty
+            //             avco_total_value = ratio * in_value
+            //         else:
+            //             avco_total_value += in_value
+            //         quantity += in_qty
+            //         avco_value = avco_total_value / quantity if quantity else 0
+            //     if move.is_out or move.is_dropship:
+            //         out_qty = move._get_valued_qty()
+            //         out_value = out_qty * avco_value
+            //         if lot:
+            //             lot_qty = move._get_valued_qty(lot)
+            //             out_value = (out_value * lot_qty / out_qty) if out_qty else 0
+            //             out_qty = lot_qty
+            //         avco_total_value -= out_value
+            //         quantity -= out_qty
+            // 
+            // return avco_value, avco_total_value
             */
             return default;
         }
 
-        protected async Task<ProductProduct> RunFifoVacuumInternalAsync(object company)
+        protected async Task<ProductProduct> RunFifoGetStackInternalAsync(object lot, object at_date, object location)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _run_fifo_vacuum(self, company=None):
-            // """Compensate layer valued at an estimated price with the price of future receipts
-            // if any. If the estimated price is equals to the real price, no layer is created but
-            // the original layer is marked as compensated.
+            // def _run_fifo_get_stack(self, lot=None, at_date=None, location=None):
+            // # TODO: return a list of tuple (move, valued_qty) instead
+            // external_location = location and location.is_valued_external
+            // fifo_stack = []
+            // fifo_stack_size = 0
+            // if location:
+            //     self = self.with_context(location=location.ids)  # noqa: PLW0642
+            // if lot:
+            //     fifo_stack_size = lot.product_qty
+            // else:
+            //     fifo_stack_size = self._with_valuation_context().with_context(to_date=at_date).qty_available
+            // if self.env.context.get('fifo_qty_already_processed'):
+            //     # When validating multiple moves at the same time, the qty_available won't be up to date yet
+            //     fifo_stack_size -= self.env.context['fifo_qty_already_processed']
+            // if self.uom_id.compare(fifo_stack_size, 0) <= 0:
+            //     return fifo_stack, 0
             // 
-            // :param company: recordset of `res.company` to limit the execution of the vacuum
-            // """
-            // if company is None:
-            //     company = self.env.company
-            // ValuationLayer = self.env['stock.valuation.layer'].sudo()
-            // svls_to_vacuum_by_product = defaultdict(lambda: ValuationLayer)
-            // res = ValuationLayer._read_group([
-            //     ('product_id', 'in', self.ids),
-            //     ('remaining_qty', '<', 0),
-            //     ('stock_move_id', '!=', False),
-            //     ('company_id', '=', company.id),
-            // ], ['product_id'], ['id:recordset', 'create_date:min'], order='create_date:min')
-            // min_create_date = datetime.max
-            // if not res:
-            //     return
-            // for group in res:
-            //     svls_to_vacuum_by_product[group[0].id] = group[1].sorted(key=lambda r: (r.create_date, r.id))
-            //     min_create_date = min(min_create_date, group[2])
-            // all_candidates_by_product = defaultdict(lambda: ValuationLayer)
-            // lot_to_update = []
-            // res = ValuationLayer._read_group([
-            //     ('product_id', 'in', self.ids),
-            //     ('remaining_qty', '>', 0),
-            //     ('company_id', '=', company.id),
-            //     ('create_date', '>=', min_create_date),
-            // ], ['product_id'], ['id:recordset'])
-            // for group in res:
-            //     all_candidates_by_product[group[0].id] = group[1]
+            // moves_domain = Domain([
+            //     ('product_id', '=', self.id),
+            //     ('company_id', '=', self.env.company.id)
+            // ])
+            // if lot:
+            //     moves_domain &= Domain([('move_line_ids.lot_id', 'in', lot.id)])
+            // if at_date:
+            //     moves_domain &= Domain([('date', '<=', at_date)])
+            // if location:
+            //     moves_domain &= Domain([('location_dest_id', '=', location.id)])
+            // if external_location:
+            //     moves_domain &= Domain([('is_out', '=', True)])
+            // else:
+            //     moves_domain &= Domain([('is_in', '=', True)])
             // 
-            // new_svl_vals_real_time = []
-            // new_svl_vals_manual = []
-            // real_time_svls_to_vacuum = ValuationLayer
+            // # Arbitrary limit as we can't guess how many moves correspond to the qty_available, but avoid fetching all moves at the same time.
+            // initial_limit = 100
+            // moves_in = self.env['stock.move'].search(moves_domain, order='date desc, id desc', limit=initial_limit)
             // 
-            // for product in self.with_company(company.id):
-            //     all_candidates = all_candidates_by_product[product.id]
-            //     current_real_time_svls = ValuationLayer
-            //     for svl_to_vacuum in svls_to_vacuum_by_product[product.id]:
-            //         # We don't use search to avoid executing _flush_search and to decrease interaction with DB
-            //         candidates = all_candidates.filtered(
-            //             lambda r: r.create_date > svl_to_vacuum.create_date
-            //             or r.create_date == svl_to_vacuum.create_date
-            //             and r.id > svl_to_vacuum.id
-            //         )
-            //         if product.lot_valuated:
-            //             candidates = candidates.filtered(lambda r: r.lot_id == svl_to_vacuum.lot_id)
-            //         if not candidates:
-            //             break
-            //         qty_to_take_on_candidates = abs(svl_to_vacuum.remaining_qty)
-            //         qty_taken_on_candidates = 0
-            //         tmp_value = 0
-            //         for candidate in candidates:
-            //             qty_taken_on_candidate = min(candidate.remaining_qty, qty_to_take_on_candidates)
-            //             qty_taken_on_candidates += qty_taken_on_candidate
+            // remaining_qty_on_first_stack_move = 0
+            // current_offset = 0
+            // # Go to the bottom of the stack
+            // while self.uom_id.compare(fifo_stack_size, 0) > 0 and moves_in:
+            //     move = moves_in[0]
+            //     moves_in = moves_in[1:]
+            //     in_qty = move._get_valued_qty()
+            //     fifo_stack.append(move)
+            //     remaining_qty_on_first_stack_move = min(in_qty, fifo_stack_size)
+            //     fifo_stack_size -= in_qty
+            //     if self.uom_id.compare(fifo_stack_size, 0) > 0 and not moves_in:
+            //         # We need to fetch more moves
+            //         current_offset += 1
+            //         moves_in = self.env['stock.move'].search(moves_domain, order='date desc, id desc', offset=current_offset * initial_limit, limit=initial_limit)
+            // fifo_stack.reverse()
+            // return fifo_stack, remaining_qty_on_first_stack_move
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> RunFifoInternalAsync(object quantity, object lot, object at_date, object location)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _run_fifo(self, quantity, lot=None, at_date=None, location=None):
+            // """ Returns the value for the next outgoing product base on the qty give as argument."""
+            // self.ensure_one()
+            // if self.uom_id.compare(quantity, 0) <= 0:
+            //     if at_date:
+            //         last_in = self._get_last_in(at_date)
+            //         return quantity * (last_in._get_price_unit() if last_in else self.standard_price)
+            //     return quantity * self.standard_price
+            // external_location = location and location.is_valued_external
             // 
-            //             candidate_unit_cost = candidate.remaining_value / candidate.remaining_qty
-            //             value_taken_on_candidate = qty_taken_on_candidate * candidate_unit_cost
-            //             value_taken_on_candidate = candidate.currency_id.round(value_taken_on_candidate)
-            //             new_remaining_value = candidate.remaining_value - value_taken_on_candidate
-            // 
-            //             candidate_vals = {
-            //                 'remaining_qty': candidate.remaining_qty - qty_taken_on_candidate,
-            //                 'remaining_value': new_remaining_value
-            //             }
-            //             candidate.write(candidate_vals)
-            //             if not (candidate.remaining_qty > 0):
-            //                 all_candidates -= candidate
-            // 
-            //             qty_to_take_on_candidates -= qty_taken_on_candidate
-            //             tmp_value += value_taken_on_candidate
-            //             if float_is_zero(qty_to_take_on_candidates, precision_rounding=product.uom_id.rounding):
-            //                 break
-            // 
-            //         # Get the estimated value we will correct.
-            //         remaining_value_before_vacuum = svl_to_vacuum.unit_cost * qty_taken_on_candidates
-            //         new_remaining_qty = svl_to_vacuum.remaining_qty + qty_taken_on_candidates
-            //         corrected_value = remaining_value_before_vacuum - tmp_value
-            //         svl_to_vacuum.write({
-            //             'remaining_qty': new_remaining_qty,
-            //         })
-            // 
-            //         # Don't create a layer or an accounting entry if the corrected value is zero.
-            //         if svl_to_vacuum.currency_id.is_zero(corrected_value):
-            //             continue
-            // 
-            //         corrected_value = svl_to_vacuum.currency_id.round(corrected_value)
-            // 
-            //         move = svl_to_vacuum.stock_move_id
-            //         new_svl_vals = new_svl_vals_real_time if product.valuation == 'real_time' else new_svl_vals_manual
-            //         new_svl_vals.append({
-            //             'product_id': product.id,
-            //             'value': corrected_value,
-            //             'unit_cost': 0,
-            //             'quantity': 0,
-            //             'remaining_qty': 0,
-            //             'stock_move_id': move.id,
-            //             'company_id': move.company_id.id,
-            //             'description': 'Revaluation of %s (negative inventory)' % (move.picking_id.name or move.name),
-            //             'stock_valuation_layer_id': svl_to_vacuum.id,
-            //             'lot_id': svl_to_vacuum.lot_id.id,
-            //         })
-            //         lot_to_update.append(svl_to_vacuum.lot_id)
-            //         if product.valuation == 'real_time':
-            //             current_real_time_svls |= svl_to_vacuum
-            //     real_time_svls_to_vacuum |= current_real_time_svls
-            // ValuationLayer.create(new_svl_vals_manual)
-            // vacuum_svls = ValuationLayer.create(new_svl_vals_real_time)
-            // 
-            // # If some negative stock were fixed, we need to recompute the standard price.
-            // for product in self:
-            //     product = product.with_company(company.id)
-            //     if not svls_to_vacuum_by_product[product.id]:
-            //         continue
-            //     if product.cost_method not in ['average', 'fifo'] or float_is_zero(product.quantity_svl,
-            //                                                               precision_rounding=product.uom_id.rounding):
-            //         continue
-            //     if product.lot_valuated:
-            //         for lot in lot_to_update:
-            //             if float_is_zero(lot.quantity_svl, precision_rounding=product.uom_id.rounding):
-            //                 continue
-            //             lot.sudo().with_context(disable_auto_svl=True).write(
-            //                 {'standard_price': lot.value_svl / lot.quantity_svl}
-            //             )
-            //     product.sudo().with_context(disable_auto_svl=True).write({'standard_price': product.value_svl / product.quantity_svl})
-            // 
-            // vacuum_svls._validate_accounting_entries()
-            // self._create_fifo_vacuum_anglo_saxon_expense_entries(zip(vacuum_svls, real_time_svls_to_vacuum))
+            // fifo_cost = 0
+            // fifo_stack, qty_on_first_move = self._run_fifo_get_stack(lot=lot, at_date=at_date, location=location)
+            // last_move = False
+            // # Going up to get the quantity in the argument
+            // while quantity > 0 and fifo_stack:
+            //     move = fifo_stack.pop(0)
+            //     last_move = move
+            //     move_value = move.value
+            //     if at_date:
+            //         move_value = move._get_value(at_date=at_date)
+            //     if qty_on_first_move:
+            //         valued_qty = move._get_valued_qty()
+            //         in_qty = qty_on_first_move
+            //         in_value = move_value * in_qty / valued_qty
+            //         qty_on_first_move = 0
+            //     else:
+            //         in_qty = move._get_valued_qty()
+            //         in_value = move_value
+            //     if in_qty > quantity:
+            //         in_value = in_value * quantity / in_qty
+            //         in_qty = quantity
+            //     fifo_cost += in_value
+            //     quantity -= in_qty
+            // # When we required more quantity than available we extrapolate with the last known price
+            // if quantity > 0:
+            //     if last_move and last_move.quantity:
+            //         fifo_cost += quantity * (last_move.value / last_move.quantity)
+            //     else:
+            //         fifo_cost += quantity * self.standard_price
+            // return fifo_cost
             */
             return default;
         }
@@ -3778,8 +3636,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _search_all_product_tag_ids(self, operator, operand):
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     return [('product_tag_ids', operator, operand), ('additional_product_tag_ids', operator, operand)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // return ['|', ('product_tag_ids', operator, operand), ('additional_product_tag_ids', operator, operand)]
             */
             return default;
@@ -3790,17 +3648,19 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _search_display_name(self, operator, value):
-            // is_positive = operator not in expression.NEGATIVE_TERM_OPERATORS
-            // combine = expression.OR if is_positive else expression.AND
-            // domains = [
-            //     [('name', operator, value)],
-            //     [('default_code', operator, value)],
-            // ]
-            // if operator in ('=', 'in') or (operator.endswith('like') and is_positive):
-            //     barcode_values = [value] if operator != 'in' else value
-            //     domains.append([('barcode', 'in', barcode_values)])
-            // if operator == '=' and isinstance(value, str) and (m := re.search(r'(\[(.*?)\])', value)):
-            //     domains.append([('default_code', '=', m.group(2))])
+            // is_positive = operator not in Domain.NEGATIVE_OPERATORS
+            // template_domains = [[('name', operator, value)]]
+            // product_domains = [[('default_code', operator, value)]]
+            // 
+            // if operator == 'in':
+            //     product_domains.append([('barcode', 'in', value)])
+            //     for v in value:
+            //         if isinstance(v, str) and (m := re.search(r'(\[(.*?)\])', v)):
+            //             product_domains.append([('default_code', '=', m.group(2))])
+            // elif operator.endswith('like') and is_positive:
+            //     product_domains.append([('barcode', 'in', [value])])
+            // 
+            // supplier_domain = []
             // if partner_id := self.env.context.get('partner_id'):
             //     supplier_domain = [
             //         ('partner_id', '=', partner_id),
@@ -3808,8 +3668,40 @@ namespace Bamboo.Core.Application.Services
             //         ('product_code', operator, value),
             //         ('product_name', operator, value),
             //     ]
-            //     domains.append([('product_tmpl_id.seller_ids', 'any', supplier_domain)])
-            // return combine(domains)
+            // 
+            // # AND clauses properly hit indexes so no need for custom sql in this case.
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     domains = template_domains + product_domains
+            //     if supplier_domain:
+            //         domains.append([('product_tmpl_id.seller_ids', 'any', supplier_domain)])
+            //     return Domain.AND(domains)
+            // 
+            // # Disable active_test to simplify subqueries
+            // self_no_active_test = self.with_context(active_test=False)
+            // queries = [
+            //     self_no_active_test._search([
+            //         ('product_tmpl_id', 'in', self_no_active_test.env['product.template']._search(Domain.OR(template_domains)))
+            //     ]),
+            //     self_no_active_test._search(Domain.OR(product_domains)),
+            // ]
+            // if supplier_domain:
+            //     queries.append(
+            //         self_no_active_test._search([
+            //             (
+            //                 'product_tmpl_id',
+            //                 'in',
+            //                 self_no_active_test.env['product.supplierinfo']._search(supplier_domain).subselect('product_tmpl_id'),
+            //             )
+            //         ])
+            //     )
+            // query = SQL(
+            //     """(%s)""",
+            //     SQL("UNION ALL").join(
+            //         [SQL("(%s)", query.select()) for query in queries]
+            //     )
+            // )
+            // 
+            // return [('id', 'in', query)]
             */
             return default;
         }
@@ -3835,16 +3727,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> SearchInternalAsync(object domain, object offset, object limit, object order)
+        protected async Task<ProductProduct> SearchInternalAsync(object domain)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, *args, **kwargs):
             // # TDE FIXME: strange
-            // if self._context.get('search_default_categ_id'):
-            //     domain = domain.copy()
-            //     domain.append((('categ_id', 'child_of', self._context['search_default_categ_id'])))
-            // return super()._search(domain, offset, limit, order)
+            // if self.env.context.get('search_default_categ_id'):
+            //     domain = Domain(domain) & Domain('categ_id', 'child_of', self.env.context['search_default_categ_id'])
+            // return super()._search(domain, *args, **kwargs)
             */
             return default;
         }
@@ -3854,11 +3745,34 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
             // def _search_is_in_purchase_order(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
+            // if operator != 'in':
+            //     return NotImplemented
             // product_ids = self.env['purchase.order.line'].search([
             //     ('order_id', 'in', [self.env.context.get('order_id', '')]),
             // ]).product_id.ids
+            // return [('id', 'in', product_ids)]
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> SearchIsInSelectedSectionOfOrderInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def _search_is_in_selected_section_of_order(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
+            // ctx = self.env.context
+            // order_id = ctx.get('order_id')
+            // order_model = ctx.get('product_catalog_order_model')
+            // line_field = ctx.get('child_field')
+            // if not (order_id and order_model and line_field):
+            //     return []
+            // 
+            // product_ids = self.env[order_model].browse(order_id)[line_field].filtered(
+            //     lambda line: line.get_parent_section_line().id == ctx.get('section_id'),
+            // ).mapped('product_id').ids
+            // 
             // return [('id', 'in', product_ids)]
             */
             return default;
@@ -3869,7 +3783,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _search_is_kits(self, operator, value):
-            // assert operator in ('=', '!='), 'Unsupported operator'
+            // if operator != 'in':
+            //     return NotImplemented
             // bom_tmpl_query = self.env['mrp.bom'].sudo()._search(
             //     [('company_id', 'in', [False] + self.env.companies.ids),
             //      ('active', '=', True),
@@ -3877,13 +3792,10 @@ namespace Bamboo.Core.Application.Services
             // bom_product_query = self.env['mrp.bom'].sudo()._search(
             //     [('company_id', 'in', [False] + self.env.companies.ids),
             //      ('type', '=', 'phantom'), ('product_id', '!=', False)])
-            // neg = ''
-            // op = '|'
-            // if (operator == '=' and not value) or (operator == '!=' and value):
-            //     neg = 'not '
-            //     op = '&'
-            // return [op, ('product_tmpl_id', neg + 'in', bom_tmpl_query.subselect('product_tmpl_id')),
-            //         ('id', neg + 'in', bom_product_query.subselect('product_id'))]
+            // return [
+            //     '|', ('product_tmpl_id', 'in', bom_tmpl_query.subselect('product_tmpl_id')),
+            //     ('id', 'in', bom_product_query.subselect('product_id'))
+            // ]
             */
             return default;
         }
@@ -3904,16 +3816,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _search_product_is_in_bom(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
+            // if operator != 'in':
+            //     return NotImplemented
             // product_ids = self.env['mrp.bom.line'].search([
             //     ('bom_id', '=', self.env.context.get('order_id', '')),
             // ]).product_id.ids
-            // if (operator == '!=' and value is True) or (operator == '=' and value is False):
-            //     domain_operator = 'not in'
-            // else:
-            //     domain_operator = 'in'
-            // return [('id', domain_operator, product_ids)]
+            // return [('id', operator, product_ids)]
             */
             return default;
         }
@@ -3923,16 +3831,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _search_product_is_in_mo(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
+            // if operator != 'in':
+            //     return NotImplemented
             // product_ids = self.env['mrp.production'].search([
             //     ('id', 'in', [self.env.context.get('order_id', '')]),
             // ]).move_raw_ids.product_id.ids
-            // if (operator == '!=' and value is True) or (operator == '=' and value is False):
-            //     domain_operator = 'not in'
-            // else:
-            //     domain_operator = 'in'
-            // return [('id', domain_operator, product_ids)]
+            // return [('id', operator, product_ids)]
             */
             return default;
         }
@@ -3942,16 +3846,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: product.py) ---
             // def _search_product_is_in_repair(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
+            // if operator != 'in':
+            //     return NotImplemented
             // product_ids = self.env['repair.order'].search([
             //     ('id', 'in', [self.env.context.get('order_id', '')]),
             // ]).move_ids.product_id.ids
-            // if (operator == '!=' and value is True) or (operator == '=' and value is False):
-            //     domain_operator = 'not in'
-            // else:
-            //     domain_operator = 'in'
-            // return [('id', domain_operator, product_ids)]
+            // return [('id', 'in', product_ids)]
             */
             return default;
         }
@@ -3961,11 +3861,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_product.py) ---
             // def _search_product_is_in_sale_order(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_("Operation not supported"))
-            // product_ids = self.env['sale.order.line'].search([
+            // if operator != 'in':
+            //     return NotImplemented
+            // product_ids = self.env['sale.order.line'].search_fetch([
             //     ('order_id', 'in', [self.env.context.get('order_id', '')]),
-            // ]).product_id.ids
+            // ], ['product_id']).product_id.ids
             // return [('id', 'in', product_ids)]
             */
             return default;
@@ -3976,22 +3876,27 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _search_product_quantity(self, operator, value, field):
-            // # TDE FIXME: should probably clean the search methods
-            // # to prevent sql injections
-            // if field not in ('qty_available', 'virtual_available', 'incoming_qty', 'outgoing_qty', 'free_qty'):
-            //     raise UserError(_('Invalid domain left operand %s', field))
-            // if operator not in ('<', '>', '=', '!=', '<=', '>='):
-            //     raise UserError(_('Invalid domain operator %s', operator))
-            // if not isinstance(value, (float, int)):
-            //     raise UserError(_("Invalid domain right operand '%s'. It must be of type Integer/Float", value))
-            // 
-            // # TODO: Still optimization possible when searching virtual quantities
-            // ids = []
             // # Order the search on `id` to prevent the default order on the product name which slows
-            // # down the search because of the join on the translation table to get the translated names.
-            // for product in self.with_context(prefetch_fields=False).search([], order='id'):
-            //     if OPERATORS[operator](product[field], value):
-            //         ids.append(product.id)
+            // # down the search.
+            // ids = self.with_context(prefetch_fields=False).search_fetch([], [field], order='id').filtered_domain([(field, operator, value)]).ids
+            // return [('id', 'in', ids)]
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> SearchProductWithSuggestedQuantityInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
+            // def _search_product_with_suggested_quantity(self, operator, value):
+            // if operator in ["in", "not in"]:
+            //     return NotImplemented
+            // 
+            // search_domain = self.env.context.get("suggest_domain") or [('type', '=', 'consu')]
+            // safe_search_domain = [c if c[0] != "suggested_qty" else [1, "=", 1] for c in search_domain]
+            // products = self.search_fetch(safe_search_domain, ["suggested_qty"])
+            // ids = products.filtered_domain([("suggested_qty", operator, value)]).ids
+            // 
             // return [('id', 'in', ids)]
             */
             return default;
@@ -4023,6 +3928,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
             // def _search_qty_available_new(self, operator, value, lot_id=False, owner_id=False, package_id=False):
             // '''extending the method in stock.product to take into account kits'''
+            // op = PY_OPERATORS.get(operator)
+            // if not op:
+            //     return NotImplemented
             // product_ids = super(ProductProduct, self)._search_qty_available_new(operator, value, lot_id, owner_id, package_id)
             // kit_boms = self.env['mrp.bom'].search([('type', "=", 'phantom')])
             // kit_products = self.env['product.product']
@@ -4032,16 +3940,21 @@ namespace Bamboo.Core.Application.Services
             //     else:
             //         kit_products |= kit.product_tmpl_id.product_variant_ids
             // for product in kit_products:
-            //     if OPERATORS[operator](product.qty_available, value):
+            //     if op(product.qty_available, value):
             //         product_ids.append(product.id)
+            //     elif product.id in product_ids:
+            //         product_ids.pop(product_ids.index(product.id))
             // return list(set(product_ids))
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def _search_qty_available_new(self, operator, value, lot_id=False, owner_id=False, package_id=False):
             // ''' Optimized method which doesn't search on stock.moves, only on stock.quants. '''
-            // if operator not in ('<', '>', '=', '!=', '<=', '>='):
-            //     raise UserError(_('Invalid domain operator %s', operator))
-            // if not isinstance(value, (float, int)):
-            //     raise UserError(_("Invalid domain right operand '%s'. It must be of type Integer/Float", value))
+            // op = PY_OPERATORS.get(operator)
+            // if not op:
+            //     return NotImplemented
+            // if isinstance(value, Iterable) and not isinstance(value, str):
+            //     value = {float(v) for v in value}
+            // else:
+            //     value = float(value)
             // 
             // product_ids = set()
             // domain_quant = self._get_domain_locations()[0]
@@ -4054,18 +3967,14 @@ namespace Bamboo.Core.Application.Services
             // quants_groupby = self.env['stock.quant']._read_group(domain_quant, ['product_id'], ['quantity:sum'])
             // 
             // # check if we need include zero values in result
-            // include_zero = (
-            //     value < 0.0 and operator in ('>', '>=') or
-            //     value > 0.0 and operator in ('<', '<=') or
-            //     value == 0.0 and operator in ('>=', '<=', '=')
-            // )
+            // include_zero = op(0.0, value)
             // 
             // processed_product_ids = set()
             // for product, quantity_sum in quants_groupby:
             //     product_id = product.id
             //     if include_zero:
             //         processed_product_ids.add(product_id)
-            //     if OPERATORS[operator](quantity_sum, value):
+            //     if op(quantity_sum, value):
             //         product_ids.add(product_id)
             // 
             // if include_zero:
@@ -4134,19 +4043,24 @@ namespace Bamboo.Core.Application.Services
             //         self_ctxt = self.with_context(lang=partner.lang)
             //         product_ctxt = product.with_context(lang=partner.lang)
             //         body_html = self_ctxt.env['ir.qweb']._render(
-            //             'website_sale_stock.availability_email_body', {'product': product_ctxt})
-            //         msg = self_ctxt.env['mail.message'].sudo().new(dict(body=body_html, record_name=product_ctxt.name))
-            //         full_mail = self_ctxt.env['mail.render.mixin']._render_encapsulate(
-            //             "mail.mail_notification_light",
+            //             'website_sale_stock.availability_email_body',
+            //             {'product': product_ctxt},
+            //         )
+            //         full_mail = product_ctxt.env['mail.render.mixin']._render_encapsulate(
+            //             'mail.mail_notification_light',
             //             body_html,
-            //             add_context=dict(message=msg, model_description=_("Product")),
+            //             add_context={'model_description': _("Product")},
+            //             context_record=product_ctxt,
             //         )
             //         context = {'lang': partner.lang}  # Use partner lang to translate mail subject below
             //         mail_values = {
-            //             "subject": _("The product '%(product_name)s' is now available", product_name=product_ctxt.name),
-            //             "email_from": (product.company_id.partner_id or self.env.user).email_formatted,
-            //             "email_to": partner.email_formatted,
-            //             "body_html": full_mail,
+            //             'subject': _(
+            //                 "The product '%(product_name)s' is now available",
+            //                 product_name=product_ctxt.name
+            //             ),
+            //             'email_from': (product.company_id.partner_id or self.env.user).email_formatted,
+            //             'email_to': partner.email_formatted,
+            //             'body_html': full_mail,
             //         }
             //         del context
             // 
@@ -4165,9 +4079,13 @@ namespace Bamboo.Core.Application.Services
             // config_self = self.env['pos.config'].sudo().search([('self_ordering_mode', '!=', 'nothing')])
             // for config in config_self:
             //     if config.current_session_id and config.access_token:
-            //         config._notify('PRODUCT_CHANGED', {
-            //             'product.product': self.read(self._load_pos_self_data_fields(config.id), load=False)
-            //         })
+            //         records = self.env["product.template"].load_product_from_pos(config.id, [('id', '=', self.product_tmpl_id.id)])
+            //         payload = {}
+            //         self_models = self.env["pos.config"]._load_self_data_models()
+            //         for model in records:
+            //             if model in self_models:
+            //                 payload[model] = records[model]
+            //         config._notify('PRODUCT_CHANGED', payload)
             */
             return default;
         }
@@ -4207,8 +4125,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _set_product_lst_price(self):
             // for product in self:
-            //     if self._context.get('uom'):
-            //         value = self.env['uom.uom'].browse(self._context['uom'])._compute_price(product.lst_price, product.uom_id)
+            //     if self.env.context.get('uom'):
+            //         value = self.env['uom.uom'].browse(self.env.context['uom'])._compute_price(product.lst_price, product.uom_id)
             //     else:
             //         value = product.lst_price
             //     value -= product.price_extra
@@ -4244,277 +4162,115 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> StockAccountGetAngloSaxonPriceUnitInternalAsync(object uom)
+        protected async Task<ProductProduct> ToMarkupDataInternalAsync(object website)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _stock_account_get_anglo_saxon_price_unit(self, uom=False):
-            // price = self.standard_price
-            // if not self or not uom or self.uom_id.id == uom.id:
-            //     return price or 0.0
-            // return self.uom_id._compute_price(price, uom)
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> SvlEmptyStockAmInternalAsync(object stock_valuation_layers)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _svl_empty_stock_am(self, stock_valuation_layers):
-            // move_vals_list = []
-            // product_accounts = {product.id: product.product_tmpl_id.get_product_accounts() for product in stock_valuation_layers.mapped('product_id')}
-            // for out_stock_valuation_layer in stock_valuation_layers:
-            //     product = out_stock_valuation_layer.product_id
-            //     stock_input_account = product_accounts[product.id].get('stock_input')
-            //     if not stock_input_account:
-            //         raise UserError(_('You don\'t have any stock input account defined on your product category. You must define one before processing this operation.'))
-            //     if not product_accounts[product.id].get('stock_valuation'):
-            //         raise UserError(_('You don\'t have any stock valuation account defined on your product category. You must define one before processing this operation.'))
-            //     if not product_accounts[product.id].get('stock_output'):
-            //         raise UserError(
-            //             _('You don\'t have any output valuation account defined on your product '
-            //               'category. You must define one before processing this operation.')
-            //         )
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
+            // def _to_markup_data(self, website):
+            // """ Generate JSON-LD markup data for the current product.
             // 
-            //     precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            //     orig_qtys = self.env.context.get('products_orig_quantity_svl')
-            //     if orig_qtys and float_compare(orig_qtys[product.id], 0, precision_digits=precision) < 1:
-            //         debit_account_id = product_accounts[product.id]['stock_valuation'].id
-            //         credit_account_id = product_accounts[product.id]['stock_output'].id
-            //     else:
-            //         debit_account_id = stock_input_account.id
-            //         credit_account_id = product_accounts[product.id]['stock_valuation'].id
-            //     value = out_stock_valuation_layer.value
-            //     move_vals = {
-            //         'journal_id': product_accounts[product.id]['stock_journal'].id,
-            //         'company_id': self.env.company.id,
-            //         'ref': product.default_code,
-            //         'stock_valuation_layer_ids': [(6, None, [out_stock_valuation_layer.id])],
-            //         'line_ids': [(0, 0, {
-            //             'name': out_stock_valuation_layer.description,
-            //             'account_id': debit_account_id,
-            //             'debit': abs(value),
-            //             'credit': 0,
-            //             'product_id': product.id,
-            //         }), (0, 0, {
-            //             'name': out_stock_valuation_layer.description,
-            //             'account_id': credit_account_id,
-            //             'debit': 0,
-            //             'credit': abs(value),
-            //             'product_id': product.id,
-            //         })],
-            //         'move_type': 'entry',
-            //     }
-            //     move_vals_list.append(move_vals)
-            // return move_vals_list
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> SvlEmptyStockInternalAsync(object description, object product_category, object product_template)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _svl_empty_stock(self, description, product_category=None, product_template=None):
-            // impacted_product_ids = []
-            // impacted_products = self.env['product.product']
-            // products_orig_quantity_svl = {}
+            // :param website website: The current website.
+            // :return: The JSON-LD markup data.
+            // :rtype: dict
+            // """
+            // self.ensure_one()
             // 
-            // # get the impacted products
-            // domain = [('is_storable', '=', True)]
-            // if product_category is not None:
-            //     domain += [('categ_id', '=', product_category.id)]
-            // elif product_template is not None:
-            //     domain += [('product_tmpl_id', '=', product_template.id)]
-            // else:
-            //     raise ValueError()
-            // products = self.env['product.product'].search_read(domain, ['quantity_svl'])
-            // for product in products:
-            //     impacted_product_ids.append(product['id'])
-            //     products_orig_quantity_svl[product['id']] = product['quantity_svl']
-            // impacted_products |= self.env['product.product'].browse(impacted_product_ids)
-            // 
-            // # empty out the stock for the impacted products
-            // empty_stock_svl_list = []
-            // lots_by_product = defaultdict(lambda: self.env['stock.lot'])
-            // res = self.env["stock.valuation.layer"]._read_group(
-            //     [("product_id", "in", impacted_products.ids), ("remaining_qty", "!=", 0)],
-            //     ["product_id"],
-            //     ["lot_id:recordset"],
+            // product_price = request.pricelist._get_product_price(
+            //     self, quantity=1, target_currency=website.currency_id
             // )
-            // for group in res:
-            //     lots_by_product[group[0].id] |= group[1]
-            // for product in impacted_products:
-            //     # FIXME sle: why not use products_orig_quantity_svl here?
-            //     if float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
-            //         # FIXME: create an empty layer to track the change?
-            //         continue
-            //     if product.lot_valuated:
-            //         if float_compare(product.quantity_svl, 0, precision_rounding=product.uom_id.rounding) > 0:
-            //             for lot in lots_by_product[product.id]:
-            //                 svsl_vals = product._prepare_out_svl_vals(lot.quantity_svl, self.env.company, lot=lot)
-            //                 svsl_vals['description'] = description + svsl_vals.pop('rounding_adjustment', '')
-            //                 svsl_vals['company_id'] = self.env.company.id
-            //                 empty_stock_svl_list.append(svsl_vals)
-            //         else:
-            //             for lot in lots_by_product[product.id]:
-            //                 svsl_vals = product._prepare_in_svl_vals(abs(lot.quantity_svl), lot.value_svl / lot.quantity_svl, lot=lot)
-            //                 svsl_vals['description'] = description + svsl_vals.pop('rounding_adjustment', '')
-            //                 svsl_vals['company_id'] = self.env.company.id
-            //                 empty_stock_svl_list.append(svsl_vals)
-            //     else:
-            //         if float_compare(product.quantity_svl, 0, precision_rounding=product.uom_id.rounding) > 0:
-            //             svsl_vals = product._prepare_out_svl_vals(product.quantity_svl, self.env.company)
-            //         else:
-            //             svsl_vals = product._prepare_in_svl_vals(abs(product.quantity_svl), product.value_svl / product.quantity_svl)
-            //         svsl_vals['description'] = description + svsl_vals.pop('rounding_adjustment', '')
-            //         svsl_vals['company_id'] = self.env.company.id
-            //         empty_stock_svl_list.append(svsl_vals)
-            // return empty_stock_svl_list, products_orig_quantity_svl, impacted_products
-            */
-            return default;
-        }
-
-        protected async Task<ProductProduct> SvlReplenishStockAmInternalAsync(object stock_valuation_layers)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _svl_replenish_stock_am(self, stock_valuation_layers):
-            // move_vals_list = []
-            // product_accounts = {product.id: product.product_tmpl_id.get_product_accounts() for product in stock_valuation_layers.mapped('product_id')}
-            // for out_stock_valuation_layer in stock_valuation_layers:
-            //     product = out_stock_valuation_layer.product_id
-            //     if not product_accounts[product.id].get('stock_input'):
-            //         raise UserError(_('You don\'t have any input valuation account defined on your product category. You must define one before processing this operation.'))
-            //     if not product_accounts[product.id].get('stock_valuation'):
-            //         raise UserError(_('You don\'t have any stock valuation account defined on your product category. You must define one before processing this operation.'))
-            //     if not product_accounts[product.id].get('stock_output'):
-            //         raise UserError(
-            //             _('You don\'t have any output valuation account defined on your product '
-            //               'category. You must define one before processing this operation.')
-            //         )
+            // # Use sudo to access cross-company taxes.
+            // product_taxes_sudo = self.sudo().taxes_id._filter_taxes_by_company(self.env.company)
+            // taxes = request.fiscal_position.map_tax(product_taxes_sudo)
+            // price = self.product_tmpl_id._apply_taxes_to_price(
+            //     product_price, website.currency_id, product_taxes_sudo, taxes, self, website=website
+            // )
             // 
-            //     precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            //     if float_compare(out_stock_valuation_layer.quantity, 0, precision_digits=precision) == 1:
-            //         debit_account_id = product_accounts[product.id]['stock_valuation'].id
-            //         credit_account_id = product_accounts[product.id]['stock_input'].id
-            //     else:
-            //         debit_account_id = product_accounts[product.id]['stock_output'].id
-            //         credit_account_id = product_accounts[product.id]['stock_valuation'].id
-            // 
-            //     value = out_stock_valuation_layer.value
-            //     move_vals = {
-            //         'journal_id': product_accounts[product.id]['stock_journal'].id,
-            //         'company_id': self.env.company.id,
-            //         'ref': product.default_code,
-            //         'stock_valuation_layer_ids': [(6, None, [out_stock_valuation_layer.id])],
-            //         'line_ids': [(0, 0, {
-            //             'name': out_stock_valuation_layer.description,
-            //             'account_id': debit_account_id,
-            //             'debit': abs(value),
-            //             'credit': 0,
-            //             'product_id': product.id,
-            //         }), (0, 0, {
-            //             'name': out_stock_valuation_layer.description,
-            //             'account_id': credit_account_id,
-            //             'debit': 0,
-            //             'credit': abs(value),
-            //             'product_id': product.id,
-            //         })],
-            //         'move_type': 'entry',
+            // base_url = website.get_base_url()
+            // markup_data = {
+            //     '@context': 'https://schema.org',
+            //     '@type': 'Product',
+            //     'name': self.with_context(display_default_code=False).display_name,
+            //     'url': f'{base_url}{self.website_url}',
+            //     'image': f'{base_url}{website.image_url(self, "image_1920")}',
+            //     'offers': {
+            //         '@type': 'Offer',
+            //         'price': price,
+            //         'priceCurrency': website.currency_id.name,
+            //     },
+            // }
+            // if self.website_meta_description or self.description_sale:
+            //     markup_data['description'] = self.website_meta_description or self.description_sale
+            // if website.is_view_active('website_sale.product_comment') and self.rating_count:
+            //     markup_data['aggregateRating'] = {
+            //         '@type': 'AggregateRating',
+            //         # sudo: product.product - visitor can access product average rating
+            //         'ratingValue': self.sudo().rating_avg,
+            //         'reviewCount': self.rating_count,
             //     }
-            //     move_vals_list.append(move_vals)
-            // return move_vals_list
+            // return markup_data
+            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: product_product.py) ---
+            // def _to_markup_data(self, website):
+            // """ Override of `website_sale` to include the product availability in the offer. """
+            // markup_data = super()._to_markup_data(website)
+            // if self.is_product_variant and self.is_storable:
+            //     if not self._is_sold_out():
+            //         availability = 'https://schema.org/InStock'
+            //     else:
+            //         availability = 'https://schema.org/OutOfStock'
+            //     markup_data['offers']['availability'] = availability
+            // return markup_data
             */
             return default;
         }
 
-        protected async Task<ProductProduct> SvlReplenishStockInternalAsync(object description, object products_orig_quantity_svl)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _svl_replenish_stock(self, description, products_orig_quantity_svl):
-            // refill_stock_svl_list = []
-            // lot_by_product = defaultdict(lambda: defaultdict(float))
-            // neg_lots = self.env['stock.quant']._read_group([
-            //     ('product_id', 'in', self.product_variant_ids.ids),
-            //     ('lot_id', '!=', False),
-            //     ], ['product_id', 'location_id', 'lot_id'], ['quantity:sum'],
-            //     having=[('quantity:sum', '<', 0)])
-            // lots = self.env['stock.quant']._read_group([
-            //     ('product_id', 'in', self.product_variant_ids.ids),
-            //     ('lot_id', '!=', False),
-            //     ], ['product_id', 'location_id', 'lot_id'], ['quantity:sum'],
-            //     having=[('quantity:sum', '>', 0)])
-            // for product, location, lot, qty in lots:
-            //     if location._should_be_valued():
-            //         lot_by_product[product][lot] += qty
-            // for product, location, lot, qty in neg_lots:
-            //     if location._should_be_valued():
-            //         raise UserError(_(
-            //             "Lot %(lot)s has a negative quantity in stock.\n"
-            //             "Correct this quantity before enabling/disabling lot valuation.",
-            //             lot=lot.display_name
-            //         ))
-            // lot_valuated_products = self.filtered("lot_valuated")
-            // if lot_valuated_products:
-            //     no_lot_quants = self.env['stock.quant']._read_group([
-            //         ('product_id', 'in', lot_valuated_products.ids),
-            //         ('lot_id', '=', False),
-            //         ('quantity', '!=', 0),
-            //     ], ['product_id', 'location_id'])
-            //     for product, location in no_lot_quants:
-            //         if location._should_be_valued():
-            //             raise UserError(_(
-            //                 "Product %(product)s has quantity in valued location %(location)s without any lot.\n"
-            //                 "Please assign lots to all your quantities before enabling lot valuation.",
-            //                 product=product.display_name,
-            //                 location=location.display_name
-            //             ))
-            // 
-            // for product in self:
-            //     quantity_svl = products_orig_quantity_svl[product.id]
-            //     if not quantity_svl:
-            //         continue
-            //     rounding = product.uom_id.rounding
-            //     price_unit = product.standard_price
-            //     if not product.lot_valuated:
-            //         lot_by_product[product] = {False: quantity_svl}
-            //     for lot, qty in lot_by_product[product].items():
-            //         if float_compare(quantity_svl, 0, precision_rounding=rounding) > 0:
-            //             qty_to_remove = min(qty, quantity_svl)
-            //             quantity_svl -= qty_to_remove
-            //             svl_vals = product._prepare_in_svl_vals(qty_to_remove, price_unit, lot=lot)
-            // 
-            //         else:
-            //             svl_vals = product._prepare_out_svl_vals(abs(quantity_svl), self.env.company, lot=lot)
-            //         svl_vals['description'] = description
-            //         svl_vals['company_id'] = self.env.company.id
-            //         refill_stock_svl_list.append(svl_vals)
-            //         if float_is_zero(quantity_svl, precision_rounding=rounding):
-            //             break
-            // return refill_stock_svl_list
-            */
-            return default;
-        }
-
-        public async Task<ProductProduct> ToggleActiveAsync(Guid id)
+        protected async Task<ProductProduct> TriggerUomWarningInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def toggle_active(self):
-            // """ Archiving related product.template if there is not any more active product.product
-            // (and vice versa, unarchiving the related product template if there is now an active product.product) """
-            // result = super().toggle_active()
-            // # We deactivate product templates which are active with no active variants.
-            // tmpl_to_deactivate = self.filtered(lambda product: (product.product_tmpl_id.active
-            //                                                     and not product.product_tmpl_id.product_variant_ids)).mapped('product_tmpl_id')
+            // def _trigger_uom_warning(self):
+            // return False
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
+            // def _trigger_uom_warning(self):
+            // res = super()._trigger_uom_warning()
+            // if res:
+            //     return res
+            // po_lines = self.env['purchase.order.line'].sudo().search_count(
+            //     [('product_id', 'in', self.ids)], limit=1
+            // )
+            // return bool(po_lines)
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_product.py) ---
+            // def _trigger_uom_warning(self):        
+            // res = super()._trigger_uom_warning()
+            // if res:
+            //     return res
+            // so_lines = self.env['sale.order.line'].sudo().search_count(
+            //     [('product_id', 'in', self.ids)], limit=1
+            // )
+            // return bool(so_lines)
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
+            // def _trigger_uom_warning(self):
+            // res = super()._trigger_uom_warning()
+            // if res:
+            //     return res
+            // moves = self.env['stock.move'].sudo().search_count(
+            //     [('product_id', 'in', self.ids)], limit=1
+            // )
+            // return bool(moves)
+            */
+            return default;
+        }
+
+        public async Task<ProductProduct> UnarchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def action_unarchive(self):
+            // records = self.filtered(lambda rec: not rec.active)
+            // super().action_unarchive()
             // # We activate product templates which are inactive with active variants.
-            // tmpl_to_activate = self.filtered(lambda product: (not product.product_tmpl_id.active
-            //                                                   and product.product_tmpl_id.product_variant_ids)).mapped('product_tmpl_id')
-            // (tmpl_to_deactivate + tmpl_to_activate).toggle_active()
-            // return result
+            // records.product_tmpl_id.filtered(
+            //     lambda product_tmpl: not product_tmpl.active and product_tmpl.product_variant_ids
+            // ).action_unarchive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -4522,7 +4278,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> UnlinkExceptActivePosSessionInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_product.py) ---
             // def _unlink_except_active_pos_session(self):
             // product_ctx = dict(self.env.context or {}, active_test=False)
             // if self.env['pos.session'].sudo().search_count([('state', '!=', 'closed')]):
@@ -4561,7 +4317,7 @@ namespace Bamboo.Core.Application.Services
             // def _unlink_except_master_data(self):
             // time_product = self.env.ref('sale_timesheet.time_product')
             // if time_product in self:
-            //     raise ValidationError(_('The %s product is required by the Timesheets app and cannot be archived nor deleted.', time_product.name))
+            //     raise ValidationError(_('The %s product is required by the Timesheets app and cannot be archived, deleted nor linked to a company.', time_product.name))
             */
             return default;
         }
@@ -4609,29 +4365,151 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductProduct> UpdateLotsStandardPriceInternalAsync()
+        protected async Task<ProductProduct> UpdateStandardPriceInternalAsync(object extra_value, object extra_quantity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
-            // def _update_lots_standard_price(self):
-            // grouped_lots = self.env['stock.lot']._read_group(
-            //     [('product_id', 'in', self.ids), ('product_id.lot_valuated', '=', True)],
-            //     ['product_id'], ['id:recordset']
-            // )
-            // for product, lots in grouped_lots:
-            //     lots.with_context(disable_auto_svl=True).write({"standard_price": product.standard_price})
+            // def _update_standard_price(self, extra_value=None, extra_quantity=None):
+            // # TODO: Add extra value and extra quantity kwargs to avoid total recomputation
+            // for product in self:
+            //     if product.cost_method == 'standard':
+            //         continue
+            //     if product.cost_method == 'fifo':
+            //         qty_available = product._with_valuation_context().qty_available
+            //         if product.uom_id.compare(qty_available, 0) > 0:
+            //             product.sudo().with_context(disable_auto_revaluation=True).standard_price = product.total_value / qty_available
+            //         elif last_in := product._get_last_in():
+            //             product.sudo().with_context(disable_auto_revaluation=True).standard_price = last_in._get_price_unit()
+            //         continue
+            //     new_standard_price = product._run_avco()[0]
+            //     if new_standard_price:
+            //         product.with_context(disable_auto_revaluation=True).sudo().standard_price = new_standard_price
             */
             return default;
         }
 
-        public async Task<ProductProduct> UpdateQuantityOnHandAsync(Guid id)
+        protected async Task<ProductProduct> UpdateUomInternalAsync(Guid to_uom_id)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
+            // def _update_uom(self, to_uom_id):
+            // for uom, product_template, boms in self.env['mrp.bom']._read_group(
+            //     [('product_tmpl_id', 'in', self.product_tmpl_id.ids)],
+            //     ['product_uom_id', 'product_tmpl_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if product_template.uom_id != uom:
+            //         raise UserError(_('As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.name, uom=product_template.uom_id.name))
+            //     boms.product_uom_id = to_uom_id
+            // 
+            // for uom, product, bom_lines in self.env['mrp.bom.line']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom_id', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if product.product_tmpl_id.uom_id != uom:
+            //         raise UserError(_('As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.name, uom=product.product_tmpl_id.uom_id.name))
+            //     bom_lines.product_uom_id = to_uom_id
+            // 
+            // for uom, product, productions in self.env['mrp.production']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom_id', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if product.product_tmpl_id.uom_id != uom:
+            //         raise UserError(_('As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.name, uom=product.product_tmpl_id.uom_id.name))
+            //     productions.product_uom_id = to_uom_id
+            // 
+            // return super()._update_uom(to_uom_id)
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            // def _update_uom(self, to_uom_id):
+            // """ Hook to handle an UoM modification. Avoid recomputation and just replace the
+            // many2one field on the impacted models."""
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
+            // def _update_uom(self, to_uom_id):
+            // for uom, product, po_lines in self.env['purchase.order.line']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom_id', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if uom != product.product_tmpl_id.uom_id:
+            //         raise UserError(_(
+            //             'As other units of measure (ex : %(problem_uom)s) '
+            //             'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //             'If you want to change it, please archive the product and create a new one.',
+            //             problem_uom=uom.display_name, uom=product.product_tmpl_id.uom_id.display_name))
+            //     po_lines.product_uom_id = to_uom_id
+            //     po_lines.flush_recordset()
+            // 
+            // return super()._update_uom(to_uom_id)
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: product.py) ---
+            // def _update_uom(self, to_uom_id):
+            // for uom, product, repairs in self.env['repair.order']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if uom != product.product_tmpl_id.uom_id:
+            //         raise UserError(_(
+            //         'As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.display_name, uom=product.product_tmpl_id.uom_id.display_name))
+            //     repairs.product_uom = to_uom_id
+            // return super()._update_uom(to_uom_id)
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_product.py) ---
+            // def _update_uom(self, to_uom_id):
+            // for uom, product, so_lines in self.env['sale.order.line']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom_id', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if so_lines.product_uom_id != product.product_tmpl_id.uom_id:
+            //         raise UserError(_(
+            //             'As other units of measure (ex : %(problem_uom)s) '
+            //             'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //             'If you want to change it, please archive the product and create a new one.',
+            //             problem_uom=uom.display_name, uom=product.product_tmpl_id.uom_id.display_name))
+            //     so_lines.product_uom_id = to_uom_id
+            // return super()._update_uom(to_uom_id)
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
-            // def action_update_quantity_on_hand(self):
-            // return self.product_tmpl_id.with_context(default_product_id=self.id, create=True).action_update_quantity_on_hand()
+            // def _update_uom(self, to_uom_id):
+            // for uom, product, moves in self.env['stock.move']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if uom != product.product_tmpl_id.uom_id:
+            //         raise UserError(_('As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.name, uom=product.product_tmpl_id.uom_id.name))
+            //     moves.product_uom = to_uom_id
+            // 
+            // for uom, product, move_lines in self.env['stock.move.line']._read_group(
+            //     [('product_id', 'in', self.ids)],
+            //     ['product_uom_id', 'product_id'],
+            //     ['id:recordset'],
+            // ):
+            //     if uom != product.product_tmpl_id.uom_id:
+            //         raise UserError(_('As other units of measure (ex : %(problem_uom)s) '
+            //         'than %(uom)s have already been used for this product, the change of unit of measure can not be done.'
+            //         'If you want to change it, please archive the product and create a new one.',
+            //         problem_uom=uom.name, uom=product.product_tmpl_id.uom_id.name))
+            //     move_lines.product_uom_id = to_uom_id
+            // return super()._update_uom(to_uom_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<ProductProduct> UsedInBomAsync(Guid id)
@@ -4670,7 +4548,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def view_header_get(self, view_id, view_type):
-            // if self._context.get('categ_id'):
+            // if self.env.context.get('categ_id'):
             //     return _(
             //         'Products: %(category)s',
             //         category=self.env['product.category'].browse(self.env.context['categ_id']).name,
@@ -4678,11 +4556,11 @@ namespace Bamboo.Core.Application.Services
             // return super().view_header_get(view_id, view_type)
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def view_header_get(self, view_id, view_type):
-            // res = super(Product, self).view_header_get(view_id, view_type)
-            // if not res and self._context.get('active_id') and self._context.get('active_model') == 'stock.location':
+            // res = super().view_header_get(view_id, view_type)
+            // if not res and self.env.context.get('active_id') and self.env.context.get('active_model') == 'stock.location':
             //     return _(
             //         'Products: %(location)s',
-            //         location=self.env['stock.location'].browse(self._context['active_id']).name,
+            //         location=self.env['stock.location'].browse(self.env.context['active_id']).name,
             //     )
             // return res
             */
@@ -4718,7 +4596,7 @@ namespace Bamboo.Core.Application.Services
             //         'search_default_product_id': self.ids[0]
             //     })
             // else:
-            //     action['domain'] = expression.AND([action.get('domain') or [], [('product_id', 'in', self.ids)]])
+            //     action['domain'] = Domain(action.get('domain') or Domain.TRUE) & Domain('product_id', 'in', self.ids)
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -4730,7 +4608,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
             // def action_view_po(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
-            // action['domain'] = ['&', ('state', 'in', ['purchase', 'done']), ('product_id', 'in', self.ids)]
+            // action['domain'] = ['&', ('state', '=', 'purchase'), ('product_id', 'in', self.ids)]
             // action['display_name'] = _("Purchase History for %s", self.display_name)
             // return action
             */
@@ -4772,7 +4650,7 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('product_id', 'in', self.ids)]
             // action['context'] = {
             //     'pivot_measures': ['product_uom_qty'],
-            //     'active_id': self._context.get('active_id'),
+            //     'active_id': self.env.context.get('active_id'),
             //     'search_default_Sales': 1,
             //     'active_model': 'sale.report',
             //     'search_default_filter_order_date': 1,
@@ -4831,12 +4709,30 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
             // def _website_show_quick_add(self):
             // self.ensure_one()
-            // # TODO VFE pass website as param and avoid existence check
-            // website = self.env['website'].get_current_website()
-            // return self.sale_ok and (not website.prevent_zero_price_sale or self._get_contextual_price())
+            // if not self.filtered_domain(self.env['website']._product_domain()):
+            //     return False
+            // return not request.website.prevent_zero_price_sale or self._get_contextual_price()
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: product_product.py) ---
             // def _website_show_quick_add(self):
-            // return (self.allow_out_of_stock_order or not self._is_sold_out()) and super()._website_show_quick_add()
+            // return not self._is_sold_out() and super()._website_show_quick_add()
+            */
+            return default;
+        }
+
+        protected async Task<ProductProduct> WithValuationContextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
+            // def _with_valuation_context(self):
+            // self_with_context = self
+            // valued_locations = self.env['stock.location'].search([('is_valued_internal', '=', True)])
+            // self_with_context = self.with_context(location=valued_locations.ids)
+            // # In FIFO, the stack in on stock.move and their value is already computed base on the owner
+            // if self.cost_method != 'fifo':
+            //     self_with_context = self_with_context.with_context(
+            //         owners=[False, self.env.company.partner_id.id]
+            //     )
+            // return self_with_context
             */
             return default;
         }
@@ -4851,18 +4747,16 @@ namespace Bamboo.Core.Application.Services
             //     expenses_sudo = self.env['hr.expense'].sudo().search([
             //         ('company_id', '=', self.env.company.id),
             //         ('product_id', 'in', self.ids),
-            //         ('state', 'in', ['reported', 'draft']),
+            //         ('state', '=', 'draft'),
             //     ])
             //     for expense_sudo in expenses_sudo:
             //         expense_product_sudo = expense_sudo.product_id
-            //         tax_domain = self.env['account.tax']._check_company_domain(expense_sudo.company_id)
             //         product_has_cost = (
             //                 expense_product_sudo
             //                 and not expense_sudo.company_currency_id.is_zero(expense_product_sudo.standard_price)
             //         )
             //         expense_vals = {
             //             'product_has_cost': product_has_cost,
-            //             'product_has_tax': bool(expense_product_sudo.supplier_taxes_id.filtered_domain(tax_domain)),
             //         }
             //         if product_has_cost:
             //             expense_vals.update({
@@ -4889,26 +4783,26 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_("This product may not be archived. It is being used for an active promotion program."))
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
-            // def write(self, values):
-            // if 'active' in values:
-            //     self.filtered(lambda p: p.active != values['active']).with_context(active_test=False).variant_bom_ids.write({
-            //         'active': values['active']
+            // def write(self, vals):
+            // if 'active' in vals:
+            //     self.filtered(lambda p: p.active != vals['active']).with_context(active_test=False).variant_bom_ids.write({
+            //         'active': vals['active']
             //     })
-            // return super().write(values)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
-            // def write(self, vals_list):
-            // res = super().write(vals_list)
-            // if 'self_order_available' in vals_list:
+            // def write(self, vals):
+            // res = super().write(vals)
+            // if 'self_order_available' in vals:
             //     for record in self:
             //         record._send_availability_status()
             // return res
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
-            // def write(self, values):
-            // res = super(ProductProduct, self).write(values)
-            // if 'product_template_attribute_value_ids' in values:
+            // def write(self, vals):
+            // res = super().write(vals)
+            // if 'product_template_attribute_value_ids' in vals:
             //     # `_get_variant_id_for_combination` depends on `product_template_attribute_value_ids`
             //     self.env.registry.clear_cache()
-            // elif 'active' in values:
+            // elif 'active' in vals:
             //     # `_get_first_possible_variant_id` depends on variants active state
             //     self.env.registry.clear_cache()
             // return res
@@ -4922,27 +4816,40 @@ namespace Bamboo.Core.Application.Services
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: product_product.py) ---
             // def write(self, vals):
-            // # timesheet product can't be archived
-            // test_mode = getattr(threading.current_thread(), 'testing', False) or self.env.registry.in_test_mode()
-            // if not test_mode and 'active' in vals and not vals['active']:
+            // # timesheet product can't be deleted, archived or linked to a company
+            // if ('active' in vals and not vals['active']) or ('company_id' in vals and vals['company_id']):
             //     time_product = self.env.ref('sale_timesheet.time_product')
             //     if time_product in self:
-            //         raise ValidationError(_('The %s product is required by the Timesheets app and cannot be archived nor deleted.', time_product.name))
+            //         raise ValidationError(_('The %s product is required by the Timesheets app and cannot be archived, deleted nor linked to a company.', time_product.name))
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
-            // def write(self, values):
-            // if 'active' in values:
-            //     self.filtered(lambda p: p.active != values['active']).with_context(active_test=False).orderpoint_ids.write({
-            //         'active': values['active']
+            // def write(self, vals):
+            // if 'active' in vals:
+            //     self.filtered(lambda p: p.active != vals['active']).with_context(active_test=False).orderpoint_ids.write({
+            //         'active': vals['active']
             //     })
-            // return super().write(values)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
             // def write(self, vals):
-            // if 'standard_price' in vals and not self.env.context.get('disable_auto_svl'):
-            //     self.filtered(lambda p: p.cost_method != 'fifo')._change_standard_price(vals['standard_price'])
+            // old_price = False
+            // if 'standard_price' in vals and not self.env.context.get('disable_auto_revaluation'):
+            //     old_price = {product: product.standard_price for product in self}
             // if 'lot_valuated' in vals:
             //     # lot_valuated must be updated from the ProductTemplate
             //     self.product_tmpl_id.write({'lot_valuated': vals.pop('lot_valuated')})
+            // res = super().write(vals)
+            // if old_price:
+            //     self._change_standard_price(old_price)
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
+            // def write(self, vals):
+            // if 'active' in vals and not vals['active']:
+            //     # unlink draft lines containing the archived product
+            //     self.env['sale.order.line'].sudo().search([
+            //         ('state', '=', 'draft'),
+            //         ('product_id', 'in', self.ids),
+            //         ('order_id', 'any', [('website_id', '!=', False)]),
+            //     ]).unlink()
             // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);

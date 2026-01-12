@@ -20,14 +20,16 @@ namespace Bamboo.Core.Application.Services
     [Module("Sale", Category = "Sales", Depends = new[] { "sales_team", "account_payment", "utm" })]
     public class SaleOrderAppService : GenericApplicationService<SaleOrder>, ISaleOrderAppService
     {
+        private readonly IAccountDocumentImportMixinAppService _accountDocumentImportMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         private readonly IProductCatalogMixinAppService _productCatalogMixinAppService;
         private readonly IUtmMixinAppService _utmMixinAppService;
-        public SaleOrderAppService(IRepository<SaleOrder, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IPosLoadMixinAppService posLoadMixinAppService, IProductCatalogMixinAppService productCatalogMixinAppService, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public SaleOrderAppService(IRepository<SaleOrder, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAccountDocumentImportMixinAppService accountDocumentImportMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IPosLoadMixinAppService posLoadMixinAppService, IProductCatalogMixinAppService productCatalogMixinAppService, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
+            _accountDocumentImportMixinAppService = accountDocumentImportMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
             _portalMixinAppService = portalMixinAppService;
@@ -149,6 +151,7 @@ namespace Bamboo.Core.Application.Services
             //         'country_id': country,
             //         'email': email,
             //         'phone': phone,
+            //         'is_pickup_location': True,
             //     })
             //     order.with_context(update_delivery_shipping_partner=True).write({'partner_shipping_id': shipping_partner})
             // return super()._action_confirm()
@@ -163,10 +166,12 @@ namespace Bamboo.Core.Application.Services
             //     This method should be extended when the confirmation should generated
             //     other documents. In this method, the SO are in 'sale' state (not yet 'done').
             // """
-            // pass
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
             // def _action_confirm(self):
             // """ On SO confirmation, some lines should generate a task or a project. """
+            // if self.env.context.get('disable_project_task_generation'):
+            //     return super()._action_confirm()
+            // 
             // if len(self.company_id) == 1:
             //     # All orders are in the same company
             //     self.order_line.sudo().with_company(self.company_id)._timesheet_service_generation()
@@ -174,6 +179,16 @@ namespace Bamboo.Core.Application.Services
             //     # Orders from different companies are confirmed together
             //     for order in self:
             //         order.order_line.sudo().with_company(order.company_id)._timesheet_service_generation()
+            // 
+            // # If the order has exactly one project and that project comes from a template, set the company of the template
+            // # on the project.
+            // for order in self.sudo(): # Salesman may not have access to projects
+            //     if len(order.project_ids) == 1:
+            //         project = order.project_ids[0]
+            //         for sol in order.order_line:
+            //             if project == sol.project_id and (project_template := sol.product_template_id.project_template_id):
+            //                 project.sudo().company_id = project_template.sudo().company_id
+            //                 break
             // return super()._action_confirm()
             --- ODOO METHOD SOURCE (MODULE: sale_purchase, FILE: sale_order.py) ---
             // def _action_confirm(self):
@@ -225,7 +240,11 @@ namespace Bamboo.Core.Application.Services
             // """
             // purchase_to_notify_map = {}  # map PO -> recordset of SOL as {purchase.order: set(sale.orde.liner)}
             // 
-            // purchase_order_lines = self.env['purchase.order.line'].search([('sale_line_id', 'in', self.mapped('order_line').ids), ('state', '!=', 'cancel')])
+            // purchase_order_lines = self.env['purchase.order.line'].search([
+            //     ('sale_line_id', 'in', self.mapped('order_line').ids),
+            //     ('state', '!=', 'cancel'),
+            //     ('product_id.service_to_purchase', '=', True),
+            // ])
             // for purchase_line in purchase_order_lines:
             //     purchase_to_notify_map.setdefault(purchase_line.order_id, self.env['sale.order.line'])
             //     purchase_to_notify_map[purchase_line.order_id] |= purchase_line.sale_line_id
@@ -262,7 +281,7 @@ namespace Bamboo.Core.Application.Services
             // ):
             //     percentage = self.payment_term_id.discount_percentage
             //     currency = self.currency_id or self.company_id.currency_id
-            //     for line in self.order_line.filtered(lambda x: not x.display_type):
+            //     for line in self._get_priced_lines():
             //         line_amount_after_discount = (line.price_subtotal / 100) * percentage
             //         epd_lines.append(self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //             record=self,
@@ -271,7 +290,7 @@ namespace Bamboo.Core.Application.Services
             //             currency_id=currency,
             //             sign=1,
             //             special_type='early_payment',
-            //             tax_ids=line.tax_id,
+            //             tax_ids=line.tax_ids.flatten_taxes_hierarchy().filtered(lambda tax: tax.amount_type != 'fixed'),
             //         ))
             //         epd_lines.append(self.env['account.tax']._prepare_base_line_for_taxes_computation(
             //             record=self,
@@ -321,6 +340,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> AddPartnershipInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: sale_order.py) ---
+            // def _add_partnership(self):
+            // for so in self:
+            //     if not so.assigned_grade_id:
+            //         continue
+            //     so.partner_id.commercial_partner_id.grade_id = so.assigned_grade_id
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> AddPointsForCouponInternalAsync(object coupon_points)
         {
             /*
@@ -347,20 +379,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> AddReferenceInternalAsync(object reference)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            // def _add_reference(self, reference):
+            // """ link the given references to the list of references. """
+            // self.ensure_one()
+            // self.stock_reference_ids = [Command.link(stock_reference.id) for stock_reference in reference]
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> AllProductAvailableInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
             // def _all_product_available(self):
             // self.ensure_one()
-            // for line in self.with_context(website_sale_stock_get_quantity=True).order_line:
-            //     product = line.product_id
-            //     if not product.is_storable or product.allow_out_of_stock_order:
-            //         continue
-            //     free_qty = self.website_id._get_product_available_qty(product)
-            //     if free_qty == 0:
-            //         return False
-            // return True
+            // if not (lines := self.order_line):
+            //     return True
+            // return not any(product._is_sold_out() for product in lines.product_id)
             */
             return default;
         }
@@ -406,6 +445,7 @@ namespace Bamboo.Core.Application.Services
             //         order_lines = self.order_line.filtered(
             //             lambda line: line.product_id.id == product.id
             //             and line.product_no_variant_attribute_value_ids.ids == no_variant_attribute_values.ids
+            //             and not line.combo_item_id
             //         )
             // 
             //         # if product variant already exist in order lines
@@ -499,9 +539,9 @@ namespace Bamboo.Core.Application.Services
             //         global_discount_reward_lines._reset_loyalty(True)
             //         old_reward_lines |= global_discount_reward_lines
             // if not reward.program_id.is_nominative and reward.program_id.applies_on == 'future' and coupon in self.coupon_point_ids.coupon_id:
-            //     return {'error': _('The coupon can only be claimed on future orders.')}
+            //     return {'error': _("The coupon can only be claimed on future orders.")}
             // elif self._get_real_points_for_coupon(coupon) < reward.required_points:
-            //     return {'error': _('The coupon does not have enough points for the selected reward.')}
+            //     return {'error': _("The coupon does not have enough points for the selected reward.")}
             // reward_vals = self._get_reward_line_values(reward, coupon, **kwargs)
             // self._write_vals_from_reward_vals(reward_vals, old_reward_lines)
             // return {}
@@ -616,7 +656,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> CanBeEditedOnPortalInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _can_be_edited_on_portal(self):
             // self.ensure_one()
             // return self.state in ('draft', 'sent')
@@ -629,42 +669,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_cancel(self):
-            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
-            // 
-            // For post-cancel operations, please only override :meth:`_action_cancel`.
-            // 
-            // note: self.ensure_one() if the wizard is shown.
-            // """
+            // """ Cancel sales order and related draft invoices. """
             // if any(order.locked for order in self):
             //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // cancel_warning = self._show_cancel_wizard()
-            // if cancel_warning:
-            //     self.ensure_one()
-            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
-            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
-            //     )
-            //     lang = self.env.context.get('lang')
-            //     template = self.env['mail.template'].browse(template_id)
-            //     if template.lang:
-            //         lang = template._render_lang(self.ids)[self.id]
-            //     ctx = {
-            //         'default_template_id': template_id,
-            //         'default_order_id': self.id,
-            //         'mark_so_as_canceled': True,
-            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     }
-            //     return {
-            //         'name': _('Cancel %s', self.type_name),
-            //         'view_mode': 'form',
-            //         'res_model': 'sale.order.cancel',
-            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
-            //         'type': 'ir.actions.act_window',
-            //         'context': ctx,
-            //         'target': 'new'
-            //     }
-            // else:
-            //     return self._action_cancel()
+            // return self._action_cancel()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -698,49 +706,96 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CartFindProductLineInternalAsync(Guid product_id, Guid line_id)
+        protected async Task<Dictionary<string, object>> CartAddInternalAsync(Guid product_id, float quantity)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _cart_add(self, product_id: int, quantity: float = 1.0, *, uom_id: int | None = None, **kwargs) -> dict:
+            // """Add quantity of the given product to the current sales order.
+            // 
+            // :param product_id: product id, as a `product.product` id.
+            // :param quantity: the quantity to add to the cart.
+            // :param kwargs: Additional parameters given to deeper method calls.
+            // :return: values used by the cart service to give feedback to the customer.
+            // """
+            // self.ensure_one()
+            // self = self.with_company(self.company_id)
+            // 
+            // if not uom_id:
+            //     uom_id = self.env['product.product'].browse(product_id).uom_id.id  # type: ignore
+            // if existing_sol := self._cart_find_product_line(product_id, uom_id=uom_id, **kwargs)[:1]:
+            //     # If a matching line is found, update the existing line instead.
+            //     return self._cart_update_line_quantity(
+            //         line_id=existing_sol.id,  # type: ignore
+            //         quantity=existing_sol.product_uom_qty + quantity,
+            //         **kwargs,
+            //     )
+            // 
+            // quantity, warning = self._verify_updated_quantity(
+            //     self.env['sale.order.line'],
+            //     product_id,
+            //     quantity,
+            //     uom_id=uom_id,
+            //     **kwargs,
+            // )
+            // 
+            // order_line = self._create_new_cart_line(product_id, quantity, uom_id, **kwargs)
+            // 
+            // # NOTE: the provided product_id should not be given after `_create_new_cart_line` call as it
+            // # could be different from the line's product_id (see variant generation logic in
+            // # `_prepare_order_line_values`).
+            // 
+            // if warning:
+            //     (order_line or self).shop_warning = warning
+            // 
+            // if not self.env.context.get('skip_cart_verification'):
+            //     self._verify_cart_after_update()
+            // 
+            // return {
+            //     'added_qty': quantity,
+            //     'line_id': order_line.id,
+            //     'quantity': quantity,
+            //     'warning': warning,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> CartFindProductLineInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale, FILE: sale_order.py) ---
-            // def _cart_find_product_line(
-            //     self, product_id=None, line_id=None,
-            //     event_booth_pending_ids=None, **kwargs
-            // ):
-            //     """Check if there is another sale order line which already contains the requested event_booth_pending_ids
-            //     to overwrite it with the newly requested booths to avoid having multiple so_line related to the same booths"""
-            //     lines = super()._cart_find_product_line(product_id, line_id, **kwargs)
+            // def _cart_find_product_line(self, *args, event_booth_pending_ids=None, **kwargs):
+            // """Check if there is another sale order line which already contains the requested event_booth_pending_ids
+            // to overwrite it with the newly requested booths to avoid having multiple so_line related to the same booths"""
+            // lines = super()._cart_find_product_line(
+            //     *args, event_booth_pending_ids=event_booth_pending_ids, **kwargs,
+            // )
             // 
-            //     if not event_booth_pending_ids or line_id:
-            //         return lines
-            // 
-            //     return lines.filtered(
-            //         lambda line: any(booth.id in event_booth_pending_ids for booth in line.event_booth_pending_ids)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
-            // def _cart_find_product_line(self, product_id=None, line_id=None, event_ticket_id=False, **kwargs):
-            // lines = super()._cart_find_product_line(product_id, line_id, **kwargs)
-            // if line_id or not event_ticket_id:
+            // if not event_booth_pending_ids:
             //     return lines
             // 
             // return lines.filtered(
-            //     lambda line: line.event_ticket_id.id == event_ticket_id
+            //     lambda line: any(booth.id in event_booth_pending_ids for booth in line.event_booth_pending_ids)
             // )
+            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
+            // def _cart_find_product_line(self, *args, event_slot_id=False, event_ticket_id=False, **kwargs):
+            // lines = super()._cart_find_product_line(
+            //     *args, event_slot_id=event_slot_id, event_ticket_id=event_ticket_id, **kwargs,
+            // )
+            // if not event_slot_id and not event_ticket_id:
+            //     return lines
+            // 
+            // return lines.filtered(lambda line: line.event_slot_id.id == event_slot_id and line.event_ticket_id.id == event_ticket_id)
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _cart_find_product_line(
-            //     self,
-            //     product_id,
-            //     line_id=None,
-            //     linked_line_id=False,
-            //     no_variant_attribute_value_ids=None,
-            //     **kwargs
+            //     self, product_id, uom_id, linked_line_id=False, no_variant_attribute_value_ids=None, **kwargs
             // ):
             //     """Find the cart line matching the given parameters.
             // 
             //     Custom attributes won't be matched (but no_variant & dynamic ones will be)
             // 
             //     :param int product_id: the product being added/removed, as a `product.product` id
-            //     :param int line_id: optional, the line the customer wants to edit (/shop/cart page), as a
-            //         `sale.order.line` id
             //     :param int linked_line_id: optional, the parent line (for optional products), as a
             //         `sale.order.line` id
             //     :param list optional_product_ids: optional, the optional products of the line, as a list
@@ -748,17 +803,13 @@ namespace Bamboo.Core.Application.Services
             //     :param list no_variant_attribute_value_ids: list of `product.template.attribute.value` ids
             //         whose attribute is configured as `no_variant`
             //     :param dict kwargs: unused parameters, maybe used in overrides or other cart update methods
+            //     :return: matching order lines in the cart, if any
+            //     :rtype: `sale.order.line` recordset
             //     """
             //     self.ensure_one()
             // 
             //     if not self.order_line:
             //         return self.env['sale.order.line']
-            // 
-            //     if line_id:
-            //         # If we update a specific line, there is no need to filter anything else
-            //         return self.order_line.filtered(
-            //             lambda sol: sol.product_id.id == product_id and sol.id == line_id
-            //         )
             // 
             //     product = self.env['product.product'].browse(product_id)
             //     if product.type == 'combo':
@@ -766,6 +817,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //     domain = [
             //         ('product_id', '=', product_id),
+            //         ('product_uom_id', '=', uom_id),
             //         ('product_custom_attribute_value_ids', '=', False),
             //         ('linked_line_id', '=', linked_line_id),
             //         ('combo_item_id', '=', False),
@@ -775,7 +827,12 @@ namespace Bamboo.Core.Application.Services
             //     if not filtered_sol:
             //         return self.env['sale.order.line']
             // 
-            //     if product.product_tmpl_id._has_no_variant_attributes():
+            //     has_configurable_no_variant_attributes = any(
+            //         len(line.value_ids) > 1 or line.attribute_id.display_type == 'multi'
+            //         for line in product.attribute_line_ids
+            //         if line.attribute_id.create_variant == 'no_variant'
+            //     )
+            //     if has_configurable_no_variant_attributes:
             //         filtered_sol = filtered_sol.filtered(
             //             lambda sol:
             //                 sol.product_no_variant_attribute_value_ids.ids == no_variant_attribute_value_ids
@@ -783,14 +840,12 @@ namespace Bamboo.Core.Application.Services
             // 
             //     return filtered_sol
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
-            // def _cart_find_product_line(self, product_id, line_id=None, **kwargs):
-            // """ Override to filter out reward lines from the cart lines.
-            // 
-            // These are handled by the _update_programs_and_rewards and _auto_apply_rewards methods.
-            // """
-            // lines = super()._cart_find_product_line(product_id, line_id, **kwargs)
-            // lines = lines.filtered(lambda l: not l.is_reward_line) if not line_id else lines
-            // return lines
+            // def _cart_find_product_line(self, *args, **kwargs):
+            // # Filter out reward lines, they shouldn't be modified by standard _cart_add logic.
+            // # This kind of lines is handled by _update_programs_and_rewards and _auto_apply_rewards.
+            // return super()._cart_find_product_line(*args, **kwargs).filtered(
+            //     lambda sol: not sol.is_reward_line
+            // )
             */
             return default;
         }
@@ -816,55 +871,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CartUpdateInternalAsync(Guid product_id, Guid line_id, object add_qty, object set_qty)
+        protected async Task<Dictionary<string, object>> CartUpdateLineQuantityInternalAsync(Guid line_id, float quantity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _cart_update(self, product_id, line_id=None, add_qty=0, set_qty=0, **kwargs):
-            // """ Add or set product quantity, add_qty can be negative """
-            // self.ensure_one()
-            // self = self.with_company(self.company_id)
+            // def _cart_update_line_quantity(self, line_id: int, quantity: float, **kwargs) -> dict:
+            // """Update the quantity of a given line of the cart.
             // 
-            // if self.state != 'draft':
-            //     request.session.pop('sale_order_id', None)
-            //     request.session.pop('website_sale_cart_quantity', None)
-            //     raise UserError(_('It is forbidden to modify a sales order which is not in draft status.'))
+            // :param line_id: line id, as a `sale.order.line` id.
+            // :param quantity: the updated quantity of the line.
+            // :param kwargs: Additional parameters given to deeper method calls.
+            // :return: values used by the cart service to give feedback to the customer.
+            // """
+            // if self:
+            //     self.ensure_one()
             // 
-            // product = self.env['product.product'].browse(product_id).exists()
-            // if add_qty and (not product or not product._is_add_to_cart_allowed()):
-            //     raise UserError(_("The given product does not exist therefore it cannot be added to cart."))
+            // self = self.with_company(self.company_id)  # noqa: PLW0642
             // 
-            // if line_id is not False:
-            //     order_line = self._cart_find_product_line(product_id, line_id, **kwargs)[:1]
-            // else:
-            //     order_line = self.env['sale.order.line']
-            // 
-            // try:
-            //     if add_qty:
-            //         add_qty = int(add_qty)
-            // except ValueError:
-            //     add_qty = 1
-            // 
-            // try:
-            //     if set_qty:
-            //         set_qty = int(set_qty)
-            // except ValueError:
-            //     set_qty = 0
-            // 
-            // quantity = 0
-            // if set_qty:
-            //     quantity = set_qty
-            // elif add_qty is not None:
-            //     if order_line:
-            //         quantity = order_line.product_uom_qty + (add_qty or 0)
-            //     else:
-            //         quantity = add_qty or 0
+            // if not (order_line := self.order_line.filtered(lambda sol: sol.id == line_id)):
+            //     # If the line isn't found because of wrong parameters, or because the user updated
+            //     # the cart in other tabs, a warning will be returned.
+            //     # Note that if the cart is empty, the zero cart_quantity will trigger a page reload
+            //     # and this warning won't be shown.
+            //     return {
+            //         'warning': _(
+            //             "We weren't able to update your cart. Please refresh your page before trying"
+            //             " again."
+            //         )
+            //     }
             // 
             // if quantity > 0:
             //     quantity, warning = self._verify_updated_quantity(
             //         order_line,
-            //         product_id,
+            //         order_line.product_id.id,
             //         quantity,
+            //         uom_id=order_line.product_uom_id.id,
             //         **kwargs,
             //     )
             // else:
@@ -872,102 +913,124 @@ namespace Bamboo.Core.Application.Services
             //     # the requested quantity update.
             //     warning = ''
             // 
-            // order_line = self._cart_update_order_line(product_id, quantity, order_line, **kwargs)
+            // added_qty = quantity - order_line.product_uom_qty  # new_qty - old_qty
+            // order_line = self._cart_update_order_line(order_line, quantity, **kwargs)
+            // if not self.env.context.get('skip_cart_verification'):
+            //     self._verify_cart_after_update()
             // 
-            // if (
-            //     order_line
-            //     # Combo product lines will be checked after creating all of their combo item lines.
-            //     and order_line.product_template_id.type != 'combo'
-            //     and not order_line.combo_item_id
-            //     and order_line.price_unit == 0
-            //     and self.website_id.prevent_zero_price_sale
-            //     and product.service_tracking not in self.env['product.template']._get_product_types_allow_zero_price()
-            // ):
-            //     raise UserError(_(
-            //         "The given product does not have a price therefore it cannot be added to cart.",
-            //     ))
-            // if self.only_services:
-            //     self._remove_delivery_line()
-            // elif self.carrier_id:
-            //     # Recompute the delivery rate.
-            //     rate = self.carrier_id.rate_shipment(self)
-            //     if rate['success']:
-            //         self.order_line.filtered(lambda line: line.is_delivery).price_unit = rate['price']
-            //     else:
-            //         self._remove_delivery_line()
+            // if warning:
+            //     (order_line or self).shop_warning = warning
             // 
             // return {
+            //     'added_qty': added_qty,
             //     'line_id': order_line.id,
             //     'quantity': quantity,
-            //     'option_ids': list(set(order_line.linked_line_ids.filtered(
-            //         lambda sol: sol.order_id == order_line.order_id).ids)
-            //     ),
             //     'warning': warning,
             // }
-            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
-            // def _cart_update(self, product_id, line_id=None, add_qty=0, set_qty=0, **kwargs):
-            // line = self.order_line.filtered(lambda sol: sol.product_id.id == product_id)[:1]
-            // reward_id = line.reward_id
-            // if set_qty == 0 and line.coupon_id and reward_id and reward_id.reward_type == 'discount':
-            //     # Force the deletion of the line even if it's a temporary record created by new()
-            //     line_id = line.id
-            // res = super()._cart_update(
-            //     product_id, line_id=line_id, add_qty=add_qty, set_qty=set_qty, **kwargs
-            // )
-            // self._update_programs_and_rewards()
-            // self._auto_apply_rewards()
-            // return res
             */
             return default;
         }
 
-        protected async Task<SaleOrder> CartUpdateOrderLineInternalAsync(Guid product_id, object quantity, object order_line)
+        protected async Task<SaleOrder> CartUpdateOrderLineInternalAsync(object order_line, object quantity)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _cart_update_order_line(self, product_id, quantity, order_line, **kwargs):
-            // self.ensure_one()
+            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
+            // def _cart_update_order_line(self, order_line, quantity, **kwargs):
+            // old_qty = order_line.product_uom_qty
             // 
-            // if order_line and quantity <= 0:
+            // updated_line = super()._cart_update_order_line(order_line, quantity, **kwargs)
+            // 
+            // # Remove event registrations on quantity decrease.
+            // if (
+            //     updated_line
+            //     and updated_line.event_ticket_id
+            //     and (diff := old_qty - updated_line.product_uom_qty) > 0
+            // ):
+            //     attendees = self.env['event.registration'].search(
+            //         domain=[
+            //             ('state', '!=', 'cancel'),
+            //             ('sale_order_id', '=', self.id),
+            //             ('event_slot_id', '=', order_line.event_slot_id.id),
+            //             ('event_ticket_id', '=', order_line.event_ticket_id.id),
+            //         ],
+            //         offset=updated_line.product_uom_qty,
+            //         limit=diff,
+            //         order='create_date asc',
+            //     )
+            //     attendees.action_cancel()
+            // 
+            // return updated_line
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _cart_update_order_line(self, order_line, quantity, **kwargs):
+            // self.ensure_one()
+            // order_line.ensure_one()
+            // 
+            // if quantity <= 0:
             //     # Remove zero or negative lines
             //     order_line.unlink()
-            //     order_line = self.env['sale.order.line']
-            // elif order_line:
-            //     # Update existing line
-            //     update_values = self._prepare_order_line_update_values(order_line, quantity, **kwargs)
-            //     if update_values:
-            //         self._update_cart_line_values(order_line, update_values)
-            // elif quantity > 0:
-            //     # Create new line
-            //     order_line_values = self._prepare_order_line_values(product_id, quantity, **kwargs)
-            //     order_line = self.env['sale.order.line'].sudo().create(order_line_values)
-            // return order_line
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> CartUpdatePricelistInternalAsync(Guid pricelist_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _cart_update_pricelist(self, pricelist_id=None):
-            // self.ensure_one()
+            //     return self.env['sale.order.line']
             // 
-            // if self.pricelist_id.id != pricelist_id:
-            //     self.pricelist_id = pricelist_id
-            //     self._recompute_prices()
+            // # Update existing line
+            // update_values = self._prepare_order_line_update_values(order_line, quantity, **kwargs)
+            // if update_values:
+            //     combo_item_lines = order_line.linked_line_ids.filtered('combo_item_id')
+            //     if (
+            //         order_line.product_type == 'combo'
+            //         and combo_item_lines
+            //         and 'product_uom_qty' in update_values
+            //     ):
+            //         # A combo product and its items should have the same quantity (by design). If the
+            //         # requested quantity isn't available for one or more combo items, we should lower
+            //         # the quantity of the combo product and its items to the maximum available quantity
+            //         # of the combo item with the least available quantity.
+            //         combo_quantity = quantity
+            //         for item_line in combo_item_lines:
+            //             if quantity != item_line.product_uom_qty:
+            //                 combo_item_quantity, _warning = self._verify_updated_quantity(
+            //                     item_line,
+            //                     item_line.product_id.id,
+            //                     quantity,
+            //                     uom_id=item_line.product_uom_id.id,
+            //                     **kwargs
+            //                 )
+            //                 combo_quantity = min(combo_quantity, combo_item_quantity)
+            //         for item_line in combo_item_lines:
+            //             if combo_quantity != item_line.product_uom_qty:
+            //                 self.with_context(skip_cart_verification=True)._cart_update_line_quantity(
+            //                     line_id=item_line.id, quantity=combo_quantity
+            //                 )
+            //         update_values['product_uom_qty'] = combo_quantity
+            // 
+            //     order_line.write(update_values)
+            // 
+            //     order_line._check_validity()
+            // 
+            // return order_line
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
+            // def _cart_update_order_line(self, order_line, quantity, **kwargs):
+            // if (
+            //     quantity <= 0
+            //     and order_line.coupon_id
+            //     and order_line.reward_id
+            //     and order_line.reward_id.reward_type == 'discount'
+            // ):
+            //     # When a reward line is deleted we remove it from the auto claimable rewards
+            //     order_line = order_line.with_context(website_sale_loyalty_delete=True)
+            // 
+            // return super()._cart_update_order_line(order_line, quantity, **kwargs)
             */
             return default;
         }
 
-        protected async Task<SaleOrder> CheapestLineInternalAsync()
+        protected async Task<SaleOrder> CheapestLineInternalAsync(object reward)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
-            // def _cheapest_line(self):
+            // def _cheapest_line(self, reward):
             // self.ensure_one()
             // cheapest_line = False
             // cheapest_line_price_unit = False
+            // domain = reward._get_discount_product_domain()
             // for line in (self.order_line - self._get_no_effect_on_threshold_lines()):
             //     line_price_unit = self._get_order_line_price(line, 'price_unit')
             //     if (
@@ -975,6 +1038,7 @@ namespace Bamboo.Core.Application.Services
             //         or line.combo_item_id
             //         or not line.product_uom_qty
             //         or not line_price_unit
+            //         or not line.product_id.filtered_domain(domain)
             //     ):
             //         continue
             //     if not cheapest_line or cheapest_line_price_unit > line_price_unit:
@@ -1010,7 +1074,9 @@ namespace Bamboo.Core.Application.Services
             //     and self.carrier_id.delivery_type == 'in_store'
             //     and not self._is_in_stock(self.warehouse_id.id)
             // ):
-            //     raise ValidationError(_("Some products are not available in the selected store."))
+            //     raise ValidationError(self.env._(
+            //         "Some products are not available in the selected store."
+            //     ))
             // return super()._check_cart_is_ready_to_be_paid()
             --- ODOO METHOD SOURCE (MODULE: website_sale_mondialrelay, FILE: sale_order.py) ---
             // def _check_cart_is_ready_to_be_paid(self):
@@ -1028,13 +1094,11 @@ namespace Bamboo.Core.Application.Services
             // return super()._check_cart_is_ready_to_be_paid()
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
             // def _check_cart_is_ready_to_be_paid(self):
-            // values = []
-            // for line in self.order_line:
-            //     if line.product_id.is_storable and not line.product_id.allow_out_of_stock_order:
-            //         cart_qty, avl_qty = self._get_cart_and_free_qty(line.product_id, line=line)
-            //         if cart_qty > avl_qty:
-            //             line._set_shop_warning_stock(cart_qty, max(avl_qty, 0))
-            //             values.append(line.shop_warning)
+            // values = [
+            //     line.shop_warning
+            //     for line in self.order_line
+            //     if not line._check_availability()
+            // ]
             // if values:
             //     raise ValidationError(' '.join(values))
             // return super()._check_cart_is_ready_to_be_paid()
@@ -1042,21 +1106,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CheckOptionalProductCompanyIdInternalAsync()
+        protected async Task<bool> CheckComboQuantitiesInternalAsync(object line)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
-            // def _check_optional_product_company_id(self):
-            // for order in self:
-            //     companies = order.sale_order_option_ids.product_id.company_id
-            //     if companies and companies != order.company_id:
-            //         bad_products = order.sale_order_option_ids.product_id.filtered(lambda p: p.company_id and p.company_id != order.company_id)
-            //         raise ValidationError(_(
-            //             "Your quotation contains products from company %(product_company)s whereas your quotation belongs to company %(quote_company)s. \n Please change the company of your quotation or remove the products from other companies (%(bad_products)s).",
-            //             product_company=', '.join(companies.mapped('display_name')),
-            //             quote_company=order.company_id.display_name,
-            //             bad_products=', '.join(bad_products.mapped('display_name')),
-            //         ))
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _check_combo_quantities(self, line) -> bool:
+            // """Ensure all combo item lines have the same quantity.
+            // 
+            // :returns: whether the combo quantities had to be updated
+            // """
+            // # Ensure all combo lines have the same quantity
+            // if not (combo_lines := line.linked_line_ids):
+            //     return False
+            // available_combo_quantity = min(line.product_uom_qty for line in combo_lines)
+            // if available_combo_quantity < line.product_uom_qty:
+            //     line._set_shop_warning_stock(
+            //         line.product_uom_qty,
+            //         available_combo_quantity,
+            //     )
+            //     (line + combo_lines).product_uom_qty = available_combo_quantity
+            //     return True
+            // 
+            // return False
             */
             return default;
         }
@@ -1103,13 +1174,18 @@ namespace Bamboo.Core.Application.Services
             // def _check_warehouse(self):
             // """ Ensure that the warehouse is set in case of storable products """
             // orders_without_wh = self.filtered(lambda order: order.state not in ('draft', 'cancel') and not order.warehouse_id)
-            // company_ids_with_wh = {group['company_id'][0] for group in self.env['stock.warehouse'].read_group(domain=[('company_id', 'in', orders_without_wh.mapped('company_id').ids)], fields=['id:recordset'], groupby=['company_id'])} if orders_without_wh else {}
+            // company_ids_with_wh = {
+            //     company_id.id for [company_id] in self.env['stock.warehouse']._read_group(
+            //         domain=[('company_id', 'in', orders_without_wh.company_id.ids)],
+            //         groupby=['company_id'],
+            //     )
+            // }
             // other_company = set()
             // for order_line in orders_without_wh.order_line:
             //     if order_line.product_id.type != 'consu':
             //         continue
-            //     if order_line.route_id.company_id and order_line.route_id.company_id != order_line.company_id:
-            //         other_company.add(order_line.route_id.company_id.id)
+            //     if order_line.route_ids.company_id and order_line.route_ids.company_id != order_line.company_id:
+            //         other_company.add(order_line.route_ids.company_id.id)
             //         continue
             //     if order_line.order_id.company_id.id in company_ids_with_wh:
             //         raise UserError(_('You must set a warehouse on your sale order to proceed.'))
@@ -1261,9 +1337,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: sale_order.py) ---
             // def _compute_amount_unpaid(self):
             // for sale_order in self:
-            //     total_invoice_paid = sum(sale_order.order_line.filtered(lambda l: not l.display_type).mapped('invoice_lines').filtered(lambda l: l.parent_state != 'cancel').mapped('price_total'))
-            //     total_pos_paid = sum(sale_order.order_line.filtered(lambda l: not l.display_type).mapped('pos_order_line_ids.price_subtotal_incl'))
-            //     sale_order.amount_unpaid = sale_order.amount_total - (total_invoice_paid + total_pos_paid)
+            //     invoices = sale_order.order_line.invoice_lines.move_id.filtered(lambda invoice: invoice.state in ('draft', 'posted'))
+            //     total_invoices_paid = sum(invoices.mapped('amount_total'))
+            //     pos_orders = sale_order.order_line.pos_order_line_ids.order_id
+            //     total_pos_orders_paid = sum(pos_orders.mapped('amount_total'))
+            //     sale_order.amount_unpaid = max(sale_order.amount_total - total_invoices_paid - total_pos_orders_paid - sale_order.amount_paid, 0.0)
             */
             return default;
         }
@@ -1275,7 +1353,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_amounts(self):
             // AccountTax = self.env['account.tax']
             // for order in self:
-            //     order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            //     order_lines = order._get_priced_lines()
             //     base_lines = [line._prepare_base_line_for_taxes_computation() for line in order_lines]
             //     base_lines += order._add_base_lines_for_early_payment_discount()
             //     AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
@@ -1318,23 +1396,25 @@ namespace Bamboo.Core.Application.Services
             // def _compute_authorized_transaction_ids(self):
             // for trans in self:
             //     trans.authorized_transaction_ids = trans.transaction_ids.filtered(lambda t: t.state == 'authorized')
+            //     trans.has_authorized_transaction_ids = bool(trans.authorized_transaction_ids)
             */
             return default;
         }
 
-        protected async Task<SaleOrder> ComputeAvailableProductDocumentIdsInternalAsync()
+        protected async Task<SaleOrder> ComputeAvailableQuotationDocumentIdsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
-            // def _compute_available_product_document_ids(self):
+            // def _compute_available_quotation_document_ids(self):
             // for order in self:
-            //     order.available_product_document_ids = self.env['quotation.document'].search(
+            //     order.available_quotation_document_ids = self.env['quotation.document'].search(
             //         self.env['quotation.document']._check_company_domain(order.company_id),
             //         order='sequence',
             //     ).filtered(lambda doc:
-            //         order.sale_order_template_id in doc.quotation_template_ids
-            //         or not doc.quotation_template_ids
-            //     ) | order.quotation_document_ids
+            //         # templates are available only to salesman
+            //         not (templates := doc.sudo().quotation_template_ids)
+            //         or order.sale_order_template_id in templates
+            //     )
             */
             return default;
         }
@@ -1432,7 +1512,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_display_name(self):
-            // if not self._context.get('sale_show_partner_name'):
+            // if not self.env.context.get('sale_show_partner_name'):
             //     return super()._compute_display_name()
             // for order in self:
             //     name = order.name
@@ -1448,9 +1528,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_duplicated_order_ids(self):
-            // order_to_duplicate_orders = self._fetch_duplicate_orders()
-            // for order in self:
+            // draft_orders = self.filtered(lambda o: o.state == 'draft')
+            // order_to_duplicate_orders = draft_orders._fetch_duplicate_orders()
+            // for order in draft_orders:
             //     order.duplicated_order_ids = [Command.set(order_to_duplicate_orders.get(order.id, []))]
+            // (self - draft_orders).duplicated_order_ids = False
             */
             return default;
         }
@@ -1489,7 +1571,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_expected_date(self):
-            // """ For service and consumable, we only take the min dates. This method is extended in sale_stock to
+            // """ For service and combo (non-goods) products, we avoid computing the expected date. This method is extended in sale_stock to
             //     take the picking_policy of SO into account.
             // """
             // self.mapped("order_line")  # Prefetch indication
@@ -1498,7 +1580,7 @@ namespace Bamboo.Core.Application.Services
             //         order.expected_date = False
             //         continue
             //     dates_list = order.order_line.filtered(
-            //         lambda line: not line.display_type and not line._is_delivery()
+            //         lambda line: line.product_id.type == 'consu' and not line.display_type and not line._is_delivery()
             //     ).mapped(lambda line: line and line._expected_date())
             //     if dates_list:
             //         order.expected_date = order._select_expected_date(dates_list)
@@ -1516,10 +1598,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_expense, FILE: sale_order.py) ---
             // def _compute_expense_count(self):
-            // expense_data = self.env['hr.expense']._read_group([('sale_order_id', 'in', self.ids)], ['sale_order_id'], ['__count'])
-            // mapped_data = {sale_order.id: count for sale_order, count in expense_data}
             // for sale_order in self:
-            //     sale_order.expense_count = mapped_data.get(sale_order.id, 0)
+            //     sale_order.expense_count = len(sale_order.order_line.expense_ids)
             */
             return default;
         }
@@ -1586,6 +1666,40 @@ namespace Bamboo.Core.Application.Services
             //     if fpos_id_before != cache[key] and order.order_line:
             //         order.show_update_fpos = True
             //     order.fiscal_position_id = cache[key]
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
+            // def _compute_fiscal_position_id(self):
+            // """Override of `sale` to set the fiscal position matching the selected pickup location
+            // for pickup in-store orders."""
+            // in_store_orders = self.filtered(
+            //     lambda so: so.carrier_id.delivery_type == 'in_store' and so.pickup_location_data
+            // )
+            // AccountFiscalPosition = self.env['account.fiscal.position'].sudo()
+            // for order in in_store_orders:
+            //     order.fiscal_position_id = AccountFiscalPosition._get_fiscal_position(
+            //         order.partner_id, delivery=order.warehouse_id.partner_id
+            //     )
+            // super(SaleOrder, self - in_store_orders)._compute_fiscal_position_id()
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> ComputeGiftCardCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
+            // def _compute_gift_card_count(self):
+            // gift_card_data = dict(
+            //     self.env['loyalty.card']._read_group(
+            //         domain=[
+            //             ('order_id', 'in', self.ids),
+            //             ('program_type', '=', 'gift_card'),
+            //         ],
+            //         groupby=['order_id'],
+            //         aggregates=['__count'],
+            //     )
+            // )
+            // for order in self:
+            //     order.gift_card_count = gift_card_data.get(order, 0)
             */
             return default;
         }
@@ -1694,7 +1808,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_is_pdf_quote_builder_available(self):
             // for order in self:
             //     order.is_pdf_quote_builder_available = bool(
-            //         order.available_product_document_ids
+            //         order.available_quotation_document_ids
             //         or order.order_line.available_product_document_ids
             //     )
             */
@@ -1755,6 +1869,19 @@ namespace Bamboo.Core.Application.Services
             //         ]
             //     })
             //     order.show_json_popover = bool(late_stock_picking)
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> ComputeLateAvailabilityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            // def _compute_late_availability(self):
+            // for order in self:
+            //     order.late_availability = any(
+            //         picking.products_availability_state == 'late' for picking in order.picking_ids
+            //     )
             */
             return default;
         }
@@ -1847,17 +1974,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_mrp, FILE: sale_order.py) ---
             // def _compute_mrp_production_ids(self):
-            // data = self.env['procurement.group']._read_group([('sale_id', 'in', self.ids)], ['sale_id'], ['id:recordset'])
-            // production_order_by_sale_line = self.env['mrp.production']._read_group([('sale_line_id', 'in', self.order_line.ids)], ['sale_line_id'], ['id:recordset'])
-            // mrp_productions = defaultdict(self.env['mrp.production'].browse)
-            // for sale, procurement_groups in data:
-            //     mrp_productions[sale.id] |= procurement_groups.stock_move_ids.created_production_id.procurement_group_id.mrp_production_ids | procurement_groups.mrp_production_ids
-            // for sale_line, production_id in production_order_by_sale_line:
-            //     mrp_productions[sale_line.order_id.id] |= production_id
             // for sale in self:
-            //     mrp_production_ids = mrp_productions[sale.id]
-            //     sale.mrp_production_count = len(mrp_production_ids)
-            //     sale.mrp_production_ids = mrp_production_ids
+            //     # We want only manufacturing orders of first level
+            //     mos = sale.stock_reference_ids.production_ids
+            //     sale.mrp_production_ids = mos.filtered(lambda mo: not mo.production_group_id.parent_ids and mo.state != 'cancel')
+            //     sale.mrp_production_count = len(sale.mrp_production_ids)
             */
             return default;
         }
@@ -1924,6 +2045,13 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> ComputePartnerShippingIdInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: sale_order.py) ---
+            // def _compute_partner_shipping_id(self):
+            // """ Override to reset the delivery address when a pickup location was selected. """
+            // super()._compute_partner_shipping_id()
+            // for order in self:
+            //     if order.partner_shipping_id.is_pickup_location:
+            //         order.partner_shipping_id = order.partner_id
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_partner_shipping_id(self):
             // for order in self:
@@ -1935,6 +2063,18 @@ namespace Bamboo.Core.Application.Services
             // for order in ecommerce_orders:
             //     if order.partner_shipping_id.is_mondialrelay and not order.carrier_id.is_mondialrelay:
             //         order.partner_shipping_id = order.partner_id
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> ComputePartnershipInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: sale_order.py) ---
+            // def _compute_partnership(self):
+            // for so in self:
+            //     partnership_lines = so.order_line.filtered(lambda l: l.service_tracking == 'partnership')
+            //     so.assigned_grade_id = partnership_lines.mapped('product_id.grade_id')[:1]
             */
             return default;
         }
@@ -1991,6 +2131,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> ComputePreferredPaymentMethodLineIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _compute_preferred_payment_method_line_id(self):
+            // for order in self:
+            //     order = order.with_company(order.company_id)
+            //     order.preferred_payment_method_line_id = order.partner_id.property_inbound_payment_method_line_id
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> ComputePrepaymentPercentInternalAsync()
         {
             /*
@@ -2021,6 +2173,16 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     order = order.with_company(order.company_id)
             //     order.pricelist_id = order.partner_id.property_product_pricelist
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _compute_pricelist_id(self):
+            // # Override to compute pricelists for carts using the partner's GeoIP,
+            // # providing a fallback in case they don't have an address set.
+            // if not (country_code := self.env['website']._get_geoip_country_code()):
+            //     return super()._compute_pricelist_id()
+            // if website_orders := self.filtered('website_id'):
+            //     website_orders = website_orders.with_context(country_code=country_code)
+            //     super(SaleOrder, website_orders)._compute_pricelist_id()
+            // return super(SaleOrder, self - website_orders)._compute_pricelist_id()
             */
             return default;
         }
@@ -2030,19 +2192,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
             // def _compute_project_ids(self):
-            // is_project_manager = self.env.user.has_group('project.group_project_manager')
-            // projects = self.env['project.project'].search([('sale_order_id', 'in', self.ids)])
+            // projects = self.env['project.project'].search(['|', ('sale_order_id', 'in', self.ids), ('reinvoiced_sale_order_id', 'in', self.ids)])
             // projects_per_so = defaultdict(lambda: self.env['project.project'])
             // for project in projects:
-            //     projects_per_so[project.sale_order_id.id] |= project
+            //     projects_per_so[project.sale_order_id.id or project.reinvoiced_sale_order_id.id] |= project
             // for order in self:
             //     projects = order.order_line.mapped('product_id.project_id')
+            //     projects |= order.project_id
             //     projects |= order.order_line.mapped('project_id')
             //     projects |= projects_per_so[order.id or order._origin.id]
-            //     if not is_project_manager:
-            //         projects = projects._filtered_access('read')
+            //     projects = projects._filtered_access('read')
             //     order.project_ids = projects
-            //     order.project_count = len(projects)
+            //     order.project_count = len(projects.filtered('active'))
             */
             return default;
         }
@@ -2145,6 +2306,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> ComputeSaleWarningTextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _compute_sale_warning_text(self):
+            // if not self.env.user.has_group('sale.group_warning_sale'):
+            //     self.sale_warning_text = ''
+            //     return
+            // for order in self:
+            //     warnings = OrderedSet()
+            //     if partner_msg := order.partner_id.sale_warn_msg:
+            //         warnings.add((order.partner_id.name or order.partner_id.display_name) + ' - ' + partner_msg)
+            //     for line in order.order_line:
+            //         if product_msg := line.sale_line_warn_msg:
+            //             warnings.add(line.product_id.display_name + ' - ' + product_msg)
+            //     order.sale_warning_text = '\n'.join(warnings)
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> ComputeShippingWeightInternalAsync()
         {
             /*
@@ -2177,11 +2358,10 @@ namespace Bamboo.Core.Application.Services
             // show_button_ids = self.env['sale.order.line']._read_group([
             //     ('order_id', 'in', self.ids),
             //     ('order_id.state', 'not in', ['draft', 'sent']),
-            //     ('product_id.type', '=', 'service'),
             // ], aggregates=['order_id:array_agg'])[0][0]
             // for order in self:
-            //     order.show_project_button = order.id in show_button_ids and order.project_count
-            //     order.show_task_button = order.show_project_button or order.tasks_count
+            //     state = order.state not in ['draft', 'sent']
+            //     order.show_project_button = state and order.project_count
             //     order.show_create_project_button = (
             //         is_project_manager
             //         and order.id in show_button_ids
@@ -2246,7 +2426,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_tax_totals(self):
             // AccountTax = self.env['account.tax']
             // for order in self:
-            //     order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            //     order_lines = order._get_priced_lines()
             //     base_lines = [line._prepare_base_line_for_taxes_computation() for line in order_lines]
             //     base_lines += order._add_base_lines_for_early_payment_discount()
             //     AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
@@ -2267,7 +2447,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_team_id(self):
             // cached_teams = {}
             // for order in self:
-            //     default_team_id = self.env.context.get('default_team_id', False) or order.team_id.id
+            //     default_team_id = order._default_team_id()
             //     user_id = order.user_id.id
             //     company_id = order.company_id.id
             //     key = (default_team_id, user_id, company_id)
@@ -2355,15 +2535,17 @@ namespace Bamboo.Core.Application.Services
             //         )
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _compute_user_id(self):
-            // """ Do not assign self.env.user as salesman for e-commerce orders.
+            // """Do not assign self.env.user as salesman for e-commerce orders.
             // 
             // Leave salesman empty if no salesman is specified on partner or website.
-            // 
-            // c/p of the logic in Website._prepare_sale_order_values
             // """
             // website_orders = self.filtered('website_id')
             // super(SaleOrder, self - website_orders)._compute_user_id()
             // for order in website_orders:
+            //     if order.state == 'draft' and not order.env.context.get('force_user_recomputation'):
+            //         # Do not assign any salesman to draft carts to avoid useless notifications/pings/...
+            //         # It'll be assigned on confirmation (see action_confirm)
+            //         continue
             //     if not order.user_id:
             //         order.user_id = (
             //             order.website_id.salesperson_id
@@ -2458,8 +2640,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _compute_website_order_line(self):
+            // # group saler.order.line to prefetch all in one query
+            // order_lines = self.env['sale.order.line'].search_fetch([('order_id', 'in', self.ids)])
             // for order in self:
-            //     order.website_order_line = order.order_line.filtered(lambda sol: sol._show_in_cart())
+            //     order.website_order_line = order_lines.filtered(
+            //         lambda sol: sol.order_id == order and sol._show_in_cart(),
+            //     )
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
             // def _compute_website_order_line(self):
             // """ This method will merge multiple discount lines generated by a same program
@@ -2468,7 +2654,7 @@ namespace Bamboo.Core.Application.Services
             //     products with different taxes.
             //     In this case, each taxes will have their own discount line. This is required
             //     to have correct amount of taxes according to the discount.
-            //     But we wan't these lines to be `visually` merged into a single one in the
+            //     But we want these lines to be `visually` merged into a single one in the
             //     e-commerce since the end user should only see one discount line.
             //     This is only possible since we don't show taxes in cart.
             //     eg:
@@ -2493,14 +2679,14 @@ namespace Bamboo.Core.Application.Services
             //             continue
             //         new_lines += self.env['sale.order.line'].new({
             //             'product_id': lines[0].product_id.id,
-            //             'tax_id': False,
+            //             'tax_ids': False,
             //             'price_unit': sum(lines.mapped('price_unit')),
             //             'price_subtotal': sum(lines.mapped('price_subtotal')),
             //             'price_total': sum(lines.mapped('price_total')),
             //             'discount': 0.0,
             //             'name': lines[0].name_short if lines.reward_id.reward_type != 'product' else lines[0].name,
             //             'product_uom_qty': 1,
-            //             'product_uom': lines[0].product_uom.id,
+            //             'product_uom_id': lines[0].product_uom_id.id,
             //             'order_id': order.id,
             //             'is_reward_line': True,
             //             'coupon_id': lines.coupon_id,
@@ -2538,11 +2724,7 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: sale_order.py) ---
             // def action_confirm(self):
-            // unconfirmed_registrations = self.order_line.registration_ids.filtered(
-            //     lambda reg: reg.state in ["draft", "cancel"]
-            // )
             // res = super(SaleOrder, self).action_confirm()
-            // unconfirmed_registrations._update_mail_schedulers()
             // 
             // for so in self:
             //     if not any(line.service_tracking == 'event' for line in so.order_line):
@@ -2557,6 +2739,11 @@ namespace Bamboo.Core.Application.Services
             //         return self.env['ir.actions.act_window'].with_context(
             //             default_sale_order_id=so.id
             //         )._for_xml_id('event_sale.action_sale_order_event_registration')
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // res = super().action_confirm()
+            // self._add_partnership()
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_confirm(self):
@@ -2575,24 +2762,16 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.order_line._validate_analytic_distribution()
             // 
-            // for order in self:
-            //     if order.partner_id in order.message_partner_ids:
-            //         continue
-            //     order.message_subscribe([order.partner_id.id])
-            // 
             // self.write(self._prepare_confirmation_values())
             // 
             // # Context key 'default_name' is sometimes propagated up to here.
             // # We don't need it and it creates issues in the creation of linked records.
-            // context = self._context.copy()
+            // context = self.env.context.copy()
             // context.pop('default_name', None)
             // context.pop('default_user_id', None)
             // 
             // self.with_context(context)._action_confirm()
-            // user = self[:1].create_uid
-            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
-            //     # Public user can confirm SO, so we check the group on any record creator.
-            //     self.action_lock()
+            // self.filtered(lambda so: so._should_be_locked()).action_lock()
             // 
             // if self.env.context.get('send_email'):
             //     self._send_order_confirmation_mail()
@@ -2600,7 +2779,7 @@ namespace Bamboo.Core.Application.Services
             // return True
             --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: sale_order.py) ---
             // def action_confirm(self):
-            // res = super(SaleOrder, self.with_context({k: v for k, v in self._context.items() if k != 'default_tag_ids'})).action_confirm()
+            // res = super(SaleOrder, self.with_context({k: v for k, v in self.env.context.items() if k != 'default_tag_ids'})).action_confirm()
             // for order in self:
             //     order.opportunity_id._update_revenues_from_so(order)
             // return res
@@ -2611,16 +2790,29 @@ namespace Bamboo.Core.Application.Services
             // for order in self.filtered(
             //     lambda o: any(o.order_line.product_id.mapped('gelato_product_uid'))
             // ):
+            //     if message := order._ensure_partner_address_is_complete():
+            //         raise ValidationError(message)
             //     order._create_order_on_gelato()
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
             // def action_confirm(self):
+            // """
+            // Override to validate and update coupon rewards.
+            // 
+            // If called with one SO, checks if there exists rewards that are available but not claimed,
+            // and if so returns a notification action.
+            // 
+            // :raises ValidationError: A coupon gave a negative amount of points.
+            // :return: True or a notification action
+            // :rtype: bool | dict
+            // """
             // for order in self:
             //     all_coupons = order.applied_coupon_ids | order.coupon_point_ids.coupon_id | order.order_line.coupon_id
             //     if any(order._get_real_points_for_coupon(coupon) < 0 for coupon in all_coupons):
-            //         raise ValidationError(_('One or more rewards on the sale order is invalid. Please check them.'))
+            //         raise ValidationError(_("One or more rewards on the sale order is invalid. Please check them."))
             //     order._update_programs_and_rewards()
             //     order._add_loyalty_history_lines()
+            // has_claimable_rewards = len(self) == 1 and bool(self._get_claimable_rewards())
             // 
             // # Remove any coupon from 'current' program that don't claim any reward.
             // # This is to avoid ghost coupons that are lost forever.
@@ -2633,6 +2825,18 @@ namespace Bamboo.Core.Application.Services
             // for coupon, change in self.filtered(lambda s: s.state != 'sale')._get_point_changes().items():
             //     coupon.points += change
             // res = super().action_confirm()
+            // # Prioritize any action from super()
+            // if isinstance(res, bool) and has_claimable_rewards:
+            //     res = {
+            //         'type': 'ir.actions.client',
+            //         'tag': 'display_notification',
+            //         'params': {
+            //             'type': 'info',
+            //             'title': _("Rewards Available"),
+            //             'message': _("There are available rewards not added to this order."),
+            //             'next': {'type': 'ir.actions.act_window_close'},
+            //         },
+            //     }
             // self._send_reward_coupon_mail()
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
@@ -2649,8 +2853,65 @@ namespace Bamboo.Core.Application.Services
             //     if order.sale_order_template_id.mail_template_id:
             //         order._send_order_notification_mail(order.sale_order_template_id.mail_template_id)
             // return res
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // if len(self) == 1 and self.env.context.get('create_for_project_id') and self.state == 'sale':
+            //     # do nothing since the SO has been automatically confirmed during its creation
+            //     return True
+            // return super().action_confirm()
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // carts = self.filtered('website_id')
+            // if self.env.su:
+            //     carts = carts.with_user(SUPERUSER_ID)
+            // # Assign the salesman to carts on confirmation, as SUPERUSER to send the
+            // # 'You have been assigned to SOOOO' with OdooBot (and not public/logged in user).
+            // carts.with_context(force_user_recomputation=True)._compute_user_id()
+            // return super().action_confirm()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<SaleOrder> ConfirmOrderOnGelatoInternalAsync(Guid gelato_order_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: sale_order.py) ---
+            // def _confirm_order_on_gelato(self, gelato_order_id):
+            // """Send the order confirmation request to Gelato.
+            // 
+            // This is performed in a separate transaction to allow running as post-commit hook.
+            // 
+            // :return: None
+            // """
+            // self.ensure_one()
+            // 
+            // _logger.info(
+            //     "Confirmation of Gelato order %s for sales order %s", gelato_order_id, self.display_name
+            // )
+            // data = None
+            // try:
+            //     api_key = self.company_id.sudo().gelato_api_key  # In sudo mode to read on the company.
+            //     payload = {'orderType': 'order'}  # Confirm the order (draft -> order).
+            //     data = utils.make_request(
+            //         api_key,
+            //         'order',
+            //         'v4',
+            //         f'orders/{gelato_order_id}',
+            //         payload=payload,
+            //         method='PATCH',
+            //     )
+            // except UserError:
+            //     self.message_post(
+            //         body=self.env._("Unable to confirm the order %s on Gelato.", gelato_order_id),
+            //         author_id=self.env.ref('base.partner_root').id,
+            //     )
+            // finally:
+            //     _logger.info(
+            //         "Received confirmation request response for Gelato order %s:\n%s",
+            //         gelato_order_id, pprint.pformat(data),
+            //     )
+            */
+            return default;
         }
 
         protected async Task<SaleOrder> ConfirmationErrorMessageInternalAsync()
@@ -2668,9 +2929,24 @@ namespace Bamboo.Core.Application.Services
             //     and not line.product_id
             //     for line in self.order_line
             // ):
-            //     return _("A line on these orders missing a product, you cannot confirm it.")
+            //     return _("Some order lines are missing a product, you need to correct them before going further.")
             // 
             // return False
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> ConstraintUniqueAssignedGradeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: sale_order.py) ---
+            // def _constraint_unique_assigned_grade(self):
+            // for so in self:
+            //     if len(set(so.order_line.mapped('product_id.grade_id'))) > 1:
+            //         raise ValidationError(so.env._(
+            //             "You cannot confirm Sale Order %(sale_order_name)s because there are products"
+            //             " assigning different grades.", sale_order_name=so.name,
+            //         ))
             */
             return default;
         }
@@ -2734,16 +3010,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CreateActivitySetDetailsInternalAsync()
+        protected async Task<SaleOrder> CreateActivitySetDetailsInternalAsync(object body)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
-            // def _create_activity_set_details(self):
+            // def _create_activity_set_details(self, body):
             // """ Create activity on sale order to set details.
             // 
             // :return: None.
             // """
-            // activity_message = _("Some information could not be imported")
+            // activity_message = _("Some information could not be imported:")
+            // activity_message += body
             // self.activity_schedule(
             //     'mail.mail_activity_data_todo',
             //     user_id=self.env.user.id,
@@ -2771,12 +3048,24 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // created_records = super().create(vals_list)
             // project = self.env['project.project'].browse(self.env.context.get('create_for_project_id'))
-            // if project:
-            //     service_sol = next((sol for sol in created_records.order_line if sol.is_service), False)
-            //     if not service_sol and not self.env.context.get('from_embedded_action'):
-            //         raise UserError(_('This Sales Order must contain at least one product of type "Service".'))
-            //     if not project.sale_line_id:
+            // task = self.env['project.task'].browse(self.env.context.get('create_for_task_id'))
+            // if project or task:
+            //     service_sol = next((sol for sol in created_records.order_line if sol.is_service), self.env['sale.order.line'])
+            //     if project and not project.sale_line_id:
             //         project.sale_line_id = service_sol
+            //         if not project.reinvoiced_sale_order_id:
+            //             project.reinvoiced_sale_order_id = service_sol.order_id or created_records[0] if created_records else False
+            //     if task and not task.sale_line_id:
+            //         created_records.with_context(disable_project_task_generation=True).action_confirm()
+            //         task.sale_line_id = service_sol
+            // return created_records
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
+            // def create(self, vals_list):
+            // created_records = super().create(vals_list)
+            // if self.env.context.get('create_for_employee_mapping'):
+            //     if not next((sol for sol in created_records.order_line if sol.is_service), False):
+            //         raise UserError(_('The Sales Order must contain at least one service product.'))
+            //     created_records.with_context(disable_project_task_generation=True).action_confirm()
             // return created_records
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def create(self, vals_list):
@@ -2839,10 +3128,67 @@ namespace Bamboo.Core.Application.Services
             // :return: An action redirecting to related sale order view.
             // :rtype: dict
             // """
-            // orders = self._create_order_from_attachment(attachment_ids)
+            // attachments = self.env['ir.attachment'].browse(attachment_ids)
+            // if not attachments:
+            //     raise UserError(_("No attachment was provided"))
+            // 
+            // orders = self.with_context(default_partner_id=self.env.user.partner_id.id)._create_records_from_attachments(attachments)
+            // 
             // return orders._get_records_action(name=_("Generated Orders"))
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<SaleOrder> CreateDownPaymentLinesFromBaseLinesInternalAsync(object down_payment_base_lines)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _create_down_payment_lines_from_base_lines(self, down_payment_base_lines):
+            // """ Add the base lines passed as parameter as sale order lines into the current sale order.
+            // 
+            // :param down_payment_base_lines: A list of base lines
+            //                                 (see '_prepare_base_line_for_taxes_computation').
+            // :return The newly created SO lines.
+            // """
+            // self.ensure_one()
+            // sequence = max(self.order_line.mapped('sequence') or [10]) + 1
+            // return self.env['sale.order.line'] \
+            //     .with_context(sale_no_log_for_new_lines=True) \
+            //     .create([
+            //         {
+            //             **self._prepare_down_payment_line_values_from_base_line(base_line),
+            //             'sequence': sequence + index,
+            //         }
+            //         for index, base_line in enumerate(down_payment_base_lines)
+            //     ])
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> CreateDownPaymentSectionLineIfNeededInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _create_down_payment_section_line_if_needed(self):
+            // """ Add the down section line if not already there on the current SO.
+            // 
+            // :return The newly created SO line or None if the section was already there.
+            // """
+            // self.ensure_one()
+            // # If a down payment is already there, then the section is not needed and
+            // # has already been created.
+            // if any(line.display_type and line.is_downpayment for line in self.order_line):
+            //     return
+            // 
+            // sequence = max(self.order_line.mapped('sequence') or [10]) + 1
+            // return self.env['sale.order.line'] \
+            //     .with_context(sale_no_log_for_new_lines=True) \
+            //     .create({
+            //         **self._prepare_down_payment_line_section_values(),
+            //         'sequence': sequence,
+            //     })
+            */
+            return default;
         }
 
         protected async Task<SaleOrder> CreateInvoicesInternalAsync(object grouped, object final, object date)
@@ -2877,7 +3223,7 @@ namespace Bamboo.Core.Application.Services
             //     invoice_vals = order._prepare_invoice()
             //     invoiceable_lines = order._get_invoiceable_lines(final)
             // 
-            //     if not any(not line.display_type for line in invoiceable_lines):
+            //     if all(line.display_type for line in invoiceable_lines):
             //         continue
             // 
             //     invoice_line_vals = []
@@ -2893,20 +3239,30 @@ namespace Bamboo.Core.Application.Services
             //             )
             //             down_payment_section_added = True
             //             invoice_item_sequence += 1
-            //         invoice_line_vals.append(
-            //             Command.create(
-            //                 line._prepare_invoice_line(sequence=invoice_item_sequence)
-            //             ),
-            //         )
+            // 
+            //         optional_values = {'sequence': invoice_item_sequence}
+            // 
+            //         # When creating the final invoice, we want to express the lines representing
+            //         # the full order but negate the already created down payment lines.
+            //         # At this point, on the sale order, the down payment lines have a non-empty
+            //         # 'extra_tax_data' containing a price unit greater than zero and a quantity of 0.0.
+            //         if line.is_downpayment:
+            //             optional_values['quantity'] = -1.0
+            //             optional_values['extra_tax_data'] = self.env['account.tax']\
+            //                 ._reverse_quantity_base_line_extra_tax_data(line.extra_tax_data)
+            // 
+            //         for vals in line._prepare_invoice_lines_vals_list(**optional_values):
+            //             invoice_line_vals.append(Command.create(vals))
+            // 
             //         invoice_item_sequence += 1
             // 
             //     invoice_vals['invoice_line_ids'] += invoice_line_vals
             //     invoice_vals_list.append(invoice_vals)
             // 
-            // if not invoice_vals_list and self._context.get('raise_if_nothing_to_invoice', True):
+            // if not invoice_vals_list and self.env.context.get('raise_if_nothing_to_invoice', True):
             //     raise UserError(self._nothing_to_invoice_error_message())
             // 
-            // # 2) Manage 'grouped' parameter: group by (partner_id, currency_id).
+            // # 2) Manage 'grouped' parameter: group by (partner_id, partner_shipping_id, currency_id).
             // if not grouped:
             //     new_invoice_vals_list = []
             //     invoice_grouping_keys = self._get_invoice_grouping_keys()
@@ -2976,59 +3332,6 @@ namespace Bamboo.Core.Application.Services
             //         self.invoice_ids._set_reversed_entry(moves_to_switch)
             // 
             // for move in moves:
-            //     if final:
-            //         # Downpayment might have been determined by a fixed amount set by the user.
-            //         # This amount is tax included. This can lead to rounding issues.
-            //         # E.g. a user wants a 100€ DP on a product with 21% tax.
-            //         # 100 / 1.21 = 82.64, 82.64 * 1,21 = 99.99
-            //         # This is already corrected by adding/removing the missing cents on the DP invoice,
-            //         # but must also be accounted for on the final invoice.
-            // 
-            //         delta_amount = 0
-            //         for order_line in self.order_line:
-            //             if not order_line.is_downpayment:
-            //                 continue
-            //             inv_amt = order_amt = 0
-            //             for invoice_line in order_line.invoice_lines:
-            //                 sign = 1 if invoice_line.move_id.is_inbound() else -1
-            //                 if invoice_line.move_id == move:
-            //                     inv_amt += invoice_line.price_total * sign
-            //                 elif invoice_line.move_id.state != 'cancel':  # filter out canceled dp lines
-            //                     order_amt += invoice_line.price_total * sign
-            //             if inv_amt and order_amt:
-            //                 # if not inv_amt, this order line is not related to current move
-            //                 # if no order_amt, dp order line was not invoiced
-            //                 delta_amount += inv_amt + order_amt
-            // 
-            //         if not move.currency_id.is_zero(delta_amount):
-            //             receivable_line = move.line_ids.filtered(
-            //                 lambda aml: aml.account_id.account_type == 'asset_receivable')[:1]
-            //             product_lines = move.line_ids.filtered(
-            //                 lambda aml: aml.display_type == 'product' and aml.is_downpayment)
-            //             tax_lines = move.line_ids.filtered(
-            //                 lambda aml: aml.tax_line_id.amount_type not in (False, 'fixed'))
-            //             if tax_lines and product_lines and receivable_line:
-            //                 line_commands = [Command.update(receivable_line.id, {
-            //                     'amount_currency': receivable_line.amount_currency + delta_amount,
-            //                 })]
-            //                 delta_sign = 1 if delta_amount > 0 else -1
-            //                 for lines, attr, sign in (
-            //                     (product_lines, 'price_total', -1 if move.is_inbound() else 1),
-            //                     (tax_lines, 'amount_currency', 1),
-            //                 ):
-            //                     remaining = delta_amount
-            //                     lines_len = len(lines)
-            //                     for line in lines:
-            //                         if move.currency_id.compare_amounts(remaining, 0) != delta_sign:
-            //                             break
-            //                         amt = delta_sign * max(
-            //                             move.currency_id.rounding,
-            //                             abs(move.currency_id.round(remaining / lines_len)),
-            //                         )
-            //                         remaining -= amt
-            //                         line_commands.append(Command.update(line.id, {attr: line[attr] + amt * sign}))
-            //                 move.line_ids = line_commands
-            // 
             //     move.message_post_with_source(
             //         'mail.message_origin_link',
             //         render_values={'self': move, 'origin': move.line_ids.sale_line_ids.order_id},
@@ -3048,32 +3351,23 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CreateOrderFromAttachmentInternalAsync(List<Guid> attachment_ids)
+        protected async Task<SaleOrder> CreateNewCartLineInternalAsync(Guid product_id, object quantity, Guid uom_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _create_order_from_attachment(self, attachment_ids):
-            // """ Create the sale orders from given attachment_ids and fill data by extracting detail
-            // from attachments and return generated orders.
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _create_new_cart_line(self, product_id, quantity, uom_id, **kwargs):
+            // if quantity <= 0.0:
+            //     return self.env['sale.order.line']
             // 
-            // :param list attachment_ids: List of attachments process.
-            // :return: Recordset of order.
-            // """
-            // attachments = self.env['ir.attachment'].browse(attachment_ids)
-            // if not attachments:
-            //     raise UserError(_("No attachment was provided"))
+            // line = self.env['sale.order.line'].create(
+            //     self._prepare_order_line_values(product_id, quantity, uom_id, **kwargs)
+            // )
             // 
-            // orders = self.browse()
-            // for attachment in attachments:
-            //     order = self.create({
-            //         'partner_id': self.env.user.partner_id.id,
-            //     })
-            //     order._extend_with_attachments(attachment)
-            //     orders |= order
-            //     order.message_post(attachment_ids=attachment.ids)
-            //     attachment.write({'res_model': self._name, 'res_id': order.id})
-            // 
-            // return orders
+            // # The validity of a combo product line can only be checked after creating all of its combo
+            // # item lines.
+            // if line.product_type != 'combo':
+            //     line._check_validity()
+            // return line
             */
             return default;
         }
@@ -3091,7 +3385,7 @@ namespace Bamboo.Core.Application.Services
             //     lambda l: l.is_delivery and l.product_id.default_code in ('normal', 'express')
             // )
             // payload = {
-            //     'orderType': 'order',
+            //     'orderType': 'draft',  # The order is confirmed/deleted later, see @post_commit hooks.
             //     'orderReferenceId': self.id,
             //     'customerReferenceId': f'Odoo Partner #{self.partner_id.id}',
             //     'currency': self.currency_id.name,
@@ -3102,6 +3396,11 @@ namespace Bamboo.Core.Application.Services
             // try:
             //     api_key = self.company_id.sudo().gelato_api_key  # In sudo mode to read on the company.
             //     data = utils.make_request(api_key, 'order', 'v4', 'orders', payload=payload)
+            // 
+            //     # Add hooks to confirm/delete the order on Gelato only after the transaction is
+            //     # committed/rolled back. This prevents creating duplicate confirmed orders on Gelato.
+            //     self.env.cr.postcommit.add(partial(self._confirm_order_on_gelato, data['id']))
+            //     self.env.cr.postrollback.add(partial(self._delete_order_on_gelato, data['id']))
             // except UserError as e:
             //     raise UserError(_(
             //         "The order with reference %(order_reference)s was not sent to Gelato.\n"
@@ -3131,7 +3430,7 @@ namespace Bamboo.Core.Application.Services
             //         'tag': 'display_notification',
             //         'params': {
             //             'type': 'danger',
-            //             'message': _("The project couldn't be created as the Sales Order must be confirmed, is already linked to a project, or doesn't involve any services."),
+            //             'message': self.env._("The project couldn't be created as the Sales Order must be confirmed or is already linked to a project."),
             //         }
             //     }
             // 
@@ -3140,10 +3439,14 @@ namespace Bamboo.Core.Application.Services
             //     sol for sol in sorted_line
             //     if sol.product_id.type == 'service' and not sol.is_downpayment
             // ), self.env['sale.order.line'])
+            // view_id = self.env.ref('sale_project.sale_project_view_form_simplified_template', raise_if_not_found=False)
             // return {
-            //     **self.env["ir.actions.actions"]._for_xml_id("project.open_create_project"),
+            //     **self.env['project.template.create.wizard'].action_open_template_view(),
+            //     'name': self.env._('Create a Project'),
+            //     'views': [(view_id.id, 'form')],
             //     'context': {
             //         'default_sale_order_id': self.id,
+            //         'default_reinvoiced_sale_order_id': self.id,
             //         'default_sale_line_id': default_sale_line.id,
             //         'default_partner_id': self.partner_id.id,
             //         'default_user_ids': [self.env.uid],
@@ -3151,6 +3454,8 @@ namespace Bamboo.Core.Application.Services
             //         'hide_allow_billable': True,
             //         'default_company_id': self.company_id.id,
             //         'generate_milestone': default_sale_line.product_id.service_policy == 'delivered_milestones',
+            //         'default_name': self.name,
+            //         'default_allow_milestones': 'delivered_milestones' in self.order_line.product_id.mapped('service_policy'),
             //     },
             // }
             */
@@ -3165,40 +3470,54 @@ namespace Bamboo.Core.Application.Services
             // if not self:
             //     return
             // 
-            // self.activity_unlink(['sale.mail_act_sale_upsell'])
+            // self.activity_unlink(['mail.mail_activity_data_todo'])
             // for order in self:
             //     order_ref = order._get_html_link()
             //     customer_ref = order.partner_id._get_html_link()
             //     order.activity_schedule(
-            //         'sale.mail_act_sale_upsell',
+            //         'mail.mail_activity_data_todo',
             //         user_id=order.user_id.id or order.partner_id.user_id.id,
             //         note=_("Upsell %(order)s for customer %(customer)s", order=order_ref, customer=customer_ref))
             */
             return default;
         }
 
-        protected async Task<SaleOrder> CronSendPendingEmailsInternalAsync(object auto_commit)
+        protected async Task<SaleOrder> CronSendPendingEmailsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_async_emails, FILE: sale_order.py) ---
-            // def _cron_send_pending_emails(self, auto_commit=True):
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _cron_send_pending_emails(self):
             // """ Find and send pending order status emails asynchronously.
             // 
-            // :param bool auto_commit: Whether the database cursor should be committed as soon as an email
-            //                          is sent. Set to False in unit tests.
             // :return: None
             // """
             // pending_email_orders = self.search([('pending_email_template_id', '!=', False)])
+            // self.env['ir.cron']._commit_progress(remaining=len(pending_email_orders))
             // for order in pending_email_orders:
             //     order = order[0]  # Avoid pre-fetching after each cache invalidation due to committing.
-            //     order.with_context(is_async_email=True)._send_order_notification_mail(
-            //         order.pending_email_template_id
-            //     )  # Asynchronously resume the email sending.
+            //     order._send_order_notification_mail(
+            //         order.pending_email_template_id, allow_deferred_sending=False
+            //     )  # Resume the email sending.
             //     order.pending_email_template_id = None
-            //     if auto_commit:
-            //         self.env.cr.commit()
+            //     remaining_time = self.env['ir.cron']._commit_progress(processed=1)
+            //     if not remaining_time:
+            //         break
             */
             return default;
+        }
+
+        public override async Task<SaleOrder> DefaultGetAsync(List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
+            // def default_get(self, fields):
+            // res = super().default_get(fields)
+            // if 'origin' in fields and (task_id := self.env.context.get('create_for_task_id')):
+            //     task = self.env['project.task'].browse(task_id)
+            //     res['origin'] = self.env._('[Project] %(task_name)s', task_name=task.name)
+            // return res
+            */
+            return await base.DefaultGetAsync(fields);
         }
 
         protected async Task<SaleOrder> DefaultOrderLineValuesInternalAsync(object child_field)
@@ -3209,6 +3528,69 @@ namespace Bamboo.Core.Application.Services
             // default_data = super()._default_order_line_values(child_field)
             // new_default_data = self.env['sale.order.line']._get_product_catalog_lines_data()
             // return {**default_data, **new_default_data}
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> DefaultQuotationDocumentIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
+            // def _default_quotation_document_ids(self):
+            // return self.env['quotation.document'].search([
+            //     *self.env['quotation.document']._check_company_domain(self.env.company),
+            //     ('quotation_template_ids', '=', False),
+            //     ('add_by_default', '=', True),
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> DefaultTeamIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _default_team_id(self):
+            // return self.env.context.get('default_team_id', False) or self.team_id.id
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _default_team_id(self):
+            // return super()._default_team_id() or self.website_id.salesteam_id.id
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> DeleteOrderOnGelatoInternalAsync(Guid gelato_order_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: sale_order.py) ---
+            // def _delete_order_on_gelato(self, gelato_order_id):
+            // """Send the order deletion request to Gelato.
+            // 
+            // This is performed in a separate transaction to allow running as post-commit hook.
+            // 
+            // :return: None
+            // """
+            // self.ensure_one()
+            // 
+            // _logger.info(
+            //     "Deletion of Gelato order %s for sales order %s", gelato_order_id, self.display_name
+            // )
+            // data = None
+            // try:
+            //     api_key = self.company_id.sudo().gelato_api_key  # In sudo mode to read on the company.
+            //     data = utils.make_request(
+            //         api_key, 'order', 'v4', f'orders/{gelato_order_id}', method='DELETE'
+            //     )
+            // except UserError:
+            //     self.message_post(
+            //         body=self.env._("Unable to delete the order %s on Gelato.", gelato_order_id),
+            //         author_id=self.env.ref('base.partner_root').id,
+            //     )
+            // finally:
+            //     _logger.info(
+            //         "Received deletion request response for Gelato order %s:\n%s",
+            //         gelato_order_id, pprint.pformat(data),
+            //     )
             */
             return default;
         }
@@ -3236,7 +3618,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param rewards_to_ignore: the rewards to ignore from the total amount (if they were already
             //     applied on the order)
-            // :type reward: `loyalty.reward` recordset
+            // :type rewards_to_ignore: `loyalty.reward` recordset
             // 
             // :return: The discountable amount
             // :rtype: float
@@ -3252,7 +3634,7 @@ namespace Bamboo.Core.Application.Services
             //     if not line.product_uom_qty or not line.price_unit:
             //         # Ignore lines whose amount will be 0 (bc of empty qty or 0 price)
             //         continue
-            //     tax_data = line.tax_id.compute_all(
+            //     tax_data = line.tax_ids.compute_all(
             //         line.price_unit,
             //         quantity=line.product_uom_qty,
             //         product=line.product_id,
@@ -3260,7 +3642,7 @@ namespace Bamboo.Core.Application.Services
             //     )
             //     # To compute the discountable amount we get the subtotal and add
             //     # non-fixed tax totals. This way fixed taxes will not be discounted
-            //     taxes = line.tax_id.filtered(lambda t: t.amount_type != 'fixed')
+            //     taxes = line.tax_ids.filtered(lambda t: t.amount_type != 'fixed')
             //     discountable += tax_data['total_excluded'] + sum(
             //         tax['amount'] for tax in tax_data['taxes'] if tax['id'] in taxes.ids
             //     )
@@ -3280,15 +3662,15 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // assert reward.discount_applicability == 'cheapest'
             // 
-            // cheapest_line = self._cheapest_line()
+            // cheapest_line = self._cheapest_line(reward)
             // if not cheapest_line:
             //     return False, False
             // 
             // discountable = 0
             // discountable_per_tax = defaultdict(int)
             // for line in cheapest_line:
-            //     discountable += line.price_total
-            //     taxes = line.tax_id.filtered(lambda t: t.amount_type != 'fixed')
+            //     discountable += line.price_total / line.product_uom_qty
+            //     taxes = line.tax_ids.filtered(lambda t: t.amount_type != 'fixed')
             //     discountable_per_tax[taxes] += line.price_unit * (1 - (line.discount or 0) / 100)
             // 
             // return discountable, discountable_per_tax
@@ -3403,13 +3785,14 @@ namespace Bamboo.Core.Application.Services
             //     if line.reward_id.reward_type == 'discount':
             //         discount_lines[line.reward_identifier_code] |= line
             // 
-            // order_lines -= self.order_line.filtered("reward_id")
+            // order_lines -= self.order_line.filtered('reward_id')
             // cheapest_line = False
             // for lines in discount_lines.values():
             //     line_reward = lines.reward_id
             //     discounted_lines = order_lines
             //     if line_reward.discount_applicability == 'cheapest':
-            //         cheapest_line = cheapest_line or self._cheapest_line()
+            //         # get the discounted cheapest line applicable for given reward domain
+            //         cheapest_line = cheapest_line or self._cheapest_line(line_reward)
             //         discounted_lines = cheapest_line
             //     elif line_reward.discount_applicability == 'specific':
             //         discounted_lines = self._get_specific_discountable_lines(line_reward)
@@ -3426,23 +3809,23 @@ namespace Bamboo.Core.Application.Services
             //         non_common_lines = discounted_lines - lines_to_discount
             //         # Fixed prices are per tax
             //         discounted_amounts = defaultdict(int, {
-            //             line.tax_id.filtered(lambda t: t.amount_type != 'fixed'): abs(line.price_total)
-            //             for line in lines
+            //             sol.tax_ids.filtered(lambda t: t.amount_type != 'fixed'): abs(sol.price_total)
+            //             for sol in lines
             //         })
             //         for line in itertools.chain(non_common_lines, common_lines):
             //             # For gift card and eWallet programs we have no tax but we can consume the amount completely
             //             if lines.reward_id.program_id.is_payment_program:
-            //                 discounted_amount = discounted_amounts[lines.tax_id.filtered(lambda t: t.amount_type != 'fixed')]
+            //                 discounted_amount = discounted_amounts[lines.tax_ids.filtered(lambda t: t.amount_type != 'fixed')]
             //             else:
-            //                 discounted_amount = discounted_amounts[line.tax_id.filtered(lambda t: t.amount_type != 'fixed')]
+            //                 discounted_amount = discounted_amounts[line.tax_ids.filtered(lambda t: t.amount_type != 'fixed')]
             //             if discounted_amount == 0:
             //                 continue
             //             remaining = remaining_amount_per_line[line]
             //             consumed = min(remaining, discounted_amount)
             //             if lines.reward_id.program_id.is_payment_program:
-            //                 discounted_amounts[lines.tax_id.filtered(lambda t: t.amount_type != 'fixed')] -= consumed
+            //                 discounted_amounts[lines.tax_ids.filtered(lambda t: t.amount_type != 'fixed')] -= consumed
             //             else:
-            //                 discounted_amounts[line.tax_id.filtered(lambda t: t.amount_type != 'fixed')] -= consumed
+            //                 discounted_amounts[line.tax_ids.filtered(lambda t: t.amount_type != 'fixed')] -= consumed
             //             remaining_amount_per_line[line] -= consumed
             // 
             // discountable = 0
@@ -3453,7 +3836,7 @@ namespace Bamboo.Core.Application.Services
             //     # line_discountable is the same as in a 'order' discount
             //     #  but first multiplied by a factor for the taxes to apply
             //     #  and then multiplied by another factor coming from the discountable
-            //     taxes = line.tax_id.filtered(lambda t: t.amount_type != 'fixed')
+            //     taxes = line.tax_ids.filtered(lambda t: t.amount_type != 'fixed')
             //     discountable_per_tax[taxes] += line_discountable *\
             //         (remaining_amount_per_line[line] / line.price_total)
             // return discountable, discountable_per_tax
@@ -3477,38 +3860,29 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<SaleOrder> ExtendWithAttachmentsInternalAsync(object attachment)
+        protected async Task<SaleOrder> EnsurePartnerAddressIsCompleteInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _extend_with_attachments(self, attachment):
-            // """ Main entry point to extend/enhance order with attachment.
+            --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: sale_order.py) ---
+            // def _ensure_partner_address_is_complete(self):
+            // """Ensure that all order's partner address fields required by Gelato are set.
             // 
-            // :param attachment: A recordset of ir.attachment.
-            // :returns: None
+            // :return: An error message if the address is incomplete, None otherwise.
+            // :rtype: str | None
             // """
-            // self.ensure_one()
-            // 
-            // file_data = attachment._unwrap_edi_attachments()[0]
-            // decoder = self._get_order_edi_decoder(file_data)
-            // if decoder:
-            //     try:
-            //         with self.env.cr.savepoint():
-            //             decoder(self, file_data)
-            //     except RedirectWarning:
-            //         raise
-            //     except Exception:
-            //         message = _(
-            //             "Error importing attachment '%(file_name)s' as order (decoder=%(decoder)s)",
-            //             file_name=file_data['filename'],
-            //             decoder=decoder.__name__,
-            //         )
-            //         self.with_user(SUPERUSER_ID).message_post(body=message)
-            //         _logger.exception(message)
-            // 
-            // if file_data.get('on_close'):
-            //     file_data['on_close']()
-            // return True
+            // required_address_fields = ['city', 'country_id', 'email', 'name', 'street']
+            // if self.partner_id.country_id.code not in const.COUNTRIES_WITHOUT_ZIPCODE:
+            //     required_address_fields.append('zip')
+            // missing_fields = [
+            //     self.partner_id._fields[field_name]
+            //     for field_name in required_address_fields if not self.partner_id[field_name]
+            // ]
+            // if missing_fields:
+            //     translated_field_names = [f._description_string(self.env) for f in missing_fields]
+            //     return _(
+            //         "The following required address fields are missing: %s",
+            //         ", ".join(translated_field_names),
+            //     )
             */
             return default;
         }
@@ -3518,24 +3892,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _fetch_duplicate_orders(self):
-            // """ Fectch duplicated orders.
+            // """ Fetch duplicated orders.
             // 
-            // :return: Dictionary mapping order to it's related duplicated orders.
+            // :return: Dictionary mapping order to its related duplicated orders.
             // :rtype: dict
             // """
             // orders = self.filtered(lambda order: order.id and order.client_order_ref)
             // if not orders:
             //     return {}
             // 
-            // used_fields = (
-            //     'company_id',
-            //     'partner_id',
-            //     'client_order_ref',
-            //     'origin',
-            //     'date_order',
-            //     'state',
-            // )
-            // self.env['sale.order'].flush_model(used_fields)
+            // self.env['sale.order'].flush_model(['company_id', 'partner_id', 'client_order_ref', 'origin', 'state'])
             // 
             // result = self.env.execute_query(SQL("""
             //     SELECT
@@ -3547,11 +3913,9 @@ namespace Bamboo.Core.Application.Services
             //          AND sale_order.id != duplicate_order.id
             //          AND duplicate_order.state != 'cancel'
             //          AND sale_order.partner_id = duplicate_order.partner_id
-            //          AND sale_order.date_order = duplicate_order.date_order
-            //          AND sale_order.client_order_ref = duplicate_order.client_order_ref
             //          AND (
-            //             sale_order.origin = duplicate_order.origin
-            //             OR (sale_order.origin IS NULL AND duplicate_order.origin IS NULL)
+            //             sale_order.origin = duplicate_order.name
+            //             OR sale_order.client_order_ref = duplicate_order.client_order_ref
             //         )
             //      WHERE sale_order.id IN %(orders)s
             //      GROUP BY sale_order.id
@@ -3571,9 +3935,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
             // def _filter_can_send_abandoned_cart_mail(self):
-            // """Prevent carts with expired/sold out tickets from being subject of reminder emails."""
+            // # Prevent carts with expired/sold out tickets from being subject of reminder emails
             // return super()._filter_can_send_abandoned_cart_mail().filtered(
-            //     lambda so: all(ticket.sale_available for ticket in so.order_line.event_ticket_id)
+            //     lambda so: all(ticket.sale_available for ticket in so.order_line.event_ticket_id),
             // )
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _filter_can_send_abandoned_cart_mail(self):
@@ -3619,7 +3983,7 @@ namespace Bamboo.Core.Application.Services
             // )
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
             // def _filter_can_send_abandoned_cart_mail(self):
-            // """ Filter sale orders on their product availability. """
+            // """Filter sale orders on their product availability."""
             // return super()._filter_can_send_abandoned_cart_mail().filtered(
             //     lambda so: so._all_product_available()
             // )
@@ -3655,7 +4019,9 @@ namespace Bamboo.Core.Application.Services
             // :rtype: record of `mail.template` or `None` if not found
             // """
             // self.ensure_one()
-            // if self.env.context.get('proforma') or self.state != 'sale':
+            // if self.env.context.get('proforma'):
+            //     return self.env.ref('sale.email_template_proforma', raise_if_not_found=False)
+            // elif self.state != 'sale':
             //     return self.env.ref('sale.email_template_edi_sale', raise_if_not_found=False)
             // else:
             //     return self._get_confirmation_template()
@@ -3705,7 +4071,7 @@ namespace Bamboo.Core.Application.Services
             // """Remove coupons from abandonned ecommerce order."""
             // ICP = self.env['ir.config_parameter']
             // validity = ICP.get_param('website_sale_coupon.abandonned_coupon_validity', 4)
-            // validity = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=int(validity)))
+            // validity = fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=int(validity)))
             // so_to_reset = self.env['sale.order'].search([
             //     ('state', '=', 'draft'),
             //     ('write_date', '<', validity),
@@ -3780,6 +4146,7 @@ namespace Bamboo.Core.Application.Services
             //     **super()._get_action_add_from_catalog_extra_context(),
             //     'product_catalog_currency_id': self.currency_id.id,
             //     'product_catalog_digits': self.order_line._fields['price_unit'].get_digits(self.env),
+            //     'show_sections': bool(self.id),
             // }
             */
             return default;
@@ -3812,7 +4179,10 @@ namespace Bamboo.Core.Application.Services
             //     picking_id = picking_id[0]
             // else:
             //     picking_id = pickings[0]
-            // action['context'] = dict(default_partner_id=self.partner_id.id, default_picking_type_id=picking_id.picking_type_id.id, default_origin=self.name, default_group_id=picking_id.group_id.id)
+            // action['context'] = dict(
+            //     default_partner_id=self.partner_id.id,
+            //     default_picking_type_id=picking_id.picking_type_id.id,
+            // )
             // return action
             */
             return default;
@@ -3840,7 +4210,7 @@ namespace Bamboo.Core.Application.Services
             // if not domain:
             //     domain = [('trigger', '=', 'auto')]
             // # Make sure domain always complies with the order's domain rules
-            // domain = expression.AND([self._get_program_domain(), domain])
+            // domain = Domain.AND([self._get_program_domain(), domain])
             // # No other way than to test all programs to the order
             // programs = self.env['loyalty.program'].search(domain)
             // all_status = self._program_check_compute_points(programs)
@@ -3893,41 +4263,48 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> GetCartAndFreeQtyInternalAsync(object product, object line)
+        protected async Task<SaleOrder> GetCartAndFreeQtyInternalAsync(object product)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
-            // def _get_cart_and_free_qty(self, product, line=None):
-            // """ Override of `website_sale_stock` to get free_qty of the product from the warehouse that
-            // was chosen rather than website's one.
-            // 
-            // :param product.product product: The product
-            // :param sale.order.line line: The optional line
-            // """
-            // cart_qty, free_qty = super()._get_cart_and_free_qty(product, line=line)
-            // if self.carrier_id.delivery_type == 'in_store':
-            //     free_qty = (product or line.product_id).with_context(
-            //         warehouse_id=self.warehouse_id.id
-            //     ).free_qty
-            // return cart_qty, free_qty
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
-            // def _get_cart_and_free_qty(self, product, line=None):
-            // """ Get cart quantity and free quantity for given product or line's product.
+            // def _get_cart_and_free_qty(self, product):
+            // """Get cart quantity and free quantity for given product.
             // 
             // Note: self.ensure_one()
             // 
-            // :param ProductProduct product: The product
-            // :param SaleOrderLine line: The optional line
+            // :param product: `product.product` record.
+            // :returns: cart quantity and available quantity in the product uom
+            // :rtype: tuple
             // """
             // self.ensure_one()
-            // if not line and not product:
-            //     return 0, 0
-            // cart_qty = sum(self._get_common_product_lines(line, product).mapped('product_uom_qty'))
-            // free_qty = (product or line.product_id).with_context(
-            //     warehouse_id=self.website_id.warehouse_id.id
-            // ).free_qty
+            // product.ensure_one()
             // 
-            // return cart_qty, free_qty
+            // return self._get_cart_qty(product.id), self._get_free_qty(product)
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetCartQtyInternalAsync(Guid product_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
+            // def _get_cart_qty(self, product_id):
+            // """Return the quantity of the given product in the current cart, if any.
+            // 
+            // :param int product_id: `product.product` id
+            // :return: product quantity in the product uom
+            // :rtype: float
+            // """
+            // if not self:
+            //     return 0.0
+            // order_lines = self._get_common_product_lines(product_id)
+            // return sum(
+            //     order_lines.mapped(
+            //         lambda sol: sol.product_uom_id._compute_quantity(
+            //             sol.product_uom_qty, sol.product_id.uom_id,
+            //         )
+            //     )
+            // )
             */
             return default;
         }
@@ -4003,15 +4380,24 @@ namespace Bamboo.Core.Application.Services
             // Coupons that can not claim any reward are not contained in the result.
             // """
             // self.ensure_one()
+            // result = defaultdict(lambda: self.env['loyalty.reward'])
+            // 
             // all_coupons = forced_coupons or (self.coupon_point_ids.coupon_id | self.order_line.coupon_id | self.applied_coupon_ids)
+            // if not all_coupons:
+            //     return result
+            // 
             // has_payment_reward = any(line.reward_id.program_id.is_payment_program for line in self.order_line)
             // global_discount_reward = self._get_applied_global_discount()
             // active_products_domain = self.env['loyalty.reward']._get_active_products_domain()
-            // discountable = lazy(lambda: self._discountable_amount(global_discount_reward))
             // 
-            // total_is_zero = self.currency_id.is_zero(discountable)
-            // result = defaultdict(lambda: self.env['loyalty.reward'])
+            // # Only evaluate discountable amount if needed
+            // discountable = lazy(lambda: self._discountable_amount(global_discount_reward))
+            // total_is_zero = lazy(lambda: self.currency_id.is_zero(discountable))
+            // 
             // for coupon in all_coupons:
+            //     # Skip coupons generated by this order that only apply on future orders
+            //     if coupon.program_id.applies_on == 'future' and coupon.order_id == self:
+            //         continue
             //     points = self._get_real_points_for_coupon(coupon)
             //     for reward in coupon.program_id.reward_ids:
             //         if (
@@ -4054,20 +4440,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> GetCommonProductLinesInternalAsync(object line, object product)
+        protected async Task<SaleOrder> GetCommonProductLinesInternalAsync(Guid product_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
-            // def _get_common_product_lines(self, line=None, product=None):
-            // """ Get the lines with the same product or line's product
-            // 
-            // :param SaleOrderLine line: The optional line
-            // :param ProductProduct product: The optional product
-            // """
-            // if not line and not product:
-            //     return self.env['sale.order.line']
-            // product = product or line.product_id
-            // return self.order_line.filtered(lambda l: l.product_id == product)
+            // def _get_common_product_lines(self, product_id=None):
+            // """Get all the lines of the current order with the given product."""
+            // return self.order_line.filtered(lambda sol: sol.product_id.id == product_id)
             */
             return default;
         }
@@ -4095,6 +4474,38 @@ namespace Bamboo.Core.Application.Services
             // def _get_confirmation_template(self):
             // self.ensure_one()
             // return self.sale_order_template_id.mail_template_id or super()._get_confirmation_template()
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _get_confirmation_template(self):
+            // """Override of `sale` to use the website specific order confirmation email template if set."""
+            // self.ensure_one()
+            // 
+            // if self.website_id and self.website_id.confirmation_email_template_id:
+            //     return self.website_id.confirmation_email_template_id
+            // 
+            // return super()._get_confirmation_template()
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetConfirmedTxCreateDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
+            // def _get_confirmed_tx_create_date(self):
+            // """Return the creation date of the earliest confirmed transaction to check which loyalty
+            // programs are applicable. If no transactions are confirmed, return the current day, using
+            // the company's time zone.
+            // """
+            // self.ensure_one()
+            // order_tz = self._get_program_timezone()
+            // confirmed_txs_dates = self.sudo().transaction_ids.filtered(
+            //     lambda tx: tx.state in ('done', 'authorized'),
+            // ).mapped('create_date')
+            // if confirmed_txs_dates:
+            //     # If order is getting confirmed, use the earliest finalized transaction's create date
+            //     tx_date = min(confirmed_txs_dates)
+            //     return tx_date.astimezone(timezone(order_tz)).date()
+            // return fields.Date.context_today(self.with_context(tz=order_tz))
             */
             return default;
         }
@@ -4115,29 +4526,22 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_default_payment_link_values(self):
+            // """ Override of `payment` to compute the default values of the payment link wizard. """
             // self.ensure_one()
-            // amount_max = self.amount_total - self.amount_paid
             // 
-            // # Always default to the minimum value needed to confirm the order:
-            // # - order is not confirmed yet
-            // # - can be confirmed online
-            // # - we have still not paid enough for confirmation.
             // prepayment_amount = self._get_prepayment_required_amount()
-            // if (
-            //     self.state in ('draft', 'sent')
-            //     and self.require_payment
-            //     and self.currency_id.compare_amounts(prepayment_amount, self.amount_paid) > 0
-            // ):
-            //     amount = prepayment_amount - self.amount_paid
-            // else:
-            //     amount = amount_max
-            // 
+            // remaining_balance = self.amount_total - self.amount_paid
+            // if self.state in ('draft', 'sent') and self.require_payment:
+            //     suggested_amount = prepayment_amount  # Suggest the amount needed to confirm the quote.
+            // else:  # The order is confirmed or doesn't require payment.
+            //     suggested_amount = remaining_balance
             // return {
             //     'currency_id': self.currency_id.id,
             //     'partner_id': self.partner_invoice_id.id,
-            //     'amount': amount,
-            //     'amount_max': amount_max,
+            //     'amount': suggested_amount,
+            //     'amount_max': remaining_balance,
             //     'amount_paid': self.amount_paid,
+            //     'prepayment_amount': prepayment_amount,
             // }
             */
             return default;
@@ -4182,15 +4586,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> GetEdiBuildersInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _get_edi_builders(self):
+            // return []
+            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            // def _get_edi_builders(self):
+            // return super()._get_edi_builders() + [self.env['sale.edi.xml.ubl_bis3']]
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetEdiDecoderInternalAsync(object file_data, object @new)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            // def _get_edi_decoder(self, file_data, new=False):
+            // """ Override of sale to add edi decoder for xml files.
+            // 
+            // :param dict file_data: File data to decode.
+            // """
+            // if file_data['import_file_type'] == 'sale.edi.xml.ubl_bis3':
+            //     return {
+            //         'priority': 20,
+            //         'decoder': self.env['sale.edi.xml.ubl_bis3']._import_order_ubl,
+            //     }
+            // return super()._get_edi_decoder(file_data, new)
+            */
+            return default;
+        }
+
         public async Task<SaleOrder> GetEmptyListHelpAsync(Guid id, SaleOrderGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def get_empty_list_help(self, help_msg):
+            // def get_empty_list_help(self, help_message):
             // self = self.with_context(
             //     empty_list_help_document_name=_("sale order"),
             // )
-            // return super().get_empty_list_help(help_msg)
+            // return super().get_empty_list_help(help_message)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -4209,6 +4645,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<SaleOrder> GetFirstServiceLineAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
+            // def get_first_service_line(self):
+            // line = next((sol for sol in self.order_line if sol.is_service), False)
+            // if not line:
+            //     raise UserError(self.env._('The Sales Order must contain at least one service product.'))
+            // return line
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<SaleOrder> GetFreeQtyInternalAsync(object product)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
+            // def _get_free_qty(self, product):
+            // return product.with_context(warehouse_id=self._get_shop_warehouse_id()).free_qty
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> GetFreeShippingLinesInternalAsync()
         {
             /*
@@ -4220,12 +4679,79 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> GetImportFileTypeInternalAsync(object file_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            // def _get_import_file_type(self, file_data):
+            // """ Identify UBL files. """
+            // # EXTENDS 'account'
+            // if (tree := file_data['xml_tree']) is not None:
+            //     customization_id = tree.find('{*}CustomizationID')
+            //     if customization_id is not None:
+            //         if customization_id.text == 'urn:fdc:peppol.eu:poacc:trns:order:3':
+            //             return 'sale.edi.xml.ubl_bis3'
+            // return super()._get_import_file_type(file_data)
+            */
+            return default;
+        }
+
+        public async Task<SaleOrder> GetImportTemplatesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def get_import_templates(self):
+            // return [{
+            //     'label': _('Import Template for Quotations'),
+            //     'template': '/sale/static/xls/quotations_import_template.xlsx',
+            // }]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<SaleOrder> GetInsufficientStockDataInternalAsync(Guid wh_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
+            // def _get_insufficient_stock_data(self, wh_id):
+            // """Return the mapping of order lines with insufficient stock in the given warehouse to their
+            // maximum available quantity in the line's UoM.
+            // If there are multiple order lines for the same product, consider the sum of their
+            // quantities.
+            // 
+            // :param int wh_id: The warehouse in which to check the stock, as a `stock.warehouse` id.
+            // :return: The mapping of order lines to their maximum available quantity.
+            // :rtype: dict
+            // """
+            // insufficient_stock_data = {}
+            // for product, ols in self.order_line.grouped('product_id').items():
+            //     if not product.is_storable or product.allow_out_of_stock_order:
+            //         continue
+            //     free_qty = product.with_context(warehouse_id=wh_id).free_qty
+            //     for ol in ols:
+            //         free_qty_in_uom = max(int(product.uom_id._compute_quantity(
+            //             free_qty, ol.product_uom_id, rounding_method="DOWN"
+            //         )), 0)  # Round down as only integer quantities can be sold.
+            //         line_qty_in_uom = ol.product_uom_qty
+            //         if line_qty_in_uom > free_qty_in_uom:  # Not enough stock.
+            //             # Set a warning on the order line.
+            //             insufficient_stock_data[ol] = free_qty_in_uom
+            //             ol.shop_warning = self.env._(
+            //                 "%(available_qty)s/%(line_qty)s available at this location",
+            //                 available_qty=free_qty_in_uom, line_qty=int(line_qty_in_uom),
+            //             )
+            //         free_qty -= ol.product_uom_id._compute_quantity(line_qty_in_uom, product.uom_id)
+            // return insufficient_stock_data
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> GetInvoiceGroupingKeysInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_invoice_grouping_keys(self):
-            // return ['company_id', 'partner_id', 'currency_id']
+            // return ['company_id', 'partner_id', 'partner_shipping_id', 'currency_id', 'fiscal_position_id']
             */
             return default;
         }
@@ -4238,13 +4764,17 @@ namespace Bamboo.Core.Application.Services
             // """Return the invoiceable lines for order `self`."""
             // down_payment_line_ids = []
             // invoiceable_line_ids = []
-            // pending_section = None
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // section_line_ids = []
+            // subsection_line_ids = []
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // 
             // for line in self.order_line:
             //     if line.display_type == 'line_section':
-            //         # Only invoice the section if one of its lines is invoiceable
-            //         pending_section = line
+            //         section_line_ids = [line.id]  # Start a new section.
+            //         subsection_line_ids = []
+            //         continue
+            //     if line.display_type == 'line_subsection':
+            //         subsection_line_ids = [line.id]  # Start a new subsection.
             //         continue
             //     if line.display_type != 'line_note' and float_is_zero(line.qty_to_invoice, precision_digits=precision):
             //         continue
@@ -4254,9 +4784,23 @@ namespace Bamboo.Core.Application.Services
             //             # at the end of the invoice, in a specific dedicated section.
             //             down_payment_line_ids.append(line.id)
             //             continue
-            //         if pending_section:
-            //             invoiceable_line_ids.append(pending_section.id)
-            //             pending_section = None
+            //         # If the invoicable line is under subsection
+            //         if subsection_line_ids:
+            //             if line.display_type:
+            //                 subsection_line_ids.append(line.id)
+            //                 continue
+            //             # Extend the subsection lines too if altleast one invoicable line is under subsection
+            //             invoiceable_line_ids.extend(section_line_ids + subsection_line_ids)
+            //             subsection_line_ids = []
+            //             section_line_ids = []
+            //         # If the invoicable line is under section
+            //         elif section_line_ids:
+            //             if line.display_type:
+            //                 section_line_ids.append(line.id)
+            //                 continue
+            //             invoiceable_line_ids.extend(section_line_ids)
+            //             section_line_ids = []
+            //             subsection_line_ids = []
             //         invoiceable_line_ids.append(line.id)
             // 
             // return self.env['sale.order.line'].browse(invoiceable_line_ids + down_payment_line_ids)
@@ -4312,7 +4856,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_line_vals_list(self, lines_vals):
             // """ Get sale order line values list.
             // 
-            // :param list line_vals: List of values [name, qty, price, tax].
+            // :param list lines_vals: List of values [name, qty, price, tax].
             // :return: List of dict values.
             // """
             // 
@@ -4321,7 +4865,7 @@ namespace Bamboo.Core.Application.Services
             //     'name': name,
             //     'product_uom_qty': quantity,
             //     'price_unit': price_unit,
-            //     'tax_id': [Command.set(tax_ids)],
+            //     'tax_ids': [Command.set(tax_ids)],
             // } for name, quantity, price_unit, tax_ids in lines_vals]
             */
             return default;
@@ -4336,7 +4880,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param product.template product_template:
             // :return: matrix to display
-            // :rtype dict:
+            // :rtype: dict
             // """
             // def has_ptavs(line, sorted_attr_ids):
             //     # TODO instead of sorting on ids, use odoo-defined order for matrix ?
@@ -4356,7 +4900,7 @@ namespace Bamboo.Core.Application.Services
             //         for cell in line:
             //             if not cell.get('name', False):
             //                 line = order_lines.filtered(lambda line: has_ptavs(line, cell['ptav_ids']))
-            //                 if line:
+            //                 if line and not line.combo_item_id:
             //                     cell.update({
             //                         'qty': sum(line.mapped('product_uom_qty'))
             //                     })
@@ -4443,44 +4987,10 @@ namespace Bamboo.Core.Application.Services
             // return self.env.company.get_base_url()
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _get_note_url(self):
-            // website_id = self._context.get('website_id')
+            // website_id = self.env.context.get('website_id')
             // if website_id:
             //     return self.env['website'].browse(website_id).get_base_url()
             // return super()._get_note_url()
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> GetOrderEdiDecoderInternalAsync(object file_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _get_order_edi_decoder(self, file_data):
-            // """ To be extended with decoding capabilities of order data from file data.
-            // 
-            // :returns:  Function to be later used to import the file.
-            //            Function' args:
-            //            - order: sale.order
-            //            - file_data: attachemnt information / value
-            //            returns True if was able to process the order
-            // """
-            // if file_data['type'] in ('pdf', 'binary'):
-            //     return lambda *args: False
-            // return
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
-            // def _get_order_edi_decoder(self, file_data):
-            // """ Override of sale to add edi decoder for xml files.
-            // 
-            // :param dict file_data: File data to decode.
-            // :return function: Function with decoding capibility `_import_order_ubl` for different xml
-            // formats.
-            // """
-            // if file_data['type'] == 'xml':
-            //     ubl_cii_xml_builder = self._get_order_ubl_builder_from_xml_tree(file_data['xml_tree'])
-            //     if ubl_cii_xml_builder is not None:
-            //         return ubl_cii_xml_builder._import_order_ubl
-            // 
-            // return super()._get_order_edi_decoder(file_data)
             */
             return default;
         }
@@ -4507,34 +5017,22 @@ namespace Bamboo.Core.Application.Services
             // )
             // 
             // def show_line(line):
-            //     if not line.is_downpayment:
-            //         return True
-            //     elif line.display_type and down_payment_lines:
-            //         return True  # Only show the down payment section if down payments were posted
-            //     elif line in down_payment_lines:
-            //         return True  # Only show posted down payments
-            //     else:
-            //         return False
+            //     if line.is_downpayment:
+            //         return (
+            //             # Only show the down payment section if down payments were posted
+            //             (line.display_type and down_payment_lines)
+            //             # Only show posted down payments
+            //             or line in down_payment_lines
+            //         )
+            //     return (
+            //         line.display_type == 'line_section'
+            //         or not (
+            //             line.parent_id.collapse_composition
+            //             or line.parent_id.parent_id.collapse_composition
+            //         )
+            //     )
             // 
             // return self.order_line.filtered(show_line)
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> GetOrderUblBuilderFromXmlTreeInternalAsync(object tree)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
-            // def _get_order_ubl_builder_from_xml_tree(self, tree):
-            // """ Return sale order ubl builder with decording capibily to given tree
-            // 
-            // :param xml tree: xml tree to find builder.
-            // :return class: class object of builder for given tree if found else none.
-            // """
-            // customization_id = tree.find('{*}CustomizationID')
-            // if customization_id is not None:
-            //     if customization_id.text == 'urn:fdc:peppol.eu:poacc:trns:order:3':
-            //         return self.env['sale.edi.xml.ubl_bis3']
             */
             return default;
         }
@@ -4545,7 +5043,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
             // def _get_order_with_valid_service_product(self):
             // SaleOrderLine = self.env['sale.order.line']
-            // return SaleOrderLine._read_group(expression.AND([
+            // return SaleOrderLine._read_group(Domain.AND([
             //     SaleOrderLine._domain_sale_line_service(),
             //     [
             //         ('order_id', 'in', self.ids),
@@ -4553,6 +5051,16 @@ namespace Bamboo.Core.Application.Services
             //              ('product_id.invoice_policy', '!=', 'delivery'),
             //     ]
             // ]), aggregates=['order_id:array_agg'])[0][0]
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetParentFieldOnChildModelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _get_parent_field_on_child_model(self):
+            // return 'order_id'
             */
             return default;
         }
@@ -4659,7 +5167,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def get_portal_last_transaction(self):
             // self.ensure_one()
-            // return self.transaction_ids.sudo()._get_last()
+            // return self.sudo().transaction_ids._get_last()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -4719,7 +5227,7 @@ namespace Bamboo.Core.Application.Services
             //         - service_policy="ordered_prepaid",
             // """
             // self.ensure_one()
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // return self.order_line.filtered(lambda sol:
             //     sol.is_service
             //     and sol.invoice_status != "invoiced"
@@ -4740,18 +5248,29 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_prepayment_required_amount(self):
-            // """ Return the minimum amount needed to confirm automatically the quotation.
+            // """ Return the minimum amount needed to automatically confirm the quotation.
             // 
             // Note: self.ensure_one()
             // 
-            // :return: The minimum amount needed to confirm automatically the quotation.
+            // :return: The minimum amount needed to automatically confirm the quotation.
             // :rtype: float
             // """
             // self.ensure_one()
-            // if self.prepayment_percent == 1.0 or not self.require_payment:
-            //     return self.amount_total
+            // 
+            // if not self.require_payment:
+            //     return 0
             // else:
             //     return self.currency_id.round(self.amount_total * self.prepayment_percent)
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetPricedLinesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _get_priced_lines(self):
+            // return self.order_line.filtered(lambda x: not x.display_type)
             */
             return default;
         }
@@ -4761,25 +5280,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: sale_order.py) ---
             // def _get_product_catalog_domain(self):
-            // """Override of `_get_product_catalog_domain` to extend the domain.
-            // 
-            // :returns: A list of tuples that represents a domain.
-            // :rtype: list
-            // """
-            // domain = super()._get_product_catalog_domain()
-            // return expression.AND([domain, [('service_tracking', '!=', 'event_booth')]])
+            // return super()._get_product_catalog_domain() & Domain('service_tracking', '!=', 'event_booth')
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: sale_order.py) ---
             // def _get_product_catalog_domain(self):
-            // """Override of `_get_product_catalog_domain` to extend the domain.
-            // 
-            // :returns: A list of tuples that represents a domain.
-            // :rtype: list
-            // """
-            // domain = super()._get_product_catalog_domain()
-            // return expression.AND([domain, [('service_tracking', '!=', 'event')]])
+            // return super()._get_product_catalog_domain() & Domain('service_tracking', '!=', 'event')
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('sale_ok', '=', True)]])
+            // return super()._get_product_catalog_domain() & Domain('sale_ok', '=', True)
             */
             return default;
         }
@@ -4797,12 +5304,11 @@ namespace Bamboo.Core.Application.Services
             //     **kwargs,
             // )
             // res = super()._get_product_catalog_order_data(products, **kwargs)
+            // has_warning_group = self.env.user.has_group('sale.group_warning_sale')
             // for product in products:
             //     res[product.id]['price'] = pricelist.get(product.id)
-            //     if product.sale_line_warn != 'no-message' and product.sale_line_warn_msg:
+            //     if product.sale_line_warn_msg and has_warning_group:
             //         res[product.id]['warning'] = product.sale_line_warn_msg
-            //     if product.sale_line_warn == "block":
-            //         res[product.id]['readOnly'] = True
             // return res
             */
             return default;
@@ -4812,10 +5318,20 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
             // grouped_lines = defaultdict(lambda: self.env['sale.order.line'])
+            // if section_id is None:
+            //     section_id = (
+            //         self.order_line[:1].id
+            //         if self.order_line[:1].display_type == 'line_section'
+            //         else False
+            //     )
             // for line in self.order_line:
-            //     if line.display_type or line.product_id.id not in product_ids:
+            //     if (
+            //         line.display_type
+            //         or line.product_id.id not in product_ids
+            //         or line.get_parent_section_line().id != section_id
+            //     ):
             //         continue
             //     grouped_lines[line.product_id] |= line
             // return grouped_lines
@@ -4848,7 +5364,7 @@ namespace Bamboo.Core.Application.Services
             // Returns the base domain that all programs have to comply to.
             // """
             // self.ensure_one()
-            // today = fields.Date.context_today(self)
+            // today = self._get_confirmed_tx_create_date()
             // return [('active', '=', True), ('sale_ok', '=', True),
             //         *self.env['loyalty.program']._check_company_domain([self.company_id.id, self.company_id.parent_id.id]),
             //         '|', ('pricelist_ids', '=', False), ('pricelist_ids', 'in', [self.pricelist_id.id]),
@@ -4863,8 +5379,26 @@ namespace Bamboo.Core.Application.Services
             //         if leaf[0] != 'sale_ok':
             //             continue
             //         res[idx] = ('ecommerce_ok', '=', True)
-            //         return expression.AND([res, [('website_id', 'in', (self.website_id.id, False))]])
+            //         return Domain.AND([res, [('website_id', 'in', (self.website_id.id, False))]])
             // return res
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetProgramTimezoneInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
+            // def _get_program_timezone(self):
+            // """Get the timezone to be used for loyalty date checking on the current order."""
+            // self.ensure_one()
+            // return (
+            //     self.company_id.partner_id.tz
+            //     or self.env['ir.config_parameter'].sudo().get_param('loyalty.timezone', 'UTC')
+            // )
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
+            // def _get_program_timezone(self):
+            // return self.website_id.salesperson_id.tz or super()._get_program_timezone()
             */
             return default;
         }
@@ -4905,11 +5439,7 @@ namespace Bamboo.Core.Application.Services
             // return self.order_line.purchase_line_ids.order_id
             --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: sale_order.py) ---
             // def _get_purchase_orders(self):
-            // linked_po = self.procurement_group_id.stock_move_ids.created_purchase_line_ids.order_id \
-            //           | self.env['stock.move'].browse(self.procurement_group_id.stock_move_ids._rollup_move_origs()).purchase_line_id.order_id
-            // group_po = self.procurement_group_id.purchase_line_ids.order_id
-            // 
-            // return super()._get_purchase_orders() | linked_po | group_po
+            // return super()._get_purchase_orders() | self.stock_reference_ids.purchase_ids
             */
             return default;
         }
@@ -4926,11 +5456,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // self.ensure_one()
             // points = coupon.points
-            // if coupon.program_id.applies_on != 'future' and self.state not in ('sale', 'done'):
-            //     # Points that will be given by the order upon confirming the order
-            //     points += self.coupon_point_ids.filtered(lambda p: p.coupon_id == coupon).points
-            // # Points already used by rewards
-            // points -= sum(self.order_line.filtered(lambda l: l.coupon_id == coupon).mapped('points_cost'))
+            // if self.state not in ('sale', 'done'):
+            //     if coupon.program_id.applies_on != 'future':
+            //         # Points that will be given by the order upon confirming the order
+            //         points += self.coupon_point_ids.filtered(lambda p: p.coupon_id == coupon).points
+            //     # Points already used by rewards
+            //     points -= sum(self.order_line.filtered(lambda l: l.coupon_id == coupon).mapped('points_cost'))
             // points = coupon.currency_id.round(points)
             // return points
             */
@@ -5048,8 +5579,7 @@ namespace Bamboo.Core.Application.Services
             // base_reward_line_values = {
             //     'product_id': reward_product.id,
             //     'product_uom_qty': 1.0,
-            //     'product_uom': reward_product.uom_id.id,
-            //     'tax_id': [Command.clear()],
+            //     'tax_ids': [Command.clear()],
             //     'name': reward.description,
             //     'reward_id': reward.id,
             //     'coupon_id': coupon.id,
@@ -5075,7 +5605,7 @@ namespace Bamboo.Core.Application.Services
             //             'product_uom_qty': 0,
             //             'points_cost': 0,
             //         }]
-            //     raise UserError(_('There is nothing to discount'))
+            //     raise UserError(_("There is nothing to discount"))
             // 
             // max_discount = reward_currency._convert(reward.discount_max_amount, self.currency_id, self.company_id, fields.Date.today()) or float('inf')
             // # discount should never surpass the order's current total amount
@@ -5099,7 +5629,7 @@ namespace Bamboo.Core.Application.Services
             // if reward.discount_mode == 'per_point' and not reward.clear_wallet:
             //     # Calculate the actual point cost if the cost is per point
             //     converted_discount = self.currency_id._convert(min(max_discount, discountable), reward_currency, self.company_id, fields.Date.today())
-            //     point_cost = converted_discount / reward.discount
+            //     point_cost = coupon.currency_id.round(converted_discount / reward.discount)
             // 
             // if reward_program.is_payment_program:  # Gift card / eWallet
             //     reward_line_values = {
@@ -5130,7 +5660,7 @@ namespace Bamboo.Core.Application.Services
             //             )
             //             reward_line_values.update({
             //                 'price_unit': new_price,
-            //                 'tax_id': [Command.set(mapped_taxes.ids)],
+            //                 'tax_ids': [Command.set(mapped_taxes.ids)],
             //             })
             //     return [reward_line_values]
             // 
@@ -5143,19 +5673,19 @@ namespace Bamboo.Core.Application.Services
             //     tax_desc = ''
             //     if len(discountable_per_tax) > 1 and any(t.name for t in mapped_taxes):
             //         tax_desc = _(
-            //             ' - On products with the following taxes: %(taxes)s',
+            //             " - On products with the following taxes: %(taxes)s",
             //             taxes=", ".join(mapped_taxes.mapped('name')),
             //         )
             //     reward_dict[tax] = {
             //         **base_reward_line_values,
             //         'name': _(
-            //             'Discount %(desc)s%(tax_str)s',
+            //             "Discount %(desc)s%(tax_str)s",
             //             desc=reward.description,
             //             tax_str=tax_desc,
             //         ) if mapped_taxes else reward.description,
             //         'price_unit': -(price * discount_factor),
             //         'points_cost': 0,
-            //         'tax_id': [Command.clear()] + [Command.link(tax.id) for tax in mapped_taxes]
+            //         'tax_ids': [Command.clear()] + [Command.link(tax.id) for tax in mapped_taxes]
             //     }
             // # We only assign the point cost to one line to avoid counting the cost multiple times
             // if reward_dict:
@@ -5183,11 +5713,10 @@ namespace Bamboo.Core.Application.Services
             //     'product_id': reward.discount_line_product_id.id,
             //     'price_unit': -min(max_discount, delivery_line.price_unit or 0),
             //     'product_uom_qty': 1,
-            //     'product_uom': reward.discount_line_product_id.uom_id.id,
             //     'order_id': self.id,
             //     'is_reward_line': True,
             //     'sequence': max(self.order_line.filtered(lambda x: not x.is_reward_line).mapped('sequence'), default=0) + 1,
-            //     'tax_id': [(Command.CLEAR, 0, 0)] + [(Command.LINK, tax.id, False) for tax in taxes],
+            //     'tax_ids': [Command.clear()] + [Command.link(tax.id) for tax in taxes],
             // }]
             */
             return default;
@@ -5207,13 +5736,13 @@ namespace Bamboo.Core.Application.Services
             // reward_products = reward.reward_product_ids
             // product = product or reward_products[:1]
             // if not product or product not in reward_products:
-            //     raise UserError(_('Invalid product to claim.'))
+            //     raise UserError(_("Invalid product to claim."))
             // taxes = self.fiscal_position_id.map_tax(product.taxes_id._filter_taxes_by_company(self.company_id))
             // points = self._get_real_points_for_coupon(coupon)
             // claimable_count = float_round(points / reward.required_points, precision_rounding=1, rounding_method='DOWN') if not reward.clear_wallet else 1
             // cost = points if reward.clear_wallet else claimable_count * reward.required_points
             // return [{
-            //     'name': _("Free Product - %(product)s", product=product.with_context(display_default_code=False).display_name),
+            //     'name': reward.description,
             //     'product_id': product.id,
             //     'discount': 100,
             //     'product_uom_qty': reward.reward_product_qty * claimable_count,
@@ -5221,10 +5750,37 @@ namespace Bamboo.Core.Application.Services
             //     'coupon_id': coupon.id,
             //     'points_cost': cost,
             //     'reward_identifier_code': _generate_random_reward_code(),
-            //     'product_uom': product.uom_id.id,
             //     'sequence': max(self.order_line.filtered(lambda x: not x.is_reward_line).mapped('sequence'), default=10) + 1,
-            //     'tax_id': [(Command.CLEAR, 0, 0)] + [(Command.LINK, tax.id, False) for tax in taxes]
+            //     'tax_ids': [Command.clear()] + [Command.link(tax.id) for tax in taxes],
             // }]
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> GetShopWarehouseIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
+            // def _get_shop_warehouse_id(self):
+            // """Override of `website_sale_stock` to consider the chosen warehouse."""
+            // self.ensure_one()
+            // if self.carrier_id.delivery_type == 'in_store':
+            //     return self.warehouse_id.id
+            // return super()._get_shop_warehouse_id()
+            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
+            // def _get_shop_warehouse_id(self):
+            // """Return the warehouse to use for shop availability checks.
+            // 
+            // If no warehouse is specified on the website, all warehouses are considered,
+            // regardless of the warehouse automatically assigned to the order.
+            // 
+            // Note: self.ensure_one()
+            // 
+            // :returns: `stock.warehouse` id
+            // :rtype: int or False
+            // """
+            // self.ensure_one()
+            // return self.website_id.warehouse_id.id
             */
             return default;
         }
@@ -5277,7 +5833,7 @@ namespace Bamboo.Core.Application.Services
             // Returns the base domain that all triggers have to comply to.
             // """
             // self.ensure_one()
-            // today = fields.Date.context_today(self)
+            // today = self._get_confirmed_tx_create_date()
             // return [('active', '=', True), ('program_id.sale_ok', '=', True),
             //         *self.env['loyalty.program']._check_company_domain([self.company_id.id, self.company_id.parent_id.id]),
             //         '|', ('program_id.pricelist_ids', '=', False),
@@ -5293,33 +5849,66 @@ namespace Bamboo.Core.Application.Services
             //         if leaf[0] != 'program_id.sale_ok':
             //             continue
             //         res[idx] = ('program_id.ecommerce_ok', '=', True)
-            //         return expression.AND([res, [('program_id.website_id', 'in', (self.website_id.id, False))]])
+            //         return Domain.AND([res, [('program_id.website_id', 'in', (self.website_id.id, False))]])
             // return res
             */
             return default;
         }
 
-        protected async Task<SaleOrder> GetUnavailableOrderLinesInternalAsync(Guid wh_id)
+        protected async Task<SaleOrder> GetUnavailableQuantityFromKitsInternalAsync(object product)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
-            // def _get_unavailable_order_lines(self, wh_id):
-            // """ Return the order lines with unavailable products for the given warehouse.
-            // 
-            // :param int wh_id: The warehouse in which to check the stock, as a `stock.warehouse` id.
-            // :return: The order lines with unavailable products.
-            // :rtype: sale.order.line
+            --- ODOO METHOD SOURCE (MODULE: website_sale_mrp, FILE: sale_order.py) ---
+            // def _get_unavailable_quantity_from_kits(self, product):
             // """
-            // unavailable_order_lines = self.env['sale.order.line']
-            // for ol in self.order_line:
-            //     if ol.is_storable:
-            //         product_free_qty = ol.product_id.with_context(warehouse_id=wh_id).free_qty
-            //         if ol.product_uom_qty > product_free_qty:
-            //             ol.shop_warning = _(
-            //                 'Only %(new_qty)s available', new_qty=int(max(product_free_qty, 0))
-            //             )
-            //             unavailable_order_lines |= ol
-            // return unavailable_order_lines
+            // If any line of the order refers to a kit product, the availability of the product
+            // might be impacted (if the product is a kit or a component of one).
+            // 
+            // This method computes the quantity that becomes unavailable for the product because
+            // of the order lines that do not refer to it directly.
+            // 
+            // :param ProductProduct product: the product for which the unavailability is computed.
+            // """
+            // self.ensure_one()
+            // unavailable_qty = 0
+            // if product.is_kits:
+            //     # Explode the kit to fetch the set of relevant components to track.
+            //     kit_bom = self.env['mrp.bom'].sudo()._bom_find(product, company_id=self.company_id.id, bom_type='phantom')[product]
+            //     _, bom_sub_lines = kit_bom.explode(product, quantity=1.0)
+            //     unavailable_component_qties = {}
+            //     qty_per_kit = defaultdict(float)
+            //     for bom_line, bom_line_data in bom_sub_lines:
+            //         if not bom_line.product_id.is_storable:
+            //             # Relevant only for storable components.
+            //             continue
+            //         if float_is_zero(bom_line_data['qty'], precision_rounding=bom_line.product_uom_id.rounding):
+            //             # As BoMs allow components with a quantity of 0 (i.e., optional components), we
+            //             # skip those to avoid a division by zero.
+            //             continue
+            //         component = bom_line.product_id
+            //         unavailable_component_qties[component] = sum(self.order_line.filtered(lambda sol: sol.product_id == component).mapped('product_uom_qty'))
+            //         uom_qty_per_kit = bom_line_data['qty'] / bom_line_data['original_qty']
+            //         qty_per_kit[component] += bom_line.product_uom_id._compute_quantity(uom_qty_per_kit / kit_bom.product_qty, component.uom_id, round=False)
+            // 
+            // for line in self.order_line:
+            //     if not line.product_id.is_kits or line.product_id == product:
+            //         continue
+            //     # Other kit lines might influence the availability of the product.
+            //     line_kit_bom = self.env['mrp.bom'].sudo()._bom_find(line.product_id, company_id=self.company_id.id, bom_type='phantom')[line.product_id]
+            //     component_qties = line._get_bom_component_qty(line_kit_bom)
+            //     unavailable_qty += component_qties.get(product.id, {}).get('qty', 0) * line.product_uom_qty / line_kit_bom.product_qty
+            //     if product.is_kits:
+            //         # If the product is a kit, the availability of its components can be influenced by other kits.
+            //         for component, _ in unavailable_component_qties.items():
+            //             unavailable_component_qties[component] += component_qties.get(component.id, {}).get('qty', 0) * line.product_uom_qty / line_kit_bom.product_qty
+            // 
+            // if product.is_kits:
+            //     # If the product is a kit, recompute availability based on the availability of its components.
+            //     max_free_kit_qty = free_qty = product.sudo().free_qty
+            //     for component, unavailable_component_qty in unavailable_component_qties.items():
+            //         max_free_kit_qty = min(max_free_kit_qty, (component.free_qty - unavailable_component_qty) // qty_per_kit[component])
+            //     unavailable_qty += free_qty - max_free_kit_qty
+            // return unavailable_qty
             */
             return default;
         }
@@ -5341,10 +5930,11 @@ namespace Bamboo.Core.Application.Services
             //     and json.loads(self.customizable_pdf_form_fields)
             // ) or {}
             // 
-            // headers_available = self.available_product_document_ids.filtered(
+            // available_docs = self.available_quotation_document_ids | self.quotation_document_ids
+            // headers_available = available_docs.filtered(
             //     lambda doc: doc.document_type == 'header'
             // )
-            // footers_available = self.available_product_document_ids.filtered(
+            // footers_available = available_docs.filtered(
             //     lambda doc: doc.document_type == 'footer'
             // )
             // selected_documents = self.quotation_document_ids
@@ -5413,22 +6003,6 @@ namespace Bamboo.Core.Application.Services
             // def _get_update_prices_lines(self):
             // """ Hook to exclude specific lines which should not be updated based on price list recomputation """
             // return self.order_line.filtered(lambda line: not line.display_type)
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> GetWarehouseAvailableInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
-            // def _get_warehouse_available(self):
-            // self.ensure_one()
-            // warehouse = self.website_id._get_warehouse_available()
-            // if not warehouse and self.user_id and self.company_id:
-            //     warehouse = self.user_id.with_company(self.company_id.id)._get_default_warehouse_id()
-            // if not warehouse:
-            //     warehouse = self.env.user._get_default_warehouse_id()
-            // return warehouse
             */
             return default;
         }
@@ -5505,16 +6079,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def init(self):
-            // create_index(self._cr, 'sale_order_date_order_id_idx', 'sale_order', ["date_order desc", "id desc"])
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<SaleOrder> InitColumnInternalAsync(object column_name)
         {
             /*
@@ -5541,7 +6105,7 @@ namespace Bamboo.Core.Application.Services
             // params = [default_warehouse.id]
             // 
             // _logger.debug("Initializing column '%s' in table '%s'", column_name, self._table)
-            // self._cr.execute(query, params)
+            // self.env.cr.execute(query, params)
             */
             return default;
         }
@@ -5573,7 +6137,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // :rtype: bool
             // """
-            // return True
+            // return bool(self)
             */
             return default;
         }
@@ -5599,12 +6163,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> IsDeliveryReadyInternalAsync()
+        protected async Task<SaleOrder> IsDisplayStockInCatalogInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _is_delivery_ready(self):
-            // return not self._has_deliverable_products() or self.carrier_id
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return True
             */
             return default;
         }
@@ -5620,7 +6184,7 @@ namespace Bamboo.Core.Application.Services
             // :return: Whether all storable products are in stock.
             // :rtype: bool
             // """
-            // return not self._get_unavailable_order_lines(wh_id)
+            // return not self._get_insufficient_stock_data(wh_id)
             */
             return default;
         }
@@ -5676,25 +6240,54 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<SaleOrder> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: sale_order.py) ---
-            // def _load_pos_data_domain(self, data):
+            // def _load_pos_data_domain(self, data, config):
             // return [['pos_order_line_ids.order_id.state', '=', 'draft']]
             */
             return default;
         }
 
-        protected async Task<SaleOrder> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<SaleOrder> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: sale_order.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['name', 'state', 'user_id', 'order_line', 'partner_id', 'pricelist_id', 'fiscal_position_id', 'amount_total', 'amount_untaxed', 'amount_unpaid',
-            //     'picking_ids', 'partner_shipping_id', 'partner_invoice_id', 'date_order', 'write_date']
+            //     'picking_ids', 'partner_shipping_id', 'partner_invoice_id', 'date_order', 'write_date', 'amount_paid']
             */
             return default;
+        }
+
+        public async Task<SaleOrder> LoadSaleOrderFromPosAsync(Guid id, SaleOrderLoadSaleOrderFromPosRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: sale_order.py) ---
+            // def load_sale_order_from_pos(self, config_id):
+            // product_ids = self.order_line.product_id.ids
+            // product_tmpls = self.env['product.template'].load_product_from_pos(
+            //     config_id,
+            //     [('product_variant_ids.id', 'in', product_ids)]
+            // )
+            // sale_order_fields = self._load_pos_data_fields(config_id)
+            // sale_order_read = self.read(sale_order_fields, load=False)
+            // sale_order_line_fields = self.order_line._load_pos_data_fields(config_id)
+            // sale_order_line_read = self.order_line.read(sale_order_line_fields, load=False)
+            // sale_order_fp_fields = self.env['account.fiscal.position']._load_pos_data_fields(config_id)
+            // sale_order_fp_read = self.fiscal_position_id.read(sale_order_fp_fields, load=False)
+            // partner_fields = self.env['res.partner']._load_pos_data_fields(config_id)
+            // 
+            // return {
+            //     'sale.order': sale_order_read,
+            //     'sale.order.line': sale_order_line_read,
+            //     'account.fiscal.position': sale_order_fp_read,
+            //     'res.partner': self.partner_id.read(partner_fields, load=False),
+            //     **product_tmpls,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<SaleOrder> LockAsync(Guid id)
@@ -5744,28 +6337,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> MessageGetSuggestedRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // if self.partner_id:
-            //     self._message_add_suggested_recipient(
-            //         recipients, partner=self.partner_id, reason=_("Customer")
-            //     )
-            // return recipients
-            */
-            return default;
-        }
-
         protected async Task<SaleOrder> MessageMailAfterHookInternalAsync(object mails)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _message_mail_after_hook(self, mails):
-            // """ After sending recovery cart emails, update orders to avoid sending
-            // it again. """
+            // # After sending recovery cart emails, update orders to avoid sending it again
             // if self.env.context.get('website_sale_send_recovery_email'):
             //     self.filtered_domain([
             //         ('cart_recovery_email_sent', '=', False),
@@ -5781,8 +6358,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _message_post_after_hook(self, message, msg_vals):
-            // """ After sending recovery cart emails, update orders to avoid sending
-            // it again. """
+            // # After sending recovery cart emails, update orders to avoid sending it again
             // if self.env.context.get('website_sale_send_recovery_email'):
             //     self.cart_recovery_email_sent = True
             // return super()._message_post_after_hook(message, msg_vals)
@@ -5797,12 +6373,25 @@ namespace Bamboo.Core.Application.Services
             // def message_post(self, **kwargs):
             // if self.env.context.get('mark_so_as_sent'):
             //     self.filtered(lambda o: o.state == 'draft').with_context(tracking_disable=True).write({'state': 'sent'})
-            // so_ctx = {'mail_post_autofollow': self.env.context.get('mail_post_autofollow', True)}
-            // if self.env.context.get('mark_so_as_sent') and 'mail_notify_author' not in kwargs:
-            //     kwargs['notify_author'] = self.env.user.partner_id.id in (kwargs.get('partner_ids') or [])
-            // return super(SaleOrder, self.with_context(**so_ctx)).message_post(**kwargs)
+            //     kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<SaleOrder> NeedsCustomerAddressInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _needs_customer_address(self):
+            // """Return whether we need the address details of the customer (country, street, ...).
+            // 
+            // If an order only has services, unless the customer wants an invoice, their checkout can
+            // be sped up by allowing them to only provide their name, email and phone numbers.
+            // """
+            // return not self.only_services
+            */
+            return default;
         }
 
         protected async Task<SaleOrder> NothingToInvoiceErrorMessageInternalAsync()
@@ -5823,19 +6412,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang)
+        protected async Task<SaleOrder> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // lang_code = render_context.get('lang')
             // record = render_context['record']
-            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id else record.name]
+            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
             // if self.amount_total:
             //     # Do not show the price in subtitles if zero (e.g. e-commerce orders are created empty)
             //     subtitles.append(
@@ -5851,34 +6442,11 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> NotifyGetRecipientsGroupsInternalAsync(object message, object model_description, object msg_vals)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: sale_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals)
-            // if not self or self.state != 'sale' or not self.order_line.registration_ids:
-            //     return groups
-            // 
-            // customer_portal_group = next((group for group in groups if group[0] == 'portal_customer'), None)
-            // if not customer_portal_group:
-            //     return groups
-            // 
-            // if customer_portal_group[2]['has_button_access']:
-            //     actions_opt = customer_portal_group[2].setdefault('actions', [])
-            //     has_single_event = len(self.order_line.event_id) == 1
-            //     registrations = self.order_line.registration_ids
-            //     for event, event_registrations in registrations.grouped('event_id').items():
-            //         actions_opt.append({
-            //             'url': url_join(event.get_base_url(), f'/event/{event.id}/my_tickets?' + url_encode({
-            //                 'registration_ids': str(event_registrations.ids),
-            //                 'tickets_hash': event._get_tickets_access_hash(event_registrations.ids),
-            //             })),
-            //             'title': _("Get Your Tickets") if has_single_event else _("%(event_name)s - Tickets", event_name=event.name)
-            //         })
-            // return groups
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Give access button to users and portal customer as portal is integrated
-            // in sale. Customer and portal group have probably no right to see
-            // the document so they don't have the access button. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
+            // # Give access button to users and portal customer as portal is integrated
+            // # in sale. Customer and portal group have probably no right to see
+            // # the document so they don't have the access button.
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -5886,7 +6454,7 @@ namespace Bamboo.Core.Application.Services
             //     return groups
             // 
             // self.ensure_one()
-            // if self._context.get('proforma'):
+            // if self.env.context.get('proforma'):
             //     for group in [g for g in groups if g[0] in ('portal_customer', 'portal', 'follower', 'customer')]:
             //         group[2]['has_button_access'] = False
             //     return groups
@@ -5912,9 +6480,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return groups
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ In case of cart recovery email, update link to redirect directly
-            // to the cart (like ``mail_template_sale_cart_recovery`` template). """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
+            // # In case of cart recovery email, update link to redirect directly
+            // # to the cart (like ``mail_template_sale_cart_recovery`` template).
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -5925,9 +6493,9 @@ namespace Bamboo.Core.Application.Services
             // customer_portal_group = next((group for group in groups if group[0] == 'portal_customer'), None)
             // if customer_portal_group:
             //     access_opt = customer_portal_group[2].setdefault('button_access', {})
-            //     if self._context.get('website_sale_send_recovery_email'):
+            //     if self.env.context.get('website_sale_send_recovery_email'):
             //         access_opt['title'] = _('Resume Order')
-            //         access_opt['url'] = '%s/shop/cart?access_token=%s' % (self.get_base_url(), self.access_token)
+            //         access_opt['url'] = f'{self.get_base_url()}/shop/cart?id={self.id}&access_token={self.access_token}'
             // return groups
             */
             return default;
@@ -6026,12 +6594,19 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _onchange_order_line(self):
             // for index, line in enumerate(self.order_line):
-            //     if line.product_type == 'combo' and line.selected_combo_items:
-            //         linked_lines = line._get_linked_lines()
+            //     combo_item_lines = line._get_linked_lines().filtered('combo_item_id')
+            //     if line.product_template_id.type != 'combo':
+            //         if combo_item_lines:
+            //             # Delete any linked combo item lines if the line's product is no longer a combo
+            //             # product.
+            //             self.order_line = [
+            //                 Command.delete(linked_line.id) for linked_line in combo_item_lines
+            //             ]
+            //     elif line.selected_combo_items:
             //         selected_combo_items = json.loads(line.selected_combo_items)
             //         if (
             //             selected_combo_items
-            //             and len(selected_combo_items) != len(line.product_template_id.combo_ids)
+            //             and len(selected_combo_items) != len(line.product_template_id.sudo().combo_ids)
             //         ):
             //             raise ValidationError(_(
             //                 "The number of selected combo items must match the number of available"
@@ -6039,7 +6614,7 @@ namespace Bamboo.Core.Application.Services
             //             ))
             // 
             //         # Delete any existing combo item lines.
-            //         delete_commands = [Command.delete(linked_line.id) for linked_line in linked_lines]
+            //         delete_commands = [Command.delete(linked_line.id) for linked_line in combo_item_lines]
             //         # Create a new combo item line for each selected combo item.
             //         create_commands = [Command.create({
             //             'product_id': combo_item['product_id'],
@@ -6063,12 +6638,21 @@ namespace Bamboo.Core.Application.Services
             //         # come first.
             //         update_commands = [Command.update(
             //             order_line.id,
-            //             {'sequence': line.sequence + len(selected_combo_items) + line_index - index},
-            //         ) for line_index, order_line in enumerate(self.order_line) if line_index > index]
+            //             {'sequence': order_line.sequence + len(selected_combo_items)},
+            //         ) for order_line in self.order_line if order_line.sequence > line.sequence]
             // 
             //         # Clear `selected_combo_items` to avoid applying the same changes multiple times.
             //         line.selected_combo_items = False
             //         self.order_line = delete_commands + create_commands + update_commands
+            //     elif (
+            //         combo_item_lines
+            //         # Only update the combo item lines if the line's combo choices haven't changed.
+            //         and combo_item_lines.combo_item_id.combo_id == line.product_template_id.combo_ids
+            //     ):
+            //         combo_item_lines.update({
+            //             'product_uom_qty': line.product_uom_qty,
+            //             'discount': line.discount,
+            //         })
             */
             return default;
         }
@@ -6083,61 +6667,16 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // def line_eqv(line, t_line):
-            //     return line and t_line and (
-            //         line.product_id == t_line.product_id
-            //         and line.display_type == t_line.display_type
-            //         and line.product_uom == t_line.product_uom_id
-            //         and line.product_uom_qty == t_line.product_uom_qty
-            //     )
-            // 
-            // def option_eqv(option, t_option):
-            //     return option and t_option and all(
-            //         option[fname] == t_option[fname]
-            //         for fname in ['product_id', 'uom_id', 'quantity']
+            //     return line and t_line and all(
+            //         line[fname] == t_line[fname]
+            //         for fname in ['product_id', 'product_uom_id', 'product_uom_qty', 'display_type']
             //     )
             // 
             // lines = self.order_line
-            // options = self.sale_order_option_ids
             // t_lines = self.sale_order_template_id.sale_order_template_line_ids
-            // t_options = self.sale_order_template_id.sale_order_template_option_ids
             // 
-            // if all(chain(
-            //     starmap(line_eqv, zip_longest(lines, t_lines)),
-            //     starmap(option_eqv, zip_longest(options, t_options)),
-            // )):
+            // if all(starmap(line_eqv, zip_longest(lines, t_lines))):
             //     self._onchange_sale_order_template_id()
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> OnchangePartnerIdWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _onchange_partner_id_warning(self):
-            // if not self.partner_id:
-            //     return
-            // 
-            // partner = self.partner_id
-            // 
-            // # If partner has no warning, check its company
-            // if partner.sale_warn == 'no-message' and partner.parent_id:
-            //     partner = partner.parent_id
-            // 
-            // if partner.sale_warn and partner.sale_warn != 'no-message':
-            //     # Block if partner only has warning but parent company is blocked
-            //     if partner.sale_warn != 'block' and partner.parent_id and partner.parent_id.sale_warn == 'block':
-            //         partner = partner.parent_id
-            // 
-            //     if partner.sale_warn == 'block':
-            //         self.partner_id = False
-            // 
-            //     return {
-            //         'warning': {
-            //             'title': _("Warning for %s", partner.name),
-            //             'message': partner.sale_warn_msg,
-            //         }
-            //     }
             */
             return default;
         }
@@ -6206,20 +6745,18 @@ namespace Bamboo.Core.Application.Services
             //     order_lines_data[1][2]['sequence'] = -99
             // 
             // self.order_line = order_lines_data
-            // 
-            // option_lines_data = [fields.Command.clear()]
-            // option_lines_data += [
-            //     fields.Command.create(option._prepare_option_line_values())
-            //     for option in sale_order_template.sale_order_template_option_ids
-            // ]
-            // 
-            // self.sale_order_option_ids = option_lines_data
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
             // def _onchange_sale_order_template_id(self):
             // super()._onchange_sale_order_template_id()
-            // for order in self:
-            //     # Remove documents which are no longer available.
-            //     order.quotation_document_ids &= order.available_product_document_ids
+            // 
+            // # Remove documents which are no longer available.
+            // self.quotation_document_ids &= self.available_quotation_document_ids
+            // 
+            // if not self.sale_order_template_id.quotation_document_ids:
+            //     return
+            // self.quotation_document_ids |= self.sale_order_template_id.quotation_document_ids.filtered(
+            //     lambda doc: doc.company_id.id in [False, self.company_id.id] and doc.add_by_default
+            // )
             */
             return default;
         }
@@ -6249,13 +6786,8 @@ namespace Bamboo.Core.Application.Services
             // view_id = self.env.ref('delivery.choose_delivery_carrier_view_form').id
             // if self.env.context.get('carrier_recompute'):
             //     name = _('Update shipping cost')
-            //     carrier = self.carrier_id
             // else:
             //     name = _('Add a shipping method')
-            //     carrier = (
-            //         self.with_company(self.company_id).partner_shipping_id.property_delivery_carrier_id
-            //         or self.with_company(self.company_id).partner_shipping_id.commercial_partner_id.property_delivery_carrier_id
-            //     )
             // return {
             //     'name': name,
             //     'type': 'ir.actions.act_window',
@@ -6266,7 +6798,7 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             //     'context': {
             //         'default_order_id': self.id,
-            //         'default_carrier_id': carrier.id,
+            //         'default_carrier_id': self.carrier_id,
             //         'default_total_weight': self._get_estimated_weight()
             //     }
             // }
@@ -6336,7 +6868,7 @@ namespace Bamboo.Core.Application.Services
             // payment_utils.check_rights_on_recordset(self)
             // 
             // # In sudo mode to bypass the checks on the rights on the transactions.
-            // return self.transaction_ids.sudo().action_capture()
+            // return self.sudo().transaction_ids.action_capture()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -6350,7 +6882,7 @@ namespace Bamboo.Core.Application.Services
             // payment_utils.check_rights_on_recordset(self)
             // 
             // # In sudo mode to bypass the checks on the rights on the transactions.
-            // self.authorized_transaction_ids.sudo().action_void()
+            // self.sudo().authorized_transaction_ids.action_void()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -6442,9 +6974,8 @@ namespace Bamboo.Core.Application.Services
             //     'name': so_description,
             //     'price_unit': price_unit,
             //     'product_uom_qty': 1,
-            //     'product_uom': carrier.product_id.uom_id.id,
             //     'product_id': carrier.product_id.id,
-            //     'tax_id': [(6, 0, taxes_ids)],
+            //     'tax_ids': [(6, 0, taxes_ids)],
             //     'is_delivery': True,
             // }
             // if carrier.free_over and self.currency_id.is_zero(price_unit) :
@@ -6453,6 +6984,69 @@ namespace Bamboo.Core.Application.Services
             //     values['sequence'] = self.order_line[-1].sequence + 1
             // del context
             // return values
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> PrepareDownPaymentLineSectionValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _prepare_down_payment_line_section_values(self):
+            // """ Prepare the values to create a section line for the down payment on the current SO.
+            // 
+            // :return: A dictionary to create a new SO section line.
+            // """
+            // self.ensure_one()
+            // return {
+            //     'order_id': self.id,
+            //     'display_type': 'line_section',
+            //     'is_downpayment': True,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> PrepareDownPaymentLineValuesFromBaseLineInternalAsync(object base_line)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: sale_order.py) ---
+            // def _prepare_down_payment_line_values_from_base_line(self, base_line):
+            // # EXTENDS 'sale'
+            // so_line_values = super()._prepare_down_payment_line_values_from_base_line(base_line)
+            // if (
+            //     base_line
+            //     and base_line['record']
+            //     and isinstance(base_line['record'], models.Model)
+            //     and base_line['record']._name == 'pos.order.line'
+            // ):
+            //     pos_order_line = base_line['record']
+            //     so_line_values['name'] = _(
+            //         "Down payment (ref: %(order_reference)s on \n %(date)s)",
+            //         order_reference=pos_order_line.name,
+            //         date=format_date(pos_order_line.env, pos_order_line.order_id.date_order),
+            //     )
+            //     so_line_values['pos_order_line_ids'] = [Command.set(pos_order_line.ids)]
+            // return so_line_values
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def _prepare_down_payment_line_values_from_base_line(self, base_line):
+            // """ Convert the base line passed as parameter representing a down payment into a
+            // dictionary to be converted into a sale order line in the current sale order.
+            // 
+            // :param base_line: A base line (see '_prepare_base_line_for_taxes_computation').
+            // :return: A dictionary to create a new SO line.
+            // """
+            // self.ensure_one()
+            // extra_tax_data = self.env['account.tax']._export_base_line_extra_tax_data(base_line)
+            // return {
+            //     'order_id': self.id,
+            //     'is_downpayment': True,
+            //     'product_uom_qty': 0.0,
+            //     'price_unit': base_line['price_unit'],
+            //     'tax_ids': [Command.set(base_line['tax_ids'].ids)],
+            //     'analytic_distribution': base_line['analytic_distribution'],
+            //     'extra_tax_data': extra_tax_data,
+            // }
             */
             return default;
         }
@@ -6487,6 +7081,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> PrepareInStoreDefaultLocationDataInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
+            // def _prepare_in_store_default_location_data(self):
+            // """ Prepare the default pickup location values for each in-store delivery method available
+            // for the order. """
+            // default_pickup_locations = {}
+            // for dm in self._get_delivery_methods():
+            //     if (
+            //         dm.delivery_type == 'in_store'
+            //         and dm.id != self.carrier_id.id
+            //         and len(dm.warehouse_ids) == 1
+            //     ):
+            //         pickup_location_data = dm.warehouse_ids[0]._prepare_pickup_location_data()
+            //         if pickup_location_data:
+            //             default_pickup_locations[dm.id] = {
+            //                 'pickup_location_data': pickup_location_data,
+            //                 'insufficient_stock_data': self._get_insufficient_stock_data(
+            //                     pickup_location_data['id']
+            //                 ),
+            //             }
+            // 
+            // return {'default_pickup_locations': default_pickup_locations}
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> PrepareInvoiceInternalAsync()
         {
             /*
@@ -6499,15 +7121,15 @@ namespace Bamboo.Core.Application.Services
             // """
             // self.ensure_one()
             // 
-            // txs_to_be_linked = self.transaction_ids.sudo().filtered(
+            // txs_to_be_linked = self.sudo().transaction_ids.filtered(
             //     lambda tx: (
             //         tx.state in ('pending', 'authorized')
-            //         or tx.state == 'done' and not (tx.payment_id and tx.payment_id.is_reconciled)
+            //         or (tx.state == 'done' and not tx.payment_id.is_reconciled)
             //     )
             // )
             // 
             // values = {
-            //     'ref': self.client_order_ref or '',
+            //     'ref': self.client_order_ref or self.name,
             //     'move_type': 'out_invoice',
             //     'narration': self.note,
             //     'currency_id': self.currency_id.id,
@@ -6520,6 +7142,7 @@ namespace Bamboo.Core.Application.Services
             //     'fiscal_position_id': (self.fiscal_position_id or self.fiscal_position_id._get_fiscal_position(self.partner_invoice_id)).id,
             //     'invoice_origin': self.name,
             //     'invoice_payment_term_id': self.payment_term_id.id,
+            //     'preferred_payment_method_line_id': self.preferred_payment_method_line_id.id,
             //     'invoice_user_id': self.user_id.id,
             //     'payment_reference': self.reference,
             //     'transaction_ids': [Command.set(txs_to_be_linked.ids)],
@@ -6540,12 +7163,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> PrepareOrderLineUpdateValuesInternalAsync(object order_line, object quantity, Guid linked_line_id)
+        protected async Task<SaleOrder> PrepareOrderLineUpdateValuesInternalAsync(object order_line, object quantity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale, FILE: sale_order.py) ---
             // def _prepare_order_line_update_values(
-            //     self, order_line, quantity, event_booth_pending_ids=False, registration_values=None,
+            //     self, order_line, quantity, *, event_booth_pending_ids=False, registration_values=None,
             //     **kwargs
             // ):
             //     """Delete existing booth registrations and create new ones with the update values."""
@@ -6565,32 +7188,33 @@ namespace Bamboo.Core.Application.Services
             //         }) for booth in booths
             //     ]
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _prepare_order_line_update_values(
-            //     self, order_line, quantity, linked_line_id=False, **kwargs
-            // ):
-            //     self.ensure_one()
-            //     values = {}
+            // def _prepare_order_line_update_values(self, order_line, quantity, **kwargs):
+            // self.ensure_one()
+            // values = {}
             // 
-            //     if quantity != order_line.product_uom_qty:
-            //         values['product_uom_qty'] = quantity
-            //     if linked_line_id and linked_line_id != order_line.linked_line_id.id:
-            //         values['linked_line_id'] = linked_line_id
+            // if quantity != order_line.product_uom_qty:
+            //     values['product_uom_qty'] = quantity
             // 
-            //     return values
+            // return values
             */
             return default;
         }
 
-        protected async Task<SaleOrder> PrepareOrderLineValuesInternalAsync(Guid product_id, object quantity, Guid linked_line_id, List<Guid> no_variant_attribute_value_ids, object product_custom_attribute_values, Guid combo_item_id)
+        protected async Task<SaleOrder> PrepareOrderLineValuesInternalAsync(Guid product_id, object quantity, Guid uom_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale, FILE: sale_order.py) ---
             // def _prepare_order_line_values(
-            //     self, product_id, quantity, event_booth_pending_ids=False, registration_values=None,
+            //     self, *args, event_booth_pending_ids=False, registration_values=None,
             //     **kwargs
             // ):
             //     """Add corresponding event to the SOline creation values (if booths are provided)."""
-            //     values = super()._prepare_order_line_values(product_id, quantity, **kwargs)
+            //     values = super()._prepare_order_line_values(
+            //         *args,
+            //         event_booth_pending_ids=event_booth_pending_ids,
+            //         registration_values=registration_values,
+            //         **kwargs,
+            //     )
             // 
             //     if not event_booth_pending_ids:
             //         return values
@@ -6607,9 +7231,11 @@ namespace Bamboo.Core.Application.Services
             // 
             //     return values
             --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
-            // def _prepare_order_line_values(self, product_id, quantity, event_ticket_id=False, **kwargs):
+            // def _prepare_order_line_values(self, product_id, *args, event_slot_id=False, event_ticket_id=False, **kwargs):
             // """Add corresponding event to the SOline creation values (if ticket is provided)."""
-            // values = super()._prepare_order_line_values(product_id, quantity, **kwargs)
+            // values = super()._prepare_order_line_values(
+            //     product_id, *args, event_ticket_id=event_ticket_id, **kwargs,
+            // )
             // 
             // if not event_ticket_id:
             //     return values
@@ -6621,12 +7247,19 @@ namespace Bamboo.Core.Application.Services
             // 
             // values['event_id'] = ticket.event_id.id
             // values['event_ticket_id'] = ticket.id
+            // values['event_slot_id'] = event_slot_id
             // 
             // return values
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _prepare_order_line_values(
-            //     self, product_id, quantity, linked_line_id=False,
-            //     no_variant_attribute_value_ids=None, product_custom_attribute_values=None,
+            //     self,
+            //     product_id,
+            //     quantity,
+            //     uom_id,
+            //     *,
+            //     linked_line_id=False,
+            //     no_variant_attribute_value_ids=None,
+            //     product_custom_attribute_values=None,
             //     combo_item_id=None,
             //     **kwargs
             // ):
@@ -6648,9 +7281,14 @@ namespace Bamboo.Core.Application.Services
             //     if not product:
             //         raise UserError(_("The given combination does not exist therefore it cannot be added to cart."))
             // 
+            //     if linked_line_id and linked_line_id not in self.order_line.ids:
+            //         # Make sure the provided parent line belongs to the current order.
+            //         raise UserError(_("Invalid request parameters."))
+            // 
             //     values = {
             //         'product_id': product.id,
             //         'product_uom_qty': quantity,
+            //         'product_uom_id': uom_id or product.uom_id.id,
             //         'order_id': self.id,
             //         'linked_line_id': linked_line_id,
             //         'combo_item_id': combo_item_id,
@@ -6865,7 +7503,7 @@ namespace Bamboo.Core.Application.Services
             //             program_result['error'] = _("This program requires a code to be applied.")
             //         elif not minimum_amount_matched:
             //             program_result['error'] = _(
-            //                 'A minimum of %(amount)s %(currency)s should be purchased to get the reward',
+            //                 "A minimum of %(amount)s %(currency)s should be purchased to get the reward",
             //                 amount=min(program.rule_ids.mapped('minimum_amount')),
             //                 currency=program.currency_id.name,
             //             )
@@ -6888,7 +7526,6 @@ namespace Bamboo.Core.Application.Services
             // def action_quotation_send(self):
             // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
             // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
-            // lang = self.env.context.get('lang')
             // 
             // ctx = {
             //     'default_model': 'sale.order',
@@ -6896,6 +7533,7 @@ namespace Bamboo.Core.Application.Services
             //     'default_composition_mode': 'comment',
             //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
             //     'email_notification_allow_footer': True,
+            //     'hide_mail_template_management_options': True,
             //     'proforma': self.env.context.get('proforma', False),
             // }
             // 
@@ -6904,7 +7542,6 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     ctx.update({
             //         'force_email': True,
-            //         'model_description': self.with_context(lang=lang).type_name,
             //     })
             //     if not self.env.context.get('hide_default_template'):
             //         mail_template = self._find_mail_template()
@@ -6913,13 +7550,12 @@ namespace Bamboo.Core.Application.Services
             //                 'default_template_id': mail_template.id,
             //                 'mark_so_as_sent': True,
             //             })
-            //         if mail_template and mail_template.lang:
-            //             lang = mail_template._render_lang(self.ids)[self.id]
             //     else:
             //         for order in self:
             //             order._portal_ensure_token()
             // 
             // action = {
+            //     'name': _('Send'),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'res_model': 'mail.compose.message',
@@ -6958,9 +7594,6 @@ namespace Bamboo.Core.Application.Services
             // if any(order.state != 'draft' for order in self):
             //     raise UserError(_("Only draft orders can be marked as sent directly."))
             // 
-            // for order in self:
-            //     order.message_subscribe(partner_ids=order.partner_id.ids)
-            // 
             // self.write({'state': 'sent'})
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -6971,9 +7604,27 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _rec_names_search(self):
-            // if self._context.get('sale_show_partner_name'):
+            // if self.env.context.get('sale_show_partner_name'):
             //     return ['name', 'partner_id.name']
             // return ['name']
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> RecomputeCartInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _recompute_cart(self):
+            // """Recompute taxes and prices for the current cart."""
+            // self._recompute_taxes()
+            // self._recompute_prices()
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
+            // def _recompute_cart(self):
+            // """Recompute cart with loyalty programs and rewards applied."""
+            // self._update_programs_and_rewards()
+            // self._auto_apply_rewards()
+            // super()._recompute_cart()
             */
             return default;
         }
@@ -6996,17 +7647,9 @@ namespace Bamboo.Core.Application.Services
             // def _recompute_prices(self):
             // """Recompute coupons/promotions after pricelist prices reset."""
             // super()._recompute_prices()
-            // if any(line.is_reward_line for line in self.order_line):
-            //     self._update_programs_and_rewards()
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
-            // def _recompute_prices(self):
-            // super()._recompute_prices()
-            // # Special case: we want to overwrite the existing discount on _recompute_prices call
-            // # i.e. to make sure the discount is correctly reset
-            // # if pricelist rule is different than when the price was first computed.
-            // self.sale_order_option_ids.discount = 0.0
-            // self.sale_order_option_ids._compute_price_unit()
-            // self.sale_order_option_ids._compute_discount()
+            // for order in self:
+            //     if any(line.is_reward_line for line in order.order_line):
+            //         order._update_programs_and_rewards()
             */
             return default;
         }
@@ -7017,7 +7660,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _recompute_taxes(self):
             // lines_to_recompute = self.order_line.filtered(lambda line: not line.display_type)
-            // lines_to_recompute._compute_tax_id()
+            // lines_to_recompute._compute_tax_ids()
             // self.show_update_fpos = False
             */
             return default;
@@ -7091,71 +7734,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SaleOrder> RemoveReferenceInternalAsync(object reference)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            // def _remove_reference(self, reference):
+            // """ remove the given references from the list of references. """
+            // self.ensure_one()
+            // self.stock_reference_ids = [Command.unlink(stock_reference.id) for stock_reference in reference]
+            */
+            return default;
+        }
+
         protected async Task<SaleOrder> ResetHasDisplayedWarningUpsellOrderLinesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
             // def _reset_has_displayed_warning_upsell_order_lines(self):
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // for line in self.order_line:
-            //     if line.has_displayed_warning_upsell and line.product_uom and float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 0:
+            //     if line.has_displayed_warning_upsell and line.product_uom_id and float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 0:
             //         line.has_displayed_warning_upsell = False
             */
             return default;
-        }
-
-        public async Task<SaleOrder> SaveIncludedPdfAsync(Guid id, SaleOrderSaveIncludedPdfRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
-            // def save_included_pdf(self, selected_pdf):
-            // """ Configure the PDF that should be included in the PDF quote builder for a given quote
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dic selected_pdf: Dictionary of all the sections linked to their header_footer or
-            //                          product_document ids, in the format: {
-            //                             'header': [doc_id],
-            //                             'lines': [{line_id: [doc_id]}],
-            //                             'footer': [doc_id]
-            //                         }
-            // :return: None
-            // """
-            // self.ensure_one()
-            // quotation_doc = self.env['quotation.document']
-            // selected_headers = quotation_doc.browse(selected_pdf['header'])
-            // selected_footers = quotation_doc.browse(selected_pdf['footer'])
-            // self.quotation_document_ids = selected_headers.ids + selected_footers.ids
-            // for line in self.order_line:
-            //     selected_lines = self.env['product.document'].browse(
-            //         selected_pdf['lines'].get(str(line.id))
-            //     )
-            //     line.product_document_ids = selected_lines.ids
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<SaleOrder> SaveNewCustomContentAsync(Guid id, SaleOrderSaveNewCustomContentRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
-            // def save_new_custom_content(self, document_type, form_field, content):
-            // """ Modify the content link to a form field in the custom content mapping of an order.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param str document_type: The document type where the for field is. Either 'header_footer'
-            //                           or 'product_document'.
-            // :param str form_field: The form field in the custom content mapping.
-            // :param str content: The content of the form field in the custom content mapping.
-            // :return: None
-            // """
-            // self.ensure_one()
-            // mapping = json.loads(self.customizable_pdf_form_fields)
-            // mapping[document_type][form_field] = content
-            // self.customizable_pdf_form_fields = json.dumps(mapping)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<SaleOrder> SearchAbandonedCartInternalAsync(object @operator, object @value)
@@ -7163,23 +7764,21 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
             // def _search_abandoned_cart(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
             // website_ids = self.env['website'].search_read(fields=['id', 'cart_abandoned_delay', 'partner_id'])
-            // deadlines = [[
-            //     '&', '&',
-            //     ('website_id', '=', website_id['id']),
-            //     ('date_order', '<=', fields.Datetime.to_string(datetime.utcnow() - relativedelta(hours=website_id['cart_abandoned_delay'] or 1.0))),
-            //     ('partner_id', '!=', website_id['partner_id'][0])
-            // ] for website_id in website_ids]
-            // abandoned_domain = [
-            //     ('state', '=', 'draft'),
-            //     ('order_line', '!=', False)
-            // ]
-            // abandoned_domain.extend(expression.OR(deadlines))
-            // abandoned_domain = expression.normalize_domain(abandoned_domain)
-            // # is_abandoned domain possibilities
-            // if (operator not in expression.NEGATIVE_TERM_OPERATORS and value) or (operator in expression.NEGATIVE_TERM_OPERATORS and not value):
-            //     return abandoned_domain
-            // return expression.distribute_not(['!'] + abandoned_domain)
+            // return Domain.AND((
+            //     Domain('state', '=', 'draft'),
+            //     Domain('order_line', '!=', False),
+            //     Domain.OR(
+            //         [
+            //             ('website_id', '=', website_id['id']),
+            //             ('date_order', '<=', fields.Datetime.to_string(fields.Datetime.now() - relativedelta(hours=website_id['cart_abandoned_delay'] or 1.0))),
+            //             ('partner_id', '!=', website_id['partner_id'][0]),
+            //         ]
+            //         for website_id in website_ids
+            //     ),
+            // ))
             */
             return default;
         }
@@ -7191,18 +7790,16 @@ namespace Bamboo.Core.Application.Services
             // def _search_display_name(self, operator, value):
             // """ For expense, we want to show all sales order but only their display_name (no ir.rule applied), this is the only way to do it. """
             // if (
-            //     self._context.get('sale_expense_all_order')
+            //     self.env.context.get('sale_expense_all_order')
             //     and self.env.user.has_group('sales_team.group_sale_salesman')
             //     and not self.env.user.has_group('sales_team.group_sale_salesman_all_leads')
             // ):
-            //     if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //         positive_operator = expression.TERM_OPERATORS_NEGATION[operator]
-            //     else:
-            //         positive_operator = operator
-            //     domain = super()._search_display_name(positive_operator, value)
-            //     company_domain = ['&', ('state', '=', 'sale'), ('company_id', 'in', self.env.companies.ids)]
-            //     query = self.sudo()._search(expression.AND([domain, company_domain]))
-            //     return [('id', 'in' if operator == positive_operator else 'not in', query)]
+            //     if operator in Domain.NEGATIVE_OPERATORS:
+            //         return NotImplemented
+            //     domain = super()._search_display_name(operator, value)
+            //     company_domain = Domain('state', '=', 'sale') & ('company_id', 'in', self.env.companies.ids)
+            //     query = self.sudo()._search(domain & company_domain)
+            //     return Domain('id', 'in', query)
             // return super()._search_display_name(operator, value)
             */
             return default;
@@ -7213,7 +7810,25 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _search_invoice_ids(self, operator, value):
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // if operator == 'in' and value:
+            //     falsy_domain = []
+            //     if False in value:
+            //         # special case for [('invoice_ids', '=', False)], i.e. "Invoices is not set"
+            //         #
+            //         # We cannot just search [('order_line.invoice_lines', '=', False)]
+            //         # because it returns orders with uninvoiced lines, which is not
+            //         # same "Invoices is not set" (some lines may have invoices and some
+            //         # don't)
+            //         #
+            //         # A solution is using the 'not any' operators with inverted search first
+            //         # ("orders with invoiced lines").
+            //         falsy_domain = [('order_line', 'not any', [
+            //             ('invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund'))
+            //         ])]
+            //         if len(value) == 1:
+            //             return falsy_domain
             //     self.env.cr.execute("""
             //         SELECT array_agg(so.id)
             //             FROM sale_order so
@@ -7226,27 +7841,27 @@ namespace Bamboo.Core.Application.Services
             //             am.id = ANY(%s)
             //     """, (list(value),))
             //     so_ids = self.env.cr.fetchone()[0] or []
-            //     return [('id', 'in', so_ids)]
-            // elif operator == '=' and not value:
-            //     # special case for [('invoice_ids', '=', False)], i.e. "Invoices is not set"
-            //     #
-            //     # We cannot just search [('order_line.invoice_lines', '=', False)]
-            //     # because it returns orders with uninvoiced lines, which is not
-            //     # same "Invoices is not set" (some lines may have invoices and some
-            //     # doesn't)
-            //     #
-            //     # A solution is making inverted search first ("orders with invoiced
-            //     # lines") and then invert results ("get all other orders")
-            //     #
-            //     # Domain below returns subset of ('order_line.invoice_lines', '!=', False)
-            //     order_ids = self._search([
-            //         ('order_line.invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund'))
-            //     ])
-            //     return [('id', 'not in', order_ids)]
-            // return [
-            //     ('order_line.invoice_lines.move_id.move_type', 'in', ('out_invoice', 'out_refund')),
-            //     ('order_line.invoice_lines.move_id', operator, value),
-            // ]
+            //     return [('id', 'in', so_ids)] + falsy_domain
+            // return [('order_line.invoice_lines', 'any', [
+            //     ('move_id.move_type', 'in', ('out_invoice', 'out_refund')),
+            //     ('move_id', operator, value),
+            // ])]
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> SearchLateAvailabilityInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            // def _search_late_availability(self, operator, value):
+            // if operator not in ('=', '!=') or not isinstance(value, bool):
+            //     return NotImplemented
+            // 
+            // sub_query = self.env['stock.picking']._search([
+            //     ('sale_id', '!=', False), ('products_availability_state', operator, 'late')
+            // ])
+            // return [('picking_ids', 'in', sub_query)]
             */
             return default;
         }
@@ -7256,13 +7871,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
             // def _search_tasks_ids(self, operator, value):
-            // if operator in NEGATIVE_TERM_OPERATORS:
-            //     positive_operator = TERM_OPERATORS_NEGATION[operator]
-            // else:
-            //     positive_operator = operator
-            // task_domain = [('display_name' if isinstance(value, str) else 'id', positive_operator, value), ('sale_order_id', '!=', False)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // task_domain = [
+            //     ('display_name' if isinstance(value, str) else 'id', operator, value),
+            //     ('sale_order_id', '!=', False),
+            // ]
             // query = self.env['project.task']._search(task_domain)
-            // return [('id', 'in' if positive_operator == operator else 'not in', query.subselect('sale_order_id'))]
+            // return [('id', 'in', query.subselect('sale_order_id'))]
             */
             return default;
         }
@@ -7299,16 +7915,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> SendOrderNotificationMailInternalAsync(object mail_template)
+        protected async Task<SaleOrder> SendOrderNotificationMailInternalAsync(object mail_template, object allow_deferred_sending)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _send_order_notification_mail(self, mail_template):
-            // """ Send a mail to the customer
+            // def _send_order_notification_mail(self, mail_template, allow_deferred_sending=True):
+            // """ Send a mail to the customer.
+            // 
+            // If the `sale.async_emails` ICP is set and `allow_deferred_sending` is true, order status
+            // emails are sent asynchronously through a cron.
             // 
             // Note: self.ensure_one()
             // 
             // :param mail.template mail_template: the template used to generate the mail
+            // :param bool allow_deferred_sending: Whether the email can be sent asynchronously.
             // :return: None
             // """
             // self.ensure_one()
@@ -7320,22 +7940,20 @@ namespace Bamboo.Core.Application.Services
             //     # sending mail in sudo was meant for it being sent from superuser
             //     self = self.with_user(SUPERUSER_ID)
             // 
-            // self.with_context(force_send=True).message_post_with_source(
-            //     mail_template,
-            //     email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
-            //     subtype_xmlid='mail.mt_comment',
-            // )
-            --- ODOO METHOD SOURCE (MODULE: sale_async_emails, FILE: sale_order.py) ---
-            // def _send_order_notification_mail(self, mail_template):
-            // """ Override of `sale` to reschedule order status emails to be sent asynchronously. """
             // async_send = str2bool(self.env['ir.config_parameter'].sudo().get_param('sale.async_emails'))
-            // cron = async_send and self.env.ref('sale_async_emails.cron', raise_if_not_found=False)
-            // if async_send and cron and not self.env.context.get('is_async_email', False):
+            // cron = self.env.ref('sale.send_pending_emails_cron', raise_if_not_found=False)
+            // cron_enabled = cron and cron.sudo().active
+            // if async_send and cron_enabled and allow_deferred_sending:
             //     # Schedule the email to be sent asynchronously.
             //     self.pending_email_template_id = mail_template
             //     cron._trigger()
-            // else:  # We are in the cron job, or the user has disabled async emails.
-            //     super()._send_order_notification_mail(mail_template)
+            // else:  # Async emails are disabled, either by the user or we are in the cron job.
+            //     # Send the email synchronously.
+            //     self.with_context(force_send=True).message_post_with_source(
+            //         mail_template,
+            //         email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
+            //         subtype_xmlid='mail.mt_comment',
+            //     )
             */
             return default;
         }
@@ -7354,6 +7972,12 @@ namespace Bamboo.Core.Application.Services
             // )
             // for order in self:
             //     order._send_order_notification_mail(mail_template)
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _send_payment_succeeded_for_order_mail(self):
+            // if carts := self.filtered('website_id'):
+            //     # Assign a salesman before sending payment confirmation mail.
+            //     carts.with_context(force_user_recomputation=True)._compute_user_id()
+            // return super()._send_payment_succeeded_for_order_mail()
             */
             return default;
         }
@@ -7394,19 +8018,6 @@ namespace Bamboo.Core.Application.Services
             //     )
             //     pending_deliveries.carrier_id = carrier.id
             // return res
-            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
-            // def set_delivery_line(self, carrier, amount):
-            // """ Override of `website_sale` to recompute warehouse and fiscal position when a new
-            // delivery method is not in-store anymore. """
-            // in_store_orders = self.filtered(
-            //     lambda so: (
-            //         so.carrier_id.delivery_type == 'in_store' and carrier.delivery_type != 'in_store'
-            //     )
-            // )
-            // res = super().set_delivery_line(carrier, amount)
-            // in_store_orders._compute_warehouse_id()
-            // in_store_orders._compute_fiscal_position_id()
-            // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -7432,6 +8043,20 @@ namespace Bamboo.Core.Application.Services
             // rate = rate or delivery_method.rate_shipment(self)
             // if rate.get('success'):
             //     self.set_delivery_line(delivery_method, rate['price'])
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
+            // def _set_delivery_method(self, delivery_method, rate=None):
+            // """ Override of `website_sale` to recompute warehouse and fiscal position when a new
+            // delivery method is not in-store anymore. """
+            // 
+            // self.ensure_one()
+            // was_in_store_order = (
+            //     self.carrier_id.delivery_type == 'in_store'
+            //     and delivery_method.delivery_type != 'in_store'
+            // )
+            // super()._set_delivery_method(delivery_method, rate=rate)
+            // if was_in_store_order:
+            //     self._compute_warehouse_id()
+            //     self._compute_fiscal_position_id()
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
             // def _set_delivery_method(self, *args, **kwargs):
             // super()._set_delivery_method(*args, **kwargs)
@@ -7480,34 +8105,16 @@ namespace Bamboo.Core.Application.Services
             // Set account fiscal position depending on selected pickup location to correctly calculate
             // taxes.
             // """
-            // res = super()._set_pickup_location(pickup_location_data)
+            // super()._set_pickup_location(pickup_location_data)
             // if self.carrier_id.delivery_type != 'in_store':
-            //     return res
+            //     return
             // 
             // self.pickup_location_data = json.loads(pickup_location_data)
             // if self.pickup_location_data:
             //     self.warehouse_id = self.pickup_location_data['id']
-            //     AccountFiscalPosition = self.env['account.fiscal.position'].sudo()
-            //     self.fiscal_position_id = AccountFiscalPosition._get_fiscal_position(
-            //         self.partner_id, delivery=self.warehouse_id.partner_id
-            //     )
+            //     self._compute_fiscal_position_id()
             // else:
             //     self._compute_warehouse_id()
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> SetShopWarningStockInternalAsync(object desired_qty, object new_qty)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
-            // def _set_shop_warning_stock(self, desired_qty, new_qty):
-            // self.ensure_one()
-            // self.shop_warning = _(
-            //     'You ask for %(desired_qty)s products but only %(new_qty)s is available',
-            //     desired_qty=desired_qty, new_qty=new_qty
-            // )
-            // return self.shop_warning
             */
             return default;
         }
@@ -7519,25 +8126,7 @@ namespace Bamboo.Core.Application.Services
             // def _should_be_locked(self):
             // self.ensure_one()
             // # Public user can confirm SO, so we check the group on any record creator.
-            // user = self[:1].create_uid
-            // return user and user.sudo().has_group('sale.group_auto_done_setting')
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ShowCancelWizardInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _show_cancel_wizard(self):
-            // """ Decide whether the sale.order.cancel wizard should be shown to cancel specified orders.
-            // 
-            // :return: True if there is any non-draft order in the given orders
-            // :rtype: bool
-            // """
-            // if self.env.context.get('disable_cancel_warning'):
-            //     return False
-            // return any(so.state != 'draft' for so in self)
+            // return self.env['res.groups']._is_feature_enabled('sale.group_auto_done_setting')
             */
             return default;
         }
@@ -7572,7 +8161,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
             // def _tasks_ids_domain(self):
-            // return ['&', ('project_id', '!=', False), '|', ('sale_line_id', 'in', self.order_line.ids), ('sale_order_id', 'in', self.ids)]
+            // return ['&', ('is_template', '=', False), ('project_id', '!=', False), '|', ('sale_line_id', 'in', self.order_line.ids), ('sale_order_id', 'in', self.ids), ('has_template_ancestor', '=', False)]
             */
             return default;
         }
@@ -7627,13 +8216,14 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // 
             // base_domain = self._get_trigger_domain()
-            // domain = expression.AND([base_domain, [('mode', '=', 'with_code'), ('code', '=', code)]])
+            // domain = Domain.AND([base_domain, [('mode', '=', 'with_code'), ('code', '=', code)]])
             // rule = self.env['loyalty.rule'].search(domain)
             // program = rule.program_id
             // coupon = False
+            // check_date = self._get_confirmed_tx_create_date()
             // 
             // if rule in self.code_enabled_rule_ids:
-            //     return {'error': _('This promo code is already applied.')}
+            //     return {'error': _("This promo code is already applied.")}
             // 
             // # No trigger was found from the code, try to find a coupon
             // if not program:
@@ -7642,19 +8232,28 @@ namespace Bamboo.Core.Application.Services
             //         not coupon.program_id.active or\
             //         not coupon.program_id.reward_ids or\
             //         not coupon.program_id.filtered_domain(self._get_program_domain()):
-            //         return {'error': _('This code is invalid (%s).', code), 'not_found': True}
-            //     elif coupon.expiration_date and coupon.expiration_date < fields.Date.today():
-            //         return {'error': _('This coupon is expired.')}
+            //         return {'error': _("This code is invalid (%s).", code), 'not_found': True}
+            //     if coupon.expiration_date and coupon.expiration_date < check_date:
+            //         return {'error': _("This coupon is expired.")}
             //     elif coupon.points < min(coupon.program_id.reward_ids.mapped('required_points')):
-            //         return {'error': _('This coupon has already been used.')}
+            //         return {'error': _("This coupon has already been used.")}
             //     program = coupon.program_id
             // 
             // if not program or not program.active:
-            //     return {'error': _('This code is invalid (%s).', code), 'not_found': True}
-            // elif (program.limit_usage and program.total_order_count >= program.max_usage):
-            //     return {'error': _('This code is expired (%s).', code)}
+            //     return {'error': _("This code is invalid (%s).", code), 'not_found': True}
             // elif program.program_type in ('loyalty', 'ewallet'):
             //     return {'error': _("This program cannot be applied with code.")}
+            // 
+            // # Lock the loyalty program row to block several processes that try to
+            // # read it at the same time. We also use NOWAIT to make sure we trigger a
+            // # serialization error when the processes don't have the lock and thus,
+            // # trigger a retry of the transaction.
+            // self.env.cr.execute("""
+            //     SELECT id FROM loyalty_program WHERE id=%s FOR UPDATE NOWAIT
+            // """, (program.id,))
+            // 
+            // if (program.limit_usage and program.total_order_count >= program.max_usage):
+            //     return {'error': _("This code is expired (%s).", code)}
             // 
             // # Rule will count the next time the points are updated
             // if rule:
@@ -7701,9 +8300,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // # Basic checks
             // if not program.filtered_domain(self._get_program_domain()):
-            //     return {'error': _('The program is not available for this order.')}
+            //     return {'error': _("The program is not available for this order.")}
             // elif program in self._get_applied_programs():
-            //     return {'error': _('This program is already applied to this order.'), 'already_applied': True}
+            //     return {'error': _("This program is already applied to this order."), 'already_applied': True}
             // elif program.reward_ids:
             //     global_rewards = program.reward_ids.filtered('is_global_discount')
             //     applied_global_reward = self._get_applied_global_discount()
@@ -7719,8 +8318,8 @@ namespace Bamboo.Core.Application.Services
             //         and self._best_global_discount_already_applied(applied_global_reward, best_global_rewards)
             //     ):
             //         return {'error': _(
-            //             'This discount (%(discount)s) is not compatible with "%(other_discount)s". '
-            //             'Please remove it in order to apply this one.',
+            //             "This discount (%(discount)s) is not compatible with \"%(other_discount)s\". "
+            //             "Please remove it in order to apply this one.",
             //             discount=best_global_rewards.description,
             //             other_discount=applied_global_reward.description
             //         )}
@@ -7799,8 +8398,12 @@ namespace Bamboo.Core.Application.Services
             //     # Recompute taxes on fpos change
             //     self._recompute_taxes()
             // 
-            // # If the user has explicitly selected a valid pricelist, we don't want to change it
-            // if selected_pricelist_id := request.session.get('website_sale_selected_pl_id'):
+            //     new_fpos = self.fiscal_position_id
+            //     request.session[FISCAL_POSITION_SESSION_CACHE_KEY] = new_fpos.id
+            //     request.fiscal_position = new_fpos
+            // 
+            // #If user explicitely selected a valid pricelist, we don't want to change it
+            // if selected_pricelist_id := request.session.get(PRICELIST_SELECTED_SESSION_CACHE_KEY):
             //     selected_pricelist = (
             //         self.env['product.pricelist'].browse(selected_pricelist_id).exists()
             //     )
@@ -7813,53 +8416,22 @@ namespace Bamboo.Core.Application.Services
             //     ):
             //         self.pricelist_id = selected_pricelist
             //     else:
-            //        request.session.pop('website_sale_selected_pl_id', None)
+            //         request.session.pop(PRICELIST_SELECTED_SESSION_CACHE_KEY, None)
             // 
             // if self.pricelist_id != pricelist_before or fpos_changed:
             //     # Pricelist may have been recomputed by the `partner_id` field update
             //     # we need to recompute the prices to match the new pricelist if it changed
             //     self._recompute_prices()
             // 
-            //     request.session['website_sale_current_pl'] = self.pricelist_id.id
-            //     self.website_id.invalidate_recordset(['pricelist_id'])
+            //     new_pricelist = self.pricelist_id
+            //     request.session[PRICELIST_SESSION_CACHE_KEY] = new_pricelist.id
+            //     request.pricelist = new_pricelist
             // 
             // if self.carrier_id and 'partner_shipping_id' in fnames and self._has_deliverable_products():
             //     # Update the delivery method on shipping address change.
             //     delivery_methods = self._get_delivery_methods()
             //     delivery_method = self._get_preferred_delivery_method(delivery_methods)
             //     self._set_delivery_method(delivery_method)
-            // 
-            // if 'partner_id' in fnames:
-            //     # Only add the main partner as follower of the order
-            //     self._message_subscribe([partner_id])
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> UpdateCartLineValuesInternalAsync(object order_line, object update_values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
-            // def _update_cart_line_values(self, order_line, update_values):
-            // """Remove event registrations on quantity decrease."""
-            // old_qty = order_line.product_uom_qty
-            // 
-            // super()._update_cart_line_values(order_line, update_values)
-            // if not order_line.event_ticket_id:
-            //     return
-            // 
-            // new_qty = order_line.product_uom_qty
-            // if new_qty < old_qty:
-            //     attendees = self.env['event.registration'].search([
-            //         ('state', '!=', 'cancel'),
-            //         ('sale_order_id', '=', self.id),
-            //         ('event_ticket_id', '=', order_line.event_ticket_id.id),
-            //     ], offset=new_qty, limit=(old_qty - new_qty), order='create_date asc')
-            //     attendees.action_cancel()
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _update_cart_line_values(self, order_line, update_values):
-            // self.ensure_one()
-            // order_line.write(update_values)
             */
             return default;
         }
@@ -7899,39 +8471,55 @@ namespace Bamboo.Core.Application.Services
             //     self.onchange_order_line()
             // return price_unit
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Update sale order line information for a given product or create a
-            // new one if none exists yet.
-            // :param int product_id: The product, as a `product.product` id.
-            // :return: The unit price of the product, based on the pricelist of the
-            //          sale order and the quantity selected.
-            // :rtype: float
-            // """
-            // request.update_context(catalog_skip_tracking=True)
-            // sol = self.order_line.filtered(lambda line: line.product_id.id == product_id)
-            // if sol:
-            //     if quantity != 0:
-            //         sol.product_uom_qty = quantity
-            //     elif self.state in ['draft', 'sent']:
-            //         price_unit = self.pricelist_id._get_product_price(
-            //             product=sol.product_id,
+            // def _update_order_line_info(
+            //     self, product_id, quantity, *, section_id=False, child_field='order_line', **kwargs
+            // ):
+            //     """ Update sale order line information for a given product or create a
+            //     new one if none exists yet.
+            //     :param int product_id: The product, as a `product.product` id.
+            //     :param int quantity: The quantity selected in the catalog.
+            //     :param int section_id: The id of section selected in the catalog.
+            //     :return: The unit price of the product, based on the pricelist of the
+            //              sale order and the quantity selected.
+            //     :rtype: float
+            //     """
+            //     request.update_context(catalog_skip_tracking=True)
+            //     sol = self.order_line.filtered(
+            //         lambda l: l.product_id.id == product_id
+            //         and l.get_parent_section_line().id == section_id,
+            //     )
+            //     if sol:
+            //         if quantity != 0:
+            //             sol.product_uom_qty = quantity
+            //         elif self.state in ['draft', 'sent']:
+            //             price_unit = self.pricelist_id._get_product_price(
+            //                 product=sol.product_id,
+            //                 quantity=1.0,
+            //                 currency=self.currency_id,
+            //                 date=self.date_order,
+            //                 **kwargs,
+            //             )
+            //             sol.unlink()
+            //             return price_unit
+            //         else:
+            //             sol.product_uom_qty = 0
+            //     elif quantity > 0:
+            //         sol = self.env['sale.order.line'].create({
+            //             'order_id': self.id,
+            //             'product_id': product_id,
+            //             'product_uom_qty': quantity,
+            //             'sequence': self._get_new_line_sequence(child_field, section_id),
+            //         })
+            //     else:  # quantity of 0, no line to update, return defaut pricelist price
+            //         return self.pricelist_id._get_product_price(
+            //             product=self.env['product.product'].browse(product_id),
             //             quantity=1.0,
             //             currency=self.currency_id,
             //             date=self.date_order,
             //             **kwargs,
             //         )
-            //         sol.unlink()
-            //         return price_unit
-            //     else:
-            //         sol.product_uom_qty = 0
-            // elif quantity > 0:
-            //     sol = self.env['sale.order.line'].create({
-            //         'order_id': self.id,
-            //         'product_id': product_id,
-            //         'product_uom_qty': quantity,
-            //         'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),  # put it at the end of the order
-            //     })
-            // return sol.price_unit * (1-(sol.discount or 0.0)/100.0)
+            // 
+            //     return sol._get_discounted_price()
             */
             return default;
         }
@@ -7989,7 +8577,7 @@ namespace Bamboo.Core.Application.Services
             // coupon_programs = self.applied_coupon_ids.program_id
             // # Programs that are automatic and not yet applied
             // program_domain = self._get_program_domain()
-            // domain = expression.AND([program_domain, [('id', 'not in', points_programs.ids), ('trigger', '=', 'auto'), ('rule_ids.mode', '=', 'auto')]])
+            // domain = Domain.AND([program_domain, [('id', 'not in', points_programs.ids), ('trigger', '=', 'auto'), ('rule_ids.mode', '=', 'auto')]])
             // automatic_programs = self.env['loyalty.program'].search(domain).filtered(lambda p:
             //     not p.limit_usage or p.total_order_count < p.max_usage)
             // 
@@ -8006,9 +8594,13 @@ namespace Bamboo.Core.Application.Services
             // coupons_to_unlink = self.env['loyalty.card']
             // point_entries_to_unlink = self.env['sale.order.coupon.points']
             // # Remove any coupons that are expired
-            // self.applied_coupon_ids = self.applied_coupon_ids.filtered(lambda c:
-            //     (not c.expiration_date or c.expiration_date >= fields.Date.today())
-            // )
+            // if initial_coupons := self.applied_coupon_ids:
+            //     check_date = self._get_confirmed_tx_create_date()
+            //     self.applied_coupon_ids = initial_coupons.filtered(
+            //         lambda c: not c.expiration_date or c.expiration_date >= check_date,
+            //     )
+            //     removed = initial_coupons - self.applied_coupon_ids
+            //     lines_to_unlink |= self.order_line.filtered(lambda sol: sol.coupon_id in removed)
             // point_ids_per_program = defaultdict(lambda: self.env['sale.order.coupon.points'])
             // for pe in self.coupon_point_ids:
             //     # Update coupons that were created for Public User
@@ -8172,8 +8764,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _validate_order(self):
-            // """
-            // Confirm the sale order and send a confirmation email.
+            // """Confirm the sale order and send a confirmation email.
             // 
             // :return: None
             // """
@@ -8199,67 +8790,128 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> VerifyUpdatedQuantityInternalAsync(object order_line, Guid product_id, object new_qty)
+        protected async Task<SaleOrder> VerifyCartAfterUpdateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _verify_cart_after_update(self):
+            // """Global checks on the cart after updates.
+            // 
+            // Called from controllers to ensure it's only done once by request (combos,
+            // optional products, ...).
+            // """
+            // if self.only_services:
+            //     self._remove_delivery_line()
+            // elif self.carrier_id:
+            //     # Recompute the delivery rate.
+            //     rate = self.carrier_id.rate_shipment(self)
+            //     if rate['success']:
+            //         self.order_line.filtered('is_delivery').price_unit = rate['price']
+            //     else:
+            //         self._remove_delivery_line()
+            // 
+            // if request:
+            //     request.session['website_sale_cart_quantity'] = self.cart_quantity
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
+            // def _verify_cart_after_update(self):
+            // super()._verify_cart_after_update()
+            // self._update_programs_and_rewards()
+            // self._auto_apply_rewards()
+            // if request:  # In case the rewards application modifies the cart quantity
+            //     request.session['website_sale_cart_quantity'] = self.cart_quantity
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> VerifyCartInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
+            // def _verify_cart(self):
+            // """Check cart content and clear outdated/invalid lines."""
+            // self.ensure_one()
+            // 
+            // # Remove lines with inactive products
+            // self.order_line.filtered(lambda sol: sol.product_id and not sol.product_id.active).unlink()
+            */
+            return default;
+        }
+
+        protected async Task<SaleOrder> VerifyUpdatedQuantityInternalAsync(object order_line, Guid product_id, object new_qty, Guid uom_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_sale, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // """Forbid quantity updates on event booth lines."""
             // product = self.env['product.product'].browse(product_id)
             // if product.service_tracking == 'event_booth' and new_qty > 1:
             //     return 1, _('You cannot manually change the quantity of an Event Booth product.')
-            // return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
+            // return super()._verify_updated_quantity(order_line, product_id, new_qty, uom_id, **kwargs)
             --- ODOO METHOD SOURCE (MODULE: website_event_sale, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, event_ticket_id=False, **kwargs):
-            // """Restrict quantity updates for event tickets according to available seats."""
-            // new_qty, warning = super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
-            // 
-            // if not event_ticket_id:
-            //     if not order_line.event_ticket_id or new_qty < order_line.product_uom_qty:
-            //         return new_qty, warning
-            //     else:
-            //         return order_line.product_uom_qty, _("You cannot raise manually the event ticket quantity in your cart")
-            // 
-            // # Adding new ticket to the cart (might be automatically linked to an existing line)
-            // ticket = self.env['event.event.ticket'].browse(event_ticket_id).exists()
-            // if not ticket:
-            //     raise UserError(_("The provided ticket doesn't exist"))
-            // 
-            // # TODO TDE consider full cart qty and not only added qty
-            // # if event seats are not auto confirmed.
-            // # Since created registrations are automatically reserved
-            // # We should only consider new added qty and not full quantity
-            // # when checking for seat availability
-            // existing_qty = order_line.product_uom_qty if order_line else 0
-            // qty_added = new_qty - existing_qty
-            // warning = ''
-            // if ticket.seats_limited and ticket.seats_available <= 0:
-            //     # Remove existing line if exists and do not add a new one
-            //     # if no ticket is available anymore
-            //     new_qty = existing_qty
-            //     warning = _(
-            //         'Sorry, The %(ticket)s tickets for the %(event)s event are sold out.',
-            //         ticket=ticket.name,
-            //         event=ticket.event_id.name,
-            //     )
-            // elif ticket.seats_limited and qty_added > ticket.seats_available:
-            //     new_qty = existing_qty + ticket.seats_available
-            //     warning = _(
-            //         'Sorry, only %(remaining_seats)d seats are still available for the %(ticket)s ticket for the %(event)s event.',
-            //         remaining_seats=ticket.seats_available,
-            //         ticket=ticket.name,
-            //         event=ticket.event_id.name,
+            // def _verify_updated_quantity(
+            //     self, order_line, product_id, new_qty, uom_id, *, event_slot_id=False, event_ticket_id=False, **kwargs
+            // ):
+            //     """Restrict quantity updates for event tickets according to available seats."""
+            //     new_qty, warning = super()._verify_updated_quantity(
+            //         order_line,
+            //         product_id,
+            //         new_qty,
+            //         uom_id,
+            //         event_slot_id=event_slot_id,
+            //         event_ticket_id=event_ticket_id,
+            //         **kwargs,
             //     )
             // 
-            // return new_qty, warning
+            //     if not event_ticket_id:
+            //         if not order_line.event_ticket_id or new_qty < order_line.product_uom_qty:
+            //             return new_qty, warning
+            //         else:
+            //             return order_line.product_uom_qty, _("You cannot raise manually the event ticket quantity in your cart")
+            // 
+            //     # Adding new ticket to the cart (might be automatically linked to an existing line)
+            //     ticket = self.env['event.event.ticket'].browse(event_ticket_id).exists()
+            //     if not ticket:
+            //         raise UserError(_("The provided ticket doesn't exist"))
+            //     slot = self.env['event.slot'].browse(event_slot_id).exists()
+            //     if event_slot_id and not slot:
+            //         raise UserError(_("The provided ticket slot doesn't exist"))
+            // 
+            //     # TODO TDE consider full cart qty and not only added qty
+            //     # if event seats are not auto confirmed.
+            //     # Since created registrations are automatically reserved
+            //     # We should only consider new added qty and not full quantity
+            //     # when checking for seat availability
+            //     existing_qty = order_line.product_uom_qty if order_line else 0
+            //     qty_added = new_qty - existing_qty
+            //     warning = ''
+            //     ticket_seats_available = ticket.event_id._get_seats_availability([(slot, ticket)])[0] if slot else ticket.seats_available
+            //     if ticket.seats_limited and ticket_seats_available <= 0:
+            //         # Remove existing line if exists and do not add a new one
+            //         # if no ticket is available anymore
+            //         new_qty = existing_qty
+            //         warning = _(
+            //             'Sorry, The %(ticket)s tickets for the %(event)s event are sold out.',
+            //             ticket=ticket.name,
+            //             event=ticket.event_id.name,
+            //         )
+            //     elif ticket.seats_limited and qty_added > ticket_seats_available:
+            //         new_qty = existing_qty + ticket_seats_available
+            //         warning = _(
+            //             'Sorry, only %(remaining_seats)d seats are still available for the %(ticket)s ticket for the %(event)s event%(slot)s.',
+            //             remaining_seats=ticket_seats_available,
+            //             slot=f' on {slot.name}' if slot else '',
+            //             ticket=ticket.name,
+            //             event=ticket.event_id.name,
+            //         )
+            // 
+            //     return new_qty, warning
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // return new_qty, ''
             --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // """ Override of `website_sale_stock` to skip the verification when click and collect
             // is activated. The quantity is verified later. """
-            // self.ensure_one()
             // product = self.env['product.product'].browse(product_id)
             // if (
             //     product.is_storable
@@ -8267,9 +8919,9 @@ namespace Bamboo.Core.Application.Services
             //     and self.website_id.in_store_dm_id
             // ):
             //     return new_qty, ''
-            // return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
+            // return super()._verify_updated_quantity(order_line, product_id, new_qty, uom_id, **kwargs)
             --- ODOO METHOD SOURCE (MODULE: website_sale_gelato, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // """ Override of `website_sale` to prevent mixing Gelato and non-Gelato products in the cart.
             // 
             // This check is not redundant with the constraint on `sale.order` in `sale_gelato` because the
@@ -8296,22 +8948,28 @@ namespace Bamboo.Core.Application.Services
             //         " shipping. Please place your order for the current cart first.",
             //         product_name=product.name,
             //     )
-            // return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
+            // return super()._verify_updated_quantity(order_line, product_id, new_qty, uom_id, **kwargs)
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // """Forbid quantity updates on courses lines."""
             // product = self.env['product.product'].browse(product_id)
             // if product.service_tracking == 'course' and new_qty > 1:
             //     return 1, _('You can only add a course once in your cart.')
-            // return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
+            // return super()._verify_updated_quantity(order_line, product_id, new_qty, uom_id, **kwargs)
             --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
-            // def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+            // def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
             // self.ensure_one()
             // product = self.env['product.product'].browse(product_id)
             // if product.is_storable and not product.allow_out_of_stock_order:
-            //     product_qty_in_cart, available_qty = self._get_cart_and_free_qty(
-            //         product, line=order_line
-            //     )
+            //     uom = self.env['uom.uom'].browse(uom_id)
+            //     product_uom = product.uom_id
+            // 
+            //     product_qty_in_cart, available_qty = self._get_cart_and_free_qty(product)
+            // 
+            //     # Convert cart and available quantities to the requested uom
+            //     product_qty_in_cart = product_uom._compute_quantity(product_qty_in_cart, uom)
+            //     available_qty = product_uom._compute_quantity(available_qty, uom, round=False)
+            //     available_qty = float_round(available_qty, precision_digits=0, rounding_method='DOWN')
             // 
             //     old_qty = order_line.product_uom_qty if order_line else 0
             //     added_qty = new_qty - old_qty
@@ -8319,26 +8977,34 @@ namespace Bamboo.Core.Application.Services
             //     if available_qty < total_cart_qty:
             //         allowed_line_qty = available_qty - (product_qty_in_cart - old_qty)
             //         if allowed_line_qty > 0:
+            //             def format_qty(qty):
+            //                 return int(qty) if float(qty).is_integer() else qty
             //             if order_line:
-            //                 order_line._set_shop_warning_stock(total_cart_qty, available_qty)
-            //             else:
-            //                 self._set_shop_warning_stock(total_cart_qty, available_qty)
-            //             returned_warning = order_line.shop_warning or self.shop_warning
-            //         else:  # 0 or negative allowed_qty
-            //             # if existing line: it will be deleted
-            //             # if no existing line: no line will be created
-            //             if order_line:
-            //                 self.shop_warning = _(
-            //                     "Some products became unavailable and your cart has been updated. We're"
-            //                     " sorry for the inconvenience."
+            //                 warning = order_line._set_shop_warning_stock(
+            //                     format_qty(total_cart_qty),
+            //                     format_qty(available_qty),
+            //                     save=False,
             //                 )
-            //                 returned_warning = self.shop_warning
             //             else:
-            //                 returned_warning = _(
-            //                     "The item has not been added to your cart since it is not available."
+            //                 warning = self.env._(
+            //                     "You ask for %(desired_qty)s products but only %(available_qty)s is"
+            //                     " available.",
+            //                     desired_qty=format_qty(total_cart_qty),
+            //                     available_qty=format_qty(available_qty),
             //                 )
-            //         return allowed_line_qty, returned_warning
-            // return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
+            //         elif order_line:
+            //             # Line will be deleted
+            //             warning = self.env._(
+            //                 "Some products became unavailable and your cart has been updated. We're"
+            //                 " sorry for the inconvenience."
+            //             )
+            //         else:
+            //             warning = self.env._(
+            //                 "%(product_name)s has not been added to your cart since it is not available.",
+            //                 product_name=product.name,
+            //             )
+            //         return allowed_line_qty, warning
+            // return super()._verify_updated_quantity(order_line, product_id, new_qty, uom_id, **kwargs)
             */
             return default;
         }
@@ -8390,6 +9056,24 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<SaleOrder> ViewGiftCardsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order.py) ---
+            // def action_view_gift_cards(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Gift Cards"),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'list,form',
+            //     'res_model': 'loyalty.card',
+            //     'domain': [('order_id', '=', self.id), ('program_type', '=', 'gift_card')],
+            //     'context': {'create': False},
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<SaleOrder> ViewInvoiceAsync(Guid id, SaleOrderViewInvoiceRequestDto input)
         {
             /*
@@ -8418,7 +9102,6 @@ namespace Bamboo.Core.Application.Services
             //         'default_partner_id': self.partner_id.id,
             //         'default_partner_shipping_id': self.partner_shipping_id.id,
             //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
-            //         'default_invoice_origin': self.name,
             //     })
             // action['context'] = context
             // return action
@@ -8443,7 +9126,7 @@ namespace Bamboo.Core.Application.Services
             //     'name': _('Milestones'),
             //     'domain': [('sale_line_id', 'in', self.order_line.ids)],
             //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('sale_project.sale_project_milestone_view_tree').id, 'list')],
+            //     'views': [(self.env.ref('sale_project.project_milestone_view_tree').id, 'list')],
             //     'view_mode': 'list',
             //     'help': _("""
             //         <p class="o_view_nocontent_smiling_face">
@@ -8519,23 +9202,37 @@ namespace Bamboo.Core.Application.Services
             // default_sale_line = next((
             //     sol for sol in sorted_line if sol.product_id.type == 'service'
             // ), self.env['sale.order.line'])
-            // action = {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Projects'),
-            //     'domain': ['|', ('sale_order_id', '=', self.id), ('id', 'in', self.with_context(active_test=False).project_ids.ids), ('active', 'in', [True, False])],
-            //     'res_model': 'project.project',
-            //     'views': [(False, 'kanban'), (False, 'list'), (False, 'form')],
-            //     'view_mode': 'kanban,list,form',
-            //     'context': {
-            //         **self._context,
-            //         'default_partner_id': self.partner_id.id,
+            // project_ids = self.project_ids
+            // partner = self.partner_shipping_id or self.partner_id
+            // if len(project_ids) == 1:
+            //     action = self.env['ir.actions.actions'].with_context(
+            //         active_id=self.project_ids.id,
+            //     )._for_xml_id('project.act_project_project_2_project_task_all')
+            //     action['context'] = {
+            //         'active_id': project_ids.id,
+            //         'default_partner_id': partner.id,
+            //         'default_project_id': self.project_ids.id,
+            //         'default_sale_line_id': default_sale_line.id,
+            //         'default_user_ids': [self.env.uid],
+            //         'search_default_sale_order_id': self.id,
+            //     }
+            //     return action
+            // else:
+            //     action = self.env['ir.actions.actions']._for_xml_id('project.open_view_project_all')
+            //     action['domain'] = [
+            //         '|',
+            //         ('sale_order_id', '=', self.id),
+            //         ('id', 'in', project_ids.ids),
+            //     ]
+            //     action['context'] = {
+            //         **self.env.context,
+            //         'default_partner_id': partner.id,
+            //         'default_reinvoiced_sale_order_id': self.id,
             //         'default_sale_line_id': default_sale_line.id,
             //         'default_allow_billable': 1,
+            //         'from_sale_order_action': True,
             //     }
-            // }
-            // if len(self.with_context(active_test=False).project_ids) == 1:
-            //     action.update({'views': [(False, 'form')], 'res_id': self.project_ids.id})
-            // return action
+            //     return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -8562,59 +9259,6 @@ namespace Bamboo.Core.Application.Services
             //         'domain': [('id', 'in', purchase_order_ids)],
             //         'view_mode': 'list,form',
             //     })
-            // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<SaleOrder> ViewTaskAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
-            // def action_view_task(self):
-            // self.ensure_one()
-            // if not self.order_line:
-            //     return {'type': 'ir.actions.act_window_close'}
-            // 
-            // list_view_id = self.env.ref('project.view_task_tree2').id
-            // form_view_id = self.env.ref('project.view_task_form2').id
-            // kanban_view_id = self.env.ref('project.view_task_kanban_inherit_view_default_project').id
-            // 
-            // project_ids = self.tasks_ids.project_id
-            // if len(project_ids) > 1:
-            //     action = self.env['ir.actions.actions']._for_xml_id('project.action_view_task')
-            //     action['domain'] = AND([ast.literal_eval(action['domain']), self._tasks_ids_domain()])
-            //     action['context'] = {}
-            // else:
-            //     # Load top bar if all the tasks linked to the SO belong to the same project
-            //     action = self.env['ir.actions.actions'].with_context({'active_id': project_ids.id})._for_xml_id('project.act_project_project_2_project_task_all')
-            //     action['context'] = {
-            //         'active_id': project_ids.id,
-            //         'search_default_sale_order_id': self.id,
-            //     }
-            // 
-            // if self.tasks_count > 1:  # cross project kanban task
-            //     for idx, (view_id, view_type) in enumerate(action['views']):
-            //         if view_type == 'kanban':
-            //             action['views'][idx] = (kanban_view_id, 'kanban')
-            //         elif view_type == 'list':
-            //             action['views'][idx] = (list_view_id, 'list')
-            //         elif view_type == 'form':
-            //             action['views'][idx] = (form_view_id, 'form')
-            // else:  # 1 or 0 tasks -> form view
-            //     action['views'] = [(form_view_id, 'form')]
-            //     action['res_id'] = self.tasks_ids.id
-            // # set default project
-            // default_line = next((sol for sol in self.order_line if sol.product_id.type == 'service'), self.env['sale.order.line'])
-            // default_project_id = default_line.project_id.id or self.project_ids[:1].id or self.tasks_ids.project_id[:1].id
-            // 
-            // action['context'].update({
-            //     'default_sale_order_id': self.id,
-            //     'default_sale_line_id': default_line.id,
-            //     'default_partner_id': self.partner_id.id,
-            //     'default_project_id': default_project_id,
-            //     'default_user_ids': [self.env.uid],
-            // })
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -8680,26 +9324,22 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // if 'pricelist_id' in vals and any(so.state == 'sale' for so in self):
             //     raise UserError(_("You cannot change the pricelist of a confirmed order !"))
-            // res = super().write(vals)
-            // if vals.get('partner_id'):
-            //     self.filtered(lambda so: so.state in ('sent', 'sale')).message_subscribe(
-            //         partner_ids=[vals['partner_id']],
-            //     )
-            // return res
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order.py) ---
-            // def write(self, values):
-            // res = super().write(values)
-            // if 'state' in values and values['state'] == 'cancel':
+            // def write(self, vals):
+            // res = super().write(vals)
+            // if 'state' in vals and vals['state'] == 'cancel':
             //     # Remove sale line field reference from all projects
             //     self.env['project.project'].sudo().search([('sale_line_id.order_id', 'in', self.ids)]).sale_line_id = False
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // if values.get('order_line') and self.state == 'sale':
             //     for order in self:
             //         pre_order_line_qty = {order_line: order_line.product_uom_qty for order_line in order.mapped('order_line') if not order_line.is_expense}
             // 
-            // if values.get('partner_shipping_id') and self._context.get('update_delivery_shipping_partner'):
+            // if values.get('partner_shipping_id') and self.env.context.get('update_delivery_shipping_partner'):
             //     for order in self:
             //         order.picking_ids.partner_id = values.get('partner_shipping_id')
             // elif values.get('partner_shipping_id'):
@@ -8717,17 +9357,20 @@ namespace Bamboo.Core.Application.Services
             //     # TODO: Log a note on each down document
             //     deadline_datetime = values.get('commitment_date')
             //     for order in self:
-            //         order.order_line.move_ids.date_deadline = deadline_datetime or order.expected_date
+            //         moves = order.order_line.move_ids.filtered(
+            //             lambda m: m.state not in ('done', 'cancel') and m.location_dest_id.usage == 'customer'
+            //         )
+            //         moves.date_deadline = deadline_datetime or order.expected_date
             // 
-            // res = super(SaleOrder, self).write(values)
+            // res = super().write(values)
             // if values.get('order_line') and self.state == 'sale':
             //     for order in self:
             //         to_log = {}
-            //         order.order_line.fetch(['product_uom', 'product_uom_qty', 'display_type', 'is_downpayment'])
+            //         order.order_line.fetch(['product_uom_id', 'product_uom_qty', 'display_type', 'is_downpayment'])
             //         for order_line in order.order_line:
             //             if order_line.display_type or order_line.is_downpayment:
             //                 continue
-            //             if float_compare(order_line.product_uom_qty, pre_order_line_qty.get(order_line, 0.0), precision_rounding=order_line.product_uom.rounding) < 0:
+            //             if float_compare(order_line.product_uom_qty, pre_order_line_qty.get(order_line, 0.0), precision_rounding=order_line.product_uom_id.rounding) < 0:
             //                 to_log[order_line] = (order_line.product_uom_qty, pre_order_line_qty.get(order_line, 0.0))
             //         if to_log:
             //             documents = self.env['stock.picking'].sudo()._log_activity_get_documents(to_log, 'move_ids', 'UP')
@@ -8783,7 +9426,7 @@ namespace Bamboo.Core.Application.Services
             //             [('partner_id', '=', self.partner_id.id), ('program_id', '=', program.id)], limit=1)
             //         # Do not apply 'nominative' programs if no point is given and no coupon exists
             //         if not points and not coupon:
-            //             return {'error': _('No card found for this loyalty program and no points will be given with this order.')}
+            //             return {'error': _("No card found for this loyalty program and no points will be given with this order.")}
             //         elif coupon:
             //             self._add_points_for_coupon({coupon: points})
             //         coupons = coupon

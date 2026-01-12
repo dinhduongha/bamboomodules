@@ -51,6 +51,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-view-pos-order")]
+        public async Task<IActionResult> ActionViewPosOrderAsync(Guid id)
+        {
+            var result = await _appService.ViewPosOrderAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-sale-order")]
         public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
         {
@@ -63,14 +71,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> RegisterAttendeeAsync(Guid id, [FromBody] EventRegistrationRegisterAttendeeRequestDto input)
         {
             var result = await _appService.RegisterAttendeeAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

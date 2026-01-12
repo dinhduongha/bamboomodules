@@ -80,41 +80,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GenerateRefreshTokenAsync<TEntity>(IEnumerable<TEntity> entities, object service, object authorization_code) where TEntity : IEntity<Guid>, IMicrosoftServiceable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_account, FILE: microsoft_service.py) ---
-            // def generate_refresh_token(self, service, authorization_code):
-            // """ Call Microsoft API to refresh the token, with the given authorization code
-            //     :param service : the name of the microsoft service to actualize
-            //     :param authorization_code : the code to exchange against the new refresh token
-            //     :returns the new refresh token
-            // """
-            // ICP_sudo = self.env['ir.config_parameter'].sudo()
-            // scope = self._get_calendar_scope()
-            // 
-            // # Get the Refresh Token From Microsoft And store it in ir.config_parameter
-            // headers = {"Content-type": "application/x-www-form-urlencoded"}
-            // data = {
-            //     'client_id': self._get_microsoft_client_id(service),
-            //     'redirect_uri': ICP_sudo.get_param('microsoft_redirect_uri'),
-            //     'client_secret': _get_microsoft_client_secret(ICP_sudo, service),
-            //     'scope': scope,
-            //     'grant_type': "refresh_token"
-            // }
-            // try:
-            //     req = requests.post(self._get_token_endpoint(), data=data, headers=headers, timeout=TIMEOUT)
-            //     req.raise_for_status()
-            //     content = req.json()
-            // except requests.exceptions.RequestException as exc:
-            //     error_msg = _("Something went wrong during your token generation. Maybe your Authorization Code is invalid or already expired")
-            //     raise self.env['res.config.settings'].get_config_warning(error_msg) from exc
-            // 
-            // return content.get('refresh_token')
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetAuthEndpointInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftServiceable
         {
             /*
@@ -239,13 +204,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'grant_type': 'refresh_token',
             //     'refresh_token': rtoken,
             // }
-            // dummy, response, dummy = self._do_request(
+            // microsoft_data = self._do_request(
             //     DEFAULT_MICROSOFT_TOKEN_ENDPOINT,
             //     params=data,
             //     headers=headers,
             //     method='POST',
             //     preuri=''
             // )
+            // response = microsoft_data[1]
             // return response.get('access_token'), response.get('expires_in')
             */
             return default;

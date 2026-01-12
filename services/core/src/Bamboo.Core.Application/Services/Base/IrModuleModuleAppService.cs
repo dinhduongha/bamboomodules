@@ -20,10 +20,10 @@ namespace Bamboo.Core.Application.Services
     [Module("BaseModule", Category = "Base")]
     public class IrModuleModuleAppService : GenericApplicationService<IrModuleModule>, IIrModuleModuleAppService
     {
-
-        public IrModuleModuleAppService(IRepository<IrModuleModule, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public IrModuleModuleAppService(IRepository<IrModuleModule, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-
+            _posLoadMixinAppService = posLoadMixinAppService;
         }
 
         public async Task<IrModuleModule> ButtonChooseThemeAsync(Guid id)
@@ -56,7 +56,6 @@ namespace Bamboo.Core.Application.Services
             // self._theme_upgrade_upstream()
             // 
             // result = website.button_go_website()
-            // result['context']['params']['with_loader'] = True
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -70,32 +69,44 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.registry.ready or self.env.registry._init:
             //     raise UserError(_('The method _button_immediate_install cannot be called on init or non loaded registries. Please use button_install instead.'))
             // 
-            // if getattr(threading.current_thread(), 'testing', False):
+            // if modules.module.current_test:
             //     raise RuntimeError(
             //         "Module operations inside tests are not transactional and thus forbidden.\n"
             //         "If you really need to perform module operations to test a specific behavior, it "
             //         "is best to write it as a standalone script, and ask the runbot/metastorm team "
             //         "for help."
             //     )
+            // 
+            // # raise error if database is updating for module operations
+            // if self.search_count([('state', 'in', ('to install', 'to upgrade', 'to remove'))], limit=1):
+            //     raise UserError(_("Odoo is currently processing another module operation.\n"
+            //                        "Please try again later or contact your system administrator."))
+            // try:
+            //     # raise error if another transaction is trying to schedule module operations concurrently
+            //     self.env.cr.execute("LOCK ir_module_module IN EXCLUSIVE MODE NOWAIT")
+            // except psycopg2.OperationalError:
+            //     raise UserError(_("Odoo is currently processing another module operation.\n"
+            //                        "Please try again later or contact your system administrator."))
+            // 
             // try:
             //     # This is done because the installation/uninstallation/upgrade can modify a currently
             //     # running cron job and prevent it from finishing, and since the ir_cron table is locked
             //     # during execution, the lock won't be released until timeout.
-            //     self._cr.execute("SELECT * FROM ir_cron FOR UPDATE NOWAIT")
+            //     self.env.cr.execute("SELECT FROM ir_cron FOR UPDATE NOWAIT")
             // except psycopg2.OperationalError:
             //     raise UserError(_("Odoo is currently processing a scheduled action.\n"
             //                       "Module operations are not possible at this time, "
             //                       "please try again later or contact your system administrator."))
             // function(self)
             // 
-            // self._cr.commit()
-            // registry = modules.registry.Registry.new(self._cr.dbname, update_module=True)
-            // self._cr.commit()
+            // self.env.cr.commit()
+            // registry = modules.registry.Registry.new(self.env.cr.dbname, update_module=True)
+            // self.env.cr.commit()
             // if request and request.registry is self.env.registry:
             //     request.env.cr.reset()
             //     request.registry = request.env.registry
             //     assert request.env.registry is registry
-            // self._cr.reset()
+            // self.env.cr.reset()
             // assert self.env.registry is registry
             // 
             // # pylint: disable=next-method-called
@@ -122,6 +133,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.is_admin():
             //     raise AccessDenied()
             // module_name = self.env.context.get('module_name')
+            // import requests  # noqa: PLC0415
             // try:
             //     resp = requests.get(
             //         f"{APPS_URL}/loempia/download/data_app/{module_name}/{major_version}",
@@ -233,7 +245,11 @@ namespace Bamboo.Core.Application.Services
             //     modules._state_update('to install', ['uninstalled'])
             // 
             //     # Determine which auto-installable modules must be installed.
-            //     modules = self.search(auto_domain).filtered(must_install)
+            // 
+            //     if config.get('skip_auto_install'):
+            //         modules = None
+            //     else:
+            //         modules = self.search(auto_domain).filtered(must_install)
             // 
             // # the modules that are installed/to install/to upgrade
             // install_mods = self.search([('state', 'in', list(install_states))])
@@ -278,17 +294,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModuleModule> ButtonInstallCancelAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
-            // def button_install_cancel(self):
-            // self.write({'state': 'uninstalled', 'demo': False})
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<IrModuleModule> ButtonRefreshThemeAsync(Guid id)
         {
             /*
@@ -318,12 +323,25 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<IrModuleModule> ButtonResetStateAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
+            // def button_reset_state(self):
+            // # reset the transient state for all modules in case the module operation is stopped in an unexpected way.
+            // self.search([('state', '=', 'to install')]).state = 'uninstalled'
+            // self.search([('state', 'in', ('to upgrade', 'to remove'))]).state = 'installed'
+            // return True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<IrModuleModule> ButtonUninstallAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def button_uninstall(self):
-            // un_installable_modules = set(odoo.conf.server_wide_modules) & set(self.mapped('name'))
+            // un_installable_modules = set(odoo.tools.config['server_wide_modules']) & set(self.mapped('name'))
             // if un_installable_modules:
             //     raise UserError(_("Those modules cannot be uninstalled: %s", ', '.join(un_installable_modules)))
             // if any(state not in ('installed', 'to upgrade') for state in self.mapped('state')):
@@ -334,17 +352,6 @@ namespace Bamboo.Core.Application.Services
             // deps = self.downstream_dependencies()
             // (self + deps).write({'state': 'to remove'})
             // return dict(ACTION_DICT, name=_('Uninstall'))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<IrModuleModule> ButtonUninstallCancelAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
-            // def button_uninstall_cancel(self):
-            // self.write({'state': 'installed'})
-            // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -361,7 +368,7 @@ namespace Bamboo.Core.Application.Services
             //     'name': _('Uninstall module'),
             //     'view_mode': 'form',
             //     'res_model': 'base.module.uninstall',
-            //     'context': {'default_module_id': self.id},
+            //     'context': {'default_module_ids': self.ids},
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -370,6 +377,12 @@ namespace Bamboo.Core.Application.Services
         public async Task<IrModuleModule> ButtonUpgradeAsync(Guid id)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
+            // def button_upgrade(self):
+            // res = super().button_upgrade()
+            // # revert states for imported modules since they cannot be upgraded
+            // self.search([('imported', '=', True), ('state', '=', 'to upgrade')]).state = 'installed'
+            // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def button_upgrade(self):
             // if not self:
@@ -422,23 +435,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModuleModule> ButtonUpgradeCancelAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
-            // def button_upgrade_cancel(self):
-            // self.write({'state': 'installed'})
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<IrModuleModule> CallAppsInternalAsync(object payload)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
             // def _call_apps(self, payload):
             // headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+            // import requests  # noqa: PLC0415
             // return requests.post(
             //         f"{APPS_URL}/loempia/listdatamodules",
             //         data=payload,
@@ -454,17 +457,31 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def check_external_dependencies(self, module_name, newstate='to install'):
-            // terp = self.get_module_info(module_name)
+            // manifest = modules.Manifest.for_addon(module_name)
+            // if not manifest:
+            //     return  # unavailable module, there is no point in checking dependencies
             // try:
-            //     modules.check_manifest_dependencies(terp)
-            // except Exception as e:
+            //     manifest.check_manifest_dependencies()
+            // except MissingDependency as e:
             //     if newstate == 'to install':
-            //         msg = _('Unable to install module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.args[0])
+            //         msg = _('Unable to install module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.dependency)
             //     elif newstate == 'to upgrade':
-            //         msg = _('Unable to upgrade module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.args[0])
+            //         msg = _('Unable to upgrade module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.dependency)
             //     else:
-            //         msg = _('Unable to process module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.args[0])
-            //     raise UserError(msg)
+            //         msg = _('Unable to process module "%(module)s" because an external dependency is not met: %(dependency)s', module=module_name, dependency=e.dependency)
+            // 
+            //     install_package = None
+            //     if platform.system() == 'Linux':
+            //         distro = platform.freedesktop_os_release()
+            //         id_likes = {distro['ID'], *distro.get('ID_LIKE', '').split()}
+            //         if 'debian' in id_likes or 'ubuntu' in id_likes:
+            //             if package := manifest['external_dependencies'].get('apt', {}).get(e.dependency):
+            //                 install_package = f'apt install {package}'
+            // 
+            //     if install_package:
+            //         msg += _("\nIt can be installed running: %s", install_package)
+            // 
+            //     raise UserError(msg) from e
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -489,6 +506,16 @@ namespace Bamboo.Core.Application.Services
             //         _logger.warning('module %s: description is empty!', module.name)
             */
             return default;
+        }
+
+        public async Task<IrModuleModule> CheckModuleUpdateAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
+            // def check_module_update(self):
+            // return bool(self.sudo().search_count([('state', 'in', ('to install', 'to upgrade', 'to remove'))], limit=1))
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<IrModuleModule> ComputeAccountTemplatesInternalAsync()
@@ -605,8 +632,8 @@ namespace Bamboo.Core.Application.Services
             //                 d.name IN (SELECT name from ir_module_module where id in %s) AND
             //                 m.state NOT IN %s AND
             //                 m.id NOT IN %s """
-            // self._cr.execute(query, (tuple(self.ids), tuple(exclude_states), tuple(known_deps.ids or self.ids)))
-            // new_deps = self.browse([row[0] for row in self._cr.fetchall()])
+            // self.env.cr.execute(query, (tuple(self.ids), tuple(exclude_states), tuple(known_deps.ids or self.ids)))
+            // new_deps = self.browse([row[0] for row in self.env.cr.fetchall()])
             // missing_mods = new_deps - known_deps
             // known_deps |= new_deps
             // if missing_mods:
@@ -616,6 +643,66 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<IrModuleModule> ExtractResourceAttachmentTranslationsInternalAsync(object module, object lang)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
+            // def _extract_resource_attachment_translations(self, module, lang):
+            // yield from super()._extract_resource_attachment_translations(module, lang)
+            // if not self._get(module).imported:
+            //     return
+            // self.env['ir.model.data'].flush_model()
+            // IrAttachment = self.env['ir.attachment']
+            // IrAttachment.flush_model()
+            // module_ = module.replace('_', r'\_')
+            // ids = [r[0] for r in self.env.execute_query(SQL(
+            //     """
+            //         SELECT ia.id
+            //         FROM ir_attachment ia
+            //         JOIN ir_model_data imd
+            //         ON ia.id = imd.res_id
+            //         AND imd.model = 'ir.attachment'
+            //         AND imd.module = %(module)s
+            //         AND ia.res_model = 'ir.ui.view'
+            //         AND ia.res_field IS NULL
+            //         AND ia.res_id IS NULL
+            //         AND (ia.url ilike %(js_pattern)s or ia.url ilike %(xml_pattern)s)
+            //         AND ia.type = 'binary'
+            //         ORDER BY ia.url
+            //     """,
+            //     module=module,
+            //     js_pattern=f'/{module_}/static/src/%.js',
+            //     xml_pattern=f'/{module_}/static/src/%.xml',
+            // ))]
+            // attachments = IrAttachment.browse(OrderedSet(ids))
+            // if not attachments:
+            //     return
+            // translations = self._get_imported_module_translations_for_webclient(module, lang)
+            // translations = {tran['id']: tran['string'] for tran in translations['messages']}
+            // for attachment in attachments.filtered('raw'):
+            //     display_path = f'addons{attachment.url}'
+            //     if attachment.url.endswith('js'):
+            //         extract_method = 'odoo.tools.babel:extract_javascript'
+            //         extract_keywords = {'_t': None}
+            //     else:
+            //         extract_method = 'odoo.tools.translate:babel_extract_qweb'
+            //         extract_keywords = {}
+            //     try:
+            //         with io.BytesIO(attachment.raw) as fileobj:
+            //             for extracted in extract.extract(extract_method, fileobj, keywords=extract_keywords):
+            //                 lineno, message, comments = extracted[:3]
+            //                 value = translations.get(message, '')
+            //                 # (module, ttype, name, res_id, source, comments, record_id, value)
+            //                 yield (module, 'code', display_path, lineno, message, comments + [JAVASCRIPT_TRANSLATION_COMMENT], None, value)
+            //     except Exception:  # noqa: BLE001
+            //         _logger.exception("Failed to extract terms from attachment with url %s", attachment.url)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
+            // def _extract_resource_attachment_translations(self, module, lang):
+            // yield from ()
+            */
+            return default;
+        }
+
         protected async Task<IrModuleModule> GeneratePrimaryPageTemplatesInternalAsync()
         {
             /*
@@ -623,7 +710,7 @@ namespace Bamboo.Core.Application.Services
             // def _generate_primary_page_templates(self):
             // """ Generates page templates based on manifest entries. """
             // View = self.env['ir.ui.view']
-            // manifest = get_manifest(self.name)
+            // manifest = Manifest.for_addon(self.name)
             // templates = manifest['new_page_templates']
             // 
             // # TODO Find a way to create theme and other module's template patches
@@ -749,13 +836,25 @@ namespace Bamboo.Core.Application.Services
             //     return set(items)
             // 
             // create_count = 0
-            // manifest = get_manifest(self.name)
+            // manifest = Manifest.for_addon(self.name)
             // 
             // # ------------------------------------------------------------
             // # Configurator
             // # ------------------------------------------------------------
             // 
-            // configurator_snippets = manifest.get('configurator_snippets', {})
+            // configurator_snippets = dict(manifest.get('configurator_snippets', {}))
+            // addons = manifest.get('configurator_snippets_addons', {})
+            // installed_modules = self.env['ir.module.module']._installed()
+            // 
+            // # Add addon snippets to the main snippet list for batch generation
+            // for module_name, pages in addons.items():
+            //     # generate snippet only if the module is installed
+            //     if module_name not in installed_modules and module_name != self.name:
+            //         continue
+            //     for page, snippets_to_insert in pages.items():
+            //         snippets = configurator_snippets.setdefault(page, [])
+            //         dynamic_snippets = [snippet for snippet, *_ in snippets_to_insert]
+            //         configurator_snippets[page] = list(dict.fromkeys(snippets + dynamic_snippets))
             // 
             // # Generate general configurator snippet templates
             // create_values = []
@@ -840,25 +939,7 @@ namespace Bamboo.Core.Application.Services
             //     path = os.path.join(module.name, 'static/description/index.html')
             //     try:
             //         with tools.file_open(path, 'rb') as desc_file:
-            //             doc = desc_file.read()
-            //             if doc.startswith(XML_DECLARATION):
-            //                 warnings.warn(
-            //                     f"XML declarations in HTML module descriptions are "
-            //                     f"deprecated since Odoo 17, {module.name} can just "
-            //                     f"have a UTF8 description with not need for a "
-            //                     f"declaration.",
-            //                     category=DeprecationWarning,
-            //                 )
-            //             else:
-            //                 try:
-            //                     doc = doc.decode()
-            //                 except UnicodeDecodeError:
-            //                     warnings.warn(
-            //                         f"Non-UTF8 module descriptions are deprecated "
-            //                         f"since Odoo 17 ({module.name}'s description "
-            //                         f"is not utf-8)",
-            //                         category=DeprecationWarning,
-            //                     )
+            //             doc = desc_file.read().decode()
             //             module.description_html = _apply_description_images(doc)
             //     except FileNotFoundError:
             //         overrides = {
@@ -895,17 +976,21 @@ namespace Bamboo.Core.Application.Services
             // for module in self:
             //     if not module.id:
             //         continue
+            //     manifest = self.get_module_info(module.name)
             //     if module.icon:
-            //         path = os.path.join(module.icon.lstrip("/"))
+            //         path = module.icon or ''
+            //     elif manifest:
+            //         path = manifest.get('icon', '')
             //     else:
-            //         path = modules.module.get_module_icon_path(module)
+            //         path = Manifest.for_addon('base').icon
+            //     path = path.removeprefix("/")
             //     if path:
             //         try:
             //             with tools.file_open(path, 'rb', filter_ext=('.png', '.svg', '.gif', '.jpeg', '.jpg')) as image_file:
             //                 module.icon_image = base64.b64encode(image_file.read())
-            //         except FileNotFoundError:
+            //         except OSError:
             //             module.icon_image = ''
-            //     countries = self.get_module_info(module.name).get('countries', [])
+            //     countries = manifest.get('countries', [])
             //     country_code = len(countries) == 1 and countries[0]
             //     module.icon_flag = get_flag(country_code.upper()) if country_code else ''
             */
@@ -924,11 +1009,62 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrModuleModule> GetImportedModuleNamesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
+            // def _get_imported_module_names(self):
+            // return OrderedSet(self.sudo().search_fetch([('imported', '=', True), ('state', '=', 'installed')], ['name']).mapped('name'))
+            */
+            return default;
+        }
+
+        protected async Task<IrModuleModule> GetImportedModuleTranslationsForWebclientInternalAsync(object module, object lang)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
+            // def _get_imported_module_translations_for_webclient(self, module, lang):
+            // if not lang:
+            //     lang = self.env.context.get("lang") or 'en_US'
+            // IrAttachment = self.env['ir.attachment']
+            // 
+            // def filter_func(row):
+            //     return row.get('value') and JAVASCRIPT_TRANSLATION_COMMENT in row['comments']
+            // 
+            // translations = {}
+            // for lang_ in get_base_langs(lang):
+            //     attachment = IrAttachment.sudo().search([
+            //         ('name', '=', f"{module}_{lang_}.po"),
+            //         ('url', '=', f"/{module}/i18n/{lang_}.po"),
+            //         ('res_model', '=', 'ir.module.module'),
+            //         ('res_id', '=', self._get_id(module)),
+            //         ('type', '=', 'binary'),
+            //     ], limit=1)
+            //     if attachment.raw:
+            //         try:
+            //             with io.BytesIO(attachment.raw) as fileobj:
+            //                 fileobj.name = attachment.name
+            //                 webclient_translations = CodeTranslations._read_code_translations_file(fileobj, filter_func)
+            //                 translations.update(webclient_translations)
+            //         except Exception:  # noqa: BLE001
+            //             _logger.warning('module %s: failed to load translation attachment %s for language %s', module, attachment.name, lang)
+            // 
+            // return {
+            //     'messages': tuple({
+            //         'id': src,
+            //         'string': value,
+            //     } for src, value in translations.items())
+            // }
+            */
+            return default;
+        }
+
         protected async Task<IrModuleModule> GetIndustryCategoriesFromAppsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
             // def _get_industry_categories_from_apps(self):
+            // import requests  # noqa: PLC0415
             // try:
             //     resp = requests.post(
             //         f"{APPS_URL}/loempia/listindustrycategory",
@@ -967,7 +1103,7 @@ namespace Bamboo.Core.Application.Services
             // imported_modules = self.filtered(lambda m: m.imported and m.latest_version)
             // for module in imported_modules:
             //     module.installed_version = module.latest_version
-            // super(IrModule, self - imported_modules)._get_latest_version()
+            // super(IrModuleModule, self - imported_modules)._get_latest_version()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def _get_latest_version(self):
             // default_version = modules.adapt_version('1.0')
@@ -1018,10 +1154,11 @@ namespace Bamboo.Core.Application.Services
             // with zipfile.ZipFile(BytesIO(zip_data), "r") as z:
             //     manifest_files = [
             //         file
-            //         for file in z.filelist
+            //         for file in z.infolist()
             //         if file.filename.count('/') == 1
             //         and file.filename.split('/')[1] in MANIFEST_NAMES
             //     ]
+            //     modules_in_zip = {manifest.filename.split('/')[0] for manifest in manifest_files}
             //     for manifest_file in manifest_files:
             //         if manifest_file.file_size > MAX_FILE_SIZE:
             //             raise UserError(_("File '%s' exceed maximum allowed file size", manifest_file.filename))
@@ -1030,7 +1167,7 @@ namespace Bamboo.Core.Application.Services
             //                 terp = ast.literal_eval(manifest.read().decode())
             //         except Exception:
             //             continue
-            //         unmet_dependencies = set(terp.get('depends', [])).difference(installed_mods)
+            //         unmet_dependencies = set(terp.get('depends', [])).difference(installed_mods, modules_in_zip)
             //         dependencies_to_install |= known_mods.filtered(lambda m: m.name in unmet_dependencies)
             //         not_found_modules |= set(
             //             mod for mod in unmet_dependencies if mod not in dependencies_to_install.mapped('name')
@@ -1052,13 +1189,18 @@ namespace Bamboo.Core.Application.Services
             //         (the name must be one of the keys present in ``_theme_model_names``)
             //     :return: recordset of theme template models (of type defined by ``model_name``)
             // """
-            // theme_model_name = self._theme_model_names[model_name]
-            // IrModelData = self.env['ir.model.data']
-            // records = self.env[theme_model_name]
+            // if not self.env.user.has_group('website.group_website_restricted_editor'):
+            //     raise werkzeug.exceptions.Forbidden()
             // 
-            // for module in self:
+            // self_sudo = self.sudo()
+            // 
+            // theme_model_name = self_sudo._theme_model_names[model_name]
+            // IrModelData = self_sudo.env['ir.model.data']
+            // records = self_sudo.env[theme_model_name]
+            // 
+            // for module in self_sudo:
             //     imd_ids = IrModelData.search([('module', '=', module.name), ('model', '=', theme_model_name)]).mapped('res_id')
-            //     records |= self.env[theme_model_name].with_context(active_test=False).browse(imd_ids)
+            //     records |= self_sudo.env[theme_model_name].with_context(active_test=False).browse(imd_ids)
             // return records
             */
             return default;
@@ -1069,11 +1211,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def get_module_info(cls, name):
-            // try:
-            //     return modules.get_manifest(name)
-            // except Exception:
-            //     _logger.debug('Error when trying to fetch information for module %s', name, exc_info=True)
-            //     return {}
+            // if isinstance(name, str):
+            //     # we have no info for studio_customization
+            //     # imported modules are not found using this method
+            //     return modules.Manifest.for_addon(name, display_warning=False) or {}
+            // if isinstance(name, modules.Manifest):
+            //     return name
+            // return {}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1096,6 +1240,7 @@ namespace Bamboo.Core.Application.Services
             //         'offset': offset,
             //     }
             // }
+            // import requests  # noqa: PLC0415
             // try:
             //     resp = self._call_apps(json.dumps(payload))
             //     resp.raise_for_status()
@@ -1241,20 +1386,17 @@ namespace Bamboo.Core.Application.Services
             // known_mods_names = {m.name: m for m in known_mods}
             // installed_mods = [m.name for m in known_mods if m.state == 'installed']
             // 
-            // terp = {}
-            // manifest_path = next((opj(path, name) for name in MANIFEST_NAMES if os.path.exists(opj(path, name))), None)
-            // if manifest_path:
-            //     with file_open(manifest_path, 'rb', env=self.env) as f:
-            //         terp.update(ast.literal_eval(f.read().decode()))
+            // terp = Manifest._from_path(path, env=self.env)
             // if not terp:
             //     return False
-            // if not terp.get('icon'):
-            //     icon_path = 'static/description/icon.png'
-            //     module_icon = module if os.path.exists(opj(path, icon_path)) else 'base'
-            //     terp['icon'] = opj('/', module_icon, icon_path)
             // values = self.get_values_from_terp(terp)
-            // if 'version' in terp:
-            //     values['latest_version'] = adapt_version(terp['version'])
+            // try:
+            //     icon_path = terp.raw_value('icon') or opj(terp.name, 'static/description/icon.png')
+            //     file_path(icon_path, env=self.env, check_exists=True)
+            //     values['icon'] = '/' + icon_path
+            // except OSError:
+            //     pass  # keep the default icon
+            // values['latest_version'] = terp.version
             // if self.env.context.get('data_module'):
             //     values['module_type'] = 'industries'
             // 
@@ -1284,7 +1426,7 @@ namespace Bamboo.Core.Application.Services
             // for pattern in terp.get('cloc_exclude', []):
             //     exclude_list.update(str(p.relative_to(base_dir)) for p in base_dir.glob(pattern) if p.is_file())
             // 
-            // kind_of_files = ['data', 'init_xml', 'update_xml']
+            // kind_of_files = ['data', 'init_xml']
             // if with_demo:
             //     kind_of_files.append('demo')
             // for kind in kind_of_files:
@@ -1294,35 +1436,26 @@ namespace Bamboo.Core.Application.Services
             //             _logger.info("module %s: skip unsupported file %s", module, filename)
             //             continue
             //         _logger.info("module %s: loading %s", module, filename)
-            //         noupdate = False
-            //         if ext == '.csv' and kind in ('init', 'init_xml'):
-            //             noupdate = True
+            //         noupdate = ext == '.csv' and kind == 'init_xml'
             //         pathname = opj(path, filename)
             //         idref = {}
-            //         with file_open(pathname, 'rb', env=self.env) as fp:
-            //             if ext == '.csv':
-            //                 convert_csv_import(self.env, module, pathname, fp.read(), idref, mode, noupdate)
-            //             elif ext == '.sql':
-            //                 convert_sql_import(self.env, fp)
-            //             elif ext == '.xml':
-            //                 convert_xml_import(self.env, module, fp, idref, mode, noupdate)
-            //                 if filename in exclude_list:
-            //                     for key, value in idref.items():
-            //                         xml_id = f"{module}.{key}" if '.' not in key else key
-            //                         name = xml_id.replace('.', '_')
-            //                         if self.env.ref(f"__cloc_exclude__.{name}", raise_if_not_found=False):
-            //                             continue
-            //                         self.env['ir.model.data'].create([{
-            //                             'name': name,
-            //                             'model': self.env['ir.model.data']._xmlid_lookup(xml_id)[0],
-            //                             'module': "__cloc_exclude__",
-            //                             'res_id': value,
-            //                         }])
+            //         convert_file(self.env, module, filename, idref, mode, noupdate, pathname=pathname)
+            //         if filename in exclude_list:
+            //             for xml_id, rec_id in idref.items():
+            //                 name = xml_id.replace('.', '_')
+            //                 if self.env.ref(f"__cloc_exclude__.{name}", raise_if_not_found=False):
+            //                     continue
+            //                 self.env['ir.model.data'].create([{
+            //                     'name': name,
+            //                     'model': self.env['ir.model.data']._xmlid_lookup(xml_id)[0],
+            //                     'module': "__cloc_exclude__",
+            //                     'res_id': rec_id,
+            //                 }])
             // 
             // path_static = opj(path, 'static')
             // IrAttachment = self.env['ir.attachment']
             // if os.path.isdir(path_static):
-            //     for root, dirs, files in os.walk(path_static):
+            //     for root, _dirs, files in os.walk(path_static):
             //         for static_file in files:
             //             full_path = opj(root, static_file)
             //             with file_open(full_path, 'rb', env=self.env) as fp:
@@ -1361,6 +1494,37 @@ namespace Bamboo.Core.Application.Services
             //                         'res_id': attachment.id,
             //                     })
             // 
+            // # store translation files as attachments to allow loading translations for webclient
+            // path_lang = opj(path, 'i18n')
+            // if os.path.isdir(path_lang):
+            //     for entry in os.scandir(path_lang):
+            //         if not entry.is_file() or not entry.name.endswith('.po'):
+            //             # we don't support sub-directories in i18n
+            //             continue
+            //         with file_open(entry.path, 'rb', env=self.env) as fp:
+            //             raw = fp.read()
+            //         lang = entry.name.split('.')[0]
+            //         # store as binary ir.attachment
+            //         values = {
+            //             'name': f'{module}_{lang}.po',
+            //             'url': f'/{module}/i18n/{lang}.po',
+            //             'res_model': 'ir.module.module',
+            //             'res_id': mod.id,
+            //             'type': 'binary',
+            //             'raw': raw,
+            //         }
+            //         attachment = IrAttachment.sudo().search([('url', '=', values['url']), ('type', '=', 'binary'), ('name', '=', values['name'])])
+            //         if attachment:
+            //             attachment.write(values)
+            //         else:
+            //             attachment = IrAttachment.create(values)
+            //             self.env['ir.model.data'].create({
+            //                 'name': f'attachment_{module}_{lang}'.replace('.', '_').replace(' ', '_'),
+            //                 'model': 'ir.attachment',
+            //                 'module': module,
+            //                 'res_id': attachment.id,
+            //             })
+            // 
             // IrAsset = self.env['ir.asset']
             // assets_vals = []
             // 
@@ -1368,6 +1532,10 @@ namespace Bamboo.Core.Application.Services
             // for bundle, commands in terp.get('assets', {}).items():
             //     for command in commands:
             //         directive, target, path = IrAsset._process_command(command)
+            //         if is_wildcard_glob(path):
+            //             raise UserError(_(
+            //                 "The assets path in the manifest of imported module '%(module_name)s' "
+            //                 "cannot contain glob wildcards (e.g., *, **).", module_name=module))
             //         path = path if path.startswith('/') else '/' + path # Ensures a '/' at the start
             //         assets_vals.append({
             //             'name': f'{module}.{bundle}.{path}',
@@ -1404,7 +1572,6 @@ namespace Bamboo.Core.Application.Services
             //     [module],
             //     [lang for lang, _name in self.env['res.lang'].get_installed()],
             //     overwrite=True,
-            //     imported_module=True,
             // )
             // 
             // if ('knowledge.article' in self.env
@@ -1441,25 +1608,23 @@ namespace Bamboo.Core.Application.Services
             // 
             // module_names = []
             // with zipfile.ZipFile(module_file, "r") as z:
-            //     for zf in z.filelist:
+            //     for zf in z.infolist():
             //         if zf.file_size > MAX_FILE_SIZE:
             //             raise UserError(_("File '%s' exceed maximum allowed file size", zf.filename))
             // 
             //     with file_open_temporary_directory(self.env) as module_dir:
-            //         manifest_files = [
-            //             file
-            //             for file in z.filelist
+            //         manifest_files = sorted(
+            //             (file.filename.split('/')[0], file)
+            //             for file in z.infolist()
             //             if file.filename.count('/') == 1
             //             and file.filename.split('/')[1] in MANIFEST_NAMES
-            //         ]
+            //         )
             //         module_data_files = defaultdict(list)
-            //         for manifest in manifest_files:
-            //             manifest_path = z.extract(manifest, module_dir)
-            //             mod_name = manifest.filename.split('/')[0]
-            //             try:
-            //                 with file_open(manifest_path, 'rb', env=self.env) as f:
-            //                     terp = ast.literal_eval(f.read().decode())
-            //             except Exception:
+            //         dependencies = defaultdict(list)
+            //         for mod_name, manifest in manifest_files:
+            //             _manifest_path = z.extract(manifest, module_dir)
+            //             terp = Manifest._from_path(opj(module_dir, mod_name), env=self.env)
+            //             if not terp:
             //                 continue
             //             files_to_import = terp.get('data', []) + terp.get('init_xml', []) + terp.get('update_xml', [])
             //             if with_demo:
@@ -1468,7 +1633,17 @@ namespace Bamboo.Core.Application.Services
             //                 if os.path.splitext(filename)[1].lower() not in ('.xml', '.csv', '.sql'):
             //                     continue
             //                 module_data_files[mod_name].append('%s/%s' % (mod_name, filename))
-            //         for file in z.filelist:
+            //             dependencies[mod_name] = terp.get('depends', [])
+            // 
+            //         dirs = {d for d in os.listdir(module_dir) if os.path.isdir(opj(module_dir, d))}
+            //         sorted_dirs = topological_sort(dependencies)
+            //         if wrong_modules := dirs.difference(sorted_dirs):
+            //             raise UserError(_(
+            //                 "No manifest found in '%(modules)s'. Can't import the zip file.",
+            //                 modules=", ".join(wrong_modules)
+            //             ))
+            // 
+            //         for file in z.infolist():
             //             filename = file.filename
             //             mod_name = filename.split('/')[0]
             //             is_data_file = filename in module_data_files[mod_name]
@@ -1477,8 +1652,7 @@ namespace Bamboo.Core.Application.Services
             //             if is_data_file or is_static or is_translation:
             //                 z.extract(file, module_dir)
             // 
-            //         dirs = [d for d in os.listdir(module_dir) if os.path.isdir(opj(module_dir, d))]
-            //         for mod_name in dirs:
+            //         for mod_name in sorted_dirs:
             //             module_names.append(mod_name)
             //             try:
             //                 # assert mod_name.startswith('theme_')
@@ -1487,8 +1661,8 @@ namespace Bamboo.Core.Application.Services
             //             except Exception as e:
             //                 raise UserError(_(
             //                     "Error while importing module '%(module)s'.\n\n %(error_message)s \n\n",
-            //                     module=mod_name, error_message=exception_to_unicode(e),
-            //                 ))
+            //                     module=mod_name, error_message=traceback.format_exc(),
+            //                 )) from e
             // return "", module_names
             */
             return default;
@@ -1508,12 +1682,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrModuleModule> LoadModuleTermsInternalAsync(object modules, object langs, object overwrite, object imported_module)
+        protected async Task<IrModuleModule> LoadModuleTermsInternalAsync(object modules, object langs, object overwrite)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_module.py) ---
-            // def _load_module_terms(self, modules, langs, overwrite=False, imported_module=False):
-            // super()._load_module_terms(modules, langs, overwrite=overwrite, imported_module=imported_module)
+            // def _load_module_terms(self, modules, langs, overwrite=False):
+            // super()._load_module_terms(modules, langs, overwrite=overwrite)
             // if 'account' in modules:
             //     def load_account_translations(env):
             //         env['account.chart.template']._load_translations(langs=langs)
@@ -1522,10 +1696,39 @@ namespace Bamboo.Core.Application.Services
             //         load_account_translations(self.env)
             //     else:
             //         self.env.registry._delayed_account_translator = load_account_translations
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
+            // def _load_module_terms(self, modules, langs, overwrite=False):
+            // super()._load_module_terms(modules, langs, overwrite=overwrite)
+            // 
+            // translation_importer = TranslationImporter(self.env.cr, verbose=False)
+            // IrAttachment = self.env['ir.attachment']
+            // 
+            // for module in modules:
+            //     if Manifest.for_addon(module, display_warning=False):
+            //         continue
+            //     for lang in langs:
+            //         for lang_ in get_base_langs(lang):
+            //             # Translations for imported data modules only works with imported po files
+            //             attachment = IrAttachment.sudo().search([
+            //                 ('name', '=', f"{module}_{lang_}.po"),
+            //                 ('url', '=', f"/{module}/i18n/{lang_}.po"),
+            //                 ('type', '=', 'binary'),
+            //             ], limit=1)
+            //             if attachment.raw:
+            //                 try:
+            //                     with io.BytesIO(attachment.raw) as fileobj:
+            //                         fileobj.name = attachment.name
+            //                         translation_importer.load(fileobj, 'po', lang, module=module)
+            //                 except Exception:   # noqa: BLE001
+            //                     _logger.warning('module %s: failed to load translation attachment %s for language %s', module, attachment.name, lang)
+            //         if lang != 'en_US' and lang not in translation_importer.imported_langs:
+            //             _logger.info('module %s: no translation for language %s', module, lang)
+            // 
+            // translation_importer.save(overwrite=overwrite)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
-            // def _load_module_terms(self, modules, langs, overwrite=False, imported_module=False):
+            // def _load_module_terms(self, modules, langs, overwrite=False):
             // """ Add missing website specific translation """
-            // res = super()._load_module_terms(modules, langs, overwrite=overwrite, imported_module=imported_module)
+            // res = super()._load_module_terms(modules, langs, overwrite=overwrite)
             // 
             // if not langs or langs == ['en_US'] or not modules:
             //     return res
@@ -1534,42 +1737,41 @@ namespace Bamboo.Core.Application.Services
             // 
             // # use the translation dic of the generic to translate the specific
             // self.env.cr.flush()
-            // cache = self.env.cache
             // View = self.env['ir.ui.view']
             // field = self.env['ir.ui.view']._fields['arch_db']
-            // # assume there are not too many records
+            // batch_size = PREFETCH_MAX // 10
             // self.env.cr.execute(""" SELECT generic.arch_db, specific.arch_db, specific.id
-            //                   FROM ir_ui_view generic
-            //                  INNER JOIN ir_ui_view specific
-            //                     ON generic.key = specific.key
-            //                  WHERE generic.website_id IS NULL AND generic.type = 'qweb'
-            //                  AND specific.website_id IS NOT NULL
-            //     """)
-            // for generic_arch_db, specific_arch_db, specific_id in self.env.cr.fetchall():
-            //     if not generic_arch_db:
-            //         continue
-            //     langs_update = (langs & generic_arch_db.keys()) - {'en_US'}
-            //     if not langs_update:
-            //         continue
-            //     # get dictionaries limited to the requested languages
-            //     generic_arch_db_en = generic_arch_db.get('en_US')
-            //     specific_arch_db_en = specific_arch_db.get('en_US')
-            //     generic_arch_db_update = {k: generic_arch_db[k] for k in langs_update}
-            //     specific_arch_db_update = {k: specific_arch_db.get(k, specific_arch_db_en) for k in langs_update}
-            //     generic_translation_dictionary = field.get_translation_dictionary(generic_arch_db_en, generic_arch_db_update)
-            //     specific_translation_dictionary = field.get_translation_dictionary(specific_arch_db_en, specific_arch_db_update)
-            //     # update specific_translation_dictionary
-            //     for term_en, specific_term_langs in specific_translation_dictionary.items():
-            //         if term_en not in generic_translation_dictionary:
+            //                                   FROM ir_ui_view generic
+            //                                  INNER JOIN ir_ui_view specific
+            //                                     ON generic.key = specific.key
+            //                                  WHERE generic.website_id IS NULL AND generic.type = 'qweb'
+            //                                  AND specific.website_id IS NOT NULL
+            //                                  AND generic.arch_db IS NOT NULL
+            //                                  AND specific.arch_db IS NOT NULL
+            //                     """)
+            // while batch := self.env.cr.fetchmany(batch_size):
+            //     for generic_arch_db, specific_arch_db, specific_id in batch:
+            //         langs_update = (langs & generic_arch_db.keys()) - {'en_US'}
+            //         if not langs_update:
             //             continue
-            //         for lang, generic_term_lang in generic_translation_dictionary[term_en].items():
-            //             if overwrite or term_en == specific_term_langs[lang]:
-            //                 specific_term_langs[lang] = generic_term_lang
-            //     for lang in langs_update:
-            //         specific_arch_db[lang] = field.translate(
-            //             lambda term: specific_translation_dictionary.get(term, {lang: None})[lang], specific_arch_db_en)
-            //     cache.update_raw(View.browse(specific_id), field, [specific_arch_db], dirty=True)
-            // 
+            //         # get dictionaries limited to the requested languages
+            //         generic_arch_db_en = generic_arch_db.get('en_US')
+            //         specific_arch_db_en = specific_arch_db.get('en_US')
+            //         generic_arch_db_update = {k: generic_arch_db[k] for k in langs_update}
+            //         specific_arch_db_update = {k: specific_arch_db.get(k, specific_arch_db_en) for k in langs_update}
+            //         generic_translation_dictionary = field.get_translation_dictionary(generic_arch_db_en, generic_arch_db_update)
+            //         specific_translation_dictionary = field.get_translation_dictionary(specific_arch_db_en, specific_arch_db_update)
+            //         # update specific_translation_dictionary
+            //         for term_en, specific_term_langs in specific_translation_dictionary.items():
+            //             if term_en not in generic_translation_dictionary:
+            //                 continue
+            //             for lang, generic_term_lang in generic_translation_dictionary[term_en].items():
+            //                 if overwrite or term_en == specific_term_langs[lang]:
+            //                     specific_term_langs[lang] = generic_term_lang
+            //         for lang in langs_update:
+            //             specific_arch_db[lang] = field.translate(
+            //                 lambda term: specific_translation_dictionary.get(term, {lang: None})[lang], specific_arch_db_en)
+            //         field._update_cache(View.with_context(prefetch_langs=True).browse(specific_id), specific_arch_db, dirty=True)
             // default_menu = self.env.ref('website.main_menu', raise_if_not_found=False)
             // if not default_menu:
             //     return res
@@ -1596,24 +1798,72 @@ namespace Bamboo.Core.Application.Services
             // ))
             // 
             // return res
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: ir_module_module.py) ---
+            // def _load_module_terms(self, modules, langs, overwrite=False):
+            // # Add missing website_sale-specific translations
+            // 
+            // super()._load_module_terms(modules, langs, overwrite=overwrite)
+            // 
+            // to_langs = [lang for lang in langs if lang != 'en_US']
+            // if not (to_langs and modules):
+            //     return  # nothing to translate
+            // 
+            // def set_field(fname):
+            //     lang_items = (
+            //         SQL('%(lang)s, o_step.%(fname)s->>%(lang)s', lang=lang, fname=fname)
+            //         for lang in to_langs
+            //     )
+            //     # PSQL functions take 100 args max, and we're generating 2 per lang
+            //     batched_lang_items = split_every(50, lang_items)
+            //     update_jsonb = SQL(' || ').join(
+            //         SQL('jsonb_build_object(%s)', SQL(', ').join(batch))
+            //         for batch in batched_lang_items
+            //     )
+            //     ordered = reversed if overwrite else iter
+            //     src = SQL(' || ').join(ordered([
+            //         SQL('jsonb_strip_nulls(%s)', update_jsonb),  # gets updated translation
+            //         SQL('jsonb_strip_nulls(step.%s)', fname),  # keeps current translation
+            //     ]))
+            //     return SQL('%(fname)s = %(src)s', fname=fname, src=src)
+            // 
+            // WebsiteCheckoutStep = self.env['website.checkout.step']
+            // to_translate = [
+            //     SQL.identifier(field.name)
+            //     for field in WebsiteCheckoutStep._fields.values()
+            //     if field.translate is True  # more correct in case of `callable(field.translate)`
+            // ]
+            // set_fields = SQL(', ').join(set_field(fname) for fname in to_translate)
+            // 
+            // WebsiteCheckoutStep.invalidate_model()
+            // self.env.cr.execute(SQL(
+            //     '''
+            //     UPDATE website_checkout_step step
+            //        SET %(set_fields)s
+            //       FROM website_checkout_step o_step
+            //       JOIN website_checkout_step s_step
+            //         ON o_step.step_href = s_step.step_href
+            //      WHERE o_step.website_id IS NULL
+            //        AND s_step.website_id IS NOT NULL
+            //        AND step.id = s_step.id
+            //     ''',
+            //     set_fields=set_fields,
+            // ))
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
-            // def _load_module_terms(self, modules, langs, overwrite=False, imported_module=False):
+            // def _load_module_terms(self, modules, langs, overwrite=False):
             // """ Load PO files of the given modules for the given languages. """
             // # load i18n files
             // translation_importer = TranslationImporter(self.env.cr, verbose=False)
             // 
             // for module_name in modules:
-            //     modpath = get_module_path(module_name, downloaded=imported_module)
-            //     if not modpath:
+            //     if not Manifest.for_addon(module_name, display_warning=False):
             //         continue
             //     for lang in langs:
-            //         is_lang_imported = False
-            //         env = self.env if imported_module else None
-            //         for po_path in get_po_paths(module_name, lang, env=env):
+            //         for po_path in get_po_paths(module_name, lang):
             //             _logger.info('module %s: loading translation file %s for language %s', module_name, po_path, lang)
             //             translation_importer.load_file(po_path, lang)
-            //             is_lang_imported = True
-            //         if lang != 'en_US' and not is_lang_imported:
+            //         for data_path in get_datafile_translation_path(module_name):
+            //             translation_importer.load_file(data_path, lang, module=module_name)
+            //         if lang != 'en_US' and lang not in translation_importer.imported_langs:
             //             _logger.info('module %s: no translation for language %s', module_name, lang)
             // 
             // translation_importer.save(overwrite=overwrite)
@@ -1621,37 +1871,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrModuleModule> LoadPosDataDomainInternalAsync()
+        protected async Task<IrModuleModule> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_module_module.py) ---
-            // def _load_pos_data_domain(self):
+            // def _load_pos_data_domain(self, data, config):
             // return [('name', '=', 'pos_settle_due')]
             */
             return default;
         }
 
-        protected async Task<IrModuleModule> LoadPosDataFieldsInternalAsync()
+        protected async Task<IrModuleModule> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_module_module.py) ---
-            // def _load_pos_data_fields(self):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'state']
-            */
-            return default;
-        }
-
-        protected async Task<IrModuleModule> LoadPosDataInternalAsync(object data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_module_module.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain()
-            // fields = self._load_pos_data_fields()
-            // return {
-            //     'data': self.search_read(domain, fields, load=False),
-            //     'fields': self._load_pos_data_fields(),
-            // }
             */
             return default;
         }
@@ -1683,12 +1918,6 @@ namespace Bamboo.Core.Application.Services
             // res = super().module_uninstall()
             // if modules_to_delete:
             //     deleted_modules_names = modules_to_delete.mapped('name')
-            //     assets_data = self.env['ir.model.data'].search([
-            //         ('model', '=', 'ir.asset'),
-            //         ('module', 'in', deleted_modules_names),
-            //     ])
-            //     assets = self.env['ir.asset'].search([('id', 'in', assets_data.mapped('res_id'))])
-            //     assets.unlink()
             //     _logger.info("deleting imported modules upon uninstallation: %s",
             //                  ", ".join(deleted_modules_names))
             //     modules_to_delete.unlink()
@@ -1842,7 +2071,7 @@ namespace Bamboo.Core.Application.Services
             // It is important to remove these copies because using them will crash if
             // they rely on data that don't exist anymore if the module is removed.
             // """
-            // domain = expression.OR([[('key', '=like', m.name + '.%')] for m in self])
+            // domain = Domain.OR(Domain('key', '=like', m.name + '.%') for m in self)
             // orphans = self.env['ir.ui.view'].with_context(**{'active_test': False, MODULE_UNINSTALL_FLAG: True}).search(domain)
             // orphans.unlink()
             */
@@ -1865,12 +2094,12 @@ namespace Bamboo.Core.Application.Services
             // def search_panel_select_range(self, field_name, **kwargs):
             // if field_name == 'category_id':
             //     enable_counters = kwargs.get('enable_counters', False)
-            //     domain = [
+            //     domain = Domain([
             //         ('parent_id', '=', False),
             //         '|',
             //         ('module_ids.application', '!=', False),
             //         ('child_ids.module_ids', '!=', False),
-            //     ]
+            //     ])
             // 
             //     excluded_xmlids = [
             //         'base.module_category_website_theme',
@@ -1887,10 +2116,7 @@ namespace Bamboo.Core.Application.Services
             //         excluded_category_ids.append(categ.id)
             // 
             //     if excluded_category_ids:
-            //         domain = expression.AND([
-            //             domain,
-            //             [('id', 'not in', excluded_category_ids)],
-            //         ])
+            //         domain &= Domain('id', 'not in', excluded_category_ids)
             // 
             //     records = self.env['ir.module.category'].search_read(domain, ['display_name'], order="sequence")
             // 
@@ -1898,7 +2124,7 @@ namespace Bamboo.Core.Application.Services
             //     for record in records:
             //         record_id = record['id']
             //         if enable_counters:
-            //             model_domain = expression.AND([
+            //             model_domain = Domain.AND([
             //                 kwargs.get('search_domain', []),
             //                 kwargs.get('category_domain', []),
             //                 kwargs.get('filter_domain', []),
@@ -1912,7 +2138,7 @@ namespace Bamboo.Core.Application.Services
             //         'values': list(values_range.values()),
             //     }
             // 
-            // return super(Module, self).search_panel_select_range(field_name, **kwargs)
+            // return super().search_panel_select_range(field_name, **kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1925,12 +2151,8 @@ namespace Bamboo.Core.Application.Services
             // if level < 1:
             //     raise UserError(_('Recursion error in modules dependencies!'))
             // 
-            // # whether some modules are installed with demo data
-            // demo = False
-            // 
             // for module in self:
             //     if module.state not in states_to_update:
-            //         demo = demo or module.demo
             //         continue
             // 
             //     # determine dependency modules to update/others
@@ -1946,17 +2168,13 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             update_mods += dep.depend_id
             // 
-            //     # update dependency modules that require it, and determine demo for module
-            //     update_demo = update_mods._state_update(newstate, states_to_update, level=level-1)
-            //     module_demo = module.demo or update_demo or any(mod.demo for mod in ready_mods)
-            //     demo = demo or module_demo
+            //     # update dependency modules that require it
+            //     update_mods._state_update(newstate, states_to_update, level=level-1)
             // 
             //     if module.state in states_to_update:
             //         # check dependencies and update module itself
             //         self.check_external_dependencies(module.name, newstate)
-            //         module.write({'state': newstate, 'demo': module_demo})
-            // 
-            // return demo
+            //         module.write({'state': newstate})
             */
             return default;
         }
@@ -1984,14 +2202,17 @@ namespace Bamboo.Core.Application.Services
             //     :param website: ``website`` model for which the models have to be cleaned
             // 
             // """
+            // if not self.env.user.has_group('website.group_website_restricted_editor'):
+            //     raise werkzeug.exceptions.Forbidden()
+            // 
             // self.ensure_one()
-            // model = self.env[model_name]
+            // model_sudo = self.env[model_name].sudo()
             // 
             // if model_name in ('website.page', 'website.menu'):
-            //     return model
+            //     return model_sudo
             // # use active_test to also unlink archived models
             // # and use MODULE_UNINSTALL_FLAG to also unlink inherited models
-            // orphans = model.with_context(**{'active_test': False, MODULE_UNINSTALL_FLAG: True}).search([
+            // orphans = model_sudo.with_context(**{'active_test': False, MODULE_UNINSTALL_FLAG: True}).search([
             //     ('key', '=like', self.name + '.%'),
             //     ('website_id', '=', website.id),
             //     ('theme_template_id', '=', False),
@@ -2096,7 +2317,7 @@ namespace Bamboo.Core.Application.Services
             //     for model_name in self._theme_model_names:
             //         module._update_records(model_name, website)
             // 
-            //     if self._context.get('apply_new_theme'):
+            //     if self.env.context.get('apply_new_theme'):
             //         # Both the theme install and upgrade flow ends up here.
             //         # The _post_copy() is supposed to be called only when the theme
             //         # is installed for the first time on a website.
@@ -2151,11 +2372,11 @@ namespace Bamboo.Core.Application.Services
             // for module in self:
             //     _logger.info('Unload theme %s for website %s from template.' % (self.mapped('name'), website.id))
             // 
-            //     for model_name in self._theme_model_names:
-            //         template = self._get_module_data(model_name)
+            //     for model_name in module._theme_model_names:
+            //         template = module._get_module_data(model_name)
             //         models = template.with_context(**{'active_test': False, MODULE_UNINSTALL_FLAG: True}).mapped('copy_ids').filtered(lambda m: m.website_id == website)
             //         models.unlink()
-            //         self._theme_cleanup(model_name, website)
+            //         module._theme_cleanup(model_name, website)
             */
             return default;
         }
@@ -2166,13 +2387,16 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
             // def _theme_upgrade_upstream(self):
             // """ Upgrade the upstream dependencies of a theme, and install it if necessary. """
+            // if not self.env.user.has_group('website.group_website_restricted_editor'):
+            //     raise werkzeug.exceptions.Forbidden()
+            // 
             // def install_or_upgrade(theme):
             //     if theme.state != 'installed':
             //         theme.button_install()
             //     themes = theme + theme._theme_get_upstream()
             //     themes.filtered(lambda m: m.state == 'installed').button_upgrade()
             // 
-            // self._button_immediate_function(install_or_upgrade)
+            // self.sudo()._button_immediate_function(install_or_upgrade)
             */
             return default;
         }
@@ -2207,7 +2431,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // categs = category.split('/')
             // if categs != current_category_path:
-            //     cat_id = modules.db.create_categories(self._cr, categs)
+            //     cat_id = modules.db.create_categories(self.env.cr, categs)
             //     self.write({'category_id': cat_id})
             */
             return default;
@@ -2221,9 +2445,9 @@ namespace Bamboo.Core.Application.Services
             // existing = set(self.country_ids.ids)
             // needed = set(self.env['res.country'].search([('code', 'in', [c.upper() for c in countries])]).ids)
             // for dep in (needed - existing):
-            //     self._cr.execute('INSERT INTO module_country (module_id, country_id) values (%s, %s)', (self.id, dep))
+            //     self.env.cr.execute('INSERT INTO module_country (module_id, country_id) values (%s, %s)', (self.id, dep))
             // for dep in (existing - needed):
-            //     self._cr.execute('DELETE FROM module_country WHERE module_id = %s and country_id = %s', (self.id, dep))
+            //     self.env.cr.execute('DELETE FROM module_country WHERE module_id = %s and country_id = %s', (self.id, dep))
             // self.invalidate_recordset(['country_ids'])
             // self.env['res.company'].invalidate_model(['uninstalled_l10n_module_ids'])
             */
@@ -2236,13 +2460,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def _update_dependencies(self, depends=None, auto_install_requirements=()):
             // self.env['ir.module.module.dependency'].flush_model()
-            // existing = set(dep.name for dep in self.dependencies_id)
+            // existing = {dep.name for dep in self.dependencies_id}
             // needed = set(depends or [])
             // for dep in (needed - existing):
-            //     self._cr.execute('INSERT INTO ir_module_module_dependency (module_id, name) values (%s, %s)', (self.id, dep))
+            //     self.env.cr.execute('INSERT INTO ir_module_module_dependency (module_id, name) values (%s, %s)', (self.id, dep))
             // for dep in (existing - needed):
-            //     self._cr.execute('DELETE FROM ir_module_module_dependency WHERE module_id = %s and name = %s', (self.id, dep))
-            // self._cr.execute('UPDATE ir_module_module_dependency SET auto_install_required = (name = any(%s)) WHERE module_id = %s',
+            //     self.env.cr.execute('DELETE FROM ir_module_module_dependency WHERE module_id = %s and name = %s', (self.id, dep))
+            // self.env.cr.execute('UPDATE ir_module_module_dependency SET auto_install_required = (name = any(%s)) WHERE module_id = %s',
             //                  (list(auto_install_requirements or ()), self.id))
             // self.env['ir.module.module.dependency'].invalidate_model(['auto_install_required'])
             // self.invalidate_recordset(['dependencies_id'])
@@ -2256,12 +2480,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def _update_exclusions(self, excludes=None):
             // self.env['ir.module.module.exclusion'].flush_model()
-            // existing = set(excl.name for excl in self.exclusion_ids)
+            // existing = {excl.name for excl in self.exclusion_ids}
             // needed = set(excludes or [])
             // for name in (needed - existing):
-            //     self._cr.execute('INSERT INTO ir_module_module_exclusion (module_id, name) VALUES (%s, %s)', (self.id, name))
+            //     self.env.cr.execute('INSERT INTO ir_module_module_exclusion (module_id, name) VALUES (%s, %s)', (self.id, name))
             // for name in (existing - needed):
-            //     self._cr.execute('DELETE FROM ir_module_module_exclusion WHERE module_id=%s AND name=%s', (self.id, name))
+            //     self.env.cr.execute('DELETE FROM ir_module_module_exclusion WHERE module_id=%s AND name=%s', (self.id, name))
             // self.invalidate_recordset(['exclusion_ids'])
             */
             return default;
@@ -2297,9 +2521,9 @@ namespace Bamboo.Core.Application.Services
             // known_mods_names = {mod.name: mod for mod in known_mods}
             // 
             // # iterate through detected modules and update/create them in db
-            // for mod_name in modules.get_modules():
-            //     mod = known_mods_names.get(mod_name)
-            //     terp = self.get_module_info(mod_name)
+            // for manifest in modules.Manifest.all_addon_manifests():
+            //     mod = known_mods_names.get(manifest.name)
+            //     terp = self.get_module_info(manifest)
             //     values = self.get_values_from_terp(terp)
             // 
             //     if mod:
@@ -2314,12 +2538,11 @@ namespace Bamboo.Core.Application.Services
             //             res[0] += 1
             //         if updated_values:
             //             mod.write(updated_values)
+            //     elif not manifest or not terp:
+            //         continue
             //     else:
-            //         mod_path = modules.get_module_path(mod_name)
-            //         if not mod_path or not terp:
-            //             continue
             //         state = "uninstalled" if terp.get('installable', True) else "uninstallable"
-            //         mod = self.create(dict(name=mod_name, state=state, **values))
+            //         mod = self.create(dict(name=manifest.name, state=state, **values))
             //         res[1] += 1
             // 
             //     mod._update_from_terp(terp)
@@ -2485,13 +2708,35 @@ namespace Bamboo.Core.Application.Services
             //                 m.name IN (SELECT name from ir_module_module_dependency where module_id in %s) AND
             //                 m.state NOT IN %s AND
             //                 m.id NOT IN %s """
-            // self._cr.execute(query, (tuple(self.ids), tuple(exclude_states), tuple(known_deps.ids or self.ids)))
-            // new_deps = self.browse([row[0] for row in self._cr.fetchall()])
+            // self.env.cr.execute(query, (tuple(self.ids), tuple(exclude_states), tuple(known_deps.ids or self.ids)))
+            // new_deps = self.browse([row[0] for row in self.env.cr.fetchall()])
             // missing_mods = new_deps - known_deps
             // known_deps |= new_deps
             // if missing_mods:
             //     known_deps |= missing_mods.upstream_dependencies(known_deps, exclude_states)
             // return known_deps
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<IrModuleModule> ViewDeliveryMethodsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: ir_module_module.py) ---
+            // def action_view_delivery_methods(self):
+            // self.ensure_one()
+            // 
+            // module_name = self.name  # e.g., delivery_dhl
+            // if not module_name.startswith('delivery_'):
+            //     return False
+            // 
+            // delivery_type = module_name.removeprefix('delivery_')  # dhl, fedex, etc.
+            // action = self.env.ref('delivery.action_delivery_carrier_form').read()[0]
+            // if delivery_type == 'mondialrelay':
+            //     action['context'] = {'search_default_is_mondialrelay': True}
+            // else:
+            //     action['context'] = {'search_default_delivery_type': delivery_type}
+            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2519,10 +2764,10 @@ namespace Bamboo.Core.Application.Services
             // def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
             // if _domain_asks_for_industries(domain):
             //     fields_name = list(specification.keys())
-            //     modules_list = self._get_modules_from_apps(fields_name, 'industries', False, domain, offset=offset, limit=limit)
+            //     modules_list = self._get_modules_from_apps(fields_name, 'industries', False, domain, offset=offset)
             //     return {
-            //         'length': len(modules_list),
-            //         'records': modules_list,
+            //         'length': len(modules_list) + offset,
+            //         'records': modules_list[:(limit or 80)],
             //     }
             // else:
             //     return super().web_search_read(domain, specification, offset=offset, limit=limit, order=order, count_limit=count_limit)
@@ -2585,7 +2830,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //             -> We want to upgrade every website using this theme.
             // """
-            // if request and request.db and request.env and request.context.get('apply_new_theme'):
+            // if request and request.db and request.env and request.env.context.get('apply_new_theme'):
             //     self = self.with_context(apply_new_theme=True)
             // 
             // for module in self:

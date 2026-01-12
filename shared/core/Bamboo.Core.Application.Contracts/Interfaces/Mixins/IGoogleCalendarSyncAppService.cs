@@ -18,6 +18,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ActionOpenComposerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ActionSendSmsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ActionSendmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> ActionUnlinkEventAsync<TEntity>(IEnumerable<TEntity> entities, Guid attendee_id, object recurrence) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ApplyRecurrenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object specific_values_creation, object no_send_edit, object generic_values_creation) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ApplyRecurrenceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values, object future) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> AttendeesValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner_commands) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -38,7 +39,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> CheckValuesToSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ClearVideocallLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeAttendeesCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> ComputeCandidateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeCurrentAttendeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeDisplayDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -46,6 +46,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeDisplayTimeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeDtstartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeDurationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> ComputeEffectivePrivacyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeFieldValueInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeGoogleIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ComputeInvalidEmailPartnerIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -73,7 +74,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> DetachEventsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object events) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> DoSmsReminderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object alarms) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> EnsureAttendeesHaveEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> EventIdsFromGoogleIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> google_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> FetchQueryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object query, object fields) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> FindPartnerCustomerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ForbidRecurrenceCreationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -82,8 +82,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetActivityDeadlineFromStartInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object allday) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetActivityExcludedModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetArchiveValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> GetAttendeeEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetAttendeeStatusO2mInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attendee) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> GetContactDetailsDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object organizer, object partners) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetCustomFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetCustomerDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetCustomerSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -104,7 +104,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetGoogleSyncedFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetIcsFileInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetLangWeekStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> GetMailMessageAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object operation, object model_name) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetMailTzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetMicrosoftSyncDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> GetMicrosoftSyncedFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -154,9 +153,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> IsGoogleInsertionBlockedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sender_user) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> IsMatchingTimeslotInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object allday) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> IsMicrosoftInsertionBlockedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sender_user) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> IsPartnerUnavailableInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object partner_events) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> MailGetOperationForMailMessageOperationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message_operation) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> MicrosoftToOdooRecurrenceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_recurrence, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> MicrosoftValuesOccurenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> NeedVideoCallInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> OdooAttendeeCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -165,9 +166,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> OdooRemindersCommandsMInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> OdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event, object default_reminders) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> OnchangeDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> PreparePartnerContactDetailsHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object section_title, object partner) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> RangeCalculationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object duration) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> RangeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> ReadGroupAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object groupby, object offset, object limit, object @orderby, object lazy) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<List<object>> ReadGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, object offset, object limit, object order) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<List<object>> ReadGroupingSetsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object grouping_sets, object aggregates, object order) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ReconcileEventsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object ranges) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> RecreateEventDifferentOrganizerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values, object sender_user) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> ResetAttendeesStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -182,9 +185,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> SetDiscussVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SetVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object recurrence_update) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> SetupEventRecurrentAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object events_by_alarm) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SkipSendMailStatusUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SplitFromInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object recurrence_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> SplitRecurrenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object time_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> StopAtInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SyncActivitiesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SyncGoogle2odooInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_events, object write_dates, object default_reminders) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;

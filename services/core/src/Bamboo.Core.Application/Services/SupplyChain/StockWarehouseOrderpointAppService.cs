@@ -43,27 +43,19 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
             // def check_product_is_not_kit(self):
             // domain = [
-            //     '|', ('product_id', 'in', self.product_id.ids),
-            //          '&', ('product_id', '=', False),
-            //               ('product_tmpl_id', 'in', self.product_id.product_tmpl_id.ids),
-            //     ('type', '=', 'phantom'),
+            //     '&',
+            //         '|', ('product_id', 'in', self.product_id.ids),
+            //             '&', ('product_id', '=', False),
+            //                 ('product_tmpl_id', 'in', self.product_id.product_tmpl_id.ids),
+            //         ('type', '=', 'phantom'),
+            //         '|',
+            //             ('company_id', 'in', self.company_id.ids),
+            //             ('company_id', '=', False),
             // ]
             // if self.env['mrp.bom'].search_count(domain, limit=1):
             //     raise ValidationError(_("A product with a kit-type bill of materials can not have a reordering rule."))
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> CheckProductUomInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _check_product_uom(self):
-            // ''' Check if the UoM has the same category as the product standard UoM '''
-            // if any(orderpoint.product_id.uom_id.category_id != orderpoint.product_uom.category_id for orderpoint in self):
-            //     raise ValidationError(_('You have to select a product unit of measure that is in the same category as the default unit of measure of the product'))
-            */
-            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> ComputeAllowedLocationIdsInternalAsync()
@@ -75,12 +67,43 @@ namespace Bamboo.Core.Application.Services
             // #  - strictly belonging to our warehouse
             // #  - not belonging to any warehouses
             // for orderpoint in self:
-            //     loc_domain = [('usage', 'in', ('internal', 'view'))]
+            //     loc_domain = Domain('usage', 'in', ('internal', 'view'))
             //     other_warehouses = self.env['stock.warehouse'].search([('id', '!=', orderpoint.warehouse_id.id)])
             //     for view_location_id in other_warehouses.mapped('view_location_id'):
-            //         loc_domain = expression.AND([loc_domain, ['!', ('id', 'child_of', view_location_id.id)]])
-            //         loc_domain = expression.AND([loc_domain, ['|', ('company_id', '=', False), ('company_id', '=', orderpoint.company_id.id)]])
+            //         loc_domain &= ~Domain('id', 'child_of', view_location_id.id)
+            //         loc_domain &= Domain('company_id', 'in', [False, orderpoint.company_id.id])
             //     orderpoint.allowed_location_ids = self.env['stock.location'].search(loc_domain)
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeAllowedReplenishmentUomIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_allowed_replenishment_uom_ids(self):
+            // super()._compute_allowed_replenishment_uom_ids()
+            // for orderpoint in self:
+            //     if 'manufacture' in orderpoint.rule_ids.mapped('action'):
+            //         orderpoint.allowed_replenishment_uom_ids += orderpoint.product_id.bom_ids.product_uom_id
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_allowed_replenishment_uom_ids(self):
+            // for orderpoint in self:
+            //     orderpoint.allowed_replenishment_uom_ids = orderpoint.product_id.uom_ids
+            //     if 'buy' in orderpoint.rule_ids.mapped('action'):
+            //         orderpoint.allowed_replenishment_uom_ids += orderpoint.product_id.seller_ids.product_uom_id
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeBomIdPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_bom_id_placeholder(self):
+            // for orderpoint in self:
+            //     default_bom = orderpoint._get_default_bom()
+            //     orderpoint.bom_id_placeholder = default_bom.display_name if default_bom else ''
             */
             return default;
         }
@@ -98,7 +121,7 @@ namespace Bamboo.Core.Application.Services
             // orderpoints_with_bom = self.filtered(lambda orderpoint: orderpoint.product_id.variant_bom_ids or orderpoint.product_id.bom_ids)
             // for orderpoint in orderpoints_with_bom:
             //     if 'manufacture' in orderpoint.rule_ids.mapped('action'):
-            //         boms = (orderpoint.product_id.variant_bom_ids or orderpoint.product_id.bom_ids)
+            //         boms = orderpoint.bom_id or orderpoint.product_id.variant_bom_ids or orderpoint.product_id.bom_ids
             //         orderpoint.days_to_order = boms and boms[0].days_to_prepare_mo or 0
             // return res
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
@@ -120,6 +143,109 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockWarehouseOrderpoint> ComputeDeadlineDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_deadline_date(self):
+            // """ Extend to add more depends values """
+            // super()._compute_deadline_date()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_deadline_date(self):
+            // """ Extend to add more depends values """
+            // super()._compute_deadline_date()
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_deadline_date(self):
+            // """ This function first checks if the qty_on_hand is less than the product_min_qty. If it is the case,
+            // the deadline_date is set to the current day. Afterwards if there are still orderpoints to compute,
+            // it retrieves all the outgoing and incoming moves until the lead_horizon_date and adds (or subtracts)
+            // them to the qty_on_hand. The first instance when the qty_on_hand dips below the product_min_qty is
+            // the deadline date. """
+            // self.fetch(['qty_on_hand'])
+            // critical_orderpoints = self.filtered(lambda o: o.qty_on_hand < o.product_min_qty)
+            // critical_orderpoints.deadline_date = fields.Date.today()
+            // orderpoints_to_compute = self - critical_orderpoints
+            // if not orderpoints_to_compute:
+            //     return
+            // 
+            // # We have to filter by company here in case of multi-company and because horizon_days is a company setting
+            // for company in orderpoints_to_compute.company_id:
+            //     company_orderpoints = orderpoints_to_compute.filtered(lambda c: c.company_id == company)
+            //     horizon_date = fields.Date.today() + relativedelta.relativedelta(days=company_orderpoints.get_horizon_days())
+            //     _, domain_move_in, domain_move_out = company_orderpoints.product_id._get_domain_locations()
+            //     domain_move_in = Domain.AND([
+            //         [('product_id', 'in', company_orderpoints.product_id.ids)],
+            //         [('state', 'in', ('waiting', 'confirmed', 'assigned', 'partially_available'))],
+            //         domain_move_in,
+            //         [('date', '<=', horizon_date)],
+            //     ])
+            //     domain_move_out = Domain.AND([
+            //         [('product_id', '=', company_orderpoints.product_id.ids)],
+            //         [('state', 'in', ('waiting', 'confirmed', 'assigned', 'partially_available'))],
+            //         domain_move_out,
+            //         [('date', '<=', horizon_date)],
+            //     ])
+            // 
+            //     Move = self.env['stock.move'].with_context(active_test=False)
+            //     incoming_moves_by_product_date = Move._read_group(domain_move_in, ['product_id', 'location_dest_id', 'date:day'], ['product_qty:sum'])
+            //     outgoing_moves_by_product_date = Move._read_group(domain_move_out, ['product_id', 'location_id', 'date:day'], ['product_qty:sum'])
+            // 
+            //     moves_by_product_dict = {}
+            //     for product, location, in_date, in_qty in incoming_moves_by_product_date:
+            //         if not moves_by_product_dict.get((product.id, location.id)):
+            //             moves_by_product_dict[product.id, location.id] = defaultdict(float)
+            //         moves_by_product_dict[product.id, location.id][in_date.date()] += in_qty
+            //     for product, location, out_date, out_qty in outgoing_moves_by_product_date:
+            //         if not moves_by_product_dict.get((product.id, location.id)):
+            //             moves_by_product_dict[product.id, location.id] = defaultdict(float)
+            //         moves_by_product_dict[product.id, location.id][out_date.date()] -= out_qty
+            // 
+            //     for orderpoint in company_orderpoints:
+            //         qty_on_hand_at_date = orderpoint.qty_on_hand
+            //         tentative_deadline = horizon_date
+            //         for move_date, move_qty in sorted(moves_by_product_dict.get((orderpoint.product_id.id, orderpoint.location_id.id), {}).items()):
+            //             qty_on_hand_at_date += move_qty
+            //             if qty_on_hand_at_date < orderpoint.product_min_qty:
+            //                 tentative_deadline = move_date - relativedelta.relativedelta(days=orderpoint.lead_days)
+            //                 break
+            //         orderpoint.deadline_date = tentative_deadline if tentative_deadline < horizon_date else False
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeEffectiveBomIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_effective_bom_id(self):
+            // for orderpoint in self:
+            //     orderpoint.effective_bom_id = orderpoint.bom_id if orderpoint.bom_id else orderpoint._get_default_bom()
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeEffectiveRouteIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_effective_route_id(self):
+            // for orderpoint in self:
+            //     orderpoint.effective_route_id = orderpoint.route_id if orderpoint.route_id else orderpoint._get_default_route()
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeEffectiveVendorIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_effective_vendor_id(self):
+            // for orderpoint in self:
+            //     orderpoint.effective_vendor_id = (orderpoint.supplier_id if orderpoint.supplier_id else orderpoint._get_default_supplier()).partner_id
+            */
+            return default;
+        }
+
         protected async Task<StockWarehouseOrderpoint> ComputeLeadDaysInternalAsync()
         {
             /*
@@ -132,9 +258,10 @@ namespace Bamboo.Core.Application.Services
             // for orderpoint in orderpoints_to_compute.with_context(bypass_delay_description=True):
             //     values = orderpoint._get_lead_days_values()
             //     lead_days, dummy = orderpoint.rule_ids._get_lead_days(orderpoint.product_id, **values)
-            //     lead_days_date = fields.Date.today() + relativedelta.relativedelta(days=lead_days['total_delay'])
-            //     orderpoint.lead_days_date = lead_days_date
-            // (self - orderpoints_to_compute).lead_days_date = False
+            //     orderpoint.lead_horizon_date = fields.Date.today() + relativedelta.relativedelta(days=lead_days['total_delay'] + lead_days['horizon_time'])
+            //     orderpoint.lead_days = lead_days['total_delay']
+            // (self - orderpoints_to_compute).lead_horizon_date = False
+            // (self - orderpoints_to_compute).lead_days = 0
             */
             return default;
         }
@@ -168,36 +295,9 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockWarehouseOrderpoint> ComputeProductMinQtyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _compute_product_min_qty(self):
-            // for orderpoint in self:
-            //     if orderpoint.product_max_qty < orderpoint.product_min_qty or not orderpoint.product_min_qty:
-            //         orderpoint.product_min_qty = orderpoint.product_max_qty
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> ComputeProductSupplierIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _compute_product_supplier_id(self):
-            // for orderpoint in self:
-            //     orderpoint.product_supplier_id = orderpoint.product_tmpl_id.seller_ids.sorted('sequence')[:1].partner_id.id
-            */
-            return default;
-        }
-
         protected async Task<StockWarehouseOrderpoint> ComputeQtyInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _compute_qty(self):
-            // """ Extend to add more depends values """
-            // return super()._compute_qty()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _compute_qty(self):
             // orderpoints_contexts = defaultdict(lambda: self.env['stock.warehouse.orderpoint'])
@@ -224,12 +324,22 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockWarehouseOrderpoint> ComputeQtyToOrderComputedInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_qty_to_order_computed(self):
+            // """ Extend to add more depends values """
+            // super()._compute_qty_to_order_computed()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_qty_to_order_computed(self):
+            // """ Extend to add more depends values
+            // TODO: Probably performance costly due to x2many in depends
+            // """
+            // return super()._compute_qty_to_order_computed()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _compute_qty_to_order_computed(self):
             // def to_compute(orderpoint):
             //     rounding = orderpoint.product_uom.rounding
-            //     # The check is on purpose. We only want to consider the visibility days if the forecast is negative and
-            //     # there is a already something to ressuply base on lead times.
+            //     # The check is on purpose. We only want to consider the horizon days if the forecast is negative and
+            //     # there is already something to resupply base on lead times.
             //     return (
             //         orderpoint.id
             //         and float_compare(orderpoint.qty_forecast, orderpoint.product_min_qty, precision_rounding=rounding) < 0
@@ -255,17 +365,42 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockWarehouseOrderpoint> ComputeReplenishmentUomIdPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_replenishment_uom_id_placeholder(self):
+            // for orderpoint in self:
+            //     replenishment_alternative = orderpoint._get_replenishment_multiple_alternative(orderpoint.qty_to_order)
+            //     orderpoint.replenishment_uom_id_placeholder = replenishment_alternative.display_name if replenishment_alternative else ''
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeRouteIdPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_route_id_placeholder(self):
+            // for orderpoint in self:
+            //     default_route = orderpoint._get_default_route()
+            //     orderpoint.route_id_placeholder = default_route.display_name if default_route else ''
+            */
+            return default;
+        }
+
         protected async Task<StockWarehouseOrderpoint> ComputeRulesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _compute_rules(self):
             // orderpoints_to_compute = self.filtered(lambda orderpoint: orderpoint.product_id and orderpoint.location_id)
-            // # Small cache mapping (location_id, route_id, product_id.route_ids | product_id.categ_id.total_route_ids) -> stock.rule.
+            // # Small cache mapping (location_id, route_id, {all product routes}) -> stock.rule.
             // # This reduces calls to _get_rules_from_location for products without routes and products with the same routes.
             // rules_cache = {}
             // for orderpoint in orderpoints_to_compute:
-            //     cache_key = (orderpoint.location_id, orderpoint.route_id, orderpoint.product_id.route_ids | orderpoint.product_id.categ_id.total_route_ids)
+            //     all_product_routes = orderpoint.product_id.route_ids | orderpoint.product_id.categ_id.total_route_ids | orderpoint.product_id.get_total_routes()
+            //     cache_key = (orderpoint.location_id, orderpoint.route_id, all_product_routes)
             //     rule_ids = rules_cache.get(cache_key) or orderpoint.product_id._get_rules_from_location(
             //         orderpoint.location_id, route_ids=orderpoint.route_id
             //     )
@@ -285,21 +420,58 @@ namespace Bamboo.Core.Application.Services
             // for res in self.env['stock.rule'].search_read([('action', '=', 'manufacture')], ['route_id']):
             //     manufacture_route.append(res['route_id'][0])
             // for orderpoint in self:
-            //     orderpoint.show_bom = orderpoint.route_id.id in manufacture_route
+            //     orderpoint.show_bom = orderpoint.effective_route_id.id in manufacture_route
             */
             return default;
         }
 
-        protected async Task<StockWarehouseOrderpoint> ComputeShowSuppplierInternalAsync()
+        protected async Task<StockWarehouseOrderpoint> ComputeShowSupplierInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _compute_show_suppplier(self):
+            // def _compute_show_supplier(self):
             // buy_route = []
             // for res in self.env['stock.rule'].search_read([('action', '=', 'buy')], ['route_id']):
             //     buy_route.append(res['route_id'][0])
             // for orderpoint in self:
-            //     orderpoint.show_supplier = orderpoint.route_id.id in buy_route
+            //     orderpoint.show_supplier = orderpoint.effective_route_id.id in buy_route
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeShowSupplyWarningInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _compute_show_supply_warning(self):
+            // for orderpoint in self:
+            //     if 'manufacture' in orderpoint.rule_ids.mapped('action') and not orderpoint.show_supply_warning:
+            //         orderpoint.show_supply_warning = not orderpoint.product_id.bom_ids
+            //         continue
+            //     super(StockWarehouseOrderpoint, orderpoint)._compute_show_supply_warning()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_show_supply_warning(self):
+            // for orderpoint in self:
+            //     if 'buy' in orderpoint.rule_ids.mapped('action') and not orderpoint.show_supply_warning:
+            //         orderpoint.show_supply_warning = not orderpoint.vendor_ids
+            //         continue
+            //     super(StockWarehouseOrderpoint, orderpoint)._compute_show_supply_warning()
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _compute_show_supply_warning(self):
+            // for orderpoint in self:
+            //     orderpoint.show_supply_warning = not orderpoint.rule_ids
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> ComputeSupplierIdPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_supplier_id_placeholder(self):
+            // for orderpoint in self:
+            //     default_supplier = orderpoint._get_default_supplier()
+            //     orderpoint.supplier_id_placeholder = default_supplier.display_name if default_supplier else ''
             */
             return default;
         }
@@ -310,35 +482,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _compute_unwanted_replenish(self):
             // for orderpoint in self:
-            //     if not orderpoint.product_id or float_is_zero(orderpoint.qty_to_order, precision_rounding=orderpoint.product_uom.rounding) or float_compare(orderpoint.product_max_qty, 0, precision_rounding=orderpoint.product_uom.rounding) == -1:
+            //     if not orderpoint.product_id or orderpoint.product_uom.is_zero(orderpoint.qty_to_order) or orderpoint.product_uom.compare(orderpoint.product_max_qty, 0) == -1:
             //         orderpoint.unwanted_replenish = False
             //     else:
             //         after_replenish_qty = orderpoint.product_id.with_context(company_id=orderpoint.company_id.id, location=orderpoint.location_id.id).virtual_available + orderpoint.qty_to_order
-            //         orderpoint.unwanted_replenish = float_compare(after_replenish_qty, orderpoint.product_max_qty, precision_rounding=orderpoint.product_uom.rounding) > 0
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> ComputeVisibilityDaysInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
-            // def _compute_visibility_days(self):
-            // res = super()._compute_visibility_days()
-            // for orderpoint in self:
-            //     if 'manufacture' in orderpoint.rule_ids.mapped('action'):
-            //         orderpoint.visibility_days = orderpoint.manufacturing_visibility_days
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _compute_visibility_days(self):
-            // res = super()._compute_visibility_days()
-            // for orderpoint in self:
-            //     if 'buy' in orderpoint.rule_ids.mapped('action'):
-            //         orderpoint.visibility_days = orderpoint.purchase_visibility_days
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _compute_visibility_days(self):
-            // self.visibility_days = 0
+            //         orderpoint.unwanted_replenish = orderpoint.product_uom.compare(after_replenish_qty, orderpoint.product_max_qty) > 0
             */
             return default;
         }
@@ -361,9 +509,115 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockWarehouseOrderpoint> GetDefaultBomInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _get_default_bom(self):
+            // self.ensure_one()
+            // if self.show_bom:
+            //     return self._get_default_rule()._get_matching_bom(
+            //         self.product_id, self.company_id, {}
+            //     )
+            // else:
+            //     return self.env['mrp.bom']
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> GetDefaultRouteInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _get_default_route(self):
+            // route_ids = self.env['stock.rule'].search([
+            //     ('action', '=', 'manufacture')
+            // ]).route_id
+            // route_id = self.rule_ids.route_id & route_ids
+            // if self.product_id.bom_ids and route_id:
+            //     return route_id[0]
+            // return super()._get_default_route()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _get_default_route(self):
+            // route_ids = self.env['stock.rule'].search([
+            //     ('action', '=', 'buy')
+            // ]).route_id
+            // route_id = self.rule_ids.route_id & route_ids
+            // if self.product_id.seller_ids and route_id:
+            //     return route_id[0]
+            // return super()._get_default_route()
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _get_default_route(self):
+            // self.ensure_one()
+            // rules_groups = self.env['stock.rule']._read_group([
+            //     '|', ('route_id.product_selectable', '!=', False),
+            //     ('route_id.product_categ_selectable', '!=', False),
+            //     ('location_dest_id', 'in', self.location_id.ids),
+            //     ('action', 'in', ['pull_push', 'pull']),
+            //     ('route_id.active', '!=', False)
+            // ], ['location_dest_id', 'route_id'])
+            // for location_dest, route in rules_groups:
+            //     if route in (self.product_id.route_ids | self.product_id.categ_id.route_ids) and self.location_id == location_dest:
+            //         return route
+            // return self.env['stock.route']
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> GetDefaultRuleInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _get_default_rule(self):
+            // self.ensure_one()
+            // return self.env['stock.rule']._get_rule(self.product_id, self.location_id, {
+            //     'route_ids': self.route_id,
+            //     'warehouse_id': self.warehouse_id,
+            // })
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> GetDefaultSupplierInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _get_default_supplier(self):
+            // self.ensure_one()
+            // if self.show_supplier and self.product_id:
+            //     return self._get_default_rule()._get_matching_supplier(
+            //         self.product_id, self.qty_to_order, self.product_uom, self.company_id, {}
+            //     )
+            // else:
+            //     return self.env['product.supplierinfo']
+            */
+            return default;
+        }
+
+        public async Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def get_horizon_days(self):
+            // """ Return the value for Horizon. This can be (in order of priority):
+            // - the value set in context in the replenishment view
+            // - the value set on the company of the all the records in self. There should be at most 1 company_id on self.
+            // - the value set on the company of the user if all else fail.
+            // """
+            // return self.env.context.get('global_horizon_days', (self.company_id or self.env.company).horizon_days)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<StockWarehouseOrderpoint> GetLeadDaysValuesInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _get_lead_days_values(self):
+            // values = super()._get_lead_days_values()
+            // if self.bom_id:
+            //     values['bom'] = self.bom_id
+            // return values
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
             // def _get_lead_days_values(self):
             // values = super()._get_lead_days_values()
@@ -376,6 +630,22 @@ namespace Bamboo.Core.Application.Services
             // return {
             //     'days_to_order': self.days_to_order,
             // }
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> GetMultipleRoundedQtyInternalAsync(object qty_to_order)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _get_multiple_rounded_qty(self, qty_to_order):
+            // replenishment_multiple = self.replenishment_uom_id or self._get_replenishment_multiple_alternative(qty_to_order)
+            // if replenishment_multiple and replenishment_multiple != self.product_id.uom_id:
+            //     # Replace the UP by DOWN if we don't want to order more quantity than product_max_qty
+            //     qty_to_order = self.product_id.uom_id._compute_quantity(qty_to_order, replenishment_multiple)
+            //     qty_to_order = fields.Float.round(qty_to_order, precision_digits=0, rounding_method="UP")
+            //     qty_to_order = replenishment_multiple._compute_quantity(qty_to_order, self.product_id.uom_id)
+            // return qty_to_order
             */
             return default;
         }
@@ -407,22 +677,24 @@ namespace Bamboo.Core.Application.Services
             // # Remove previous automatically created orderpoint that has been refilled.
             // orderpoints_removed = orderpoints._unlink_processed_orderpoints()
             // orderpoints = orderpoints - orderpoints_removed
+            // if self.env.context.get('force_orderpoint_recompute', False):
+            //     orderpoints._compute_qty_to_order_computed()
+            //     orderpoints._compute_deadline_date()
             // to_refill = defaultdict(float)
             // all_product_ids = self._get_orderpoint_products()
             // all_replenish_location_ids = self._get_orderpoint_locations()
             // ploc_per_day = defaultdict(set)
             // # For each replenish location get products with negative virtual_available aka forecast
             // 
-            // 
             // Move = self.env['stock.move'].with_context(active_test=False)
             // Quant = self.env['stock.quant'].with_context(active_test=False)
             // domain_quant, domain_move_in_loc, domain_move_out_loc = all_product_ids._get_domain_locations_new(all_replenish_location_ids.ids)
-            // domain_state = [('state', 'in', ('waiting', 'confirmed', 'assigned', 'partially_available'))]
-            // domain_product = [['product_id', 'in', all_product_ids.ids]]
+            // domain_state = Domain('state', 'in', ('waiting', 'confirmed', 'assigned', 'partially_available'))
+            // domain_product = Domain('product_id', 'in', all_product_ids.ids)
             // 
-            // domain_quant = expression.AND([domain_product, domain_quant])
-            // domain_move_in = expression.AND([domain_product, domain_state, domain_move_in_loc])
-            // domain_move_out = expression.AND([domain_product, domain_state, domain_move_out_loc])
+            // domain_quant = Domain.AND((domain_product, domain_quant))
+            // domain_move_in = Domain.AND((domain_product, domain_state, domain_move_in_loc))
+            // domain_move_out = Domain.AND((domain_product, domain_state, domain_move_out_loc))
             // 
             // moves_in = defaultdict(list)
             // for item in Move._read_group(domain_move_in, ['product_id', 'location_dest_id', 'location_final_id'], ['product_qty:sum']):
@@ -436,22 +708,21 @@ namespace Bamboo.Core.Application.Services
             // for item in Quant._read_group(domain_quant, ['product_id', 'location_id'], ['quantity:sum']):
             //     quants[item[0]].append((item[1], item[2]))
             // 
-            // rounding = {product.id: product.uom_id.rounding for product in all_product_ids}
             // path = {loc: loc.parent_path for loc in self.env['stock.location'].with_context(active_test=False).search([('id', 'child_of', all_replenish_location_ids.ids)])}
             // for loc in all_replenish_location_ids:
             //     for product in all_product_ids:
             //         qty_available = sum(q[1] for q in quants.get(product, [(0, 0)]) if is_parent_path_in(loc, path, q[0]))
             //         incoming_qty = sum(m[2] for m in moves_in.get(product, [(0, 0, 0)]) if is_parent_path_in(loc, path, m[0]) or is_parent_path_in(loc, path, m[1]))
             //         outgoing_qty = sum(m[1] for m in moves_out.get(product, [(0, 0)]) if is_parent_path_in(loc, path, m[0]))
-            //         if float_compare(qty_available + incoming_qty - outgoing_qty, 0, precision_rounding=rounding[product.id]) < 0:
+            //         if product.uom_id.compare(qty_available + incoming_qty - outgoing_qty, 0) < 0:
             //             # group product by lead_days and location in order to read virtual_available
             //             # in batch
             //             rules = product._get_rules_from_location(loc)
-            //             lead_days = rules.with_context(bypass_delay_description=True)._get_lead_days(product)[0]['total_delay']
-            //             ploc_per_day[(lead_days, loc)].add(product.id)
+            //             lead_days = rules.with_context(bypass_delay_description=True)._get_lead_days(product)[0]
+            //             ploc_per_day[lead_days['total_delay'] + lead_days['horizon_time'], loc].add(product.id)
             // 
             // # recompute virtual_available with lead days
-            // today = fields.datetime.now().replace(hour=23, minute=59, second=59)
+            // today = fields.Datetime.now().replace(hour=23, minute=59, second=59)
             // product_ids = set()
             // location_ids = set()
             // for (days, loc), prod_ids in ploc_per_day.items():
@@ -461,7 +732,7 @@ namespace Bamboo.Core.Application.Services
             //         to_date=today + relativedelta.relativedelta(days=days)
             //     ).read(['virtual_available'])
             //     for (product, qty) in zip(products, qties):
-            //         if float_compare(qty['virtual_available'], 0, precision_rounding=product.uom_id.rounding) < 0:
+            //         if product.uom_id.compare(qty['virtual_available'], 0) < 0:
             //             to_refill[(qty['id'], loc.id)] = qty['virtual_available']
             //             product_ids.add(qty['id'])
             //             location_ids.add(loc.id)
@@ -473,7 +744,7 @@ namespace Bamboo.Core.Application.Services
             // product_ids = list(product_ids)
             // location_ids = list(location_ids)
             // qty_by_product_loc = self.env['product.product'].browse(product_ids)._get_quantity_in_progress(location_ids=location_ids)[0]
-            // rounding = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // rounding = self.env['decimal.precision'].precision_get('Product Unit')
             // # Group orderpoint by product-location
             // orderpoint_by_product_location = self.env['stock.warehouse.orderpoint']._read_group(
             //     [('id', 'in', orderpoints.ids), ('product_id', 'in', product_ids)],
@@ -519,9 +790,6 @@ namespace Bamboo.Core.Application.Services
             //         orderpoint_values_list.append(orderpoint_values)
             // 
             // orderpoints = self.env['stock.warehouse.orderpoint'].with_user(SUPERUSER_ID).create(orderpoint_values_list)
-            // for orderpoint in orderpoints:
-            //     orderpoint._set_default_route_id()
-            //     orderpoint.qty_multiple = orderpoint._get_qty_multiple_to_order()
             // return action
             */
             return default;
@@ -542,7 +810,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _get_orderpoint_procurement_date(self):
-            // return timezone(self.company_id.partner_id.tz or 'UTC').localize(datetime.combine(self.lead_days_date, time(12))).astimezone(UTC).replace(tzinfo=None)
+            // return timezone(self.company_id.partner_id.tz or 'UTC').localize(datetime.combine(self.lead_horizon_date, time(12))).astimezone(UTC).replace(tzinfo=None)
             */
             return default;
         }
@@ -581,74 +849,81 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockWarehouseOrderpoint> GetProductContextInternalAsync(object visibility_days)
+        protected async Task<StockWarehouseOrderpoint> GetProductContextInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _get_product_context(self, visibility_days=0):
+            // def _get_product_context(self):
             // """Used to call `virtual_available` when running an orderpoint."""
             // self.ensure_one()
             // return {
             //     'location': self.location_id.id,
-            //     'to_date': datetime.combine(self.lead_days_date + relativedelta.relativedelta(days=visibility_days), time.max)
+            //     'to_date': datetime.combine(self.lead_horizon_date, time.max)
             // }
             */
             return default;
         }
 
-        protected async Task<StockWarehouseOrderpoint> GetQtyMultipleToOrderInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
-            // def _get_qty_multiple_to_order(self):
-            // """ Calculates the minimum quantity that can be ordered according to the qty and UoM of the BoM
-            // """
-            // self.ensure_one()
-            // qty_multiple_to_order = super()._get_qty_multiple_to_order()
-            // if 'manufacture' in self.rule_ids.mapped('action'):
-            //     bom = self.env['mrp.bom']._bom_find(self.product_id, bom_type='normal')[self.product_id]
-            //     return bom.product_uom_id._compute_quantity(bom.product_qty, self.product_uom)
-            // return qty_multiple_to_order
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _get_qty_multiple_to_order(self):
-            // """ Calculates the minimum quantity that can be ordered according to the PO UoM or BoM
-            // """
-            // self.ensure_one()
-            // return 0
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> GetQtyToOrderInternalAsync(object force_visibility_days, object qty_in_progress_by_orderpoint)
+        protected async Task<StockWarehouseOrderpoint> GetQtyToOrderInternalAsync(object qty_in_progress_by_orderpoint)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _get_qty_to_order(self, force_visibility_days=False, qty_in_progress_by_orderpoint=None):
+            // def _get_qty_to_order(self, qty_in_progress_by_orderpoint=None):
             // self.ensure_one()
-            // visibility_days = self.visibility_days
-            // if force_visibility_days is not False:
-            //     # Accepts falsy values such as 0.
-            //     visibility_days = force_visibility_days
             // qty_to_order = 0.0
             // qty_in_progress_by_orderpoint = qty_in_progress_by_orderpoint or {}
             // qty_in_progress = qty_in_progress_by_orderpoint.get(self.id)
             // if qty_in_progress is None:
             //     qty_in_progress = self._quantity_in_progress()[self.id]
             // rounding = self.product_uom.rounding
-            // # The check is on purpose. We only want to consider the visibility days if the forecast is negative and
-            // # there is a already something to ressuply base on lead times.
+            // # The check is on purpose. We only want to consider the horizon days if the forecast is negative and
+            // # there is already something to resupply base on lead times.
             // if float_compare(self.qty_forecast, self.product_min_qty, precision_rounding=rounding) < 0:
-            //     product_context = self._get_product_context(visibility_days=visibility_days)
+            //     product_context = self._get_product_context()
             //     qty_forecast_with_visibility = self.product_id.with_context(product_context).read(['virtual_available'])[0]['virtual_available'] + qty_in_progress
             //     qty_to_order = max(self.product_min_qty, self.product_max_qty) - qty_forecast_with_visibility
-            //     remainder = (self.qty_multiple > 0.0 and qty_to_order % self.qty_multiple) or 0.0
-            //     if (float_compare(remainder, 0.0, precision_rounding=rounding) > 0
-            //             and float_compare(self.qty_multiple - remainder, 0.0, precision_rounding=rounding) > 0):
-            //         if float_is_zero(self.product_max_qty, precision_rounding=rounding):
-            //             qty_to_order += self.qty_multiple - remainder
-            //         else:
-            //             qty_to_order -= remainder
+            //     qty_to_order = self._get_multiple_rounded_qty(qty_to_order)
             // return qty_to_order
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> GetReplenishmentMultipleAlternativeInternalAsync(object qty_to_order)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _get_replenishment_multiple_alternative(self, qty_to_order):
+            // self.ensure_one()
+            // routes = self.effective_route_id or self.product_id.route_ids
+            // if not any(r.action == 'manufacture' for r in routes.rule_ids):
+            //     return super()._get_replenishment_multiple_alternative(qty_to_order)
+            // bom = self.bom_id or self.env['mrp.bom']._bom_find(self.product_id, picking_type=False, bom_type='normal', company_id=self.company_id.id)[self.product_id]
+            // return bom.product_uom_id
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _get_replenishment_multiple_alternative(self, qty_to_order):
+            // self.ensure_one()
+            // routes = self.effective_route_id or self.product_id.route_ids
+            // if not (self.product_id and any(r.action == 'buy' for r in routes.rule_ids)):
+            //     return super()._get_replenishment_multiple_alternative(qty_to_order)
+            // planned_date = self._get_orderpoint_procurement_date()
+            // global_horizon_days = self.get_horizon_days()
+            // if global_horizon_days:
+            //     planned_date -= relativedelta.relativedelta(days=int(global_horizon_days))
+            // date_deadline = planned_date or fields.Date.today()
+            // dates_info = self.product_id._get_dates_info(date_deadline, self.location_id, route_ids=self.route_id)
+            // supplier = self.supplier_id or self.product_id.with_company(self.company_id)._select_seller(
+            //     quantity=qty_to_order,
+            //     date=max(dates_info['date_order'].date(), fields.Date.today()),
+            //     uom_id=self.product_uom
+            // )
+            // return supplier.product_uom_id
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _get_replenishment_multiple_alternative(self, qty_to_order):
+            // """
+            // This method is used to get the alternative replenishment_uom_id for the orderpoint if not set manually.
+            // To be overridden in relevant modules.
+            // """
+            // return False
             */
             return default;
         }
@@ -659,9 +934,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
             // def _get_replenishment_order_notification(self):
             // self.ensure_one()
-            // domain = [('orderpoint_id', 'in', self.ids)]
+            // domain = Domain('orderpoint_id', 'in', self.ids)
             // if self.env.context.get('written_after'):
-            //     domain = AND([domain, [('write_date', '>=', self.env.context.get('written_after'))]])
+            //     domain &= Domain('write_date', '>=', self.env.context.get('written_after'))
             // production = self.env['mrp.production'].search(domain, limit=1)
             // if production:
             //     return {
@@ -682,9 +957,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
             // def _get_replenishment_order_notification(self):
             // self.ensure_one()
-            // domain = [('orderpoint_id', 'in', self.ids)]
+            // domain = Domain('orderpoint_id', 'in', self.ids)
             // if self.env.context.get('written_after'):
-            //     domain = AND([domain, [('write_date', '>=', self.env.context.get('written_after'))]])
+            //     domain &= Domain('write_date', '>=', self.env.context.get('written_after'))
             // order = self.env['purchase.order.line'].search(domain, limit=1).order_id
             // if order:
             //     return {
@@ -705,9 +980,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _get_replenishment_order_notification(self):
             // self.ensure_one()
-            // domain = [('orderpoint_id', 'in', self.ids)]
+            // domain = Domain('orderpoint_id', 'in', self.ids)
             // if self.env.context.get('written_after'):
-            //     domain = expression.AND([domain, [('write_date', '>=', self.env.context.get('written_after'))]])
+            //     domain &= Domain('write_date', '>=', self.env.context.get('written_after'))
             // move = self.env['stock.move'].search(domain, limit=1)
             // if ((move.location_id.warehouse_id and move.location_id.warehouse_id != self.warehouse_id)
             //     or move.location_id.usage == 'transit') and move.picking_id:
@@ -731,14 +1006,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> GetVisibilityDaysAsync(Guid id)
+        protected async Task<StockWarehouseOrderpoint> InverseBomIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def get_visibility_days(self):
-            // return self.env['ir.config_parameter'].sudo().get_param('stock.visibility_days', 0)
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _inverse_bom_id(self):
+            // for orderpoint in self:
+            //     if not orderpoint.route_id and orderpoint.bom_id:
+            //         orderpoint.route_id = self.env['stock.rule'].search([('action', '=', 'manufacture')])[0].route_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> InverseQtyToOrderInternalAsync()
@@ -757,6 +1034,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockWarehouseOrderpoint> InverseRouteIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _inverse_route_id(self):
+            // for orderpoint in self:
+            //     if not orderpoint.route_id:
+            //         orderpoint.bom_id = False
+            // super()._inverse_route_id()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _inverse_route_id(self):
+            // for orderpoint in self:
+            //     if not orderpoint.route_id:
+            //         orderpoint.supplier_id = False
+            // super()._inverse_route_id()
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _inverse_route_id(self):
+            // # Override this method to add custom behavior when route is set
+            // pass
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> InverseSupplierIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _inverse_supplier_id(self):
+            // for orderpoint in self:
+            //     if not orderpoint.route_id and orderpoint.supplier_id:
+            //         orderpoint.route_id = self.env['stock.rule'].search([('action', '=', 'buy')])[0].route_id
+            */
+            return default;
+        }
+
         protected async Task<StockWarehouseOrderpoint> OnchangeProductIdInternalAsync()
         {
             /*
@@ -764,17 +1076,6 @@ namespace Bamboo.Core.Application.Services
             // def _onchange_product_id(self):
             // if self.product_id:
             //     self.product_uom = self.product_id.uom_id.id
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> OnchangeRouteIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _onchange_route_id(self):
-            // if self.route_id:
-            //     self.qty_multiple = self._get_qty_multiple_to_order()
             */
             return default;
         }
@@ -810,42 +1111,45 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockWarehouseOrderpoint> PrepareProcurementValuesInternalAsync(object date, object @group)
+        protected async Task<StockWarehouseOrderpoint> PrepareProcurementValuesInternalAsync(object date)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
-            // def _prepare_procurement_values(self, date=False, group=False):
-            // values = super()._prepare_procurement_values(date=date, group=group)
+            // def _prepare_procurement_values(self, date=False):
+            // values = super()._prepare_procurement_values(date=date)
             // values['bom_id'] = self.bom_id
             // return values
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: stock_orderpoint.py) ---
-            // def _prepare_procurement_values(self, date=False, group=False):
-            // vals = super()._prepare_procurement_values(date, group)
-            // if not vals.get('partner_id') and self.location_id.is_subcontracting_location and len(self.location_id.subcontractor_ids) == 1:
+            // def _prepare_procurement_values(self, date=False):
+            // vals = super()._prepare_procurement_values(date)
+            // if not vals.get('partner_id') and self.location_id.is_subcontract() and len(self.location_id.subcontractor_ids) == 1:
             //     vals['partner_id'] = self.location_id.subcontractor_ids.id
             // return vals
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _prepare_procurement_values(self, date=False, group=False):
-            // values = super()._prepare_procurement_values(date=date, group=group)
+            // def _prepare_procurement_values(self, date=False):
+            // values = super()._prepare_procurement_values(date=date)
             // values['supplierinfo_id'] = self.supplier_id
             // return values
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _prepare_procurement_values(self, date=False, group=False):
+            // def _prepare_procurement_values(self, date=False):
             // """ Prepare specific key for moves or other components that will be created from a stock rule
             // comming from an orderpoint. This method could be override in order to add other custom key that could
             // be used in move/po creation.
             // """
             // date_deadline = date or fields.Date.today()
             // dates_info = self.product_id._get_dates_info(date_deadline, self.location_id, route_ids=self.route_id)
-            // return {
+            // values = {
             //     'route_ids': self.route_id,
             //     'date_planned': dates_info['date_planned'],
             //     'date_order': dates_info['date_order'],
             //     'date_deadline': date or False,
             //     'warehouse_id': self.warehouse_id,
             //     'orderpoint_id': self,
-            //     'group_id': group or self.group_id,
             // }
+            // reference = self.env.context.get('origins')
+            // if reference:
+            //     values['reference_ids'] = self.env['stock.reference'].browse(reference.get(self.id))
+            // return values
             */
             return default;
         }
@@ -864,8 +1168,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // for orderpoints_batch_ids in split_every(1000, self.ids):
             //     if use_new_cursor:
-            //         assert isinstance(self._cr, BaseCursor)
-            //         cr = Registry(self._cr.dbname).cursor()
+            //         assert isinstance(self.env.cr, BaseCursor)
+            //         cr = Registry(self.env.cr.dbname).cursor()
             //         self = self.with_env(self.env(cr=cr))
             //     try:
             //         orderpoints_batch = self.env['stock.warehouse.orderpoint'].browse(orderpoints_batch_ids)
@@ -875,23 +1179,24 @@ namespace Bamboo.Core.Application.Services
             //             for orderpoint in orderpoints_batch:
             //                 origins = orderpoint.env.context.get('origins', {}).get(orderpoint.id, False)
             //                 if origins:
-            //                     origin = '%s - %s' % (orderpoint.display_name, ','.join(origins))
+            //                     origins = self.env['stock.reference'].browse(origins)
+            //                     origin = '%s - %s' % (orderpoint.display_name, ','.join(origins.mapped('name')))
             //                 else:
             //                     origin = orderpoint.name
-            //                 if float_compare(orderpoint.qty_to_order, 0.0, precision_rounding=orderpoint.product_uom.rounding) == 1:
+            //                 if orderpoint.product_uom.compare(orderpoint.qty_to_order, 0.0) == 1:
             //                     date = orderpoint._get_orderpoint_procurement_date()
-            //                     global_visibility_days = self.env.context.get('global_visibility_days', self.env['ir.config_parameter'].sudo().get_param('stock.visibility_days', 0))
-            //                     if global_visibility_days:
-            //                         date -= relativedelta.relativedelta(days=int(global_visibility_days))
+            //                     global_horizon_days = orderpoint.get_horizon_days()
+            //                     if global_horizon_days:
+            //                         date -= relativedelta.relativedelta(days=int(global_horizon_days))
             //                     values = orderpoint._prepare_procurement_values(date=date)
-            //                     procurements.append(self.env['procurement.group'].Procurement(
+            //                     procurements.append(self.env['stock.rule'].Procurement(
             //                         orderpoint.product_id, orderpoint.qty_to_order, orderpoint.product_uom,
             //                         orderpoint.location_id, orderpoint.name, origin,
             //                         orderpoint.company_id, values))
             // 
             //             try:
             //                 with self.env.cr.savepoint():
-            //                     self.env['procurement.group'].with_context(from_orderpoint=True).run(procurements, raise_user_error=raise_user_error)
+            //                     self.env['stock.rule'].with_context(from_orderpoint=True).run(procurements, raise_user_error=raise_user_error)
             //             except ProcurementException as errors:
             //                 orderpoints_exceptions = []
             //                 for procurement, error_msg in errors.procurement_exceptions:
@@ -915,10 +1220,10 @@ namespace Bamboo.Core.Application.Services
             // 
             //         # Log an activity on product template for failed orderpoints.
             //         for orderpoint, error_msg in all_orderpoints_exceptions:
-            //             existing_activity = self.env['mail.activity'].search([
+            //             existing_activity = self.env['mail.activity'].search_count([
             //                 ('res_id', '=', orderpoint.product_id.product_tmpl_id.id),
             //                 ('res_model_id', '=', self.env.ref('product.model_product_template').id),
-            //                 ('note', '=', error_msg)])
+            //                 ('note', 'like', error_msg)], limit=1)
             //             if not existing_activity:
             //                 orderpoint.product_id.product_tmpl_id.sudo().activity_schedule(
             //                     'mail.mail_activity_data_warning',
@@ -949,10 +1254,8 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {
             //     'active_id': self.product_id.id,
             //     'active_model': 'product.product',
-            //     'lead_days_date': format_date(self.env, self.lead_days_date),
-            //     'qty_to_order': self._get_qty_to_order(force_visibility_days=0),
-            //     'visibility_days_date': format_date(self.env, fields.Date.add(self.lead_days_date, days=int(self.visibility_days))),
-            //     'qty_to_order_with_visibility_days': self.qty_to_order_computed,
+            //     'lead_horizon_date': format_date(self.env, self.lead_horizon_date),
+            //     'qty_to_order': self._get_qty_to_order(),
             // }
             // warehouse = self.warehouse_id
             // if warehouse:
@@ -982,7 +1285,7 @@ namespace Bamboo.Core.Application.Services
             //     ratios_total = []
             //     for bom_line, bom_line_data in bom_sub_lines:
             //         component = bom_line.product_id
-            //         if not component.is_storable or float_is_zero(bom_line_data['qty'], precision_rounding=bom_line.product_uom_id.rounding):
+            //         if not component.is_storable or bom_line.product_uom_id.is_zero(bom_line_data['qty']):
             //             continue
             //         uom_qty_per_kit = bom_line_data['qty'] / bom_line_data['original_qty']
             //         qty_per_kit = bom_line.product_uom_id._compute_quantity(uom_qty_per_kit, bom_line.product_id.uom_id, raise_if_failure=False)
@@ -1024,8 +1327,8 @@ namespace Bamboo.Core.Application.Services
             // ])
             // for prod in in_progress_productions:
             //     date_start, date_finished, orderpoint = prod.date_start, prod.date_finished, prod.orderpoint_id
-            //     lead_days_date = datetime.combine(orderpoint.lead_days_date, time.max)
-            //     if date_start <= lead_days_date < date_finished:
+            //     lead_horizon_date = datetime.combine(orderpoint.lead_horizon_date, time.max)
+            //     if date_start <= lead_horizon_date < date_finished:
             //         res[orderpoint.id] += prod.product_uom_id._compute_quantity(
             //                 prod.product_qty, orderpoint.product_uom, round=False)
             // return res
@@ -1065,10 +1368,7 @@ namespace Bamboo.Core.Application.Services
             // now = self.env.cr.now()
             // if force_to_max:
             //     for orderpoint in self:
-            //         orderpoint.qty_to_order = orderpoint.product_max_qty - orderpoint.qty_forecast
-            //         remainder = orderpoint.qty_multiple > 0 and orderpoint.qty_to_order % orderpoint.qty_multiple or 0.0
-            //         if not float_is_zero(remainder, precision_rounding=orderpoint.product_uom.rounding):
-            //             orderpoint.qty_to_order += orderpoint.qty_multiple - remainder
+            //         orderpoint.qty_to_order = orderpoint._get_multiple_rounded_qty(orderpoint.product_max_qty - orderpoint.qty_forecast)
             // try:
             //     self._procure_orderpoint_confirm(company_id=self.env.company)
             // except UserError as e:
@@ -1104,6 +1404,62 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<StockWarehouseOrderpoint> SearchAvailableVendorInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _search_available_vendor(self, operator, value):
+            // vendors = self.env['res.partner'].search([('id', operator, value)])
+            // orderpoints = self.env['stock.warehouse.orderpoint'].search([]).filtered(
+            //     lambda orderpoint: orderpoint.product_id._prepare_sellers().mapped('partner_id') & vendors
+            // )
+            // return [('id', 'in', orderpoints.ids)]
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> SearchEffectiveBomIdInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
+            // def _search_effective_bom_id(self, operator, value):
+            // boms = self.env['mrp.bom'].search([('id', operator, value)])
+            // orderpoints = self.env['stock.warehouse.orderpoint'].search([]).filtered(
+            //     lambda orderpoint: orderpoint.effective_bom_id in boms
+            // )
+            // return [('id', 'in', orderpoints.ids)]
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> SearchEffectiveRouteIdInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
+            // def _search_effective_route_id(self, operator, value):
+            // routes = self.env['stock.route'].search([('id', operator, value)])
+            // orderpoints = self.env['stock.warehouse.orderpoint'].search([]).filtered(
+            //     lambda orderpoint: orderpoint.effective_route_id in routes
+            // )
+            // return [('id', 'in', orderpoints.ids)]
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouseOrderpoint> SearchEffectiveVendorIdInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _search_effective_vendor_id(self, operator, value):
+            // vendors = self.env['res.partner'].search([('id', operator, value)])
+            // orderpoints = self.env['stock.warehouse.orderpoint'].search([]).filtered(
+            //     lambda orderpoint: orderpoint.effective_vendor_id in vendors
+            // )
+            // return [('id', 'in', orderpoints.ids)]
+            */
+            return default;
+        }
+
         protected async Task<StockWarehouseOrderpoint> SearchQtyToOrderInternalAsync(object @operator, object @value)
         {
             /*
@@ -1112,82 +1468,9 @@ namespace Bamboo.Core.Application.Services
             // records = self.search_fetch([('qty_to_order_manual', 'in', [0, False])], ['qty_to_order_computed'])
             // matched_ids = records.filtered_domain([('qty_to_order_computed', operator, value)]).ids
             // return ['|',
-            //             ('qty_to_order_manual', operator, value),
+            //             '&', ('qty_to_order_manual', operator, value), ('qty_to_order_manual', 'not in', [0, False]),
             //             ('id', 'in', matched_ids)
             //         ]
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> SetDefaultRouteIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
-            // def _set_default_route_id(self):
-            // route_ids = self.env['stock.rule'].search([
-            //     ('action', '=', 'manufacture')
-            // ]).route_id
-            // for orderpoint in self:
-            //     if not orderpoint.product_id.bom_ids:
-            //         continue
-            //     route_id = orderpoint.rule_ids.route_id & route_ids
-            //     if not route_id:
-            //         continue
-            //     orderpoint.route_id = route_id[0].id
-            // return super()._set_default_route_id()
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _set_default_route_id(self):
-            // route_ids = self.env['stock.rule'].search([
-            //     ('action', '=', 'buy')
-            // ]).route_id
-            // for orderpoint in self:
-            //     route_id = orderpoint.rule_ids.route_id & route_ids
-            //     if not orderpoint.product_id.seller_ids:
-            //         continue
-            //     if not route_id:
-            //         continue
-            //     orderpoint.route_id = route_id[0].id
-            // return super()._set_default_route_id()
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _set_default_route_id(self):
-            // """ Write the `route_id` field on `self`. This method is intendend to be called on the
-            // orderpoints generated when openning the replenish report.
-            // """
-            // self = self.filtered(lambda o: not o.route_id)
-            // rules_groups = self.env['stock.rule']._read_group([
-            //     '|', ('route_id.product_selectable', '!=', False),
-            //     ('route_id.product_categ_selectable', '!=', False),
-            //     ('location_dest_id', 'in', self.location_id.ids),
-            //     ('action', 'in', ['pull_push', 'pull']),
-            //     ('route_id.active', '!=', False)
-            // ], ['location_dest_id', 'route_id'])
-            // for location_dest, route in rules_groups:
-            //     orderpoints = self.filtered(lambda o: not o.route_id and route in (o.product_id.route_ids | o.product_id.categ_id.route_ids) and o.location_id.id == location_dest.id)
-            //     orderpoints.route_id = route
-            */
-            return default;
-        }
-
-        protected async Task<StockWarehouseOrderpoint> SetVisibilityDaysInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_orderpoint.py) ---
-            // def _set_visibility_days(self):
-            // res = super()._set_visibility_days()
-            // for orderpoint in self:
-            //     if 'manufacture' in orderpoint.rule_ids.mapped('action'):
-            //         orderpoint.manufacturing_visibility_days = orderpoint.visibility_days
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _set_visibility_days(self):
-            // res = super()._set_visibility_days()
-            // for orderpoint in self:
-            //     if 'buy' in orderpoint.rule_ids.mapped('action'):
-            //         orderpoint.purchase_visibility_days = orderpoint.visibility_days
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
-            // def _set_visibility_days(self):
-            // return True
             */
             return default;
         }
@@ -1218,12 +1501,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def _unlink_processed_orderpoints(self):
-            // domain = [
+            // domain = Domain([
             //     ('create_uid', '=', SUPERUSER_ID),
             //     ('trigger', '=', 'manual'),
-            // ]
+            // ])
             // if self.ids:
-            //     expression.AND([domain, [('ids', 'in', self.ids)]])
+            //     domain &= Domain('id', 'in', self.ids)
             // manual_orderpoints = self.env['stock.warehouse.orderpoint'].with_context(active_test=False).search(domain)
             // orderpoints_to_remove = manual_orderpoints.filtered(lambda o: o.qty_to_order <= 0.0)
             // # Remove previous automatically created orderpoint that has been refilled.

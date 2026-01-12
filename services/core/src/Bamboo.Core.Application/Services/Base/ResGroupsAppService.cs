@@ -49,23 +49,116 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> ApplyGroupInternalAsync(object implied_group)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _apply_group(self, implied_group):
             // """ Add the given group to the groups implied by the current group
             // :param implied_group: the implied group to add
             // """
-            // groups = self.filtered(lambda g: implied_group not in g.implied_ids)
+            // groups = self.filtered(lambda g: implied_group not in g.all_implied_ids)
             // groups.write({'implied_ids': [Command.link(implied_group.id)]})
             */
             return default;
         }
 
-        protected async Task<ResGroups> CheckOneUserTypeInternalAsync()
+        protected async Task<ResGroups> CheckDisjointGroupsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_one_user_type(self):
-            // self.users._check_one_user_type()
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _check_disjoint_groups(self):
+            // # check for users that might have two exclusive groups
+            // self.env.registry.clear_cache('groups')
+            // self.all_implied_by_ids._check_user_disjoint_groups()
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> CheckUserDisjointGroupsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _check_user_disjoint_groups(self):
+            // # Here we should check all the users in any group of 'self':
+            // #
+            // #   self.user_ids._check_disjoint_groups()
+            // #
+            // # But that wouldn't scale at all for large groups, like more than 10K
+            // # users.  So instead we search for such a nasty user.
+            // gids = self._get_user_type_groups().ids
+            // domain = (
+            //     Domain('active', '=', True)
+            //     & Domain('group_ids', 'in', self.ids)
+            //     & Domain.OR(
+            //         Domain('all_group_ids', 'in', [gids[index]])
+            //         & Domain('all_group_ids', 'in', gids[index+1:])
+            //         for index in range(0, len(gids) - 1)
+            //     )
+            // )
+            // user = self.env['res.users'].search(domain, order='id', limit=1)
+            // if user:
+            //     user._check_disjoint_groups()
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeAllImpliedByIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_all_implied_by_ids(self):
+            // """ Compute the reflexive transitive closure of implied_by_ids. """
+            // group_definitions = self._get_group_definitions()
+            // for g in self:
+            //     g.all_implied_by_ids = g.ids + group_definitions.get_subset_ids(g.ids)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeAllImpliedIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_all_implied_ids(self):
+            // """ Compute the reflexive transitive closure of implied_ids. """
+            // group_definitions = self._get_group_definitions()
+            // for g in self:
+            //     g.all_implied_ids = g.ids + group_definitions.get_superset_ids(g.ids)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeAllUserIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_all_user_ids(self):
+            // for group in self.with_context(active_test=False):
+            //     group.all_user_ids = group.all_implied_by_ids.user_ids
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeAllUsersCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_all_users_count(self):
+            // for group in self:
+            //     group.all_users_count = len(group.all_user_ids)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeDisjointIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_disjoint_ids(self):
+            // user_type_groups = self._get_user_type_groups()
+            // for group in self:
+            //     if group in user_type_groups:
+            //         group.disjoint_ids = user_type_groups - group
+            //     else:
+            //         group.disjoint_ids = False
             */
             return default;
         }
@@ -73,28 +166,98 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> ComputeFullNameInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _compute_full_name(self):
             // # Important: value must be stored in environment of group, not group1!
             // for group, group1 in zip(self, self.sudo()):
-            //     if group1.category_id:
-            //         group.full_name = '%s / %s' % (group1.category_id.name, group1.name)
+            //     if group1.privilege_id and not self.env.context.get('short_display_name'):
+            //         group.full_name = '%s / %s' % (group1.privilege_id.name, group1.name)
             //     else:
             //         group.full_name = group1.name
             */
             return default;
         }
 
-        protected async Task<ResGroups> ComputeTransImpliedInternalAsync()
+        protected async Task<ResGroups> ComputeHasLockTimeoutInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _compute_trans_implied(self):
-            // # Compute the transitive closure recursively. Note that the performance
-            // # is good, because the record cache behaves as a memo (the field is
-            // # never computed twice on a given group.)
-            // for g in self:
-            //     g.trans_implied_ids = g.implied_ids | g.implied_ids.trans_implied_ids
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_has_lock_timeout(self):
+            // for group in self:
+            //     group.has_lock_timeout = bool(group.lock_timeout)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeLockTimeout2faSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_lock_timeout_2fa_selection(self):
+            // for group in self:
+            //     group.lock_timeout_2fa_selection = "with_2fa" if group.lock_timeout_mfa else "without_2fa"
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeLockTimeoutDelayUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_lock_timeout_delay_unit(self):
+            // for group in self:
+            //     (
+            //         group.lock_timeout_delay_in_unit,
+            //         group.lock_timeout_delay_unit,
+            //     ) = human_readable_delay(group.lock_timeout)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeLockTimeoutInactivity2faSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_lock_timeout_inactivity_2fa_selection(self):
+            // for group in self:
+            //     group.lock_timeout_inactivity_2fa_selection = (
+            //         "with_2fa" if group.lock_timeout_inactivity_mfa else "without_2fa"
+            //     )
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeLockTimeoutInactivityBoolInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_lock_timeout_inactivity_bool(self):
+            // for group in self:
+            //     group.has_lock_timeout_inactivity = bool(group.lock_timeout_inactivity)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeLockTimeoutInactivityDelayUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _compute_lock_timeout_inactivity_delay_unit(self):
+            // for group in self:
+            //     (
+            //         group.lock_timeout_inactivity_delay_in_unit,
+            //         group.lock_timeout_inactivity_delay_unit,
+            //     ) = human_readable_delay(group.lock_timeout_inactivity)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> ComputeViewGroupHierarchyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _compute_view_group_hierarchy(self):
+            // self.view_group_hierarchy = self._get_view_group_hierarchy()
             */
             return default;
         }
@@ -102,12 +265,12 @@ namespace Bamboo.Core.Application.Services
         public async Task<ResGroups> CopyDataAsync(Guid id, ResGroupsCopyDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def copy_data(self, default=None):
             // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
             // for group, vals in zip(self, vals_list):
-            //     vals['name'] = default.get('name') or _('%s (copy)', group.name)
+            //     vals['name'] = default.get('name') or self.env._('%s (copy)', group.name)
             // return vals_list
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -116,22 +279,16 @@ namespace Bamboo.Core.Application.Services
         public override async Task<ResGroups> CreateAsync(ResGroups entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
             // def create(self, vals_list):
-            // user_ids_list = [vals.pop('users', None) for vals in vals_list]
-            // groups = super(GroupsImplied, self).create(vals_list)
-            // for group, user_ids in zip(groups, user_ids_list):
-            //     if user_ids:
-            //         # delegate addition of users to add implied groups
-            //         group.write({'users': user_ids})
-            // self.env.registry.clear_cache('groups')
-            // return groups
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // """Override to invalidate `_get_lock_timeouts` cache if timeout fields are set on creation."""
+            // if any(field in vals for vals in vals_list for field in CACHE_INVALIDATE_FIELDS):
+            //     self.env.registry.clear_cache()
+            // return super().create(vals_list)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def create(self, vals_list):
             // groups = super().create(vals_list)
-            // self._update_user_groups_view()
-            // # actions.get_bindings() depends on action records
-            // self.env.registry.clear_cache()
+            // self.env.registry.clear_cache('groups')
             // return groups
             */
             return await base.CreateAsync(entity, fields);
@@ -140,7 +297,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> EnsureXmlIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _ensure_xml_id(self):
             // """Return the groups external identifiers, creating the external identifier for groups missing one"""
             // result = self.get_external_id()
@@ -172,19 +329,15 @@ namespace Bamboo.Core.Application.Services
             // # Overridden in order to remove 'Show Full Accounting Features' and
             // # 'Show Full Accounting Features - Readonly' in the 'res.users' form view to prevent confusion
             // group_account_user = self.env.ref('account.group_account_user', raise_if_not_found=False)
-            // if group_account_user and group_account_user.category_id.xml_id == 'base.module_category_hidden':
+            // if group_account_user and not group_account_user.privilege_id:
             //     domain += [('id', '!=', group_account_user.id)]
             // group_account_readonly = self.env.ref('account.group_account_readonly', raise_if_not_found=False)
-            // if group_account_readonly and group_account_readonly.category_id.xml_id == 'base.module_category_hidden':
+            // if group_account_readonly and not group_account_readonly.privilege_id:
             //     domain += [('id', '!=', group_account_readonly.id)]
             // group_account_basic = self.env.ref('account.group_account_basic', raise_if_not_found=False)
-            // if group_account_basic and group_account_basic.category_id.xml_id == 'base.module_category_hidden':
+            // if group_account_basic and not group_account_basic.privilege_id:
             //     domain += [('id', '!=', group_account_basic.id)]
             // return super().get_application_groups(domain)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def get_application_groups(self, domain):
-            // """ Return the non-share groups that satisfy ``domain``. """
-            // return self.search(domain + [('share', '=', False)])
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -192,94 +345,243 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> GetGroupDefinitionsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _get_group_definitions(self):
             // """ Return the definition of all the groups as a :class:`~odoo.tools.SetDefinitions`. """
             // groups = self.sudo().search([], order='id')
             // id_to_ref = groups.get_external_id()
-            // 
-            // # The 'base.group_no_one' is not actually involved by any other group because it is session dependent.
-            // group_no_one_id = {gid for gid, ref in id_to_ref.items() if ref == 'base.group_no_one'}
-            // 
             // data = {
             //     group.id: {
             //         'ref': id_to_ref[group.id] or str(group.id),
-            //         'supersets': set(group.implied_ids.ids) - group_no_one_id,
+            //         'supersets': group.implied_ids.ids,
+            //         'disjoints': group.disjoint_ids.ids,
             //     }
             //     for group in groups
             // }
-            // 
-            // # determine exclusive groups (will be disjoint for the set expression)
-            // user_types_category_id = self.env['ir.model.data']._xmlid_to_res_id('base.module_category_user_type', raise_if_not_found=False)
-            // if user_types_category_id:
-            //     user_type_ids = self.sudo().search([('category_id', '=', user_types_category_id)]).ids
-            //     for user_type_id in user_type_ids:
-            //         data[user_type_id]['disjoints'] = set(user_type_ids) - {user_type_id}
-            // 
             // return SetDefinitions(data)
             */
             return default;
         }
 
-        public async Task<ResGroups> GetGroupsByApplicationAsync(Guid id)
+        protected async Task<ResGroups> GetLockTimeoutsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def get_groups_by_application(self):
-            // """ Return all groups classified by application (module category), as a list::
-            // 
-            //         [(app, kind, groups), ...],
-            // 
-            //     where ``app`` and ``groups`` are recordsets, and ``kind`` is either
-            //     ``'boolean'`` or ``'selection'``. Applications are given in sequence
-            //     order.  If ``kind`` is ``'selection'``, ``groups`` are given in
-            //     reverse implication order.
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _get_lock_timeouts(self):
             // """
-            // def linearize(app, gs, category_name):
-            //     # 'User Type' is an exception
-            //     if app.xml_id == 'base.module_category_user_type':
-            //         return (app, 'selection', gs.sorted('id'), category_name)
-            //     # determine sequence order: a group appears after its implied groups
-            //     order = {g: len(g.trans_implied_ids & gs) for g in gs}
-            //     # We want a selection for Accounting too. Auditor and Invoice are both
-            //     # children of Accountant, but the two of them make a full accountant
-            //     # so it makes no sense to have checkboxes.
-            //     if app.xml_id == 'base.module_category_accounting_accounting':
-            //         return (app, 'selection', gs.sorted(key=order.get), category_name)
-            //     # check whether order is total, i.e., sequence orders are distinct
-            //     if len(set(order.values())) == len(gs):
-            //         return (app, 'selection', gs.sorted(key=order.get), category_name)
-            //     else:
-            //         return (app, 'boolean', gs, (100, 'Other'))
+            // Compute the session and inactivity timeout settings for the user.
             // 
-            // # classify all groups by application
-            // by_app, others = defaultdict(self.browse), self.browse()
-            // for g in self.get_application_groups([]):
-            //     if g.category_id:
-            //         by_app[g.category_id] += g
-            //     else:
-            //         others += g
-            // # build the result
-            // res = []
-            // for app, gs in sorted(by_app.items(), key=lambda it: it[0].sequence or 0):
-            //     if app.parent_id:
-            //         res.append(linearize(app, gs, (app.parent_id.sequence, app.parent_id.name)))
-            //     else:
-            //         res.append(linearize(app, gs, (100, 'Other')))
+            // This method returns the shortest configured timeouts (in seconds) across all groups
+            // implied by the user's group membership. For each type of timeout, it distinguishes
+            // between those that require MFA and those that do not.
             // 
-            // if others:
-            //     res.append((self.env['ir.module.category'], 'boolean', others, (100,'Other')))
-            // return res
+            // :return: A dictionary with timeout types as keys and a list of tuples as values.
+            //     Each tuple is of the form (timeout_in_seconds, requires_mfa), ordered from shortest to longest.
+            // 
+            //     Example::
+            // 
+            //         {
+            //             'lock_timeout': [(43200, False), (86400, True)],
+            //             'lock_timeout_inactivity': [(900, False)]
+            //         }
+            // 
+            // :rtype: dict
+            // """
+            // result = {}
+            // 
+            // for key, mfa_key in [
+            //     ("lock_timeout", "lock_timeout_mfa"),
+            //     ("lock_timeout_inactivity", "lock_timeout_inactivity_mfa"),
+            // ]:
+            //     # `with_context({})` because
+            //     # - Same reasons than https://github.com/odoo/odoo/commit/7a0255665714f2c0129d04d4a3f14a3137c159f1
+            //     # - As this method is decorated with `@ormcache('self._ids')`, it cannot depend on the context
+            //     values = [(g[key], g[mfa_key]) for g in self.with_context({}).all_implied_ids if g[key]]
+            //     min_non_mfa = min((timeout for timeout, mfa in values if not mfa), default=None)
+            //     min_mfa = min((timeout for timeout, mfa in values if mfa), default=None)
+            // 
+            //     result[key] = []
+            // 
+            //     if min_mfa:
+            //         result[key].append((min_mfa * 60, True))
+            //     if min_non_mfa and (not min_mfa or min_non_mfa < min_mfa):
+            //         result[key].append((min_non_mfa * 60, False))
+            // 
+            //     # Sort from lowest timeout to highest
+            //     result[key].sort()
+            // 
+            // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
-        protected async Task<ResGroups> GetHiddenExtraCategoriesInternalAsync()
+        protected async Task<ResGroups> GetUserTypeGroupsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _get_hidden_extra_categories(self):
-            // return ['base.module_category_hidden', 'base.module_category_extra', 'base.module_category_usability']
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _get_user_type_groups(self):
+            // """ Return the (disjoint) user type groups (employee, portal, public). """
+            // group_ids = [
+            //     gid
+            //     for xid in ('base.group_user', 'base.group_portal', 'base.group_public')
+            //     if (gid := self.env['ir.model.data']._xmlid_to_res_id(xid, raise_if_not_found=False))
+            // ]
+            // return self.sudo().browse(group_ids)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> GetViewGroupHierarchyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _get_view_group_hierarchy(self):
+            // return {
+            //     'groups': {
+            //         group.id: {
+            //             'id': group.id,
+            //             'name': group.name,
+            //             'comment': group.comment,
+            //             'privilege_id': group.privilege_id.id,
+            //             'disjoint_ids': group.disjoint_ids.ids,
+            //             'implied_ids': group.implied_ids.ids,
+            //             'all_implied_ids': group.all_implied_ids.ids,
+            //             'all_implied_by_ids': group.all_implied_by_ids.ids,
+            //         }
+            //         for group in self.search([])
+            //     },
+            //     'privileges': {
+            //         privilege.id: {
+            //             'id': privilege.id,
+            //             'name': privilege.name,
+            //             'category_id': privilege.category_id.id,
+            //             'description': privilege.description,
+            //             'placeholder': privilege.placeholder,
+            //             'group_ids': [group.id for group in privilege.group_ids.sorted(lambda g: (len(g.all_implied_ids & privilege.group_ids) if g.privilege_id else 0, g.sequence, g.id))]
+            //         }
+            //         for privilege in self.env['res.groups.privilege'].search([])
+            //     },
+            //     'categories': [
+            //         {
+            //             'id': category.id,
+            //             'name': category.name,
+            //             'privilege_ids': category.privilege_ids.sorted(lambda p: p.sequence).filtered(lambda p: p.group_ids).ids,
+            //         } for category in self.env['ir.module.category'].search([('privilege_ids.group_ids', '!=', False)])
+            //     ]
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> InverseAllUserIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _inverse_all_user_ids(self):
+            // for group in self:
+            //     user_to_add = group.all_user_ids - group.all_implied_by_ids.user_ids
+            //     user_to_remove = group.all_implied_by_ids.user_ids - group.all_user_ids
+            //     group.user_ids = group.user_ids - user_to_remove + user_to_add
+            // 
+            //     cannot_remove = group.all_implied_by_ids.user_ids & user_to_remove
+            //     if cannot_remove:
+            //         raise UserError(self.env._(
+            //             "It is not possible to remove implied group %(group)s from users %(users)s",
+            //             group=repr(group.name),
+            //             users=', '.join(cannot_remove.mapped('name')),
+            //         ))
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> InverseLockTimeout2faSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _inverse_lock_timeout_2fa_selection(self):
+            // for group in self:
+            //     group.lock_timeout_mfa = group.lock_timeout_2fa_selection == "with_2fa"
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> InverseLockTimeoutInactivity2faSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _inverse_lock_timeout_inactivity_2fa_selection(self):
+            // for group in self:
+            //     group.lock_timeout_inactivity_mfa = group.lock_timeout_inactivity_2fa_selection == "with_2fa"
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> IsFeatureEnabledInternalAsync(object group_reference)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _is_feature_enabled(self, group_reference):
+            // return self.env['res.users'].sudo().browse(api.SUPERUSER_ID)._has_group(group_reference)
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> OnchangeHasLockTimeoutInactivityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _onchange_has_lock_timeout_inactivity(self):
+            // for group in self:
+            //     if not group.has_lock_timeout_inactivity:
+            //         group.lock_timeout_inactivity = False
+            //         group.lock_timeout_inactivity_mfa = False
+            //     else:
+            //         group.lock_timeout_inactivity = 15  # 15 minutes by default
+            //         group.lock_timeout_inactivity_mfa = False
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> OnchangeHasLockTimeoutInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _onchange_has_lock_timeout(self):
+            // for group in self:
+            //     if not group.has_lock_timeout:
+            //         group.lock_timeout = False
+            //         group.lock_timeout_mfa = False
+            //     else:
+            //         group.lock_timeout = 1440  # 1 day by default
+            //         group.lock_timeout_mfa = True
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> OnchangeLockTimeoutDelayUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _onchange_lock_timeout_delay_unit(self):
+            // for group in self:
+            //     group.lock_timeout = human_readable_delay_to_minutes(
+            //         group.lock_timeout_delay_in_unit,
+            //         group.lock_timeout_delay_unit,
+            //     )
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> OnchangeLockTimeoutInactivityDelayUnitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def _onchange_lock_timeout_inactivity_delay_unit(self):
+            // for group in self:
+            //     group.lock_timeout_inactivity = human_readable_delay_to_minutes(
+            //         group.lock_timeout_inactivity_delay_in_unit,
+            //         group.lock_timeout_inactivity_delay_unit,
+            //     )
             */
             return default;
         }
@@ -287,25 +589,58 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> RemoveGroupInternalAsync(object implied_group)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _remove_group(self, implied_group):
             // """ Remove the given group from the implied groups of the current group
             // :param implied_group: the implied group to remove
             // """
-            // groups = self.filtered(lambda g: implied_group in g.implied_ids)
-            // if groups:
-            //     groups.write({'implied_ids': [Command.unlink(implied_group.id)]})
-            //     # if user belongs to implied_group thanks to another group, don't remove him
-            //     # this avoids readding the template user and triggering the mechanism at 121cd0d6084cb28
-            //     users_to_unlink = [
-            //         user
-            //         for user in groups.with_context(active_test=False).users
-            //         if implied_group not in (user.groups_id - implied_group).trans_implied_ids
-            //     ]
-            //     if users_to_unlink:
-            //         # do not remove inactive users (e.g. default)
-            //         implied_group.with_context(active_test=False).write(
-            //             {'users': [Command.unlink(user.id) for user in users_to_unlink]})
+            // groups = self.all_implied_ids.filtered(lambda g: implied_group in g.implied_ids)
+            // groups.write({'implied_ids': [Command.unlink(implied_group.id)]})
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> SearchAllImpliedByIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _search_all_implied_by_ids(self, operator, value):
+            // """ Compute the search on the reflexive transitive closure of implied_by_ids. """
+            // if operator in ("any", "not any") and isinstance(value, Domain):
+            //     value = self.search(value).ids
+            //     operator = "in" if operator == "any" else "not in"
+            // elif operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // 
+            // group_definitions = self._get_group_definitions()
+            // ids = [*value, *group_definitions.get_superset_ids(value)]
+            // 
+            // return [('id', operator, ids)]
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> SearchAllImpliedIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _search_all_implied_ids(self, operator, value):
+            // """ Compute the search on the reflexive transitive closure of implied_ids. """
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // group_definitions = self._get_group_definitions()
+            // ids = [*value, *group_definitions.get_subset_ids(value)]
+            // return [('id', operator, ids)]
+            */
+            return default;
+        }
+
+        protected async Task<ResGroups> SearchAllUserIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _search_all_user_ids(self, operator, value):
+            // return [('all_implied_by_ids.user_ids', operator, value)]
             */
             return default;
         }
@@ -313,34 +648,42 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> SearchFullNameInternalAsync(object @operator, object operand)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _search_full_name(self, operator, operand):
-            // lst = True
-            // if isinstance(operand, bool):
-            //     return [('name', operator, operand)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // 
             // if isinstance(operand, str):
-            //     lst = False
-            //     operand = [operand]
-            // where_domains = []
-            // for group in operand:
-            //     values = [v for v in group.split('/') if v]
-            //     group_name = values.pop().strip() if values else ''
-            //     category_name = values and '/'.join(values).strip() or group_name
-            //     group_domain = [('name', operator, lst and [group_name] or group_name)]
-            //     category_ids = self.env['ir.module.category'].sudo()._search(
-            //         [('name', operator, [category_name] if lst else category_name)])
-            //     category_domain = [('category_id', 'in', category_ids)]
-            //     if operator in expression.NEGATIVE_TERM_OPERATORS and not values:
-            //         category_domain = expression.OR([category_domain, [('category_id', '=', False)]])
-            //     if (operator in expression.NEGATIVE_TERM_OPERATORS) == (not values):
-            //         where = expression.AND([group_domain, category_domain])
-            //     else:
-            //         where = expression.OR([group_domain, category_domain])
-            //     where_domains.append(where)
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     return expression.AND(where_domains)
+            //     def make_operand(val): return val
+            //     operands = [operand]
             // else:
-            //     return expression.OR(where_domains)
+            //     def make_operand(val): return [val]
+            //     operands = operand
+            // 
+            // where_domains = [Domain('name', operator, operand)]
+            // for group in operands:
+            //     if not group:
+            //         continue
+            //     domain = Domain('name', operator, make_operand(group))
+            //     where_domains.append(domain)
+            // 
+            //     if '/' in group:
+            //         privilege_name, _, group_name = group.partition('/')
+            //         group_name = group_name.strip()
+            //         privilege_name = privilege_name.strip()
+            //     else:
+            //         privilege_name = group
+            //         group_name = None
+            // 
+            //     if privilege_name:
+            //         domain = Domain(
+            //             'privilege_id', 'any!', Domain('name', operator, make_operand(privilege_name)),
+            //         )
+            //         if group_name:
+            //             domain &= Domain('name', operator, make_operand(group_name))
+            //         where_domains.append(domain)
+            // 
+            // return Domain.OR(where_domains)
             */
             return default;
         }
@@ -348,33 +691,51 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
             // # add explicit ordering if search is sorted on full_name
             // if order and order.startswith('full_name'):
             //     groups = super().search(domain)
             //     groups = groups.sorted('full_name', reverse=order.endswith('DESC'))
             //     groups = groups[offset:offset+limit] if limit else groups[offset:]
             //     return groups._as_query(order)
-            // return super()._search(domain, offset, limit, order)
+            // return super()._search(domain, offset, limit, order, **kwargs)
             */
             return default;
+        }
+
+        public async Task<ResGroups> ShowAllUsersAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
+            // def action_show_all_users(self):
+            // self.ensure_one()
+            // return {
+            //     'name': self.env._('Users and implied users of %(group)s', group=self.display_name),
+            //     'view_mode': 'list,form',
+            //     'res_model': 'res.users',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {'create': False, 'delete': False, 'form_view_ref': 'base.view_users_form'},
+            //     'domain': [('all_group_ids', 'in', self.ids)],
+            //     'target': 'current',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def unlink(self):
+            // """Override to invalidate `_get_lock_timeouts` cache if timeout fields exist on deleted records."""
+            // if self.filtered(lambda r: any(r[field] for field in CACHE_INVALIDATE_FIELDS)):
+            //     self.env.registry.clear_cache()
+            // return super().unlink()
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def unlink(self):
             // res = super().unlink()
             // self.env.registry.clear_cache('groups')
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def unlink(self):
-            // res = super(GroupsView, self).unlink()
-            // self._update_user_groups_view()
-            // # actions.get_bindings() depends on action records
-            // self.env.registry.clear_cache()
             // return res
             */
             return await base.UnlinkAsync(ids);
@@ -383,152 +744,12 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResGroups> UnlinkExceptSettingsGroupInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _unlink_except_settings_group(self):
             // classified = self.env['res.config.settings']._get_classified_fields()
             // for _name, _groups, implied_group in classified['group']:
             //     if implied_group.id in self.ids:
-            //         raise ValidationError(_('You cannot delete a group linked with a settings field.'))
-            */
-            return default;
-        }
-
-        protected async Task<ResGroups> UpdateUserGroupsViewInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _update_user_groups_view(self):
-            // """ Modify the view with xmlid ``base.user_groups_view``, which inherits
-            //     the user form view, and introduces the reified group fields.
-            // """
-            // # remove the language to avoid translations, it will be handled at the view level
-            // self = self.with_context(lang=None)
-            // 
-            // # We have to try-catch this, because at first init the view does not
-            // # exist but we are already creating some basic groups.
-            // view = self.env.ref('base.user_groups_view', raise_if_not_found=False)
-            // if not (view and view._name == 'ir.ui.view'):
-            //     return
-            // 
-            // if self._context.get('install_filename') or self._context.get(MODULE_UNINSTALL_FLAG):
-            //     # use a dummy view during install/upgrade/uninstall
-            //     xml = E.field(name="groups_id", position="after")
-            // 
-            // else:
-            //     group_no_one = view.env.ref('base.group_no_one')
-            //     group_employee = view.env.ref('base.group_user')
-            //     xml0, xml1, xml2, xml3, xml4 = [], [], [], [], []
-            //     xml_by_category = {}
-            //     xml1.append(E.separator(string='User Type', colspan="2", groups='base.group_no_one'))
-            // 
-            //     user_type_field_name = ''
-            //     user_type_readonly = str({})
-            //     sorted_tuples = sorted(self.get_groups_by_application(),
-            //                            key=lambda t: t[0].xml_id != 'base.module_category_user_type')
-            // 
-            //     invisible_information = "All fields linked to groups must be present in the view due to the overwrite of create and write. The implied groups are calculated using this values."
-            // 
-            //     for app, kind, gs, category_name in sorted_tuples:  # we process the user type first
-            //         attrs = {}
-            //         # hide groups in categories 'Hidden' and 'Extra' (except for group_no_one)
-            //         if app.xml_id in self._get_hidden_extra_categories():
-            //             attrs['groups'] = 'base.group_no_one'
-            // 
-            //         # User type (employee, portal or public) is a separated group. This is the only 'selection'
-            //         # group of res.groups without implied groups (with each other).
-            //         if app.xml_id == 'base.module_category_user_type':
-            //             # application name with a selection field
-            //             field_name = name_selection_groups(gs.ids)
-            //             # test_reified_groups, put the user category type in invisible
-            //             # as it's used in domain of attrs of other fields,
-            //             # and the normal user category type field node is wrapped in a `groups="base.no_one"`,
-            //             # and is therefore removed when not in debug mode.
-            //             xml0.append(E.field(name=field_name, invisible="True", on_change="1"))
-            //             xml0.append(etree.Comment(invisible_information))
-            //             user_type_field_name = field_name
-            //             user_type_readonly = f'{user_type_field_name} != {group_employee.id}'
-            //             attrs['widget'] = 'radio'
-            //             # Trigger the on_change of this "virtual field"
-            //             attrs['on_change'] = '1'
-            //             xml1.append(E.field(name=field_name, **attrs))
-            //             xml1.append(E.newline())
-            // 
-            //         elif kind == 'selection':
-            //             # application name with a selection field
-            //             field_name = name_selection_groups(gs.ids)
-            //             attrs['readonly'] = user_type_readonly
-            //             attrs['on_change'] = '1'
-            //             if category_name not in xml_by_category:
-            //                 xml_by_category[category_name] = []
-            //                 xml_by_category[category_name].append(E.newline())
-            //             xml_by_category[category_name].append(E.field(name=field_name, **attrs))
-            //             xml_by_category[category_name].append(E.newline())
-            //             # add duplicate invisible field so default values are saved on create
-            //             if attrs.get('groups') == 'base.group_no_one':
-            //                 xml0.append(E.field(name=field_name, **dict(attrs, invisible="True", groups='!base.group_no_one')))
-            //                 xml0.append(etree.Comment(invisible_information))
-            // 
-            //         else:
-            //             # application separator with boolean fields
-            //             app_name = app.name or 'Other'
-            //             xml4.append(E.separator(string=app_name, **attrs))
-            //             left_group, right_group = [], []
-            //             attrs['readonly'] = user_type_readonly
-            //             # we can't use enumerate, as we sometime skip groups
-            //             group_count = 0
-            //             for g in gs:
-            //                 field_name = name_boolean_group(g.id)
-            //                 dest_group = left_group if group_count % 2 == 0 else right_group
-            //                 if g == group_no_one:
-            //                     # make the group_no_one invisible in the form view
-            //                     dest_group.append(E.field(name=field_name, invisible="True", **attrs))
-            //                     dest_group.append(etree.Comment(invisible_information))
-            //                 else:
-            //                     dest_group.append(E.field(name=field_name, **attrs))
-            //                 # add duplicate invisible field so default values are saved on create
-            //                 xml0.append(E.field(name=field_name, **dict(attrs, invisible="True", groups='!base.group_no_one')))
-            //                 xml0.append(etree.Comment(invisible_information))
-            //                 group_count += 1
-            //             xml4.append(E.group(*left_group))
-            //             xml4.append(E.group(*right_group))
-            // 
-            //     xml4.append({'class': "o_label_nowrap"})
-            //     user_type_invisible = f'{user_type_field_name} != {group_employee.id}' if user_type_field_name else ''
-            // 
-            //     for xml_cat in sorted(xml_by_category.keys(), key=lambda it: it[0]):
-            //         master_category_name = xml_cat[1]
-            //         xml3.append(E.group(*(xml_by_category[xml_cat]), string=master_category_name))
-            // 
-            //     field_name = 'user_group_warning'
-            //     user_group_warning_xml = E.div({
-            //         'class': "alert alert-warning",
-            //         'role': "alert",
-            //         'colspan': "2",
-            //         'invisible': f'not {field_name}',
-            //     })
-            //     user_group_warning_xml.append(E.label({
-            //         'for': field_name,
-            //         'string': "Access Rights Mismatch",
-            //         'class': "text text-warning fw-bold",
-            //     }))
-            //     user_group_warning_xml.append(E.field(name=field_name))
-            //     xml2.append(user_group_warning_xml)
-            // 
-            //     xml = E.field(
-            //         *(xml0),
-            //         E.group(*(xml1), groups="base.group_no_one"),
-            //         E.group(*(xml2), invisible=user_type_invisible),
-            //         E.group(*(xml3), invisible=user_type_invisible),
-            //         E.group(*(xml4), invisible=user_type_invisible, groups="base.group_no_one"), name="groups_id", position="replace")
-            //     xml.addprevious(etree.Comment("GENERATED AUTOMATICALLY BY GROUPS"))
-            // 
-            // # serialize and update the view
-            // xml_content = etree.tostring(xml, pretty_print=True, encoding="unicode")
-            // if xml_content != view.arch:  # avoid useless xml validation if no change
-            //     new_context = dict(view._context)
-            //     new_context.pop('install_filename', None)  # don't set arch_fs for this computed view
-            //     new_context['lang'] = None
-            //     view.with_context(new_context).write({'arch': xml_content})
+            //         raise ValidationError(self.env._('You cannot delete a group linked with a settings field.'))
             */
             return default;
         }
@@ -536,90 +757,58 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, ResGroups entity, List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
+            // def write(self, vals):
+            // """Override to invalidate `_get_lock_timeouts` cache if timeout fields are updated."""
+            // if any(field in vals for field in CACHE_INVALIDATE_FIELDS):
+            //     self.env.registry.clear_cache()
+            // return super().write(vals)
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_groups.py) ---
+            // def write(self, vals):
+            // if vals.get("user_ids"):
+            //     operator_group = self.env.ref("im_livechat.im_livechat_group_user")
+            //     if operator_group in self.all_implied_ids:
+            //         operators = operator_group.all_user_ids
+            //         result = super().write(vals)
+            //         lost_operators = operators - operator_group.all_user_ids
+            //         # sudo - im_livechat.channel: user manager can remove user from livechat channels
+            //         self.env["im_livechat.channel"].sudo() \
+            //             .search([("user_ids", "in", lost_operators.ids)]) \
+            //             .write({"user_ids": [Command.unlink(operator.id) for operator in lost_operators]})
+            //         return result
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_groups.py) ---
             // def write(self, vals):
             // res = super().write(vals)
-            // if vals.get("users"):
-            //     self.env["discuss.channel"].search([("group_ids", "in", self._ids)])._subscribe_users_automatically()
+            // if vals.get("user_ids"):
+            //     self.env["discuss.channel"].search([("group_ids", "in", self.all_implied_ids._ids)])._subscribe_users_automatically()
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_groups.py) ---
             // def write(self, vals):
             // """ Automatically subscribe new users to linked slide channels """
-            // write_res = super(UserGroup, self).write(vals)
-            // if vals.get('users'):
+            // write_res = super().write(vals)
+            // if vals.get('user_ids'):
             //     # TDE FIXME: maybe directly check users and subscribe them
             //     self.env['slide.channel'].sudo().search([('enroll_group_ids', 'in', self._ids)])._add_groups_members()
             // return write_res
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def write(self, vals):
             // if 'name' in vals:
             //     if vals['name'].startswith('-'):
-            //         raise UserError(_('The name of the group can not start with "-"'))
+            //         raise UserError(self.env._('The name of the group can not start with "-"'))
+            // 
             // # invalidate caches before updating groups, since the recomputation of
             // # field 'share' depends on method has_group()
             // # DLE P139
             // if self.ids:
             //     self.env['ir.model.access'].call_cache_clearing_methods()
-            // return super(Groups, self).write(vals)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def write(self, values):
-            // res = super(GroupsImplied, self).write(values)
-            // if values.get('users') or values.get('implied_ids'):
-            //     # add all implied groups (to all users of each group)
-            //     updated_group_ids = OrderedSet()
-            //     updated_user_ids = OrderedSet()
-            //     for group in self:
-            //         self._cr.execute("""
-            //             WITH RECURSIVE group_imply(gid, hid) AS (
-            //                 SELECT gid, hid
-            //                   FROM res_groups_implied_rel
-            //                  UNION
-            //                 SELECT i.gid, r.hid
-            //                   FROM res_groups_implied_rel r
-            //                   JOIN group_imply i ON (i.hid = r.gid)
-            //             )
-            //             INSERT INTO res_groups_users_rel (gid, uid)
-            //                  SELECT i.hid, r.uid
-            //                    FROM group_imply i, res_groups_users_rel r
-            //                   WHERE r.gid = i.gid
-            //                     AND i.gid = %(gid)s
-            //                  EXCEPT
-            //                  SELECT r.gid, r.uid
-            //                    FROM res_groups_users_rel r
-            //                    JOIN group_imply i ON (r.gid = i.hid)
-            //                   WHERE i.gid = %(gid)s
-            //             RETURNING gid, uid
-            //         """, dict(gid=group.id))
-            //         updated = self.env.cr.fetchall()
-            //         gids, uids = zip(*updated) if updated else ([], [])
-            //         updated_group_ids.update(gids)
-            //         updated_user_ids.update(uids)
-            //     # notify the ORM about the updated users and groups
-            //     updated_groups = self.env['res.groups'].browse(updated_group_ids)
-            //     updated_groups.invalidate_recordset(['users'])
-            //     updated_groups.modified(['users'])
-            //     updated_users = self.env['res.users'].browse(updated_user_ids)
-            //     updated_users.invalidate_recordset(['groups_id'])
-            //     updated_users.modified(['groups_id'])
-            //     # explicitly check constraints
-            //     updated_groups._validate_fields(['users'])
-            //     updated_users._validate_fields(['groups_id'])
-            //     self._check_one_user_type()
-            // if 'implied_ids' in values:
+            // 
+            // res = super().write(vals)
+            // 
+            // if 'implied_ids' in vals or 'implied_by_ids' in vals:
+            //     # Invalidate the cache of groups and their relationships
             //     self.env.registry.clear_cache('groups')
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def write(self, values):
-            // # determine which values the "user groups view" depends on
-            // VIEW_DEPS = ('category_id', 'implied_ids')
-            // view_values0 = [g[name] for name in VIEW_DEPS if name in values for g in self]
-            // res = super(GroupsView, self).write(values)
-            // # update the "user groups view" only if necessary
-            // view_values1 = [g[name] for name in VIEW_DEPS if name in values for g in self]
-            // if view_values0 != view_values1:
-            //     self._update_user_groups_view()
-            // # actions.get_bindings() depends on action records
-            // self.env.registry.clear_cache()
+            // 
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

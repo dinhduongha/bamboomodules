@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class AccountAnalyticLineGetUnusualDaysRequestDto
+    {
+        public object DateFrom { get; set; }
+        public object DateTo { get; set; }
+    }
+    
     public class AccountAnalyticLineGetViewsRequestDto
     {
         public object Views { get; set; }

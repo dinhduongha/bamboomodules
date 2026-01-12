@@ -110,6 +110,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // The dynamic attributes values will be add after. The dynamic
             // attributes has different origins.
+            // 
             // - value from key equal to ``t-att``: python dictionary expression;
             // - value from keys that start with ``t-att-``: python expression;
             // - value from keys that start with ``t-attf-``: format string
@@ -134,15 +135,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # attributes. As we only have the namespace definition, we'll use
             // # an nsmap where the keys are the definitions and the values the
             // # prefixes in order to get back the right prefix and restore it.
-            // if any(not name.startswith('t-') for name in el.attrib):
+            // if any(not key.startswith('t-') for key in el.attrib):
             //     nsprefixmap = {v: k for k, v in chain(compile_context['nsmap'].items(), el.nsmap.items())}
             //     for key in list(el.attrib):
             //         if not key.startswith('t-'):
             //             value = el.attrib.pop(key)
-            //             attrib_qname = etree.QName(key)
+            //             name = key.removesuffix(".translate")
+            //             attrib_qname = etree.QName(name)
             //             if attrib_qname.namespace:
-            //                 key = f'{nsprefixmap[attrib_qname.namespace]}:{attrib_qname.localname}'
-            //             code.append(indent_code(f'attrs[{key!r}] = {value!r}', level))
+            //                 name = f'{nsprefixmap[attrib_qname.namespace]}:{attrib_qname.localname}'
+            //             code.append(indent_code(f'attrs[{name!r}] = {value!r}', level))
             // 
             // # Compile the dynamic attributes of the given element. All
             // # attributes will be add to the ``attrs`` dictionary in the
@@ -150,7 +152,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for key in list(el.attrib):
             //     if key.startswith('t-attf-'):
             //         value = el.attrib.pop(key)
-            //         code.append(indent_code(f"attrs[{key[7:]!r}] = {self._compile_format(value)}", level))
+            //         name = key[7:].removesuffix(".translate")
+            //         code.append(indent_code(f"attrs[{name!r}] = {self._compile_format(value)}", level))
             //     elif key.startswith('t-att-'):
             //         value = el.attrib.pop(key)
             //         code.append(indent_code(f"attrs[{key[6:]!r}] = {self._compile_expr(value)}", level))
@@ -165,82 +168,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             elif isinstance(atts_value, (list, tuple)):
             //                 attrs.update(dict(atts_value))
             //             """, level))
-            // 
-            // return code
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CompileDirectiveCacheInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object level) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _compile_directive_cache(self, el, compile_context, level):
-            // """Compile the `t-cache` tuple expression into a key cache.
-            // 
-            // The `t-cache` directive allows you to keep the rendered result
-            // of a template part. The supplied key must be a tuple. This tuple
-            // can contain recordset in this case the zone will be invalidated
-            // each time the write_date of these records changes.
-            // The values are scoped into the `t-cache` and are not available
-            // outside.
-            // see: `t-nocache`
-            // """
-            // expr = el.attrib.pop('t-cache')
-            // code = self._flush_text(compile_context, level)
-            // 
-            // def_name = compile_context['make_name']('t_cache')
-            // 
-            // # Generate the content function
-            // def_code = [indent_code(f"""def {def_name}(self, values):""", 0)]
-            // def_content = self._compile_directives(el, compile_context, 1)
-            // if def_content and not compile_context['_text_concat']:
-            //     self._append_text('', compile_context) # To ensure the template function is a generator and doesn't become a regular function
-            // def_code.extend(def_content)
-            // def_code.extend(self._flush_text(compile_context, 1))
-            // compile_context['template_functions'][def_name] = def_code
-            // 
-            // # Get the dynamic key for the cache and load the content.
-            // # The t-nocache yield a tuple (ref, function name) instead of a
-            // # When reading tuple coming from t-nocache, we check if the
-            // # method is already known otherwise the corresponding template
-            // # and its functions are loaded.
-            // code.append(indent_code(f"""
-            //     template_cache_key = {self._compile_expr(expr)} if not self.env.context.get('is_t_cache_disabled') else None
-            //     cache_key = self._get_cache_key(template_cache_key) if template_cache_key else None
-            //     uniq_cache_key = cache_key and ({str(self.env.context['__qweb_base_key_cache'])!r}, '{def_name}_cache', cache_key)
-            //     loaded_values = values['__qweb_loaded_values']
-            //     def {def_name}_cache():
-            //         content = []
-            //         text = []
-            //         for item in {def_name}(self, {{**values, '__qweb_in_cache': True}}):
-            //             if isinstance(item, str):
-            //                 text.append(item)
-            //             else:
-            //                 content.append(''.join(text))
-            //                 content.append(item)
-            //                 text = []
-            //         if text:
-            //             content.append(''.join(text))
-            //         return content
-            //     cache_content = self._load_values(uniq_cache_key, {def_name}_cache, loaded_values)
-            //     if values.get('__qweb_in_cache'):
-            //         yield from cache_content
-            //     else:
-            //         for item in cache_content:
-            //             if isinstance(item, str):
-            //                 yield item
-            //             else:
-            //                 ref, function_name, cached_values = item
-            //                 t_nocache_function = loaded_values.get(function_name)
-            //                 if not t_nocache_function:
-            //                     t_call_template_functions, def_name = self._compile(ref)
-            //                     t_nocache_function = t_call_template_functions[function_name]
-            // 
-            //                 nocache_values = values['__qweb_root_values'].copy()
-            //                 nocache_values.update(cached_values)
-            //                 yield ''.join(t_nocache_function(self, nocache_values))
-            //     """, level))
             // 
             // return code
             */
@@ -264,6 +191,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // defer_load = self._compile_bool(el.attrib.pop('defer_load', False))
             // lazy_load = self._compile_bool(el.attrib.pop('lazy_load', False))
             // media = el.attrib.pop('media', False)
+            // autoprefix = self._compile_bool(el.attrib.pop('t-autoprefix', False))
             // code.append(indent_code(f"""
             //     t_call_assets_nodes = self._get_asset_nodes(
             //         {xmlid!r},
@@ -273,6 +201,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         defer_load={defer_load},
             //         lazy_load={lazy_load},
             //         media={media!r},
+            //         autoprefix={autoprefix}
             //     )
             // """.strip(), level))
             // 
@@ -322,12 +251,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // expr = el.attrib.pop('t-call')
             // 
+            // el_tag = etree.QName(el.tag).localname if el.nsmap else el.tag
+            // if el_tag != 't':
+            //     raise SyntaxError(f"t-call must be on a <t> element (actually on <{el_tag}>).")
+            // 
             // if el.attrib.get('t-call-options'): # retro-compatibility
             //     el.attrib.set('t-options', el.attrib.pop('t-call-options'))
             // 
             // nsmap = compile_context.get('nsmap')
             // 
             // code = self._flush_text(compile_context, level, rstrip=el.tag.lower() == 't')
+            // _ref, path, xml = compile_context['_qweb_error_path_xml']
             // 
             // # options
             // el.attrib.pop('t-consumed-options', None)
@@ -343,33 +277,69 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             nsmap.append(f'None:{value!r}')
             //     code.append(indent_code(f"t_call_options.update(nsmap={{{', '.join(nsmap)}}})", level))
             // 
-            // # values (t-out="0" from content and variables from t-set)
-            // def_name = compile_context['make_name']('t_call')
+            // # values from content (t-out="0")
+            // if bool(list(el) or el.text):
+            //     is_deprecated_version = not any(not key.startswith('t-') for key in el.attrib) and any(n.attrib.get('t-set') for n in el)
             // 
-            // # values from content (t-out="0" and t-set inside the content)
-            // code_content = [f"def {def_name}(self, values):"]
-            // code_content.extend(self._compile_directive(el, compile_context, 'inner-content', 1))
-            // self._append_text('', compile_context) # To ensure the template function is a generator and doesn't become a regular function
-            // code_content.extend(self._flush_text(compile_context, 1, rstrip=True))
-            // compile_context['template_functions'][def_name] = code_content
+            //     def_name = compile_context['make_name']('t_call')
+            //     code_content = [f"def {def_name}(self, values):"]
+            //     code_content.append(indent_code(f'# element: {path!r} , {xml!r}', 1))
+            //     code_content.extend(self._compile_directive(el, compile_context, 'inner-content', 1))
+            //     self._append_text('', compile_context)  # To ensure the template function is a generator and doesn't become a regular function
+            //     code_content.extend(self._flush_text(compile_context, 1, rstrip=True))
             // 
-            // code.append(indent_code(f"""
-            //     t_call_values = values.copy()
-            //     t_call_values[{T_CALL_SLOT}] = list({def_name}(self, t_call_values))
+            //     compile_context['template_functions'][def_name] = code_content
+            // 
+            //     code.append(indent_code(f"""
+            //         t_call_content_values = values.copy()
+            //         qwebContent = QwebContent(self, QwebCallParameters(self.env.context, {compile_context['ref']!r}, {def_name!r}, t_call_content_values, 'root', 'inner-content', (template_options['ref'], {path!r}, {xml!r})))
+            //         t_call_values = {{ {T_CALL_SLOT}: qwebContent}}
             //     """, level))
             // 
-            // template = self._compile_format(expr)
+            //     if is_deprecated_version:
+            //         # force the loading of the content to get values from t-set
+            //         code.append(indent_code(f"""
+            //             str(qwebContent)
+            //             new_values = {{k: v for k, v in t_call_content_values.items() if k != {T_CALL_SLOT} and k != '__qweb_attrs__' and values.get(k) is not v}}
+            //             t_call_values.update(new_values)
+            //         """, level))
+            // else:
+            //     code.append(indent_code(f"t_call_values = {{ {T_CALL_SLOT}: '' }}", level))
+            // 
+            // # args to values
+            // for key in list(el.attrib):
+            //     if key.endswith(('.f', '.translate')):
+            //         name = key.removesuffix(".f").removesuffix(".translate")
+            //         value = el.attrib.pop(key)
+            //         code.append(indent_code(f"t_call_values[{name!r}] = {self._compile_format(value)}", level))
+            //     elif not key.startswith('t-'):
+            //         value = el.attrib.pop(key)
+            //         code.append(indent_code(f"t_call_values[{key!r}] = {self._compile_expr(value)}", level))
+            //     elif key == 't-args':
+            //         value = el.attrib.pop(key)
+            //         code.append(indent_code(f"""
+            //             atts_value = {self._compile_expr(value)}
+            //             if isinstance(atts_value, dict):
+            //                 t_call_values.update(atts_value)
+            //             elif isinstance(atts_value, (list, tuple)) and not isinstance(atts_value[0], (list, tuple)):
+            //                 t_call_values.update([atts_value])
+            //             elif isinstance(atts_value, (list, tuple)):
+            //                 t_call_values.update(dict(atts_value))
+            //             """, level))
+            // 
+            // template = expr if expr.isnumeric() else self._compile_format(expr)
             // 
             // # call
             // code.append(indent_code(f"""
-            //     irQweb = self.with_context(**t_call_options)
             //     template = {template}
-            //     if template.isnumeric():
-            //         template = int(template)
-            //     t_call_template_functions, def_name = irQweb._compile(template)
-            //     render_template = t_call_template_functions[def_name]
-            //     yield from render_template(irQweb, t_call_values)
             //     """, level))
+            // if '%' in template:
+            //     code.append(indent_code("""
+            //         if template.isnumeric():
+            //             template = int(template)
+            //         """, level))
+            // 
+            // code.append(indent_code(f"yield QwebCallParameters(t_call_options, template, None, t_call_values, True, 't-call', (template_options['ref'], {path!r}, {xml!r}))", level))
             // 
             // return code
             */
@@ -467,12 +437,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _compile_directive_field(self, el, compile_context, level):
-            // """Compile `t-field` expressions into a python code as a list of
+            // """Compile ``t-field`` expressions into a python code as a list of
             // strings.
             // 
             // The compiled code will call ``_get_field`` method at rendering time
             // using the type of value supplied by the field. This behavior can be
-            // changed with `t-options-widget` or `t-options={'widget': ...}.
+            // changed with ``t-options-widget`` or ``t-options={'widget': ...}``.
             // 
             // The code will contain evalution and rendering of the compiled value
             // value from the record field. If the compiled value is None or False,
@@ -498,16 +468,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _compile_directive_foreach(self, el, compile_context, level):
-            // """Compile `t-foreach` expressions into a python code as a list of
+            // """Compile ``t-foreach`` expressions into a python code as a list of
             // strings.
             // 
-            // `t-as` is used to define the key name.
-            // `t-foreach` compiled value can be an iterable, an dictionary or a
-            // number.
+            // * ``t-as`` is used to define the key name.
+            // * ``t-foreach`` compiled value can be an iterable, an dictionary or a
+            //   number.
             // 
-            // The code will contain loop `for` that wrap the rest of the compiled
+            // The code will contain loop ``for`` that wrap the rest of the compiled
             // code of this element.
-            // Some key into values dictionary are create automatically:
+            // 
+            // Some key into values dictionary are create automatically::
+            // 
             //     *_size, *_index, *_value, *_first, *_last, *_odd, *_even, *_parity
             // """
             // expr_foreach = el.attrib.pop('t-foreach')
@@ -705,7 +677,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if el.text is not None:
             //     self._append_text(el.text, compile_context)
             // body = []
-            // for item in el:
+            // for item in list(el):
             //     if isinstance(item, etree._Comment):
             //         if compile_context.get('preserve_comments'):
             //             self._append_text(f"<!--{item.text}-->", compile_context)
@@ -725,24 +697,26 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CompileDirectiveInstallInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object indent) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def _compile_directive_install(self, el, compile_context, indent):
             // key = el.attrib.pop('t-install')
             // thumbnail = el.attrib.pop('t-thumbnail', 'oe-thumbnail')
             // image_preview = el.attrib.pop('t-image-preview', None)
             // group = el.attrib.pop('group', None)
+            // label = el.attrib.pop('label', None)
             // if self.env.user.has_group('base.group_system'):
             //     module = self.env['ir.module.module'].search([('name', '=', key)])
             //     if not module or module.state == 'installed':
             //         return []
             //     name = el.attrib.get('string') or 'Snippet'
-            //     div = Markup('<div name="%s" data-oe-type="snippet" data-module-id="%s" data-module-display-name="%s" data-o-image-preview="%s" data-oe-thumbnail="%s" %s><section/></div>') % (
+            //     div = Markup('<div name="%s" data-oe-type="snippet" data-module-id="%s" data-module-display-name="%s" data-o-image-preview="%s" data-oe-thumbnail="%s" %s %s><section/></div>') % (
             //         name,
             //         module.id,
             //         module.display_name,
             //         escape_silent(image_preview),
             //         thumbnail,
             //         Markup('data-o-group="%s"') % group if group else '',
+            //         Markup('data-o-label="%s"') % label if label else '',
             //     )
             //     self._append_text(div, compile_context)
             // return []
@@ -764,7 +738,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _compile_directive(self, el, compile_context, directive, level):
             // compile_handler = getattr(self, f"_compile_directive_{directive.replace('-', '_')}", None)
-            // return compile_handler(el, compile_context, level)
+            // if compile_context.get('profile') and directive not in ('inner-content', 'tag-open', 'tag-close'):
+            //     enter = f"{' ' * 4 * level}self.env.context['qweb_tracker'].enter_directive({directive!r}, {el.attrib!r}, {compile_context['_qweb_error_path_xml'][1]!r})"
+            //     leave = f"{' ' * 4 * level}self.env.context['qweb_tracker'].leave_directive({directive!r}, {el.attrib!r}, {compile_context['_qweb_error_path_xml'][1]!r})"
+            //     code_directive = compile_handler(el, compile_context, level)
+            //     if code_directive:
+            //         code_directive = [enter, *code_directive, leave]
+            // else:
+            //     code_directive = compile_handler(el, compile_context, level)
+            // return code_directive
             */
             return default;
         }
@@ -778,81 +760,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise SyntaxError("t-lang is an alias of t-options-lang but only available on the same node of t-call")
             // el.attrib['t-options-lang'] = el.attrib.pop('t-lang')
             // return self._compile_node(el, compile_context, level)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CompileDirectiveNocacheInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object level) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _compile_directive_nocache(self, el, compile_context, level):
-            // """
-            // The `t-nocache` directive makes it possible to force rendering
-            // of a part even if it is in a `t-cache`. The values available in
-            // the `t-nocache` are the one provided when calling the template
-            // (and therefore ignores any t-set that could have been done).
-            // 
-            // The `t-nocache-*` are the values whose result of the
-            // expression will be cached and added to the root's values when
-            // rendering the no cache part. Only primitive types can be cached.
-            // 
-            // see: `t-cache`
-            // """
-            // if 't-nocache' not in el.attrib:
-            //     raise SyntaxError("t-nocache-* must be on the same node as t-nocache")
-            // 
-            // el.attrib.pop('t-nocache')
-            // code = self._flush_text(compile_context, level)
-            // 
-            // # t-nocache-* will generate the values to put in cache
-            // # must cosume this attributes before generate the cached content.
-            // code_cache_values = []
-            // for key in list(el.attrib):
-            //     if key.startswith('t-nocache-'):
-            //         expr = el.attrib.pop(key)
-            //         varname = key[10:]
-            //         if not VARNAME_REGEXP.match(varname):
-            //             raise ValueError(f'The varname {varname!r} can only contain alphanumeric characters and underscores.')
-            //         code_cache_values.append(indent_code(f"""
-            //             cached_value = {self._compile_expr(expr)}
-            //             if cached_value is not None and not isinstance(cached_value, (str, int, float, bool)):
-            //                 raise ValueError(f'''The value type of {key!r} cannot be cached: {{cached_value!r}}''')
-            //             cached_values[{varname!r}] = cached_value
-            //         """, level + 1))
-            // 
-            // # generate the cached content method
-            // def_name = compile_context['make_name']('t_nocache')
-            // def_code = [f"def {def_name}(self, values):"]
-            // def_code.append(indent_code("try:", 1))
-            // def_content = self._compile_directives(el, compile_context, 2)
-            // if def_content and not compile_context['_text_concat']:
-            //     self._append_text('', compile_context) # To ensure the template function is a generator and doesn't become a regular function
-            // def_code.extend(def_content)
-            // def_code.extend(self._flush_text(compile_context, 2))
-            // def_code.append(indent_code(f"""
-            //         except QWebException:
-            //             raise
-            //         except Exception as e:
-            //             raise QWebException("Error while render the template",
-            //                 self, template, ref={compile_context['ref']!r}, code=code) from e
-            //     """, 1))
-            // compile_context['template_functions'][def_name] = def_code
-            // 
-            // # if the nocache is inside a cache return a tuple with the method name and the cached values
-            // code.append(indent_code("""
-            //     if values.get('__qweb_in_cache'):
-            //         cached_values = {}
-            //     """, level))
-            // code.extend(code_cache_values)
-            // code.append(indent_code(f"yield ({compile_context['template']!r}, {def_name!r}, cached_values)", level+1))
-            // # else render the content
-            // code.append(indent_code(f"""
-            //     else:
-            //         yield from {def_name}(self, values)
-            //     """, level))
-            // 
-            // return code
             */
             return default;
         }
@@ -935,6 +842,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // code = self._flush_text(compile_context, level)
             // 
+            // _ref, path, xml = compile_context['_qweb_error_path_xml']
+            // 
             // code_options = el.attrib.pop('t-consumed-options', 'None')
             // tag_open = (
             //     self._compile_directive(el, compile_context, 'tag-open', level + 1) +
@@ -954,7 +863,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if expr == T_CALL_SLOT and code_options != 'True':
             //     code.append(indent_code("if True:", level))
             //     code.extend(tag_open)
-            //     code.append(indent_code(f"yield from values.get({T_CALL_SLOT}, [])", level + 1))
+            //     code.append(indent_code(f"yield values.get({T_CALL_SLOT}, '')", level + 1))
             //     code.extend(tag_close)
             //     return code
             // elif ttype == 't-field':
@@ -971,7 +880,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     force_display_dependent = True
             // else:
             //     if expr == T_CALL_SLOT:
-            //         code.append(indent_code(f"content = Markup(''.join(values.get({T_CALL_SLOT}, [])))", level))
+            //         code.append(indent_code(f"content = values.get({T_CALL_SLOT}, '')", level))
             //     else:
             //         code.append(indent_code(f"content = {self._compile_expr(expr)}", level))
             // 
@@ -1008,7 +917,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Use str to avoid the escaping of the other html content because the
             // # yield generator MarkupSafe values will be join into an string in
             // # `_render`.
-            // code.append(indent_code("yield str(escape(content))", level + 1))
+            // code.append(indent_code(f"""
+            //     if isinstance(content, QwebContent):
+            //         self.env.context['_qweb_error_path_xml'][0] = template_options['ref']
+            //         self.env.context['_qweb_error_path_xml'][1] = {path!r}
+            //         self.env.context['_qweb_error_path_xml'][2] = {xml!r}
+            //         yield content
+            //     else:
+            //         yield str(escape(content))
+            // """, level + 1))
             // code.extend(tag_close)
             // 
             // # generate code to display the tag with default content if the value is
@@ -1040,7 +957,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CompileDirectivePlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object indent) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def _compile_directive_placeholder(self, el, compile_context, indent):
             // el.set('t-att-placeholder', el.attrib.pop('t-placeholder'))
             // return []
@@ -1077,6 +994,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // There are 3 kinds of `t-set`:
             // * `t-value` containing python code;
             // * `t-valuef` containing strings to format;
+            // * `t-valuef.translate` containing translated strings to format;
             // * whose value is the content of the tag (being Markup safe).
             // 
             // The code will contain the assignment of the dynamically generated value.
@@ -1089,9 +1007,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if varname == "":
             //         raise KeyError('t-set')
             //     if varname != T_CALL_SLOT and varname[0] != '{' and not VARNAME_REGEXP.match(varname):
-            //         raise ValueError('The varname can only contain alphanumeric characters and underscores.')
+            //         raise SyntaxError('The varname can only contain alphanumeric characters and underscores.')
+            //     if '__' in varname:
+            //         raise SyntaxError(f"Using variable names with '__' is not allowed: {varname!r}")
             // 
-            //     if 't-value' in el.attrib or 't-valuef' in el.attrib or varname[0] == '{':
+            //     if 't-value' in el.attrib or 't-valuef' in el.attrib or 't-valuef.translate' in el.attrib or varname[0] == '{':
             //         el.attrib.pop('t-inner-content') # The content is considered empty.
             //         if varname == T_CALL_SLOT:
             //             raise SyntaxError('t-set="0" should not be set from t-value or t-valuef')
@@ -1102,36 +1022,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif 't-valuef' in el.attrib:
             //         exprf = el.attrib.pop('t-valuef')
             //         code.append(indent_code(f"values[{varname!r}] = {self._compile_format(exprf)}", level))
+            //     elif 't-valuef.translate' in el.attrib:
+            //         exprf = el.attrib.pop('t-valuef.translate')
+            //         code.append(indent_code(f"values[{varname!r}] = {self._compile_format(exprf)}", level))
             //     elif varname[0] == '{':
             //         code.append(indent_code(f"values.update({self._compile_expr(varname)})", level))
             //     else:
             //         # set the content as value
+            //         _ref, path, xml = compile_context['_qweb_error_path_xml']
             //         content = (
             //             self._compile_directive(el, compile_context, 'inner-content', 1) +
             //             self._flush_text(compile_context, 1))
             //         if content:
             //             def_name = compile_context['make_name']('t_set')
-            //             compile_context['template_functions'][def_name] = [f"def {def_name}(self, values):"] + content
-            //             code.append(indent_code(f"""
-            //                     t_set = []
-            //                     for item in {def_name}(self, values):
-            //                         if isinstance(item, str):
-            //                             t_set.append(item)
-            //                         else:
-            //                             ref, function_name, cached_values = item
-            //                             t_nocache_function = values['__qweb_loaded_values'].get(function_name)
-            //                             if not t_nocache_function:
-            //                                 t_call_template_functions, def_name = self._compile(ref)
-            //                                 t_nocache_function = t_call_template_functions[function_name]
+            //             def_code = [f"def {def_name}(self, values):"]
+            //             def_code.append(indent_code(f'# element: {path!r} , {xml!r}', 1))
+            //             def_code.extend(content)
+            //             compile_context['template_functions'][def_name] = def_code
             // 
-            //                             nocache_values = values['__qweb_root_values'].copy()
-            //                             nocache_values.update(cached_values)
-            //                             t_set.extend(t_nocache_function(self, nocache_values))
-            //                 """, level))
-            //             expr = "Markup(''.join(t_set))"
+            //             code.append(indent_code(f"""
+            //                 values[{varname!r}] = QwebContent(self, QwebCallParameters(self.env.context, {compile_context['ref']!r}, {def_name!r}, values.copy(), 'root', 't-set', (template_options['ref'], {path!r}, {xml!r})))
+            //             """, level))
             //         else:
-            //             expr = "''"
-            //         code.append(indent_code(f"values[{varname!r}] = {expr}", level))
+            //             code.append(indent_code(f"values[{varname!r}] = ''", level))
             // 
             // return code
             */
@@ -1141,7 +1054,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CompileDirectiveSnippetCallInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object indent) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def _compile_directive_snippet_call(self, el, compile_context, indent):
             // key = el.attrib.pop('t-snippet-call')
             // snippet_name = el.attrib.pop('string', None)
@@ -1155,16 +1068,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CompileDirectiveSnippetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object indent) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def _compile_directive_snippet(self, el, compile_context, indent):
             // key = el.attrib.pop('t-snippet')
             // el.set('t-call', key)
-            // snippet_lang = self._context.get('snippet_lang')
+            // snippet_lang = self.env.context.get('snippet_lang')
             // if snippet_lang:
             //     el.set('t-lang', f"'{snippet_lang}'")
             // 
             // el.set('t-options', f"{{'snippet-key': {key!r}}}")
-            // view = self.env['ir.ui.view']._get(key).sudo()
+            // view = self.env['ir.ui.view']._get_template_view(key)
             // name = el.attrib.pop('string', view.name)
             // thumbnail = el.attrib.pop('t-thumbnail', "oe-thumbnail")
             // image_preview = el.attrib.pop('t-image-preview', None)
@@ -1172,17 +1085,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # - "true": always forbid
             // # - "form": forbid if forms are sanitized
             // forbid_sanitize = el.attrib.pop('t-forbid-sanitize', None)
+            // grid_column_span = el.attrib.pop('t-grid-column-span', None)
             // snippet_group = el.attrib.pop('snippet-group', None)
             // group = el.attrib.pop('group', None)
-            // div = Markup('<div name="%s" data-oe-type="snippet" data-o-image-preview="%s" data-oe-thumbnail="%s" data-oe-snippet-id="%s" data-oe-keywords="%s" %s %s %s>') % (
+            // label = el.attrib.pop('label', None)
+            // div = Markup('<div name="%s" data-oe-type="snippet" data-o-image-preview="%s" data-oe-thumbnail="%s" data-oe-snippet-id="%s" data-oe-snippet-key="%s" data-oe-keywords="%s" %s %s %s %s %s>') % (
             //     name,
             //     escape_silent(image_preview),
             //     thumbnail,
             //     view.id,
+            //     key.split('.')[-1],
             //     escape_silent(el.findtext('keywords')),
             //     Markup('data-oe-forbid-sanitize="%s"') % forbid_sanitize if forbid_sanitize else '',
+            //     Markup('data-o-grid-column-span="%s"') % grid_column_span if grid_column_span else '',
             //     Markup('data-o-snippet-group="%s"') % snippet_group if snippet_group else '',
             //     Markup('data-o-group="%s"') % group if group else '',
+            //     Markup('data-o-label="%s"') % label if label else '',
             // )
             // self._append_text(div, compile_context)
             // code = self._compile_node(el, compile_context, indent)
@@ -1224,6 +1142,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // The dynamic attributes values will be add after. The dynamic
             // attributes has different origins.
+            // 
             // - value from key equal to ``t-att``: python dictionary expression;
             // - value from keys that start with ``t-att-``: python expression;
             // - value from keys that start with ``t-attf-``: format string
@@ -1327,9 +1246,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif directive == 'options':
             //         if any(name.startswith('t-options-') for name in el.attrib):
             //             code.extend(self._compile_directive(el, compile_context, directive, level))
-            //     elif directive == 'nocache':
-            //         if any(name.startswith('t-nocache-') for name in el.attrib):
-            //             code.extend(self._compile_directive(el, compile_context, directive, level))
             // 
             // # compile unordered directives still present on the element
             // for att in el.attrib:
@@ -1362,7 +1278,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // method.
             // 
             // :param expr: string: python expression
-            // :param [raise_on_missing]: boolean:
+            // :param bool raise_on_missing:
             //     Compile has `values['product'].price` instead of
             //     `values.get('product').price` to raise an error when get the
             //     'product' value and not an 'NoneType' object has no attribute
@@ -1501,6 +1417,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     pos = t.start
             // 
             //     if t.exact_type == token.NAME:
+            //         if '__' in string:
+            //             raise SyntaxError(f"Using variable names with '__' is not allowed: {string!r}")
             //         if string == 'lambda': # lambda => allowed values
             //             code.append('lambda ')
             //             index += 1
@@ -1525,7 +1443,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             code.append(string)
             //         elif index > 0 and tokens[index - 1] and tokens[index - 1].exact_type == token.DOT:
             //             code.append(string)
-            //         elif raise_on_missing or index + 1 < len(tokens) and tokens[index + 1].exact_type in [token.DOT, token.LPAR, token.LSQB, 'qweb']:
+            //         elif raise_on_missing or index + 1 < len(tokens) and tokens[index + 1].exact_type in [token.DOT, token.LPAR, token.LSQB, token.QWEB]:
             //             # Should have values['product'].price to raise an error when get
             //             # the 'product' value and not an 'NoneType' object has no
             //             # attribute 'price' error.
@@ -1577,52 +1495,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _compile(self, template):
-            // if isinstance(template, etree._Element):
-            //     self = self.with_context(is_t_cache_disabled=True)
-            //     ref = None
-            // else:
-            //     ref = self._get_view_id(template)
-            // 
-            // # define the base key cache for code in cache and t-cache feature
-            // base_key_cache = None
-            // if ref:
-            //     base_key_cache = self._get_cache_key(tuple([ref] + [self.env.context.get(k) for k in self._get_template_cache_keys()]))
-            // self = self.with_context(__qweb_base_key_cache=base_key_cache)
-            // 
-            // # generate the template functions and the root function name
-            // def generate_functions():
-            //     code, options, def_name = self._generate_code(template)
-            //     if self.env.context.get('profile'):
-            //         ref_value = None
-            //         with contextlib.suppress(ValueError, TypeError):
-            //             ref_value = int(options.get('ref'))
-            //         profile_options = {
-            //             'ref': ref_value,
-            //             'ref_xml': options.get('ref_xml') and str(options['ref_xml']) or None,
-            //         }
+            // ref = None
+            // if isinstance(template, str) and template.endswith('.xml'):
+            //     module_path = Manifest.for_addon(Path(template).parts[0]).path
+            //     if 'templates' not in Path(file_path(template)).relative_to(module_path).parts:
+            //         raise ValueError("The templates file %s must be under a subfolder 'templates' of a module", template)
             //     else:
-            //         profile_options = None
-            //     code = '\n'.join([
-            //         "def generate_functions():",
-            //         "    template_functions = {}",
-            //         indent_code(code, 1),
-            //         f"    template_functions['options'] = {profile_options!r}",
-            //         "    return template_functions",
-            //     ])
+            //         with file_open(template, 'rb', filter_ext=('.xml',)) as file:
+            //             template = etree.fromstring(file.read())
+            // elif not isinstance(template, etree._Element):
+            //     ref = self._get_template_info(template)['id']
             // 
-            //     try:
-            //         compiled = compile(code, f"<{ref}>", 'exec')
-            //         globals_dict = self.__prepare_globals()
-            //         globals_dict['__builtins__'] = globals_dict # So that unknown/unsafe builtins are never added.
-            //         unsafe_eval(compiled, globals_dict)
-            //         return globals_dict['generate_functions'](), def_name
-            //     except QWebException:
-            //         raise
-            //     except Exception as e:
-            //         raise QWebException("Error when compiling xml template",
-            //             self, template, code=code, ref=ref) from e
+            // if ref:
+            //     template_functions, def_name, options = self._generate_code_cached(ref)
+            // else:
+            //     template_functions, def_name, options = self._generate_code_uncached(template)
             // 
-            // return self._load_values(base_key_cache, generate_functions)
+            // render_template = template_functions[def_name]
+            // if options.get('profile') and render_template.__name__ != 'profiled_method_compile':
+            //     ref = options.get('ref')
+            //     ref_xml = str(val) if (val := options.get('ref_xml')) else None
+            // 
+            //     def wrap(function):
+            //         def profiled_method_compile(self, values):
+            //             qweb_tracker = QwebTracker(ref, ref_xml, self.env.cr)
+            //             self = self.with_context(qweb_tracker=qweb_tracker)
+            //             if qweb_tracker.execution_context_enabled:
+            //                 with ExecutionContext(template=ref):
+            //                     return function(self, values)
+            //             return function(self, values)
+            // 
+            //         return profiled_method_compile
+            // 
+            //     for key, function in template_functions.items():
+            //         if isinstance(function, FunctionType):
+            //             template_functions[key] = wrap(function)
+            // 
+            // return (template_functions, def_name, options)
             */
             return default;
         }
@@ -1630,15 +1539,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CompileNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object el, object compile_context, object level) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def _compile_node(self, el, compile_context, indent):
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def _compile_node(self, el, compile_context, level):
             // snippet_key = compile_context.get('snippet-key')
-            // template = compile_context['template']
+            // 
+            // template = compile_context['ref_name']
             // sub_call_key = compile_context.get('snippet-sub-call-key')
+            // 
             // # We only add the 'data-snippet' & 'data-name' attrib once when
             // # compiling the root node of the template.
-            // if template not in {snippet_key, sub_call_key} or el.getparent() is not None:
-            //     return super()._compile_node(el, compile_context, indent)
+            // if not template or template not in {snippet_key, sub_call_key} or el.getparent() is not None:
+            //     return super()._compile_node(el, compile_context, level)
             // 
             // snippet_base_node = el
             // if el.tag == 't':
@@ -1664,7 +1575,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // snippet_name = compile_context.get('snippet-name')
             // if snippet_name and 'data-name' not in snippet_base_node.attrib:
             //     snippet_base_node.attrib['data-name'] = snippet_name
-            // return super()._compile_node(el, compile_context, indent)
+            // return super()._compile_node(el, compile_context, level)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _compile_node(self, el, compile_context, level):
             // """ Compile the given element into python code.
@@ -1690,7 +1601,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // path = compile_context['root'].getpath(el)
             // xml = etree.tostring(etree.Element(el.tag, el.attrib), encoding='unicode')
-            // compile_context['_qweb_error_path_xml'] = (path, xml)
+            // compile_context['_qweb_error_path_xml'][0] = compile_context['ref']
+            // compile_context['_qweb_error_path_xml'][1] = path
+            // compile_context['_qweb_error_path_xml'][2] = xml
             // body = [indent_code(f'# element: {path!r} , {xml!r}', level)]
             // 
             // # create an iterator on directives to compile in order
@@ -1731,7 +1644,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Compile a purely static element into a list of string. """
             // if not el.nsmap:
             //     unqualified_el_tag = el_tag = el.tag
-            //     attrib = self._post_processing_att(el.tag, el.attrib)
+            //     attrib = self._post_processing_att(el.tag, {**el.attrib, '__is_static_node': True})
             // else:
             //     # Etree will remove the ns prefixes indirection by inlining the corresponding
             //     # nsmap definition into the tag attribute. Restore the tag and prefix here.
@@ -1755,13 +1668,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ns = chain(compile_context['nsmap'].items(), el.nsmap.items())
             //     nsprefixmap = {v: k for k, v in ns}
             //     for key, value in el.attrib.items():
-            //         attrib_qname = etree.QName(key)
+            //         name = key.removesuffix(".translate")
+            //         attrib_qname = etree.QName(name)
             //         if attrib_qname.namespace:
             //             attrib[f'{nsprefixmap[attrib_qname.namespace]}:{attrib_qname.localname}'] = value
             //         else:
-            //             attrib[key] = value
+            //             attrib[name] = value
             // 
-            //     attrib = self._post_processing_att(el.tag, attrib)
+            //     attrib = self._post_processing_att(el.tag, {**attrib, '__is_static_node': True})
             // 
             //     # Update the dict of inherited namespaces before continuing the recursion. Note:
             //     # since `compile_context['nsmap']` is a dict (and therefore mutable) and we do **not**
@@ -1770,7 +1684,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     original_nsmap = dict(compile_context['nsmap'])
             // 
             // if unqualified_el_tag != 't':
-            //     attributes = ''.join(f' {name}="{escape(str(value))}"'
+            //     attributes = ''.join(f' {name.removesuffix(".translate")}="{escape(str(value))}"'
             //                         for name, value in attrib.items() if value or isinstance(value, str))
             //     self._append_text(f'<{el_tag}{"".join(attributes)}', compile_context)
             //     if el_tag in VOID_ELEMENTS:
@@ -1843,7 +1757,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DirectivesEvalOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def _directives_eval_order(self):
             // directives = super()._directives_eval_order()
             // # Insert before "att" as those may rely on static attributes like
@@ -1858,32 +1772,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _directives_eval_order(self):
             // """ List all supported directives in the order in which they should be
             // evaluated on a given element. For instance, a node bearing both
-            // ``foreach`` and ``if`` should see ``foreach`` executed before ``if`` aka
+            // ``foreach`` and ``if`` should see ``foreach`` executed before ``if``
+            // aka
+            // 
             // .. code-block:: xml
+            // 
             //     <el t-foreach="foo" t-as="bar" t-if="bar">
+            // 
             // should be equivalent to
+            // 
             // .. code-block:: xml
+            // 
             //     <t t-foreach="foo" t-as="bar">
             //         <t t-if="bar">
             //             <el>
+            // 
             // then this method should return ``['foreach', 'if']``.
             // """
             // return [
             //     'elif', # Must be the first because compiled by the previous if.
             //     'else', # Must be the first because compiled by the previous if.
             //     'debug',
-            //     'nocache',
-            //     'cache',
             //     'groups',
             //     'as', 'foreach',
             //     'if',
             //     'call-assets',
             //     'lang',
             //     'options',
+            //     'call',
             //     'att',
             //     'field', 'esc', 'raw', 'out',
             //     'tag-open',
-            //     'call',
             //     'set',
             //     'inner-content',
             //     'tag-close',
@@ -1917,23 +1836,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GenerateAssetLinksCacheInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object assets_params, object rtl) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<TEntity> GenerateAssetLinksCacheInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object assets_params, object rtl, object autoprefix) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _generate_asset_links_cache(self, bundle, css=True, js=True, assets_params=None, rtl=False):
-            // return self._generate_asset_links(bundle, css, js, False, assets_params, rtl)
+            // def _generate_asset_links_cache(self, bundle, css=True, js=True, assets_params=None, rtl=False, autoprefix=False):
+            // return self._generate_asset_links(bundle, css, js, False, assets_params, rtl, autoprefix=autoprefix)
             */
             return default;
         }
 
-        public async Task<TEntity> GenerateAssetLinksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug_assets, object assets_params, object rtl) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<TEntity> GenerateAssetLinksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug_assets, object assets_params, object rtl, object autoprefix) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _generate_asset_links(self, bundle, css=True, js=True, debug_assets=False, assets_params=None, rtl=False):
-            // asset_bundle = self._get_asset_bundle(bundle, css=css, js=js, debug_assets=debug_assets, rtl=rtl, assets_params=assets_params)
+            // def _generate_asset_links(self, bundle, css=True, js=True, debug_assets=False, assets_params=None, rtl=False, autoprefix=False):
+            // asset_bundle = self._get_asset_bundle(bundle, css=css, js=js, debug_assets=debug_assets, rtl=rtl, assets_params=assets_params, autoprefix=autoprefix)
             // return asset_bundle.get_links()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GenerateCodeCachedInternalAsync<TEntity>(IEnumerable<TEntity> entities, int @ref) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _generate_code_cached(self, ref: int):
+            // return self._generate_code_uncached(ref)
             */
             return default;
         }
@@ -1942,21 +1871,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _generate_code(self, template):
+            // def _generate_code(self, template: int | str | etree._Element):
             // """ Compile the given template into a rendering function (generator)::
             // 
             //     render_template(qweb, values)
-            //     This method can be called only by the IrQweb `_render` method or by
-            //     the compiled code of t-call from an other template.
             // 
-            //     An `options` dictionary is created and attached to the function. It
-            //     contains rendering options that are part of the cache key in
-            //     addition to template references.
+            // This method can be called only by :meth:`_render` method or by
+            // the compiled code of t-call from an other template.
             // 
-            //     where ``qweb`` is a QWeb instance and ``values`` are the values to
-            //     render.
+            // An ``options`` dictionary is created and attached to the function.
+            // It contains rendering options that are part of the cache key in
+            // addition to template references.
             // 
-            //     :returns: tuple containing code, options and main method name
+            // where ``qweb`` is a QWeb instance and ``values`` are the values to
+            // render.
+            // 
+            // :returns: tuple containing code, options and main method name
             // """
             // if not isinstance(template, (int, str, etree._Element)):
             //     template = str(template)
@@ -1969,32 +1899,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             // try:
             //     element, document, ref = self._get_template(template)
             // except (ValueError, UserError) as e:
-            //     # return the error function if the template is not found or fail
+            //     # return the error information if the template is not found or fail
+            //     options = {k: compile_context.get(k, False) for k in self._get_template_cache_keys()}
             //     message = str(e)
-            //     code = indent_code(f"""
-            //         def not_found_template(self, values):
-            //             if self.env.context.get('raise_if_not_found', True):
-            //                 raise {e.__class__.__name__}({message!r})
-            //             warning('Cannot load template %s: %s', {template!r}, {message!r})
-            //             return ''
-            //         template_functions = {{'not_found_template': not_found_template}}
-            //     """, 0)
-            //     return (code, {}, 'not_found_template')
+            //     if hasattr(e, 'context') and e.context.get('view'):
+            //         message = f"{message} (view: {e.context['view'].key})"
+            //     options['error'] = (e.__class__, message, traceback.format_exc())
+            //     return (None, options, 'not_found_template')
             // 
             // compile_context.pop('raise_if_not_found', None)
+            // 
+            // ref_name = element.attrib.pop('t-name', None)
+            // if isinstance(ref, int) or (isinstance(template, str) and '<' not in template):
+            //     ref_name = self._get_template_info(ref)['key'] or ref_name
             // 
             // # reference to get xml and etree (usually the template ID)
             // compile_context['ref'] = ref
             // # reference name or key to get xml and etree (usually the template XML ID)
-            // compile_context['ref_name'] = element.attrib.pop('t-name', template if isinstance(template, str) and '<' not in template else None)
+            // compile_context['ref_name'] = ref_name
             // # str xml of the reference template used for compilation. Useful for debugging, dev mode and profiling.
-            // compile_context['ref_xml'] = document
+            // compile_context['ref_xml'] = str(document) if document else None
             // # Identifier used to call `_compile`
             // compile_context['template'] = template
             // # Root of the etree which will be processed during compilation.
             // compile_context['root'] = element.getroottree()
             // # Reference to the last node being compiled. It is mainly used for debugging and displaying error messages.
-            // compile_context['_qweb_error_path_xml'] = None
+            // compile_context['_qweb_error_path_xml'] = compile_context.get('_qweb_error_path_xml', [None, None, None])
             // 
             // compile_context['nsmap'] = {
             //     ns_prefix: str(ns_definition)
@@ -2006,57 +1936,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # dictionary is only there for logs, performance or test information.
             // # The values of these `options` cannot be changed and must always be
             // # identical in `context` and `self.env.context`.
-            // options = {k: compile_context.get(k) for k in self._get_template_cache_keys() + ['ref', 'ref_name', 'ref_xml']}
+            // options = {
+            //     key: compile_context.get(key, False)
+            //     for key in self._get_template_cache_keys() + ['ref', 'ref_name']
+            // }
             // 
             // # generate code
-            // 
-            // def_name = TO_VARNAME_REGEXP.sub(r'_', f'template_{ref}')
+            // ref_name = compile_context['ref_name'] or ''
+            // if isinstance(template, etree._Element):
+            //     def_name = TO_VARNAME_REGEXP.sub(r'_', f'template_etree_{next(ETREE_TEMPLATE_REF)}')
+            // else:
+            //     def_name = TO_VARNAME_REGEXP.sub(r'_', f'template_{ref_name if "<" not in ref_name else ""}_{ref}')
             // 
             // name_gen = count()
             // compile_context['make_name'] = lambda prefix: f"{def_name}_{prefix}_{next(name_gen)}"
             // 
-            // try:
-            //     if element.text:
-            //         element.text = FIRST_RSTRIP_REGEXP.sub(r'\2', element.text)
+            // if element.text:
+            //     element.text = FIRST_RSTRIP_REGEXP.sub(r'\2', element.text)
             // 
-            //     compile_context['template_functions'] = {}
+            // compile_context['template_functions'] = {}
             // 
-            //     compile_context['_text_concat'] = []
-            //     self._append_text("", compile_context) # To ensure the template function is a generator and doesn't become a regular function
-            //     compile_context['template_functions'][f'{def_name}_content'] = (
-            //         [f"def {def_name}_content(self, values):"]
-            //         + self._compile_node(element, compile_context, 2)
-            //         + self._flush_text(compile_context, 2, rstrip=True))
+            // compile_context['_text_concat'] = []
+            // self._append_text("", compile_context)  # To ensure the template function is a generator and doesn't become a regular function
+            // compile_context['template_functions'][f'{def_name}_content'] = (
+            //     [f"def {def_name}_content(self, values):"]
+            //     + self._compile_node(element, compile_context, 2)
+            //     + self._flush_text(compile_context, 2, rstrip=True))
             // 
-            //     compile_context['template_functions'][def_name] = [indent_code(f"""
-            //         def {def_name}(self, values):
-            //             try:
-            //                 if '__qweb_loaded_values' not in values:
-            //                     values['__qweb_loaded_values'] = {{}}
-            //                     values['__qweb_root_values'] = values.copy()
-            //                     values['xmlid'] = {options['ref_name']!r}
-            //                     values['viewid'] = {options['ref']!r}
-            //                 values['__qweb_loaded_values'].update(template_functions)
+            // compile_context['template_functions'][def_name] = [indent_code(f"""
+            //     def {def_name}(self, values):
+            //         if 'xmlid' not in values:
+            //             values['xmlid'] = {options['ref_name']!r}
+            //             values['viewid'] = {options['ref']!r}
+            //         self.env.context['__qweb_loaded_functions'].update(template_functions)
+            //         self.env.context['__qweb_loaded_options'][{options['ref']!r}] = self.env.context['__qweb_loaded_options'][{options['ref_name']!r}] = template_options
+            //         self.env.context['__qweb_loaded_codes'][{options['ref']!r}] = self.env.context['__qweb_loaded_codes'][{options['ref_name']!r}] = code
+            //         yield from {def_name}_content(self, values)
+            //         """, 0)]
             // 
-            //                 yield from {def_name}_content(self, values)
-            //             except QWebException:
-            //                 raise
-            //             except Exception as e:
-            //                 if isinstance(e, TransactionRollbackError):
-            //                     raise
-            //                 if isinstance(e, ReadOnlySqlTransaction):
-            //                     raise
-            //                 raise QWebException("Error while render the template",
-            //                     self, template, ref={compile_context['ref']!r}, code=code) from e
-            //             """, 0)]
-            // except QWebException:
-            //     raise
-            // except Exception as e:
-            //     raise QWebException("Error when compiling xml template",
-            //         self, template, ref=compile_context['ref'], path_xml=compile_context['_qweb_error_path_xml']) from e
-            // 
-            // code_lines = ['code = None']
-            // code_lines.append(f'template = {(document if isinstance(template, etree._Element) else template)!r}')
+            // code_lines = []
+            // code_lines.append(f'template_options = {pprint.pformat(options, indent=4)}')
+            // code_lines.append('code = None')
             // code_lines.append('template_functions = {}')
             // 
             // for lines in compile_context['template_functions'].values():
@@ -2066,22 +1986,61 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     code_lines.append(f'template_functions[{name!r}] = {name}')
             // 
             // code = '\n'.join(code_lines)
-            // code += f'\n\ncode = {code!r}'
+            // 
+            // if options.get('profile'):
+            //     options['ref_xml'] = compile_context['ref_xml']
             // 
             // return (code, options, def_name)
             */
             return default;
         }
 
-        public async Task<TEntity> GetAssetBundleInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle_name, object css, object js, object debug_assets, object rtl, object assets_params) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<TEntity> GenerateCodeUncachedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_asset_bundle(self, bundle_name, css=True, js=True, debug_assets=False, rtl=False, assets_params=None):
+            // def _generate_code_uncached(self, template: int | str | etree._Element):
+            // ref = self._get_template_info(template)['id'] if isinstance(template, (int, str)) else None
+            // 
+            // code, options, def_name = self._generate_code(template)
+            // 
+            // if code is None:
+            //     Error, message, stack = options['error']
+            // 
+            //     def not_found_template(self, values):
+            //         if tools.config['dev_mode']:
+            //             _logger.info(stack)
+            //         if self.env.context.get('raise_if_not_found', True):
+            //             raise Error(message)
+            //         _logger.warning('Cannot load template %s: %s', template, message)
+            //         return ''
+            // 
+            //     return {'not_found_template': not_found_template}, 'not_found_template', frozendict(options)
+            // 
+            // wrap_code = '\n'.join([
+            //     "def generate_functions():",
+            //     indent_code(code, 1),
+            //     f"    code = {code!r}",
+            //     "    return template_functions",
+            // ])
+            // compiled = compile(wrap_code, f"<{ref}>", 'exec')
+            // globals_dict = self.__prepare_globals()
+            // globals_dict['__builtins__'] = globals_dict  # So that unknown/unsafe builtins are never added.
+            // unsafe_eval(compiled, globals_dict)
+            // return globals_dict['generate_functions'](), def_name, frozendict(options)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAssetBundleInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle_name, object css, object js, object debug_assets, object rtl, object assets_params, object autoprefix) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _get_asset_bundle(self, bundle_name, css=True, js=True, debug_assets=False, rtl=False, assets_params=None, autoprefix=False):
             // if assets_params is None:
             //     assets_params = self.env['ir.asset']._get_asset_params()
             // files, external_assets = self._get_asset_content(bundle_name, assets_params)
-            // return AssetsBundle(bundle_name, files, external_assets, env=self.env, css=css, js=js, debug_assets=debug_assets, rtl=rtl, assets_params=assets_params)
+            // return AssetsBundle(bundle_name, files, external_assets, env=self.env, css=css, js=js, debug_assets=debug_assets, rtl=rtl, assets_params=assets_params, autoprefix=autoprefix)
             */
             return default;
         }
@@ -2122,11 +2081,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetAssetLinksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<TEntity> GetAssetLinksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug, object autoprefix) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_asset_links(self, bundle, css=True, js=True, debug=None):
+            // def _get_asset_links(self, bundle, css=True, js=True, debug=None, autoprefix=False):
             // """Generates asset nodes.
             // If debug=assets, the assets will be regenerated when a file which composes them has been modified.
             // Else, the assets will be generated only once and then stored in cache.
@@ -2136,24 +2095,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             // debug_assets = debug and 'assets' in debug
             // 
             // if debug_assets:
-            //     return self._generate_asset_links(bundle, css=css, js=js, debug_assets=True, assets_params=assets_params, rtl=rtl)
+            //     return self._generate_asset_links(bundle, css=css, js=js, debug_assets=True, assets_params=assets_params, rtl=rtl, autoprefix=autoprefix)
             // else:
-            //     return self._generate_asset_links_cache(bundle, css=css, js=js, assets_params=assets_params, rtl=rtl)
+            //     return self._generate_asset_links_cache(bundle, css=css, js=js, assets_params=assets_params, rtl=rtl, autoprefix=autoprefix)
             */
             return default;
         }
 
-        public async Task<TEntity> GetAssetNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug, object defer_load, object lazy_load, object media) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<TEntity> GetAssetNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bundle, object css, object js, object debug, object defer_load, object lazy_load, object media, object autoprefix) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_asset_nodes(self, bundle, css=True, js=True, debug=False, defer_load=False, lazy_load=False, media=None):
+            // def _get_asset_nodes(self, bundle, css=True, js=True, debug=False, defer_load=False, lazy_load=False, media=None, autoprefix=False):
             // """Generates asset nodes.
             // If debug=assets, the assets will be regenerated when a file which composes them has been modified.
             // Else, the assets will be generated only once and then stored in cache.
             // """
             // media = css and media or None
-            // links = self._get_asset_links(bundle, css=css, js=js, debug=debug)
+            // links = self._get_asset_links(bundle, css=css, js=js, debug=debug, autoprefix=autoprefix)
             // return self._links_to_nodes(links, defer_load=defer_load, lazy_load=lazy_load, media=media)
             */
             return default;
@@ -2162,22 +2121,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetBundlesToPregenarateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
         {
             #if PYTHON_CODE
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb.py) ---
-            // def _get_bundles_to_pregenarate(self):
-            // js_assets, css_assets = super(IrQWeb, self)._get_bundles_to_pregenarate()
-            // assets = {
-            //     'web_editor.assets_snippets_menu',
-            //     'web_editor.backend_assets_wysiwyg',
-            //     'web_editor.assets_wysiwyg',
-            //     'web_editor.wysiwyg_iframe_editor_assets',
-            // }
-            // return (js_assets | assets, css_assets | assets)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_qweb.py) ---
             // def _get_bundles_to_pregenarate(self):
-            // js_assets, css_assets = super(IrQWeb, self)._get_bundles_to_pregenarate()
+            // js_assets, css_assets = super()._get_bundles_to_pregenarate()
             // assets = {
-            //     'website.backend_assets_all_wysiwyg',
-            //     'website.assets_all_wysiwyg_inside',
+            //     'website.assets_all_wysiwyg',
             // }
             // return (js_assets | assets, css_assets | assets)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
@@ -2200,45 +2148,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             css_bundles.add(asset)
             // return (js_bundles, css_bundles)
             #endif
-            return default;
-        }
-
-        public async Task<TEntity> GetCacheKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cache_key) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_cache_key(self, cache_key):
-            // """
-            //     Convert the template cache key item into a hashable key.
-            //     :param cache_key: tuple
-            //     :returns: tuple of hashable items
-            // """
-            // if not isinstance(cache_key, (tuple, list)):
-            //     cache_key = (cache_key,)
-            // keys = []
-            // for item in cache_key:
-            //     try:
-            //         # use try catch instead of isinstance to detect lazy values
-            //         keys.append(item._name)
-            //         keys.append(tuple(item.ids))
-            //         dates = item.mapped('write_date')
-            //         if dates:
-            //             keys.append(max(dates).timestamp())
-            //     except AttributeError:
-            //         keys.append(repr(item))
-            // return tuple(keys)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetCachedValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cache_key, object get_value) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_cached_values(self, cache_key, get_value):
-            // """ generate value from the function if the result is not cached. """
-            // return get_value()
-            */
             return default;
         }
 
@@ -2269,6 +2178,91 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             if converted:
             //                 base64_source = converted.datas
             // return image_data_uri(base64_source)
+            */
+            return default;
+        }
+
+        public async Task<object> GetErrorInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error, List<object> stack, object frame) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _get_error_info(self, error, stack: list[QwebStackFrame], frame: QwebStackFrame) -> QWebErrorInfo:
+            // no_id_ref = 'etree._Element'
+            // 
+            // path = None
+            // html = None
+            // loaded_codes = self.env.context['__qweb_loaded_codes']
+            // if (frame.params.view_ref in loaded_codes and not isinstance(error, RecursionError)) or len(stack) <= 1:
+            //     options = frame.options or {}  # The compilation may have failed before the compilation options were loaded.
+            //     if 'ref' not in options:
+            //         options = self.env.context['__qweb_loaded_options'].get(frame.params.view_ref) or {}
+            //     ref = options.get('ref') or frame.params.view_ref  # The template can have a null reference, for example for a provided etree.
+            //     ref_name = options.get('ref_name') or None
+            //     code = loaded_codes.get(frame.params.view_ref) or loaded_codes.get(no_id_ref)
+            //     if ref == self.env.context['_qweb_error_path_xml'][0]:
+            //         path = self.env.context['_qweb_error_path_xml'][1]
+            //         html = self.env.context['_qweb_error_path_xml'][2]
+            // else:
+            //     # get the previous caller (like t-call) to display erroneous xml node.
+            //     options = stack[-2].options or {}  # The compilation may have failed before the compilation options were loaded.
+            //     ref = options.get('ref')
+            //     ref_name = options.get('ref_name')
+            //     code = loaded_codes.get(ref) or loaded_codes.get(no_id_ref)
+            //     if frame.params.path_xml:
+            //         path = frame.params.path_xml[1]
+            //         html = frame.params.path_xml[2]
+            // 
+            // source_file_ref = None if ref == no_id_ref else ref
+            // line_nb = 0
+            // trace = traceback.format_exc()
+            // for error_line in reversed(trace.split('\n')):
+            //     if f'File "<{source_file_ref}>"' in error_line or (ref is None and 'File "<' in error_line):
+            //         line_function = error_line.split(', line ')[1]
+            //         line_nb = int(line_function.split(',')[0])
+            //         break
+            // 
+            // source = [info.params.path_xml for info in stack if info.params.path_xml]
+            // code_lines = (code or '').split('\n')
+            // 
+            // found = False
+            // for code_line in reversed(code_lines[:line_nb]):
+            //     if code_line.startswith('def '):
+            //         break
+            //     match = re.match(r'\s*# element: (.*) , (.*)', code_line)
+            //     if not match:
+            //         if found:
+            //             break
+            //         continue
+            //     if found:
+            //         info = (ref, match[1][1:-1], match[2][1:-1])
+            //         if info not in source:
+            //             source.append(info)
+            //     else:
+            //         found = True
+            //         path = match[1][1:-1]
+            //         html = match[2][1:-1]
+            // 
+            // if path:
+            //     source.append((ref, path, html))
+            // 
+            // surrounding = None
+            // if self.env.context.get('dev_mode') and line_nb:
+            //     if html and ' t-if=' in html and ' if ' in '\n'.join(code_lines[line_nb - 2:line_nb - 1]):
+            //         line_nb -= 1
+            //     previous_lines = '\n'.join(code_lines[max(line_nb - 25, 0):line_nb - 1])
+            //     line = code_lines[line_nb - 1]
+            //     next_lines = '\n'.join(code_lines[line_nb:line_nb + 5])
+            //     indent = re.search(r"^(\s*)", line).group(0)
+            //     surrounding = textwrap.indent(
+            //         textwrap.dedent(
+            //             f"{previous_lines}\n"
+            //             f"{indent}########### Line triggering the error ############\n{line}\n"
+            //             f"{indent}##################################################\n{next_lines}"
+            //         ),
+            //         ' ' * 8
+            //     )
+            // 
+            // return QWebErrorInfo(f'{error.__class__.__name__}: {error}', ref if ref_name is None else ref_name, ref, path, html, source, surrounding)
             */
             return default;
         }
@@ -2312,15 +2306,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetPreloadAttributeXmlidsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def _get_preload_attribute_xmlids(self):
+            // return super()._get_preload_attribute_xmlids() + ['t-snippet', 't-snippet-call']
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _get_preload_attribute_xmlids(self):
+            // return ['t-call']
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetTemplateCacheKeysInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
+            // def _get_template_cache_keys(self):
+            // return super()._get_template_cache_keys() + ['snippet_lang']
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_qweb.py) ---
             // def _get_template_cache_keys(self):
             // return super()._get_template_cache_keys() + ["raise_on_forbidden_code_for_model"]
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
-            // def _get_template_cache_keys(self):
-            // return super()._get_template_cache_keys() + ['snippet_lang']
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_qweb.py) ---
             // def _get_template_cache_keys(self):
             // """ Return the list of context keys to use for caching ``_compile``. """
@@ -2333,9 +2340,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetTemplateInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _get_template_info(self, template):
+            // return self.env['ir.ui.view']._get_cached_template_info(template)
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_qweb.py) ---
+            // def _get_template(self, template):
+            // element, document, ref = super()._get_template(template)
+            // if self.env.context.get('website_id'):
+            //     add_form_signature(element, self.sudo().env)
+            // return element, document, ref
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _get_template(self, template):
             // """ Retrieve the given template, and return it as a tuple ``(etree,
@@ -2351,58 +2374,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if isinstance(template, etree._Element):
             //     element = template
             //     document = etree.tostring(template, encoding='unicode')
-            //     ref = None
+            // 
+            //     # <templates>
+            //     #   <template t-name=... /> <!-- return ONLY this element -->
+            //     #   <template t-name=... />
+            //     # </templates>
+            //     for node in element.iter():
+            //         ref = node.get('t-name')
+            //         if ref:
+            //             return (node, document, _id_or_xmlid(ref))
+            // 
+            //     return (element, document, 'etree._Element')
+            // 
             // # template is xml as string
-            // elif isinstance(template, str) and '<' in template:
+            // if isinstance(template, str) and '<' in template:
             //     raise ValueError('Inline templates must be passed as `etree` documents')
             // 
             // # template is (id or ref) to a database stored template
-            // else:
-            //     try:
-            //         ref_alias = int(template)  # e.g. <t t-call="33"/>
-            //     except ValueError:
-            //         ref_alias = template  # e.g. web.layout
+            // id_or_xmlid = _id_or_xmlid(template)  # e.g. <t t-call="33"/> or <t t-call="web.layout"/>
+            // value = self._preload_trees([id_or_xmlid]).get(id_or_xmlid)
+            // if value.get('error'):
+            //     raise value['error']
             // 
-            //     doc_or_elem, ref = self._load(ref_alias) or (None, None)
-            //     if doc_or_elem is None:
-            //         raise ValueError(f"Can not load template: {ref_alias!r}")
-            //     if isinstance(doc_or_elem, etree._Element):
-            //         element = doc_or_elem
-            //         document = etree.tostring(doc_or_elem, encoding='unicode')
-            //     elif isinstance(doc_or_elem, str):
-            //         element = etree.fromstring(doc_or_elem)
-            //         document = doc_or_elem
-            //     else:
-            //         raise TypeError(f"Loaded template {ref!r} should be a string.")
-            // 
-            // # return etree, document and ref, or try to find the ref
-            // if ref:
-            //     return (element, document, ref)
-            // 
-            // # <templates>
-            // #   <template t-name=... /> <!-- return ONLY this element -->
-            // #   <template t-name=... />
-            // # </templates>
-            // for node in element.iter():
-            //     ref = node.get('t-name')
-            //     if ref:
-            //         return (node, document, ref)
-            // 
-            // # use the document itself as ref when no t-name was found
-            // return (element, document, document)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetViewIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _get_view_id(self, template):
-            // try:
-            //     return self.env['ir.ui.view'].sudo().with_context(load_all_views=True)._get_view_id(template)
-            // except Exception:
-            //     return None
+            // # In dev mode `_generate_code_cached` is not cached and the tree can be processed several times
+            // value_tree = deepcopy(value['tree']) if 'xml' in tools.config['dev_mode'] else value['tree']
+            // # return etree, document and ref
+            // return (value_tree, value['template'], value['ref'])
             */
             return default;
         }
@@ -2476,8 +2473,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // is_js = ext in SCRIPT_EXTENSIONS
             // is_xml = ext in TEMPLATE_EXTENSIONS
             // is_css = ext in STYLE_EXTENSIONS
-            // if not is_js and not is_xml and not is_css:
-            //     return
             // 
             // if is_js:
             //     is_asset_bundle = path and path.startswith('/web/assets/')
@@ -2485,7 +2480,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'type': 'text/javascript',
             //     }
             // 
-            //     if (defer_load or lazy_load):
+            //     if defer_load:
+            //         # Note that "lazy_load" will lead to "defer" being added in JS,
+            //         # not here, otherwise this is not W3C valid (defer is probably
+            //         # not even needed there anyways). See LAZY_LOAD_DEFER.
             //         attributes['defer'] = 'defer'
             //     if path:
             //         if lazy_load:
@@ -2497,7 +2495,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         attributes['onerror'] = "__odooAssetError=1"
             // 
             //     return ('script', attributes)
-            // 
             // 
             // if is_css:
             //     attributes = {
@@ -2516,6 +2513,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'data-src': path,
             //         }
             //     return ('script', attributes)
+            // 
+            // return None
             */
             return default;
         }
@@ -2526,65 +2525,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
             // def _links_to_nodes(self, paths, defer_load=False, lazy_load=False, media=None):
             // return [self._link_to_node(path, defer_load=defer_load, lazy_load=lazy_load, media=media) for path in paths]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> LoadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @ref) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _load(self, ref):
-            // """
-            // Load the template referenced by ``ref``.
-            // 
-            // :returns: The loaded template (as string or etree) and its
-            //     identifier
-            // :rtype: Tuple[Union[etree, str], Optional[str, int]]
-            // """
-            // IrUIView = self.env['ir.ui.view'].sudo()
-            // view = IrUIView._get(ref)
-            // template = IrUIView._read_template(view.id)
-            // etree_view = etree.fromstring(template)
-            // 
-            // xmlid = view.key or ref
-            // if isinstance(ref, int):
-            //     domain = [('model', '=', 'ir.ui.view'), ('res_id', '=', view.id)]
-            //     model_data = self.env['ir.model.data'].sudo().search_read(domain, ['module', 'name'], limit=1)
-            //     if model_data:
-            //         xmlid = f"{model_data[0]['module']}.{model_data[0]['name']}"
-            // 
-            // # QWeb's ``_read_template`` will check if one of the first children of
-            // # what we send to it has a "t-name" attribute having ``ref`` as value
-            // # to consider it has found it. As it'll never be the case when working
-            // # with view ids or children view or children primary views, force it here.
-            // if view.inherit_id is not None:
-            //     for node in etree_view:
-            //         if node.get('t-name') == str(ref) or node.get('t-name') == str(view.key):
-            //             node.attrib.pop('name', None)
-            //             node.attrib.pop('id', None)
-            //             etree_view = node
-            //             break
-            // etree_view.set('t-name', str(xmlid))
-            // return (etree_view, view.id)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> LoadValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cache_key, object get_value, object loaded_values) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _load_values(self, cache_key, get_value, loaded_values=None):
-            // """ generate value from the function if the result is not cached. """
-            // if not cache_key:
-            //     return get_value()
-            // value = loaded_values and loaded_values.get(cache_key)
-            // if not value:
-            //     value = self._get_cached_values(cache_key, get_value)
-            // if loaded_values is not None:
-            //     loaded_values[cache_key] = value
-            // return value
             */
             return default;
         }
@@ -2629,7 +2569,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     }
             //     remove_src = False
             //     if tagName in ('iframe', 'script'):
-            //         src_host = parse_url((atts.get('src') or '').lower()).host
+            //         src_host = urlsplit((atts.get('src') or '').lower()).hostname
             //         if src_host:
             //             remove_src = any(
             //                 # "www.example.com" and "example.com" should block both.
@@ -2655,7 +2595,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // name = self.URL_ATTRS.get(tagName)
             // if request:
             //     value = atts.get(name) if name else None
-            //     if value is not None and value is not False:
+            //     if value not in (None, False, ()):
             //         atts[name] = self.env['ir.http']._url_for(str(value))
             // 
             //     # Adapt background-image URL in the same way as image src.
@@ -2667,9 +2607,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // data_name = f'data-{name}'
             // if name and (name in atts or data_name in atts):
             //     atts = OrderedDict(atts)
-            //     if name in atts:
+            //     if name in atts and atts[name] not in (False, None, ()):
             //         atts[name] = website.get_cdn_url(atts[name])
-            //     if data_name in atts:
+            //     if data_name in atts and atts[data_name] not in (False, None, ()):
             //         atts[data_name] = website.get_cdn_url(atts[data_name])
             // atts = self._adapt_style_background_image(atts, website.get_cdn_url)
             // 
@@ -2685,6 +2625,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     @returns dict
             // """
+            // if not atts.pop('__is_static_node', False) and (href := atts.get('href')) and MALICIOUS_SCHEMES(str(href)):
+            //     atts['href'] = ""
             // return atts
             */
             return default;
@@ -2719,6 +2661,75 @@ namespace Bamboo.Core.Application.Services.Mixins
             // _logger.info('CSS Assets bundles generated in %s seconds', time.time()-start)
             // return links
             */
+            return default;
+        }
+
+        public async Task<TEntity> PreloadTreesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object refs) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            #if PYTHON_CODE
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _preload_trees(self, refs: Sequence[int | str]):
+            // """ Preload all tree and subtree (from t-call and other '_get_preload_attribute_xmlids' values).
+            // 
+            //     Returns::
+            // 
+            //         {
+            //             id or xmlId/key: {
+            //                 'xmlid': str | None,
+            //                 'ref': int | None,
+            //                 'tree': etree | None,
+            //                 'template': str | None,
+            //                 'error': None | MissingError
+            //             }
+            //         }
+            // """
+            // compile_batch = self.env['ir.ui.view']._preload_views(refs)
+            // 
+            // refs = list(map(_id_or_xmlid, refs))
+            // missing_refs = {ref: compile_batch[ref] for ref in refs if 'template' not in compile_batch[ref] and not compile_batch[ref]['error']}
+            // if not missing_refs:
+            //     return compile_batch
+            // 
+            // xmlids = list(missing_refs)
+            // missing_refs_values = list(missing_refs.values())
+            // views = self.env['ir.ui.view'].sudo().union(*[data['view'] for data in missing_refs_values])
+            // 
+            // trees = views._get_view_etrees()
+            // 
+            // # add in cache
+            // for xmlid, view, tree in zip(xmlids, views, trees):
+            //     data = {
+            //         'tree': tree,
+            //         'template': etree.tostring(tree, encoding='unicode'),
+            //     }
+            //     compile_batch[view.id].update(data)
+            //     compile_batch[xmlid].update(data)
+            // 
+            // # preload sub template
+            // ref_names = self._get_preload_attribute_xmlids()
+            // sub_refs = OrderedSet()
+            // for tree in trees:
+            //     sub_refs.update(
+            //         el.get(ref_name)
+            //         for ref_name in ref_names
+            //         for el in tree.xpath(f'//*[@{ref_name}]')
+            //         if not any(att.startswith('t-options-') or att == 't-options' or att == 't-lang' for att in el.attrib)
+            //         if '{' not in el.get(ref_name) and '<' not in el.get(ref_name) and '/' not in el.get(ref_name)
+            //     )
+            // assert not any(not f for f in sub_refs), "template is required"
+            // self._preload_trees(list(sub_refs))
+            // 
+            // # not found template
+            // for ref in missing_refs:
+            //     if ref not in compile_batch:
+            //         compile_batch[ref] = {
+            //             'xmlid': ref,
+            //             'ref': ref,
+            //             'error': MissingError(self.env._("External ID can not be loaded: %s", ref)),
+            //         }
+            // 
+            // return compile_batch
+            #endif
             return default;
         }
 
@@ -2758,8 +2769,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     values.setdefault('res_company', self.env.company.sudo())
             //     values.update(
             //         request=request,  # might be unbound if we're not in an httprequest context
-            //         test_mode_enabled=bool(config['test_enable'] or config['test_file']),
-            //         json=scriptsafe,
+            //         test_mode_enabled=config['test_enable'],
+            //         json=qwebJSON,
             //         quote_plus=werkzeug.urls.url_quote_plus,
             //         time=safe_eval.time,
             //         datetime=safe_eval.datetime,
@@ -2774,10 +2785,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     )
             // 
             // context = {'dev_mode': 'qweb' in tools.config['dev_mode']}
-            // if 'xml' in tools.config['dev_mode']:
-            //     context['is_t_cache_disabled'] = True
-            // elif 'disable-t-cache' in debug:
-            //     context['is_t_cache_disabled'] = True
             // return self.with_context(**context)
             */
             return default;
@@ -2879,44 +2886,193 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RenderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template, object values) where TEntity : IEntity<Guid>, IIrQwebable
+        public async Task<object> RenderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template, object values) where TEntity : IEntity<Guid>, IIrQwebable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
-            // def _render(self, template, values=None, **options):
-            // """ render(template, values, **options)
-            // 
-            // Render the template specified by the given name.
+            // def _render(self, template: int | str | etree._Element, values: dict | None = None, **options) -> Markup:
+            // """ Render the template specified by the given name.
             // 
             // :param template: etree, xml_id, template name (see _get_template)
             //     * Call the method ``load`` is not an etree.
             // :param dict values: template values to be used for rendering
             // :param options: used to compile the template
             //     Options will be add into the IrQweb.env.context for the rendering.
+            // 
             //     * ``lang`` (str) used language to render the template
             //     * ``inherit_branding`` (bool) add the tag node branding
             //     * ``inherit_branding_auto`` (bool) add the branding on fields
             //     * ``minimal_qcontext``(bool) To use the minimum context and options
-            //         from ``_prepare_environment``
+            //       from ``_prepare_environment``
             // 
             // :returns: bytes marked as markup-safe (decode to :class:`markupsafe.Markup`
             //           instead of `str`)
             // :rtype: MarkupSafe
             // """
+            // # profiling code
+            // current_thread = threading.current_thread()
+            // execution_context_enabled = getattr(current_thread, 'profiler_params', {}).get('execution_context_qweb')
+            // qweb_hooks = getattr(current_thread, 'qweb_hooks', ())
+            // if execution_context_enabled or qweb_hooks:
+            //     # To have the new compilation cached because the generated code will change.
+            //     # Therefore 'profile' is a key to the cache.
+            //     options['profile'] = True
+            // 
             // values = values.copy() if values else {}
             // if T_CALL_SLOT in values:
-            //     raise ValueError(f'values[{T_CALL_SLOT}] should be unset when call the _render method and only set into the template.')
+            //     _logger.warning('values[0] should be unset when call the _render method and only set into the template.')
+            //     values.pop(T_CALL_SLOT)
             // 
             // irQweb = self.with_context(**options)._prepare_environment(values)
+            // irQweb = irQweb.with_context(
+            //     # List of generated and/or used functions, used for optimal performance
+            //     __qweb_loaded_functions={},
+            //     # List of codes generated during compilation. It is mainly used for debugging and displaying error messages.
+            //     __qweb_loaded_codes={},
+            //     __qweb_loaded_options={},
+            //     # Reference to the last node being compiled. It is mainly used for debugging and displaying error messages.
+            //     _qweb_error_path_xml=[None, None, None],
+            // )
             // 
             // safe_eval.check_values(values)
             // 
-            // template_functions, def_name = irQweb._compile(template)
-            // render_template = template_functions[def_name]
-            // rendering = render_template(irQweb, values)
-            // result = ''.join(rendering)
+            // root_values = values.copy()
+            // values['__qweb_root_values'] = root_values['__qweb_root_values'] = root_values
             // 
-            // return Markup(result)
+            // iterator = irQweb._render_iterall(template, None, values)
+            // return Markup(''.join(iterator))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> RenderIterallInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_ref, object method, object values, object directive) where TEntity : IEntity<Guid>, IIrQwebable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb.py) ---
+            // def _render_iterall(self, view_ref, method, values, directive='render') -> Iterator[str]:
+            // """ Iterate over the generator method.
+            //     Generator elements are a str
+            // """
+            // root_values = values['__qweb_root_values']
+            // loaded_functions = self.env.context['__qweb_loaded_functions']
+            // 
+            // params = QwebCallParameters(
+            //     context={},
+            //     view_ref=view_ref,
+            //     method=method,
+            //     values=None,
+            //     scope=False,
+            //     directive=directive,
+            //     path_xml=None,
+            // )
+            // stack = [QwebStackFrame(params, self, iter([params]), values, None)]
+            // 
+            // try:
+            //     while stack:
+            //         if len(stack) > 50:
+            //             raise RecursionError('Qweb template infinite recursion')  # noqa: TRY301
+            // 
+            //         frame = stack[-1]
+            // 
+            //         # traverse the iterator
+            //         for item in frame.iterator:
+            //             # To debug the rendering step by step you can log the (len(stack) * '  ', repr(item))
+            //             if isinstance(item, str):
+            //                 yield item
+            //                 continue
+            // 
+            //             # use QwebContent params or return already evaluated QwebContent
+            //             if is_content := isinstance(item, QwebContent):
+            //                 if item.html is not None:
+            //                     yield item.html
+            //                     continue
+            //                 params = item.params__
+            // 
+            //             else:  # isinstance(item, QwebCallParameters)
+            //                 params = item
+            // 
+            //             # add new QwebStackFrame from QwebCallParameters
+            //             values = frame.values
+            //             irQweb = frame.irQweb
+            // 
+            //             # Use the current directive context
+            //             if params.context:
+            //                 irQweb = irQweb.with_context(**params.context)
+            // 
+            //             render_template = loaded_functions.get(params.method)
+            // 
+            //             # Fetch the compiled function and template options
+            //             if not render_template:
+            //                 template_functions, def_name, options = irQweb._compile(params.view_ref)
+            //                 loaded_functions.update(template_functions)
+            //                 render_template = template_functions[params.method or def_name]
+            //             else:
+            //                 options = irQweb._compile(params.view_ref)[2]
+            // 
+            //             # Apply a new scope if needed
+            //             if params.scope:
+            //                 if params.scope == 'root':
+            //                     values = root_values
+            //                 values = values.copy()
+            // 
+            //             # Update values with default values
+            //             if params.values:
+            //                 values.update(params.values)
+            // 
+            //             iterator = iter([])
+            //             try:
+            //                 # Create the iterator from the template
+            //                 iterator = render_template(irQweb, values)
+            //             finally:
+            //                 if is_content and self.env.context['_qweb_error_path_xml'][1]:
+            //                     # add a stack frame to log a complete error with the path when compile the template
+            //                     logParams = QwebCallParameters(*(params[0:-1] + (tuple(self.env.context['_qweb_error_path_xml']),)))
+            //                     stack.append(QwebStackFrame(logParams, irQweb, [], values, options))
+            //                 stack.append(QwebStackFrame(params, irQweb, iterator, values, options))
+            //             break
+            // 
+            //         else:
+            //             stack.pop()
+            // 
+            // except (TransactionRollbackError, ReadOnlySqlTransaction):
+            //     raise
+            // 
+            // except Exception as error:
+            //     qweb_error_info = self._get_error_info(error, stack, stack[-1])
+            //     if qweb_error_info.template is None and qweb_error_info.ref is None:
+            //         qweb_error_info.ref = view_ref
+            // 
+            //     if hasattr(error, 'qweb'):
+            //         if qweb_error_info.source:
+            //             error.qweb.source = qweb_error_info.source + error.qweb.source
+            //         if not error.qweb.ref and frame.params.view_ref:
+            //             error.qweb.ref = frame.params.view_ref
+            //         qweb_error_info = error.qweb
+            //     elif not isinstance(error, UserError):
+            //         # If is not an odoo Exception check if the current error is raise from
+            //         # IrQweb (models or computed code). In this case, convert it into an QWebError.
+            //         isQweb = False
+            // 
+            //         trace = error.__traceback__
+            //         tb_frames = [trace.tb_frame]
+            //         while trace.tb_next is not None:
+            //             trace = trace.tb_next
+            //             tb_frames.append(trace.tb_frame)
+            //         for tb_frame in tb_frames[::-1]:
+            //             if tb_frame.f_globals.get('__name__') == __name__ or (
+            //                 isinstance(tb_frame.f_locals.get('self'), models.AbstractModel)
+            //                 and tb_frame.f_locals['self']._name == self._name
+            //             ):
+            //                 isQweb = True
+            //                 break
+            //             if any(path in tb_frame.f_code.co_filename for path in tools.config['addons_path']):
+            //                 break
+            // 
+            //         if isQweb:
+            //             raise QWebError(qweb_error_info) from error
+            // 
+            //     error.qweb = qweb_error_info
+            //     raise
             */
             return default;
         }
@@ -2951,22 +3107,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // generated code.
             // """
             // return {
+            //     '__name__': __name__,
             //     'Sized': Sized,
             //     'Mapping': Mapping,
             //     'Markup': Markup,
             //     'escape': escape,
             //     'VOID_ELEMENTS': VOID_ELEMENTS,
-            //     'QWebException': QWebException,
-            //     'Exception': Exception,
-            //     'TransactionRollbackError': TransactionRollbackError, # for SerializationFailure in assets
-            //     'ReadOnlySqlTransaction': psycopg2.errors.ReadOnlySqlTransaction,
+            //     'QwebCallParameters': QwebCallParameters,
+            //     'QwebContent': QwebContent,
             //     'ValueError': ValueError,
-            //     'UserError': UserError,
-            //     'AccessDenied': AccessDenied,
-            //     'AccessError': AccessError,
-            //     'MissingError': MissingError,
-            //     'ValidationError': ValidationError,
-            //     'warning': lambda *args: _logger.warning(*args),
             //     **_BUILTINS,
             // }
             */

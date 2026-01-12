@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("barcodes", Category = "Supply Chain", Depends = new[] { "web" })]
+    [Module("barcodes", Category = "SupplyChain", Depends = new[] { "web" })]
     public class BarcodesBarcodeEventsMixinAppService : ApplicationService, IBarcodesBarcodeEventsMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;

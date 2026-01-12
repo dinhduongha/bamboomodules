@@ -86,21 +86,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<OnboardingProgress> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def init(self):
-            // """Make sure there aren't multiple records for the same onboarding and company."""
-            // # not in _sql_constraint because COALESCE is not supported for PostgreSQL constraint
-            // self.env.cr.execute("""
-            //     CREATE UNIQUE INDEX IF NOT EXISTS onboarding_progress_onboarding_company_uniq
-            //     ON onboarding_progress (onboarding_id, COALESCE(company_id, 0))
-            // """)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<OnboardingProgress> RecomputeProgressStepIdsInternalAsync()
         {
             /*

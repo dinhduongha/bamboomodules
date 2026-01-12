@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-change-password-wizard")]
+        public async Task<IActionResult> ActionChangePasswordWizardAsync(Guid id)
+        {
+            var result = await _appService.ChangePasswordWizardAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-create-employee")]
         public async Task<IActionResult> ActionCreateEmployeeAsync(Guid id)
         {
@@ -51,14 +59,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee-cars")]
-        public async Task<IActionResult> ActionOpenEmployeeCarsAsync(Guid id)
-        {
-            var result = await _appService.OpenEmployeeCarsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-employees")]
         public async Task<IActionResult> ActionOpenEmployeesAsync(Guid id)
         {
@@ -67,26 +67,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-last-month-attendances")]
-        public async Task<IActionResult> ActionOpenLastMonthAttendancesAsync(Guid id)
-        {
-            var result = await _appService.OpenLastMonthAttendancesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-last-month-overtime")]
-        public async Task<IActionResult> ActionOpenLastMonthOvertimeAsync(Guid id)
-        {
-            var result = await _appService.OpenLastMonthOvertimeAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-my-account-settings")]
         public async Task<IActionResult> ActionOpenMyAccountSettingsAsync(Guid id)
         {
             var result = await _appService.OpenMyAccountSettingsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-related-contact")]
+        public async Task<IActionResult> ActionRelatedContactAsync(Guid id)
+        {
+            var result = await _appService.RelatedContactAsync(id);
             return Ok(result);
         }
         
@@ -103,6 +95,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionRevokeAllDevicesAsync(Guid id)
         {
             var result = await _appService.RevokeAllDevicesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-setup-outgoing-mail-server")]
+        public async Task<IActionResult> ActionSetupOutgoingMailServerAsync(Guid id, [FromBody] ResUsersSetupOutgoingMailServerRequestDto input)
+        {
+            var result = await _appService.SetupOutgoingMailServerAsync(id, input);
             return Ok(result);
         }
         
@@ -127,6 +127,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionShowRulesAsync(Guid id)
         {
             var result = await _appService.ShowRulesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-test-outgoing-mail-server")]
+        public async Task<IActionResult> ActionTestOutgoingMailServerAsync(Guid id)
+        {
+            var result = await _appService.TestOutgoingMailServerAsync(id);
             return Ok(result);
         }
         
@@ -187,14 +195,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/check")]
-        public async Task<IActionResult> CheckAsync(Guid id, [FromBody] ResUsersCheckRequestDto input)
-        {
-            var result = await _appService.CheckAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/check-calendar-credentials")]
         public async Task<IActionResult> CheckCalendarCredentialsAsync(Guid id)
         {
@@ -231,6 +231,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetCompanyCurrencyIdAsync(Guid id)
         {
             var result = await _appService.GetCompanyCurrencyIdAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-formview-action")]
+        public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] ResUsersGetFormviewActionRequestDto input)
+        {
+            var result = await _appService.GetFormviewActionAsync(id, input);
             return Ok(result);
         }
         
@@ -379,6 +387,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/remove-oauth-access-token")]
+        public async Task<IActionResult> RemoveOauthAccessTokenAsync(Guid id)
+        {
+            var result = await _appService.RemoveOauthAccessTokenAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/reset-password")]
         public async Task<IActionResult> ResetPasswordAsync(Guid id, [FromBody] ResUsersResetPasswordRequestDto input)
         {
@@ -463,14 +479,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SwitchTourEnabledAsync(Guid id, [FromBody] ResUsersSwitchTourEnabledRequestDto input)
         {
             var result = await _appService.SwitchTourEnabledAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
         

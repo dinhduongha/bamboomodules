@@ -25,58 +25,6 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<IrFilters> AutoInitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
-            // def _auto_init(self):
-            // result = super(IrFilters, self)._auto_init()
-            // # Use unique index to implement unique constraint on the lowercase name (not possible using a constraint)
-            // tools.create_unique_index(self._cr, 'ir_filters_name_model_uid_unique_action_index',
-            //                           self._table, ['model_id', 'COALESCE(user_id,-1)', 'COALESCE(action_id,-1)',
-            //                                         'lower(name)', 'embedded_parent_res_id', 'COALESCE(embedded_action_id,-1)'])
-            // return result
-            */
-            return default;
-        }
-
-        protected async Task<IrFilters> CheckGlobalDefaultInternalAsync(object vals, object matching_filters)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
-            // def _check_global_default(self, vals, matching_filters):
-            // """ _check_global_default(dict, list(dict), dict) -> None
-            // 
-            // Checks if there is a global default for the model_id requested.
-            // 
-            // If there is, and the default is different than the record being written
-            // (-> we're not updating the current global default), raise an error
-            // to avoid users unknowingly overwriting existing global defaults (they
-            // have to explicitly remove the current default before setting a new one)
-            // 
-            // This method should only be called if ``vals`` is trying to set
-            // ``is_default``
-            // 
-            // :raises odoo.exceptions.UserError: if there is an existing default and
-            //                                     we're not updating it
-            // """
-            // domain = self._get_action_domain(vals.get('action_id'), vals.get('embedded_action_id'), vals.get('embedded_parent_res_id'))
-            // defaults = self.search(domain + [
-            //     ('model_id', '=', vals['model_id']),
-            //     ('user_id', '=', False),
-            //     ('is_default', '=', True),
-            // ])
-            // 
-            // if not defaults:
-            //     return
-            // if matching_filters and (matching_filters[0]['id'] == defaults.id):
-            //     return
-            // 
-            // raise UserError(self.env._("There is already a shared filter set as default for %(model)s, delete or change it before setting a new default", model=vals.get('model_id')))
-            */
-            return default;
-        }
-
         public async Task<IrFilters> CopyDataAsync(Guid id, IrFiltersCopyDataRequestDto input)
         {
             /*
@@ -93,46 +41,14 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrFilters> CreateOrReplaceAsync(Guid id, IrFiltersCreateOrReplaceRequestDto input)
+        public async Task<IrFilters> CreateFilterAsync(Guid id, IrFiltersCreateFilterRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
-            // def create_or_replace(self, vals):
-            // action_id = vals.get('action_id')
+            // def create_filter(self, vals):
             // embedded_action_id = vals.get('embedded_action_id')
             // if not embedded_action_id and 'embedded_parent_res_id' in vals:
             //     del vals['embedded_parent_res_id']
-            // embedded_parent_res_id = vals.get('embedded_parent_res_id')
-            // current_filters = self.get_filters(vals['model_id'], action_id, embedded_action_id, embedded_parent_res_id)
-            // matching_filters = [f for f in current_filters
-            //                     if f['name'].lower() == vals['name'].lower()
-            //                     # next line looks for matching user_ids (specific or global), i.e.
-            //                     # f.user_id is False and vals.user_id is False or missing,
-            //                     # or f.user_id.id == vals.user_id
-            //                     if (f['user_id'] and f['user_id'][0]) == vals.get('user_id')]
-            // 
-            // if vals.get('is_default'):
-            //     if vals.get('user_id'):
-            //         # Setting new default: any other default that belongs to the user
-            //         # should be turned off
-            //         domain = self._get_action_domain(action_id, embedded_action_id, embedded_parent_res_id)
-            //         defaults = self.search(domain + [
-            //             ('model_id', '=', vals['model_id']),
-            //             ('user_id', '=', vals['user_id']),
-            //             ('is_default', '=', True),
-            //         ])
-            //         if defaults:
-            //             defaults.write({'is_default': False})
-            //     else:
-            //         self._check_global_default(vals, matching_filters)
-            // 
-            // # When a filter exists for the same (name, model, user) triple, we simply
-            // # replace its definition (considering action_id irrelevant here)
-            // if matching_filters:
-            //     matching_filter = self.browse(matching_filters[0]['id'])
-            //     matching_filter.write(vals)
-            //     return matching_filter
-            // 
             // return self.create(vals)
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -159,11 +75,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
             // def _get_eval_domain(self):
-            // self.ensure_one()
-            // return safe_eval(self.domain, {
-            //     'datetime': datetime,
-            //     'context_today': datetime.datetime.now,
-            // })
+            // try:
+            //     return ast.literal_eval(self.domain)
+            // except ValueError as e:
+            //     raise ValueError("Invalid domain: {self.domain}") from e
             */
             return default;
         }
@@ -181,17 +96,17 @@ namespace Bamboo.Core.Application.Services
             //     The action does not have to correspond to the model, it may only be
             //     a contextual action.
             // :return: list of :meth:`~osv.read`-like dicts containing the
-            //     ``name``, ``is_default``, ``domain``, ``user_id`` (m2o tuple),
+            //     ``name``, ``is_default``, ``domain``, ``user_ids`` (m2m),
             //     ``action_id`` (m2o tuple), ``embedded_action_id`` (m2o tuple), ``embedded_parent_res_id``
             //     and ``context`` of the matching ``ir.filters``.
             // """
-            // # available filters: private filters (user_id=uid) and public filters (uid=NULL),
+            // # available filters: private filters (user_ids=uids) and public filters (uids=NULL),
             // # and filters for the action (action_id=action_id) or global (action_id=NULL)
             // user_context = self.env['res.users'].context_get()
             // action_domain = self._get_action_domain(action_id, embedded_action_id, embedded_parent_res_id)
             // return self.with_context(user_context).search_read(
-            //     action_domain + [('model_id', '=', model), ('user_id', 'in', [self._uid, False])],
-            //     ['name', 'is_default', 'domain', 'context', 'user_id', 'sort', 'embedded_action_id', 'embedded_parent_res_id'],
+            //     action_domain + [('model_id', '=', model), ('user_ids', 'in', [self.env.uid, False])],
+            //     ['name', 'is_default', 'domain', 'context', 'user_ids', 'sort', 'embedded_action_id', 'embedded_parent_res_id'],
             // )
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -203,11 +118,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
             // def _list_all_models(self):
             // lang = self.env.lang or 'en_US'
-            // self._cr.execute(
+            // self.env.cr.execute(
             //     "SELECT model, COALESCE(name->>%s, name->>'en_US') FROM ir_model ORDER BY 2",
             //     [lang],
             // )
-            // return self._cr.fetchall()
+            // return self.env.cr.fetchall()
             */
             return default;
         }

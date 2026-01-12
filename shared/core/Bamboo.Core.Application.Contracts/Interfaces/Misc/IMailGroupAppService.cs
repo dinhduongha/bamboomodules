@@ -10,12 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailGroupAppService : IGenericApplicationService<MailGroup>
     {
+        Task<MailGroup> CloseAsync(Guid id);
         Task<MailGroup> GoToWebsiteAsync(Guid id);
         Task<MailGroup> JoinAsync(Guid id);
         Task<MailGroup> LeaveAsync(Guid id);
         Task<MailGroup> MessageNewAsync(Guid id, MailGroupMessageNewRequestDto input);
         Task<MailGroup> MessagePostAsync(Guid id, MailGroupMessagePostRequestDto input);
         Task<MailGroup> MessageUpdateAsync(Guid id, MailGroupMessageUpdateRequestDto input);
+        Task<MailGroup> OpenAsync(Guid id);
         Task<MailGroup> SendGuidelinesAsync(Guid id, MailGroupSendGuidelinesRequestDto input);
     }
 }

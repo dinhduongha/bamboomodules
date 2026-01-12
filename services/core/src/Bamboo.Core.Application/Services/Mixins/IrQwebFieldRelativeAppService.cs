@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(RelativeDatetimeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     now=dict(type='datetime', string=_('Reference date'), description=_('Date to compare with the field value, by default use the current date.'))
             // )
@@ -45,7 +45,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def record_to_html(self, record, field_name, options):
             // if 'now' not in options:
             //     options = dict(options, now=record._fields[field_name].now())
-            // return super(RelativeDatetimeConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             */
             return default;
         }

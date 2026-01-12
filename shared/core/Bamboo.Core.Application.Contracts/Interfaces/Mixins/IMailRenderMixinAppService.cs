@@ -16,6 +16,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ActionDuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionFetchFavoritesAsync<TEntity>(IEnumerable<TEntity> entities, object extra_domain) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionLaunchAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> ActionOpenMailPreviewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionPreviewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionPutInQueueAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionReloadAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -29,6 +30,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ActionSendWinnerMailingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionSetFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionShareAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> ActionShareGetDefaultBodyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionTestAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionUnlinkSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionViewBouncedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -50,9 +52,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ActionViewTracesScheduledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ActionViewTracesSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> BuildExpressionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object sub_field_name, object null_value) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> CancelUnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CheckAbstractModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CheckAccessRightDynamicTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> CheckCanBeRenderedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fnames, object render_options) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CheckMailingFilterModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ClassifyPerLangInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object engine) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeAbTestingDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -66,6 +68,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeClicksRatioInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeEmailFromInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeFavoriteDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> ComputeHasDynamicReportsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> ComputeHasMailServerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeImagePreviewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeIsAbTestSentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ComputeIsBodyEmptyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -95,6 +99,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeWarningMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ConvertInlineImagesToUrlsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object html_content) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ConvertLinksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CreateAbTestingUtmCampaignsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> CreateActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -102,12 +107,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> CreateAttachmentsFromInlineImagesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object b64images) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> DefaultCardTemplateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> ExpressionIsDefaultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> FetchOrCreatePreviewCardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> FixAttachmentOwnershipInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GenerateMailingRecipientTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid document_id, object email) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GenerateMailingReportTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid user_id) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GenerateTemplateAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object render_results) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> GenerateTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object find_or_create_partners) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> GenerateTemplateRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object find_or_create_partners, object render_results) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> GenerateTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object recipients_allow_suggested, object find_or_create_partners) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> GenerateTemplateRecipientsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object allow_suggested, object find_or_create_partners, object render_results) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GenerateTemplateScheduledDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_results) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GenerateTemplateStaticValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object render_fields, object render_results) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetAbTestingDescriptionModifyingFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -118,11 +125,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetDefaultAbTestingCampaignValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetDefaultMailServerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetDefaultMailingDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> GetDynamicFieldNamesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetImageB64InternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetImageByUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object url, object session) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetLinkTrackerValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetMassMailingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetModelSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> GetNonAbstractModelsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetOptOutListInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetPrettyMailingTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetRecipientsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -136,9 +145,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetUrlFromResIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid res_id, object suffix) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> GetViewUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_to, Guid res_id) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> HasUnsafeExpressionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> HasUnsafeExpressionTemplateInlineTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_txt, object model) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> HasUnsafeExpressionTemplateQwebInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_src, object model) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> OpenDeleteConfirmationModalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> HasUnsafeExpressionTemplateInlineTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> HasUnsafeExpressionTemplateQwebInternalAsync<TEntity>(IEnumerable<TEntity> entities, object source, object model, object fname) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> OnchangeModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ParseMailingDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> PrepareStatisticsEmailValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> PrependPreviewInternalAsync<TEntity>(IEnumerable<TEntity> entities, object html, object preview) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -146,8 +155,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ProcessScheduledDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object scheduled_date) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderEncapsulateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object layout_xmlid, object html, object add_context, object context_record) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderEvalContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> RenderFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, List<Guid> res_ids, object engine, object compute_lang, object set_lang, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> RenderFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, List<Guid> res_ids, object engine, object compute_lang, object res_ids_lang, object set_lang, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderLangInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object engine) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> RenderTemplateGetValidOptionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderTemplateInlineTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_txt, object model, List<Guid> res_ids, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderTemplateInlineTemplateRegexInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_txt, object model, List<Guid> res_ids) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> RenderTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_src, object model, List<Guid> res_ids, object engine, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable;
@@ -165,8 +175,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> UnlinkActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> UnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> UpdateCardsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object auto_commit) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> UpdateFieldTranslationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fname, object translations, object digest, object source_lang) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> UpdateFieldTranslationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object translations, object digest, object source_lang) where TEntity : IEntity<Guid>, IMailRenderMixinable;
         Task<TEntity> ValidFieldParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, object name) where TEntity : IEntity<Guid>, IMailRenderMixinable;
-        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailRenderMixinable;
+        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IMailRenderMixinable;
     }
 }

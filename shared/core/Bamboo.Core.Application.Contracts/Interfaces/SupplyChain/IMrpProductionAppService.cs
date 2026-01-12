@@ -17,14 +17,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MrpProduction> ButtonUnbuildAsync(Guid id);
         Task<MrpProduction> ButtonUnplanAsync(Guid id);
         Task<MrpProduction> CancelAsync(Guid id);
+        Task<MrpProduction> ClearLotProducingIdsAsync(Guid id);
         Task<MrpProduction> ConfirmAsync(Guid id);
         Task<MrpProduction> CopyDataAsync(Guid id, MrpProductionCopyDataRequestDto input);
         Task<MrpProduction> DoUnreserveAsync(Guid id);
         Task<MrpProduction> GenerateBomAsync(Guid id);
-        Task<MrpProduction> GenerateSerialAsync(Guid id);
+        Task<MrpProduction> GenerateSerialAsync(Guid id, MrpProductionGenerateSerialRequestDto input);
         Task<MrpProduction> GetEmptyListHelpAsync(Guid id, MrpProductionGetEmptyListHelpRequestDto input);
-        Task<MrpProduction> GetLinkedSaleOrdersAsync(Guid id);
-        Task<MrpProduction> MassProduceAsync(Guid id);
         Task<MrpProduction> MergeAsync(Guid id);
         Task<MrpProduction> OpenLabelLayoutAsync(Guid id);
         Task<MrpProduction> OpenLabelTypeAsync(Guid id);
@@ -34,12 +33,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MrpProduction> SeeMoveScrapAsync(Guid id);
         Task<MrpProduction> SetQtyProducingAsync(Guid id);
         Task<MrpProduction> SplitAsync(Guid id);
+        Task<MrpProduction> SplitSubcontractingAsync(Guid id);
         Task<MrpProduction> StartAsync(Guid id);
-        Task<MrpProduction> SubcontractingRecordComponentAsync(Guid id);
         Task<MrpProduction> ToggleIsLockedAsync(Guid id);
         Task<MrpProduction> UpdateBomAsync(Guid id);
         Task<MrpProduction> ViewAnalyticAccountsAsync(Guid id);
         Task<MrpProduction> ViewMoDeliveryAsync(Guid id);
+        Task<MrpProduction> ViewMoveWipAsync(Guid id);
         Task<MrpProduction> ViewMrpProductionBackordersAsync(Guid id);
         Task<MrpProduction> ViewMrpProductionChildsAsync(Guid id);
         Task<MrpProduction> ViewMrpProductionSourcesAsync(Guid id);
@@ -48,6 +48,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MrpProduction> ViewReceptionReportAsync(Guid id);
         Task<MrpProduction> ViewRepairOrdersAsync(Guid id);
         Task<MrpProduction> ViewSaleOrdersAsync(Guid id);
-        Task<MrpProduction> ViewStockValuationLayersAsync(Guid id);
+        Task<MrpProduction> ViewSerialNumbersAsync(Guid id);
     }
 }

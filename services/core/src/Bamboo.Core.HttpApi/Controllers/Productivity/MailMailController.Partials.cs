@@ -27,6 +27,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-send-and-close")]
+        public async Task<IActionResult> ActionSendAndCloseAsync(Guid id)
+        {
+            var result = await _appService.SendAndCloseAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/cancel")]
         public async Task<IActionResult> CancelAsync(Guid id)
         {

@@ -22,6 +22,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<StockPickingType> GetRepairStockPickingPickingTypeAsync(Guid id);
         Task<StockPickingType> GetStockPickingPickingTypeAsync(Guid id);
         Task<StockPickingType> RedirectToBarcodeInstallationAsync(Guid id);
-        Task<StockPickingType> RepairOverviewAsync(Guid id);
+        Task<StockPickingType> WaveAsync(Guid id);
     }
 }

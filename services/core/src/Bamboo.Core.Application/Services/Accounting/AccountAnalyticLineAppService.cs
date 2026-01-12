@@ -91,13 +91,64 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<AccountAnalyticLine> ComputeAnalyticDistributionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_line.py) ---
+            // def _compute_analytic_distribution(self):
+            // for line in self:
+            //     line.analytic_distribution = {line._get_distribution_key(): 100}
+            */
+            return default;
+        }
+
+        protected async Task<AccountAnalyticLine> ComputeCalendarDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
+            // def _compute_calendar_display_name(self):
+            // companies = self.company_id
+            // encoding_in_days_per_company = dict(zip(companies, [company.timesheet_encode_uom_id == self.env.ref('uom.product_uom_day') for company in companies]))
+            // for line in self:
+            //     if not line.project_id:
+            //         line.calendar_display_name = ""
+            //         continue
+            //     if encoding_in_days_per_company[line.company_id]:
+            //         days = line._get_timesheet_time_day()
+            //         if days == int(days):
+            //             days = int(days)
+            //         line.calendar_display_name = self.env._(
+            //             "%(project_name)s (%(days)sd)",
+            //             project_name=line.project_id.display_name,
+            //             days=days,
+            //         )
+            //     else:
+            //         minutes = round(line.unit_amount * 60)
+            //         hours, minutes = divmod(minutes, 60)
+            //         if minutes:
+            //             line.calendar_display_name = self.env._(
+            //                 "%(project_name)s (%(hours)sh%(minutes)s)",
+            //                 project_name=line.project_id.display_name,
+            //                 hours=hours,
+            //                 minutes=minutes,
+            //             )
+            //         else:
+            //             line.calendar_display_name = self.env._(
+            //                 "%(project_name)s (%(hours)sh)",
+            //                 project_name=line.project_id.display_name,
+            //                 hours=hours,
+            //             )
+            */
+            return default;
+        }
+
         protected async Task<AccountAnalyticLine> ComputeCommercialPartnerInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
             // def _compute_commercial_partner(self):
             // for timesheet in self:
-            //     timesheet.commercial_partner_id = timesheet.task_id.partner_id.commercial_partner_id or timesheet.project_id.partner_id.commercial_partner_id
+            //     timesheet.commercial_partner_id = timesheet.task_id.sudo().partner_id.commercial_partner_id or timesheet.project_id.sudo().partner_id.commercial_partner_id
             */
             return default;
         }
@@ -122,7 +173,7 @@ namespace Bamboo.Core.Application.Services
             // super(AccountAnalyticLine, self - analytic_line_with_project)._compute_display_name()
             // for analytic_line in analytic_line_with_project:
             //     if analytic_line.task_id:
-            //         analytic_line.display_name = f"{analytic_line.project_id.display_name} - {analytic_line.task_id.display_name}"
+            //         analytic_line.display_name = f"{analytic_line.project_id.sudo().display_name} - {analytic_line.task_id.sudo().display_name}"
             //     else:
             //         analytic_line.display_name = analytic_line.project_id.display_name
             */
@@ -279,19 +330,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<object> ConditionToSqlInternalAsync(string @alias, string fname, string @operator, object @value, object query)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_line.py) ---
-            // def _condition_to_sql(self, alias: str, fname: str, operator: str, value, query: Query) -> SQL:
-            // if fname == 'date' and value == 'fiscal_start_year':
-            //     fiscalyear_date_range = self.env.company.compute_fiscalyear_dates(fields.Date.today())
-            //     value = fiscalyear_date_range['date_from'] - relativedelta(years=1)
-            // return super()._condition_to_sql(alias, fname, operator, value, query)
-            */
-            return default;
-        }
-
         protected async Task<AccountAnalyticLine> ConvertHoursToDaysInternalAsync(object time)
         {
             /*
@@ -308,18 +346,36 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---
-            // def create(self, vals):
-            // analytic_lines = super().create(vals)
+            // def create(self, vals_list):
+            // analytic_lines = super().create(vals_list)
             // analytic_lines.move_line_id._update_analytic_distribution()
             // return analytic_lines
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
             // def create(self, vals_list):
+            // user_timezone = self.env.tz
             // # Before creating a timesheet, we need to put a valid employee_id in the vals
             // default_user_id = self._default_user()
             // user_ids = []
             // employee_ids = []
+            // # If batch creating from the calendar view, prefetch all employees to avoid fetching them one by one in the loop
+            // if self.env.context.get('timesheet_calendar'):
+            //     self.env['hr.employee'].browse([vals.get('employee_id') for vals in vals_list])
             // # 1/ Collect the user_ids and employee_ids from each timesheet vals
-            // for vals in vals_list:
+            // skipped_vals = 0
+            // valid_vals = 0
+            // for vals in vals_list[:]:
+            //     if self.env.context.get('timesheet_calendar'):
+            //         if not 'employee_id' in vals:
+            //             vals['employee_id'] = self.env.user.employee_id.id
+            //         employee = self.env['hr.employee'].browse(vals['employee_id'])
+            //         date = fields.Date.from_string(vals.get('date', fields.Date.to_string(fields.Date.context_today(self))))
+            //         if not any(employee.resource_id._get_valid_work_intervals(
+            //             datetime.combine(date, time.min, tzinfo=user_timezone),
+            //             datetime.combine(date, time.max, tzinfo=user_timezone),
+            //         )[0][employee.resource_id.id]):
+            //             vals_list.remove(vals)
+            //             skipped_vals += 1
+            //             continue
             //     task = self.env['project.task'].sudo().browse(vals.get('task_id'))
             //     project = self.env['project.project'].sudo().browse(vals.get('project_id'))
             //     if not (task or project):
@@ -344,13 +400,14 @@ namespace Bamboo.Core.Application.Services
             // 
             //     if not vals.get('name'):
             //         vals['name'] = '/'
-            //     employee_id = vals.get('employee_id', self._context.get('default_employee_id', False))
+            //     employee_id = vals.get('employee_id', self.env.context.get('default_employee_id', False))
             //     if employee_id and employee_id not in employee_ids:
             //         employee_ids.append(employee_id)
             //     else:
             //         user_id = vals.get('user_id', default_user_id)
             //         if user_id not in user_ids:
             //             user_ids.append(user_id)
+            //     valid_vals += 1
             // 
             // # 2/ Search all employees related to user_ids and employee_ids, in the selected companies
             // HrEmployee_sudo = self.env['hr.employee'].sudo()
@@ -377,7 +434,7 @@ namespace Bamboo.Core.Application.Services
             // for vals in vals_list:
             //     if not vals.get('project_id'):
             //         continue
-            //     employee_in_id = vals.get('employee_id', self._context.get('default_employee_id', False))
+            //     employee_in_id = vals.get('employee_id', self.env.context.get('default_employee_id', False))
             //     if employee_in_id:
             //         company = False
             //         if not vals.get('company_id'):
@@ -398,7 +455,7 @@ namespace Bamboo.Core.Application.Services
             //     employee_out_id = False
             //     if employee_per_company:
             //         company_id = list(employee_per_company)[0] if len(employee_per_company) == 1\
-            //                 else vals.get('company_id', self.env.company.id)
+            //                 else vals.get('company_id') or self.env.company.id
             //         employee_out_id = employee_per_company.get(company_id, False)
             // 
             //     if employee_out_id:
@@ -414,11 +471,28 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(error_msg)
             // 
             // # 5/ Finally, create the timesheets
-            // lines = super(AccountAnalyticLine, self).create(vals_list)
+            // lines = super().create(vals_list)
             // lines._check_can_create()
             // for line, values in zip(lines, vals_list):
             //     if line.project_id:  # applied only for timesheet
             //         line._timesheet_postprocess(values)
+            // 
+            // if self.env.context.get('timesheet_calendar'):
+            //     if skipped_vals:
+            //         type = "danger"
+            //         if valid_vals:
+            //             message = self.env._("Some timesheets were not created: employees aren’t working on the selected days")
+            //         else:
+            //             message = self.env._("No timesheets created: employees aren’t working on the selected days")
+            //     else:
+            //         type = "success"
+            //         message = self.env._("Timesheets successfully created")
+            // 
+            //     self.env.user._bus_send('simple_notification', {
+            //         "type": type,
+            //         "message": message,
+            //     })
+            // 
             // return lines
             */
             return await base.CreateAsync(entity, fields);
@@ -428,11 +502,11 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
-            // def default_get(self, field_list):
-            // result = super(AccountAnalyticLine, self).default_get(field_list)
-            // if not self.env.context.get('default_employee_id') and 'employee_id' in field_list and result.get('user_id'):
+            // def default_get(self, fields):
+            // result = super().default_get(fields)
+            // if not self.env.context.get('default_employee_id') and 'employee_id' in fields and result.get('user_id'):
             //     result['employee_id'] = self.env['hr.employee'].search([('user_id', '=', result['user_id']), ('company_id', '=', result.get('company_id', self.env.company.id))], limit=1).id
-            // if not self._context.get('default_project_id') and self._context.get('is_timesheet'):
+            // if not self.env.context.get('default_project_id') and self.env.context.get('is_timesheet'):
             //     employee_id = result.get('employee_id', self.env.context.get('default_employee_id', False))
             //     favorite_project_id = self._get_favorite_project_id(employee_id)
             //     if favorite_project_id:
@@ -457,9 +531,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
             // def _domain_employee_id(self):
-            // domain = [('company_id', 'in', self._context.get('allowed_company_ids'))]
+            // domain = Domain('company_id', 'in', self.env.context.get('allowed_company_ids'))
             // if not self.env.user.has_group('hr_timesheet.group_hr_timesheet_approver'):
-            //     domain = expression.AND([domain, [('user_id', '=', self.env.user.id)]])
+            //     domain &= Domain('user_id', '=', self.env.user.id)
             // return domain
             */
             return default;
@@ -470,11 +544,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
             // def _domain_project_id(self):
-            // domain = [('allow_timesheets', '=', True)]
+            // domain = Domain([('allow_timesheets', '=', True), ('is_template', '=', False)])
             // if not self.env.user.has_group('hr_timesheet.group_timesheet_manager'):
-            //     return expression.AND([domain,
-            //         ['|', ('privacy_visibility', '!=', 'followers'), ('message_partner_ids', 'in', [self.env.user.partner_id.id])]
-            //     ])
+            //     domain &= Domain('privacy_visibility', 'in', ['employees', 'portal']) | Domain('message_partner_ids', 'in', [self.env.user.partner_id.id])
             // return domain
             */
             return default;
@@ -485,7 +557,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
             // def _domain_so_line(self):
-            // domain = expression.AND([
+            // domain = Domain.AND([
             //     self.env['sale.order.line']._sellable_lines_domain(),
             //     self.env['sale.order.line']._domain_sale_line_service(),
             //     [
@@ -506,9 +578,7 @@ namespace Bamboo.Core.Application.Services
             // if not uom_hours:
             //     uom_hours = self.env['uom.uom'].create({
             //         'name': "Hours",
-            //         'category_id': self.env.ref('uom.uom_categ_wtime').id,
-            //         'factor': 8,
-            //         'uom_type': "smaller",
+            //         'relative_factor': 1,
             //     })
             //     self.env['ir.model.data'].create({
             //         'name': 'product_uom_hour',
@@ -546,9 +616,10 @@ namespace Bamboo.Core.Application.Services
             // ]
             --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: account_analytic.py) ---
             // def _get_favorite_project_id_domain(self, employee_id=False):
-            // return expression.AND([
+            // return Domain.AND([
             //     super()._get_favorite_project_id_domain(employee_id),
-            //     [('holiday_id', '=', False), ('global_leave_id', '=', False)],
+            //     Domain('holiday_id', '=', False),
+            //     Domain('global_leave_id', '=', False),
             // ])
             */
             return default;
@@ -564,10 +635,25 @@ namespace Bamboo.Core.Application.Services
             // )
             // if not last_timesheets:
             //     internal_project = self.env.company.internal_project_id
-            //     return internal_project.active and internal_project.allow_timesheets and internal_project.id
+            //     return internal_project.has_access('read') and internal_project.active and internal_project.allow_timesheets and internal_project.id
             // return mode([t.project_id.id for t in last_timesheets])
             */
             return default;
+        }
+
+        public async Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
+            // def get_import_templates(self):
+            // if self.env.context.get('is_timesheet'):
+            //     return [{
+            //         'label': _('Import Template for Timesheets'),
+            //         'template': '/hr_timesheet/static/xls/timesheets_import_template.xlsx',
+            //     }]
+            // return []
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<AccountAnalyticLine> GetRedirectActionInternalAsync()
@@ -625,6 +711,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<AccountAnalyticLine> GetUnusualDaysAsync(Guid id, AccountAnalyticLineGetUnusualDaysRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
+            // def get_unusual_days(self, date_from, date_to=None):
+            // return self.env.user.employee_id._get_unusual_days(date_from, date_to)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<AccountAnalyticLine> GetViewsAsync(Guid id, AccountAnalyticLineGetViewsRequestDto input)
         {
             /*
@@ -663,6 +759,41 @@ namespace Bamboo.Core.Application.Services
             //     if mapping_entry:
             //         return mapping_entry.cost
             // return super()._hourly_cost()
+            */
+            return default;
+        }
+
+        protected async Task<AccountAnalyticLine> InverseAnalyticDistributionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_line.py) ---
+            // def _inverse_analytic_distribution(self):
+            // empty_account = dict.fromkeys(self._get_plan_fnames(), False)
+            // to_create_vals = []
+            // for line in self:
+            //     final_distribution = self.env['analytic.mixin']._merge_distribution(
+            //         {line._get_distribution_key(): 100},
+            //         line.analytic_distribution or {},
+            //     )
+            //     if not final_distribution:
+            //         continue
+            //     amount_fname = line._split_amount_fname()
+            //     vals_list = [
+            //         {amount_fname: line[amount_fname] * percent / 100} | empty_account | {
+            //             account.plan_id._column_name(): account.id
+            //             for account in self.env['account.analytic.account'].browse(int(aid) for aid in account_ids.split(','))
+            //         }
+            //         for account_ids, percent in final_distribution.items()
+            //     ]
+            // 
+            //     line.write(vals_list[0])
+            //     to_create_vals += [line.copy_data(vals)[0] for vals in vals_list[1:]]
+            // if to_create_vals:
+            //     self.create(to_create_vals)
+            //     self.env.user._bus_send('simple_notification', {
+            //         'type': 'success',
+            //         'message': self.env._("%s analytic lines created", len(to_create_vals)),
+            //     })
             */
             return default;
         }
@@ -746,8 +877,8 @@ namespace Bamboo.Core.Application.Services
             // prod_accounts = self.product_id.product_tmpl_id.with_company(self.company_id)._get_product_accounts()
             // unit = self.product_uom_id
             // account = prod_accounts['expense']
-            // if not unit or self.product_id.uom_po_id.category_id.id != unit.category_id.id:
-            //     unit = self.product_id.uom_po_id
+            // if not unit:
+            //     unit = self.product_id.uom_id
             // 
             // # Compute based on pricetype
             // amount_unit = self.product_id._price_compute('standard_price', uom=unit)[self.product_id.id]
@@ -785,7 +916,7 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             //     'res_model': 'account.analytic.line',
             //     'views': [(self.env.ref('hr_timesheet.timesheet_view_form_portal_user').id, 'form')],
-            //     'context': self._context,
+            //     'context': self.env.context,
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -809,6 +940,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<AccountAnalyticLine> SearchFiscalDateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_line.py) ---
+            // def _search_fiscal_date(self, operator, value):
+            // fiscalyear_date_range = self.env.company.compute_fiscalyear_dates(fields.Date.today())
+            // return [('date', '>=', fiscalyear_date_range['date_from'] - relativedelta(years=1))]
+            */
+            return default;
+        }
+
         protected async Task<AccountAnalyticLine> SearchMessagePartnerIdsInternalAsync(object @operator, object @value)
         {
             /*
@@ -819,14 +961,48 @@ namespace Bamboo.Core.Application.Services
             //     ('res_model', 'in', ('project.project', 'project.task')),
             // ], ['res_model'], ['res_id:array_agg']))
             // if not followed_ids_by_model:
-            //     return expression.FALSE_DOMAIN
-            // domains = []
+            //     return Domain.FALSE
+            // domain = Domain.FALSE
             // if project_ids := followed_ids_by_model.get('project.project'):
-            //     domains.append([('project_id', 'in', project_ids)])
+            //     domain |= Domain('project_id', 'in', project_ids)
             // if task_ids := followed_ids_by_model.get('project.task'):
-            //     domains.append([('task_id', 'in', task_ids)])
-            // domain = expression.OR(domains)
+            //     domain |= Domain('task_id', 'in', task_ids)
             // return domain
+            */
+            return default;
+        }
+
+        protected async Task<AccountAnalyticLine> ShowPortalTimesheetsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
+            // def _show_portal_timesheets(self):
+            // """
+            // Determine if we show timesheet information in the portal. Meant to be overriden in website_timesheet.
+            // """
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: website_timesheet, FILE: account_analytic_line.py) ---
+            // def _show_portal_timesheets(self):
+            // """
+            // Determine if we show timesheet information in the portal.
+            // """
+            // domain = [("key", "=", "hr_timesheet.portal_my_home_timesheet")]
+            // return self.env["ir.ui.view"].sudo().with_context(active_test=False).search(domain).filter_duplicate().active
+            */
+            return default;
+        }
+
+        protected async Task<AccountAnalyticLine> SplitAmountFnameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_line.py) ---
+            // def _split_amount_fname(self):
+            // return 'amount'
+            --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
+            // def _split_amount_fname(self):
+            // # split the quantity instead of the amount, since the amount is postprocessed
+            // # based on the quantity
+            // return 'unit_amount' if self.project_id else super()._split_amount_fname()
             */
             return default;
         }
@@ -837,7 +1013,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
             // def _timesheet_convert_sol_uom(self, sol, to_unit):
             // to_uom = self.env.ref(to_unit)
-            // return round(sol.product_uom._compute_quantity(sol.product_uom_qty, to_uom, raise_if_failure=False), 2)
+            // return round(sol.product_uom_id._compute_quantity(sol.product_uom_qty, to_uom, raise_if_failure=False), 2)
             */
             return default;
         }
@@ -886,10 +1062,13 @@ namespace Bamboo.Core.Application.Services
             // if self.env.user.has_group('hr_timesheet.group_hr_timesheet_user'):
             //     # Then, he is internal user, and we take the domain for this current user
             //     return self.env['ir.rule']._compute_domain(self._name)
-            // return [
-            //     ('message_partner_ids', 'child_of', [self.env.user.partner_id.commercial_partner_id.id]),
-            //     ('project_id.privacy_visibility', '=', 'portal'),
-            // ]
+            // return (
+            //     (
+            //         Domain('message_partner_ids', 'child_of', [self.env.user.partner_id.commercial_partner_id.id])
+            //         | Domain('partner_id', 'child_of', [self.env.user.partner_id.commercial_partner_id.id])
+            //     )
+            //     & Domain('project_id.privacy_visibility', 'in', ['invited_users', 'portal'])
+            // )
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
             // def _timesheet_get_portal_domain(self):
             // """ Only the timesheets with a product invoiced on delivered quantity are concerned.
@@ -897,7 +1076,7 @@ namespace Bamboo.Core.Application.Services
             //     thus there is no meaning of showing invoice with ordered quantity.
             // """
             // domain = super()._timesheet_get_portal_domain()
-            // return expression.AND([domain, [('timesheet_invoice_type', 'in', ['billable_time', 'non_billable', 'billable_fixed', 'billable_manual', 'billable_milestones'])]])
+            // return Domain.AND([domain, [('timesheet_invoice_type', 'in', ['billable_time', 'non_billable', 'billable_fixed', 'billable_manual', 'billable_milestones'])]])
             */
             return default;
         }
@@ -1003,7 +1182,7 @@ namespace Bamboo.Core.Application.Services
             // if missing_plan_names:
             //     raise ValidationError(_(
             //         "'%(missing_plan_names)s' analytic plan(s) required on the project '%(project_name)s' linked to the timesheet.",
-            //         missing_plan_names=format_list(self.env, missing_plan_names),
+            //         missing_plan_names=missing_plan_names,
             //         project_name=project.name,
             //     ))
             // return {
@@ -1030,7 +1209,7 @@ namespace Bamboo.Core.Application.Services
             // if missing_plan_names:
             //     raise ValidationError(_(
             //         "'%(missing_plan_names)s' analytic plan(s) required on the analytic distribution of the sale order item '%(so_line_name)s' linked to the timesheet.",
-            //         missing_plan_names=format_list(self.env, missing_plan_names),
+            //         missing_plan_names=missing_plan_names,
             //         so_line_name=so_line.name,
             //     ))
             // 
@@ -1098,6 +1277,35 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<AccountAnalyticLine> WhereCalcInternalAsync(object domain, object active_test)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_analytic_account.py) ---
+            // def _where_calc(self, domain, active_test=True):
+            // """Computes the WHERE clause needed to implement an OpenERP domain.
+            // 
+            // :param list domain: the domain to compute
+            // :param bool active_test: whether the default filtering of records with
+            //     ``active`` field set to ``False`` should be applied.
+            // :return: the query expressing the given domain as provided in domain
+            // :rtype: Query
+            // """
+            // # if the object has an active field ('active', 'x_active'), filter out all
+            // # inactive records unless they were explicitly asked for
+            // if self._active_name and active_test and self._context.get('active_test', True):
+            //     # the item[0] trick below works for domain items and '&'/'|'/'!'
+            //     # operators too
+            //     if not any(item[0] == self._active_name for item in domain):
+            //         domain = [(self._active_name, '=', 1)] + domain
+            // 
+            // if domain:
+            //     return expression.expression(domain, self).query
+            // else:
+            //     return Query(self.env, self._table, self._table_sql)
+            */
+            return default;
+        }
+
         public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountAnalyticLine entity, List<string> fields)
         {
             /*
@@ -1111,7 +1319,8 @@ namespace Bamboo.Core.Application.Services
             //     affected_move_lines._update_analytic_distribution()
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // self._check_can_write(values)
             // 
             // task = self.env['project.task'].sudo().browse(values.get('task_id'))
@@ -1134,7 +1343,7 @@ namespace Bamboo.Core.Application.Services
             //     values['name'] = '/'
             // if 'company_id' in values and not values.get('company_id'):
             //     del values['company_id']
-            // result = super(AccountAnalyticLine, self).write(values)
+            // result = super().write(values)
             // # applied only for timesheet
             // self.filtered(lambda t: t.project_id)._timesheet_postprocess(values)
             // return result

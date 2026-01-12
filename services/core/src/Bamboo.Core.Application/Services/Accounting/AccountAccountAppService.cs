@@ -20,10 +20,14 @@ namespace Bamboo.Core.Application.Services
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
     public class AccountAccountAppService : GenericApplicationService<AccountAccount>, IAccountAccountAppService
     {
+        private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
-        public AccountAccountAppService(IRepository<AccountAccount, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public AccountAccountAppService(IRepository<AccountAccount, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
+            _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
+            _posLoadMixinAppService = posLoadMixinAppService;
         }
 
         protected async Task<AccountAccount> ActionUnmergeGetUserConfirmationInternalAsync()
@@ -333,53 +337,52 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
             // def _build_spreadsheet_formula_domain(self, formula_params, default_accounts=False):
-            // codes = [code for code in formula_params["codes"] if code]
-            // 
-            // default_domain = expression.FALSE_DOMAIN
-            // if not codes:
-            //     if not default_accounts:
-            //         return default_domain
-            //     default_domain = [('account_type', 'in', ['liability_payable', 'asset_receivable'])]
-            // 
-            // company_id = formula_params["company_id"] or self.env.company.id
+            // company_id = formula_params.get("company_id") or self.env.company.id
             // company = self.env["res.company"].browse(company_id)
-            // start, end = self._get_date_period_boundaries(
-            //     formula_params["date_range"], company
-            // )
-            // balance_domain = [
+            // start, end = self._get_date_period_boundaries(formula_params["date_range"], company)
+            // 
+            // balance_domain = Domain([
             //     ("account_id.include_initial_balance", "=", True),
             //     ("date", "<=", end),
-            // ]
-            // pnl_domain = [
+            // ])
+            // pnl_domain = Domain([
             //     ("account_id.include_initial_balance", "=", False),
             //     ("date", ">=", start),
             //     ("date", "<=", end),
-            // ]
-            // # It is more optimized to (like) search for code directly in account.account than in account_move_line
-            // code_domain = expression.OR(
-            //     [
-            //         ("code", "=like", f"{code}%"),
-            //     ]
-            //     for code in codes
-            // )
-            // account_domain = expression.OR([code_domain, default_domain])
-            // account_ids = self.env["account.account"].with_company(company_id).search(account_domain).ids
-            // code_domain = [("account_id", "in", account_ids)]
-            // period_domain = expression.OR([balance_domain, pnl_domain])
-            // domain = expression.AND([code_domain, period_domain, [("company_id", "=", company_id)]])
-            // if formula_params["include_unposted"]:
-            //     domain = expression.AND(
-            //         [domain, [("move_id.state", "!=", "cancel")]]
+            // ])
+            // period_domain = balance_domain | pnl_domain
+            // 
+            // # Determine account domain based on tags or codes
+            // if 'account_tag_ids' in formula_params:
+            //     tag_ids = [int(tag_id) for tag_id in formula_params["account_tag_ids"]]
+            //     account_id_domain = Domain('account_id.tag_ids', 'in', tag_ids) if tag_ids else Domain.FALSE
+            // elif 'codes' in formula_params:
+            //     codes = [code for code in formula_params.get("codes", []) if code]
+            //     default_domain = Domain.FALSE
+            //     if not codes:
+            //         if not default_accounts:
+            //             return default_domain
+            //         default_domain = Domain('account_type', 'in', ['liability_payable', 'asset_receivable'])
+            // 
+            //     # It is more optimized to (like) search for code directly in account.account than in account_move_line
+            //     code_domain = Domain.OR(
+            //         Domain("code", "=like", f"{code}%")
+            //         for code in codes
             //     )
+            //     account_domain = code_domain | default_domain
+            //     account_ids = self.env["account.account"].with_company(company_id).search(account_domain).ids
+            //     account_id_domain = [("account_id", "in", account_ids)]
             // else:
-            //     domain = expression.AND(
-            //         [domain, [("move_id.state", "=", "posted")]]
-            //     )
+            //     account_id_domain = Domain.FALSE
+            // 
+            // posted_domain = [("move_id.state", "!=", "cancel")] if formula_params.get("include_unposted") else [("move_id.state", "=", "posted")]
+            // 
+            // domain = Domain.AND([account_id_domain, period_domain, [("company_id", "=", company_id)], posted_domain])
+            // 
             // partner_ids = [int(partner_id) for partner_id in formula_params.get('partner_ids', []) if partner_id]
             // if partner_ids:
-            //     domain = expression.AND(
-            //         [domain, [("partner_id", "in", partner_ids)]]
-            //     )
+            //     domain &= Domain("partner_id", "in", partner_ids)
+            // 
             // return domain
             */
             return default;
@@ -406,7 +409,7 @@ namespace Bamboo.Core.Application.Services
             // def _check_account_is_bank_journal_bank_account(self):
             // self.env['account.account'].flush_model(['account_type'])
             // self.env['account.journal'].flush_model(['type', 'default_account_id'])
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT journal.id
             //       FROM account_journal journal
             //       JOIN account_account account ON journal.default_account_id = account.id
@@ -415,7 +418,7 @@ namespace Bamboo.Core.Application.Services
             //      LIMIT 1;
             // ''', [tuple(self.ids)])
             // 
-            // if self._cr.fetchone():
+            // if self.env.cr.fetchone():
             //     raise ValidationError(_("You cannot change the type of an account set as Bank Account on a journal to Receivable or Payable."))
             */
             return default;
@@ -431,7 +434,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.env['account.account'].flush_model(['account_type'])
             // self.env['account.journal'].flush_model(['type', 'default_account_id'])
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT account.id
             //     FROM account_account account
             //     JOIN account_journal journal ON journal.default_account_id = account.id
@@ -441,25 +444,8 @@ namespace Bamboo.Core.Application.Services
             //     LIMIT 1;
             // ''', [tuple(self.ids)])
             // 
-            // if self._cr.fetchone():
+            // if self.env.cr.fetchone():
             //     raise ValidationError(_("The account is already in use in a 'sale' or 'purchase' journal. This means that the account's type couldn't be 'receivable' or 'payable'."))
-            */
-            return default;
-        }
-
-        protected async Task<AccountAccount> CheckAccountTypeUniqueCurrentYearEarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def _check_account_type_unique_current_year_earning(self):
-            // result = self._read_group(
-            //     domain=[('account_type', '=', 'equity_unaffected')],
-            //     groupby=['company_ids'],
-            //     aggregates=['id:recordset'],
-            //     having=[('__count', '>', 1)],
-            // )
-            // for _company, account_unaffected_earnings in result:
-            //     raise ValidationError(_('You cannot have more than one account with "Current Year Earnings" as type. (accounts: %s)', [a.code for a in account_unaffected_earnings]))
             */
             return default;
         }
@@ -495,12 +481,16 @@ namespace Bamboo.Core.Application.Services
             // def _check_company_consistency(self):
             // if accounts_without_company := self.filtered(lambda a: not a.sudo().company_ids):
             //     raise ValidationError(
-            //         _("The following accounts must be assigned to at least one company:")
-            //         + "\n" + "\n".join(f"- {account.display_name}" for account in accounts_without_company)
+            //         self.env._(
+            //             "The following accounts must be assigned to at least one company:\n%(accounts)s",
+            //             accounts="\n".join(f"- {account.display_name}" for account in accounts_without_company),
+            //         ),
             //     )
             // if self.filtered(lambda a: a.account_type == 'asset_cash' and len(a.company_ids) > 1):
             //     raise ValidationError(_("Bank & Cash accounts cannot be shared between companies."))
             // 
+            // # Need to invalidate the sudo cache as we might have just written on `company_ids`
+            // self.invalidate_recordset(fnames=['company_ids'])
             // for companies, accounts in self.grouped(lambda a: a.company_ids).items():
             //     if self.env['account.move.line'].sudo().search_count([
             //         ('account_id', 'in', accounts.ids),
@@ -531,7 +521,7 @@ namespace Bamboo.Core.Application.Services
             // self.env['account.payment.method'].flush_model(['payment_type'])
             // self.env['account.payment.method.line'].flush_model(['payment_method_id', 'payment_account_id'])
             // 
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT
             //         account.id,
             //         journal.id
@@ -577,7 +567,7 @@ namespace Bamboo.Core.Application.Services
             // ''', {
             //     'accounts': tuple(self.ids)
             // })
-            // res = self._cr.fetchone()
+            // res = self.env.cr.fetchone()
             // if res:
             //     account = self.env['account.account'].browse(res[0])
             //     journal = self.env['account.journal'].browse(res[1])
@@ -614,7 +604,7 @@ namespace Bamboo.Core.Application.Services
             // self.env['account.journal'].flush_model(['company_id', 'default_account_id'])
             // self.env['account.payment.method.line'].flush_model(['journal_id', 'payment_account_id'])
             // 
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT journal.id
             //     FROM account_journal journal
             //     JOIN res_company company on journal.company_id = company.id
@@ -627,7 +617,7 @@ namespace Bamboo.Core.Application.Services
             //     'accounts': tuple(accounts.ids),
             // })
             // 
-            // rows = self._cr.fetchall()
+            // rows = self.env.cr.fetchall()
             // if rows:
             //     journals = self.env['account.journal'].browse([r[0] for r in rows])
             //     raise ValidationError(_(
@@ -765,8 +755,24 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _compute_display_name(self):
+            // formatted_display_name = self.env.context.get('formatted_display_name')
+            // new_line = '\n'
+            // preferred_account_ids = self.env.context.get('preferred_account_ids', [])
+            // if (
+            //     (move_type := self.env.context.get('move_type'))
+            //     and (partner := self.env.context.get('partner_id'))
+            //     and not preferred_account_ids
+            // ):
+            //     preferred_account_ids = self._order_accounts_by_frequency_for_partner(self.env.company.id, partner, move_type)
             // for account in self:
-            //     account.display_name = f"{account.code} {account.name}" if account.code else account.name
+            //     if formatted_display_name and account.code:
+            //         account.display_name = (
+            //             f"""{account.code if self.env.user.has_group('account.group_account_readonly') else ''} {account.name}"""
+            //             f"""{f' `{_("Suggested")}`' if account.id in preferred_account_ids else ''}"""
+            //             f"""{f'{new_line}--{account.description}--' if account.description else ''}"""
+            //         )
+            //     else:
+            //         account.display_name = f"{account.code} {account.name}" if account.code and self.env.user.has_group('account.group_account_readonly') else account.name
             */
             return default;
         }
@@ -777,7 +783,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _compute_include_initial_balance(self):
             // for account in self:
-            //     account.include_initial_balance = account.internal_group not in ['income', 'expense']
+            //     account.include_initial_balance = account.internal_group not in ['income', 'expense'] and account.account_type != 'equity_unaffected'
             */
             return default;
         }
@@ -869,7 +875,7 @@ namespace Bamboo.Core.Application.Services
             // for record in self:
             //     record.related_taxes_amount = self.env['account.tax'].search_count([
             //         *self.env['account.tax']._check_company_domain(self.env.company),
-            //         ('repartition_line_ids.account_id', '=', record.id),
+            //         ('repartition_line_ids.account_id', 'in', record.ids),
             //     ])
             */
             return default;
@@ -880,30 +886,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _compute_used(self):
-            // ids = set(self._search_used('=', True)[0][2])
+            // ids = set(self._get_used_account_ids())
             // for record in self:
             //     record.used = record.id in ids
-            */
-            return default;
-        }
-
-        protected async Task<AccountAccount> ConstrainsAllowedJournalIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def _constrains_allowed_journal_ids(self):
-            // self.env['account.move.line'].flush_model(['account_id', 'journal_id'])
-            // self.flush_recordset(['allowed_journal_ids'])
-            // self._cr.execute("""
-            //     SELECT aml.id
-            //     FROM account_move_line aml
-            //     WHERE aml.account_id in %s
-            //     AND EXISTS (SELECT 1 FROM account_account_account_journal_rel WHERE account_account_id = aml.account_id)
-            //     AND NOT EXISTS (SELECT 1 FROM account_account_account_journal_rel WHERE account_account_id = aml.account_id AND account_journal_id = aml.journal_id)
-            // """, [tuple(self.ids)])
-            // ids = self._cr.fetchall()
-            // if ids:
-            //     raise ValidationError(_('Some journal items already exist with this account but in other journals than the allowed ones.'))
             */
             return default;
         }
@@ -1029,16 +1014,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<object> FieldToSqlInternalAsync(string @alias, string fname, object query, bool flush)
+        protected async Task<object> FieldToSqlInternalAsync(string @alias, string field_expr, object query)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def _field_to_sql(self, alias: str, fname: str, query: (Query | None) = None, flush: bool = True) -> SQL:
-            // if fname == 'internal_group':
-            //     return SQL("split_part(%s, '_', 1)", self._field_to_sql(alias, 'account_type', query, flush))
-            // if fname == 'code':
-            //     return self.with_company(self.env.company.root_id).sudo()._field_to_sql(alias, 'code_store', query, flush)
-            // if fname == 'placeholder_code':
+            // def _field_to_sql(self, alias: str, field_expr: str, query: (Query | None) = None) -> SQL:
+            // if field_expr == 'internal_group':
+            //     return SQL("split_part(%s, '_', 1)", self._field_to_sql(alias, 'account_type', query))
+            // if field_expr == 'code':
+            //     return self.with_company(self.env.company.root_id).sudo()._field_to_sql(alias, 'code_store', query)
+            // if field_expr == 'placeholder_code':
             //     if 'account_first_company' not in query._joins:
             //         # When multiple accounts are selected, ``placeholder_code`` is used for all of them
             //         # as it is in the default ``_order`` (e.g., for ``account_asset_id`` and
@@ -1082,13 +1067,13 @@ namespace Bamboo.Core.Application.Services
             //         account_first_company_root_id=SQL.identifier('account_first_company', 'root_company_id'),
             //         to_flush=self._fields['code_store'],
             //     )
-            // if fname == 'root_id':
+            // if field_expr == 'root_id':
             //     return SQL(
             //         "SUBSTRING(%(placeholder_code)s, 1, 2)",
-            //         placeholder_code=self._field_to_sql(alias, 'placeholder_code', query, flush),
+            //         placeholder_code=self._field_to_sql(alias, 'placeholder_code', query),
             //     )
             // 
-            // return super()._field_to_sql(alias, fname, query, flush)
+            // return super()._field_to_sql(alias, field_expr, query)
             */
             return default;
         }
@@ -1202,22 +1187,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountAccount> GetMostFrequentAccountForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type, Guid journal_id)
+        protected async Task<AccountAccount> GetMostFrequentAccountForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def _get_most_frequent_account_for_partner(self, company_id, partner_id, move_type=None, journal_id=None):
-            // most_frequent_account = self._get_most_frequent_accounts_for_partner(company_id, partner_id, move_type, filter_never_user_accounts=True, limit=1, journal_id=journal_id)
+            // def _get_most_frequent_account_for_partner(self, company_id, partner_id, move_type=None):
+            // most_frequent_account = self._get_most_frequent_accounts_for_partner(company_id, partner_id, move_type, filter_never_user_accounts=True, limit=1)
             // return most_frequent_account[0] if most_frequent_account else False
             */
             return default;
         }
 
-        protected async Task<AccountAccount> GetMostFrequentAccountsForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type, object filter_never_user_accounts, object limit, Guid journal_id)
+        protected async Task<AccountAccount> GetMostFrequentAccountsForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type, object filter_never_user_accounts, object limit)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def _get_most_frequent_accounts_for_partner(self, company_id, partner_id, move_type, filter_never_user_accounts=False, limit=None, journal_id=None):
+            // def _get_most_frequent_accounts_for_partner(self, company_id, partner_id, move_type, filter_never_user_accounts=False, limit=None):
             // """
             // Returns the accounts ordered from most frequent to least frequent for a given partner
             // and filtered according to the move type
@@ -1226,23 +1211,20 @@ namespace Bamboo.Core.Application.Services
             // :param move_type: the type of the move to know which type of accounts to retrieve
             // :param filter_never_user_accounts: True if we should filter out accounts never used for the partner
             // :param limit: the maximum number of accounts to retrieve
-            // :param journal_id: only return accounts allowed on this journal id
             // :returns: List of account ids, ordered by frequency (from most to least frequent)
             // """
             // domain = [
             //     *self.env['account.move.line']._check_company_domain(company_id),
             //     ('partner_id', '=', partner_id),
-            //     ('account_id.deprecated', '=', False),
+            //     ('account_id.active', '=', True),
             //     ('date', '>=', fields.Date.add(fields.Date.today(), days=-365 * 2)),
             // ]
-            // if journal_id:
-            //     domain += ['|', ('account_id.allowed_journal_ids', '=', journal_id), ('account_id.allowed_journal_ids', '=', False)]
             // if move_type in self.env['account.move'].get_inbound_types(include_receipts=True):
             //     domain.append(('account_id.internal_group', '=', 'income'))
             // elif move_type in self.env['account.move'].get_outbound_types(include_receipts=True):
             //     domain.append(('account_id.internal_group', '=', 'expense'))
             // 
-            // query = self.env['account.move.line']._where_calc(domain)
+            // query = self.env['account.move.line']._search(domain, bypass_access=True)
             // if not filter_never_user_accounts:
             //     _kind, rhs_table, condition = query._joins['account_move_line__account_id']
             //     query._joins['account_move_line__account_id'] = (SQL("RIGHT JOIN"), rhs_table, condition)
@@ -1268,6 +1250,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<AccountAccount> GetUsedAccountIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
+            // def _get_used_account_ids(self):
+            // rows = self.env.execute_query(SQL("""
+            //     SELECT id FROM account_account account
+            //     WHERE EXISTS (SELECT 1 FROM account_move_line aml WHERE aml.account_id = account.id LIMIT 1)
+            // """))
+            // return [r[0] for r in rows]
+            */
+            return default;
+        }
+
         protected async Task<AccountAccount> InverseCodeInternalAsync()
         {
             /*
@@ -1286,6 +1282,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<AccountAccount> LoadPosDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_account.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // property_account_receivable_ids = {partner['property_account_receivable_id'] for partner in data['res.partner']}
+            // return [('id', 'in', property_account_receivable_ids)]
+            */
+            return default;
+        }
+
+        protected async Task<AccountAccount> LoadPosDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_account.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return [
+            //     'id', 'non_trade',
+            // ]
+            */
+            return default;
+        }
+
         protected async Task<AccountAccount> LoadPrecommitUpdateOpeningMoveInternalAsync()
         {
             /*
@@ -1298,7 +1317,7 @@ namespace Bamboo.Core.Application.Services
             // Instead, the opening balances are collected and this method is called once at the end
             // to update the opening move accordingly.
             // """
-            // data = self._cr.precommit.data.pop('import_account_opening_balance', {})
+            // data = self.env.cr.precommit.data.pop('import_account_opening_balance', {})
             // 
             // for company_id, account_values in data.items():
             //     self.env['res.company'].browse(company_id)._update_opening_move({
@@ -1387,15 +1406,46 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<object> OrderToSqlInternalAsync(string order, object query, object @alias, bool reverse)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
+            // def _order_to_sql(self, order: str, query: Query, alias: (str | None) = None, reverse: bool = False) -> SQL:
+            // sql_order = super()._order_to_sql(order, query, alias, reverse)
+            // 
+            // if order == self._order and (preferred_account_type := self.env.context.get('preferred_account_type')):
+            //     sql_order = SQL(
+            //         "%(field_sql)s = %(preferred_account_type)s %(direction)s, %(base_order)s",
+            //         field_sql=self._field_to_sql(alias or self._table, 'account_type'),
+            //         preferred_account_type=preferred_account_type,
+            //         direction=SQL('ASC') if reverse else SQL('DESC'),
+            //         base_order=sql_order,
+            //     )
+            // if order == self._order and (preferred_account_ids := self.env.context.get('preferred_account_ids')):
+            //     sql_order = SQL(
+            //         "%(alias)s.id in %(preferred_account_ids)s %(direction)s, %(base_order)s",
+            //         alias=SQL.identifier(alias or self._table),
+            //         preferred_account_ids=tuple(map(int, preferred_account_ids)),
+            //         direction=SQL('ASC') if reverse else SQL('DESC'),
+            //         base_order=sql_order,
+            //     )
+            // return sql_order
+            */
+            return default;
+        }
+
         protected async Task<AccountAccount> SearchAccountRootInternalAsync(object @operator, object @value)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_account_root(self, operator, value):
-            // if operator in ['=', 'child_of']:
-            //     root = self.env['account.root'].browse(value)
-            //     return [('placeholder_code', '=ilike', root.name + ('' if operator == '=' and not root.parent_id else '%'))]
-            // raise NotImplementedError
+            // if operator not in ('in', 'child_of'):
+            //     return NotImplemented
+            // roots = self.env['account.root'].browse(value)
+            // return Domain.OR(
+            //     Domain('placeholder_code', '=ilike', root.name + ('' if operator == 'in' and not root.parent_id else '%'))
+            //     for root in roots
+            // )
             */
             return default;
         }
@@ -1415,14 +1465,19 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_display_name(self, operator, value):
-            // name = value or ''
-            // if operator in ('=', '!='):
-            //     domain = ['|', ('code', '=', name.split(' ')[0]), ('name', operator, name)]
-            // else:
-            //     domain = ['|', ('code', '=like', name.split(' ')[0] + '%'), ('name', operator, name)]
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     domain = ['&', '!'] + domain[1:]
-            // return domain
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // if operator == 'in':
+            //     names = value
+            //     return [
+            //         '|',
+            //         ('code', 'in', [(name or '').split(' ')[0] for name in value]),
+            //         ('name', 'in', names),
+            //     ]
+            // if isinstance(value, str):
+            //     name = value or ''
+            //     return ['|', '|', ('code', '=like', name.split(' ')[0] + '%'), ('name', operator, name), ('description', 'ilike', name)]
+            // return NotImplemented
             */
             return default;
         }
@@ -1432,11 +1487,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_include_initial_balance(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_('Operation not supported'))
-            // if operator != '=':
-            //     value = not value
-            // return [('internal_group', 'not in' if value else 'in', ['income', 'expense'])]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('internal_group', 'not in', ['income', 'expense']), ('account_type', '!=', 'equity_unaffected')]
             */
             return default;
         }
@@ -1446,15 +1499,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_internal_group(self, operator, value):
-            // if operator not in ['=', 'in', '!=', 'not in']:
-            //     raise UserError(_('Operation not supported'))
-            // domain = expression.OR([[('account_type', '=like', group)] for group in {
-            //     self._get_internal_group(v) + '%'
-            //     for v in (value if isinstance(value, (list, tuple)) else [value])
-            // }])
-            // if operator in ('!=', 'not in'):
-            //     return ['!'] + expression.normalize_domain(domain)
-            // return domain
+            // if operator != 'in':
+            //     return NotImplemented
+            // return Domain.OR(
+            //     Domain('account_type', '=like', self._get_internal_group(v) + '%')
+            //     for v in value
+            // )
             */
             return default;
         }
@@ -1468,30 +1518,41 @@ namespace Bamboo.Core.Application.Services
             //     company by starting from an existing code and incrementing it.
             // 
             //     Examples:
-            //         |  start_code  |  codes checked for availability                            |
-            //         +--------------+------------------------------------------------------------+
-            //         |    102100    |  102101, 102102, 102103, 102104, ...                       |
-            //         |     1598     |  1599, 1600, 1601, 1602, ...                               |
-            //         |   10.01.08   |  10.01.09, 10.01.10, 10.01.11, 10.01.12, ...               |
-            //         |   10.01.97   |  10.01.98, 10.01.99, 10.01.97.copy2, 10.01.97.copy3, ...   |
-            //         |    1021A     |  1021A, 1022A, 1023A, 1024A, ...                           |
-            //         |    hello     |  hello.copy, hello.copy2, hello.copy3, hello.copy4, ...    |
-            //         |     9998     |  9999, 9998.copy, 9998.copy2, 9998.copy3, ...              |
             // 
-            //     :param start_code str: the code to increment until an available one is found
+            //     +--------------+-----------------------------------------------------------+
+            //     |  start_code  | codes checked for availability                            |
+            //     +==============+===========================================================+
+            //     |    102100    | 102101, 102102, 102103, 102104, ...                       |
+            //     +--------------+-----------------------------------------------------------+
+            //     |     1598     | 1599, 1600, 1601, 1602, ...                               |
+            //     +--------------+-----------------------------------------------------------+
+            //     |   10.01.08   | 10.01.09, 10.01.10, 10.01.11, 10.01.12, ...               |
+            //     +--------------+-----------------------------------------------------------+
+            //     |   10.01.97   | 10.01.98, 10.01.99, 10.01.97.copy2, 10.01.97.copy3, ...   |
+            //     +--------------+-----------------------------------------------------------+
+            //     |    1021A     | 1021A, 1022A, 1023A, 1024A, ...                           |
+            //     +--------------+-----------------------------------------------------------+
+            //     |    hello     | hello.copy, hello.copy2, hello.copy3, hello.copy4, ...    |
+            //     +--------------+-----------------------------------------------------------+
+            //     |     9998     | 9999, 9998.copy, 9998.copy2, 9998.copy3, ...              |
+            //     +--------------+-----------------------------------------------------------+
+            // 
+            //     :param str start_code: the code to increment until an available one is found
             //     :param set[str] cache: a set of codes which you know are already used
             //                             (optional, to speed up the method).
-            //                             If none is given, the method will use cache = {start_code}.
+            //                             If none is given, the method will use cache = ``{start_code}``.
             //                             i.e. the method will return the first available code
             //                             *strictly* greater than start_code.
             //                             If you want the method to start at start_code, you should
             //                             explicitly pass cache={}.
             // 
-            //     :return str: an available new account code for the active company.
-            //                  It will normally have length `len(start_code)`.
-            //                  If incrementing the last digits starting from `start_code` does
-            //                  not work, the method will try as a fallback
-            //                  '{start_code}.copy', '{start_code}.copy2', ... '{start_code}.copy99'.
+            //     :return: an available new account code for the active company.
+            //              It will normally have length ``len(start_code)``.
+            //              If incrementing the last digits starting from ``start_code`` does
+            //              not work, the method will try as a fallback
+            //              ``'{start_code}.copy'``, ``'{start_code}.copy2'``, ...
+            //              ``'{start_code}.copy99'``.
+            //     :rtype: str
             // """
             // if cache is None:
             //     cache = {start_code}
@@ -1543,7 +1604,8 @@ namespace Bamboo.Core.Application.Services
             // if field_name != 'root_id' or set_count:
             //     return super()._search_panel_domain_image(field_name, domain, set_count, limit)
             // 
-            // if expression.is_false(self, domain):
+            // domain = Domain(domain)
+            // if domain.is_false():
             //     return {}
             // 
             // query_account = self.env['account.account']._search(domain, limit=limit)
@@ -1563,11 +1625,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_placeholder_code(self, operator, value):
-            // if operator != '=ilike':
-            //     raise NotImplementedError
+            // if operator not in ('=ilike', 'in'):
+            //     return NotImplemented
             // query = Query(self.env, 'account_account')
             // placeholder_code_sql = self.env['account.account']._field_to_sql('account_account', 'placeholder_code', query)
-            // query.add_where(SQL("%s ILIKE %s", placeholder_code_sql, value))
+            // if operator == 'in':
+            //     query.add_where(SQL("%s IN %s", placeholder_code_sql, tuple(value)))
+            // else:
+            //     query.add_where(SQL("%s ILIKE %s", placeholder_code_sql, value))
             // return [('id', 'in', query)]
             */
             return default;
@@ -1578,15 +1643,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _search_used(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_('Operation not supported'))
-            // if operator != '=':
-            //     value = not value
-            // self._cr.execute("""
-            //     SELECT id FROM account_account account
-            //     WHERE EXISTS (SELECT 1 FROM account_move_line aml WHERE aml.account_id = account.id LIMIT 1)
-            // """)
-            // return [('id', 'in' if value else 'not in', [r[0] for r in self._cr.fetchall()])]
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // return [('id', operator, self._get_used_account_ids())]
             */
             return default;
         }
@@ -1627,11 +1686,11 @@ namespace Bamboo.Core.Application.Services
             // got assigned.
             // """
             // self.ensure_one()
-            // if 'import_account_opening_balance' not in self._cr.precommit.data:
-            //     data = self._cr.precommit.data['import_account_opening_balance'] = {}
-            //     self._cr.precommit.add(self._load_precommit_update_opening_move)
+            // if 'import_account_opening_balance' not in self.env.cr.precommit.data:
+            //     data = self.env.cr.precommit.data['import_account_opening_balance'] = {}
+            //     self.env.cr.precommit.add(self._load_precommit_update_opening_move)
             // else:
-            //     data = self._cr.precommit.data['import_account_opening_balance']
+            //     data = self.env.cr.precommit.data['import_account_opening_balance']
             // data.setdefault(self.env.company.id, {}).setdefault(self.id, [None, None])
             // index = 0 if field == 'debit' else 1
             // data[self.env.company.id][self.id][index] = amount
@@ -1662,22 +1721,59 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(Guid id, AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
+            // def spreadsheet_fetch_balance_tag(self, args_list):
+            // """Fetch data for ODOO.BALANCE.TAG formulas
+            // The input list looks like this::
+            // 
+            //     [{
+            //         account_tag_ids: str[]
+            //         date_range: {
+            //             range_type: "year"
+            //             year: int
+            //         },
+            //         company_id: int
+            //         include_unposted: bool
+            //     }]
+            // """
+            // results = []
+            // for args in args_list:
+            //     account_tag_ids = [tag_id for tag_id in args.get('account_tag_ids', []) if tag_id]
+            //     if not account_tag_ids:
+            //         results.append({'balance': 0})
+            //         continue
+            // 
+            //     company_id = args["company_id"] or self.env.company.id
+            //     domain = self._build_spreadsheet_formula_domain(args)
+            //     MoveLines = self.env["account.move.line"].with_company(company_id)
+            //     [(balance,)] = MoveLines._read_group(domain, aggregates=['balance:sum'])
+            //     results.append({'balance': balance or 0.0})
+            // 
+            // return results
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
             // def spreadsheet_fetch_debit_credit(self, args_list):
             // """Fetch data for ODOO.CREDIT, ODOO.DEBIT and ODOO.BALANCE formulas
-            // The input list looks like this:
-            // [{
-            //     date_range: {
-            //         range_type: "year"
-            //         year: int
-            //     },
-            //     company_id: int
-            //     codes: str[]
-            //     include_unposted: bool
-            // }]
+            // The input list looks like this::
+            // 
+            //     [{
+            //         date_range: {
+            //             range_type: "year"
+            //             year: int
+            //         },
+            //         company_id: int
+            //         codes: str[]
+            //         include_unposted: bool
+            //     }]
             // """
             // results = []
             // for args in args_list:
@@ -1698,17 +1794,18 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
             // def spreadsheet_fetch_partner_balance(self, args_list):
             // """Fetch data for ODOO.PARTNER.BALANCE formulas
-            // The input list looks like this:
-            // [{
-            //     date_range: {
-            //         range_type: "year"
-            //         year: int
-            //     },
-            //     company_id: int
-            //     codes: str[]
-            //     include_unposted: bool
-            //     partner_ids: int[]
-            // }]
+            // The input list looks like this::
+            // 
+            //     [{
+            //         date_range: {
+            //             range_type: "year"
+            //             year: int
+            //         },
+            //         company_id: int
+            //         codes: str[]
+            //         include_unposted: bool
+            //         partner_ids: int[]
+            //     }]
             // """
             // results = []
             // for args in args_list:
@@ -1734,16 +1831,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
             // def spreadsheet_fetch_residual_amount(self, args_list):
             // """Fetch data for ODOO.RESUDUAL formulas
-            // The input list looks like this:
-            // [{
-            //     date_range: {
-            //         range_type: "year"
-            //         year: int
-            //     },
-            //     company_id: int
-            //     codes: str[]
-            //     include_unposted: bool
-            // }]
+            // The input list looks like this::
+            // 
+            //     [{
+            //         date_range: {
+            //             range_type: "year"
+            //             year: int
+            //         },
+            //         company_id: int
+            //         codes: str[]
+            //         include_unposted: bool
+            //     }]
             // """
             // results = []
             // for args in args_list:
@@ -1840,7 +1938,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _unlink_except_contains_journal_items(self):
-            // if self.env['account.move.line'].search_count([('account_id', 'in', self.ids)], limit=1):
+            // if self.env['account.move.line'].sudo().search_count([('account_id', 'in', self.ids)], limit=1):
             //     raise UserError(_('You cannot perform this action on an account that contains journal items.'))
             */
             return default;

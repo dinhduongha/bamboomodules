@@ -19,6 +19,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-set-auto-reconcile")]
+        public async Task<IActionResult> ActionSetAutoReconcileAsync(Guid id)
+        {
+            var result = await _appService.SetAutoReconcileAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-set-manual")]
+        public async Task<IActionResult> ActionSetManualAsync(Guid id)
+        {
+            var result = await _appService.SetManualAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountReconcileModelCopyDataRequestDto input)
         {

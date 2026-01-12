@@ -12,6 +12,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     {
         Task<LunchSupplier> ConfirmOrdersAsync(Guid id);
         Task<LunchSupplier> SendOrdersAsync(Guid id);
-        Task<LunchSupplier> ToggleActiveAsync(Guid id);
     }
 }

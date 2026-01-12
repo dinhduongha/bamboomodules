@@ -15,6 +15,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<AccountAccount> GetAccountGroupAsync(Guid id, AccountAccountGetAccountGroupRequestDto input);
         Task<AccountAccount> GetImportTemplatesAsync(Guid id);
         Task<AccountAccount> OpenRelatedTaxesAsync(Guid id);
+        Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(Guid id, AccountAccountSpreadsheetFetchBalanceTagRequestDto input);
         Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, AccountAccountSpreadsheetFetchDebitCreditRequestDto input);
         Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(Guid id, AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input);
         Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(Guid id, AccountAccountSpreadsheetFetchResidualAmountRequestDto input);

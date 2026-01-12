@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldImageable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // if element.find('img') is None:
             //     return False
@@ -78,7 +78,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ], limit=1)
             //         return attachment.datas
             // 
-            // return super(Image, self).from_html(model, field, element)
+            // return super().from_html(model, field, element)
             */
             return default;
         }
@@ -93,18 +93,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // except binascii.Error:
             //     raise ValueError("Invalid image content") from None
             // 
-            // if img_b64 and guess_mimetype(img_b64, '') == 'image/webp':
+            // mimetype = guess_mimetype(img_b64, '') if img_b64 else None
+            // if mimetype == 'image/webp':
             //     return self.env["ir.qweb"]._get_converted_image_data_uri(value)
+            // elif mimetype != "image/svg+xml":
+            //     try:
+            //         image = Image.open(BytesIO(img_b64))
+            //         image.verify()
+            //         mimetype = Image.MIME[image.format]
+            //     except OSError as exc:
+            //         raise ValueError("Non-image binary fields can not be converted to HTML") from exc
+            //     except Exception as exc:  # noqa: BLE001
+            //         raise ValueError("Invalid image content") from exc
             // 
-            // try:
-            //     image = Image.open(BytesIO(img_b64))
-            //     image.verify()
-            // except IOError:
-            //     raise ValueError("Non-image binary fields can not be converted to HTML") from None
-            // except: # image.verify() throws "suitable exceptions", I have no idea what they are
-            //     raise ValueError("Invalid image content") from None
-            // 
-            // return "data:%s;base64,%s" % (Image.MIME[image.format], value.decode('ascii'))
+            // return "data:%s;base64,%s" % (mimetype, value.decode('ascii'))
             */
             return default;
         }
@@ -154,7 +156,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadLocalUrlAsync<TEntity>(IEnumerable<TEntity> entities, object url) where TEntity : IEntity<Guid>, IIrQwebFieldImageable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def load_local_url(self, url):
             // match = self.local_url_re.match(urls.url_parse(url).path)
             // rest = match.group('rest')
@@ -169,7 +171,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         image.load()
             //         f.seek(0)
             //         return base64.b64encode(f.read())
-            // except Exception:
+            // except Exception:  # noqa: BLE001
             //     logger.exception("Failed to load local image %r", url)
             //     return None
             */
@@ -179,8 +181,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadRemoteUrlAsync<TEntity>(IEnumerable<TEntity> entities, object url) where TEntity : IEntity<Guid>, IIrQwebFieldImageable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def load_remote_url(self, url):
+            // if url.startswith('data:'):
+            //     logger.debug("Cannot load binary data url %r", url)
+            //     return None
             // try:
             //     # should probably remove remote URLs entirely:
             //     # * in fields, downloading them without blowing up the server is a
@@ -194,7 +199,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     image = I.open(io.BytesIO(req.content))
             //     # force a complete load of the image data to validate it
             //     image.load()
-            // except Exception:
+            // # We're catching all exceptions because Pillow's exceptions are
+            // # directly inheriting from Exception.
+            // except Exception:  # noqa: BLE001
             //     logger.warning("Failed to load remote image %r", url, exc_info=True)
             //     return None
             // 

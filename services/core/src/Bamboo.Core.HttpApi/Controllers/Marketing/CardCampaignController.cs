@@ -8,7 +8,7 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Social Marketing, Module: marketing_card
+    // Category: Marketing/Marketing Card, Module: marketing_card
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]

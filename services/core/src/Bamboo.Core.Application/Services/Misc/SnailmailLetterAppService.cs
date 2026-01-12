@@ -133,7 +133,6 @@ namespace Bamboo.Core.Application.Services
             // and res_ids and create them if not found.
             // """
             // self.ensure_one()
-            // obj = self.env[self.model].browse(self.res_id)
             // if not self.attachment_id:
             //     report = self.report_template
             //     if not report:
@@ -143,13 +142,6 @@ namespace Bamboo.Core.Application.Services
             //             return False
             //         else:
             //             self.write({'report_template': report.id})
-            //     if report.print_report_name:
-            //         report_name = safe_eval(report.print_report_name, {'object': obj})
-            //     elif report.attachment:
-            //         report_name = safe_eval(report.attachment, {'object': obj})
-            //     else:
-            //         report_name = 'Document'
-            //     filename = "%s.%s" % (report_name, "pdf")
             //     paperformat = report.get_paperformat()
             //     if (paperformat.format == 'custom' and paperformat.page_width != 210 and paperformat.page_height != 297) or paperformat.format != 'A4':
             //         raise UserError(_("Please use an A4 Paper format."))
@@ -160,8 +152,9 @@ namespace Bamboo.Core.Application.Services
             //         for layout in ('bubble', 'wave', 'folder')
             //     }:
             //         self.company_id.external_report_layout_id = self.env.ref('web.external_layout_standard')
-            //     pdf_bin, unused_filetype = self.env['ir.actions.report'].with_context(snailmail_layout=not self.cover, lang='en_US')._render_qweb_pdf(report, self.res_id)
+            //     filename, pdf_bin = self._generate_report_pdf(report)
             //     self.company_id.external_report_layout_id = prev
+            // 
             //     pdf_bin = self._overwrite_margins(pdf_bin)
             //     if self.cover:
             //         pdf_bin = self._append_cover_page(pdf_bin)
@@ -175,6 +168,25 @@ namespace Bamboo.Core.Application.Services
             //     self.write({'attachment_id': attachment.id})
             // 
             // return self.attachment_id
+            */
+            return default;
+        }
+
+        protected async Task<SnailmailLetter> GenerateReportPdfInternalAsync(object report)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: snailmail_letter.py) ---
+            // def _generate_report_pdf(self, report):
+            // obj = self.env[self.model].browse(self.res_id)
+            // if report.print_report_name:
+            //     report_name = safe_eval(report.print_report_name, {'object': obj})
+            // elif report.attachment:
+            //     report_name = safe_eval(report.attachment, {'object': obj})
+            // else:
+            //     report_name = 'Document'
+            // filename = "%s.%s" % (report_name, "pdf")
+            // pdf_bin = self.env['ir.actions.report'].with_context(snailmail_layout=not self.cover, lang='en_US')._render_qweb_pdf(report, self.res_id)[0]
+            // return filename, pdf_bin
             */
             return default;
         }
@@ -204,7 +216,7 @@ namespace Bamboo.Core.Application.Services
             //     link = self.env['iap.account'].get_credits_url(service_name='snailmail')
             //     return _('You don\'t have enough credits to perform this operation.<br>Please go to your <a href=%s target="new">iap account</a>.', link)
             // if error == 'TRIAL_ERROR':
-            //     link = self.env['iap.account'].get_credits_url(service_name='snailmail', trial=True)
+            //     link = self.env['iap.account'].get_credits_url(service_name='snailmail')
             //     return _('You don\'t have an IAP account registered for this service.<br>Please go to <a href=%s target="new">iap.odoo.com</a> to claim your free credits.', link)
             // if error == 'NO_PRICE_AVAILABLE':
             //     return _('The country of the partner is not covered by Snailmail.')
@@ -347,7 +359,7 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             // """
-            // account_token = self.env['iap.account'].get('snailmail').account_token
+            // account_token = self.env['iap.account'].get('snailmail').sudo().account_token
             // dbuuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
             // documents = []
             // 

@@ -10,7 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountLockExceptionAppService : IGenericApplicationService<AccountLockException>
     {
-        Task<AccountLockException> InitAsync(Guid id);
         Task<AccountLockException> RevokeAsync(Guid id);
         Task<AccountLockException> ShowAuditTrailDuringExceptionAsync(Guid id);
     }

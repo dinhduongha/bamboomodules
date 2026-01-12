@@ -47,55 +47,82 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<UomUom> CheckCategoryReferenceUniquenessInternalAsync()
+        protected async Task<UomUom> CheckFactorInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _check_category_reference_uniqueness(self):
-            // categ_res = self.with_context(active_test=False).read_group(
-            //     [("category_id", "in", self.category_id.ids)],
-            //     ["category_id", "uom_type"],
-            //     ["category_id", "uom_type"],
-            //     lazy=False,
-            // )
-            // uom_by_category = defaultdict(int)
-            // ref_by_category = {}
-            // for res in categ_res:
-            //     uom_by_category[res["category_id"][0]] += res["__count"]
-            //     if res["uom_type"] == "reference":
-            //         ref_by_category[res["category_id"][0]] = res["__count"]
+            // def _check_factor(self):
+            // for uom in self:
+            //     if not uom.relative_uom_id and uom.relative_factor != 1.0:
+            //         raise UserError(_("Reference unit of measure is missing."))
+            */
+            return default;
+        }
+
+        protected async Task<UomUom> CheckQtyInternalAsync(object product_qty, Guid uom_id, object rounding_method)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def _check_qty(self, product_qty, uom_id, rounding_method="HALF-UP"):
+            // """Check if product_qty in given uom is a multiple of the packaging qty.
+            // If not, rounding the product_qty to closest multiple of the packaging qty
+            // according to the rounding_method "UP", "HALF-UP or "DOWN".
+            // """
+            // self.ensure_one()
+            // packaging_qty = self._compute_quantity(1, uom_id)
+            // # We do not use the modulo operator to check if qty is a mltiple of q. Indeed the quantity
+            // # per package might be a float, leading to incorrect results. For example:
+            // # 8 % 1.6 = 1.5999999999999996
+            // # 5.4 % 1.8 = 2.220446049250313e-16
+            // if product_qty and packaging_qty:
+            //     product_qty = float_round(product_qty / packaging_qty, precision_rounding=1.0,
+            //                           rounding_method=rounding_method) * packaging_qty
+            // return product_qty
+            */
+            return default;
+        }
+
+        public async Task<UomUom> CompareAsync(Guid id, UomUomCompareRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def compare(self, value1: float, value2: float) -> Literal[-1, 0, 1]:
+            // """Compare two measures after rounding them with the 'Product Unit' precision
             // 
-            // for category in self.category_id:
-            //     reference_count = ref_by_category.get(category.id, 0)
-            //     if reference_count > 1:
-            //         raise ValidationError(_("UoM category %s should only have one reference unit of measure.", category.name))
-            //     elif reference_count == 0 and uom_by_category.get(category.id, 0) > 0:
-            //         raise ValidationError(_("UoM category %s should have a reference unit of measure.", category.name))
+            // :param value1: origin value to compare
+            // :param value2: value to compare to
+            // :return: -1, 0 or 1, if ``value1`` is lower than, equal to, or greater than ``value2``.
+            // """
+            // self.ensure_one()
+            // digits = self.env['decimal.precision'].precision_get('Product Unit')
+            // return tools.float_compare(value1, value2, precision_digits=digits)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<UomUom> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def _compute_display_name(self):
+            // super()._compute_display_name()
+            // for uom in self:
+            //     if uom.env.context.get('formatted_display_name') and uom.relative_uom_id:
+            //         uom.display_name = f"{uom.name}\t--{uom.relative_factor} {uom.relative_uom_id.name}--"
             */
             return default;
         }
 
-        protected async Task<UomUom> ComputeColorInternalAsync()
+        protected async Task<UomUom> ComputeFactorInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_color(self):
+            // def _compute_factor(self):
             // for uom in self:
-            //     if uom.uom_type == 'reference':
-            //         uom.color = 7
+            //     if uom.relative_uom_id:
+            //         uom.factor = uom.relative_factor * uom.relative_uom_id.factor
             //     else:
-            //         uom.color = 0
-            */
-            return default;
-        }
-
-        protected async Task<UomUom> ComputeFactorInvInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_factor_inv(self):
-            // for uom in self:
-            //     uom.factor_inv = uom.factor and (1.0 / uom.factor) or 0.0
+            //         uom.factor = uom.relative_factor
             */
             return default;
         }
@@ -111,75 +138,100 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<UomUom> ComputePriceInternalAsync(object price, object to_unit)
+        protected async Task<float> ComputePriceInternalAsync(float price, object to_unit)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_price(self, price, to_unit):
+            // def _compute_price(self, price: float, to_unit: Self) -> float:
             // self.ensure_one()
             // if not self or not price or not to_unit or self == to_unit:
             //     return price
-            // if self.category_id.id != to_unit.category_id.id:
-            //     return price
-            // amount = price * self.factor
+            // amount = price * to_unit.factor
             // if to_unit:
-            //     amount = amount / to_unit.factor
+            //     amount = amount / self.factor
             // return amount
             */
             return default;
         }
 
-        protected async Task<UomUom> ComputeQuantityInternalAsync(object qty, object to_unit, object round, object rounding_method, object raise_if_failure)
+        protected async Task<float> ComputeQuantityInternalAsync(float qty, object to_unit, bool round, object rounding_method, bool raise_if_failure)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_quantity(self, qty, to_unit, round=True, rounding_method='UP', raise_if_failure=True):
-            // """ Convert the given quantity from the current UoM `self` into a given one
-            //     :param qty: the quantity to convert
-            //     :param to_unit: the destination UoM record (uom.uom)
-            //     :param raise_if_failure: only if the conversion is not possible
-            //         - if true, raise an exception if the conversion is not possible (different UoM category),
-            //         - otherwise, return the initial quantity
-            // """
-            // if not self or not qty:
-            //     return qty
-            // self.ensure_one()
-            // 
-            // if self != to_unit and self.category_id.id != to_unit.category_id.id:
-            //     if raise_if_failure:
-            //         raise UserError(_(
-            //             'The unit of measure %(unit)s defined on the order line doesn\'t belong to the same category as the unit of measure %(product_unit)s defined on the product. Please correct the unit of measure defined on the order line or on the product. They should belong to the same category.',
-            //             unit=self.name, product_unit=to_unit.name))
-            //     else:
+            // def _compute_quantity(
+            //     self,
+            //     qty: float,
+            //     to_unit: Self,
+            //     round: bool = True,
+            //     rounding_method: RoundingMethod = 'UP',
+            //     raise_if_failure: bool = True,
+            // ) -> float:
+            //     """ Convert the given quantity from the current UoM `self` into a given one
+            //         :param qty: the quantity to convert
+            //         :param to_unit: the destination UomUom record (uom.uom)
+            //         :param raise_if_failure: only if the conversion is not possible
+            //             - if true, raise an exception if the conversion is not possible (different UomUom category),
+            //             - otherwise, return the initial quantity
+            //     """
+            //     if not self or not qty:
             //         return qty
+            //     self.ensure_one()
             // 
-            // if self == to_unit:
-            //     amount = qty
-            // else:
-            //     amount = qty / self.factor
-            //     if to_unit:
-            //         amount = amount * to_unit.factor
+            //     if self == to_unit:
+            //         amount = qty
+            //     else:
+            //         amount = qty * self.factor
+            //         if to_unit:
+            //             amount = amount / to_unit.factor
             // 
-            // if to_unit and round:
-            //     amount = tools.float_round(amount, precision_rounding=to_unit.rounding, rounding_method=rounding_method)
+            //     if to_unit and round:
+            //         amount = tools.float_round(amount, precision_rounding=to_unit.rounding, rounding_method=rounding_method)
             // 
-            // return amount
+            //     return amount
             */
             return default;
         }
 
-        protected async Task<UomUom> ComputeRatioInternalAsync()
+        protected async Task<UomUom> ComputeRoundingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_ratio(self):
+            // def _compute_rounding(self):
+            // """ All Units of Measure share the same rounding precision defined in 'Product Unit'.
+            //     Set in a compute to ensure compatibility with previous calls to `uom.rounding`.
+            // """
+            // decimal_precision = self.env['decimal.precision'].precision_get('Product Unit')
+            // self.rounding = 10 ** -decimal_precision
+            */
+            return default;
+        }
+
+        protected async Task<UomUom> ComputeSequenceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def _compute_sequence(self):
             // for uom in self:
-            //     if uom.uom_type == 'reference':
-            //         uom.ratio = 1
-            //     elif uom.uom_type == 'bigger':
-            //         uom.ratio = uom.factor_inv
-            //     else:
-            //         uom.ratio = uom.factor
+            //     if uom.id and uom.sequence:
+            //         # Only set a default sequence before the record creation, or on module update if
+            //         # there is no value.
+            //         continue
+            //     uom.sequence = min(int(uom.relative_factor * 100.0), 1000)
+            */
+            return default;
+        }
+
+        protected async Task<UomUom> DomainProductUomsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: uom_uom.py) ---
+            // def _domain_product_uoms(self):
+            // domain = []
+            // if self.env.context.get("product_id"):
+            //     domain.append(Domain('product_id', '=', self.env.context['product_id']))
+            // if self.env.context.get("product_ids"):
+            //     domain.append(Domain('product_id', 'in', self.env.context['product_ids']))
+            // return Domain.OR(domain) if domain else Domain.TRUE
             */
             return default;
         }
@@ -211,62 +263,67 @@ namespace Bamboo.Core.Application.Services
             // def _get_unece_code(self):
             // """ Returns the UNECE code used for international trading for corresponding to the UoM as per
             // https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf"""
-            // mapping = {
-            //     'uom.product_uom_unit': 'C62',
-            //     'uom.product_uom_dozen': 'DZN',
-            //     'uom.product_uom_kgm': 'KGM',
-            //     'uom.product_uom_gram': 'GRM',
-            //     'uom.product_uom_day': 'DAY',
-            //     'uom.product_uom_hour': 'HUR',
-            //     'uom.product_uom_ton': 'TNE',
-            //     'uom.product_uom_meter': 'MTR',
-            //     'uom.product_uom_km': 'KMT',
-            //     'uom.product_uom_cm': 'CMT',
-            //     'uom.product_uom_litre': 'LTR',
-            //     'uom.product_uom_lb': 'LBR',
-            //     'uom.product_uom_oz': 'ONZ',
-            //     'uom.product_uom_inch': 'INH',
-            //     'uom.product_uom_foot': 'FOT',
-            //     'uom.product_uom_mile': 'SMI',
-            //     'uom.product_uom_floz': 'OZA',
-            //     'uom.product_uom_qt': 'QT',
-            //     'uom.product_uom_gal': 'GLL',
-            //     'uom.product_uom_cubic_meter': 'MTQ',
-            //     'uom.product_uom_cubic_inch': 'INQ',
-            //     'uom.product_uom_cubic_foot': 'FTQ',
-            //     'uom.uom_square_meter': 'MTK',
-            //     'uom.uom_square_foot': 'FTK',
-            //     'uom.product_uom_yard': 'YRD',
-            //     'uom.product_uom_millimeter': 'MMT',
-            // }
             // xml_ids = self._get_external_ids().get(self.id, [])
-            // matches = list(set(xml_ids) & set(mapping.keys()))
-            // return matches and mapping[matches[0]] or 'C62'
+            // matches = list(set(xml_ids) & set(UOM_TO_UNECE_CODE.keys()))
+            // return matches and UOM_TO_UNECE_CODE[matches[0]] or 'C62'
             */
             return default;
         }
 
-        protected async Task<UomUom> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<UomUom> GetUomFromUneceCodeInternalAsync(object unece_code)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['id', 'name', 'category_id', 'factor_inv', 'factor', 'is_pos_groupable', 'uom_type', 'rounding']
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: uom_uom.py) ---
+            // def _get_uom_from_unece_code(self, unece_code):
+            // unece_code_to_uom = {v: k for k, v in UOM_TO_UNECE_CODE.items()}
+            // uom_xmlid = unece_code_to_uom.get(unece_code, 'uom.product_uom_unit')
+            // return self.env.ref(uom_xmlid, raise_if_not_found=False)
             */
             return default;
         }
 
-        protected async Task<UomUom> LoadPosDataInternalAsync(object data)
+        protected async Task<bool> HasCommonReferenceInternalAsync(object other_uom)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(data['pos.config']['data'][0]['id'])
-            // return {
-            //     'data': self.with_context({**self.env.context}).search_read(domain, fields, load=False),
-            //     'fields': fields,
-            // }
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def _has_common_reference(self, other_uom: Self) -> bool:
+            // """ Check if `self` and `other_uom` have a common reference unit """
+            // self.ensure_one()
+            // other_uom.ensure_one()
+            // self_path = self.parent_path.split('/')
+            // other_path = other_uom.parent_path.split('/')
+            // common_path = []
+            // for self_parent, other_parent in zip(self_path, other_path):
+            //     if self_parent == other_parent:
+            //         common_path.append(self_parent)
+            //     else:
+            //         break
+            // return bool(common_path)
+            */
+            return default;
+        }
+
+        public async Task<bool> IsZeroAsync(Guid id, UomUomIsZeroRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            // def is_zero(self, value: float) -> bool:
+            // """Check if the value is zero after rounding with the 'Product Unit' precision"""
+            // self.ensure_one()
+            // digits = self.env['decimal.precision'].precision_get('Product Unit')
+            // return tools.float_is_zero(value, precision_digits=digits)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<UomUom> LoadPosDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: uom.py) ---
+            // def _load_pos_data_fields(self, config):
+            // taxes = self.env['account.tax'].search(self.env['account.tax']._check_company_domain(config.company_id.id))
+            // product_uom_fields = taxes._eval_taxes_computation_prepare_product_uom_fields()
+            // return list(product_uom_fields.union({'id', 'name', 'factor', 'is_pos_groupable', 'parent_path', 'rounding'}))
             */
             return default;
         }
@@ -284,7 +341,6 @@ namespace Bamboo.Core.Application.Services
             //                 "Some critical fields have been modified on %s.\n"
             //                 "Note that existing data WON'T be updated by this change.\n\n"
             //                 "As units of measure impact the whole system, this may cause critical issues.\n"
-            //                 "E.g. modifying the rounding could disturb your inventory balance.\n\n"
             //                 "Therefore, changing core units of measure in a running database is not recommended.",
             //                 self.name,
             //             )
@@ -294,51 +350,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<UomUom> OnchangeRoundingInternalAsync()
+        public async Task<UomUom> OpenPackagingBarcodesAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: uom_uom.py) ---
-            // def _onchange_rounding(self):
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            // if self.rounding < 1.0 / 10.0**precision:
-            //     return {'warning': {
-            //         'title': _('Warning!'),
-            //         'message': _(
-            //             "This rounding precision is higher than the Decimal Accuracy"
-            //             " (%(digits)s digits).\nThis may cause inconsistencies in computations.\n"
-            //             "Please set a precision between %(min_precision)s and 1.",
-            //             digits=precision, min_precision=1.0 / 10.0**precision),
-            //     }}
+            // def action_open_packaging_barcodes(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Packaging Barcodes'),
+            //     'res_model': 'product.uom',
+            //     'view_mode': 'list',
+            //     'view_id': self.env.ref('product.product_uom_list_view').id,
+            //     'domain': [('uom_id', '=', self.id)],
+            // }
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<UomUom> OnchangeUomTypeInternalAsync()
+        public async Task<float> RoundAsync(Guid id, UomUomRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _onchange_uom_type(self):
-            // if self.uom_type == 'reference':
-            //     self.factor = 1
+            // def round(self, value: float, rounding_method: RoundingMethod = 'HALF-UP') -> float:
+            // """Round the value using the 'Product Unit' precision"""
+            // self.ensure_one()
+            // digits = self.env['decimal.precision'].precision_get('Product Unit')
+            // return tools.float_round(value, precision_digits=digits, rounding_method=rounding_method)
             */
-            return default;
-        }
-
-        protected async Task<UomUom> SetRatioInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _set_ratio(self):
-            // if self.ratio == 0:
-            //     raise ValidationError(_("The value of ratio could not be Zero"))
-            // if self.uom_type == 'reference':
-            //     self.factor = 1
-            // elif self.uom_type == 'bigger':
-            //     self.factor = 1 / self.ratio
-            // else:
-            //     self.factor = self.ratio
-            */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<UomUom> UnlinkExceptMasterDataInternalAsync()
@@ -366,12 +406,17 @@ namespace Bamboo.Core.Application.Services
             // # from deletion (and warn in case of modification)
             // return [
             //     "product_uom_dozen",
+            //     "product_uom_pack_6",
             // ]
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
             // def _unprotected_uom_xml_ids(self):
+            // """ Return a list of UoM XML IDs that are not protected by default.
+            // Note: Some of these may be protected via overrides in other modules.
+            // """
             // return [
-            //     "product_uom_hour", # NOTE: this uom is protected when hr_timesheet is installed.
+            //     "product_uom_hour",
             //     "product_uom_dozen",
+            //     "product_uom_pack_6",
             // ]
             */
             return default;
@@ -381,14 +426,16 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
-            // def write(self, values):
+            // def write(self, vals):
             // # Users can not update the factor if open stock moves are based on it
-            // if 'factor' in values or 'factor_inv' in values or 'category_id' in values:
+            // keys_to_protect = {'factor', 'relative_factor', 'relative_uom_id'}
+            // if any(key in vals for key in keys_to_protect):
             //     changed = self.filtered(
-            //         lambda u: any(u[f] != values[f] if f in values else False
-            //                       for f in {'factor', 'factor_inv'})) + self.filtered(
-            //         lambda u: any(u[f].id != int(values[f]) if f in values else False
-            //                       for f in {'category_id'}))
+            //         lambda u: any(
+            //             f in vals and u[f] != vals[f]
+            //             for f in ('factor', 'relative_factor')
+            //         ) or ('relative_uom_id' in vals and u.relative_uom_id.id != int(vals['relative_uom_id']))
+            //     )
             //     if changed:
             //         error_msg = _(
             //             "You cannot change the ratio of this unit of measure"
@@ -410,18 +457,7 @@ namespace Bamboo.Core.Application.Services
             //             ('quantity', '!=', 0),
             //         ]):
             //             raise UserError(error_msg)
-            // return super(UoM, self).write(values)
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def write(self, values):
-            // if 'factor_inv' in values:
-            //     factor_inv = values.pop('factor_inv')
-            //     values['factor'] = factor_inv and (1.0 / factor_inv) or 0.0
-            // 
-            // res = super(UoM, self).write(values)
-            // if ('uom_type' not in values or values['uom_type'] != 'reference') and\
-            //         not self.env.context.get('allow_to_change_reference'):
-            //     self._check_category_reference_uniqueness()
-            // return res
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

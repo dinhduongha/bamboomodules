@@ -24,335 +24,512 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ExportOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _export_order(self, order):
-            // vals = self._export_order_vals(order)
-            // xml_content = self.env['ir.qweb']._render('purchase_edi_ubl_bis3.bis3_OrderType', vals)
-            // return etree.tostring(cleanup_xml_node(xml_content), xml_declaration=True, encoding='UTF-8')
+            // def _add_purchase_order_allowance_charge_nodes(self, document_node, vals):
+            // # OVERRIDE
+            // ubl_values = vals['_ubl_values']
+            // document_node['cac:AllowanceCharge'] = [
+            //     self._ubl_get_allowance_charge_early_payment(vals, early_payment_values)
+            //     for early_payment_values in ubl_values['allowance_charges_early_payment_currency']
+            // ]
             */
             return default;
         }
 
-        public async Task<TEntity> ExportOrderValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderBaseLinesValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _export_order_vals(self, order):
-            // order_lines = self._get_order_lines(order)
-            // anticipated_monetary_total_vals = self._get_anticipated_monetary_total_vals(order, order_lines)
+            // def _add_purchase_order_base_lines_vals(self, vals):
+            // purchase_order = vals['purchase_order']
+            // AccountTax = self.env['account.tax']
             // 
-            // supplier = order.partner_id
-            // customer = order.company_id.partner_id.commercial_partner_id
+            // base_lines = [line._prepare_base_line_for_taxes_computation() for line in purchase_order.order_line.filtered(lambda line: not line.display_type)]
+            // AccountTax._add_tax_details_in_base_lines(base_lines, purchase_order.company_id)
+            // AccountTax._round_base_lines_tax_details(base_lines, purchase_order.company_id)
+            // 
+            // vals['base_lines'] = base_lines
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderBuyerCustomerPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_buyer_customer_party_nodes(self, document_node, vals):
+            // document_node['cac:BuyerCustomerParty'] = {
+            //     'cac:Party': self._get_party_node({**vals, 'partner': vals['customer'], 'role': 'customer'})
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderConfigValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_config_vals(self, vals):
+            // purchase_order = vals['purchase_order']
+            // supplier = purchase_order.partner_id
+            // customer = purchase_order.company_id.partner_id.commercial_partner_id
+            // 
             // customer_delivery_address = customer.child_ids.filtered(lambda child: child.type == 'delivery')
-            // delivery = (
-            //     order.dest_address_id
+            // partner_shipping = (
+            //     purchase_order.dest_address_id
             //     or (customer_delivery_address and customer_delivery_address[0])
             //     or customer
             // )
             // 
-            // vals = {
-            //     'builder': self,
-            //     'order': order,
+            // vals.update({
+            //     'document_type': 'order',
+            // 
             //     'supplier': supplier,
             //     'customer': customer,
+            //     'partner_shipping': partner_shipping,
             // 
-            //     'format_float': self.format_float,
+            //     'company': purchase_order.company_id,
+            //     'currency_id': purchase_order.currency_id,
+            //     'company_currency_id': purchase_order.company_id.currency_id,
             // 
-            //     'vals': {
-            //         'id': order.name,
-            //         'issue_date': order.create_date.date(),
-            //         'note': html2plaintext(order.notes) if order.notes else False,
-            //         'originator_document_reference': order.origin,
-            //         'document_currency_code': order.currency_id.name.upper(),
-            //         'delivery_party_vals': self._get_delivery_party_vals(delivery),
-            //         'supplier_party_vals': self._get_partner_party_vals(supplier, role='supplier'),
-            //         'customer_party_vals': self._get_partner_party_vals(customer, role='customer'),
-            //         'payment_terms_vals': self._get_payment_terms_vals(order.payment_term_id),
-            //         'anticipated_monetary_total_vals': anticipated_monetary_total_vals,
-            //         'tax_amount': order.amount_tax,
-            //         'order_lines': order_lines,
-            //         'currency_dp': self._get_currency_decimal_places(order.currency_id),  # currency decimal places
-            //         'currency_id': order.currency_id.name,
+            //     'use_company_currency': False,  # If true, use the company currency for the amounts instead of the order currency
+            //     'fixed_taxes_as_allowance_charges': True,  # If true, include fixed taxes as AllowanceCharges on lines instead of as taxes
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderCurrencyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_currency_vals(self, vals):
+            // self._add_document_currency_vals(vals)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderDeliveryNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_delivery_nodes(self, document_node, vals):
+            // document_node['cac:Delivery'] = {
+            //     'cac:DeliveryParty': self._get_party_node({**vals, 'partner': vals['partner_shipping'], 'role': 'delivery'})
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderHeaderNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_header_nodes(self, document_node, vals):
+            // purchase_order = vals['purchase_order']
+            // document_node.update({
+            //     'cbc:CustomizationID': {'_text': 'urn:fdc:peppol.eu:poacc:trns:order:3'},
+            //     'cbc:ProfileID': {'_text': 'urn:fdc:peppol.eu:poacc:bis:ordering:3'},
+            //     'cbc:ID': {'_text': purchase_order.name},
+            //     'cbc:IssueDate': {'_text': purchase_order.create_date.date()},
+            //     'cbc:OrderTypeCode': {'_text': '105'},
+            //     'cbc:Note': {'_text': html2plaintext(purchase_order.note)} if purchase_order.note else None,
+            //     'cbc:DocumentCurrencyCode': {'_text': vals['currency_name']},
+            //     'cac:QuotationDocumentReference': {
+            //         'cbc:ID': {'_text': purchase_order.partner_ref}
+            //     },
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLineAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_allowance_charge_nodes(self, line_node, vals):
+            // # OVERRIDE
+            // base_line = vals['base_line']
+            // ubl_values = base_line['_ubl_values']
+            // allowance_charges_nodes = line_node['cac:AllowanceCharge'] = []
+            // 
+            // # Discount.
+            // discount_values = ubl_values['allowance_charge_discount_currency']
+            // if discount_values:
+            //     allowance_charges_nodes.append(self._ubl_get_line_allowance_charge_discount_node(vals, discount_values))
+            // 
+            // # Recycling contribution taxes.
+            // for recycling_contribution_values in base_line['_ubl_values']['allowance_charges_recycling_contribution_currency']:
+            //     allowance_charges_nodes.append(self._ubl_get_line_allowance_charge_recycling_contribution_node(vals, recycling_contribution_values))
+            // 
+            // # Excise taxes.
+            // for excise_values in base_line['_ubl_values']['allowance_charges_excise_currency']:
+            //     allowance_charges_nodes.append(self._ubl_get_line_allowance_charge_excise_node(vals, excise_values))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLineAmountNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_amount_nodes(self, line_node, vals):
+            // # OVERRIDE
+            // base_line = vals['base_line']
+            // currency = vals['currency_id']
+            // 
+            // quantity_tag = self._get_tags_for_document_type(vals)['line_quantity']
+            // 
+            // line_node.update({
+            //     quantity_tag: {
+            //         '_text': base_line['quantity'],
+            //         'unitCode': self._get_uom_unece_code(base_line['product_uom_id']),
+            //     },
+            //     'cbc:LineExtensionAmount': {
+            //         '_text': FloatFmt(base_line['_ubl_values']['line_extension_amount'], min_dp=currency.decimal_places),
+            //         'currencyID': currency.name,
+            //     },
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLineIdNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_id_nodes(self, line_node, vals):
+            // self._add_document_line_id_nodes(line_node, vals)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLineItemNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_item_nodes(self, line_node, vals):
+            // # OVERRIDE
+            // item_values = vals['base_line']['_ubl_values']['item_currency']
+            // line_item_node = self._ubl_get_line_item_node(vals, item_values)
+            // 
+            // base_line = item_values['base_line']
+            // product = base_line['product_id']
+            // partner = base_line['partner_id']
+            // supplier_info = product.variant_seller_ids.filtered(lambda s:
+            //     s.partner_id == partner
+            //     and (
+            //         s.product_id == product
+            //         or (not s.product_id and s.product_tmpl_id == product.product_tmpl_id)
+            //     )
+            //     and (s.product_code or s.product_name),
+            // )[:1]
+            // 
+            // # Prefer the seller's product name over our (buyer) product name
+            // if supplier_info.product_name:
+            //     line_item_node['cbc:Name']['_text'] = supplier_info.product_name
+            // 
+            // # When generating purchase order (PO) we are not considered as the seller of the sale but
+            // # buyer. The `SellersItemIdentification` is therefore the PO's partner product ID.
+            // line_item_node['cac:SellersItemIdentification'] = {
+            //     'cbc:ID': {'_text': supplier_info.product_code or None},
+            // }
+            // 
+            // line_node['cac:Item'] = line_item_node
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLineNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_nodes(self, document_node, vals):
+            // document_node['cac:OrderLine'] = order_line_nodes = []
+            // 
+            // line_idx = 1
+            // for base_line in vals['base_lines']:
+            //     line_vals = {
+            //         **vals,
+            //         'line_idx': line_idx,
+            //         'base_line': base_line,
+            //     }
+            // 
+            //     line_node = {}
+            //     self._add_purchase_order_line_id_nodes(line_node, line_vals)
+            //     self._add_purchase_order_line_amount_nodes(line_node, line_vals)
+            //     self._add_purchase_order_line_allowance_charge_nodes(line_node, line_vals)
+            //     self._add_purchase_order_line_item_nodes(line_node, line_vals)
+            //     self._add_purchase_order_line_price_nodes(line_node, line_vals)
+            // 
+            //     order_line_nodes.append({
+            //         'cac:LineItem': line_node,
+            //     })
+            //     line_idx += 1
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderLinePriceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_line_price_nodes(self, line_node, vals):
+            // # OVERRIDE
+            // base_line = vals['base_line']
+            // ubl_values = base_line['_ubl_values']
+            // 
+            // line_node['cac:Price'] = {
+            //     'cbc:PriceAmount': {
+            //         '_text': FloatFmt(ubl_values['price_amount_currency'], min_dp=1, max_dp=6),
+            //         'currencyID': vals['currency_name'],
             //     },
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AddPurchaseOrderMonetaryTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
+            // def _add_purchase_order_monetary_total_nodes(self, document_node, vals):
+            // ubl_values = vals['_ubl_values']
+            // line_tag = self._get_tags_for_document_type(vals)['document_line']
             // 
-            // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ExportPurchaseOrderFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _export_purchase_order_filename(self, purchase_order):
-            // return f"{purchase_order.name.replace('/', '_')}_ubl_bis3.xml"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetAnticipatedMonetaryTotalValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order, object order_lines) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_anticipated_monetary_total_vals(self, purchase_order, order_lines):
-            // line_extension_amount = sum(line['line_extension_amount'] for line in order_lines)
-            // allowance_total_amount = sum(line['price']['allowance_charge_vals']['amount'] for line in order_lines if 'allowance_charge_vals' in line['price'])
-            // return {
-            //     'currency': purchase_order.currency_id,
-            //     'currency_dp': self._get_currency_decimal_places(purchase_order.currency_id),
-            //     'line_extension_amount': line_extension_amount,
-            //     'allowance_total_amount': allowance_total_amount,
-            //     'tax_exclusive_amount': line_extension_amount - allowance_total_amount,
-            //     'tax_inclusive_amount': purchase_order.amount_total,
-            //     'payable_amount': purchase_order.amount_total,
+            // line_extension_amount = sum(
+            //     line_node['cac:LineItem']['cbc:LineExtensionAmount']['_text']
+            //     for line_node in document_node[line_tag]
+            // )
+            // tax_amount = sum(
+            //     tax_total['cbc:TaxAmount']['_text']
+            //     for tax_total in document_node['cac:TaxTotal']
+            //     if tax_total['cbc:TaxAmount']['currencyID'] == vals['currency_id'].name
+            // )
+            // total_allowance = sum(
+            //     allowance_charge['cbc:Amount']['_text']
+            //     for allowance_charge in document_node['cac:AllowanceCharge']
+            //     if allowance_charge['cbc:ChargeIndicator']['_text'] == 'false'
+            // )
+            // total_charge = sum(
+            //     allowance_charge['cbc:Amount']['_text']
+            //     for allowance_charge in document_node['cac:AllowanceCharge']
+            //     if allowance_charge['cbc:ChargeIndicator']['_text'] == 'true'
+            // )
+            // payable_rounding_amount = ubl_values['payable_rounding_amount_currency']
+            // 
+            // document_node['cac:AnticipatedMonetaryTotal'] = {
+            //     'cbc:LineExtensionAmount': {
+            //         '_text': FloatFmt(line_extension_amount, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     },
+            //     'cbc:TaxExclusiveAmount': {
+            //         '_text': FloatFmt(line_extension_amount, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     },
+            //     'cbc:TaxInclusiveAmount': {
+            //         '_text': FloatFmt(line_extension_amount + tax_amount, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     },
+            //     'cbc:AllowanceTotalAmount': {
+            //         '_text': FloatFmt(total_allowance, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     } if total_allowance else None,
+            //     'cbc:ChargeTotalAmount': {
+            //         '_text': FloatFmt(total_charge, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     } if total_charge else None,
+            //     'cbc:PrepaidAmount': {
+            //         '_text': FloatFmt(0.0, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     },
+            //     'cbc:PayableRoundingAmount': {
+            //         '_text': FloatFmt(payable_rounding_amount, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     } if payable_rounding_amount else None,
+            //     'cbc:PayableAmount': {
+            //         '_text': FloatFmt(line_extension_amount + tax_amount, min_dp=vals['currency_dp']),
+            //         'currencyID': vals['currency_name'],
+            //     },
             // }
             */
             return default;
         }
 
-        public async Task<TEntity> GetCountryValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderMonetaryTotalsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_country_vals(self, country):
-            // return {
-            //     'country': country,
-            // 
-            //     'identification_code': country.code,
-            //     'name': country.name,
-            // }
+            // def _add_purchase_order_monetary_totals_vals(self, vals):
+            // self._add_document_monetary_total_vals(vals)
             */
             return default;
         }
 
-        public async Task<TEntity> GetDeliveryPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object delivery) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderPaymentTermsNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_delivery_party_vals(self, delivery):
-            // return {
-            //     'party_name': delivery.display_name,
-            //     'postal_address_vals': self._get_partner_address_vals(delivery),
-            //     'contact_vals': self._get_partner_contact_vals(delivery),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetItemValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object order_line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_item_vals(self, order, order_line):
-            // product = order_line.product_id
-            // variant_info = [{
-            //     'name': value.attribute_id.name,
-            //     'value': value.name
-            // } for value in product.product_template_attribute_value_ids]
-            // 
-            // vals = {
-            //     'name': product.name or order_line.name,
-            //     'description': order_line.name or product.description,
-            //     'standard_item_identification': product.barcode,
-            //     'classified_tax_category_vals': self._get_tax_category_vals(order, order_line)
-            // }
-            // 
-            // if len(variant_info) > 0:
-            //     vals['variant_info'] = variant_info
-            // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetLineAllowanceChargeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_line_allowance_charge_vals(self, line):
-            // # Price subtotal with discount subtracted:
-            // net_price_subtotal = line.price_subtotal
-            // # Price subtotal without discount subtracted:
-            // if line.discount == 100.0:
-            //     gross_price_subtotal = 0.0
-            // else:
-            //     gross_price_subtotal = line.currency_id.round(net_price_subtotal / (1.0 - (line.discount or 0.0) / 100.0))
-            // 
-            // return {
-            //     'charge_indicator': 'false',
-            //     'allowance_charge_reason_code': '95',
-            //     'allowance_charge_reason': _("Discount"),
-            //     'currency_id': line.currency_id.name,
-            //     'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            //     'amount': gross_price_subtotal - net_price_subtotal,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetLineItemPriceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_line_item_price_vals(self, line):
-            // """ Method used to fill the cac:Price node.
-            // It provides information about the price applied for the goods and services.
-            // """
-            // # Price subtotal without discount:
-            // net_price_subtotal = line.price_subtotal
-            // # Price subtotal with discount:
-            // if line.discount == 100.0:
-            //     gross_price_subtotal = 0.0
-            // else:
-            //     gross_price_subtotal = net_price_subtotal / (1.0 - (line.discount or 0.0) / 100.0)
-            // # Price subtotal with discount / quantity:
-            // gross_price_unit = gross_price_subtotal / line.product_qty if line.product_qty else 0.0
-            // 
-            // uom = self._get_uom_unece_code(line.product_uom)
-            // 
-            // vals = {
-            //     'currency_id': line.currency_id.name,
-            //     'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            //     'price_amount': round(gross_price_unit, 10),
-            //     'product_price_dp': self.env['decimal.precision'].precision_get('Product Price'),
-            //     'base_quantity': 1,
-            //     'base_quantity_unit_code': uom,
-            // }
-            // 
-            // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetOrderLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_order_lines(self, order):
-            // def _get_order_line_vals(order_line, order_line_id):
-            //     return {
-            //         'id': order_line_id,
-            //         'quantity': order_line.product_qty,
-            //         'quantity_unit_code': self._get_uom_unece_code(order_line.product_uom),
-            //         'line_extension_amount': order_line.price_subtotal,
-            //         'currency_id': order_line.currency_id.name,
-            //         'currency_dp': self._get_currency_decimal_places(order_line.currency_id),
-            //         'price': self._get_line_item_price_vals(order_line),
-            //         'item': self._get_item_vals(order, order_line),
+            // def _add_purchase_order_payment_terms_nodes(self, document_node, vals):
+            // purchase_order = vals['purchase_order']
+            // if purchase_order.payment_term_id:
+            //     document_node['cac:PaymentTerms'] = {
+            //         'cbc:Note': {'_text': purchase_order.payment_term_id.name}
             //     }
-            // return [_get_order_line_vals(line, line_id) for line_id, line in enumerate(
-            //     order.order_line.filtered(lambda line: line.display_type not in ['line_note', 'line_section'])
-            // , 1)]
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderSellerSupplierPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_partner_address_vals(self, partner):
-            // return {
-            //     'street_name': partner.street,
-            //     'additional_street_name': partner.street2,
-            //     'city_name': partner.city,
-            //     'postal_zone': partner.zip,
-            //     'country_subentity': partner.state_id.name,
-            //     'country_identification_code': partner.country_id.code
+            // def _add_purchase_order_seller_supplier_party_nodes(self, document_node, vals):
+            // document_node['cac:SellerSupplierParty'] = {
+            //     'cac:Party': self._get_party_node({**vals, 'partner': vals['supplier'], 'role': 'supplier'})
             // }
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerContactValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderTaxGroupingFunctionValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_partner_contact_vals(self, partner):
-            // return {
-            //     'name': partner.name,
-            //     'telephone': partner.phone or partner.mobile,
-            //     'electronic_mail': partner.email,
-            // }
+            // def _add_purchase_order_tax_grouping_function_vals(self, vals):
+            // self._add_document_tax_grouping_function_vals(vals)
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerPartyLegalEntityValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> AddPurchaseOrderTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_partner_party_legal_entity_vals(self, partner):
-            // return {
-            //     'registration_name': partner.name,
-            //     'company_id': partner.vat,
-            //     'registration_address_vals': self._get_partner_address_vals(partner),
-            // }
+            // def _add_purchase_order_tax_total_nodes(self, document_node, vals):
+            // # OVERRIDE
+            // ubl_values = vals['_ubl_values']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // tax_total_nodes = document_node['cac:TaxTotal'] = []
+            // for tax_total in ubl_values['tax_totals_currency'].values():
+            //     tax_total_node = self._ubl_get_tax_total_node(vals, tax_total)
+            //     tax_total_nodes.append(tax_total_node)
+            // 
+            // # Only one subtotal expressed in foreign currency in case of multi currencies.
+            // if currency != company_currency:
+            //     for tax_total in ubl_values['tax_totals'].values():
+            //         tax_total_node = self._ubl_get_tax_total_node(vals, tax_total)
+            //         tax_total_node['cac:TaxSubtotal'] = []
+            //         tax_total_nodes.append(tax_total_node)
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerPartyTaxSchemeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> ExportOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_partner_party_tax_scheme_vals(self, partner):
-            // return {
-            //     'company_id': partner.vat,
-            //     'tax_scheme_vals': {'id': 'VAT'},
-            // }
+            // def _export_order(self, purchase_order):
+            // vals = {'purchase_order': purchase_order}
+            // document_node = self._get_purchase_order_node(vals)
+            // xml_content = dict_to_xml(document_node, template=Order, nsmap=self._get_document_nsmap(vals))
+            // return etree.tostring(xml_content, xml_declaration=True, encoding='UTF-8')
             */
             return default;
         }
 
-        public async Task<TEntity> GetPartnerPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> GetPurchaseOrderNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_partner_party_vals(self, partner, role):
-            // vals = {
-            //     'party_name': partner.display_name,
-            //     'postal_address_vals': self._get_partner_address_vals(partner),
-            //     'contact_vals': self._get_partner_contact_vals(partner),
-            // }
-            // if role == 'customer':
-            //     vals['party_tax_scheme_vals'] = self._get_partner_party_tax_scheme_vals(partner.commercial_partner_id)
-            // return vals
+            // def _get_purchase_order_node(self, vals):
+            // self._add_purchase_order_config_vals(vals)
+            // self._add_purchase_order_base_lines_vals(vals)
+            // self._add_purchase_order_currency_vals(vals)
+            // self._add_purchase_order_tax_grouping_function_vals(vals)
+            // self._setup_base_lines(vals)
+            // self._add_purchase_order_monetary_totals_vals(vals)
+            // 
+            // document_node = {}
+            // self._add_purchase_order_header_nodes(document_node, vals)
+            // self._add_purchase_order_buyer_customer_party_nodes(document_node, vals)
+            // self._add_purchase_order_seller_supplier_party_nodes(document_node, vals)
+            // self._add_purchase_order_delivery_nodes(document_node, vals)
+            // self._add_purchase_order_payment_terms_nodes(document_node, vals)
+            // self._add_purchase_order_line_nodes(document_node, vals)
+            // self._add_purchase_order_allowance_charge_nodes(document_node, vals)
+            // self._add_purchase_order_tax_total_nodes(document_node, vals)
+            // self._add_purchase_order_monetary_total_nodes(document_node, vals)
+            // return document_node
             */
             return default;
         }
 
-        public async Task<TEntity> GetPaymentTermsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object payment_term) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> RetrieveOrderValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object tree) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_payment_terms_vals(self, payment_term):
-            // return {
-            //     'note': payment_term.name
-            // }
+            // def _retrieve_order_vals(self, order, tree):
+            // """ Fill order details by extracting details from xml tree.
+            // param order: Order to fill details from xml tree.
+            // param tree: Xml tree to extract details.
+            // :return: list of logs to add warning and information about data from xml.
+            // """
+            // order_vals, logs = super()._retrieve_order_vals(order, tree)
+            // partner, partner_logs = self._import_partner(
+            //     order.company_id,
+            //     **self._import_retrieve_partner_vals(tree, 'SellerSupplier'),
+            // )
+            // if partner:
+            //     order_vals['partner_id'] = partner.id
+            // order_vals['partner_ref'] = tree.findtext('./{*}ID')
+            // order_vals['origin'] = tree.findtext('./{*}OriginatorDocumentReference/{*}ID')
+            // 
+            // delivery_partner, delivery_logs = self._import_partner(
+            //     order.company_id,
+            //     **self._import_retrieve_partner_vals(tree, 'Delivery'),
+            // )
+            // if delivery_partner:
+            //     order_vals['dest_address_id'] = delivery_partner.id
+            // 
+            // allowance_charges_line_vals, allowance_charges_logs = self._import_document_allowance_charges(tree, order, 'purchase')
+            // lines_vals, line_logs = self._import_lines(order, tree, './{*}OrderLine/{*}LineItem', document_type='order', tax_type='purchase')
+            // # adapt each line to purchase.order.line
+            // for line in lines_vals:
+            //     line['product_qty'] = line.pop('quantity')
+            //     # remove invoice line fields
+            //     line.pop('deferred_start_date', False)
+            //     line.pop('deferred_end_date', False)
+            //     if not line.get('product_id'):
+            //         line_logs.append(_("Could not retrieve the product named: %(name)s", name=line['name']))
+            // lines_vals += allowance_charges_line_vals
+            // 
+            // # Update order with lines excluding discounts
+            // order_vals['order_line'] = [Command.create(line_vals) for line_vals in lines_vals]
+            // logs += partner_logs + delivery_logs + line_logs + allowance_charges_logs
+            // 
+            // return order_vals, logs
             */
             return default;
         }
 
-        public async Task<TEntity> GetTaxCategoryValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object order_line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
+        public async Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
-            // def _get_tax_category_vals(self, order, order_line):
-            // if not order_line.taxes_id:
-            //     return None
-            // tax = order_line.taxes_id[0]
-            // customer = order.company_id.partner_id.commercial_partner_id
-            // supplier = order.partner_id
-            // tax_unece_codes = self._get_tax_unece_codes(customer, supplier, tax)
-            // return {
-            //     'id': tax_unece_codes.get('tax_category_code'),
-            //     'percent': tax.amount if tax.amount_type == 'percent' else False,
-            //     'tax_scheme_vals': {'id': 'VAT'},
-            // }
+            // def _ubl_get_line_allowance_charge_discount_node(self, vals, discount_values):
+            // # EXTENDS account.edi.xml.ubl_bis3
+            // discount_node = super()._ubl_get_line_allowance_charge_discount_node(vals, discount_values)
+            // discount_node['cbc:AllowanceChargeReason'] = None
+            // discount_node['cbc:MultiplierFactorNumeric'] = None
+            // discount_node['cbc:BaseAmount'] = None
+            // return discount_node
             */
             return default;
         }

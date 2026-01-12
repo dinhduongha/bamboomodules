@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class WebsiteVisitorAppService : GenericApplicationService<WebsiteVisitor>, IWebsiteVisitorAppService
     {
 
@@ -32,7 +32,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_visitor.py) ---
             // def _add_tracking(self, domain, website_track_values):
             // """ Add the track and update the visitor"""
-            // domain = expression.AND([domain, [('visitor_id', '=', self.id)]])
+            // domain = Domain.AND([domain, Domain('visitor_id', '=', self.id)])
             // last_view = self.env['website.track'].sudo().search(domain, limit=1)
             // if not last_view or last_view.visit_datetime < datetime.now() - timedelta(minutes=30):
             //     website_track_values['visitor_id'] = self.id
@@ -103,7 +103,7 @@ namespace Bamboo.Core.Application.Services
             // def _check_for_sms_composer(self):
             // check = super(WebsiteVisitor, self)._check_for_sms_composer()
             // if not check and self.lead_ids:
-            //     sorted_leads = self.lead_ids.filtered(lambda l: l.mobile == self.mobile or l.phone == self.mobile)._sort_by_confidence_level(reverse=True)
+            //     sorted_leads = self.lead_ids.filtered(lambda l: l.phone == self.phone)._sort_by_confidence_level(reverse=True)
             //     if sorted_leads:
             //         return True
             // return check
@@ -112,7 +112,7 @@ namespace Bamboo.Core.Application.Services
             // """ Purpose of this method is to actualize visitor model prior to contacting
             // him. Used notably for inheritance purpose, when dealing with leads that
             // could update the visitor model. """
-            // return bool(self.partner_id and (self.partner_id.mobile or self.partner_id.phone))
+            // return bool(self.partner_id.phone)
             */
             return default;
         }
@@ -145,18 +145,18 @@ namespace Bamboo.Core.Application.Services
             // def _compute_email_phone(self):
             // results = self.env['res.partner'].search_read(
             //     [('id', 'in', self.partner_id.ids)],
-            //     ['id', 'email_normalized', 'mobile', 'phone'],
+            //     ['id', 'email_normalized', 'phone'],
             // )
             // mapped_data = {
             //     result['id']: {
             //         'email_normalized': result['email_normalized'],
-            //         'mobile': result['mobile'] if result['mobile'] else result['phone']
+            //         'phone': result['phone']
             //     } for result in results
             // }
             // 
             // for visitor in self:
             //     visitor.email = mapped_data.get(visitor.partner_id.id, {}).get('email_normalized')
-            //     visitor.mobile = mapped_data.get(visitor.partner_id.id, {}).get('mobile')
+            //     visitor.mobile = mapped_data.get(visitor.partner_id.id, {}).get('phone')
             --- ODOO METHOD SOURCE (MODULE: website_crm, FILE: website_visitor.py) ---
             // def _compute_email_phone(self):
             // super(WebsiteVisitor, self)._compute_email_phone()
@@ -170,7 +170,7 @@ namespace Bamboo.Core.Application.Services
             //     if not visitor.email:
             //         visitor.email = next((lead.email_normalized for lead in visitor_leads if lead.email_normalized), False)
             //     if not visitor.mobile:
-            //         visitor.mobile = next((lead.mobile or lead.phone for lead in visitor_leads if lead.mobile or lead.phone), False)
+            //         visitor.mobile = next((lead.phone for lead in visitor_leads if lead.phone), False)
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: website_visitor.py) ---
             // def _compute_email_phone(self):
             // super(WebsiteVisitor, self)._compute_email_phone()
@@ -264,9 +264,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website_visitor.py) ---
             // def _compute_livechat_operator_id(self):
-            // results = self.env['discuss.channel'].search_read(
-            //     [('livechat_visitor_id', 'in', self.ids), ('livechat_active', '=', True)],
-            //     ['livechat_visitor_id', 'livechat_operator_id']
+            // results = self.env["discuss.channel"].search_read(
+            //     [("livechat_visitor_id", "in", self.ids), ("livechat_end_dt", "=", False)],
+            //     ["livechat_visitor_id", "livechat_operator_id"],
             // )
             // visitor_operator_map = {int(result['livechat_visitor_id'][0]): int(result['livechat_operator_id'][0]) for result in results}
             // for visitor in self:
@@ -293,7 +293,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // for visitor in self:
             //     visitor_info = mapped_data.get(visitor.id, {'page_count': 0, 'visitor_page_count': 0, 'page_ids': set()})
-            //     visitor.page_ids = [(6, 0, visitor_info['page_ids'])]
+            //     # sudo - website.visitor: access to page_ids is restricted to group_website_designer
+            //     visitor.sudo().page_ids = [(6, 0, visitor_info['page_ids'])]
             //     visitor.visitor_page_count = visitor_info['visitor_page_count']
             //     visitor.page_count = visitor_info['page_count']
             */
@@ -307,6 +308,9 @@ namespace Bamboo.Core.Application.Services
             // def _compute_partner_id(self):
             // # The browse in the loop is fine, there is no SQL Query on partner here
             // for visitor in self:
+            //     if not visitor.id:
+            //         visitor.partner_id = visitor._origin.partner_id
+            //         continue
             //     # If the access_token is not a 32 length hexa string, it means that
             //     # the visitor is linked to a logged in user, in which case its
             //     # partner_id is used instead as the token.
@@ -367,32 +371,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<WebsiteVisitor> CronUnlinkOldVisitorsInternalAsync(object batch_size, object limit)
+        protected async Task<WebsiteVisitor> CronUnlinkOldVisitorsInternalAsync(object batch_size)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_visitor.py) ---
-            // def _cron_unlink_old_visitors(self, batch_size=1000, limit=None):
+            // def _cron_unlink_old_visitors(self, batch_size=1000):
             // """ Unlink inactive visitors (see '_inactive_visitors_domain' for
             // details).
             // 
             // Visitors were previously archived but we came to the conclusion that
             // archived visitors have very little value and bloat the database for no
             // reason. """
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
-            // visitor_model = self.env['website.visitor']
-            // visitor_ids = visitor_model.sudo().search(self._inactive_visitors_domain(), limit=limit).ids
-            // visitor_done = 0
-            // for inactive_visitors_batch in split_every(
-            //     batch_size,
-            //     visitor_ids,
-            //     visitor_model.browse,
-            // ):
-            //     inactive_visitors_batch.unlink()
-            //     visitor_done += len(inactive_visitors_batch)
-            //     if auto_commit:
-            //         self.env['ir.cron']._notify_progress(done=visitor_done, remaining=len(visitor_ids) - visitor_done)
-            //         self.env.cr.commit()
-            // self.env['ir.cron']._notify_progress(done=visitor_done, remaining=len(visitor_ids) - visitor_done)
+            // domain = self._inactive_visitors_domain()
+            // visitors = self.env['website.visitor'].sudo().search(domain, limit=batch_size)
+            // visitors.unlink()
+            // self.env['ir.cron']._commit_progress(
+            //     processed=len(visitors),
+            //     remaining=0 if len(visitors) < batch_size else visitors.search_count(domain),
+            // )
+            */
+            return default;
+        }
+
+        protected async Task<WebsiteVisitor> FieldStoreReprInternalAsync(object field_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website_visitor.py) ---
+            // def _field_store_repr(self, field_name):
+            // if field_name == "page_visit_history":
+            //     # sudo: website.track - reading the history of accessible visitor is acceptable
+            //     return [
+            //         Store.Attr("page_visit_history", lambda visitor: visitor.sudo()._get_visitor_history()),
+            //     ]
+            // return [field_name]
             */
             return default;
         }
@@ -447,7 +458,7 @@ namespace Bamboo.Core.Application.Services
             //     visitor_id, _ = self._upsert_visitor(access_token, force_track_values)
             //     return self.env['website.visitor'].sudo().browse(visitor_id)
             // 
-            // visitor = self.env['website.visitor'].sudo().search([('access_token', '=', access_token)])
+            // visitor = self.env['website.visitor'].sudo().search_fetch([('access_token', '=', access_token)])
             // 
             // if not force_create and not self.env.cr.readonly and visitor and not visitor.timezone:
             //     tz = self._get_visitor_timezone()
@@ -455,6 +466,23 @@ namespace Bamboo.Core.Application.Services
             //         visitor._update_visitor_timezone(tz)
             // 
             // return visitor
+            */
+            return default;
+        }
+
+        protected async Task<WebsiteVisitor> GetVisitorHistoryInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website_visitor.py) ---
+            // def _get_visitor_history(self):
+            // self.ensure_one()
+            // recent_history = self.env["website.track"].search(
+            //     [("page_id", "!=", False), ("visitor_id", "=", self.id)], limit=3
+            // )
+            // return [
+            //     (visit.page_id.name, fields.Datetime.to_string(visit.visit_datetime))
+            //     for visit in reversed(recent_history)
+            // ]
             */
             return default;
         }
@@ -511,23 +539,20 @@ namespace Bamboo.Core.Application.Services
             // 
             // delay_days = int(self.env['ir.config_parameter'].sudo().get_param('website.visitor.live.days', 60))
             // deadline = datetime.now() - timedelta(days=delay_days)
-            // return [('last_connection_datetime', '<', deadline), ('partner_id', '=', False)]
+            // return Domain('last_connection_datetime', '<', deadline) & Domain('partner_id', '=', False)
             --- ODOO METHOD SOURCE (MODULE: website_crm, FILE: website_visitor.py) ---
             // def _inactive_visitors_domain(self):
             // """ Visitors tied to leads are considered always active and should not be deleted. """
-            // domain = super()._inactive_visitors_domain()
-            // return expression.AND([domain, [('lead_ids', '=', False)]])
+            // return super()._inactive_visitors_domain() & Domain('lead_ids', '=', False)
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: website_visitor.py) ---
             // def _inactive_visitors_domain(self):
             // """ Visitors registered to events are considered always active and should not be deleted. """
-            // domain = super()._inactive_visitors_domain()
-            // return expression.AND([domain, [('event_registration_ids', '=', False)]])
+            // return super()._inactive_visitors_domain() & Domain('event_registration_ids', '=', False)
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: website_visitor.py) ---
             // def _inactive_visitors_domain(self):
             // """ Visitors registered to push subscriptions are considered always active and should not be
             // deleted. """
-            // domain = super()._inactive_visitors_domain()
-            // return expression.AND([domain, [('event_track_visitor_ids', '=', False)]])
+            // return super()._inactive_visitors_domain() & Domain('event_track_visitor_ids', '=', False)
             */
             return default;
         }
@@ -626,13 +651,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_crm_sms, FILE: website_visitor.py) ---
             // def _prepare_sms_composer_context(self):
             // if not self.partner_id and self.lead_ids:
-            //     leads_with_number = self.lead_ids.filtered(lambda l: l.mobile == self.mobile or l.phone == self.mobile)._sort_by_confidence_level(reverse=True)
+            //     leads_with_number = self.lead_ids.filtered(lambda l: l.phone == self.phone)._sort_by_confidence_level(reverse=True)
             //     if leads_with_number:
             //         lead = leads_with_number[0]
             //         return {
             //             'default_res_model': 'crm.lead',
             //             'default_res_id': lead.id,
-            //             'number_field_name': 'mobile' if lead.mobile == self.mobile else 'phone',
+            //             'number_field_name': 'phone',
             //         }
             // return super(WebsiteVisitor, self)._prepare_sms_composer_context()
             --- ODOO METHOD SOURCE (MODULE: website_sms, FILE: website_visitor.py) ---
@@ -641,7 +666,7 @@ namespace Bamboo.Core.Application.Services
             //     'default_res_model': 'res.partner',
             //     'default_res_id': self.partner_id.id,
             //     'default_composition_mode': 'comment',
-            //     'default_number_field_name': 'mobile' if self.partner_id.mobile else 'phone',
+            //     'default_number_field_name': 'phone',
             // }
             */
             return default;
@@ -655,8 +680,8 @@ namespace Bamboo.Core.Application.Services
             // """ Search visitors with terms on events within their event registrations. E.g. [('event_registered_ids',
             // 'in', [1, 2])] should return visitors having a registration on events 1, 2 as
             // well as their children for notification purpose. """
-            // if operator == "not in":
-            //     raise NotImplementedError(self.env._("Unsupported 'Not In' operation on visitors registrations"))
+            // if operator in ('not in', 'not any'):
+            //     raise UserError(self.env._("Unsupported 'Not In' operation on visitors registrations"))
             // 
             // all_registrations = self.env['event.registration'].sudo().search([
             //     ('event_id', operator, operand)
@@ -678,8 +703,8 @@ namespace Bamboo.Core.Application.Services
             // def _search_event_track_wishlisted_ids(self, operator, operand):
             // """ Search visitors with terms on wishlisted tracks. E.g. [('event_track_wishlisted_ids',
             // 'in', [1, 2])] should return visitors having wishlisted tracks 1, 2. """
-            // if operator == "not in":
-            //     raise NotImplementedError(self.env._("Unsupported 'Not In' operation on track wishlist visitors"))
+            // if operator in ('not in', 'not any'):
+            //     raise UserError(self.env._("Unsupported 'Not In' operation on track wishlist visitors"))
             // 
             // track_visitors = self.env['event.track.visitor'].sudo().search([
             //     ('track_id', operator, operand),
@@ -696,8 +721,6 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_visitor.py) ---
             // def _search_page_ids(self, operator, value):
-            // if operator not in ('like', 'ilike', 'not like', 'not ilike', '=like', '=ilike', '=', '!='):
-            //     raise ValueError(_('This operator is not supported'))
             // return [('website_track_ids.page_id.name', operator, value)]
             */
             return default;
@@ -714,7 +737,9 @@ namespace Bamboo.Core.Application.Services
             // The visitor will receive the chat request the next time he navigates to a website page.
             // (see _handle_webpage_dispatch for next step)"""
             // # check if visitor is available
-            // unavailable_visitors_count = self.env['discuss.channel'].search_count([('livechat_visitor_id', 'in', self.ids), ('livechat_active', '=', True)])
+            // unavailable_visitors_count = self.env["discuss.channel"].search_count(
+            //     [("livechat_visitor_id", "in", self.ids), ("livechat_end_dt", "=", False)]
+            // )
             // if unavailable_visitors_count:
             //     raise UserError(_('Recipients are not available. Please refresh the page to get latest visitors status.'))
             // # check if user is available as operator
@@ -733,14 +758,13 @@ namespace Bamboo.Core.Application.Services
             //         members_to_add.append(Command.link(visitor.partner_id.id))
             //     discuss_channel_vals_list.append({
             //         'channel_partner_ids': members_to_add,
+            //         "is_pending_chat_request": True,
             //         'livechat_channel_id': visitor.website_id.channel_id.id,
             //         'livechat_operator_id': self.env.user.partner_id.id,
             //         'channel_type': 'livechat',
             //         'country_id': country.id,
-            //         'anonymous_name': visitor_name,
             //         'name': ', '.join([visitor_name, operator.livechat_username if operator.livechat_username else operator.name]),
             //         'livechat_visitor_id': visitor.id,
-            //         'livechat_active': True,
             //     })
             // discuss_channels = self.env['discuss.channel'].create(discuss_channel_vals_list)
             // for channel in discuss_channels:
@@ -754,19 +778,12 @@ namespace Bamboo.Core.Application.Services
             //                 "timezone": visitor.timezone,
             //             }
             //         )
-            //         channel.add_members(guest_ids=guest.ids, post_joined_message=False)
-            // # Open empty chatter to allow the operator to start chatting with
-            // # the visitor. Also open the visitor's chat window in order for it
-            // # to be displayed at the next page load.
-            // channel_members = self.env['discuss.channel.member'].sudo().search([
-            //     ('channel_id', 'in', discuss_channels.ids),
-            // ])
-            // channel_members.write({
-            //     'fold_state': 'open',
-            // })
-            // operator._bus_send(
-            //     "website_livechat.send_chat_request", Store(discuss_channels).get_result()
-            // )
+            //         channel._add_members(guests=guest, post_joined_message=False)
+            // # Open empty channel to allow the operator to start chatting with the visitor
+            // Store(bus_channel=self.env.user).add(
+            //     discuss_channels,
+            //     extra_fields={"open_chat_window": True},
+            // ).bus_send()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -937,12 +954,11 @@ namespace Bamboo.Core.Application.Services
             // visitor_id, upsert = super()._upsert_visitor(access_token, force_track_values=force_track_values)
             // if upsert == 'inserted':
             //     visitor_sudo = self.sudo().browse(visitor_id)
-            //     if discuss_channel_uuid := request.cookies.get("im_livechat_uuid"):
-            //         discuss_channel = request.env["discuss.channel"].sudo().search([("uuid", "=", discuss_channel_uuid)])
-            //         discuss_channel.write({
-            //             'livechat_visitor_id': visitor_sudo.id,
-            //             'anonymous_name': "Visitor #%d (%s)" % (visitor_sudo.id, visitor_sudo.country_id.name) if visitor_sudo.country_id else f"Visitor #{visitor_sudo.id}"
-            //         })
+            //     if guest := self.env["mail.guest"]._get_guest_from_context():
+            //         # sudo: mail.guest - guest can access their own channels and link them to newly created visitor.
+            //         guest_livechats = guest.sudo().channel_ids.filtered(lambda c: c.channel_type == "livechat")
+            //         guest_livechats.livechat_visitor_id = visitor_sudo.id
+            //         guest_livechats.country_id = visitor_sudo.country_id
             // return visitor_id, upsert
             */
             return default;

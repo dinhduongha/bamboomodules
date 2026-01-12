@@ -35,7 +35,7 @@ namespace Bamboo.Core.Application.Services
             // ctx = dict(self.env.context or {}, default_quant_ids=quant_ids)
             // view = self.env.ref('stock.stock_inventory_adjustment_name_form_view', False)
             // return {
-            //     'name': _('Inventory Adjustment Reference / Reason'),
+            //     'name': _('Inventory Adjustment'),
             //     'type': 'ir.actions.act_window',
             //     'views': [(view.id, 'form')],
             //     'res_model': 'stock.inventory.adjustment.name',
@@ -46,63 +46,47 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<StockQuant> ApplyInventoryAsync(Guid id)
+        public async Task<StockQuant> ApplyInventoryAsync(Guid id, StockQuantApplyInventoryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def action_apply_inventory(self):
-            // products_tracked_without_lot = []
-            // for quant in self:
-            //     rounding = quant.product_uom_id.rounding
-            //     if fields.Float.is_zero(quant.inventory_diff_quantity, precision_rounding=rounding)\
-            //             and fields.Float.is_zero(quant.inventory_quantity, precision_rounding=rounding)\
-            //             and fields.Float.is_zero(quant.quantity, precision_rounding=rounding):
-            //         continue
-            //     if quant.product_id.tracking in ['lot', 'serial'] and\
-            //             not quant.lot_id and quant.inventory_quantity != quant.quantity and not quant.quantity:
-            //         products_tracked_without_lot.append(quant.product_id.id)
+            // def action_apply_inventory(self, date=None):
             // # for some reason if multi-record, env.context doesn't pass to wizards...
             // ctx = dict(self.env.context or {})
             // ctx['default_quant_ids'] = self.ids
             // quants_outdated = self.filtered(lambda quant: quant.is_outdated)
-            // if not self.env.context.get('set_inventory_quantity_auto_apply'):
-            //     if quants_outdated:
-            //         ctx['default_quant_to_fix_ids'] = quants_outdated.ids
-            //         return {
-            //             'name': _('Conflict in Inventory Adjustment'),
-            //             'type': 'ir.actions.act_window',
-            //             'view_mode': 'form',
-            //             'views': [(False, 'form')],
-            //             'res_model': 'stock.inventory.conflict',
-            //             'target': 'new',
-            //             'context': ctx,
-            //         }
-            //     if products_tracked_without_lot:
-            //         ctx['default_product_ids'] = products_tracked_without_lot
-            //         return {
-            //             'name': _('Tracked Products in Inventory Adjustment'),
-            //             'type': 'ir.actions.act_window',
-            //             'view_mode': 'form',
-            //             'views': [(False, 'form')],
-            //             'res_model': 'stock.track.confirmation',
-            //             'target': 'new',
-            //             'context': ctx,
-            //         }
-            // self._apply_inventory()
+            // if quants_outdated:
+            //     ctx['default_quant_to_fix_ids'] = quants_outdated.ids
+            //     return {
+            //         'name': _('Conflict in Inventory Adjustment'),
+            //         'type': 'ir.actions.act_window',
+            //         'view_mode': 'form',
+            //         'views': [(False, 'form')],
+            //         'res_model': 'stock.inventory.conflict',
+            //         'target': 'new',
+            //         'context': ctx,
+            //     }
+            // self._apply_inventory(date)
             // self.inventory_quantity_set = False
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<StockQuant> ApplyInventoryInternalAsync()
+        protected async Task<StockQuant> ApplyInventoryInternalAsync(object date)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def _apply_inventory(self):
+            // def _apply_inventory(self, date=None):
+            // # Consider the inventory_quantity as set => recompute the inventory_diff_quantity if needed
+            // self.inventory_quantity_set = True
             // move_vals = []
             // for quant in self:
+            //     # if inventory applied from product's inverse_qty and the inventory_diff_quantity is 0,
+            //     # we skip creating a move with 0 quantity.
+            //     if quant.env.context.get('from_inverse_qty') and quant.product_uom_id.compare(quant.inventory_diff_quantity, 0) == 0:
+            //         continue
             //     # Create and validate a move so that the quant matches its `inventory_quantity`.
-            //     if float_compare(quant.inventory_diff_quantity, 0, precision_rounding=quant.product_uom_id.rounding) > 0:
+            //     if quant.product_uom_id.compare(quant.inventory_diff_quantity, 0) > 0:
             //         move_vals.append(
             //             quant._get_inventory_move_values(quant.inventory_diff_quantity,
             //                                              quant.product_id.with_company(quant.company_id).property_stock_inventory,
@@ -114,21 +98,24 @@ namespace Bamboo.Core.Application.Services
             //                                              quant.product_id.with_company(quant.company_id).property_stock_inventory,
             //                                              package_id=quant.package_id))
             // moves = self.env['stock.move'].with_context(inventory_mode=False).create(move_vals)
-            // moves._action_done()
+            // moves.with_context(ignore_dest_packages=True)._action_done()
+            // if date:
+            //     moves.date = date
+            // moves._trigger_assign()
             // self.location_id.sudo().write({'last_inventory_date': fields.Date.today()})
             // date_by_location = {loc: loc._get_next_inventory_date() for loc in self.mapped('location_id')}
             // for quant in self:
             //     quant.inventory_date = date_by_location[quant.location_id]
             // self.action_clear_inventory_quantity()
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_quant.py) ---
-            // def _apply_inventory(self):
+            // def _apply_inventory(self, date=None):
             // for accounting_date, inventory_ids in groupby(self, key=lambda q: q.accounting_date):
             //     inventories = self.env['stock.quant'].concat(*inventory_ids)
             //     if accounting_date:
-            //         super(StockQuant, inventories.with_context(force_period_date=accounting_date))._apply_inventory()
+            //         super(StockQuant, inventories.with_context(force_period_date=accounting_date))._apply_inventory(date)
             //         inventories.accounting_date = False
             //     else:
-            //         super(StockQuant, inventories)._apply_inventory()
+            //         super(StockQuant, inventories)._apply_inventory(date)
             */
             return default;
         }
@@ -198,7 +185,7 @@ namespace Bamboo.Core.Application.Services
             //     ['quantity:sum'],
             // )
             // for product, _location, lot, qty in groups:
-            //     if float_compare(abs(qty), 1, precision_rounding=product.uom_id.rounding) > 0:
+            //     if product.uom_id.compare(abs(qty), 1) > 0:
             //         raise ValidationError(_('The serial number has already been assigned: \n Product: %(product)s, Serial Number: %(serial_number)s', product=product.display_name, serial_number=lot.name))
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -231,14 +218,15 @@ namespace Bamboo.Core.Application.Services
             // message = None
             // recommended_location = None
             // if product_id.tracking == 'serial':
-            //     internal_domain = [('location_id.usage', 'in', ('internal', 'transit'))]
+            //     internal_domain = Domain('location_id.usage', 'in', ('internal', 'transit'))
             //     if lot_id.company_id:
-            //         internal_domain = expression.AND([internal_domain, [('company_id', '=', company_id.id)]])
-            //     quants = self.env['stock.quant'].search([('product_id', '=', product_id.id),
-            //                                              ('lot_id', '=', lot_id.id),
-            //                                              ('quantity', '!=', 0),
-            //                                              '|', ('location_id.usage', '=', 'customer'),
-            //                                                    *internal_domain])
+            //         internal_domain &= Domain('company_id', '=', company_id.id)
+            //     quants = self.env['stock.quant'].search(Domain.AND((
+            //         Domain('product_id', '=', product_id.id),
+            //         Domain('lot_id', 'in', lot_id.ids),
+            //         Domain('quantity', '!=', 0),
+            //         Domain('location_id.usage', '=', 'customer') | internal_domain,
+            //     )))
             //     sn_locations = quants.mapped('location_id')
             //     if quants:
             //         if not source_location_id:
@@ -248,7 +236,7 @@ namespace Bamboo.Core.Application.Services
             //                         'before its corresponding receipt operation is validated. In this case the issue will be solved '
             //                         'automatically once all steps are completed. Otherwise, the serial number should be corrected to '
             //                         'prevent inconsistent data.',
-            //                         serial_number=lot_id.name, location_list=format_list(self.env, sn_locations.mapped('display_name')))
+            //                         serial_number=lot_id.name, location_list=sn_locations.mapped('display_name'))
             // 
             //         elif source_location_id and source_location_id not in sn_locations:
             //             # using an existing SN in the wrong location
@@ -268,14 +256,14 @@ namespace Bamboo.Core.Application.Services
             //                             'Source location for this move will be changed to %(recommended_location)s',
             //                             serial_number=lot_id.name,
             //                             source_location=source_location_id.display_name,
-            //                             other_locations=format_list(self.env, sn_locations.mapped('display_name')),
+            //                             other_locations=sn_locations.mapped('display_name'),
             //                             recommended_location=recommended_location.display_name)
             //             else:
             //                 message = _('Serial number (%(serial_number)s) is not located in %(source_location)s, but is located in location(s): %(other_locations)s.\n\n'
             //                             'Please correct this to prevent inconsistent data.',
             //                             serial_number=lot_id.name,
             //                             source_location=source_location_id.display_name,
-            //                             other_locations=format_list(self.env, sn_locations.mapped('display_name')))
+            //                             other_locations=sn_locations.mapped('display_name'))
             //                 recommended_location = None
             // return message, recommended_location
             */
@@ -309,7 +297,7 @@ namespace Bamboo.Core.Application.Services
             //     ml_reserved_qty = reserved_move_lines.get((product, location, lot, package, owner), 0)
             //     if location.should_bypass_reservation():
             //         quants._update_reserved_quantity(product, location, -reserved_quantity, lot_id=lot, package_id=package, owner_id=owner)
-            //     elif float_compare(reserved_quantity, ml_reserved_qty, precision_rounding=product.uom_id.rounding) != 0:
+            //     elif product.uom_id.compare(reserved_quantity, ml_reserved_qty) != 0:
             //         quants._update_reserved_quantity(product, location, ml_reserved_qty - reserved_quantity, lot_id=lot, package_id=package, owner_id=owner)
             //     if ml_reserved_qty:
             //         del reserved_move_lines[(product, location, lot, package, owner)]
@@ -340,10 +328,33 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockQuant> ComputeAvailableQuantityInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: stock_quant.py) ---
+            // def _compute_available_quantity(self):
+            // super()._compute_available_quantity()
+            // current_date = fields.Datetime.now()
+            // for quant in self:
+            //     if quant.use_expiration_date and quant.removal_date and quant.removal_date <= current_date:
+            //         quant.available_quantity = 0
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _compute_available_quantity(self):
             // for quant in self:
             //     quant.available_quantity = quant.quantity - quant.reserved_quantity
+            */
+            return default;
+        }
+
+        protected async Task<StockQuant> ComputeCostMethodInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_quant.py) ---
+            // def _compute_cost_method(self):
+            // for quant in self:
+            //     quant.cost_method = (
+            //         quant.product_categ_id.with_company(
+            //             quant.company_id
+            //         ).property_cost_method
+            //         or (quant.company_id or self.env.company).cost_method
+            //     )
             */
             return default;
         }
@@ -355,14 +366,25 @@ namespace Bamboo.Core.Application.Services
             // def _compute_display_name(self):
             // """name that will be displayed in the detailed operation"""
             // for record in self:
-            //     name = [record.location_id.display_name]
-            //     if record.lot_id:
-            //         name.append(record.lot_id.name)
-            //     if record.package_id:
-            //         name.append(record.package_id.name)
-            //     if record.owner_id:
-            //         name.append(record.owner_id.name)
-            //     record.display_name = ' - '.join(name)
+            //     if record.env.context.get('formatted_display_name'):
+            //         name = f"{record.location_id.name}"
+            //         if record.package_id:
+            //             name += f"\t--{record.package_id.display_name}--"
+            //         if record.lot_id:
+            //             name += (' ' if record.package_id else '\t') + f"--{record.lot_id.name}--"
+            //         record.display_name = name
+            //     else:
+            //         if not record.ids:
+            //             record.display_name = ''
+            //             continue
+            //         name = [record.location_id.display_name]
+            //         if record.lot_id:
+            //             name.append(record.lot_id.name)
+            //         if record.package_id:
+            //             name.append(record.package_id.display_name)
+            //         if record.owner_id:
+            //             name.append(record.owner_id.name)
+            //         record.display_name = ' - '.join(name)
             */
             return default;
         }
@@ -386,7 +408,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _compute_inventory_diff_quantity(self):
             // for quant in self:
-            //     quant.inventory_diff_quantity = quant.inventory_quantity - quant.quantity
+            //     if quant.inventory_quantity_set:
+            //         quant.inventory_diff_quantity = quant.inventory_quantity - quant.quantity
+            //     else:
+            //         quant.inventory_diff_quantity = 0
             */
             return default;
         }
@@ -419,7 +444,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_is_outdated(self):
             // self.is_outdated = False
             // for quant in self:
-            //     if quant.product_id and float_compare(quant.inventory_quantity - quant.inventory_diff_quantity, quant.quantity, precision_rounding=quant.product_uom_id.rounding) and quant.inventory_quantity_set:
+            //     if quant.product_id and quant.product_uom_id.compare(quant.inventory_quantity - quant.inventory_diff_quantity, quant.quantity) and quant.inventory_quantity_set:
             //         quant.is_outdated = True
             */
             return default;
@@ -486,7 +511,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _compute_sn_duplicated(self):
             // self.sn_duplicated = False
-            // domain = [('tracking', '=', 'serial'), ('lot_id', 'in', self.lot_id.ids), ('location_id.usage', 'in', ['internal', 'transit'])]
+            // domain = [('tracking', '=', 'serial'), ('lot_id', 'in', self.lot_id.ids), ('quantity', '>', 0), ('location_id.usage', 'in', ['internal', 'transit'])]
             // results = self._read_group(domain, ['lot_id'], having=[('__count', '>', 1)])
             // duplicated_sn_ids = [lot.id for [lot] in results]
             // quants_with_duplicated_sn = self.env['stock.quant'].search([('lot_id', 'in', duplicated_sn_ids)])
@@ -500,26 +525,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_quant.py) ---
             // def _compute_value(self):
-            // """ (Product.value_svl / Product.quantity_svl) * quant.quantity, i.e. average unit cost * on hand qty
-            // """
             // self.fetch(['company_id', 'location_id', 'owner_id', 'product_id', 'quantity', 'lot_id'])
             // self.value = 0
             // for quant in self:
-            //     quant.currency_id = quant.company_id.currency_id
             //     if not quant.location_id or not quant.product_id or\
             //             not quant.location_id._should_be_valued() or\
             //             quant._should_exclude_for_valuation() or\
-            //             float_is_zero(quant.quantity, precision_rounding=quant.product_id.uom_id.rounding):
+            //             quant.product_id.uom_id.is_zero(quant.quantity):
             //         continue
             //     if quant.product_id.lot_valuated:
-            //         quantity = quant.lot_id.with_company(quant.company_id).quantity_svl
-            //         value_svl = quant.lot_id.with_company(quant.company_id).value_svl
+            //         quantity = quant.lot_id.with_company(quant.company_id).product_qty
+            //         value = quant.lot_id.with_company(quant.company_id).total_value
             //     else:
-            //         quantity = quant.product_id.with_company(quant.company_id).quantity_svl
-            //         value_svl = quant.product_id.with_company(quant.company_id).value_svl
-            //     if float_is_zero(quantity, precision_rounding=quant.product_id.uom_id.rounding):
+            //         quantity = quant.product_id.with_company(quant.company_id).qty_available
+            //         value = quant.product_id.with_company(quant.company_id).total_value
+            //     if quant.product_id.uom_id.is_zero(quantity):
             //         continue
-            //     quant.value = quant.quantity * value_svl / quantity
+            //     quant.value = quant.quantity * value / quantity
             */
             return default;
         }
@@ -690,13 +712,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // self = self.sudo()
             // quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
-            // rounding = product_id.uom_id.rounding
             // if product_id.tracking == 'none':
             //     available_quantity = sum(quants.mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
             //     if allow_negative:
             //         return available_quantity
             //     else:
-            //         return available_quantity if float_compare(available_quantity, 0.0, precision_rounding=rounding) >= 0.0 else 0.0
+            //         return available_quantity if product_id.uom_id.compare(available_quantity, 0.0) >= 0.0 else 0.0
             // else:
             //     availaible_quantities = {lot_id: 0.0 for lot_id in list(set(quants.mapped('lot_id'))) + ['untracked']}
             //     for quant in quants:
@@ -709,7 +730,7 @@ namespace Bamboo.Core.Application.Services
             //     if allow_negative:
             //         return sum(availaible_quantities.values())
             //     else:
-            //         return sum([available_quantity for available_quantity in availaible_quantities.values() if float_compare(available_quantity, 0, precision_rounding=rounding) > 0])
+            //         return sum(available_quantity for available_quantity in availaible_quantities.values() if product_id.uom_id.compare(available_quantity, 0) > 0)
             */
             return default;
         }
@@ -730,23 +751,25 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _get_gather_domain(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False):
-            // domain = [('product_id', '=', product_id.id)]
+            // domains = [Domain('product_id', '=', product_id.id)]
             // if not strict:
             //     if lot_id:
-            //         domain = expression.AND([['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)], domain])
+            //         domains.append(Domain('lot_id', 'in', [lot_id.id, False]))
             //     if package_id:
-            //         domain = expression.AND([[('package_id', '=', package_id.id)], domain])
+            //         domains.append(Domain('package_id', '=', package_id.id))
             //     if owner_id:
-            //         domain = expression.AND([[('owner_id', '=', owner_id.id)], domain])
-            //     domain = expression.AND([[('location_id', 'child_of', location_id.id)], domain])
+            //         domains.append(Domain('owner_id', '=', owner_id.id))
+            //     domains.append(Domain('location_id', 'child_of', location_id.id))
             // else:
-            //     domain = expression.AND([['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)] if lot_id else [('lot_id', '=', False)], domain])
-            //     domain = expression.AND([[('package_id', '=', package_id and package_id.id or False)], domain])
-            //     domain = expression.AND([[('owner_id', '=', owner_id and owner_id.id or False)], domain])
-            //     domain = expression.AND([[('location_id', '=', location_id.id)], domain])
+            //     domains.extend((
+            //         Domain('lot_id', 'in', [False, lot_id.id if lot_id else False]),
+            //         Domain('package_id', '=', package_id.id if package_id else False),
+            //         Domain('owner_id', '=', owner_id.id if owner_id else False),
+            //         Domain('location_id', '=', location_id.id),
+            //     ))
             // if self.env.context.get('with_expiration'):
-            //     domain = expression.AND([['|', ('expiration_date', '>=', self.env.context['with_expiration']), ('expiration_date', '=', False)], domain])
-            // return domain
+            //     domains.append(Domain('removal_date', '>=', self.env.context['with_expiration']) | Domain('removal_date', '=', False))
+            // return Domain.AND(domains)
             */
             return default;
         }
@@ -755,7 +778,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: stock_quant.py) ---
-            // def _get_gs1_barcode(self, gs1_quantity_rules_ai_by_uom):
+            // def _get_gs1_barcode(self, gs1_quantity_rules_ai_by_uom=False):
             // barcode = super()._get_gs1_barcode(gs1_quantity_rules_ai_by_uom)
             // if self.use_expiration_date:
             //     if self.lot_id.expiration_date:
@@ -864,22 +887,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param location_id: `stock.location`
             // :param location_dest_id: `stock.location`
-            // :param package_id: `stock.quant.package`
-            // :param package_dest_id: `stock.quant.package`
+            // :param package_id: `stock.package`
+            // :param package_dest_id: `stock.package`
             // :return: dict with all values needed to create a new `stock.move` with its move line.
             // """
             // self.ensure_one()
-            // if self.env.context.get('inventory_name'):
-            //     name = self.env.context.get('inventory_name')
-            // elif fields.Float.is_zero(qty, precision_rounding=self.product_uom_id.rounding):
-            //     name = _('Product Quantity Confirmed')
-            // else:
-            //     name = _('Product Quantity Updated')
-            // if self.user_id and self.user_id.id != SUPERUSER_ID:
-            //     name += f' ({self.user_id.display_name})'
             // 
-            // return {
-            //     'name': name,
+            // res = {
             //     'product_id': self.product_id.id,
             //     'product_uom': self.product_uom_id.id,
             //     'product_uom_qty': qty,
@@ -903,28 +917,37 @@ namespace Bamboo.Core.Application.Services
             //         'owner_id': self.owner_id.id,
             //     })]
             // }
+            // if self.env.context.get('inventory_name'):
+            //     res['inventory_name'] = self.env.context.get('inventory_name')
+            // 
+            // return res
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_quant.py) ---
             // def _get_inventory_move_values(self, qty, location_id, location_dest_id, package_id=False, package_dest_id=False):
             // res_move = super()._get_inventory_move_values(qty, location_id, location_dest_id, package_id, package_dest_id)
             // if not self.env.context.get('inventory_name'):
             //     force_period_date = self.env.context.get('force_period_date', False)
             //     if force_period_date:
-            //         res_move['name'] += _(' [Accounted on %s]', force_period_date)
+            //         if self.product_uom_id.is_zero(qty):
+            //             name = _('Product Quantity Confirmed')
+            //         else:
+            //             name = _('Product Quantity Updated')
+            //         if self.env.uid and self.env.uid != SUPERUSER_ID:
+            //             name += f' ({self.env.user.display_name})'
+            //         res_move['inventory_name'] = name + _(' [Accounted on %s]', force_period_date)
             // return res_move
             */
             return default;
         }
 
-        protected async Task<StockQuant> GetQuantsActionInternalAsync(object domain, object extend)
+        protected async Task<StockQuant> GetQuantsActionInternalAsync(object extend)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def _get_quants_action(self, domain=None, extend=False):
+            // def _get_quants_action(self, extend=False):
             // """ Returns an action to open (non-inventory adjustment) quant view.
             // Depending of the context (user have right to be inventory mode or not),
             // the list view will be editable or readonly.
             // 
-            // :param domain: List for the domain, empty by default.
             // :param extend: If True, enables form, graph and pivot views. False by default.
             // """
             // if not self.env['ir.config_parameter'].sudo().get_param('stock.skip_quant_tasks'):
@@ -932,23 +955,8 @@ namespace Bamboo.Core.Application.Services
             // ctx = dict(self.env.context or {})
             // ctx['inventory_report_mode'] = True
             // ctx.pop('group_by', None)
-            // action = {
-            //     'name': _('Locations'),
-            //     'view_mode': 'list,form',
-            //     'res_model': 'stock.quant',
-            //     'type': 'ir.actions.act_window',
-            //     'context': ctx,
-            //     'domain': domain or [],
-            //     'help': """
-            //         <p class="o_view_nocontent_empty_folder">{}</p>
-            //         <p>{}</p>
-            //         """.format(_('No Stock On Hand'),
-            //                    _('This analysis gives you an overview of the current stock level of your products.')),
-            // }
             // 
-            // target_action = self.env.ref('stock.dashboard_open_quants', False)
-            // if target_action:
-            //     action['id'] = target_action.id
+            // action = self.env['ir.actions.act_window']._for_xml_id('stock.stock_quant_action')
             // 
             // form_view = self.env.ref('stock.view_stock_quant_form_editable').id
             // if self.env.context.get('inventory_mode') and self.env.user.has_group('stock.group_stock_manager'):
@@ -960,6 +968,7 @@ namespace Bamboo.Core.Application.Services
             //         (action['view_id'], 'list'),
             //         (form_view, 'form'),
             //     ],
+            //     'context': ctx,
             // })
             // if extend:
             //     action.update({
@@ -971,6 +980,8 @@ namespace Bamboo.Core.Application.Services
             //             (self.env.ref('stock.stock_quant_view_graph').id, 'graph'),
             //         ],
             //     })
+            // # It's mainly define in the server action in order to call _get_quants_action when using the url
+            // action['path'] = "stock-locations"
             // return action
             */
             return default;
@@ -983,12 +994,12 @@ namespace Bamboo.Core.Application.Services
             // def _get_quants_by_products_locations(self, product_ids, location_ids, extra_domain=False):
             // res = defaultdict(lambda: self.env['stock.quant'])
             // if product_ids and location_ids:
-            //     domain = [
+            //     domain = Domain([
             //         ('product_id', 'in', product_ids.ids),
             //         ('location_id', 'child_of', location_ids.ids)
-            //     ]
+            //     ])
             //     if extra_domain:
-            //         domain = expression.AND([domain, extra_domain])
+            //         domain &= Domain(extra_domain)
             //     needed_quants = self.env['stock.quant']._read_group(
             //         domain,
             //         ['product_id', 'location_id', 'lot_id', 'package_id', 'owner_id'],
@@ -1041,11 +1052,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockQuant> GetReserveQuantityInternalAsync(Guid product_id, Guid location_id, object quantity, Guid product_packaging_id, Guid uom_id, Guid lot_id, Guid package_id, Guid owner_id, object strict)
+        protected async Task<StockQuant> GetReserveQuantityInternalAsync(Guid product_id, Guid location_id, object quantity, Guid uom_id, Guid lot_id, Guid package_id, Guid owner_id, object strict)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def _get_reserve_quantity(self, product_id, location_id, quantity, product_packaging_id=None, uom_id=None, lot_id=None, package_id=None, owner_id=None, strict=False):
+            // def _get_reserve_quantity(self, product_id, location_id, quantity, uom_id=None, lot_id=None, package_id=None, owner_id=None, strict=False):
             // """ Get the quantity available to reserve for the set of quants
             // sharing the combination of `product_id, location_id` if `strict` is set to False or sharing
             // the *exact same characteristics* otherwise. If no quants are in self, `_gather` will do a search to fetch the quants
@@ -1056,7 +1067,6 @@ namespace Bamboo.Core.Application.Services
             //     could be done and how much the system is able to reserve on it
             // """
             // self = self.sudo()
-            // rounding = product_id.uom_id.rounding
             // 
             // quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict, qty=quantity)
             // 
@@ -1064,8 +1074,8 @@ namespace Bamboo.Core.Application.Services
             // available_quantity = quants._get_available_quantity(product_id, location_id, lot_id, package_id, owner_id, strict)
             // 
             // # do full packaging reservation when it's needed
-            // if product_packaging_id and product_id.product_tmpl_id.categ_id.packaging_reserve_method == "full":
-            //     available_quantity = product_packaging_id._check_qty(available_quantity, product_id.uom_id, "DOWN")
+            // if self.env.context.get('packaging_uom_id') and product_id.product_tmpl_id.categ_id.packaging_reserve_method == "full":
+            //     available_quantity = self.env.context.get('packaging_uom_id')._check_qty(available_quantity, product_id.uom_id, "DOWN")
             // 
             // quantity = min(quantity, available_quantity)
             // 
@@ -1082,37 +1092,37 @@ namespace Bamboo.Core.Application.Services
             //     quantity = uom_id._compute_quantity(quantity_move_uom, product_id.uom_id, rounding_method='HALF-UP')
             // 
             // if product_id.tracking == 'serial':
-            //     if float_compare(quantity, int(quantity), precision_rounding=rounding) != 0:
+            //     if product_id.uom_id.compare(quantity, int(quantity)) != 0:
             //         quantity = 0
             // 
             // reserved_quants = []
             // 
-            // if float_compare(quantity, 0, precision_rounding=rounding) > 0:
+            // if product_id.uom_id.compare(quantity, 0) > 0:
             //     # if we want to reserve
-            //     available_quantity = sum(quants.filtered(lambda q: float_compare(q.quantity, 0, precision_rounding=rounding) > 0).mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
-            // elif float_compare(quantity, 0, precision_rounding=rounding) < 0:
+            //     available_quantity = sum(quants.filtered(lambda q: product_id.uom_id.compare(q.quantity, 0) > 0).mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
+            // elif product_id.uom_id.compare(quantity, 0) < 0:
             //     # if we want to unreserve
             //     available_quantity = sum(quants.mapped('reserved_quantity'))
-            //     if float_compare(abs(quantity), available_quantity, precision_rounding=rounding) > 0:
+            //     if product_id.uom_id.compare(abs(quantity), available_quantity) > 0:
             //         raise UserError(_('It is not possible to unreserve more products of %s than you have in stock.', product_id.display_name))
             // else:
             //     return reserved_quants
             // 
             // negative_reserved_quantity = defaultdict(float)
             // for quant in quants:
-            //     if float_compare(quant.quantity - quant.reserved_quantity, 0, precision_rounding=rounding) < 0:
+            //     if product_id.uom_id.compare(quant.quantity - quant.reserved_quantity, 0) < 0:
             //         negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)] += quant.quantity - quant.reserved_quantity
             // for quant in quants:
-            //     if float_compare(quantity, 0, precision_rounding=rounding) > 0:
+            //     if product_id.uom_id.compare(quantity, 0) > 0:
             //         max_quantity_on_quant = quant.quantity - quant.reserved_quantity
-            //         if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
+            //         if product_id.uom_id.compare(max_quantity_on_quant, 0) <= 0:
             //             continue
             //         negative_quantity = negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)]
             //         if negative_quantity:
             //             negative_qty_to_remove = min(abs(negative_quantity), max_quantity_on_quant)
             //             negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)] += negative_qty_to_remove
             //             max_quantity_on_quant -= negative_qty_to_remove
-            //         if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
+            //         if product_id.uom_id.compare(max_quantity_on_quant, 0) <= 0:
             //             continue
             //         max_quantity_on_quant = min(max_quantity_on_quant, quantity)
             //         reserved_quants.append((quant, max_quantity_on_quant))
@@ -1124,7 +1134,7 @@ namespace Bamboo.Core.Application.Services
             //         quantity += max_quantity_on_quant
             //         available_quantity += max_quantity_on_quant
             // 
-            //     if float_is_zero(quantity, precision_rounding=rounding) or float_is_zero(available_quantity, precision_rounding=rounding):
+            //     if product_id.uom_id.is_zero(quantity) or product_id.uom_id.is_zero(available_quantity):
             //         break
             // return reserved_quants
             */
@@ -1265,20 +1275,32 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def move_quants(self, location_dest_id=False, package_dest_id=False, message=False, unpack=False):
+            // def move_quants(self, location_dest_id=False, package_dest_id=False, message=False, unpack=False, up_to_parent_packages=False):
             // """ Directly move a stock.quant to another location and/or package by creating a stock.move.
             // 
             // :param location_dest_id: `stock.location` destination location for the quants
-            // :param package_dest_id: `stock.quant.package´ destination package for the quants
+            // :param package_dest_id: `stock.package` destination package for the quants
             // :param message: String to fill the reference field on the generated stock.move
             // :param unpack: set to True when needing to unpack the quant
+            // :param up_to_parent_packages: `stock.package` that are the upper limit to keep the parents
             // """
+            // def set_parent_package(all_quants, package, limit_ids):
+            //     if not package.parent_package_id or (limit_ids and package.id in limit_ids):
+            //         return
+            //     if any(quant not in all_quants for quant in package.parent_package_id.contained_quant_ids):
+            //         # Only move the container package as well if its whole content is moved as well
+            //         return
+            //     package.package_dest_id = package.parent_package_id
+            //     return set_parent_package(all_quants, package.parent_package_id, limit_ids)
+            // 
             // message = message or _('Quantity Relocated')
             // move_vals = []
+            // limit_ids = set(up_to_parent_packages.ids if up_to_parent_packages else [])
             // for quant in self:
             //     result_package_id = package_dest_id  # temp variable to keep package_dest_id unchanged
             //     if not unpack and not package_dest_id:
             //         result_package_id = quant.package_id
+            //         set_parent_package(self, result_package_id, limit_ids)
             //     move_vals.append(quant.with_context(inventory_name=message)._get_inventory_move_values(
             //         quant.quantity,
             //         quant.location_id,
@@ -1394,7 +1416,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_quant.py) ---
             // def _read_group_postprocess_aggregate(self, aggregate_spec, raw_values):
-            // if aggregate_spec == 'value:sum':
+            // if aggregate_spec in ('value:sum', 'value:sum_currency'):
             //     column = super()._read_group_postprocess_aggregate('id:recordset', raw_values)
             //     return (sum(records.mapped('value')) for records in column)
             // return super()._read_group_postprocess_aggregate(aggregate_spec, raw_values)
@@ -1420,7 +1442,7 @@ namespace Bamboo.Core.Application.Services
             // def _read_group_select(self, aggregate_spec, query):
             // # flag value as aggregatable, and manually sum the values from the
             // # records in the group
-            // if aggregate_spec == 'value:sum':
+            // if aggregate_spec in ('value:sum', 'value:sum_currency'):
             //     return super()._read_group_select('id:recordset', query)
             // return super()._read_group_select(aggregate_spec, query)
             */
@@ -1454,11 +1476,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _run_least_packages_removal_strategy_astar(self, domain, qty):
             // # Fetch the available packages and contents
-            // query = self._where_calc(domain)
-            // query_str, params = query.select('package_id', 'SUM(quantity - reserved_quantity) AS available_qty')
-            // query_str += ' GROUP BY package_id HAVING SUM(quantity - reserved_quantity) > 0 ORDER BY available_qty DESC'
-            // self._cr.execute(query_str, params)
-            // qty_by_package = self._cr.fetchall()
+            // domain = Domain(domain).optimize(self)
+            // query = self._search(domain, bypass_access=True)
+            // query.groupby = SQL("package_id")
+            // query.having = SQL("SUM(quantity - reserved_quantity) > 0")
+            // query.order = SQL("available_qty DESC")
+            // qty_by_package = self.env.execute_query(
+            //     query.select('package_id', 'SUM(quantity - reserved_quantity) AS available_qty'))
             // 
             // # Items that do not belong to a package are added individually to the list, any empty packages get removed.
             // pkg_found = False
@@ -1504,13 +1528,13 @@ namespace Bamboo.Core.Application.Services
             //         if pkg[0] is None:
             //             # Lazily retrieve ids for single items
             //             if not single_item_ids:
-            //                 single_item_ids = self.search(expression.AND([[('package_id', '=', None)], domain])).mapped('id')
+            //                 single_item_ids = self.search(Domain('package_id', '=', None) & domain).ids
             //             selected_single_items.append(single_item_ids.pop())
             // 
-            //     expr = [('package_id', 'in', [elem[0] for elem in node.taken_packages if elem[0] is not None])]
-            //     if selected_single_items:
-            //         expr = expression.OR([expr, [('id', 'in', selected_single_items)]])
-            //     return expression.AND([expr, domain])
+            //     return (
+            //         Domain('package_id', 'in', [elem[0] for elem in node.taken_packages if elem[0] is not None])
+            //         | Domain('id', 'in', selected_single_items)
+            //     ) & domain
             // 
             // Node = namedtuple("Node", "count_remaining taken_packages next_index")
             // 
@@ -1568,12 +1592,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _search(self, domain, *args, **kwargs):
-            // domain = [
-            //     ['lot_id', 'any', [line]]
-            //     if line and isinstance(line, (list, tuple)) and isinstance(line[0], str) and line[0].startswith('lot_properties.')
-            //     else line
-            //     for line in domain
-            // ]
+            // domain = Domain(domain).map_conditions(
+            //     lambda condition: Domain('lot_id', 'any', [condition]) if condition.field_expr.startswith('lot_properties.') else condition
+            // )
             // return super()._search(domain, *args, **kwargs)
             */
             return default;
@@ -1584,8 +1605,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _search_is_outdated(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
             // quant_ids = self.search([('inventory_quantity_set', '=', True)])
-            // quant_ids = quant_ids.filtered(lambda quant: float_compare(quant.inventory_quantity - quant.inventory_diff_quantity, quant.quantity, precision_rounding=quant.product_uom_id.rounding)).ids
+            // quant_ids = quant_ids.filtered(lambda quant: quant.product_uom_id.compare(quant.inventory_quantity - quant.inventory_diff_quantity, quant.quantity)).ids
             // return [('id', 'in', quant_ids)]
             */
             return default;
@@ -1596,10 +1619,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_quant.py) ---
             // def _search_is_subcontract(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_('Operation not supported'))
-            // 
-            // return [('location_id.is_subcontracting_location', operator, value)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // subcontracting_location_ids = self.env.companies.subcontracting_location_id.child_internal_location_ids.ids
+            // return [('location_id', operator, subcontracting_location_ids)]
             */
             return default;
         }
@@ -1610,15 +1633,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _search_on_hand(self, operator, value):
             // """Handle the "on_hand" filter, indirectly calling `_get_domain_locations`."""
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise UserError(_('Operation not supported'))
-            // domain_loc = self.env['product.product']._get_domain_locations()[0]
-            // quant_query = self.env['stock.quant']._search(domain_loc)
-            // if (operator == '!=' and value is True) or (operator == '=' and value is False):
-            //     domain_operator = 'not in'
-            // else:
-            //     domain_operator = 'in'
-            // return [('id', domain_operator, quant_query)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return self.env['product.product']._get_domain_locations()[0]
             */
             return default;
         }
@@ -1642,8 +1659,9 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'new',
             //         'context': ctx,
             //     }
-            // for quant in self:
-            //     quant.inventory_quantity = quant.quantity
+            // if not self.env.context.get('from_request_count'):
+            //     for quant in self:
+            //         quant.inventory_quantity = quant.quantity
             // self.user_id = self.env.user.id
             // self.inventory_quantity_set = True
             */
@@ -1666,7 +1684,7 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     quant.inventory_quantity = quant.inventory_quantity_auto_apply
             //     quant_to_inventory |= quant
-            // quant_to_inventory.with_context({'set_inventory_quantity_auto_apply': True}).action_apply_inventory()
+            // quant_to_inventory.action_apply_inventory()
             */
             return default;
         }
@@ -1676,7 +1694,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def action_set_inventory_quantity_zero(self):
-            // self.filtered(lambda l: not l.inventory_quantity).inventory_quantity = 0
+            // self.inventory_quantity = 0
+            // if self.env.context.get('inventory_report_mode'):
+            //     self._apply_inventory()
             // self.user_id = self.env.user.id
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1685,6 +1705,12 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockQuant> SetViewContextInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: stock_quant.py) ---
+            // def _set_view_context(self):
+            // self_with_context = self
+            // if self.env.context.get('default_product_id') and self.env['product.product'].browse(self.env.context.get('default_product_id')).use_expiration_date:
+            //     self_with_context = self.with_context(show_removal_date=True)
+            // return super(StockQuant, self_with_context)._set_view_context()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
             // def _set_view_context(self):
             // """ Adds context when opening quants related views. """
@@ -1779,7 +1805,7 @@ namespace Bamboo.Core.Application.Services
             // this method is often called in batch and each unlink invalidate
             // the cache. We defer the calls to unlink in this method.
             // """
-            // precision_digits = max(6, self.sudo().env.ref('product.decimal_product_uom').digits * 2)
+            // precision_digits = max(6, self.sudo().env.ref('uom.decimal_product_uom').digits * 2)
             // # Use a select instead of ORM search for UoM robustness.
             // query = """SELECT id FROM stock_quant WHERE (round(quantity::numeric, %s) = 0 OR quantity IS NULL)
             //                                              AND round(reserved_quantity::numeric, %s) = 0
@@ -1816,14 +1842,18 @@ namespace Bamboo.Core.Application.Services
             //     raise ValidationError(_('Quantity or Reserved Quantity should be set.'))
             // self = self.sudo()
             // quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=True)
-            // if lot_id and quantity > 0:
-            //     quants = quants.filtered(lambda q: q.lot_id)
+            // if lot_id:
+            //     if product_id.uom_id.compare(quantity, 0) > 0:
+            //         quants = quants.filtered(lambda q: q.lot_id)
+            //     else:
+            //         # Don't remove quantity from a negative quant without lot
+            //         quants = quants.filtered(lambda q: product_id.uom_id.compare(q.quantity, 0) > 0 or q.lot_id)
             // 
             // if location_id.should_bypass_reservation():
             //     incoming_dates = []
             // else:
             //     incoming_dates = [quant.in_date for quant in quants if quant.in_date and
-            //                       float_compare(quant.quantity, 0, precision_rounding=quant.product_uom_id.rounding) > 0]
+            //                       quant.product_uom_id.compare(quant.quantity, 0) > 0]
             // if in_date:
             //     incoming_dates += [in_date]
             // # If multiple incoming dates are available for a given lot_id/package_id/owner_id, we
@@ -1835,11 +1865,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // quant = None
             // if quants:
-            //     # see _acquire_one_job for explanations
-            //     self._cr.execute("SELECT id FROM stock_quant WHERE id IN %s ORDER BY lot_id LIMIT 1 FOR NO KEY UPDATE SKIP LOCKED", [tuple(quants.ids)])
-            //     stock_quant_result = self._cr.fetchone()
-            //     if stock_quant_result:
-            //         quant = self.browse(stock_quant_result[0])
+            //     # quants are already ordered in _gather
+            //     # lock the first available
+            //     quant = quants.try_lock_for_update(allow_referencing=True, limit=1)
             // 
             // if quant:
             //     vals = {'in_date': in_date}
@@ -1904,7 +1932,7 @@ namespace Bamboo.Core.Application.Services
             //     ctx['search_default_my_count'] = True
             // view_id = self.env.ref('stock.view_stock_quant_tree_inventory_editable').id
             // action = {
-            //     'name': _('Inventory Adjustments'),
+            //     'name': _('Physical Inventory'),
             //     'view_mode': 'list',
             //     'res_model': 'stock.quant',
             //     'type': 'ir.actions.act_window',
@@ -1972,22 +2000,6 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = literal_eval(action.get('context'))
             // action['context']['search_default_product_id'] = self.product_id.id
             // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<StockQuant> WarningDuplicatedSnAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
-            // def action_warning_duplicated_sn(self):
-            // return {
-            //     'name': _('Warning Duplicated SN'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'stock.quant',
-            //     'views': [(self.env.ref('stock.duplicated_sn_warning').id, 'form')],
-            //     'target': 'new',
-            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

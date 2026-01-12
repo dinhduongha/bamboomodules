@@ -28,18 +28,33 @@ namespace Bamboo.Core.Application.Services
             _productCatalogMixinAppService = productCatalogMixinAppService;
         }
 
+        public async Task<MrpBom> ArchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_archive(self):
+            // self.with_context(active_test=False).operation_ids.action_archive()
+            // return super().action_archive()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<MrpBom> BomFindDomainInternalAsync(object products, object picking_type, Guid company_id, object bom_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _bom_find_domain(self, products, picking_type=None, company_id=False, bom_type=False):
-            // domain = ['&', '|', ('product_id', 'in', products.ids), '&', ('product_id', '=', False), ('product_tmpl_id', 'in', products.product_tmpl_id.ids), ('active', '=', True)]
+            // domain = (
+            //     Domain('product_id', 'in', products.ids) | (
+            //         Domain('product_id', '=', False) & Domain('product_tmpl_id', 'in', products.product_tmpl_id.ids)
+            //     )
+            // ) & Domain('active', '=', True)
             // if company_id or self.env.context.get('company_id'):
-            //     domain = AND([domain, ['|', ('company_id', '=', False), ('company_id', '=', company_id or self.env.context.get('company_id'))]])
+            //     domain &= Domain('company_id', 'in', [False, company_id or self.env.context.get('company_id')])
             // if picking_type:
-            //     domain = AND([domain, ['|', ('picking_type_id', '=', picking_type.id), ('picking_type_id', '=', False)]])
+            //     domain &= Domain('picking_type_id', 'in', [picking_type.id, False])
             // if bom_type:
-            //     domain = AND([domain, [('type', '=', bom_type)]])
+            //     domain &= Domain('type', '=', bom_type)
             // return domain
             */
             return default;
@@ -90,7 +105,7 @@ namespace Bamboo.Core.Application.Services
             // def _bom_subcontract_find(self, product, picking_type=None, company_id=False, bom_type='subcontract', subcontractor=False):
             // domain = self._bom_find_domain(product, picking_type=picking_type, company_id=company_id, bom_type=bom_type)
             // if subcontractor:
-            //     domain = AND([domain, [('subcontractor_ids', 'parent_of', subcontractor.ids)]])
+            //     domain &= Domain('subcontractor_ids', 'parent_of', subcontractor.ids)
             //     return self.search(domain, order='sequence, product_id, id', limit=1)
             // else:
             //     return self.env['mrp.bom']
@@ -134,10 +149,10 @@ namespace Bamboo.Core.Application.Services
             // 
             // boms_to_check = self
             // if self.bom_line_ids.product_id:
-            //     boms_to_check |= self.search(OR([
+            //     boms_to_check |= self.search(Domain.OR(
             //         self._bom_find_domain(product)
             //         for product in self.bom_line_ids.product_id
-            //     ]))
+            //     ))
             // 
             // for bom in boms_to_check:
             //     if not bom.active:
@@ -192,8 +207,10 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     if any(bl.cost_share < 0 for bl in bom.bom_line_ids):
             //         raise UserError(_("Components cost share have to be positive or equals to zero."))
-            //     if float_compare(sum(bom.bom_line_ids.mapped('cost_share')), 100, precision_digits=2) != 0:
-            //         raise UserError(_("The total cost share for a BoM's component have to be 100"))
+            //     for product in bom.product_tmpl_id.product_variant_ids:
+            //         total_variant_cost_share = sum(bom.bom_line_ids.filtered(lambda bl: not bl._skip_bom_line(product) and not bl.product_uom_id.is_zero(bl.product_qty)).mapped('cost_share'))
+            //         if float_round(total_variant_cost_share, precision_digits=2) not in [0, 100]:
+            //             raise UserError(_("The total cost share for a BoM's component have to be 100"))
             // return res
             */
             return default;
@@ -219,6 +236,17 @@ namespace Bamboo.Core.Application.Services
             // def _check_subcontracting_no_operation(self):
             // if self.filtered_domain([('type', '=', 'subcontract'), '|', ('operation_ids', '!=', False), ('byproduct_ids', '!=', False)]):
             //     raise ValidationError(_('You can not set a Bill of Material with operations or by-product line as subcontracting.'))
+            */
+            return default;
+        }
+
+        protected async Task<MrpBom> CheckValidBatchSizeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _check_valid_batch_size(self):
+            // if any(bom.enable_batch_size and bom.product_uom_id.compare(bom.batch_size, 0.0) <= 0 for bom in self):
+            //     raise ValidationError(self.env._("The batch size must be positive!"))
             */
             return default;
         }
@@ -252,7 +280,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _compute_display_name(self):
             // for bom in self:
-            //     bom.display_name = f"{bom.code + ': ' if bom.code else ''}{bom.product_tmpl_id.display_name}"
+            //     display_name = f"{bom.code + ': ' if bom.code else ''}{bom.product_tmpl_id.display_name}"
+            //     if self.env.context.get('display_bom_uom_qty') and (bom.product_qty > 1 or bom.product_uom_id != bom.product_tmpl_id.uom_id):
+            //         display_name += f" ({bom.product_qty} {bom.product_uom_id.name})"
+            //     bom.display_name = _('%(display_name)s', display_name=display_name)
+            */
+            return default;
+        }
+
+        protected async Task<MrpBom> ComputeOperationCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _compute_operation_count(self):
+            // for bom in self:
+            //     bom.operation_count = len(bom.operation_ids)
             */
             return default;
         }
@@ -264,6 +306,22 @@ namespace Bamboo.Core.Application.Services
             // def _compute_possible_product_template_attribute_value_ids(self):
             // for bom in self:
             //     bom.possible_product_template_attribute_value_ids = bom.product_tmpl_id.valid_product_template_attribute_line_ids.product_template_value_ids._only_active()
+            */
+            return default;
+        }
+
+        protected async Task<MrpBom> ComputeShowSetBomButtonInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _compute_show_set_bom_button(self):
+            // self.show_set_bom_button = True
+            // orderpoint_id = self.env.context.get('orderpoint_id', self.env.context.get('default_orderpoint_id'))
+            // if orderpoint_id:
+            //     orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
+            //     self.filtered(
+            //         lambda s: s.id == orderpoint.bom_id.id
+            //     ).show_set_bom_button = False
             */
             return default;
         }
@@ -288,7 +346,7 @@ namespace Bamboo.Core.Application.Services
             // def _ensure_bom_is_free(self):
             // product_ids = []
             // for bom in self:
-            //     if bom.type != 'phantom':
+            //     if not bom.active or bom.type != 'phantom':
             //         continue
             //     product_ids += bom.product_id.ids or bom.product_tmpl_id.product_variant_ids.ids
             // if not product_ids:
@@ -328,7 +386,7 @@ namespace Bamboo.Core.Application.Services
             //     for product in products:
             //         product_boms.setdefault(product, self.env['mrp.bom'])
             // 
-            // boms_done = [(self, {'qty': quantity, 'product': product, 'original_qty': quantity, 'parent_line': False})]
+            // boms_done = [(self, self.env['mrp.bom.line']._prepare_bom_done_values(quantity, product, quantity, []))]
             // lines_done = []
             // 
             // bom_lines = []
@@ -358,17 +416,30 @@ namespace Bamboo.Core.Application.Services
             //         for bom_line in bom.bom_line_ids:
             //             if bom_line.product_id not in product_boms:
             //                 product_ids.add(bom_line.product_id.id)
-            //         boms_done.append((bom, {'qty': converted_line_quantity, 'product': current_product, 'original_qty': quantity, 'parent_line': current_line}))
+            //         boms_done.append((bom, current_line._prepare_bom_done_values(converted_line_quantity, current_product, quantity, boms_done)))
             //     else:
             //         # We round up here because the user expects that if he has to consume a little more, the whole UOM unit
             //         # should be consumed.
-            //         rounding = current_line.product_uom_id.rounding
-            //         line_quantity = float_round(line_quantity, precision_rounding=rounding, rounding_method='UP')
-            //         lines_done.append((current_line, {'qty': line_quantity, 'product': current_product, 'original_qty': quantity, 'parent_line': parent_line}))
+            //         line_quantity = current_line.product_uom_id.round(line_quantity, rounding_method='UP')
+            //         lines_done.append((current_line, current_line._prepare_line_done_values(line_quantity, current_product, quantity, parent_line, boms_done)))
             // 
+            // lines_done = self._round_last_line_done(lines_done)
             // return boms_done, lines_done
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<MrpBom> GetActionAddFromCatalogExtraContextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _get_action_add_from_catalog_extra_context(self):
+            // return {
+            //     **super()._get_action_add_from_catalog_extra_context(),
+            //     'product_catalog_currency_id': self.env.company.currency_id.id,
+            // }
+            */
+            return default;
         }
 
         protected async Task<MrpBom> GetDefaultProductUomIdInternalAsync()
@@ -386,24 +457,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _get_extra_attachments(self):
-            // final_domain = []
-            // bom_domain = [('attached_on_mrp', '=', 'bom')]
             // is_byproduct = self.env.user.has_group('mrp.group_mrp_byproducts')
+            // product_ids, template_ids = OrderedSet(), OrderedSet()
             // for bom in self:
-            //     product_subdomain = ['|',
-            //         '&', ('res_model', '=', 'product.product'), ('res_id', '=', bom.product_id.id),
-            //         '&', ('res_model', '=', 'product.template'), ('res_id', '=', bom.product_tmpl_id.id)]
+            //     product_ids.add(bom.product_id.id)
+            //     template_ids.add(bom.product_tmpl_id.id)
             //     if is_byproduct:
-            //         product_domain = OR([product_subdomain, [
-            //             '|',
-            //             '&', ('res_model', '=', 'product.product'), ('res_id', 'in', bom.byproduct_ids.product_id.ids),
-            //             '&', ('res_model', '=', 'product.template'), ('res_id', 'in', bom.byproduct_ids.product_id.product_tmpl_id.ids)]])
-            //     else:
-            //         product_domain = product_subdomain
-            //     prod_final_domain = AND([bom_domain, product_domain])
-            //     final_domain = OR([final_domain, prod_final_domain]) if final_domain else prod_final_domain
+            //         product_ids.update(bom.byproduct_ids.product_id.ids)
+            //         template_ids.update(bom.byproduct_ids.product_id.product_tmpl_id.ids)
             // 
-            // attachements = self.env['product.document'].search(final_domain).ir_attachment_id
+            // domain = Domain('attached_on_mrp', '=', 'bom') & (
+            //     (Domain('res_model', '=', 'product.product') & Domain('res_id', 'in', product_ids))
+            //     | (Domain('res_model', '=', 'product.template') & Domain('res_id', 'in', template_ids))
+            // )
+            // attachements = self.env['product.document'].search(domain).ir_attachment_id
             // return attachements
             */
             return default;
@@ -446,11 +513,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpBom> GetProductCatalogRecordLinesInternalAsync(List<Guid> product_ids, object child_field)
+        protected async Task<MrpBom> GetProductCatalogRecordLinesInternalAsync(List<Guid> product_ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def _get_product_catalog_record_lines(self, product_ids, child_field=False, **kwargs):
+            // def _get_product_catalog_record_lines(self, product_ids, *, child_field=False, **kwargs):
             // if not child_field:
             //     return {}
             // lines = self[child_field].filtered(lambda line: line.product_id.id in product_ids)
@@ -531,7 +598,7 @@ namespace Bamboo.Core.Application.Services
             //     }
             //     default_uom_id = self.env.context.get('default_product_uom_id')
             //     # Avoids updating the BoM's UoM in case a specific UoM was passed through as a default value.
-            //     if self.product_uom_id.category_id != self.product_tmpl_id.uom_id.category_id or self.product_uom_id.id != default_uom_id:
+            //     if self.product_uom_id.id != default_uom_id:
             //         self.product_uom_id = self.product_tmpl_id.uom_id.id
             //     if self.product_id.product_tmpl_id != self.product_tmpl_id:
             //         self.product_id = False
@@ -551,18 +618,66 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MrpBom> OnchangeProductUomIdAsync(Guid id)
+        public async Task<MrpBom> OpenOperationFormAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def onchange_product_uom_id(self):
-            // res = {}
-            // if not self.product_uom_id or not self.product_tmpl_id:
+            // def action_open_operation_form(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mrp.routing.workcenter',
+            //     'context': {
+            //         'default_bom_id': self.id,
+            //         'search_default_bom_id': self.id,
+            //         'bom_id_invisible': True,
+            //     },
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<MrpBom> RoundLastLineDoneInternalAsync(object lines_done)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def _round_last_line_done(self, lines_done):
+            // return lines_done
+            --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_bom.py) ---
+            // def _round_last_line_done(self, lines_done):
+            // result = super()._round_last_line_done(lines_done)
+            // if result:
+            //     result[-1][1]['line_cost_share'] = float_round(100.0 - sum(vals.get('line_cost_share', 0.0) for _, vals in result[:-1]), precision_digits=2)
+            // return result
+            */
+            return default;
+        }
+
+        public async Task<MrpBom> SetBomOnOrderpointAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_set_bom_on_orderpoint(self):
+            // self.ensure_one()
+            // orderpoint_id = self.env.context.get('orderpoint_id')
+            // if not orderpoint_id:
             //     return
-            // if self.product_uom_id.category_id.id != self.product_tmpl_id.uom_id.category_id.id:
-            //     self.product_uom_id = self.product_tmpl_id.uom_id.id
-            //     res['warning'] = {'title': _('Warning'), 'message': _('The Product Unit of Measure you chose has a different category than in the product form.')}
-            // return res
+            // orderpoint = self.env['stock.warehouse.orderpoint'].browse(orderpoint_id)
+            // if 'manufacture' not in orderpoint.route_id.rule_ids.mapped('action'):
+            //     domain = Domain.AND([
+            //         [('action', '=', 'manufacture')],
+            //         Domain.OR([
+            //             [('company_id', '=', orderpoint.company_id.id)],
+            //             [('company_id', '=', False)],
+            //         ]),
+            //     ])
+            //     orderpoint.route_id = self.env['stock.rule'].search(domain, limit=1).route_id.id
+            // orderpoint.bom_id = self
+            // bom_qty = self.product_uom_id._compute_quantity(self.product_qty, orderpoint.product_id.uom_id)
+            // if orderpoint.qty_to_order < bom_qty:
+            //     orderpoint.qty_to_order = bom_qty
+            // return orderpoint.action_stock_replenishment_info()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -572,21 +687,22 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
             // def _set_outdated_bom_in_productions(self):
+            // if not self:
+            //     return
             // # Searches for MOs using these BoMs to notify them that their BoM has been updated.
             // list_of_domain_by_bom = []
             // for bom in self:
-            //     domain_by_products = [('product_id', 'in', bom.product_tmpl_id.product_variant_ids.ids)]
             //     if bom.product_id:
-            //         domain_by_products = [('product_id', '=', bom.product_id.id)]
-            //     domain_for_confirmed_mo = AND([[('state', '=', 'confirmed')], domain_by_products])
+            //         domain_by_products = Domain('product_id', '=', bom.product_id.id)
+            //     else:
+            //         domain_by_products = Domain('product_id', 'in', bom.product_tmpl_id.product_variant_ids.ids)
+            //     domain_for_confirmed_mo = Domain('state', '=', 'confirmed') & domain_by_products
             //     # Avoid confirmed MOs if the BoM's product was changed.
-            //     domain_by_states = OR([[('state', '=', 'draft')], domain_for_confirmed_mo])
-            //     list_of_domain_by_bom.append(AND([[('bom_id', '=', bom.id)], domain_by_states]))
-            // if list_of_domain_by_bom:
-            //     domain = OR(list_of_domain_by_bom)
-            //     productions = self.env['mrp.production'].search(domain)
-            //     if productions:
-            //         productions.is_outdated_bom = True
+            //     domain_by_states = Domain('state', '=', 'draft') | domain_for_confirmed_mo
+            //     list_of_domain_by_bom.append(Domain('bom_id', '=', bom.id) & domain_by_states)
+            // productions = self.env['mrp.production'].search(Domain.OR(list_of_domain_by_bom))
+            // if productions:
+            //     productions.is_outdated_bom = True
             */
             return default;
         }
@@ -636,17 +752,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpBom> ToggleActiveAsync(Guid id)
+        public async Task<MrpBom> UnarchiveAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def toggle_active(self):
-            // self.with_context({'active_test': False}).operation_ids.toggle_active()
-            // return super().toggle_active()
-            --- ODOO METHOD SOURCE (MODULE: sale_mrp, FILE: mrp_bom.py) ---
-            // def toggle_active(self):
-            // self.filtered(lambda bom: bom.active)._ensure_bom_is_free()
-            // return super().toggle_active()
+            // def action_unarchive(self):
+            // self.with_context(active_test=False).operation_ids.action_unarchive()
+            // return super().action_unarchive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -673,11 +785,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpBom> UpdateOrderLineInfoInternalAsync(Guid product_id, object quantity, object child_field)
+        protected async Task<MrpBom> UpdateOrderLineInfoInternalAsync(Guid product_id, object quantity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def _update_order_line_info(self, product_id, quantity, child_field=False, **kwargs):
+            // def _update_order_line_info(self, product_id, quantity, *, child_field=False, **kwargs):
             // if not child_field:
             //     return 0
             // entity = self[child_field].filtered(lambda line: line.product_id.id == product_id)
@@ -712,7 +824,7 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_mrp, FILE: mrp_bom.py) ---
             // def write(self, vals):
-            // if 'phantom' in self.mapped('type') and vals.get('type', 'phantom') != 'phantom':
+            // if not vals.get('active', True) or ('phantom' in self.mapped('type') and vals.get('type', 'phantom') != 'phantom'):
             //     self._ensure_bom_is_free()
             // return super().write(vals)
             */

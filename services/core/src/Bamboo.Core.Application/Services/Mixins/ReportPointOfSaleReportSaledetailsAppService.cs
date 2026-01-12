@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("point_of_sale", Category = "Sales", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
+    [Module("point_of_sale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public class ReportPointOfSaleReportSaledetailsAppService : ApplicationService, IReportPointOfSaleReportSaledetailsAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -33,7 +33,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     date_start = fields.Datetime.from_string(date_start)
             // else:
             //     # start by default today 00:00:00
-            //     user_tz = pytz.timezone(self.env.context.get('tz') or self.env.user.tz or 'UTC')
+            //     user_tz = self.env.tz
             //     today = user_tz.localize(fields.Datetime.from_string(fields.Date.context_today(self)))
             //     date_start = today.astimezone(pytz.timezone('UTC')).replace(tzinfo=None)
             // 
@@ -56,20 +56,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: report_sale_details.py) ---
             // def _get_domain(self, date_start=False, date_stop=False, config_ids=False, session_ids=False):
-            // domain = [('state', 'in', ['paid', 'invoiced', 'done'])]
+            // domain = Domain('state', 'in', ['paid', 'done'])
             // 
             // if (session_ids):
-            //     domain = AND([domain, [('session_id', 'in', session_ids)]])
+            //     domain &= Domain('session_id', 'in', session_ids)
             // else:
             //     date_start, date_stop = self._get_date_start_and_date_stop(date_start, date_stop)
             // 
-            //     domain = AND([domain,
-            //         [('date_order', '>=', fields.Datetime.to_string(date_start)),
-            //         ('date_order', '<=', fields.Datetime.to_string(date_stop))]
-            //     ])
+            //     domain &= Domain('date_order', '>=', fields.Datetime.to_string(date_start))
+            //     domain &= Domain('date_order', '<=', fields.Datetime.to_string(date_stop))
             // 
             //     if config_ids:
-            //         domain = AND([domain, [('config_id', 'in', config_ids)]])
+            //         domain &= Domain('config_id', 'in', config_ids)
             // 
             // return domain
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: single_employee_sales_report.py) ---
@@ -77,7 +75,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // domain = super()._get_domain(config_ids=config_ids, session_ids=session_ids)
             // 
             // if (employee_id):
-            //     domain = AND([domain, [('employee_id', '=', employee_id)]])
+            //     domain = Domain.AND([domain, [('employee_id', '=', employee_id)]])
             // 
             // return domain
             */
@@ -103,10 +101,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // key1 = line.product_id.product_tmpl_id.pos_categ_ids[0].name if len(line.product_id.product_tmpl_id.pos_categ_ids) else _('Not Categorized')
             // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
             // products.setdefault(key1, {})
-            // products[key1].setdefault(key2, [0.0, 0.0, 0.0])
-            // products[key1][key2][0] = round(products[key1][key2][0] + line.qty, precision)
+            // products[key1].setdefault(key2, [0.0, 0.0, 0.0, ''])
+            // products[key1][key2][0] = round(products[key1][key2][0] + abs(line.qty), precision)
             // products[key1][key2][1] += self._get_product_total_amount(line)
             // products[key1][key2][2] += line.price_subtotal
+            // 
+            // # Name of each combo products along with the combo
+            // if line.combo_line_ids:
+            //     combo_products_label = ' (' + ", ".join(line.combo_line_ids.product_id.mapped('name')) + ')'
+            //     products[key1][key2][3] = combo_products_label
             // 
             // if line.tax_ids_after_fiscal_position:
             //     line_taxes = line.tax_ids_after_fiscal_position.sudo().compute_all(line.price_unit * (1-(line.discount or 0.0)/100.0), currency, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
@@ -122,7 +125,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     taxes['taxes'].setdefault(0, {'name': _('No Taxes'), 'tax_amount': 0.0, 'base_amount': 0.0})
             //     taxes['taxes'][0]['base_amount'] += line.price_subtotal_incl
             // 
-            // taxes['base_amount'] += line.price_subtotal
+            // refund_sign = -1 if line.order_id.is_refund else 1
+            // taxes['base_amount'] += line.price_subtotal * refund_sign
             // return products, taxes
             */
             return default;
@@ -201,7 +205,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     currency = order.session_id.currency_id
             // 
             //     for line in order.lines:
-            //         if line.qty >= 0:
+            //         if not line.order_id.is_refund:
             //             products_sold, taxes = self._get_products_and_taxes_dict(line, products_sold, taxes, currency)
             //         else:
             //             refund_done, refund_taxes = self._get_products_and_taxes_dict(line, refund_done, refund_taxes, currency)
@@ -222,6 +226,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         WHERE payment.payment_method_id = method.id
             //             AND payment.id IN %(payment_ids)s
             //         GROUP BY method.name, method.is_cash_count, payment.session_id, method.id, journal_id
+            //         ORDER BY method.id, payment.session_id
             //     """, method_name=method_name, payment_ids=tuple(payment_ids)))
             //     payments = self.env.cr.dictfetchall()
             // else:
@@ -350,15 +355,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'name': category_name,
             //         'products': sorted([{
             //             'product_id': product.id,
-            //             'product_name': product.name,
-            //             'code': product.default_code,
+            //             'product_name': product.display_name,
+            //             'barcode': product.barcode,
             //             'quantity': qty,
             //             'price_unit': price_unit,
             //             'discount': discount,
             //             'uom': product.uom_id.name,
             //             'total_paid': product_total,
             //             'base_amount': base_amount,
-            //         } for (product, price_unit, discount), (qty, product_total, base_amount) in product_list.items()], key=lambda l: l['product_name']),
+            //             'combo_products_label': combo_products_label,
+            //         } for (product, price_unit, discount), (qty, product_total, base_amount, combo_products_label) in product_list.items()], key=lambda l: l['product_name']),
             //     }
             //     products.append(category_dictionnary)
             // products = sorted(products, key=lambda l: str(l['name']))
@@ -368,15 +374,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'name': category_name,
             //         'products': sorted([{
             //             'product_id': product.id,
-            //             'product_name': product.name,
-            //             'code': product.default_code,
+            //             'product_name': product.display_name,
+            //             'barcode': product.barcode,
             //             'quantity': qty,
             //             'price_unit': price_unit,
             //             'discount': discount,
             //             'uom': product.uom_id.name,
             //             'total_paid': product_total,
             //             'base_amount': base_amount,
-            //         } for (product, price_unit, discount), (qty, product_total, base_amount) in product_list.items()], key=lambda l: l['product_name']),
+            //             'combo_products_label': combo_products_label,
+            //         } for (product, price_unit, discount), (qty, product_total, base_amount, combo_products_label) in product_list.items()], key=lambda l: l['product_name']),
             //     }
             //     refund_products.append(category_dictionnary)
             // refund_products = sorted(refund_products, key=lambda l: str(l['name']))
@@ -418,10 +425,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     })
             //     invoiceTotal += session._get_total_invoice()
             //     totalPaymentsAmount += session.total_payments_amount
-            // 
+            // payments_per_method = {}
             // for payment in payments:
             //     if payment.get('id'):
-            //         payment['name'] = self.env['pos.payment.method'].browse(payment['id']).name + ' ' + self.env['pos.session'].browse(payment['session']).name
+            //         method_name = self.env['pos.payment.method'].browse(payment['id']).name
+            //         payment['name'] = method_name + ' ' + self.env['pos.session'].browse(payment['session']).name
+            //         if payments_per_method.get(payment['id']):
+            //             payments_per_method[payment['id']]['total'] += payment['total']
+            //         else:
+            //             payments_per_method[payment['id']] = {
+            //                 'name': method_name,
+            //                 'total': payment['total'],
+            //             }
             // 
             // return {
             //     'opening_note': sessions[0].opening_notes if len(sessions) == 1 else False,
@@ -448,6 +463,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'invoiceList': invoiceList,
             //     'invoiceTotal': invoiceTotal,
             //     'total_paid': totalPaymentsAmount,
+            //     'payments_per_method': payments_per_method.values(),
+            //     'show_payment_per_method': not session_ids,
             // }
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: single_employee_sales_report.py) ---
             // def get_sale_details(self, date_start=False, date_stop=False, config_ids=False, session_ids=False, employee_id=False):

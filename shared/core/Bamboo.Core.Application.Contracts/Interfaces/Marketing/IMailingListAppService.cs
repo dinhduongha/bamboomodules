@@ -10,7 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailingListAppService : IGenericApplicationService<MailingList>
     {
-        Task<MailingList> CloseDialogAsync(Guid id);
         Task<MailingList> CopyDataAsync(Guid id, MailingListCopyDataRequestDto input);
         Task<MailingList> MergeAsync(Guid id, MailingListMergeRequestDto input);
         Task<MailingList> OpenImportAsync(Guid id);

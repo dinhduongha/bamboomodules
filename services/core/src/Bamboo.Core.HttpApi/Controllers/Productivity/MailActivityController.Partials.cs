@@ -91,10 +91,26 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-snooze")]
-        public async Task<IActionResult> ActionSnoozeAsync(Guid id)
+        [Route("{id}/action-reschedule-nextweek")]
+        public async Task<IActionResult> ActionRescheduleNextweekAsync(Guid id)
         {
-            var result = await _appService.SnoozeAsync(id);
+            var result = await _appService.RescheduleNextweekAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-reschedule-today")]
+        public async Task<IActionResult> ActionRescheduleTodayAsync(Guid id)
+        {
+            var result = await _appService.RescheduleTodayAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-reschedule-tomorrow")]
+        public async Task<IActionResult> ActionRescheduleTomorrowAsync(Guid id)
+        {
+            var result = await _appService.RescheduleTomorrowAsync(id);
             return Ok(result);
         }
         

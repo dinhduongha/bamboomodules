@@ -32,19 +32,19 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _action_user_cancel(self, reason):
+            // def _action_user_cancel(self, reason=None):
             // self.ensure_one()
             // if not self.can_cancel:
             //     raise ValidationError(_('This time off cannot be cancelled.'))
             // 
             // self._force_cancel(reason, 'mail.mt_note')
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
-            // def _action_user_cancel(self, reason):
+            // def _action_user_cancel(self, reason=None):
             // res = super()._action_user_cancel(reason)
             // self.sudo()._regen_work_entries()
             // return res
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
-            // def _action_user_cancel(self, reason):
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
+            // def _action_user_cancel(self, reason=None):
             // res = super()._action_user_cancel(reason)
             // timesheets = self.sudo().timesheet_ids
             // timesheets.write({'holiday_id': False})
@@ -55,13 +55,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrLeave> ActionValidateInternalAsync(object check_state)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _action_validate(self, check_state=True):
+            // current_employee = self.env.user.employee_id
+            // leaves = self._get_leaves_on_public_holiday()
+            // if check_state and any(not holiday.can_validate for holiday in self):
+            //     raise UserError(_('You can\'t validate this leave.'))
+            // if leaves:
+            //     raise ValidationError(_('The following employees are not supposed to work during that period:\n %s') % ','.join(leaves.mapped('employee_id.name')))
+            // 
+            // self.write({'state': 'validate'})
+            // 
+            // leaves_second_approver = self.env['hr.leave']
+            // leaves_first_approver = self.env['hr.leave']
+            // 
+            // for leave in self:
+            //     if leave.validation_type == 'both':
+            //         leaves_second_approver += leave
+            //     else:
+            //         leaves_first_approver += leave
+            // 
+            // leaves_second_approver.write({'second_approver_id': current_employee.id})
+            // leaves_first_approver.write({'first_approver_id': current_employee.id})
+            // 
+            // self._validate_leave_request()
+            // if not self.env.context.get('leave_fast_create'):
+            //     self.filtered(lambda holiday: holiday.validation_type != 'no_validation').activity_update()
+            // return True
+            */
+            return default;
+        }
+
         public async Task<HrLeave> ActivityUpdateAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def activity_update(self):
             // if self.env.context.get('mail_activity_automation_skip'):
-            //     return False
+            //     return
             // 
             // to_clean, to_do, to_do_confirm_activity = self.env['hr.leave'], self.env['hr.leave'], self.env['hr.leave']
             // activity_vals = []
@@ -108,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             //     elif holiday.state in ['refuse', 'cancel']:
             //         to_clean |= holiday
             // if to_clean:
-            //     to_clean.activity_unlink(['hr_holidays.mail_act_leave_approval', 'hr_holidays.mail_act_leave_second_approval'])
+            //     to_clean.activity_unlink(self._get_to_clean_activities(), only_automated=False)
             // if to_do_confirm_activity:
             //     to_do_confirm_activity.activity_feedback(['hr_holidays.mail_act_leave_approval'])
             // if to_do:
@@ -135,35 +169,39 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def action_approve(self, check_state=True):
-            // # if validation_type == 'both': this method is the first approval approval
-            // # if validation_type != 'both': this method calls action_validate() below
-            // 
-            // # Do not check the state in case we are redirected from the dashboard
-            // if check_state and any(holiday.state != 'confirm' for holiday in self):
-            //     raise UserError(_('Time off request must be confirmed ("To Approve") in order to approve it.'))
-            // 
             // current_employee = self.env.user.employee_id
-            // self.filtered(lambda hol: hol.validation_type == 'both').write({'state': 'validate1', 'first_approver_id': current_employee.id})
-            // 
-            // self.filtered(lambda hol: hol.validation_type != 'both').action_validate(check_state)
+            // leave_to_approve = self.env['hr.leave']
+            // leave_to_validate = self.env['hr.leave']
+            // for leave in self:
+            //     if check_state and leave.can_validate or not check_state and leave.validation_type != "both":
+            //         leave_to_validate += leave
+            //     elif check_state and leave.can_approve or not check_state and leave.validation_type == 'both':
+            //         leave_to_approve += leave
+            //     else:
+            //         raise UserError(self.env._('You cannot approve this leave.'))
+            // leave_to_approve.write({'state': 'validate1', 'first_approver_id': current_employee.id})
+            // leave_to_validate._action_validate(check_state)
             // if not self.env.context.get('leave_fast_create'):
             //     self.activity_update()
             // return True
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
+            // def action_approve(self, check_state=True):
+            // res = super().action_approve(check_state)
+            // self._check_overtime_deductible(self)
+            // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<HrLeave> AutoInitInternalAsync()
+        public async Task<HrLeave> BackToApprovalAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _auto_init(self):
-            // res = super(HolidaysRequest, self)._auto_init()
-            // tools.create_index(self._cr, 'hr_leave_date_to_date_from_index',
-            //                    self._table, ['date_to', 'date_from'])
-            // return res
+            // def action_back_to_approval(self):
+            // self.filtered(lambda l: l.can_back_to_approve)._move_validate_leave_to_confirm()
+            // return True
             */
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<HrLeave> CancelAsync(Guid id)
@@ -182,6 +220,7 @@ namespace Bamboo.Core.Application.Services
             //     'views': [[False, 'form']],
             //     'context': {
             //         'default_leave_id': self.id,
+            //         'dialog_size': "medium",
             //     }
             // }
             */
@@ -251,12 +290,16 @@ namespace Bamboo.Core.Application.Services
             // # 1. Create a work entry for each leave
             // work_entries_vals_list = []
             // for leave in self:
-            //     contracts = leave.employee_id.sudo()._get_contracts(leave.date_from, leave.date_to, states=['open', 'close'])
+            //     contracts = leave.employee_id.sudo()._get_versions_with_contract_overlap_with_period(leave.date_from.date(), leave.date_to.date())
             //     for contract in contracts:
             //         # Generate only if it has aleady been generated
             //         if leave.date_to >= contract.date_generated_from and leave.date_from <= contract.date_generated_to:
-            //             work_entries_vals_list += contracts._get_work_entries_values(leave.date_from, leave.date_to)
+            //             work_entries_vals_list += contracts._get_work_entries_values(
+            //                 datetime.combine(leave.date_from, time.min),
+            //                 datetime.combine(leave.date_to, time.max),
+            //             )
             // 
+            // work_entries_vals_list = self.env['hr.version']._generate_work_entries_postprocess(work_entries_vals_list)
             // new_leave_work_entries = self.env['hr.work.entry'].create(work_entries_vals_list)
             // 
             // if new_leave_work_entries:
@@ -264,8 +307,8 @@ namespace Bamboo.Core.Application.Services
             //     start = min(self.mapped('date_from'), default=False)
             //     stop = max(self.mapped('date_to'), default=False)
             //     work_entry_groups = self.env['hr.work.entry']._read_group([
-            //         ('date_start', '<', stop),
-            //         ('date_stop', '>', start),
+            //         ('date', '<=', stop),
+            //         ('date', '>=', start),
             //         ('employee_id', 'in', self.employee_id.ids),
             //     ], ['employee_id'], ['id:recordset'])
             //     work_entries_by_employee = {
@@ -291,61 +334,72 @@ namespace Bamboo.Core.Application.Services
             // 
             //         overlappping |= self.env['hr.work.entry']._from_intervals(outside_intervals)
             //         included |= previous_employee_work_entries - overlappping
-            //     overlappping.write({'leave_id': False})
-            //     included.write({'active': False})
+            //     overlappping.filtered(lambda entry: entry.state != 'validated').write({'leave_id': False})
+            //     included.filtered(lambda entry: entry.state != 'validated').write({'active': False})
             */
             return default;
         }
 
-        protected async Task<HrLeave> CheckApprovalUpdateInternalAsync(object state)
+        protected async Task<HrLeave> CheckApprovalUpdateInternalAsync(object state, object raise_if_not_possible)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _check_approval_update(self, state):
-            // """ Check if target state is achievable. """
-            // if self.env.is_superuser():
-            //     return
+            // def _check_approval_update(self, state, raise_if_not_possible=True):
+            //         """ Check if target state is achievable. """
+            //         if self.env.is_superuser():
+            //             return True
             // 
-            // current_employee = self.env.user.employee_id
-            // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // is_manager = self.env.user.has_group('hr_holidays.group_hr_holidays_manager')
+            //         is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
             // 
-            // for holiday in self:
-            //     val_type = holiday.validation_type
-            // 
-            //     if not is_manager:
-            //         if holiday.state == 'cancel' and state != 'confirm':
-            //             raise UserError(_('A cancelled leave cannot be modified.'))
-            //         if state == 'confirm':
-            //             if holiday.state == 'refuse':
-            //                 raise UserError(_('Only a Time Off Manager can reset a refused leave.'))
-            //             if holiday.date_from and holiday.date_from.date() <= fields.Date.today():
-            //                 raise UserError(_('Only a Time Off Manager can reset a started leave.'))
-            //             if holiday.employee_id != current_employee:
-            //                 raise UserError(_('Only a Time Off Manager can reset other people leaves.'))
-            //         else:
-            //             if val_type == 'no_validation' and current_employee == holiday.employee_id and (is_officer or is_manager):
-            //                 continue
-            //             # use ir.rule based first access check: department, members, ... (see security.xml)
-            //             holiday.check_access('write')
-            // 
-            //             # This handles states validate1 validate and refuse
-            //             if holiday.employee_id == current_employee\
-            //                     and self.env.user != holiday.employee_id.leave_manager_id\
-            //                     and not is_officer:
-            //                 raise UserError(_('Only a Time Off Officer or Manager can approve/refuse its own requests.'))
-            // 
-            //             if (state == 'validate1' and val_type == 'both'):
-            //                 if not is_officer and self.env.user != holiday.employee_id.leave_manager_id:
-            //                     raise UserError(_('You must be either %s\'s manager or Time off Manager to approve this leave') % (holiday.employee_id.name))
-            // 
-            //             if (state == 'validate' and val_type == 'manager')\
-            //                     and self.env.user != holiday.employee_id.leave_manager_id\
-            //                     and not is_officer:
-            //                 raise UserError(_("You must be %s's Manager to approve this leave", holiday.employee_id.name))
-            // 
-            //             if not is_officer and (state == 'validate' and val_type == 'hr'):
-            //                 raise UserError(_('You must either be a Time off Officer or Time off Manager to approve this leave'))
+            //         for holiday in self:
+            //             is_time_off_manager = holiday.employee_id.leave_manager_id == self.env.user
+            //             dict_all_possible_state = holiday._get_next_states_by_state()
+            //             validation_type = holiday.validation_type
+            //             error_message = ""
+            //             # Standard Check
+            //             if holiday.state == state:
+            //                 error_message = self.env._('You can\'t do the same action twice.')
+            //             elif state == 'validate1' and validation_type != 'both':
+            //                 error_message = self.env._('Not possible state. State Approve is only used for leave needed 2 approvals')
+            //             elif holiday.state == 'cancel':
+            //                 error_message = self.env._('A cancelled leave cannot be modified.')
+            //             elif state not in dict_all_possible_state.get(holiday.state, {}):
+            //                 if state == 'cancel':
+            //                     error_message = self.env._('You can only cancel your own leave. You can cancel a leave only if this leave \
+            // is approved, validated or refused.')
+            //                 elif state == 'confirm':
+            //                     error_message = self.env._('You can\'t reset a leave. Cancel/delete this one and create an other')
+            //                 elif state == 'validate1':
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can approve a leave.')
+            //                     else:
+            //                         error_message = self.env._('You can\'t approve a validated leave.')
+            //                 elif state == "validate":
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can validate a leave.')
+            //                     elif holiday.state == "refuse":
+            //                         error_message = self.env._('You can\'t approve this refused leave.')
+            //                     else:
+            //                         error_message = self.env._('You can only validate a leave with validation by Time Off Manager.')
+            //                 elif state == "refuse":
+            //                     if not is_time_off_manager:
+            //                         error_message = self.env._('Only a Time Off Officer/Manager can refuse a leave.')
+            //                     else:
+            //                         error_message = self.env._('You can\'t refuse a leave with validation by Time Off Officer.')
+            //             elif state != "cancel":
+            //                 try:
+            //                     holiday.check_access('write')
+            //                 except UserError as e:
+            //                     if raise_if_not_possible:
+            //                         raise UserError(e)
+            //                     return False
+            //                 else:
+            //                     continue
+            //             if error_message:
+            //                 if raise_if_not_possible:
+            //                     raise UserError(error_message)
+            //                 return False
+            //         return True
             */
             return default;
         }
@@ -353,7 +407,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrLeave> CheckContractsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_contract, FILE: hr_leave.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _check_contracts(self):
             //         """
             //             A leave cannot be set across multiple contracts.
@@ -362,27 +416,25 @@ namespace Bamboo.Core.Application.Services
             //             contracts are later modifed/created in the middle of the leave.
             //         """
             //         for holiday in self.filtered('employee_id'):
-            //             contracts = holiday._get_overlapping_contracts()
-            //             if len(contracts.resource_calendar_id) > 1:
-            //                 state_labels = {e[0]: e[1] for e in contracts._fields['state']._description_selection(self.env)}
+            //             versions = holiday._get_overlapping_contracts()
+            //             if len(versions.resource_calendar_id) > 1:
             //                 raise ValidationError(
-            //                     _("""A leave cannot be set across multiple contracts with different working schedules.
+            //                     self.env._("""A leave cannot be set across multiple versions with different working schedules.
             // 
-            // Please create one time off for each contract.
+            // Please create one time off for each version period.
             // 
             // Time off:
             // %(time_off)s
             // 
-            // Contracts:
-            // %(contracts)s""",
+            // Versions:
+            // %(versions)s""",
             //                       time_off=holiday.display_name,
-            //                       contracts='\n'.join(_(
-            //                           "Contract %(contract)s from %(start_date)s to %(end_date)s, status: %(status)s",
-            //                           contract=contract.name,
-            //                           start_date=format_date(self.env, contract.date_start),
-            //                           end_date=format_date(self.env, contract.date_end) if contract.date_end else _("undefined"),
-            //                           status=state_labels[contract.state]
-            //                       ) for contract in contracts)))
+            //                       versions='\n'.join(_(
+            //                           "- '%(version)s' from %(start_date)s to %(end_date)s",
+            //                           version=version.name or version.employee_id.name,
+            //                           start_date=format_date(self.env, version.date_start),
+            //                           end_date=format_date(self.env, version.date_end) if version.date_end else self.env._("undefined"),
+            //                       ) for version in versions)))
             */
             return default;
         }
@@ -392,67 +444,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _check_date(self):
-            //         if self.env.context.get('leave_skip_date_check', False):
-            //             return
-            // 
-            //         all_leaves = self.search([
-            //             ('date_from', '<', max(self.mapped('date_to'))),
-            //             ('date_to', '>', min(self.mapped('date_from'))),
-            //             ('employee_id', 'in', self.employee_id.ids),
-            //             ('id', 'not in', self.ids),
-            //             ('state', 'not in', ['cancel', 'refuse']),
-            //         ])
-            //         for holiday in self:
-            //             domain = [
-            //                 ('employee_id', '=', holiday.employee_id.id),
-            //                 ('date_from', '<', holiday.date_to),
-            //                 ('date_to', '>', holiday.date_from),
-            //                 ('id', '!=', holiday.id),
-            //                 ('state', 'not in', ['cancel', 'refuse']),
-            //             ]
-            //             conflicting_holidays = all_leaves.filtered_domain(domain)
-            // 
-            //             if conflicting_holidays:
-            //                 conflicting_holidays_list = []
-            //                 # Do not display the name of the employee if the conflicting holidays have an employee_id.user_id equivalent to the user id
-            //                 holidays_only_have_uid = bool(holiday.employee_id)
-            //                 holiday_states = dict(conflicting_holidays.fields_get(allfields=['state'])['state']['selection'])
-            //                 for conflicting_holiday in conflicting_holidays:
-            //                     conflicting_holiday_data = {}
-            //                     conflicting_holiday_data['employee_name'] = conflicting_holiday.employee_id.name
-            //                     conflicting_holiday_data['date_from'] = format_date(self.env, min(conflicting_holiday.mapped('date_from')))
-            //                     conflicting_holiday_data['date_to'] = format_date(self.env, min(conflicting_holiday.mapped('date_to')))
-            //                     conflicting_holiday_data['state'] = holiday_states[conflicting_holiday.state]
-            //                     if conflicting_holiday.employee_id.user_id.id != self.env.uid:
-            //                         holidays_only_have_uid = False
-            //                     if conflicting_holiday_data not in conflicting_holidays_list:
-            //                         conflicting_holidays_list.append(conflicting_holiday_data)
-            //                 if not conflicting_holidays_list:
-            //                     return
-            //                 conflicting_holidays_strings = []
-            //                 if holidays_only_have_uid:
-            //                     for conflicting_holiday_data in conflicting_holidays_list:
-            //                         conflicting_holidays_string = _('from %(date_from)s to %(date_to)s - %(state)s',
-            //                                                         date_from=conflicting_holiday_data['date_from'],
-            //                                                         date_to=conflicting_holiday_data['date_to'],
-            //                                                         state=conflicting_holiday_data['state'])
-            //                         conflicting_holidays_strings.append(conflicting_holidays_string)
-            //                     raise ValidationError(_("""\
-            // You've already booked time off which overlaps with this period:
-            // %s
-            // Attempting to double-book your time off won't magically make your vacation 2x better!
-            // """,
-            //                         "\n".join(conflicting_holidays_strings)))
-            //                 for conflicting_holiday_data in conflicting_holidays_list:
-            //                     conflicting_holidays_string = "\n" + _('%(employee_name)s - from %(date_from)s to %(date_to)s - %(state)s',
-            //                                                     employee_name=conflicting_holiday_data['employee_name'],
-            //                                                     date_from=conflicting_holiday_data['date_from'],
-            //                                                     date_to=conflicting_holiday_data['date_to'],
-            //                                                     state=conflicting_holiday_data['state'])
-            //                     conflicting_holidays_strings.append(conflicting_holidays_string)
-            //                 raise ValidationError(_(
-            //                     "An employee already booked time off which overlaps with this period:%s",
-            //                     "".join(conflicting_holidays_strings)))
+            // if self.env.context.get('leave_skip_date_check', False):
+            //     return
+            // for holiday in self:
+            //     if holiday.dashboard_warning_message:
+            //         raise ValidationError(holiday.dashboard_warning_message)
             */
             return default;
         }
@@ -491,27 +487,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeave> CheckMandatoryDayInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _check_mandatory_day(self):
-            // is_leave_user = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // if not is_leave_user and any(leave.has_mandatory_day for leave in self):
-            //     raise ValidationError(_('You are not allowed to request time off on a Mandatory Day'))
-            */
-            return default;
-        }
-
         protected async Task<HrLeave> CheckMissingGlobalLeaveTimesheetsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def _check_missing_global_leave_timesheets(self):
             // if not self:
             //     return
-            // min_date = min([leave.date_from for leave in self])
-            // max_date = max([leave.date_to for leave in self])
+            // min_date = min(self.mapped('date_from'))
+            // max_date = max(self.mapped('date_to'))
             // 
             // global_leaves = self.env['resource.calendar.leaves'].search([
             //     ("resource_id", "=", False),
@@ -532,23 +516,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def _check_overtime_deductible(self, leaves):
             // # If the type of leave is overtime deductible, we have to check that the employee has enough extra hours
-            // for leave in leaves:
-            //     if not leave.overtime_deductible:
-            //         leave.overtime_id.sudo().unlink()
-            //         continue
-            //     employee = leave.employee_id.sudo()
-            //     duration = leave.number_of_hours
-            //     if duration > employee.total_overtime:
-            //         if employee.user_id == self.env.user:
+            // hours = self._get_deductible_employee_overtime(leaves.employee_id)
+            // for leave in leaves.filtered('overtime_deductible'):
+            //     if hours[leave.employee_id] < 0:
+            //         if leave.employee_id.user_id == self.env.user:
             //             raise ValidationError(_('You do not have enough extra hours to request this leave'))
             //         raise ValidationError(_('The employee does not have enough extra hours to request this leave.'))
-            //     if not leave.sudo().overtime_id:
-            //         leave.sudo().overtime_id = self.env['hr.attendance.overtime'].sudo().create({
-            //             'employee_id': employee.id,
-            //             'date': leave.date_from,
-            //             'adjustment': True,
-            //             'duration': -1 * duration,
-            //         })
             */
             return default;
         }
@@ -562,13 +535,16 @@ namespace Bamboo.Core.Application.Services
             // for leave in self:
             //     sorted_leaves[(leave.holiday_status_id, leave.date_from.date())] |= leave
             // for (leave_type, date_from), leaves in sorted_leaves.items():
-            //     if leave_type.requires_allocation == 'no':
+            //     if not leave_type.requires_allocation:
             //         continue
             //     employees = leaves.employee_id
             //     leave_data = leave_type.get_allocation_data(employees, date_from)
             //     if leave_type.allows_negative:
             //         max_excess = leave_type.max_allowed_negative
             //         for employee in employees:
+            //             if not leave_data[employee]:
+            //                 raise ValidationError(_("You do not have any allocation for this time off type.\n"
+            //                                         "Please request an allocation before submitting your time off request."))
             //             if leave_data[employee] and leave_data[employee][0][1]['virtual_remaining_leaves'] < -max_excess:
             //                 raise ValidationError(_("There is no valid allocation to cover that request."))
             //         continue
@@ -579,10 +555,16 @@ namespace Bamboo.Core.Application.Services
             //     for employee in employees:
             //         previous_emp_data = previous_leave_data[employee] and previous_leave_data[employee][0][1]['virtual_excess_data']
             //         emp_data = leave_data[employee] and leave_data[employee][0][1]['virtual_excess_data']
+            //         if not leave_data[employee]:
+            //             raise ValidationError(_("You do not have any allocation for this time off type.\n"
+            //                                     "Please request an allocation before submitting your time off request."))
             //         if not previous_emp_data and not emp_data:
             //             continue
             //         if previous_emp_data != emp_data and len(emp_data) >= len(previous_emp_data):
             //             raise ValidationError(_("There is no valid allocation to cover that request."))
+            // is_leave_user = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
+            // if not is_leave_user and any(leave.has_mandatory_day for leave in self):
+            //     raise ValidationError(_('You are not allowed to request time off on a Mandatory Day'))
             */
             return default;
         }
@@ -593,15 +575,18 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_can_approve(self):
             // for holiday in self:
-            //     try:
-            //         if holiday.state == 'confirm' and holiday.validation_type == 'both':
-            //             holiday._check_approval_update('validate1')
-            //         else:
-            //             holiday._check_approval_update('validate')
-            //     except (AccessError, UserError):
-            //         holiday.can_approve = False
-            //     else:
-            //         holiday.can_approve = True
+            //     holiday.can_approve = holiday._check_approval_update('validate1', raise_if_not_possible=False)
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> ComputeCanBackToApproveInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_can_back_to_approve(self):
+            // for holiday in self:
+            //     holiday.can_back_to_approve = holiday.state == 'validate' and holiday._check_approval_update('confirm', raise_if_not_possible=False)
             */
             return default;
         }
@@ -611,9 +596,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_can_cancel(self):
-            // now = fields.Datetime.now().date()
-            // for leave in self:
-            //     leave.can_cancel = leave.id and leave.employee_id.user_id == self.env.user and leave.state in ['validate', 'validate1'] and leave.date_from and leave.date_from.date() >= now
+            // for holiday in self:
+            //     holiday.can_cancel = holiday._check_approval_update('cancel', raise_if_not_possible=False)
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
             // def _compute_can_cancel(self):
             // super()._compute_can_cancel()
@@ -628,18 +612,24 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeave> ComputeCanResetInternalAsync()
+        protected async Task<HrLeave> ComputeCanRefuseInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _compute_can_reset(self):
+            // def _compute_can_refuse(self):
             // for holiday in self:
-            //     try:
-            //         holiday._check_approval_update('confirm')
-            //     except (AccessError, UserError):
-            //         holiday.can_reset = False
-            //     else:
-            //         holiday.can_reset = True
+            //     holiday.can_refuse = holiday._check_approval_update('refuse', raise_if_not_possible=False)
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> ComputeCanValidateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_can_validate(self):
+            // for holiday in self:
+            //     holiday.can_validate = holiday._check_approval_update('validate', raise_if_not_possible=False)
             */
             return default;
         }
@@ -655,6 +645,64 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrLeave> ComputeDashboardWarningMessageInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_dashboard_warning_message(self):
+            // all_leaves = self.search([
+            //     ('date_from', '<', max(self.mapped('date_to'))),
+            //     ('date_to', '>', min(self.mapped('date_from'))),
+            //     ('employee_id', 'in', self.employee_id.ids),
+            //     ('holiday_status_id.allow_request_on_top', '=', False),
+            //     ('state', 'not in', ['cancel', 'refuse']),
+            // ])
+            // self.filtered(lambda self: self.state in ['cancel', 'refuse']).dashboard_warning_message = False
+            // for holiday in self.filtered(lambda self: self.state not in ['cancel', 'refuse']):
+            //     conflicting_holidays = all_leaves.filtered_domain([
+            //         ('employee_id', 'in', holiday.employee_id.ids),
+            //         ('date_from', '<', holiday.date_to),
+            //         ('date_to', '>', holiday.date_from),
+            //         ('id', 'not in', holiday.ids),
+            //     ])
+            //     if not conflicting_holidays:
+            //         holiday.dashboard_warning_message = False
+            //         continue
+            // 
+            //     conflicting_holidays_list = []
+            //     # Do not display the name of the employee if the conflicting holidays have an employee_id.user_id equivalent to the user id
+            //     holidays_only_have_uid = bool(holiday.employee_id)
+            //     holiday_states = dict(conflicting_holidays.fields_get(allfields=['state'])['state']['selection'])
+            //     for conflicting_holiday in conflicting_holidays:
+            //         conflicting_holiday_data = {
+            //             'employee_name': conflicting_holiday.employee_id.name,
+            //             'date_from': format_date(self.env, min(conflicting_holiday.mapped('date_from'))),
+            //             'date_to': format_date(self.env, min(conflicting_holiday.mapped('date_to'))),
+            //             'state': holiday_states[conflicting_holiday.state]
+            //         }
+            //         if conflicting_holiday.employee_id.user_id.id != self.env.uid:
+            //             holidays_only_have_uid = False
+            //         if conflicting_holiday_data not in conflicting_holidays_list:
+            //             conflicting_holidays_list.append(conflicting_holiday_data)
+            // 
+            //     msg = ""
+            //     if holidays_only_have_uid:
+            //         msg = self.env._('You\'ve already booked time off which overlaps with this period:')
+            //     else:
+            //         msg = self.env._('An employee already booked time off which overlaps with this period:')
+            // 
+            //     holiday.dashboard_warning_message = msg + "".join(
+            //         ('\n\t' + self.env._('%(employee_name)s from %(date_from)s to %(date_to)s - %(state)s')) % {
+            //             'employee_name': conflicting_holiday_data['employee_name'] if not holidays_only_have_uid else "",
+            //             'date_from': conflicting_holiday_data['date_from'],
+            //             'date_to': conflicting_holiday_data['date_to'],
+            //             'state': conflicting_holiday_data['state']
+            //         } for conflicting_holiday_data in conflicting_holidays_list
+            //     )
+            */
+            return default;
+        }
+
         protected async Task<HrLeave> ComputeDateFromToInternalAsync()
         {
             /*
@@ -663,31 +711,37 @@ namespace Bamboo.Core.Application.Services
             // for holiday in self:
             //     if not holiday.request_date_from:
             //         holiday.date_from = False
-            //     elif not holiday.request_unit_half and not holiday.request_unit_hours and not holiday.request_date_to:
+            //         continue
+            // 
+            //     if not holiday.request_date_to:
             //         holiday.date_to = False
-            //     else:
-            //         if (holiday.request_unit_half or holiday.request_unit_hours) and holiday.request_date_to != holiday.request_date_from:
-            //             holiday.request_date_to = holiday.request_date_from
+            //         continue
             // 
+            //     if holiday.request_unit_hours:
+            //         hour_from = holiday.request_hour_from
+            //         hour_to = holiday.request_hour_to
+            //         if not hour_from or not hour_to:
+            //             computed_from, computed_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to)
+            //             hour_from = hour_from or computed_from
+            //             hour_to = hour_to or computed_to
             // 
-            //         day_period = {
-            //             'am': 'morning',
-            //             'pm': 'afternoon'
-            //         }.get(holiday.request_date_from_period, None) if holiday.request_unit_half else None
-            // 
-            // 
-            //         compensated_request_date_from = holiday.request_date_from
-            //         compensated_request_date_to = holiday.request_date_to
-            // 
-            //         if holiday.request_unit_hours:
-            //             hour_from = holiday.request_hour_from
-            //             hour_to = holiday.request_hour_to
-            //         else:
+            //     elif holiday.request_unit_half:
+            //         period_map = {'am': 'morning', 'pm': 'afternoon'}
+            //         from_period = period_map.get(holiday.request_date_from_period)
+            //         to_period = period_map.get(holiday.request_date_to_period)
+            //         if holiday.request_date_from == holiday.request_date_to:
+            //             day_period = from_period if from_period == to_period else None
             //             hour_from, hour_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to,
-            //                 day_period=day_period)
+            //                 day_period)
+            //         else:
+            //             hour_from, _ = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_from, from_period)
+            //             _, hour_to = holiday._get_hour_from_to(holiday.request_date_to, holiday.request_date_to, to_period)
             // 
-            //         holiday.date_from = self._to_utc(compensated_request_date_from, hour_from, holiday.employee_id or holiday)
-            //         holiday.date_to = self._to_utc(compensated_request_date_to, hour_to, holiday.employee_id or holiday)
+            //     else:
+            //         hour_from, hour_to = holiday._get_hour_from_to(holiday.request_date_from, holiday.request_date_to)
+            // 
+            //     holiday.date_from = self._to_utc(holiday.request_date_from, hour_from, holiday.employee_id or holiday)
+            //     holiday.date_to = self._to_utc(holiday.request_date_to, hour_to, holiday.employee_id or holiday)
             */
             return default;
         }
@@ -727,7 +781,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_display_name(self):
             // for leave in self:
-            //     user_tz = timezone(leave.tz)
+            //     user_tz = pytz.timezone(leave.tz)
             //     date_from_utc = leave.date_from and leave.date_from.astimezone(user_tz).date()
             //     date_to_utc = leave.date_to and leave.date_to.astimezone(user_tz).date()
             //     time_off_type_display = leave.holiday_status_id.name
@@ -801,14 +855,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<HrLeave> ComputeEmployeeOvertimeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
+            // def _compute_employee_overtime(self):
+            // diff_by_employee = self._get_deductible_employee_overtime(self.employee_id)
+            // for leave in self:
+            //     leave.employee_overtime = diff_by_employee[leave.employee_id]
+            */
+            return default;
+        }
+
         protected async Task<HrLeave> ComputeFromEmployeeIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_from_employee_id(self):
             // for holiday in self:
-            //     holiday.manager_id = holiday.employee_id.parent_id.id
-            //     if holiday.holiday_status_id.requires_allocation == 'no':
+            //     if not holiday.holiday_status_id.requires_allocation:
             //         continue
             //     if not holiday.employee_id:
             //         holiday.holiday_status_id = False
@@ -826,11 +891,13 @@ namespace Bamboo.Core.Application.Services
             // def _compute_has_mandatory_day(self):
             // date_from, date_to = min(self.mapped('date_from')), max(self.mapped('date_to'))
             // if date_from and date_to:
-            //     mandatory_days = self.employee_id._get_mandatory_days(
+            //     # Sudo to get access to version fields on employee (job_id)
+            //     mandatory_days = self.employee_id.sudo()._get_mandatory_days(
             //         date_from.date(),
             //         date_to.date())
             // 
             //     for leave in self:
+            //         department_ids = leave.employee_id.department_id.ids
             //         domain = [
             //             ('start_date', '<=', leave.date_to.date()),
             //             ('end_date', '>=', leave.date_from.date()),
@@ -838,6 +905,14 @@ namespace Bamboo.Core.Application.Services
             //                 ('resource_calendar_id', '=', False),
             //                 ('resource_calendar_id', '=', leave.resource_calendar_id.id),
             //         ]
+            //         if department_ids:
+            //             domain += [
+            //                 '|',
+            //                 ('department_ids', '=', False),
+            //                 ('department_ids', 'parent_of', department_ids),
+            //             ]
+            //         else:
+            //             domain += [('department_ids', '=', False)]
             // 
             //         if leave.holiday_status_id.company_id:
             //             domain += [('company_id', '=', leave.holiday_status_id.company_id.id)]
@@ -879,7 +954,33 @@ namespace Bamboo.Core.Application.Services
             // durations = self._get_durations(check_leave_type=False)
             // for leave in self:
             //     days = durations[leave.id][0]
-            //     leave.leave_type_increases_duration = leave.leave_type_request_unit == 'day' and days < leave.number_of_days
+            //     if leave.leave_type_request_unit == 'day' and leave.holiday_status_requires_allocation and days < leave.number_of_days:
+            //         leave.leave_type_increases_duration = self.env._("According to your working schedule you are expected to work"
+            //         " %(days)s days in this period, but %(nb_days)s days will be used because this leave"
+            //         " %(leave_type_name)s can only be taken by days.",
+            //         days=days, nb_days=leave.number_of_days, leave_type_name=leave.holiday_status_id.name)
+            //     else:
+            //         leave.leave_type_increases_duration = ''
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> ComputeLeavesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_leaves(self):
+            // date_from = fields.Date.from_string(self.env.context['default_request_date_from']) if 'default_request_date_from' in self.env.context else fields.Date.today()
+            // employee_days_per_allocation = self.employee_id._get_consumed_leaves(self.holiday_status_id, date_from)[0]
+            // for leave in self:
+            //     virtual_remaining_leaves = 0
+            //     max_leaves = 0
+            //     for allocation, allocation_dict in employee_days_per_allocation[leave.employee_id][leave.holiday_status_id].items():
+            //         if allocation and (not allocation.date_to or allocation.date_to >= date_from):
+            //             max_leaves += allocation_dict['max_leaves']
+            //             virtual_remaining_leaves += allocation_dict['virtual_remaining_leaves']
+            //     leave.virtual_remaining_leaves = virtual_remaining_leaves
+            //     leave.max_leaves = max_leaves
             */
             return default;
         }
@@ -890,7 +991,27 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def _compute_overtime_deductible(self):
             // for leave in self:
-            //     leave.overtime_deductible = leave.holiday_status_id.overtime_deductible and leave.holiday_status_id.requires_allocation == 'no'
+            //     leave.overtime_deductible = leave.holiday_status_id.overtime_deductible and not leave.holiday_status_id.requires_allocation
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> ComputeRequestHourFromToInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _compute_request_hour_from_to(self):
+            // env_company_calendar = self.env.company.resource_calendar_id
+            // for leave in self:
+            //     calendar = leave.resource_calendar_id or env_company_calendar
+            //     if (not leave.request_unit_hours
+            //             and leave.employee_id
+            //             and leave.request_date_from
+            //             and leave.request_date_to
+            //             and calendar):
+            //         hour_from, hour_to = leave._get_hour_from_to(leave.request_date_from, leave.request_date_to)
+            //         leave.request_hour_from = hour_from
+            //         leave.request_hour_to = hour_to
             */
             return default;
         }
@@ -901,8 +1022,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_request_unit_half(self):
             // for holiday in self:
-            //     if holiday.holiday_status_id or holiday.request_unit_hours:
-            //         holiday.request_unit_half = False
+            //     holiday.request_unit_half = holiday.leave_type_request_unit == 'half_day'
             */
             return default;
         }
@@ -913,8 +1033,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_request_unit_hours(self):
             // for holiday in self:
-            //     if holiday.holiday_status_id or holiday.request_unit_half:
-            //         holiday.request_unit_hours = False
+            //     holiday.request_unit_hours = holiday.leave_type_request_unit == 'hour'
             */
             return default;
         }
@@ -924,39 +1043,40 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _compute_resource_calendar_id(self):
+            // leaves_without_emp_or_date = self.filtered(
+            //     lambda leave: not (leave.employee_id and leave.request_date_from and leave.request_date_to)
+            // )
+            // valid_leaves = self - leaves_without_emp_or_date
+            // leaves_without_emp_or_date.resource_calendar_id = self.env.company.resource_calendar_id
+            // if not valid_leaves:
+            //     return
             // employees_by_dates = defaultdict(lambda: self.env['hr.employee'])
-            // for leave in self:
-            //     if leave.employee_id and leave.request_date_from:
-            //         employees_by_dates[leave.request_date_from] += leave.employee_id
+            // contracts_by_employee = dict(
+            //     self.env['hr.version']._read_group(
+            //         domain=[('employee_id', 'in', self.employee_id.ids)],
+            //         groupby=['employee_id'],
+            //         aggregates=['id:recordset']
+            //     )
+            // )
+            // for leave in valid_leaves:
+            //     employees_by_dates[leave.request_date_from] += leave.employee_id
             // calendar_by_dates = {date_from: employees._get_calendars(date_from) for date_from, employees in employees_by_dates.items()}
-            // for leave in self:
-            //     calendar = False
-            //     if leave.employee_id and leave.request_date_from:
-            //         calendar = calendar_by_dates[leave.request_date_from][leave.employee_id.id]
-            //     leave.resource_calendar_id = calendar or self.env.company.resource_calendar_id
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_contract, FILE: hr_leave.py) ---
-            // def _compute_resource_calendar_id(self):
-            // super()._compute_resource_calendar_id()
-            // for leave in self.filtered(lambda l: l.employee_id):
+            // for leave in valid_leaves:
+            //     calendar = calendar_by_dates.get(leave.request_date_from, {}).get(leave.employee_id.id) \
+            //                 or self.env.company.resource_calendar_id
             //     # We use the request dates to find the contracts, because date_from
             //     # and date_to are not set yet at this point. Since these dates are
             //     # used to get the contracts for which these leaves apply and
             //     # contract start- and end-dates are just dates (and not datetimes)
             //     # these dates are comparable.
-            //     if leave.employee_id:
-            //         contracts = self.env['hr.contract'].search([
-            //             '|', ('state', 'in', ['open', 'close']),
-            //                  '&', ('state', '=', 'draft'),
-            //                       ('kanban_state', '=', 'done'),
-            //             ('employee_id', '=', leave.employee_id.id),
-            //             ('date_start', '<=', leave.request_date_to),
-            //             '|', ('date_end', '=', False),
-            //                  ('date_end', '>=', leave.request_date_from),
-            //         ])
-            //         if contracts:
-            //             # If there are more than one contract they should all have the
-            //             # same calendar, otherwise a constraint is violated.
-            //             leave.resource_calendar_id = contracts[:1].resource_calendar_id
+            //     contracts = contracts_by_employee.get(leave.employee_id, self.env['hr.version']).filtered(
+            //         lambda c: c.date_start <= leave.request_date_to and
+            //                   (not c.date_end or c.date_end >= leave.request_date_from))
+            //     if contracts:
+            //         # If there are more than one contract they should all have the
+            //         # same calendar, otherwise a constraint is violated.
+            //         calendar = contracts[:1].resource_calendar_id
+            //     leave.resource_calendar_id = calendar
             */
             return default;
         }
@@ -995,25 +1115,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> ConfirmAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
-            // def action_confirm(self):
-            // res = super().action_confirm()
-            // self._check_overtime_deductible(self)
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<HrLeave> CopyDataAsync(Guid id, HrLeaveCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def copy_data(self, default=None):
             // vals_list = super().copy_data(default=default)
-            // if default and 'request_date_from' in default and 'request_date_to' in default:
+            // if self.env.context.get('skip_copy_check'):
             //     return vals_list
             // if all(leave.state in ['cancel', 'refuse'] for leave in self):  # No overlap constraint in these cases
             //     return vals_list
@@ -1028,7 +1136,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def create(self, vals_list):
             // # Override to avoid automatic logging of creation
-            // if not self._context.get('leave_fast_create'):
+            // if not self.env.context.get('leave_fast_create'):
             //     leave_types = self.env['hr.leave.type'].browse([values.get('holiday_status_id') for values in vals_list if values.get('holiday_status_id')])
             //     mapped_validation_type = {leave_type.id: leave_type.leave_validation_type for leave_type in leave_types}
             // 
@@ -1042,11 +1150,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // if any(not vals.get('employee_id') for vals in vals_list):
             //     raise UserError(_("There is no employee set on the time off. Please make sure you're logged in the correct company."))
-            // holidays = super(HolidaysRequest, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // holidays = super(HrLeave, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             // holidays._check_validity()
+            // self.env['hr.leave.allocation'].invalidate_model(['leaves_taken', 'max_leaves'])  # missing dependency on compute
             // 
             // for holiday in holidays:
-            //     if not self._context.get('leave_fast_create'):
+            //     if not self.env.context.get('leave_fast_create'):
             //         # Everything that is done here must be done using sudo because we might
             //         # have different create and write rights
             //         # eg : holidays_user can create a leave request with validation_type = 'manager' for someone else
@@ -1057,10 +1166,10 @@ namespace Bamboo.Core.Application.Services
             //             holiday_sudo.message_subscribe(partner_ids=holiday.employee_id.leave_manager_id.partner_id.ids)
             //         if holiday.validation_type == 'no_validation':
             //             # Automatic validation should be done in sudo, because user might not have the rights to do it by himself
-            //             holiday_sudo.action_validate()
+            //             holiday_sudo.action_approve()
             //             holiday_sudo.message_subscribe(partner_ids=holiday._get_responsible_for_approval().partner_id.ids)
             //             holiday_sudo.message_post(body=_("The time off has been automatically approved"), subtype_xmlid="mail.mt_comment") # Message from OdooBot (sudo)
-            //         elif not self._context.get('import_file'):
+            //         elif not self.env.context.get('import_file'):
             //             holiday_sudo.activity_update()
             // return holidays
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
@@ -1118,7 +1227,7 @@ namespace Bamboo.Core.Application.Services
             // # Note:
             // # Without the application of the timezone, days based on UTC datetimes
             // # will be returned (and will therefore not be correct for the client).
-            // client_tz = timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
+            // client_tz = self.env.tz
             // if values.get('date_from'):
             //     if not values.get('request_date_from'):
             //         values['request_date_from'] = pytz.utc.localize(values['date_from']).astimezone(client_tz)
@@ -1154,56 +1263,164 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _force_cancel(self, reason, msg_subtype='mail.mt_comment', notify_responsibles=True):
-            // recs = self.browse() if self.env.context.get(MODULE_UNINSTALL_FLAG) else self
-            // for leave in recs:
-            //     leave.message_post(
-            //         body=_('The time off has been cancelled: %s', reason),
-            //         subtype_xmlid=msg_subtype
-            //     )
-            // 
-            //     if not notify_responsibles:
-            //         continue
-            // 
-            //     responsibles = self.env['res.partner']
-            //     # manager
-            //     if (leave.holiday_status_id.leave_validation_type == 'manager' and leave.state == 'validate') or (leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate1'):
-            //         responsibles = leave.employee_id.leave_manager_id.partner_id
-            //     # officer
-            //     elif leave.holiday_status_id.leave_validation_type == 'hr' and leave.state == 'validate':
-            //         responsibles = leave.holiday_status_id.responsible_ids.partner_id
-            //     # both
-            //     elif leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate':
-            //         responsibles = leave.employee_id.leave_manager_id.partner_id
-            //         responsibles |= leave.holiday_status_id.responsible_ids.partner_id
-            // 
-            //     if responsibles:
-            //         self.env['mail.thread'].sudo().message_notify(
-            //             partner_ids=responsibles.ids,
-            //             model_description='Time Off',
-            //             subject=_('Cancelled Time Off'),
-            //             body=_(
-            //                 "%(leave_name)s has been cancelled with the justification: <br/> %(reason)s.",
-            //                 leave_name=leave.display_name,
-            //                 reason=reason
-            //             ),
-            //             email_layout_xmlid='mail.mail_notification_light',
+            // def _force_cancel(self, reason=None, msg_subtype='mail.mt_comment', notify_responsibles=True):
+            // leaves = self.browse() if self.env.context.get(MODULE_UNINSTALL_FLAG) else self
+            // if reason:
+            //     model_description = self.env['ir.model']._get('hr.holidays').display_name
+            //     for leave in leaves:
+            //         body = self.env._(
+            //             "The time off request has been cancelled for the following reason:%(reason)s",
+            //             reason=Markup("<p>{reason}</p>").format(reason=reason)
             //         )
+            //         leave.message_post(
+            //             body=body,
+            //             subtype_xmlid=msg_subtype
+            //         )
+            // 
+            //         if not notify_responsibles:
+            //             continue
+            // 
+            //         responsibles = self.env['res.partner']
+            //         # manager
+            //         if (leave.holiday_status_id.leave_validation_type == 'manager' and leave.state == 'validate') or (leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate1'):
+            //             responsibles = leave.employee_id.leave_manager_id.partner_id
+            //         # officer
+            //         elif leave.holiday_status_id.leave_validation_type == 'hr' and leave.state == 'validate':
+            //             responsibles = leave.holiday_status_id.responsible_ids.partner_id
+            //         # both
+            //         elif leave.holiday_status_id.leave_validation_type == 'both' and leave.state == 'validate':
+            //             responsibles = leave.employee_id.leave_manager_id.partner_id
+            //             responsibles |= leave.holiday_status_id.responsible_ids.partner_id
+            // 
+            //         if responsibles:
+            //             body = self.env._(
+            //                 "%(leave_name)s has been cancelled for the following reason: %(reason)s",
+            //                 leave_name=leave.display_name,
+            //                 reason=Markup("<blockquote>{reason}</blockquote>").format(reason=reason),
+            //             )
+            //             leave.message_notify(
+            //                 partner_ids=responsibles.ids,
+            //                 model_description=model_description,
+            //                 subject=self.env._('Cancelled Time Off'),
+            //                 body=body,
+            //                 email_layout_xmlid="mail.mail_notification_layout",
+            //                 subtitles=[leave.display_name],
+            //             )
             // leave_sudo = self.sudo()
-            // leave_sudo.state = 'cancel'
+            // leave_sudo.state = "cancel"
             // leave_sudo.activity_update()
             // leave_sudo._post_leave_cancel()
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def _force_cancel(self, *args, **kwargs):
             // super()._force_cancel(*args, **kwargs)
-            // self.sudo().overtime_id.unlink()
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def _force_cancel(self, *args, **kwargs):
             // super()._force_cancel(*args, **kwargs)
             // # override this method to reevaluate timesheets after the leaves are updated via force cancel
             // timesheets = self.sudo().timesheet_ids
             // timesheets.holiday_id = False
             // timesheets.unlink()
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> GenerateTimesheetsInternalAsync(object ignored_resource_calendar_leaves)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
+            // def _generate_timesheets(self, ignored_resource_calendar_leaves=None):
+            // """ Timesheet will be generated on leave validation
+            //     internal_project_id and leave_timesheet_task_id are used.
+            //     The generated timesheet will be attached to this project/task.
+            // """
+            // vals_list = []
+            // leave_ids = []
+            // calendar_leaves_data = self.env['resource.calendar.leaves']._read_group([('holiday_id', 'in', self.ids)], ['holiday_id'], ['id:array_agg'])
+            // mapped_calendar_leaves = {leave: calendar_leave_ids[0] for leave, calendar_leave_ids in calendar_leaves_data}
+            // for leave in self:
+            //     project, task = leave.employee_id.company_id.internal_project_id, leave.employee_id.company_id.leave_timesheet_task_id
+            // 
+            //     if not project or not task or leave.holiday_status_id.time_type == 'other':
+            //         continue
+            // 
+            //     leave_ids.append(leave.id)
+            //     if not leave.employee_id:
+            //         continue
+            // 
+            //     calendar = leave.employee_id.resource_calendar_id
+            //     calendar_timezone = pytz.timezone((calendar or leave.employee_id).tz)
+            // 
+            //     if calendar.flexible_hours and (leave.request_unit_hours or leave.request_unit_half or leave.date_from.date() == leave.date_to.date()):
+            //         leave_date = leave.date_from.astimezone(calendar_timezone).date()
+            //         if leave.request_unit_hours:
+            //             hours = leave.request_hour_to - leave.request_hour_from
+            //         elif leave.request_unit_half:
+            //             hours = calendar.hours_per_day / 2
+            //         else:  # Single-day leave
+            //             hours = calendar.hours_per_day
+            //         work_hours_data = [(leave_date, hours)]
+            //     else:
+            //         ignored_resource_calendar_leaves = ignored_resource_calendar_leaves or []
+            //         if leave in mapped_calendar_leaves:
+            //             ignored_resource_calendar_leaves.append(mapped_calendar_leaves[leave])
+            //         work_hours_data = leave.employee_id._list_work_time_per_day(
+            //             leave.date_from,
+            //             leave.date_to,
+            //             domain=[('id', 'not in', ignored_resource_calendar_leaves)] if ignored_resource_calendar_leaves else None)[leave.employee_id.id]
+            // 
+            //     for index, (day_date, work_hours_count) in enumerate(work_hours_data):
+            //         vals_list.append(leave._timesheet_prepare_line_values(index, work_hours_data, day_date, work_hours_count, project, task))
+            // 
+            // # Unlink previous timesheets to avoid doublon (shouldn't happen on the interface but meh). Necessary when the function is called to regenerate timesheets.
+            // old_timesheets = self.env["account.analytic.line"].sudo().search([('project_id', '!=', False), ('holiday_id', 'in', leave_ids)])
+            // if old_timesheets:
+            //     old_timesheets.holiday_id = False
+            //     old_timesheets.unlink()
+            // 
+            // self.env['account.analytic.line'].sudo().create(vals_list)
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> GetDeductibleEmployeeOvertimeInternalAsync(object employees)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
+            // def _get_deductible_employee_overtime(self, employees):
+            // # return dict {employee: number of hours}
+            // diff_by_employee = defaultdict(lambda: 0)
+            // for employee, hours in self.env['hr.attendance.overtime.line'].sudo()._read_group(
+            //     domain=[
+            //         ('compensable_as_leave', '=', True),
+            //         ('employee_id', 'in', employees.ids),
+            //         ('status', '=', 'approved'),
+            //     ],
+            //     groupby=['employee_id'],
+            //     aggregates=['manual_duration:sum'],
+            // ):
+            //     diff_by_employee[employee] += hours
+            // for employee, hours in self._read_group(
+            //     domain=[
+            //         ('holiday_status_id.overtime_deductible', '=', True),
+            //         ('holiday_status_id.requires_allocation', '=', False),
+            //         ('employee_id', 'in', employees.ids),
+            //         ('state', 'not in', ['refuse', 'cancel']),
+            //     ],
+            //     groupby=['employee_id'],
+            //     aggregates=['number_of_hours:sum'],
+            // ):
+            //     diff_by_employee[employee] -= hours
+            // for employee, hours in self.env['hr.leave.allocation']._read_group(
+            //     domain=[
+            //         ('holiday_status_id.overtime_deductible', '=', True),
+            //         ('employee_id', 'in', employees.ids),
+            //         ('state', '=', 'confirm'),
+            //     ],
+            //     groupby=['employee_id'],
+            //     aggregates=['number_of_hours_display:sum'],
+            // ):
+            //     diff_by_employee[employee] -= hours
+            // return diff_by_employee
             */
             return default;
         }
@@ -1234,34 +1451,51 @@ namespace Bamboo.Core.Application.Services
             //           '|', ('holiday_id', '=', False), ('holiday_id', 'not in', employee_leaves.ids)]
             // # Precompute values in batch for performance purposes
             // work_time_per_day_mapped = {
-            //     (date_from, date_to, calendar): employees.with_context(
+            //     (date_from, date_to, include_public_holidays_in_duration, calendar): employees.with_context(
             //             compute_leaves=not include_public_holidays_in_duration)._list_work_time_per_day(date_from, date_to, domain=domain, calendar=calendar)
             //     for (date_from, date_to, include_public_holidays_in_duration, calendar), employees in employees_by_dates_calendar.items()
             // }
             // work_days_data_mapped = {
-            //     (date_from, date_to, calendar): employees._get_work_days_data_batch(date_from, date_to, compute_leaves=not include_public_holidays_in_duration, domain=domain, calendar=calendar)
+            //     (date_from, date_to, include_public_holidays_in_duration, calendar): employees._get_work_days_data_batch(date_from, date_to, compute_leaves=not include_public_holidays_in_duration, domain=domain, calendar=calendar)
             //     for (date_from, date_to, include_public_holidays_in_duration, calendar), employees in employees_by_dates_calendar.items()
             // }
             // for leave in self:
             //     calendar = resource_calendar or leave.resource_calendar_id
-            //     if not leave.date_from or not leave.date_to or not calendar:
+            //     if not leave.date_from or not leave.date_to or (not calendar and not leave.employee_id):
             //         result[leave.id] = (0, 0)
             //         continue
+            //     hours, days = (0, 0)
             //     if leave.employee_id:
             //         # For flexible employees, if it's a single day leave, we force it to the real duration since the virtual intervals might not match reality on that day, especially for custom hours
-            //         if leave.employee_id.is_flexible and leave.date_to.date() == leave.date_from.date():
-            //             hours = (leave.date_to - leave.date_from).total_seconds() / 3600
-            //             if not leave.request_unit_hours:
-            //                 days = 1 if not leave.request_unit_half else 0.5
+            //         # sudo as is_flexible is on version model and employee does not have access to it.
+            //         if leave.employee_id.sudo().is_flexible and leave.request_date_to == leave.request_date_from:
+            //             public_holidays = self.env['resource.calendar.leaves'].search([
+            //                 ('resource_id', '=', False),
+            //                 ('date_from', '<', leave.date_to),
+            //                 ('date_to', '>', leave.date_from),
+            //                 ('calendar_id', 'in', [False, calendar.id]),
+            //                 ('company_id', '=', leave.company_id.id)
+            //             ])
+            //             if public_holidays:
+            //                 public_holidays_intervals = Intervals([(ph.date_from, ph.date_to, ph) for ph in public_holidays])
+            //                 leave_intervals = Intervals([(leave.date_from, leave.date_to, leave)])
+            //                 real_leave_intervals = leave_intervals - public_holidays_intervals
+            //                 hours = 0
+            //                 for start, stop, meta in real_leave_intervals:
+            //                     hours += (stop - start).total_seconds() / 3600
             //             else:
-            //                 days = (leave.date_to - leave.date_from).total_seconds() / 3600 / 24
+            //                 hours = (leave.date_to - leave.date_from).total_seconds() / 3600
+            //             if not leave.request_unit_hours and not public_holidays:
+            //                 days = 1 if not leave.request_unit_half or leave.request_date_from_period != leave.request_date_to_period else 0.5
+            //             else:
+            //                 days = hours / 24
             //         elif leave.leave_type_request_unit == 'day' and check_leave_type:
             //             # list of tuples (day, hours)
-            //             work_time_per_day_list = work_time_per_day_mapped[(leave.date_from, leave.date_to, calendar)][leave.employee_id.id]
+            //             work_time_per_day_list = work_time_per_day_mapped[leave.date_from, leave.date_to, leave.holiday_status_id.include_public_holidays_in_duration, calendar][leave.employee_id.id]
             //             days = len(work_time_per_day_list)
             //             hours = sum(map(lambda t: t[1], work_time_per_day_list))
             //         else:
-            //             work_days_data = work_days_data_mapped[(leave.date_from, leave.date_to, calendar)][leave.employee_id.id]
+            //             work_days_data = work_days_data_mapped[leave.date_from, leave.date_to, leave.holiday_status_id.include_public_holidays_in_duration, calendar][leave.employee_id.id]
             //             hours, days = work_days_data['hours'], work_days_data['days']
             //     else:
             //         today_hours = calendar.get_work_hours_count(
@@ -1310,51 +1544,13 @@ namespace Bamboo.Core.Application.Services
             // If there are no attendances on the exact days of the request, return
             // the earliest hour_from and latest hour_to that exist in the schedule.
             // """
-            // self.ensure_one()
+            // calendar = self.resource_calendar_id
+            // if not calendar:
+            //     return (0, 24)
+            // calendar.ensure_one()
             // 
-            // domain = [
-            //     ('calendar_id', '=', self.resource_calendar_id.id),
-            //     ('display_type', '=', False),
-            //     ('day_period', '!=', 'lunch'),
-            // ]
-            // # In the case of flexible hours, we resort to centering the holiday hours around 12pm
-            // if self.resource_calendar_id.flexible_hours:
-            //     hours_per_day = self.resource_calendar_id.hours_per_day
-            //     attendances = []
-            //     default_start = 12.0 - (hours_per_day / 2)
-            //     default_end = 12.0 + (hours_per_day / 2)
-            //     for week_type in [0, 1]:
-            //         for day in range(7):
-            //             if day_period:
-            //                 attendances.append(DummyAttendance(default_start if day_period == 'morning' else 12, 12 if day_period == 'morning' else default_end, day, day_period, week_type))
-            //             else:
-            //                 attendances.append(DummyAttendance(default_start, default_end, day, None, week_type))
-            //     attendances = sorted(attendances, key=lambda att: att.dayofweek)
-            // else:
-            //     if day_period:
-            //         domain.append(('day_period', '=', day_period))
-            //     # Must be sorted by dayofweek ASC and day_period DESC
-            //     attendances = self.env['resource.calendar.attendance']._read_group(domain,
-            //         ['week_type', 'dayofweek'],
-            //         ['hour_from:min', 'hour_to:max'], order="dayofweek ASC")
-            // 
-            //     attendances = [DummyAttendance(hour_from, hour_to, dayofweek, None, week_type) for week_type, dayofweek, hour_from, hour_to in attendances]
-            // 
-            //     # If we can't find any attendances on the exact days of the request,
-            //     # we default to the widest possible range that exists in the schedule.
-            //     default_start = min((attendance.hour_from for attendance in attendances), default=0)
-            //     default_end = max((attendance.hour_to for attendance in attendances), default=0)
-            // 
-            // start_week_type = 0
-            // end_week_type = 0
-            // if self.resource_calendar_id.two_weeks_calendar:
-            //     start_week_type = self.env['resource.calendar.attendance'].get_week_type(request_date_from)
-            //     end_week_type = self.env['resource.calendar.attendance'].get_week_type(request_date_to)
-            // 
-            // hour_from = next((att.hour_from for att in attendances if int(att.dayofweek) == request_date_from.weekday() and (int(att.week_type) == start_week_type)),
-            //                  default_start)
-            // hour_to = next((att.hour_to for att in attendances if int(att.dayofweek) == request_date_to.weekday() and (int(att.week_type) == end_week_type)),
-            //                default_end)
+            // hour_from, _ = calendar._get_hours_for_date(request_date_from, day_period)
+            // _, hour_to = calendar._get_hours_for_date(request_date_to, day_period)
             // 
             // return (hour_from, hour_to)
             */
@@ -1375,28 +1571,75 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeave> GetOverlappingContractsInternalAsync(object contract_states)
+        protected async Task<HrLeave> GetNextStatesByStateInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_contract, FILE: hr_leave.py) ---
-            // def _get_overlapping_contracts(self, contract_states=None):
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_next_states_by_state(self):
             // self.ensure_one()
-            // if contract_states is None:
-            //     contract_states = [
-            //         '|',
-            //         ('state', 'not in', ['draft', 'cancel']),
-            //         '&',
-            //         ('state', '=', 'draft'),
-            //         ('kanban_state', '=', 'done')
-            //     ]
-            // domain = AND([contract_states, [
-            //     ('employee_id', '=', self.employee_id.id),
-            //     ('date_start', '<=', self.date_to),
-            //     '|',
-            //         ('date_end', '>=', self.date_from),
-            //         ('date_end', '=', False),
-            // ]])
-            // return self.env['hr.contract'].sudo().search(domain)
+            // state_result = {
+            //     'confirm': set(),
+            //     'validate1': set(),
+            //     'validate': set(),
+            //     'refuse': set(),
+            //     'cancel': set()
+            // }
+            // validation_type = self.validation_type
+            // 
+            // user_employees = self.env.user.employee_ids
+            // is_own_leave = self.employee_id in user_employees
+            // is_in_past = self.date_from and self.date_from.date() < fields.Date.today()
+            // 
+            // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
+            // is_time_off_manager = self.employee_id.leave_manager_id == self.env.user
+            // 
+            // if is_own_leave and (not is_in_past or is_officer):
+            //     state_result['validate1'].add('cancel')
+            //     state_result['validate'].add('cancel')
+            //     state_result['refuse'].add('cancel')
+            // 
+            // if is_officer:
+            //     if validation_type == 'both':
+            //         state_result['confirm'].add('validate1')
+            //         state_result['refuse'].add('validate1')
+            //         state_result['cancel'].add('validate1')
+            //     state_result['confirm'].update({'validate', 'refuse'})
+            //     state_result['validate1'].update({'confirm', 'validate', 'refuse'})
+            //     state_result['validate'].update({'confirm', 'refuse'})
+            //     state_result['refuse'].update({'confirm', 'validate'})
+            //     state_result['cancel'].update({'confirm', 'validate', 'refuse'})
+            // elif is_time_off_manager:
+            //     if validation_type != 'hr':
+            //         state_result['confirm'].add('refuse')
+            //         state_result['validate'].add('refuse')
+            //     if validation_type == 'both':
+            //         state_result['confirm'].add('validate1')
+            //         state_result['validate1'].add('refuse')
+            //     elif validation_type == 'manager':
+            //         state_result['confirm'].add('validate')
+            //         state_result['refuse'].add('validate')
+            // 
+            // return state_result
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> GetOverlappingContractsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_overlapping_contracts(self):
+            // self.ensure_one()
+            // domain = Domain.AND([
+            //     Domain('employee_id', '=', self.employee_id.id),
+            //     Domain('contract_date_start', '<=', self.date_to),
+            //     Domain.OR([
+            //         Domain('contract_date_end', '>=', self.date_from),
+            //         Domain('contract_date_end', '=', False),
+            //     ])
+            // ])
+            // versions = self.env['hr.version'].sudo().search(domain)
+            // return versions.filtered(lambda v: v._is_overlapping_period(self.date_from.date(), self.date_to.date()))
             */
             return default;
         }
@@ -1428,6 +1671,16 @@ namespace Bamboo.Core.Application.Services
             //     if self.holiday_status_id.responsible_ids:
             //         responsible = self.holiday_status_id.responsible_ids
             // return responsible
+            */
+            return default;
+        }
+
+        protected async Task<HrLeave> GetToCleanActivitiesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _get_to_clean_activities(self):
+            // return ['hr_holidays.mail_act_leave_approval', 'hr_holidays.mail_act_leave_second_approval']
             */
             return default;
         }
@@ -1465,6 +1718,7 @@ namespace Bamboo.Core.Application.Services
             // def _inverse_supported_attachment_ids(self):
             // for holiday in self:
             //     holiday.attachment_ids = holiday.supported_attachment_ids
+            // self.invalidate_recordset(['attachment_ids'])
             */
             return default;
         }
@@ -1477,10 +1731,27 @@ namespace Bamboo.Core.Application.Services
             // # due to record rule can not allow to add follower and mention on validated leave so subscribe through sudo
             // if any(holiday.state in ['validate', 'validate1'] for holiday in self):
             //     self.check_access('read')
-            //     return super(HolidaysRequest, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
-            // return super(HolidaysRequest, self).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            //     return super(HrLeave, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+            // return super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<HrLeave> MoveValidateLeaveToConfirmInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
+            // def _move_validate_leave_to_confirm(self):
+            // self.write({'state': 'confirm'})
+            // self.activity_update()
+            // self._post_leave_cancel()
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
+            // def _move_validate_leave_to_confirm(self):
+            // res = super()._move_validate_leave_to_confirm()
+            // self._regen_work_entries()
+            // return res
+            */
+            return default;
         }
 
         protected async Task<HrLeave> NotifyChangeInternalAsync(object message, object subtype_xmlid)
@@ -1507,67 +1778,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeave> NotifyGetRecipientsGroupsInternalAsync(object message, object model_description, object msg_vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Handle HR users and officers recipients that can validate or refuse holidays
-            // directly from email. """
-            // groups = super()._notify_get_recipients_groups(
-            //     message, model_description, msg_vals=msg_vals
-            // )
-            // if not self:
-            //     return groups
-            // 
-            // local_msg_vals = dict(msg_vals or {})
-            // 
-            // self.ensure_one()
-            // hr_actions = []
-            // if self.state == 'confirm':
-            //     app_action = self._notify_get_action_link('controller', controller='/leave/approve', **local_msg_vals)
-            //     hr_actions += [{'url': app_action, 'title': _('Approve')}]
-            // if self.state == 'validate1':
-            //     app_action = self._notify_get_action_link('controller', controller='/leave/validate', **local_msg_vals)
-            //     hr_actions += [{'url': app_action, 'title': _('Validate')}]
-            // if self.state in ['confirm', 'validate', 'validate1']:
-            //     ref_action = self._notify_get_action_link('controller', controller='/leave/refuse', **local_msg_vals)
-            //     hr_actions += [{'url': ref_action, 'title': _('Refuse')}]
-            // 
-            // holiday_user_group_id = self.env.ref('hr_holidays.group_hr_holidays_user').id
-            // new_group = (
-            //     'group_hr_holidays_user',
-            //     lambda pdata: pdata['type'] == 'user' and holiday_user_group_id in pdata['groups'],
-            //     {
-            //         'actions': hr_actions,
-            //         'active': True,
-            //         'has_button_access': True,
-            //     }
-            // )
-            // 
-            // return [new_group] + groups
-            */
-            return default;
-        }
-
         protected async Task<HrLeave> NotifyManagerInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _notify_manager(self):
             // leaves = self.filtered(lambda hol: (hol.validation_type == 'both' and hol.state in ['validate1', 'validate']) or (hol.validation_type == 'manager' and hol.state == 'validate'))
+            // model_description = self.env['ir.model']._get('hr.holidays').name
             // for holiday in leaves:
             //     responsible = holiday.employee_id.leave_manager_id.partner_id.ids
             //     if responsible:
-            //         self.env['mail.thread'].sudo().message_notify(
+            //         holiday.sudo().message_notify(
             //             partner_ids=responsible,
-            //             model_description='Time Off',
+            //             model_description=model_description,
             //             subject=_('Refused Time Off'),
             //             body=_(
             //                 '%(holiday_name)s has been refused.',
             //                 holiday_name=holiday.display_name,
             //             ),
-            //             email_layout_xmlid='mail.mail_notification_light',
+            //             email_layout_xmlid="mail.mail_notification_layout",
+            //             subtitles=[holiday.display_name],
             //         )
             */
             return default;
@@ -1579,13 +1809,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _onchange_hours(self):
             // # avoid negative or after midnight
-            // self.request_hour_from = min(self.request_hour_from, 23.99)
-            // self.request_hour_from = max(self.request_hour_from, 0.0)
-            // self.request_hour_to = min(self.request_hour_to, 24)
-            // self.request_hour_to = max(self.request_hour_to, 0.0)
-            // 
-            // # avoid wrong order
-            // self.request_hour_to = max(self.request_hour_to, self.request_hour_from)
+            // self.request_hour_from = min(max(self.request_hour_from, 0.0), 23.99)
+            // self.request_hour_to = min(max(self.request_hour_to, 0.0), 24)
             */
             return default;
         }
@@ -1617,28 +1842,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeave> OpenRecordsAsync(Guid id, HrLeaveOpenRecordsRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_open_records(self, leave_ids):
-            // if len(leave_ids) == 1:
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'view_mode': 'form',
-            //         'res_id': leave_ids[0],
-            //         'res_model': 'hr.leave',
-            //     }
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': [[False, 'list'], [False, 'form']],
-            //     'domain': [('id', 'in', leave_ids.ids)],
-            //     'res_model': 'hr.leave',
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<HrLeave> PostLeaveCancelInternalAsync()
         {
             /*
@@ -1665,13 +1868,18 @@ namespace Bamboo.Core.Application.Services
             //     allday_value = not holiday.request_unit_half
             //     if holiday.leave_type_request_unit == 'hour':
             //         allday_value = float_compare(holiday.number_of_days, 1.0, 1) >= 0
+            // 
+            //     leave_tz = pytz.timezone(holiday.tz) if holiday.tz else pytz.UTC
+            //     start_value = pytz.UTC.localize(holiday.date_from).astimezone(leave_tz).replace(tzinfo=None)
+            //     stop_value = pytz.UTC.localize(holiday.date_to).astimezone(leave_tz).replace(tzinfo=None)
+            // 
             //     meeting_values = {
             //         'name': meeting_name,
             //         'duration': holiday.number_of_days * (holiday.resource_calendar_id.hours_per_day or HOURS_PER_DAY),
             //         'description': holiday.notes,
             //         'user_id': user.id,
-            //         'start': holiday.date_from,
-            //         'stop': holiday.date_to,
+            //         'start': start_value,
+            //         'stop': stop_value,
             //         'allday': allday_value,
             //         'privacy': 'confidential',
             //         'event_tz': user.tz,
@@ -1704,6 +1912,7 @@ namespace Bamboo.Core.Application.Services
             //     'resource_id': self.employee_id.resource_id.id,
             //     'calendar_id': self.resource_calendar_id.id,
             //     'time_type': self.holiday_status_id.time_type,
+            //     'elligible_for_accrual_rate': self.holiday_status_id.elligible_for_accrual_rate,
             // }
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
             // def _prepare_resource_leave_vals(self):
@@ -1741,7 +1950,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def action_refuse(self):
             // res = super().action_refuse()
-            // self.sudo().overtime_id.unlink()
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
             // def action_refuse(self):
@@ -1749,13 +1957,13 @@ namespace Bamboo.Core.Application.Services
             // Override to archive linked work entries and recreate attendance work entries
             // where the refused leave was.
             // """
-            // res = super(HrLeave, self).action_refuse()
+            // res = super().action_refuse()
             // self._regen_work_entries()
             // return res
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def action_refuse(self):
             // """ Remove the timesheets linked to the refused holidays """
-            // result = super(Holidays, self).action_refuse()
+            // result = super().action_refuse()
             // timesheets = self.sudo().mapped('timesheet_ids')
             // timesheets.write({'holiday_id': False})
             // timesheets.unlink()
@@ -1779,7 +1987,10 @@ namespace Bamboo.Core.Application.Services
             // # Re-create attendance work entries
             // vals_list = []
             // for work_entry in work_entries:
-            //     vals_list += work_entry.contract_id._get_work_entries_values(work_entry.date_start, work_entry.date_stop)
+            //     vals_list += work_entry.version_id._get_work_entries_values(
+            //         datetime.combine(work_entry.date, time.min),
+            //         datetime.combine(work_entry.date, time.max))
+            // vals_list = self.env['hr.version']._generate_work_entries_postprocess(vals_list)
             // self.env['hr.work.entry'].create(vals_list)
             */
             return default;
@@ -1804,29 +2015,11 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrLeave> ResetConfirmAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_reset_confirm(self):
-            // if any(holiday.state not in ['cancel', 'refuse'] for holiday in self):
-            //     raise UserError(_('Time off request state must be "Refused" or "Cancelled" in order to be reset to "Confirmed".'))
-            // self.write({
-            //     'state': 'confirm',
-            //     'first_approver_id': False,
-            //     'second_approver_id': False,
-            // })
-            // self.activity_update()
-            // return True
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def action_reset_confirm(self):
-            // overtime_leaves = self.filtered('overtime_deductible')
+            // self._check_overtime_deductible(self)
             // res = super().action_reset_confirm()
-            // overtime_leaves.overtime_id.sudo().unlink()
             // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
-            // def action_reset_confirm(self):
-            // start = min(self.mapped('date_from'), default=False)
-            // stop = max(self.mapped('date_to'), default=False)
-            // with self.env['hr.work.entry']._error_checking(start=start, stop=stop, employee_ids=self.employee_id.ids):
-            //     return super().action_reset_confirm()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1837,12 +2030,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _search_description(self, operator, value):
             // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user')
-            // domain = [('private_name', operator, value)]
+            // domain = Domain('private_name', operator, value)
             // 
             // if not is_officer:
-            //     domain = expression.AND([domain, [('user_id', '=', self.env.user.id)]])
+            //     domain &= Domain('user_id', '=', self.env.user.id)
             // query = self.sudo()._search(domain)
-            // return [('id', 'in', query)]
+            // return Domain('id', 'in', query)
             */
             return default;
         }
@@ -1851,89 +2044,64 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def _split_leaves(self, split_date_from, split_date_to):
+            // def _split_leaves(self, split_date_from, split_date_to=False):
             // """
-            // Split leaves on the given full-day interval. The leaves will be split
-            // into two new leaves: the period up until (but not including)
-            // split_date_from and the period starting at (and including)
-            // split_date_to.
+            // This method splits an original leave in two leaves and returns the new one for each leave in self.
+            // E.g. (start, stop) -> (start, split_date_from - 1day), (split_date_to, stop)
+            // :param split_date_from: The starting date of the splicing interval (includes)
+            // :param split_date_to: The ending date of the splicing interval. (not includes)
+            // :param changes_message: The message will be translated and posted in the first leave's chatter
             // 
-            // This means that the period in between split_date_from and split_date_to
-            // will no longer be covered by the new leaves. In order to split a leave
-            // without losing any leave coverage, split_date_from and split_date_to
-            // should therefore be the same.
-            // 
-            // Another important note to make is that this method only splits leaves
-            // on full-day intervals. Logic to split leaves on partial days or hours
-            // is not straightforward as you have to take into account working hours
-            // and timezones. It's also not clear that we would want to handle this
-            // automatically. The method will therefore also only work on leaves that
-            // are taken in full or half days (Though a half day leave in the interval
-            // will simply be refused - there are no multi-day spanning half-day
-            // leaves)
-            // 
-            // The method creates one or two new leaves per leave that needs to be
-            // split and refuses the original leave.
+            // If split_date_to is not set; the splicing interval will be equals to [split_date_form, split_date_from -1]
+            // to avoid one day leave.
             // """
-            // # Keep track of the original states before refusing the leaves and creating new ones
-            // original_states = {l.id: l.state for l in self}
-            // 
-            // # Refuse all original leaves
-            // self.action_refuse()
-            // split_leaves_vals = []
+            // new_leaves_vals = []
+            // if not split_date_to:
+            //     split_date_to = split_date_from
             // 
             // # Only leaves that span a period outside of the split interval need
             // # to be split.
             // multi_day_leaves = self.filtered(lambda l: l.request_date_from < split_date_from or l.request_date_to >= split_date_to)
-            // 
             // for leave in multi_day_leaves:
-            //     # Leaves in days
             //     new_leave_vals = []
-            // 
-            //     # Get the values to create the leave before the split
+            //     target_leave_vals = []
             //     if leave.request_date_from < split_date_from:
-            //         new_leave_vals.append(leave.copy_data({
-            //             'request_date_from': leave.request_date_from,
+            //         new_leave_vals.append(leave.with_context(skip_copy_check=True).copy_data({
             //             'request_date_to': split_date_from + timedelta(days=-1),
-            //             'state': original_states[leave.id],
+            //             'state': leave.state
             //         })[0])
             // 
             //     # Do the same for the new leave after the split
             //     if leave.request_date_to >= split_date_to:
-            //         new_leave_vals.append(leave.copy_data({
+            //         new_leave_vals.append(leave.with_context(skip_copy_check=True).copy_data({
             //             'request_date_from': split_date_to,
-            //             'request_date_to': leave.request_date_to,
-            //             'state': original_states[leave.id],
+            //             'state': leave.state
             //         })[0])
             // 
-            //     # For those two new leaves, only create them if they actually
-            //     # have a non-zero duration.
+            //     # For those two new leaves, only create them if they actually have a non-zero duration.
             //     for leave_vals in new_leave_vals:
             //         new_leave = self.env['hr.leave'].new(leave_vals)
             //         new_leave._compute_date_from_to()
-            //         # Could happen for part-time contract, that time off is not necessary
-            //         # anymore.
-            //         # Imagine you work on monday-wednesday-friday only.
-            //         # You take a time off on friday.
-            //         # We create a company time off on friday.
-            //         # By looking at the last attendance before the company time off
-            //         # start date to compute the date_to, you would have a date_from > date_to.
-            //         # Just don't create the leave at that time. That's the reason why we use
-            //         # new instead of create. As the leave is not actually created yet, the sql
-            //         # constraint didn't check date_from < date_to yet.
             //         if new_leave.date_from < new_leave.date_to:
-            //             split_leaves_vals.append(new_leave._convert_to_write(new_leave._cache))
+            //             target_leave_vals.append(new_leave._convert_to_write(new_leave._cache))
             // 
-            // split_leaves = self.env['hr.leave'].with_context(
+            //     if target_leave_vals:
+            //         vals = target_leave_vals.pop(0)
+            //         leave.with_context(leave_skip_state_check=True).write({
+            //             'request_date_from': vals['request_date_from'],
+            //             'request_date_to': vals['request_date_to'],
+            //         })
+            //         if target_leave_vals:
+            //             new_leaves_vals.extend(target_leave_vals)
+            // 
+            // if not new_leaves_vals:
+            //     return self.env['hr.leave']
+            // return self.env['hr.leave'].with_context(
             //     tracking_disable=True,
             //     mail_activity_automation_skip=True,
             //     leave_fast_create=True,
             //     leave_skip_state_check=True
-            // ).create(split_leaves_vals)
-            // 
-            // split_leaves.filtered(lambda l: l.state in 'validate')._validate_leave_request()
-            // 
-            // return split_leaves
+            // ).create(new_leaves_vals)
             */
             return default;
         }
@@ -1941,7 +2109,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<HrLeave> TimesheetPrepareLineValuesInternalAsync(object index, object work_hours_data, object day_date, object work_hours_count, object project, object task)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def _timesheet_prepare_line_values(self, index, work_hours_data, day_date, work_hours_count, project, task):
             // self.ensure_one()
             // return {
@@ -1966,8 +2134,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _to_utc(self, date, hour, resource):
             // hour = float_to_time(float(hour))
-            // holiday_tz = timezone(resource.tz or self.env.user.tz or 'UTC')
-            // return holiday_tz.localize(datetime.combine(date, hour)).astimezone(UTC).replace(tzinfo=None)
+            // holiday_tz = pytz.timezone(resource.tz or self.env.user.tz or 'UTC')
+            // return holiday_tz.localize(datetime.combine(date, hour)).astimezone(pytz.UTC).replace(tzinfo=None)
             */
             return default;
         }
@@ -1980,25 +2148,9 @@ namespace Bamboo.Core.Application.Services
             // if 'state' in init_values and self.state == 'validate':
             //     leave_notif_subtype = self.holiday_status_id.leave_notif_subtype_id
             //     return leave_notif_subtype or self.env.ref('hr_holidays.mt_leave')
-            // return super(HolidaysRequest, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             */
             return default;
-        }
-
-        public override async Task<object> UnlinkAsync(List<Guid> ids)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def unlink(self):
-            // self.sudo()._post_leave_cancel()
-            // return super(HolidaysRequest, self.with_context(leave_skip_date_check=True)).unlink()
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
-            // def unlink(self):
-            // # TODO master change to ondelete
-            // self.sudo().overtime_id.unlink()
-            // return super().unlink()
-            */
-            return await base.UnlinkAsync(ids);
         }
 
         protected async Task<HrLeave> UnlinkIfCorrectStatesInternalAsync()
@@ -2006,19 +2158,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
             // def _unlink_if_correct_states(self):
-            // error_message = _('You cannot delete a time off which is in %s state')
+            // error_message = self.env._('Oops! %(state)s Time-Off requests can only be deleted by Administrators.')
             // state_description_values = {elem[0]: elem[1] for elem in self._fields['state']._description_selection(self.env)}
             // now = fields.Datetime.now().date()
             // 
             // if not self.env.user.has_group('hr_holidays.group_hr_holidays_user'):
             //     for hol in self:
             //         if hol.state not in ['confirm', 'validate1', 'cancel']:
-            //             raise UserError(error_message % state_description_values.get(self[:1].state))
+            //             raise UserError(error_message % {'state': state_description_values.get(self[:1].state)})
             //         if hol.date_from.date() < now:
-            //             raise UserError(_('You cannot delete a time off which is in the past'))
-            // else:
+            //             raise UserError(_("You can't delete a time off request that is in the past."))
+            // elif not self.env.user.has_group('hr_holidays.group_hr_holidays_manager'):
             //     for holiday in self.filtered(lambda holiday: holiday.state not in ['cancel', 'confirm']):
-            //         raise UserError(error_message % (state_description_values.get(holiday.state),))
+            //         error_message = self.env._('Oops! %(state)s Time-Off requests can only be deleted by Administrators.')
+            //         raise UserError(error_message % {'state': state_description_values.get(holiday.state)})
             */
             return default;
         }
@@ -2028,49 +2181,19 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
             // def _update_leaves_overtime(self):
-            // employee_dates = defaultdict(set)
-            // for leave in self:
-            //     if leave.employee_id:
-            //         for d in range((leave.date_to - leave.date_from).days + 1):
-            //             employee_dates[leave.employee_id].add(self.env['hr.attendance']._get_day_start_and_day(leave.employee_id, leave.date_from + timedelta(days=d)))
-            // if employee_dates:
-            //     self.env['hr.attendance'].sudo()._update_overtime(employee_dates)
+            // Attendance = self.env['hr.attendance']
+            // dates = [
+            //     Attendance._attendance_date(leave.date_from, leave.employee_id)
+            //     for leave in self.filtered(lambda leave: leave.state == 'confirmed')
+            // ]
+            // if dates:
+            //     Attendance.search([
+            //         ('date', '>=', min(dates)),
+            //         ('date', '<=', max(dates)),
+            //         ('employee_id', 'in', self.employee_id.ids),
+            //     ])._update_overtimes()
             */
             return default;
-        }
-
-        public async Task<HrLeave> ValidateAsync(Guid id, HrLeaveValidateRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def action_validate(self, check_state=True):
-            // current_employee = self.env.user.employee_id
-            // leaves = self._get_leaves_on_public_holiday()
-            // if leaves:
-            //     raise ValidationError(_('The following employees are not supposed to work during that period:\n %s') % ','.join(leaves.mapped('employee_id.name')))
-            // if check_state and any(holiday.state not in ['confirm', 'validate1'] and holiday.validation_type != 'no_validation' for holiday in self):
-            //     raise UserError(_('Time off request must be confirmed in order to approve it.'))
-            // 
-            // self.write({'state': 'validate'})
-            // 
-            // leaves_second_approver = self.env['hr.leave']
-            // leaves_first_approver = self.env['hr.leave']
-            // 
-            // for leave in self:
-            //     if leave.validation_type == 'both':
-            //         leaves_second_approver += leave
-            //     else:
-            //         leaves_first_approver += leave
-            // 
-            // leaves_second_approver.write({'second_approver_id': current_employee.id})
-            // leaves_first_approver.write({'first_approver_id': current_employee.id})
-            // 
-            // self._validate_leave_request()
-            // if not self.env.context.get('leave_fast_create'):
-            //     self.filtered(lambda holiday: holiday.validation_type != 'no_validation').activity_update()
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<HrLeave> ValidateLeaveRequestInternalAsync()
@@ -2085,21 +2208,23 @@ namespace Bamboo.Core.Application.Services
             // meeting_holidays = holidays.filtered(lambda l: l.holiday_status_id.create_calendar_meeting)
             // meetings = self.env['calendar.event']
             // if meeting_holidays:
+            //     Meeting = self.env['calendar.event']
+            //     Meeting.check_access('create')
             //     meeting_values_for_user_id = meeting_holidays._prepare_holidays_meeting_values()
             //     Meeting = self.env['calendar.event']
             //     for user_id, meeting_values in meeting_values_for_user_id.items():
-            //         meetings += Meeting.with_user(user_id or self.env.uid).with_context(
+            //         meetings += Meeting.with_user(user_id or self.env.uid).sudo().with_context(clean_context({**self.env.context, **dict(
             //                         allowed_company_ids=[],
             //                         no_mail_to_attendees=True,
             //                         calendar_no_videocall=True,
             //                         active_model=self._name
-            //                     ).create(meeting_values)
+            //                     )})).create(meeting_values)
             // Holiday = self.env['hr.leave']
             // for meeting in meetings:
             //     Holiday.browse(meeting.res_id).meeting_id = meeting
             // 
             // for holiday in holidays:
-            //     user_tz = timezone(holiday.tz)
+            //     user_tz = pytz.timezone(holiday.tz)
             //     utc_tz = pytz.utc.localize(holiday.date_from).astimezone(user_tz)
             //     notify_partner_ids = holiday.employee_id.user_id.partner_id.ids
             //     holiday.message_post(
@@ -2115,63 +2240,12 @@ namespace Bamboo.Core.Application.Services
             // self._update_leaves_overtime()
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
             // def _validate_leave_request(self):
-            // super(HrLeave, self)._validate_leave_request()
+            // super()._validate_leave_request()
             // self.sudo()._cancel_work_entry_conflict()  # delete preexisting conflicting work_entries
             // return True
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def _validate_leave_request(self):
-            // """ Timesheet will be generated on leave validation only if timesheet_generate is True
-            //     If company is set, timesheet_project_id and timesheet_task_id from leave type are
-            //     used as project_id and task_id.
-            //     Else, internal_project_id and leave_timesheet_task_id are used.
-            //     The generated timesheet will be attached to this project/task.
-            // """
-            // vals_list = []
-            // leave_ids = []
-            // for leave in self:
-            //     if not leave.holiday_status_id.timesheet_generate:
-            //         continue
-            // 
-            //     if leave.holiday_status_id.company_id:
-            //         project, task = leave.holiday_status_id.timesheet_project_id, leave.holiday_status_id.timesheet_task_id
-            //     else:
-            //         project, task = leave.employee_id.company_id.internal_project_id, leave.employee_id.company_id.leave_timesheet_task_id
-            // 
-            //     if not project or not task:
-            //         continue
-            // 
-            //     leave_ids.append(leave.id)
-            //     if not leave.employee_id:
-            //         continue
-            // 
-            //     calendar = leave.employee_id.resource_calendar_id
-            //     calendar_timezone = pytz.timezone(calendar.tz)
-            // 
-            //     if calendar.flexible_hours and (leave.request_unit_hours or leave.request_unit_half or leave.date_from.date() == leave.date_to.date()):
-            //         leave_date = leave.date_from.astimezone(calendar_timezone).date()
-            //         if leave.request_unit_hours:
-            //             hours = leave.request_hour_to - leave.request_hour_from
-            //         elif leave.request_unit_half:
-            //             hours = calendar.hours_per_day / 2
-            //         else:  # Single-day leave
-            //             hours = calendar.hours_per_day
-            //         work_hours_data = [(leave_date, hours)]
-            //     else:
-            //         work_hours_data = leave.employee_id._list_work_time_per_day(
-            //             leave.date_from,
-            //             leave.date_to)[leave.employee_id.id]
-            // 
-            //     for index, (day_date, work_hours_count) in enumerate(work_hours_data):
-            //         vals_list.append(leave._timesheet_prepare_line_values(index, work_hours_data, day_date, work_hours_count, project, task))
-            // 
-            // # Unlink previous timesheets to avoid doublon (shouldn't happen on the interface but meh)
-            // old_timesheets = self.env["account.analytic.line"].sudo().search([('project_id', '!=', False), ('holiday_id', 'in', leave_ids)])
-            // if old_timesheets:
-            //     old_timesheets.holiday_id = False
-            //     old_timesheets.unlink()
-            // 
-            // self.env['account.analytic.line'].sudo().create(vals_list)
-            // 
+            // self._generate_timesheets()
             // return super()._validate_leave_request()
             */
             return default;
@@ -2181,7 +2255,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // values = vals
             // is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user') or self.env.is_superuser()
             // if not is_officer and values.keys() - {'attachment_ids', 'supported_attachment_ids', 'message_main_attachment_id'}:
             //     if any(hol.date_from.date() < fields.Date.today() and hol.employee_id.leave_manager_id != self.env.user
@@ -2209,9 +2284,10 @@ namespace Bamboo.Core.Application.Services
             //         values['request_date_from'] = values['date_from']
             //     if 'date_to' in values:
             //         values['request_date_to'] = values['date_to']
-            // result = super(HolidaysRequest, self).write(values)
+            // result = super().write(values)
             // if any(field in values for field in ['request_date_from', 'date_from', 'request_date_from', 'date_to', 'holiday_status_id', 'employee_id', 'state']):
             //     self._check_validity()
+            //     self.env['hr.leave.allocation'].invalidate_model(['leaves_taken', 'max_leaves'])  # missing dependency on compute
             // if not self.env.context.get('leave_fast_create'):
             //     for holiday in self:
             //         if employee_id:
@@ -2224,20 +2300,7 @@ namespace Bamboo.Core.Application.Services
             // fields_to_check = {'number_of_days', 'request_date_from', 'request_date_to', 'state', 'employee_id', 'holiday_status_id'}
             // if not any(field for field in fields_to_check if field in vals):
             //     return res
-            // if vals.get('holiday_status_id'):
-            //     self._check_overtime_deductible(self)
-            // #User may not have access to overtime_id field
-            // for leave in self.sudo().filtered('overtime_id'):
-            //     # It must always be possible to refuse leave based on overtime
-            //     if vals.get('state') in ['refuse']:
-            //         continue
-            //     employee = leave.employee_id
-            //     duration = leave.number_of_hours
-            //     overtime_duration = leave.overtime_id.sudo().duration
-            //     if overtime_duration != -1 * duration:
-            //         if duration > employee.total_overtime - overtime_duration:
-            //             raise ValidationError(_('The employee does not have enough extra hours to extend this leave.'))
-            //         leave.overtime_id.sudo().duration = -1 * duration
+            // self._check_overtime_deductible(self)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_leave.py) ---
             // def write(self, vals):
@@ -2258,7 +2321,7 @@ namespace Bamboo.Core.Application.Services
             // stop = datetime.combine(max(stop_dates) + relativedelta(days=1), time.max)
             // with self.env['hr.work.entry']._error_checking(start=start, stop=stop, skip=skip_check, employee_ids=employee_ids):
             //     return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_holidays.py) ---
+            --- ODOO METHOD SOURCE (MODULE: project_timesheet_holidays, FILE: hr_leave.py) ---
             // def write(self, vals):
             // res = super().write(vals)
             // # reevaluate timesheets after the leaves are wrote in order to remove empty timesheets

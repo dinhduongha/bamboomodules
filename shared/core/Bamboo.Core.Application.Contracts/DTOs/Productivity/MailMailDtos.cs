@@ -6,7 +6,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
 {
     public class MailMailProcessEmailQueueRequestDto
     {
-        public object Ids { get; set; }
+        public List<Guid> EmailIds { get; set; }
         public object BatchSize { get; set; }
     }
     

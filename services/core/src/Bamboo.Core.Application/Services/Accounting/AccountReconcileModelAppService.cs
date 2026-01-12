@@ -26,55 +26,40 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        protected async Task<AccountReconcileModel> CheckPaymentToleranceParamInternalAsync()
+        protected async Task<AccountReconcileModel> CheckMatchLabelParamInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _check_payment_tolerance_param(self):
+            // def _check_match_label_param(self):
             // for record in self:
-            //     if record.allow_payment_tolerance:
-            //         if record.payment_tolerance_type == 'percentage' and not 0 <= record.payment_tolerance_param <= 100:
-            //             raise ValidationError(_("A payment tolerance defined as a percentage should always be between 0 and 100"))
-            //         elif record.payment_tolerance_type == 'fixed_amount' and record.payment_tolerance_param < 0:
-            //             raise ValidationError(_("A payment tolerance defined as an amount should always be higher than 0"))
+            //     if record.match_label == 'match_regex':
+            //         try:
+            //             re.compile(record.match_label_param)
+            //         except re.error:
+            //             raise UserError(_('The regex is not valid'))
             */
             return default;
         }
 
-        protected async Task<AccountReconcileModel> ComputeNumberEntriesInternalAsync()
+        protected async Task<AccountReconcileModel> ComputeCanBeProposedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_number_entries(self):
-            // data = self.env['account.move.line']._read_group([('reconcile_model_id', 'in', self.ids)], ['reconcile_model_id'], ['__count'])
-            // mapped_data = {reconcile_model.id: count for reconcile_model, count in data}
+            // def _compute_can_be_proposed(self):
             // for model in self:
-            //     model.number_entries = mapped_data.get(model.id, 0)
+            //     model.can_be_proposed = not model.mapped_partner_id and (model.match_label or model.match_amount or model.match_partner_ids or model.trigger == 'auto_reconcile')
             */
             return default;
         }
 
-        protected async Task<AccountReconcileModel> ComputePaymentToleranceParamInternalAsync()
+        protected async Task<AccountReconcileModel> ComputePartnerMappingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_payment_tolerance_param(self):
-            // for record in self:
-            //     if record.payment_tolerance_type == 'percentage':
-            //         record.payment_tolerance_param = min(100.0, max(0.0, record.payment_tolerance_param))
-            //     else:
-            //         record.payment_tolerance_param = max(0.0, record.payment_tolerance_param)
-            */
-            return default;
-        }
-
-        protected async Task<AccountReconcileModel> ComputeShowDecimalSeparatorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def _compute_show_decimal_separator(self):
-            // for record in self:
-            //     record.show_decimal_separator = any(l.amount_type == 'regex' for l in record.line_ids)
+            // def _compute_partner_mapping(self):
+            // for model in self:
+            //     is_partner_mapping = model.match_label and len(model.line_ids) == 1 and model.line_ids[0].partner_id and not model.line_ids[0].account_id
+            //     model.mapped_partner_id = is_partner_mapping and model.line_ids[0].partner_id.id
             */
             return default;
         }
@@ -105,17 +90,37 @@ namespace Bamboo.Core.Application.Services
             // def action_reconcile_stat(self):
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT ARRAY_AGG(DISTINCT move_id)
             //     FROM account_move_line
             //     WHERE reconcile_model_id = %s
             // ''', [self.id])
             // action.update({
             //     'context': {},
-            //     'domain': [('id', 'in', self._cr.fetchone()[0])],
+            //     'domain': [('id', 'in', self.env.cr.fetchone()[0])],
             //     'help': """<p class="o_view_nocontent_empty_folder">{}</p>""".format(_('This reconciliation model has created no entry so far')),
             // })
             // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<AccountReconcileModel> SetAutoReconcileAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
+            // def action_set_auto_reconcile(self):
+            // self.trigger = 'auto_reconcile'
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<AccountReconcileModel> SetManualAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
+            // def action_set_manual(self):
+            // self.trigger = 'manual'
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

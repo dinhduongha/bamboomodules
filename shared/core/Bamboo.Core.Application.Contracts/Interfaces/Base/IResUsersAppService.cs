@@ -15,7 +15,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> AuthOauthAsync(Guid id, ResUsersAuthOauthRequestDto input);
         Task<ResUsers> AuthenticateAsync(Guid id, ResUsersAuthenticateRequestDto input);
         Task<ResUsers> ChangePasswordAsync(Guid id, ResUsersChangePasswordRequestDto input);
-        Task<ResUsers> CheckAsync(Guid id, ResUsersCheckRequestDto input);
+        Task<ResUsers> ChangePasswordWizardAsync(Guid id);
         Task<ResUsers> CheckCalendarCredentialsAsync(Guid id);
         Task<ResUsers> CheckSynchronizationStatusAsync(Guid id);
         Task<ResUsers> ContextGetAsync(Guid id);
@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> CreatePasskeyAsync(Guid id);
         Task<ResUsers> GetAsync(Guid id);
         Task<ResUsers> GetCompanyCurrencyIdAsync(Guid id);
+        Task<ResUsers> GetFormviewActionAsync(Guid id, ResUsersGetFormviewActionRequestDto input);
         Task<ResUsers> GetGamificationRedirectionDataAsync(Guid id);
         Task<ResUsers> GetPasswordPolicyAsync(Guid id);
         Task<ResUsers> GetSelectedCalendarsPartnerIdsAsync(Guid id, ResUsersGetSelectedCalendarsPartnerIdsRequestDto input);
@@ -38,16 +39,15 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> NewAsync(Guid id, ResUsersNewRequestDto input);
         Task<ResUsers> OnChangeLoginAsync(Guid id);
         Task<ResUsers> OnchangeParentIdAsync(Guid id);
-        Task<ResUsers> OpenEmployeeCarsAsync(Guid id);
         Task<ResUsers> OpenEmployeesAsync(Guid id);
-        Task<ResUsers> OpenLastMonthAttendancesAsync(Guid id);
-        Task<ResUsers> OpenLastMonthOvertimeAsync(Guid id);
         Task<ResUsers> OpenMyAccountSettingsAsync(Guid id);
         Task<ResUsers> OpenWebsiteUrlAsync(Guid id);
         Task<ResUsers> PauseGoogleSynchronizationAsync(Guid id);
         Task<ResUsers> PauseMicrosoftSynchronizationAsync(Guid id);
         Task<ResUsers> PreferenceChangePasswordAsync(Guid id);
         Task<ResUsers> PreferenceSaveAsync(Guid id);
+        Task<ResUsers> RelatedContactAsync(Guid id);
+        Task<ResUsers> RemoveOauthAccessTokenAsync(Guid id);
         Task<ResUsers> ResetPasswordAsync(Guid id, ResUsersResetPasswordRequestDto input);
         Task<ResUsers> ResetPasswordAsync(Guid id);
         Task<ResUsers> RestartGoogleSynchronizationAsync(Guid id);
@@ -57,6 +57,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id);
         Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid id);
         Task<ResUsers> SendUnregisteredUserReminderAsync(Guid id);
+        Task<ResUsers> SetupOutgoingMailServerAsync(Guid id, ResUsersSetupOutgoingMailServerRequestDto input);
         Task<ResUsers> ShowAccessesAsync(Guid id);
         Task<ResUsers> ShowGroupsAsync(Guid id);
         Task<ResUsers> ShowRulesAsync(Guid id);
@@ -64,7 +65,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> StopGoogleSynchronizationAsync(Guid id);
         Task<ResUsers> StopMicrosoftSynchronizationAsync(Guid id);
         Task<ResUsers> SwitchTourEnabledAsync(Guid id, ResUsersSwitchTourEnabledRequestDto input);
-        Task<ResUsers> ToggleActiveAsync(Guid id);
+        Task<ResUsers> TestOutgoingMailServerAsync(Guid id);
         Task<ResUsers> TotpDisableAsync(Guid id);
         Task<ResUsers> TotpEnableWizardAsync(Guid id);
         Task<ResUsers> TotpInviteAsync(Guid id);

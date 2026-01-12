@@ -9,12 +9,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object AdrPref { get; set; }
     }
     
-    public class ResPartnerAutocompleteRequestDto
-    {
-        public object Query { get; set; }
-        public object Timeout { get; set; }
-    }
-    
     public class ResPartnerAutocompleteByNameRequestDto
     {
         public object Query { get; set; }
@@ -32,11 +26,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto
     {
         public object Company { get; set; }
-    }
-    
-    public class ResPartnerCheckGstInRequestDto
-    {
-        public object Vat { get; set; }
     }
     
     public class ResPartnerCheckVatAlRequestDto
@@ -64,12 +53,22 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Vat { get; set; }
     }
     
+    public class ResPartnerCheckVatDoRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
     public class ResPartnerCheckVatEcRequestDto
     {
         public object Vat { get; set; }
     }
     
     public class ResPartnerCheckVatGrRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
+    public class ResPartnerCheckVatGtRequestDto
     {
         public object Vat { get; set; }
     }
@@ -95,6 +94,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     }
     
     public class ResPartnerCheckVatInRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
+    public class ResPartnerCheckVatJpRequestDto
     {
         public object Vat { get; set; }
     }
@@ -129,6 +133,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Vat { get; set; }
     }
     
+    public class ResPartnerCheckVatRsRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
     public class ResPartnerCheckVatRuRequestDto
     {
         public object Vat { get; set; }
@@ -139,12 +148,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Vat { get; set; }
     }
     
-    public class ResPartnerCheckVatTRequestDto
+    public class ResPartnerCheckVatThRequestDto
     {
         public object Vat { get; set; }
     }
     
     public class ResPartnerCheckVatTrRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
+    public class ResPartnerCheckVatTwRequestDto
     {
         public object Vat { get; set; }
     }
@@ -172,12 +186,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class ResPartnerCopyDataRequestDto
     {
         public object Default { get; set; }
-    }
-    
-    public class ResPartnerCreateMembershipInvoiceRequestDto
-    {
-        public object Product { get; set; }
-        public object Amount { get; set; }
     }
     
     public class ResPartnerDoPartnerManualActionRequestDto
@@ -214,14 +222,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Timeout { get; set; }
     }
     
-    public class ResPartnerEnrichCompanyRequestDto
-    {
-        public object CompanyDomain { get; set; }
-        public object PartnerGid { get; set; }
-        public object Vat { get; set; }
-        public object Timeout { get; set; }
-    }
-    
     public class ResPartnerFieldsViewGetRequestDto
     {
         public Guid ViewId { get; set; }
@@ -236,13 +236,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object AssertValidEmail { get; set; }
     }
     
-    public class ResPartnerFixEuVatNumberRequestDto
+    public class ResPartnerFormatVatChRequestDto
     {
-        public Guid CountryId { get; set; }
         public object Vat { get; set; }
     }
     
-    public class ResPartnerFormatVatChRequestDto
+    public class ResPartnerFormatVatClRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
+    public class ResPartnerFormatVatCoRequestDto
     {
         public object Vat { get; set; }
     }
@@ -252,7 +256,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Vat { get; set; }
     }
     
+    public class ResPartnerFormatVatHuRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
     public class ResPartnerFormatVatSmRequestDto
+    {
+        public object Vat { get; set; }
+    }
+    
+    public class ResPartnerFormatVatVnRequestDto
     {
         public object Vat { get; set; }
     }
@@ -273,6 +287,13 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public Guid ChannelId { get; set; }
         public object Search { get; set; }
         public object Limit { get; set; }
+    }
+    
+    public class ResPartnerGetNewPartnerRequestDto
+    {
+        public Guid ConfigId { get; set; }
+        public object Domain { get; set; }
+        public object Offset { get; set; }
     }
     
     public class ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto
@@ -306,27 +327,14 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Zoom { get; set; }
     }
     
-    public class ResPartnerIapPartnerAutocompleteAddTagsRequestDto
+    public class ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto
     {
         public object UnspscCodes { get; set; }
-    }
-    
-    public class ResPartnerImSearchRequestDto
-    {
-        public object Name { get; set; }
-        public object Limit { get; set; }
-        public List<Guid> ExcludedIds { get; set; }
     }
     
     public class ResPartnerIsValidRucEcRequestDto
     {
         public object Vat { get; set; }
-    }
-    
-    public class ResPartnerReadByVatRequestDto
-    {
-        public object Vat { get; set; }
-        public object Timeout { get; set; }
     }
     
     public class ResPartnerSearchForChannelInviteRequestDto
@@ -339,17 +347,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class ResPartnerSignupPrepareRequestDto
     {
         public object SignupType { get; set; }
-    }
-    
-    public class ResPartnerSimpleVatCheckRequestDto
-    {
-        public object CountryCode { get; set; }
-        public object VatNumber { get; set; }
-    }
-    
-    public class ResPartnerUpdateAddressRequestDto
-    {
-        public object Vals { get; set; }
     }
     
     public class ResPartnerViewHeaderGetRequestDto

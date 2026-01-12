@@ -48,17 +48,12 @@ namespace Bamboo.Core.Application.Services
             //     ('location_id.usage', '=', 'internal')])
             // alert_lots = lot_stock_quants.mapped('lot_id')
             // 
-            // alert_activity_xml_id = "product_expiry.mail_activity_type_alert_date_reached"
-            // alert_activity = self.env.ref(alert_activity_xml_id, raise_if_not_found=False)
-            // alert_activity_default_user_id = alert_activity.default_user_id.id if alert_activity else None
             // for lot in alert_lots:
-            //     user_id = alert_activity_default_user_id or \
-            //               lot.product_id.with_company(lot.company_id).responsible_id.id or \
-            //               lot.product_id.responsible_id.id or SUPERUSER_ID
             //     lot.activity_schedule(
-            //         alert_activity_xml_id,
-            //         user_id=user_id,
-            //         note=_("The alert date has been reached for this lot/serial number")
+            //         'mail.mail_activity_data_todo',
+            //         user_id=lot.product_id.with_company(lot.company_id).responsible_id.id or lot.product_id.responsible_id.id or SUPERUSER_ID,
+            //         note=_("The alert date has been reached for this lot/serial number"),
+            //         summary=_("Alert Date Reached"),
             //     )
             // alert_lots.write({
             //     'product_expiry_reminded': True
@@ -67,50 +62,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockLot> ChangeStandardPriceInternalAsync(object new_price)
+        protected async Task<StockLot> ChangeStandardPriceInternalAsync(object old_price)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
-            // def _change_standard_price(self, new_price):
+            // def _change_standard_price(self, old_price):
             // """Helper to create the stock valuation layers and the account moves
             // after an update of standard price.
             // 
             // :param new_price: new standard price
             // """
-            // if self.product_id.filtered(lambda p: p.valuation == 'real_time') and not self.env['stock.valuation.layer'].check_access_rights('read', raise_exception=False):
-            //     raise UserError(_("You cannot update the cost of a product in automated valuation as it leads to the creation of a journal entry, for which you don't have the access rights."))
-            // 
-            // svl_vals_list = []
-            // company_id = self.env.company
-            // price_unit_prec = self.env['decimal.precision'].precision_get('Product Price')
-            // rounded_new_price = float_round(new_price, precision_digits=price_unit_prec)
             // for lot in self:
-            //     if lot.product_id.cost_method not in ('standard', 'average'):
+            //     if lot.product_id.cost_method != 'average' or lot.standard_price == old_price:
             //         continue
-            //     quantity_svl = lot.sudo().quantity_svl
-            //     if float_compare(quantity_svl, 0.0, precision_rounding=lot.product_id.uom_id.rounding) <= 0:
-            //         continue
-            //     value_svl = lot.sudo().value_svl
-            //     value = company_id.currency_id.round((rounded_new_price * quantity_svl) - value_svl)
-            //     if company_id.currency_id.is_zero(value):
-            //         continue
-            // 
-            //     svl_vals = {
-            //         'company_id': company_id.id,
-            //         'product_id': lot.product_id.id,
-            //         'description': _('Lot value manually modified (from %(old)s to %(new)s)', old=lot.standard_price, new=rounded_new_price),
-            //         'value': value,
-            //         'quantity': 0,
+            //     product = lot.product_id
+            //     self.env['product.value'].sudo().create({
+            //         'product_id': product.id,
             //         'lot_id': lot.id,
-            //     }
-            //     svl_vals_list.append(svl_vals)
-            // layers = self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
-            // layers._change_standart_price_accounting_entries(new_price)
-            // for product in self.with_context(disable_auto_svl=True).product_id:
-            //     if product.cost_method == 'standard':
-            //         continue
-            //     if product.quantity_svl:
-            //         product.standard_price = product.value_svl / product.quantity_svl
+            //         'value': lot.standard_price,
+            //         'company_id': product.company_id.id or self.env.company.id,
+            //         'date': fields.Datetime.now(),
+            //         'description': _('%(lot)s price update from %(old_price)s to %(new_price)s by %(user)s',
+            //             lot=lot.name, old_price=old_price, new_price=lot.standard_price, user=self.env.user.name)
+            //     })
             */
             return default;
         }
@@ -127,6 +101,14 @@ namespace Bamboo.Core.Application.Services
             //     product_ids = self.env.context.get('lot_product_ids')
             //     if not active_mo.picking_type_id.use_create_components_lots and product_ids & component_product_ids:
             //         raise UserError(_('You are not allowed to create or edit a lot or serial number for the components with the operation type "Manufacturing". To change this, go on the operation type and tick the box "Create New Lots/Serial Numbers for Components".'))
+            // return super()._check_create()
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: stock_lot.py) ---
+            // def _check_create(self):
+            // active_repair_id = self.env.context.get('active_repair_id')
+            // if active_repair_id:
+            //     active_repair = self.env['repair.order'].browse(active_repair_id)
+            //     if active_repair and not active_repair.picking_type_id.use_create_lots:
+            //         raise UserError(_('You are not allowed to create a lot or serial number with this operation type. To change this, go on the operation type and tick the box "Create New Lots/Serial Numbers".'))
             // return super()._check_create()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
             // def _check_create(self):
@@ -166,6 +148,31 @@ namespace Bamboo.Core.Application.Services
             //             error_lines="\n".join(error_message_lines),
             //         ),
             //     )
+            */
+            return default;
+        }
+
+        protected async Task<StockLot> ComputeAvgCostInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
+            // def _compute_avg_cost(self):
+            // """Compute totals of multiple svl related values"""
+            // at_date = fields.Datetime.to_datetime(self.env.context.get('to_date'))
+            // 
+            // self.avg_cost = 0.0
+            // for lot in self:
+            //     if not lot.lot_valuated:
+            //         continue
+            // 
+            //     qty_available = lot.product_qty
+            //     if lot.product_id.cost_method == 'standard':
+            //         total_value = lot.standard_price * qty_available
+            //     elif lot.product_id.cost_method == 'average':
+            //         total_value = lot.product_id._run_avco(at_date=at_date, lot=lot)[1]
+            //     else:
+            //         total_value = lot.product_id._run_fifo(qty_available, at_date=at_date, lot=lot)
+            //     lot.avg_cost = total_value / qty_available if qty_available else 0.0
             */
             return default;
         }
@@ -218,9 +225,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
             // def _compute_delivery_ids(self):
-            // delivery_ids_by_lot = self._find_delivery_ids_by_lot()
+            // delivery_ids_by_lot = self._find_delivery_ids_by_lot_iterative()
             // for lot in self:
-            //     lot.delivery_ids = delivery_ids_by_lot[lot.id]
+            //     lot.delivery_ids = delivery_ids_by_lot.get(lot.id, [])
             //     lot.delivery_count = len(lot.delivery_ids)
             */
             return default;
@@ -237,7 +244,29 @@ namespace Bamboo.Core.Application.Services
             // always triggered.
             // """
             // for prod_lot in self:
-            //     prod_lot.display_complete = prod_lot.id or self._context.get('display_complete')
+            //     prod_lot.display_complete = prod_lot.id or self.env.context.get('display_complete')
+            */
+            return default;
+        }
+
+        protected async Task<StockLot> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: production_lot.py) ---
+            // def _compute_display_name(self):
+            // lots_to_process_ids = []
+            // for lot in self:
+            //     if lot.env.context.get('formatted_display_name') and lot.use_expiration_date and lot.expiration_date:
+            //         name = f"{lot.name}"
+            //         if fields.Datetime.now() >= lot.expiration_date:
+            //             name += self.env._("\t--Expired--")
+            //         elif lot.alert_date and fields.Datetime.now() >= lot.alert_date:
+            //             name += self.env._("\t--Expire on %(date)s--", date=fields.Datetime.to_string(lot.expiration_date))
+            //         lot.display_name = name
+            //     else:
+            //         lots_to_process_ids.append(lot.id)
+            // if lots_to_process_ids:
+            //     super(StockLot, self.env['stock.lot'].browse(lots_to_process_ids))._compute_display_name()
             */
             return default;
         }
@@ -269,27 +298,38 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockLot> ComputeLastDeliveryPartnerIdInternalAsync()
+        protected async Task<StockLot> ComputeNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
-            // def _compute_last_delivery_partner_id(self):
-            // serial_products = self.filtered(lambda l: l.product_id.tracking == 'serial')
-            // delivery_ids_by_lot = serial_products._find_delivery_ids_by_lot()
-            // (self - serial_products).last_delivery_partner_id = False
-            // for lot in serial_products:
-            //     if lot.product_id.tracking == 'serial' and len(delivery_ids_by_lot[lot.id]) > 0:
-            //         lot.last_delivery_partner_id = self.env['stock.picking'].browse(delivery_ids_by_lot[lot.id]).sorted(key='date_done', reverse=True)[0].partner_id
-            //     else:
-            //         lot.last_delivery_partner_id = False
-            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: stock.py) ---
-            // def _compute_last_delivery_partner_id(self):
-            // super()._compute_last_delivery_partner_id()
+            // def _compute_name(self):
             // for lot in self:
-            //     if lot.delivery_count > 0:
-            //         last_delivery = max(lot.delivery_ids, key=lambda d: d.date_done)
-            //         if last_delivery.is_dropship:
-            //             lot.last_delivery_partner_id = last_delivery.sale_id.partner_id
+            //     if not lot.name:
+            //         lot.name = lot.product_id.lot_sequence_id.next_by_id() if lot.product_id.lot_sequence_id else False
+            */
+            return default;
+        }
+
+        protected async Task<StockLot> ComputePartnerIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
+            // def _compute_partner_ids(self):
+            // delivery_ids_by_lot = self._find_delivery_ids_by_lot_iterative()
+            // for lot in self:
+            //     if delivery_ids_by_lot.get(lot.id, []):
+            //         lot.partner_ids = self.env['stock.picking'].browse(delivery_ids_by_lot[lot.id]).sorted(key='date_done', reverse=True).partner_id
+            //     else:
+            //         lot.partner_ids = False
+            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: stock.py) ---
+            // def _compute_partner_ids(self):
+            // delivery_ids_by_lot = self._find_delivery_ids_by_lot()
+            // for lot in self:
+            //     if delivery_ids_by_lot[lot.id]:
+            //         picking_ids = self.env['stock.picking'].browse(delivery_ids_by_lot[lot.id]).sorted(key='date_done', reverse=True)
+            //         lot.partner_ids = list(p.sale_id.partner_shipping_id.id if p.is_dropship else p.partner_id.id for p in picking_ids)
+            //     else:
+            //         lot.partner_ids = False
             */
             return default;
         }
@@ -389,44 +429,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockLot> ComputeValueSvlInternalAsync()
+        protected async Task<StockLot> ComputeValueInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
-            // def _compute_value_svl(self):
+            // def _compute_value(self):
             // """Compute totals of multiple svl related values"""
-            // self.value_svl = 0
-            // self.quantity_svl = 0
-            // self.avg_cost = 0
-            // self.total_value = 0
-            // self.company_currency_id = False
-            // lots = self.filtered(lambda l: l.product_id.lot_valuated)
-            // if not lots:
-            //     return
             // company_id = self.env.company
             // self.company_currency_id = company_id.currency_id
-            // domain = [
-            //     *self.env['stock.valuation.layer']._check_company_domain(company_id),
-            //     ('lot_id', 'in', lots.ids),
-            // ]
-            // if self.env.context.get('to_date'):
-            //     to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
-            //     domain.append(('create_date', '<=', to_date))
-            // groups = self.env['stock.valuation.layer']._read_group(
-            //     domain,
-            //     groupby=['lot_id'],
-            //     aggregates=['value:sum', 'quantity:sum'],
-            // )
-            // # Browse all lots and compute lots' quantities_dict in batch.
-            // group_mapping = {lot: aggregates for lot, *aggregates in groups}
-            // for lot in lots:
-            //     value_sum, quantity_sum = group_mapping.get(lot._origin, (0, 0))
-            //     value_svl = self.company_currency_id.round(value_sum)
-            //     avg_cost = value_svl / quantity_sum if quantity_sum else 0
-            //     lot.value_svl = value_svl
-            //     lot.quantity_svl = quantity_sum
-            //     lot.avg_cost = avg_cost
-            //     lot.total_value = avg_cost * quantity_sum
+            // at_date = fields.Datetime.to_datetime(self.env.context.get('to_date'))
+            // 
+            // for lot in self:
+            //     if not lot.lot_valuated:
+            //         lot.total_value = 0.0
+            //         continue
+            // 
+            //     qty_available = lot.product_qty
+            //     if lot.product_id.cost_method == 'standard':
+            //         lot.total_value = lot.standard_price * qty_available
+            //     elif lot.product_id.cost_method == 'average':
+            //         lot.total_value = lot.product_id._run_avco(at_date=at_date, lot=lot)[1]
+            //     else:
+            //         lot.total_value = lot.product_id._run_fifo(qty_available, at_date=at_date, lot=lot)
             */
             return default;
         }
@@ -459,8 +483,8 @@ namespace Bamboo.Core.Application.Services
             // lots = super().create(vals_list)
             // for product, lots_by_product in lots.grouped('product_id').items():
             //     if product.lot_valuated:
-            //         lots_by_product.filtered(lambda lot: not lot.standard_price).with_context(disable_auto_svl=True).write({
-            //             'standard_price': product.standard_price
+            //         lots_by_product.filtered(lambda lot: not lot.standard_price).with_context(disable_auto_revaluation=True).write({
+            //             'standard_price': product.standard_price,
             //         })
             // return lots
             */
@@ -474,12 +498,10 @@ namespace Bamboo.Core.Application.Services
             // def _find_delivery_ids_by_lot(self, lot_path=None, delivery_by_lot=None):
             // if lot_path is None:
             //     lot_path = set()
-            // domain = [
+            // domain = Domain([
             //     ('lot_id', 'in', self.ids),
             //     ('state', '=', 'done'),
-            // ]
-            // domain_restriction = self._get_outgoing_domain()
-            // domain = expression.AND([domain, domain_restriction])
+            // ]) & Domain(self._get_outgoing_domain())
             // move_lines = self.env['stock.move.line'].search(domain)
             // moves_by_lot = {
             //     lot_id: {'producing_lines': set(), 'barren_lines': set()}
@@ -514,6 +536,77 @@ namespace Bamboo.Core.Application.Services
             // 
             //     delivery_by_lot[lot.id] = list(delivery_ids)
             // return delivery_by_lot
+            */
+            return default;
+        }
+
+        protected async Task<StockLot> FindDeliveryIdsByLotIterativeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
+            // def _find_delivery_ids_by_lot_iterative(self):
+            // """ Retrieve all delivery IDs (outgoing picking) linked to the lots
+            //     in self and all the lots found when parcouring the produce lines.
+            //     :return: A dictionary where keys are the IDs of the original 'stock.lot'
+            //               records (self) and values are lists of associated 'stock.picking' IDs.
+            //     :rtype: dict
+            // """
+            // 
+            // all_lot_ids = set(self.ids)
+            // barren_lines = defaultdict(set)
+            // parent_map = defaultdict(set)
+            // 
+            // # Prefetch the lines linked to lots and split them between producing lines
+            // # and barren lines (lines that have `produce_line_ids` and lines that don't
+            // # have them respectively) and build the map of the parents of each lot (so we
+            // # can browse the tree from the leaves to the root and propagate the pickings)
+            // queue = list(self.ids)
+            // while queue:
+            //     domain = Domain([
+            //         ('lot_id', 'in', queue),
+            //         ('state', '=', 'done'),
+            //     ]) & Domain(self._get_outgoing_domain())
+            // 
+            //     queue = []
+            //     move_lines = self.env['stock.move.line'].search(domain)
+            //     for line in move_lines:
+            //         lot_id = line.lot_id.id
+            // 
+            //         produce_line_lot_ids = line.produce_line_ids.lot_id.ids
+            //         if produce_line_lot_ids:
+            //             for child_lot_id in produce_line_lot_ids:
+            //                 parent_map[child_lot_id].add(lot_id)
+            //         else:
+            //             barren_lines[lot_id].add(line.id)
+            // 
+            //         next_lots = set(produce_line_lot_ids) - all_lot_ids
+            //         all_lot_ids.update(next_lots)
+            //         queue.extend(next_lots)
+            // 
+            // # Initialize delivery_by_lot with barren lines (i.e. the leaves of the lot tree)
+            // lots_to_propagate = set()
+            // delivery_by_lot = {lot_id: set() for lot_id in all_lot_ids}
+            // for lot_id in barren_lines:
+            //     barren_line_ids = barren_lines[lot_id]
+            //     if barren_line_ids:
+            //         barren_move_lines = self.env['stock.move.line'].browse(barren_line_ids)
+            //         delivery_by_lot[lot_id].update(barren_move_lines.picking_id.ids)
+            //         lots_to_propagate.add(lot_id)
+            // 
+            // # Propagate the deliveries from the children to their parent lots.
+            // # This loop processes lots whose delivery sets have just been updated,
+            // # ensuring the new results are merged upward through the parent graph until
+            // # all deliveries are propagated
+            // while lots_to_propagate:
+            //     lot_id = lots_to_propagate.pop()
+            // 
+            //     parent_ids = parent_map[lot_id]
+            //     for parent_id in parent_ids:
+            //         if not delivery_by_lot[lot_id].issubset(delivery_by_lot[parent_id]):
+            //             delivery_by_lot[parent_id].update(delivery_by_lot[lot_id])
+            //             lots_to_propagate.add(parent_id)
+            // 
+            // return {lot_id: list(delivery_by_lot[lot_id]) for lot_id in delivery_by_lot}
             */
             return default;
         }
@@ -569,13 +662,13 @@ namespace Bamboo.Core.Application.Services
             // def _get_outgoing_domain(self):
             // return [
             //     '|',
-            //     ('picking_code', '=', 'outgoing'),
+            //     '|', ('picking_code', '=', 'outgoing'), ('move_id.picking_code', '=', 'outgoing'),
             //     ('produce_line_ids', '!=', False),
             // ]
             --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: stock.py) ---
             // def _get_outgoing_domain(self):
             // res = super()._get_outgoing_domain()
-            // return expression.OR([res, [
+            // return Domain.OR([res, [
             //     ('location_dest_id.usage', '=', 'customer'),
             //     ('location_id.usage', '=', 'supplier'),
             // ]])
@@ -666,29 +759,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLot> RevaluationAsync(Guid id)
+        protected async Task<StockLot> SearchPartnerIdsInternalAsync(object @operator, object @value)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
-            // def action_revaluation(self):
-            // # Cannot hide the button in list view for non required field in groupby
-            // if not self:
-            //     raise UserError(_("Select an existing lot/serial number to be reevaluated"))
-            // elif all(float_is_zero(layer.remaining_qty, precision_rounding=self.product_id.uom_id.rounding) for layer in self.stock_valuation_layer_ids):
-            //     raise UserError(_("You cannot adjust the valuation of a layer with zero quantity"))
-            // self.ensure_one()
-            // ctx = dict(self._context, default_lot_id=self.id, default_company_id=self.env.company.id)
-            // return {
-            //     'name': _("Lot/Serial number Revaluation"),
-            //     'view_mode': 'form',
-            //     'res_model': 'stock.valuation.layer.revaluation',
-            //     'view_id': self.env.ref('stock_account.stock_valuation_layer_revaluation_form_view').id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': ctx,
-            //     'target': 'new'
-            // }
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
+            // def _search_partner_ids(self, operator, value):
+            // """ returns partner_ids that are directly delivered the product of the lot/SN, i.e. not
+            // lots/SNs that are consumed within a MO. This means this search is NOT symmetric with the
+            // partner_ids field within the form view since it uses different logic that isn't efficient
+            // enough for this search due to it being usable within the list view.
+            // """
+            // if operator in Domain.NEGATIVE_OPERATORS or not isinstance(value, (Iterable)):
+            //     return NotImplemented
+            // is_no_partner = operator == 'in' and list(value) == [False]
+            // domain = Domain([
+            //     ('lot_id', '!=', False),
+            //     ('state', '=', 'done'),
+            // ])
+            // if is_no_partner:
+            //     # reverse the search, get all lots sent to partner so we can return all lots NOT sent
+            //     domain &= Domain('picking_partner_id', 'not in', value)
+            // else:
+            //     domain &= Domain.OR([
+            //         Domain('picking_partner_id', operator, value),
+            //         Domain('move_partner_id', operator, value),
+            //     ])
+            // domain &= Domain(self._get_outgoing_domain())
+            // move_lines = self.env['stock.move.line'].search(domain)
+            // 
+            // if is_no_partner:
+            //     return [('id', 'not in', move_lines.lot_id.ids)]
+            // return [('id', 'in', move_lines.lot_id.ids)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<StockLot> SearchProductQtyInternalAsync(object @operator, object @value)
@@ -696,10 +799,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
             // def _search_product_qty(self, operator, value):
-            // if operator not in OPERATORS:
-            //     raise UserError(_("Invalid domain operator %s", operator))
-            // if not isinstance(value, (float, int)):
-            //     raise UserError(_("Invalid domain right operand '%s'. It must be of type Integer/Float", value))
+            // op = PY_OPERATORS.get(operator)
+            // if not op:
+            //     return NotImplemented
+            // if isinstance(value, Iterable) and not isinstance(value, str):
+            //     value = {float(v) for v in value}
+            // else:
+            //     value = float(value)
             // domain = [
             //     ('lot_id', '!=', False),
             //     '|', ('location_id.usage', '=', 'internal'),
@@ -711,18 +817,11 @@ namespace Bamboo.Core.Application.Services
             // for lot, quantity_sum in lots_w_qty:
             //     lot_id = lot.id
             //     lot_ids_w_qty.append(lot_id)
-            //     if OPERATORS[operator](quantity_sum, value):
+            //     if op(quantity_sum, value):
             //         ids.append(lot_id)
-            // if value == 0.0 and operator == '=':
-            //     return [('id', 'not in', lot_ids_w_qty)]
-            // if value == 0.0 and operator == '!=':
-            //     return [('id', 'in', lot_ids_w_qty)]
+            // 
             // # check if we need include zero values in result
-            // include_zero = (
-            //     value < 0.0 and operator in ('>', '>=') or
-            //     value > 0.0 and operator in ('<', '<=') or
-            //     value == 0.0 and operator in ('>=', '<=')
-            // )
+            // include_zero = op(0.0, value)
             // if include_zero:
             //     return ['|', ('id', 'in', ids), ('id', 'not in', lot_ids_w_qty)]
             // return [('id', 'in', ids)]
@@ -745,6 +844,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockLot> UpdateStandardPriceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
+            // def _update_standard_price(self):
+            // # TODO: Add extra value and extra quantity kwargs to avoid total recomputation
+            // for lot in self:
+            //     lot = lot.with_context(disable_auto_revaluation=True)
+            //     if not lot.product_id.lot_valuated:
+            //         continue
+            //     if lot.product_id.cost_method == 'standard':
+            //         if not lot.standard_price:
+            //             lot.standard_price = lot.product_id.standard_price
+            //         continue
+            //     lot.standard_price = lot.product_id._run_avco(lot=lot)[0]
+            */
+            return default;
+        }
+
         public async Task<StockLot> ViewPoAsync(Guid id)
         {
             /*
@@ -753,7 +871,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("purchase.purchase_form_action")
             // action['domain'] = [('id', 'in', self.mapped('purchase_order_ids.id'))]
-            // action['context'] = dict(self._context, create=False)
+            // action['context'] = dict(self.env.context, create=False)
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -794,24 +912,8 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
             // action['domain'] = [('id', 'in', self.mapped('sale_order_ids.id'))]
-            // action['context'] = dict(self._context, create=False)
+            // action['context'] = dict(self.env.context, create=False)
             // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<StockLot> ViewStockValuationLayersAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
-            // def action_view_stock_valuation_layers(self):
-            // self.ensure_one()
-            // domain = [('lot_id', '=', self.ids)]
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock_account.stock_valuation_layer_action")
-            // context = literal_eval(action['context'])
-            // context.update(self.env.context)
-            // context['no_at_date'] = True
-            // return dict(action, domain=domain, context=context)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -836,9 +938,13 @@ namespace Bamboo.Core.Application.Services
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_lot.py) ---
             // def write(self, vals):
-            // if 'standard_price' in vals and not self.env.context.get('disable_auto_svl'):
-            //     self._change_standard_price(vals['standard_price'])
-            // return super().write(vals)
+            // old_price = False
+            // if 'standard_price' in vals and not self.env.context.get('disable_auto_revaluation'):
+            //     old_price = {lot: lot.standard_price for lot in self}
+            // res = super().write(vals)
+            // if old_price:
+            //     self._change_standard_price(old_price)
+            // return res
             */
             return await base.WriteAsync(ids, entity, fields);
         }

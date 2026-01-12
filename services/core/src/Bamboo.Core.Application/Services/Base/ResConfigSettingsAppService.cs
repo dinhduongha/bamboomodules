@@ -26,35 +26,34 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResConfigSettings> ActivateStripeAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonDisconnectThisDatabaseAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
-            // def action_activate_stripe(self):
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
+            // def button_disconnect_this_database(self):
+            // """Disconnect the current database from the Peppol network.
+            // This does not delete or affect the IAP connection, which will remain intact.
+            // So don't use this to deregister the participant/connection.
+            // """
             // self.ensure_one()
-            // if not self.is_stripe_supported_country:
-            //     return False
-            // menu = self.env.ref('website.menu_website_website_settings', raise_if_not_found=False)
-            // menu_id = menu and menu.id
-            // return self.env.company._run_payment_onboarding_step(menu_id=menu_id)
+            // self.account_peppol_edi_user._peppol_out_of_sync_disconnect_this_database()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> ButtonAccountPeppolConfigureServicesAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonOpenPeppolConfigWizardAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def button_account_peppol_configure_services(self):
-            // wizard = self.env['account_peppol.service.wizard'].create({
-            //     'edi_user_id': self.account_peppol_edi_user.id,
-            //     'service_json': self.account_peppol_edi_user._peppol_get_services().get('services'),
-            // })
+            // def button_open_peppol_config_wizard(self):
+            // view = self.env.ref('account_peppol.peppol_config_wizard_form').sudo()
+            // # TODO remove in master this hack to have the possibility of being only a sender
+            // if 'button_peppol_reset_to_sender' not in view.arch_db:
+            //     view.reset_arch(mode="hard")
             // return {
             //     'type': 'ir.actions.act_window',
-            //     'name': 'Configure your peppol services',
-            //     'res_model': 'account_peppol.service.wizard',
-            //     'res_id': wizard.id,
+            //     'name': 'Advanced Peppol Configuration',
+            //     'res_model': 'peppol.config.wizard',
             //     'view_mode': 'form',
             //     'target': 'new',
             // }
@@ -62,93 +61,48 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> ButtonDeregisterPeppolParticipantAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonPeppolDisconnectBranchFromParentAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def button_deregister_peppol_participant(self):
-            // """
-            // Deregister the edi user from Peppol network
-            // """
+            // def button_peppol_disconnect_branch_from_parent(self):
             // self.ensure_one()
-            // 
-            // if self.account_peppol_edi_user:
-            //     self.account_peppol_edi_user._peppol_deregister_participant()
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> ButtonMigratePeppolRegistrationAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def button_migrate_peppol_registration(self):
-            // """
-            // Migrates AWAY from Odoo's SMP.
-            // If the user is a receiver, they need to request a migration key, generated on the IAP server.
-            // The migration key is then displayed in Peppol settings.
-            // Currently, reopening after migrating away is not supported.
-            // """
-            // raise UserError(_("This feature is deprecated. Contact Odoo support if you need a migration key."))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> ButtonPeppolSmpRegistrationAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def button_peppol_smp_registration(self):
-            // """
-            // The second (optional) step in Peppol registration.
-            // The user can choose to become a Receiver and officially register on the Peppol
-            // network, i.e. receive documents from other Peppol participants.
-            // """
-            // self.ensure_one()
-            // self.account_peppol_edi_user._peppol_register_sender_as_receiver()
-            // if self.account_peppol_proxy_state == 'smp_registration':
-            //     return {
-            //         'type': 'ir.actions.client',
-            //         'tag': 'display_notification',
-            //         'params': {
-            //             'title': _("Registered to receive documents via Peppol."),
-            //             'type': 'success',
-            //             'message': _("Your registration on Peppol network should be activated within a day. The updated status will be visible in Settings."),
-            //             'next': {'type': 'ir.actions.act_window_close'},
-            //         }
-            //     }
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> ButtonUpdatePeppolUserDataAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def button_update_peppol_user_data(self):
-            // """
-            // Action for the user to be able to update their contact details any time
-            // Calls /update_user on the iap server
-            // """
-            // self.ensure_one()
-            // 
-            // if not self.account_peppol_contact_email or not self.account_peppol_phone_number:
-            //     raise ValidationError(_("Contact email and mobile number are required."))
-            // 
-            // params = {
-            //     'update_data': {
-            //         'peppol_phone_number': self.account_peppol_phone_number,
-            //         'peppol_contact_email': self.account_peppol_contact_email,
+            // previous_parent_company_name = self.company_id.peppol_parent_company_id.name
+            // self.account_peppol_edi_user._peppol_deregister_participant()
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'title': None,
+            //         'type': 'success',
+            //         'message': _("Disconnected this branch company peppol configuration from %s.", previous_parent_company_name),
+            //         'next': {'type': 'ir.actions.act_window_close'},
             //     }
             // }
-            // 
-            // self.account_peppol_edi_user._call_peppol_proxy(
-            //     endpoint='/api/peppol/1/update_user',
-            //     params=params,
-            // )
-            // return True
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> ButtonPeppolRegisterSenderAsReceiverAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
+            // def button_peppol_register_sender_as_receiver(self):
+            // """Register the existing user as a receiver."""
+            // self.ensure_one()
+            // return self.env['peppol.config.wizard'].new().button_peppol_register_sender_as_receiver()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> ButtonReconnectThisDatabaseAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
+            // def button_reconnect_this_database(self):
+            // """Re-establish an out-of-sync connection"""
+            // self.ensure_one()
+            // self.account_peppol_edi_user._peppol_out_of_sync_reconnect_this_database()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -165,18 +119,6 @@ namespace Bamboo.Core.Application.Services
             // return {}
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResConfigSettings> CheckAdvancedPresenceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_config_settings.py) ---
-            // def _check_advanced_presence(self):
-            // test_mode = self.env.registry.in_test_mode() or getattr(threading.current_thread(), 'testing', False)
-            // if self.env.context.get('install_mode', False) or test_mode:
-            //     return
-            */
-            return default;
         }
 
         protected async Task<ResConfigSettings> CheckCloudStorageUninstallableInternalAsync()
@@ -263,26 +205,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> ComputeAccountPeppolEdiUserInternalAsync()
+        protected async Task<ResConfigSettings> ComputeActiveProviderIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def _compute_account_peppol_edi_user(self):
-            // for config in self:
-            //     config.account_peppol_edi_user = config.company_id.account_edi_proxy_client_ids.filtered(
-            //         lambda u: u.proxy_type == 'peppol')
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeAccountPeppolModeConstraintInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
-            // def _compute_account_peppol_mode_constraint(self):
-            // mode_constraint = self.env['ir.config_parameter'].sudo().get_param('account_peppol.mode_constraint')
-            // trial_param = self.env['ir.config_parameter'].sudo().get_param('saas_trial.confirm_token')
-            // self.account_peppol_mode_constraint = trial_param and 'demo' or mode_constraint or 'prod'
+            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
+            // def _compute_active_provider_id(self):
+            // return super()._compute_active_provider_id()
             */
             return default;
         }
@@ -308,28 +236,6 @@ namespace Bamboo.Core.Application.Services
             //     # Default to `b2b` in case no website is set to avoid not being
             //     # able to save.
             //     config.auth_signup_uninvited = config.website_id.auth_signup_uninvited or 'b2b'
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeCheckoutProcessStepsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
-            // def _compute_checkout_process_steps(self):
-            // """
-            // Computing the extra info step and buy now settings when changing
-            // the website in the res.config.settings page to show the correct value
-            // in the checkbox.
-            // """
-            // for record in self:
-            //     website = record.with_context(website_id=record.website_id.id).website_id
-            //     record.enabled_extra_checkout_step = website.is_view_active(
-            //         'website_sale.extra_info'
-            //     )
-            //     record.enabled_buy_now_button = website.is_view_active(
-            //         'website_sale.product_buy_now'
-            //     )
             */
             return default;
         }
@@ -463,6 +369,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResConfigSettings> ComputeHasEnabledProviderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
+            // def _compute_has_enabled_provider(self):
+            // return super()._compute_has_enabled_provider()
+            */
+            return default;
+        }
+
         protected async Task<ResConfigSettings> ComputeHasGoogleAnalyticsInternalAsync()
         {
             /*
@@ -536,6 +452,24 @@ namespace Bamboo.Core.Application.Services
             // def _compute_is_encode_uom_days(self):
             // for settings in self:
             //     settings.is_encode_uom_days = settings.timesheet_encode_method == 'days'
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> ComputeIsNewsletterEnabledInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_mass_mailing, FILE: res_config_settings.py) ---
+            // def _compute_is_newsletter_enabled(self):
+            // """
+            // Computing newsletter setting when changing the website in the res.config.settings page to
+            // show the correct value in the checkbox.
+            // """
+            // for record in self:
+            //     website = record.with_context(website_id=record.website_id.id).website_id
+            //     record.is_newsletter_enabled = website.is_view_active(
+            //         'website_sale_mass_mailing.newsletter'
+            //     )
             */
             return default;
         }
@@ -617,6 +551,17 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_config_settings.py) ---
             // def _compute_partner_autocomplete_insufficient_credit(self):
             // self.partner_autocomplete_insufficient_credit = self.env['iap.account'].get_credits('partner_autocomplete') <= 0
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> ComputePeppolUseParentCompanyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
+            // def _compute_peppol_use_parent_company(self):
+            // for setting in self:
+            //     setting.peppol_use_parent_company = bool(setting.company_id.peppol_parent_company_id)
             */
             return default;
         }
@@ -716,20 +661,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> ComputePosEpsonPrinterIpInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_epson_printer, FILE: res_config_settings.py) ---
-            // def _compute_pos_epson_printer_ip(self):
-            // for res_config in self:
-            //     if not res_config.pos_other_devices:
-            //         res_config.pos_epson_printer_ip = ''
-            //     else:
-            //         res_config.pos_epson_printer_ip = res_config.pos_config_id.epson_printer_ip
-            */
-            return default;
-        }
-
         protected async Task<ResConfigSettings> ComputePosFiscalPositionsInternalAsync()
         {
             /*
@@ -770,10 +701,6 @@ namespace Bamboo.Core.Application.Services
             //         res_config.pos_iface_cashdrawer = res_config.pos_config_id.iface_cashdrawer
             //     else:
             //         res_config.pos_iface_cashdrawer = False
-            --- ODOO METHOD SOURCE (MODULE: pos_epson_printer, FILE: res_config_settings.py) ---
-            // def _compute_pos_iface_cashdrawer(self):
-            // """We are just adding depends on this compute."""
-            // super()._compute_pos_iface_cashdrawer()
             */
             return default;
         }
@@ -867,7 +794,7 @@ namespace Bamboo.Core.Application.Services
             // for res_config in self:
             //     if res_config.pos_self_ordering_mode == 'kiosk':
             //         currency_id = res_config.pos_journal_id.currency_id.id if res_config.pos_journal_id.currency_id else res_config.pos_config_id.company_id.currency_id.id
-            //         domain = AND([self.env['product.pricelist']._check_company_domain(res_config.pos_config_id.company_id), [('currency_id', '=', currency_id)]])
+            //         domain = Domain.AND([self.env['product.pricelist']._check_company_domain(res_config.pos_config_id.company_id), [('currency_id', '=', currency_id)]])
             //         res_config.pos_available_pricelist_ids = self.env['product.pricelist'].search(domain)
             */
             return default;
@@ -959,23 +886,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> ComputeProvidersStateInternalAsync()
+        protected async Task<ResConfigSettings> ComputeReplenishOnOrderInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
-            // def _compute_providers_state(self):
-            // paypal = self.env.ref('payment.payment_provider_paypal', raise_if_not_found=False)
-            // stripe = self.env.ref('payment.payment_provider_stripe', raise_if_not_found=False)
-            // for config in self:
-            //     providers = config._get_activated_providers()
-            //     first_provider = stripe if stripe and stripe in providers else providers[0] if providers else providers
-            //     config.first_provider_label = _('Configure %s', first_provider.name)
-            //     if len(providers) == 1 and providers == paypal:
-            //         config.providers_state = 'paypal_only'
-            //     elif len(providers) >= 1:
-            //         config.providers_state = 'other_than_paypal'
-            //     else:
-            //         config.providers_state = 'none'
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_config_settings.py) ---
+            // def _compute_replenish_on_order(self):
+            // route = self.env.ref('stock.route_warehouse0_mto', raise_if_not_found=False)
+            // if route:
+            //     self.replenish_on_order = route.active
             */
             return default;
         }
@@ -1028,29 +946,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> ConfigureFirstProviderAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
-            // def action_configure_first_provider(self):
-            // self.ensure_one()
-            // stripe = self.env['payment.provider'].search([
-            //     *self.env['payment.provider']._check_company_domain(self.env.company),
-            //     ('code', '=', 'stripe')
-            // ], limit=1)
-            // providers = self._get_activated_providers()
-            // return {
-            //     'name': self.first_provider_label,
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'payment.provider',
-            //     'views': [[False, 'form']],
-            //     'res_id': stripe.id if stripe in providers else providers[0].id,
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public override async Task<ResConfigSettings> CreateAsync(ResConfigSettings entity, List<string> fields)
         {
             /*
@@ -1060,10 +955,10 @@ namespace Bamboo.Core.Application.Services
             // configs._check_google_maps_static_api_secret()
             // return configs
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: res_config_settings.py) ---
-            // def create(self, vals):
-            // configs = super().create(vals)
+            // def create(self, vals_list):
+            // configs = super().create(vals_list)
             // if any(config.hr_presence_control_ip or config.hr_presence_control_email for config in configs):
-            //     self.env['hr.employee.base']._check_presence()
+            //     self.env['hr.employee']._check_presence()
             // return configs
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
             // def create(self, vals_list):
@@ -1081,6 +976,9 @@ namespace Bamboo.Core.Application.Services
             // 
             //         if vals.get('pos_use_pricelist'):
             //             vals['group_product_pricelist'] = True
+            // 
+            //         if vals.get('pos_use_presets') is not None:
+            //             vals["group_pos_preset"] = bool(self.env["pos.config"].search_count([("use_presets", "=", True), ("id", "!=", pos_config_id)])) or vals['pos_use_presets']
             // 
             //         for field in self._fields.values():
             //             if field.name == 'pos_config_id':
@@ -1117,7 +1015,7 @@ namespace Bamboo.Core.Application.Services
             // for vals in vals_list:
             //     pos_config_id = vals.get('pos_config_id')
             //     if pos_config_id:
-            //         vals['pos_advanced_employee_ids'] = vals.get('pos_advanced_employee_ids', []) + [[4, emp_id] for emp_id in self.env['pos.config'].browse(pos_config_id)._get_group_pos_manager().users.employee_id.ids]
+            //         vals['pos_advanced_employee_ids'] = vals.get('pos_advanced_employee_ids', []) + [[4, emp_id] for emp_id in self.env['pos.config'].browse(pos_config_id)._get_group_pos_manager().user_ids.employee_id.ids]
             // return super().create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
             // def create(self, vals_list):
@@ -1230,6 +1128,20 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResConfigSettings> EuOssTaxMappingAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
+            // def action_eu_oss_tax_mapping(self):
+            // l10n_eu_oss_module = self.env['ir.module.module'].search([('name', '=', 'l10n_eu_oss')], limit=1)
+            // if l10n_eu_oss_module:
+            //     if l10n_eu_oss_module.state != 'installed':
+            //         l10n_eu_oss_module.button_immediate_install()
+            //     self.env.companies._map_eu_taxes()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResConfigSettings> ExecuteAsync(Guid id)
         {
             /*
@@ -1268,15 +1180,23 @@ namespace Bamboo.Core.Application.Services
             //     self.env.flush_all()
             // 
             // if to_uninstall:
-            //     to_uninstall.button_immediate_uninstall()
+            //     return {
+            //         'type': 'ir.actions.act_window',
+            //         'target': 'new',
+            //         'name': _('Uninstall modules'),
+            //         'view_mode': 'form',
+            //         'res_model': 'base.module.uninstall',
+            //         'context': {
+            //             'default_module_ids': to_uninstall.ids,
+            //         },
+            //     }
             // 
             // installation_status = self._install_modules(to_install)
             // 
             // if installation_status or to_uninstall:
             //     # After the uninstall/install calls, the registry and environments
             //     # are no longer valid. So we reset the environment.
-            //     self.env.reset()
-            //     self = self.env()[self._name]
+            //     self.env.transaction.reset()
             // 
             // # pylint: disable=next-method-called
             // config = self.env['res.config'].next() or {}
@@ -1290,6 +1210,26 @@ namespace Bamboo.Core.Application.Services
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResConfigSettings> GenerateExcelInternalAsync(object rows, object headers)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
+            // def _generate_excel(self, rows, headers):
+            // import xlsxwriter  # noqa: PLC0415
+            // with BytesIO() as buffer:
+            //     with xlsxwriter.Workbook(buffer, {'in_memory': True}) as workbook:
+            //         worksheet = workbook.add_worksheet()
+            // 
+            //         for col, header in enumerate(headers):
+            //             worksheet.write(0, col, header)
+            //         for row_idx, row in enumerate(rows, start=1):
+            //             for col_idx, cell in enumerate(row):
+            //                 worksheet.write(row_idx, col_idx, cell)
+            //     return buffer.getvalue()
+            */
+            return default;
         }
 
         public async Task<ResConfigSettings> GenerateQrCodesPageAsync(Guid id)
@@ -1344,6 +1284,7 @@ namespace Bamboo.Core.Application.Services
             //     raise ValidationError(_("QR codes can only be generated in mobile or consultation mode."))
             // 
             // qr_images = []
+            // excel_rows = []
             // 
             // if self.pos_module_pos_restaurant:
             //     table_ids = self.pos_config_id.floor_ids.table_ids
@@ -1351,23 +1292,36 @@ namespace Bamboo.Core.Application.Services
             //     if not table_ids:
             //         raise ValidationError(_("In Self-Order mode, you must have at least one table to generate QR codes"))
             // 
-            //     for table in table_ids:
+            //     for row_num, table in enumerate(table_ids, start=1):
+            //         table_number = table.table_number
+            //         floor_name = table.floor_id.name
+            //         url = url_unquote(self.pos_config_id._get_self_order_url(table.id))
             //         qr_images.append({
-            //             'image': self._generate_single_qr_code(url_unquote(self.pos_config_id._get_self_order_url(table.id))),
-            //             'name': f"{table.floor_id.name} - {table.table_number}",
+            //             'images': self.pos_config_id._generate_single_qr_code__(url),
+            //             'name': f"{floor_name} - {table_number}",
             //         })
+            //         excel_rows.append([self.pos_config_id.name, floor_name, table_number, url])
+            //     headers = ['Pos config', 'Floor', 'Table id', 'Url shortened']
             // else:
+            //     url = url_unquote(self.pos_config_id._get_self_order_url())
             //     qr_images.append({
-            //         'image': self._generate_single_qr_code(url_unquote(self.pos_config_id._get_self_order_url())),
+            //         'images': self.pos_config_id._generate_single_qr_code__(url),
             //         'name': "generic",
             //     })
+            //     excel_rows.append([self.pos_config_id.name, url])
+            //     headers = ['Pos config', 'Url shortened']
+            // 
+            // xlsx_content = self._generate_excel(excel_rows, headers)
             // 
             // # Create a zip with all images in qr_images
             // zip_buffer = BytesIO()
             // with zipfile.ZipFile(zip_buffer, "w", 0) as zip_file:
+            //     zip_file.writestr("Table_url.xlsx", xlsx_content)
             //     for index, qr_image in enumerate(qr_images):
             //         with zip_file.open(f"{qr_image['name']} ({index + 1}).png", "w") as buf:
-            //             qr_image['image'].save(buf, format="PNG")
+            //             qr_image['images']['png'].save(buf, format="PNG")
+            //         with zip_file.open(f"{qr_image['name']} ({index + 1}).svg", "w") as buf:
+            //             buf.write(qr_image['images']['svg'].to_string())
             // zip_buffer.seek(0)
             // 
             // # Delete previous attachments
@@ -1393,48 +1347,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResConfigSettings> GenerateSingleQrCodeInternalAsync(object url)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
-            // def _generate_single_qr_code(self, url):
-            // qr = qrcode.QRCode(
-            //     version=1,
-            //     error_correction=qrcode.constants.ERROR_CORRECT_L,
-            //     box_size=10,
-            //     border=4,
-            // )
-            // qr.add_data(url)
-            // qr.make(fit=True)
-            // return qr.make_image(fill_color="black", back_color="transparent")
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> GetActivatedProvidersInternalAsync()
+        protected async Task<ResConfigSettings> GetActiveProvidersDomainInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
-            // def _get_activated_providers(self):
+            // def _get_active_providers_domain(self, *args, **kwargs):
+            // """Override of `payment` to only return providers compatible with the current website."""
             // self.ensure_one()
-            // wire_transfer = self.env.ref('payment.payment_provider_transfer', raise_if_not_found=False)
-            // return self.env['payment.provider'].search([
-            //     ('state', '!=', 'disabled'),
-            //     ('id', '!=', wire_transfer.id if wire_transfer else False),
-            //     '|',
-            //     ('website_id', '=', False),
-            //     ('website_id', '=', self.website_id.id)
+            // return Domain.AND([
+            //     super()._get_active_providers_domain(*args, **kwargs),
+            //     ['|', ('website_id', '=', False), ('website_id', '=', self.website_id.id)],
             // ])
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> GetBasicProjectDomainInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: res_config_settings.py) ---
-            // def _get_basic_project_domain(self):
-            // return []
             */
             return default;
         }
@@ -1444,7 +1367,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
             // def _get_classified_fields(self, fnames=None):
-            // """ return a dictionary with the fields classified by category::
+            // """ return a dictionary with the fields classified by category:
+            // 
+            //     .. code-block:: python
             // 
             //         {   'default': [('default_foo', 'model', 'foo'), ...],
             //             'group':   [('group_bar', [browse_group], browse_implied_group), ...],
@@ -1540,31 +1465,51 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
             // def get_config_warning(self, msg):
             // """
-            // Helper: return a Warning exception with the given message where the %(field:xxx)s
-            // and/or %(menu:yyy)s are replaced by the human readable field's name and/or menuitem's
-            // full path.
+            // Helper: return a Warning exception with the given message where the ``%(field:xxx)s``
+            // and/or ``%(menu:yyy)s`` are replaced by the human readable field's name and/or
+            // menuitem's full path.
             // 
             // Usage:
             // ------
-            // Just include in your error message %(field:model_name.field_name)s to obtain the human
-            // readable field's name, and/or %(menu:module_name.menuitem_xml_id)s to obtain the menuitem's
-            // full path.
+            // Just include in your error message ``%(field:model_name.field_name)s`` to obtain the
+            // human readable field's name, and/or %(menu:module_name.menuitem_xml_id)s to obtain the
+            // menuitem's full path.
             // 
             // Example of use:
             // ---------------
-            // from odoo.addons.base.models.res_config import get_warning_config
-            // raise get_warning_config(cr, _("Error: this action is prohibited. You should check the field %(field:sale.config.settings.fetchmail_lead)s in %(menu:sales_team.menu_sale_config)s."), context=context)
+            // 
+            // .. code-block:: python
+            // 
+            //     raise env['ir..config.settings'](_(
+            //         "Error: this action is prohibited. You should check the "
+            //         "field %(field:sale.config.settings.fetchmail_lead)s in "
+            //         "%(menu:sales_team.menu_sale_config)s."))
             // 
             // This will return an exception containing the following message:
-            //     Error: this action is prohibited. You should check the field Create leads from incoming mails in Settings/Configuration/Sales.
+            // 
+            //     Error: this action is prohibited. You should check the field Create
+            //     leads from incoming mails in Settings/Configuration/Sales.
             // 
             // What if there is another substitution in the message already?
             // -------------------------------------------------------------
-            // You could have a situation where the error message you want to upgrade already contains a substitution. Example:
-            //     Cannot find any account journal of %s type for this company.\n\nYou can create one in the menu: \nConfiguration\\Journals\\Journals.
-            // What you want to do here is simply to replace the path by %menu:account.menu_account_config)s, and leave the rest alone.
-            // In order to do that, you can use the double percent (%%) to escape your new substitution, like so:
-            //     Cannot find any account journal of %s type for this company.\n\nYou can create one in the %%(menu:account.menu_account_config)s.
+            // You could have a situation where the error message you want to upgrade already contains
+            // a substitution.
+            // 
+            // Example:
+            // 
+            //     Cannot find any account journal of %s type for this company.
+            // 
+            //     You can create one in the menu:
+            //     Configuration/Journals/Journals.
+            // 
+            // What you want to do here is simply to replace the path by
+            // ``%menu:account.menu_account_config)s``, and leave the rest alone.
+            // In order to do that, you can use the double percent (``%%``) to escape your new
+            // substitution, like so:
+            // 
+            //     Cannot find any account journal of %s type for this company.
+            // 
+            //     You can create one in the %%(menu:account.menu_account_config)s.
             // """
             // self = self.sudo()
             // 
@@ -1616,7 +1561,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param string full_field_name: the full name of the field, structured as follows:
             //     model_name.field_name (e.g.: "sale.config.settings.fetchmail_lead")
-            // :return string: human readable name of the field (e.g.: "Create leads from incoming mails")
+            // :return: human readable name of the field (e.g.: "Create leads from incoming mails")
+            // :rtype: str
             // """
             // model_name, field_name = full_field_name.rsplit('.', 1)
             // return self.env[model_name].fields_get([field_name])[field_name]['string']
@@ -1634,12 +1580,31 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param string menu_xml_id: the xml id of the menuitem where the view is located,
             //     structured as follows: module_name.menuitem_xml_id (e.g.: "sales_team.menu_sale_config")
-            // :return tuple:
-            //     - t[0]: string: full path to the menuitem (e.g.: "Settings/Configuration/Sales")
-            //     - t[1]: int or long: id of the menuitem's action
+            // :return: a 2-value tuple where
+            // 
+            //   - t[0]: string: full path to the menuitem (e.g.: "Settings/Configuration/Sales")
+            //   - t[1]: int or long: id of the menuitem's action
             // """
             // ir_ui_menu = self.env.ref(menu_xml_id)
             // return (ir_ui_menu.complete_name, ir_ui_menu.action.id)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> GetPosQrStandsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
+            // def get_pos_qr_stands(self):
+            // """Redirect to the get the free stands with the data of QR codes for the current POS config"""
+            // self.ensure_one()
+            // return {
+            //     "type": "ir.actions.client",
+            //     "tag": "pos_qr_stands",
+            //     "params": {
+            //         "data": self.pos_config_id.get_pos_qr_order_data(),
+            //     },
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1667,10 +1632,16 @@ namespace Bamboo.Core.Application.Services
             //         auth_oauth_google_client_id=google_provider.client_id,
             //         server_uri_google=self.get_uri())
             // return res
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_config_settings.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_config_settings.py) ---
             // def get_values(self):
-            // res = super(ResConfigSettings, self).get_values()
+            // res = super().get_values()
             // res['auth_totp_enforce'] = bool(self.env['ir.config_parameter'].sudo().get_param('auth_totp.policy'))
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage, FILE: res_config_settings.py) ---
+            // def get_values(self):
+            // res = super().get_values()
+            // ICP = self.env['ir.config_parameter']
+            // res['cloud_storage_min_file_size_mb'] = int(ICP.get_param('cloud_storage_min_file_size', DEFAULT_CLOUD_STORAGE_MIN_FILE_SIZE)) / 1000000
             // return res
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_google, FILE: res_config_settings.py) ---
             // def get_values(self):
@@ -1678,12 +1649,29 @@ namespace Bamboo.Core.Application.Services
             // if account_info := self.env['ir.config_parameter'].get_param('cloud_storage_google_account_info'):
             //     res['cloud_storage_google_service_account_key'] = base64.b64encode(account_info.encode())
             // return res
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: res_config_settings.py) ---
+            // def get_values(self):
+            // res = super().get_values()
+            // res['cloud_storage_migration_progress'] = self.env['cloud.storage.migration.report'].get_progress()
+            // message_model_names = self.env['ir.config_parameter'].get_param('cloud_storage_migration_message_models', '').split(',')
+            // message_model_names = tuple(m_ for m in message_model_names if (m_ := m.strip()) and m_ in self.env)
+            // res['cloud_storage_migration_message_model_ids'] = [Command.set(self.env['ir.model'].search([('model', 'in', message_model_names)]).ids)]
+            // all_model_names = self.env['ir.config_parameter'].get_param('cloud_storage_migration_all_models', '').split(',')
+            // all_model_names = tuple(m_ for m in all_model_names if (m_ := m.strip()) and m_ in self.env)
+            // res['cloud_storage_migration_all_model_ids'] = [Command.set(self.env['ir.model'].search([('model', 'in', all_model_names)]).ids)]
+            // return res
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: res_config_settings.py) ---
             // def get_values(self):
             // values = super(ResConfigSettings, self).get_values()
             // cron = self.sudo().with_context(active_test=False).env.ref('crm_iap_enrich.ir_cron_lead_enrichment', raise_if_not_found=False)
             // values['lead_enrich_auto'] = 'auto' if cron and cron.active else 'manual'
             // return values
+            --- ODOO METHOD SOURCE (MODULE: google_recaptcha, FILE: res_config_settings.py) ---
+            // def get_values(self):
+            // res = super().get_values()
+            // icp = self.env['ir.config_parameter'].sudo()
+            // res['enable_recaptcha'] = str2bool(icp.get_param('enable_recaptcha', default=True))
+            // return res
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_config_settings.py) ---
             // def get_values(self):
             // res = super(ResConfigSettings, self).get_values()
@@ -1721,28 +1709,6 @@ namespace Bamboo.Core.Application.Services
             //     is_installed_sale=self.env['ir.module.module'].search([('name', '=', 'sale'), ('state', '=', 'installed')]).id,
             // )
             // return res
-            --- ODOO METHOD SOURCE (MODULE: website_payment_authorize, FILE: res_config_settings.py) ---
-            // def get_values(self):
-            // res = super().get_values()
-            // authorize = self.env.ref('payment.payment_provider_authorize').sudo()
-            // res['authorize_capture_method'] = 'manual' if authorize.capture_manually else 'auto'
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: website_sale_mass_mailing, FILE: res_config_settings.py) ---
-            // def get_values(self):
-            // res = super().get_values()
-            // res['is_newsletter_enabled'] = self.env.ref('website_sale_mass_mailing.newsletter').active
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: res_config_settings.py) ---
-            // def get_values(self):
-            // res = super(ResConfigSettings, self).get_values()
-            // IrDefaultGet = self.env['ir.default'].sudo()._get
-            // allow_out_of_stock_order = IrDefaultGet('product.template', 'allow_out_of_stock_order')
-            // 
-            // res.update(
-            //     allow_out_of_stock_order=allow_out_of_stock_order if allow_out_of_stock_order is not None else True,
-            //     available_threshold=IrDefaultGet('product.template', 'available_threshold') or 5.0,
-            //     show_availability=IrDefaultGet('product.template', 'show_availability') or False)
-            // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
             // def get_values(self):
             // """
@@ -1751,6 +1717,27 @@ namespace Bamboo.Core.Application.Services
             // return {}
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResConfigSettings> InstallModulesInternalAsync(object modules)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
+            // def _install_modules(self, modules):
+            // """ Install the requested modules.
+            // 
+            // :param modules: a recordset of ir.module.module records
+            // :return: the next action to execute
+            // """
+            // result = None
+            // 
+            // to_install_modules = modules.filtered(lambda module: module.state == 'uninstalled')
+            // if to_install_modules:
+            //     result = to_install_modules.button_immediate_install()
+            // 
+            // return result
+            */
+            return default;
         }
 
         protected async Task<ResConfigSettings> InverseAccountDefaultCreditLimitInternalAsync()
@@ -1777,12 +1764,13 @@ namespace Bamboo.Core.Application.Services
             // for record in self:
             //     if not record.website_id:
             //         continue
-            //     record.website_id.account_on_checkout = record.account_on_checkout
             //     # account_on_checkout implies different values for `auth_signup_uninvited`
-            //     if record.account_on_checkout in ['optional', 'mandatory']:
-            //         record.website_id.auth_signup_uninvited = 'b2c'
-            //     else:
-            //         record.website_id.auth_signup_uninvited = 'b2b'
+            //     if record.website_id.account_on_checkout != record.account_on_checkout:
+            //         if self.account_on_checkout in ['optional', 'mandatory']:
+            //             record.website_id.auth_signup_uninvited = 'b2c'
+            //         else:
+            //             record.website_id.auth_signup_uninvited = 'b2b'
+            //     record.website_id.account_on_checkout = record.account_on_checkout
             */
             return default;
         }
@@ -1794,6 +1782,26 @@ namespace Bamboo.Core.Application.Services
             // def _inverse_auth_signup_uninvited(self):
             // for config in self:
             //     config.website_id.auth_signup_uninvited = config.auth_signup_uninvited
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> InverseCloudStorageMigrationAllModelIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: res_config_settings.py) ---
+            // def _inverse_cloud_storage_migration_all_model_ids(self):
+            // self.cloud_storage_migration_all_models = ','.join(self.cloud_storage_migration_all_model_ids.mapped('model'))
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> InverseCloudStorageMigrationMessageModelIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: res_config_settings.py) ---
+            // def _inverse_cloud_storage_migration_message_model_ids(self):
+            // self.cloud_storage_migration_message_models = ','.join(self.cloud_storage_migration_message_model_ids.mapped('model'))
             */
             return default;
         }
@@ -1902,6 +1910,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResConfigSettings> InverseReplenishOnOrderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_config_settings.py) ---
+            // def _inverse_replenish_on_order(self):
+            // route = self.env.ref('stock.route_warehouse0_mto', raise_if_not_found=False)
+            // if route:
+            //     route.active = self.replenish_on_order
+            */
+            return default;
+        }
+
         protected async Task<ResConfigSettings> InverseSharedUserAccountInternalAsync()
         {
             /*
@@ -1931,10 +1951,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
             // def _is_cashdrawer_displayed(self, res_config):
-            // return res_config.pos_iface_print_via_proxy
-            --- ODOO METHOD SOURCE (MODULE: pos_epson_printer, FILE: res_config_settings.py) ---
+            // return res_config.pos_iface_print_via_proxy or (
+            //     res_config.pos_other_devices
+            //     and bool(res_config.pos_epson_printer_ip)
+            // )
+            --- ODOO METHOD SOURCE (MODULE: pos_imin, FILE: res_config_settings.py) ---
             // def _is_cashdrawer_displayed(self, res_config):
-            // return super()._is_cashdrawer_displayed(res_config) or (res_config.pos_other_devices and bool(res_config.pos_epson_printer_ip))
+            // return super()._is_cashdrawer_displayed(res_config) or (res_config.pos_other_devices)
             */
             return default;
         }
@@ -1983,6 +2006,8 @@ namespace Bamboo.Core.Application.Services
             // for employee in self.pos_advanced_employee_ids:
             //     if employee in self.pos_basic_employee_ids:
             //         self.pos_basic_employee_ids -= employee
+            //     if employee in self.pos_minimal_employee_ids:
+            //         self.pos_minimal_employee_ids -= employee
             */
             return default;
         }
@@ -2001,7 +2026,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResConfigSettings> OnchangeAuthTotpEnforceInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: res_config_settings.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_config_settings.py) ---
             // def _onchange_auth_totp_enforce(self):
             // if self.auth_totp_enforce:
             //     self.auth_totp_policy = self.auth_totp_policy or 'employee_required'
@@ -2017,11 +2042,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: res_config_settings.py) ---
             // def _onchange_basic_employee_ids(self):
             // for employee in self.pos_basic_employee_ids:
-            //     if employee in self.pos_advanced_employee_ids:
-            //         if employee.user_id._has_group('point_of_sale.group_pos_manager'):
-            //             self.pos_basic_employee_ids -= employee
-            //         else:
-            //             self.pos_advanced_employee_ids -= employee
+            //     if employee.user_id._has_group('point_of_sale.group_pos_manager'):
+            //         self.pos_basic_employee_ids -= employee
+            //     elif employee in self.pos_advanced_employee_ids:
+            //         self.pos_advanced_employee_ids -= employee
+            //     elif employee in self.pos_minimal_employee_ids:
+            //         self.pos_minimal_employee_ids -= employee
             */
             return default;
         }
@@ -2055,6 +2081,18 @@ namespace Bamboo.Core.Application.Services
             //     if not (user.has_group("point_of_sale.group_pos_user")
             //             or user.has_group("point_of_sale.group_pos_manager")):
             //         raise ValidationError(_("The user must be a POS user"))
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> OnchangeEpsonPrinterIpInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
+            // def _onchange_epson_printer_ip(self):
+            // for rec in self:
+            //     if rec.pos_epson_printer_ip:
+            //         rec.pos_epson_printer_ip = format_epson_certified_domain(rec.pos_epson_printer_ip)
             */
             return default;
         }
@@ -2165,8 +2203,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: res_config_settings.py) ---
             // def _onchange_layout(self):
             // for record in self:
-            //     if self._is_layout_cover_required():
-            //         self.company_id.snailmail_cover = True
+            //     if record._is_layout_cover_required():
+            //         record.company_id.snailmail_cover = True
             */
             return default;
         }
@@ -2182,6 +2220,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResConfigSettings> OnchangeMinimalEmployeeIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: res_config_settings.py) ---
+            // def _onchange_minimal_employee_ids(self):
+            // for employee in self.pos_minimal_employee_ids:
+            //     if employee.user_id._has_group('point_of_sale.group_pos_manager'):
+            //         self.pos_minimal_employee_ids -= employee
+            //     elif employee in self.pos_basic_employee_ids:
+            //         self.pos_basic_employee_ids -= employee
+            //     elif employee in self.pos_advanced_employee_ids:
+            //         self.pos_advanced_employee_ids -= employee
+            */
+            return default;
+        }
+
         public async Task<ResConfigSettings> OnchangeModuleAccountBudgetAsync(Guid id)
         {
             /*
@@ -2189,27 +2243,6 @@ namespace Bamboo.Core.Application.Services
             // def onchange_module_account_budget(self):
             // if self.module_account_budget:
             //     self.group_analytic_accounting = True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> OnchangeModuleAsync(Guid id, ResConfigSettingsOnchangeModuleRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
-            // def onchange_module(self, field_value, module_name):
-            // module_sudo = self.env['ir.module.module']._get(module_name[7:])
-            // if not int(field_value) and module_sudo.state in ('to install', 'installed', 'to upgrade'):
-            //     deps = module_sudo.downstream_dependencies()
-            //     dep_names = (deps | module_sudo).mapped('shortdesc')
-            //     message = '\n'.join(dep_names)
-            //     return {
-            //         'warning': {
-            //             'title': _('Warning!'),
-            //             'message': _('Disabling this option will also uninstall the following modules \n%s', message),
-            //         }
-            //     }
-            // return {}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2250,6 +2283,18 @@ namespace Bamboo.Core.Application.Services
             //     if not config.module_website_event_track:
             //         config.module_website_event_track_live = False
             //         config.module_website_event_track_quiz = False
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> OnchangePartnershipLabelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: res_config_settings.py) ---
+            // def _onchange_partnership_label(self):
+            // crm_menu = self.env.ref('partnership.crm_menu_partners', raise_if_not_found=False)
+            // if crm_menu:
+            //     crm_menu.name = self.partnership_label
             */
             return default;
         }
@@ -2316,9 +2361,6 @@ namespace Bamboo.Core.Application.Services
             // 
             // if self.pos_self_ordering_service_mode == 'counter' and self.pos_self_ordering_mode == 'mobile':
             //     self.pos_self_ordering_pay_after = "each"
-            // 
-            // if self.pos_self_ordering_mode not in ['nothing', 'consultation'] and self.pos_self_ordering_pay_after == "each" and not self.module_pos_preparation_display:
-            //     self.module_pos_preparation_display = True
             */
             return default;
         }
@@ -2348,6 +2390,17 @@ namespace Bamboo.Core.Application.Services
             //             config.plausible_site = url.path.split('/')[-1]
             //         except Exception:  # noqa
             //             pass
+            */
+            return default;
+        }
+
+        protected async Task<ResConfigSettings> OnchangeStockConfirmationFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_config_settings.py) ---
+            // def _onchange_stock_confirmation_fields(self):
+            // if self.stock_text_confirmation and self.stock_confirmation_type == 'sms':
+            //     self.module_stock_sms = True
             */
             return default;
         }
@@ -2412,28 +2465,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> OnchangeUseManufacturingLeadInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: res_config_settings.py) ---
-            // def _onchange_use_manufacturing_lead(self):
-            // if not self.use_manufacturing_lead:
-            //     self.manufacturing_lead = 0.0
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> OnchangeUsePoLeadInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: res_config_settings.py) ---
-            // def _onchange_use_po_lead(self):
-            // if not self.use_po_lead:
-            //     self.po_lead = 0.0
-            */
-            return default;
-        }
-
         protected async Task<ResConfigSettings> OnchangeUseSecurityLeadInternalAsync()
         {
             /*
@@ -2451,7 +2482,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
             // def action_open_abandoned_cart_mail_template(self):
             // return {
-            //     'name': _("Customize Email Templates"),
+            //     'name': self.env._("Customize Email Templates"),
             //     'type': 'ir.actions.act_window',
             //     'res_model': 'mail.template',
             //     'view_id': False,
@@ -2480,6 +2511,30 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResConfigSettings> OpenCloudStorageMigrationConfigurationsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: res_config_settings.py) ---
+            // def action_open_cloud_storage_migration_configurations(self):
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'ir.config_parameter',
+            //     'view_mode': 'list,form',
+            //     'domain': [('key', 'in', [
+            //         'cloud_storage_min_file_size',
+            //         'cloud_storage_migration_max_file_size',
+            //         'cloud_storage_migration_max_batch_file_size',
+            //         'cloud_storage_migration_message_models',
+            //         'cloud_storage_migration_all_models',
+            //         'cloud_storage_migration_min_attachment_id',
+            //         'cloud_storage_migration_max_attachment_id',
+            //     ])],
+            //     'target': 'current',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResConfigSettings> OpenCompanyAsync(Guid id)
         {
             /*
@@ -2493,22 +2548,6 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.env.company.id,
             //     'target': 'current',
             // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> OpenDefaultUserAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_config_settings.py) ---
-            // def open_default_user(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("base.action_res_users")
-            // if self.env.ref('base.default_user', raise_if_not_found=False):
-            //     action['res_id'] = self.env.ref('base.default_user').id
-            // else:
-            //     raise UserError(_("Default User Template not found."))
-            // action['views'] = [[self.env.ref('base.view_users_form').id, 'form']]
-            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2573,6 +2612,59 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResConfigSettings> OpenNewUserDefaultGroupsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_config_settings.py) ---
+            // def open_new_user_default_groups(self):
+            // default_group = self.env.ref('base.default_user_group', raise_if_not_found=False)
+            // if not default_group:
+            //     default_group = self.env['res.groups'].create({
+            //         'name': _('Default access for new users'),
+            //     })
+            //     self.env['ir.model.data'].create({
+            //         'name': 'default_user_group',
+            //         'module': 'base',
+            //         'res_id': default_group.id,
+            //         'model': 'res.groups',
+            //         'noupdate': True,
+            //     })
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Edit new user default group"),
+            //     'view_mode': 'form',
+            //     'res_model': 'res.groups',
+            //     'res_id': default_group.id,
+            //     'views': [(self.env.ref('base.view_default_groups_form').id, 'form')],
+            //     'target': 'new',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> OpenPaymentMethodFormAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
+            // def open_payment_method_form(self):
+            // bank_journal = self.env['account.journal'].search([('type', '=', 'bank'), ('company_id', 'in', self.env.company.parent_ids.ids)], limit=1)
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'pos.payment.method',
+            //     'views': [(False, 'form')],
+            //     'target': 'current',
+            //     'context': {
+            //         'default_config_ids': self.env.context.get('config_ids', False) or False,
+            //         'default_payment_method_type': 'terminal',
+            //         'default_use_payment_terminal': self.env.context.get('selection', False),
+            //         'default_journal_id': bank_journal.id if bank_journal else False,
+            //         'default_name': f"Bank {self.env.context.get('provider_name', False)}",
+            //     }
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResConfigSettings> OpenPeppolFormAsync(Guid id)
         {
             /*
@@ -2581,6 +2673,29 @@ namespace Bamboo.Core.Application.Services
             // registration_wizard = self.env['peppol.registration'].create({'company_id': self.company_id.id})
             // registration_action = registration_wizard._action_open_peppol_form(reopen=False)
             // return registration_action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> OpenProductFeedsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
+            // def action_open_product_feeds(self):
+            // """Open the list view to manage the feed specific to the current website."""
+            // self.ensure_one()
+            // return {
+            //     'name': self.env._("Product Feeds"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'product.feed',
+            //     'views': [(False, 'list')],
+            //     'target': 'new',
+            //     'context': {
+            //         'default_website_id': self.website_id.id,
+            //         'hide_website_column': True,
+            //     },
+            //     'domain': [('website_id', '=', self.website_id.id)],
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2609,13 +2724,23 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
             // def action_open_sale_mail_templates(self):
             // return {
-            //     'name': _("Customize Email Templates"),
+            //     'name': self.env._("Customize Email Templates"),
             //     'type': 'ir.actions.act_window',
             //     'domain': [('model', '=', 'sale.order')],
             //     'res_model': 'mail.template',
             //     'view_id': False,
             //     'view_mode': 'list,form',
             // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> OpenSmsTwilioAccountManageAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: res_config_settings.py) ---
+            // def action_open_sms_twilio_account_manage(self):
+            // return self.company_id._action_open_sms_twilio_account_manage()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2633,6 +2758,24 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = template_user_id
             // action['views'] = [[self.env.ref('base.view_users_form').id, 'form']]
             // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> PosCloseUiAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
+            // def pos_close_ui(self):
+            // return self.pos_open_ui()
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
+            // def pos_close_ui(self):
+            // if self.pos_self_ordering_mode == "kiosk":
+            //     if self.env.context.get('pos_config_id'):
+            //         pos_config_id = self.env.context['pos_config_id']
+            //         pos_config = self.env['pos.config'].browse(pos_config_id)
+            //         return pos_config.action_close_kiosk_session()
+            // return super().pos_close_ui()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2659,10 +2802,26 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
             // def pos_open_ui(self):
-            // if self._context.get('pos_config_id'):
-            //     pos_config_id = self._context['pos_config_id']
+            // if self.env.context.get('pos_config_id'):
+            //     pos_config_id = self.env.context['pos_config_id']
             //     pos_config = self.env['pos.config'].browse(pos_config_id)
             //     return pos_config.open_ui()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResConfigSettings> PosPrinterDialogAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
+            // def action_pos_printer_dialog(self):
+            // return {
+            //     'view_mode': 'form',
+            //     'res_model': 'pos.printer',
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'res_id': False,
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2714,27 +2873,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_config_settings.py) ---
             // def regenerate_kiosk_key(self):
-            // if self.env.user.has_group("hr_attendance.group_hr_attendance_manager"):
+            // if self.env.user.has_group("hr_attendance.group_hr_attendance_user"):
             //     self.company_id._regenerate_attendance_kiosk_key()
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResConfigSettings> RegisterHookInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
-            // def _register_hook(self):
-            // """ Add an onchange method for each module field. """
-            // def make_method(name):
-            //     return lambda self: self.onchange_module(self[name], name)
-            // 
-            // for name in self._fields:
-            //     if name.startswith('module_'):
-            //         method = make_method(name)
-            //         self._onchange_methods[name].append(method)
-            */
-            return default;
         }
 
         public async Task<ResConfigSettings> ReloadTemplateAsync(Guid id)
@@ -2743,499 +2885,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
             // def reload_template(self):
             // self.env['account.chart.template'].try_loading(self.company_id.chart_template, company=self.company_id)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveAccountAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_account(self):
-            // to_removes = [
-            //     'payment.transaction',
-            //     'account.bank.statement.line',
-            //     'account.payment',
-            //     'account.analytic.line',
-            //     'account.analytic.account',
-            //     'account.partial.reconcile',
-            //     'account.move.line',
-            //     'hr.expense.sheet',
-            //     'account.move',
-            // ]
-            // res = self.remove_data(to_removes, [])
-            // domain = [
-            //     ('company_id', '=', self.env.company.id),
-            //     '|', ('code', '=ilike', 'account.%'),
-            //     '|', ('prefix', '=ilike', 'BNK1/%'),
-            //     '|', ('prefix', '=ilike', 'CSH1/%'),
-            //     '|', ('prefix', '=ilike', 'INV/%'),
-            //     '|', ('prefix', '=ilike', 'EXCH/%'),
-            //     '|', ('prefix', '=ilike', 'MISC/%'),
-            //     '|', ('prefix', '=ilike', '账单/%'),
-            //     ('prefix', '=ilike', '杂项/%')
-            // ]
-            // try:
-            //     seqs = self.env['ir.sequence'].search(domain)
-            //     if seqs.exists():
-            //         seqs.write({
-            //             'number_next': 1,
-            //         })
-            // except Exception as e:
-            //     _logger.error('reset sequence data error: %s,%s', domain, e)
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveAccountChartAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_account_chart(self):
-            // company_id = self.env.company.id
-            // self = self.with_context(force_company=company_id, company_id=company_id)
-            // to_removes = [
-            //     'res.partner.bank',
-            //     'account.move.line',
-            //     'account.invoice',
-            //     'account.payment',
-            //     'account.bank.statement',
-            //     'account.tax.account.tag',
-            //     'account.tax',
-            //     'account.account.account.tag',
-            //     'wizard_multi_charts_accounts',
-            //     'account.journal',
-            //     'account.account',
-            // ]
-            // try:
-            //     field1 = self.env['ir.model.fields']._get('product.template', "taxes_id").id
-            //     field2 = self.env['ir.model.fields']._get('product.template', "supplier_taxes_id").id
-            // 
-            //     sql = "delete from ir_default where (field_id = %s or field_id = %s) and company_id=%d" \
-            //           % (field1, field2, company_id)
-            //     sql2 = "update account_journal set bank_account_id=NULL where company_id=%d;" % company_id
-            //     self._cr.execute(sql)
-            //     self._cr.execute(sql2)
-            // 
-            //     self._cr.commit()
-            // except Exception as e:
-            //     _logger.error('remove data error: %s,%s', 'account_chart: set tax and account_journal', e)
-            // if self.env['ir.model']._get('pos.config'):
-            //     self.env['pos.config'].write({
-            //         'journal_id': False,
-            //     })
-            // try:
-            //     rec = self.env['res.partner'].search([])
-            //     for r in rec:
-            //         r.write({
-            //             'property_account_receivable_id': None,
-            //             'property_account_payable_id': None,
-            //         })
-            // except Exception as e:
-            //     _logger.error('remove data error: %s,%s', 'account_chart', e)
-            // try:
-            //     rec = self.env['product.category'].search([])
-            //     for r in rec:
-            //         r.write({
-            //             'property_account_income_categ_id': None,
-            //             'property_account_expense_categ_id': None,
-            //             'property_account_creditor_price_difference_categ': None,
-            //             'property_stock_account_input_categ_id': None,
-            //             'property_stock_account_output_categ_id': None,
-            //             'property_stock_valuation_account_id': None,
-            //         })
-            // except Exception as e:
-            //     pass
-            // try:
-            //     rec = self.env['product.template'].search([])
-            //     for r in rec:
-            //         r.write({
-            //             'property_account_income_id': None,
-            //             'property_account_expense_id': None,
-            //         })
-            // except Exception as e:
-            //     pass
-            // try:
-            //     rec = self.env['stock.location'].search([])
-            //     for r in rec:
-            //         r.write({
-            //             'valuation_in_account_id': None,
-            //             'valuation_out_account_id': None,
-            //         })
-            // except Exception as e:
-            //     pass
-            // seqs = []
-            // res = self.remove_data(to_removes, seqs)
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveAllAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_all(self):
-            // self.remove_account()
-            // self.remove_quality()
-            // self.remove_website()
-            // self.remove_quality_setting()
-            // self.remove_inventory()
-            // self.remove_purchase()
-            // self.remove_mrp()
-            // self.remove_sales()
-            // self.remove_project()
-            // self.remove_pos()
-            // self.remove_expense()
-            // self.remove_account_chart()
-            // self.remove_message()
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveDataAsync(Guid id, ResConfigSettingsRemoveDataRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_data(self, o, s=[]):
-            // for line in o:
-            //     try:
-            //         if not self.env['ir.model']._get(line):
-            //             continue
-            //     except Exception as e:
-            //         _logger.warning('remove data error get ir.model: %s,%s', line, e)
-            //         continue
-            //     obj_name = line
-            //     obj = self.pool.get(obj_name)
-            //     if not obj:
-            //         t_name = obj_name.replace('.', '_')
-            //     else:
-            //         t_name = obj._table
-            //     sql = "delete from %s" % t_name
-            //     try:
-            //         self._cr.execute(sql)
-            //         self._cr.commit()
-            //     except Exception as e:
-            //         _logger.warning('remove data error: %s,%s', line, e)
-            // for line in s:
-            //     domain = ['|', ('code', '=ilike', line + '%'), ('prefix', '=ilike', line + '%')]
-            //     try:
-            //         seqs = self.env['ir.sequence'].sudo().search(domain)
-            //         if seqs.exists():
-            //             seqs.write({
-            //                 'number_next': 1,
-            //             })
-            //     except Exception as e:
-            //         _logger.warning('reset sequence data error: %s,%s', line, e)
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveExpenseAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_expense(self):
-            // to_removes = [
-            //     'hr.expense.sheet',
-            //     'hr.expense',
-            //     'hr.payslip',
-            //     'hr.payslip.run',
-            // ]
-            // seqs = [
-            //     'hr.expense.',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveInventoryAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_inventory(self):
-            // to_removes = [
-            //     'stock.quant',
-            //     'stock.move.line',
-            //     'stock.package_level',
-            //     'stock.quantity.history',
-            //     'stock.quant.package',
-            //     'stock.move',
-            //     'stock.picking',
-            //     'stock.scrap',
-            //     'stock.picking.batch',
-            //     'stock.inventory.line',
-            //     'stock.inventory',
-            //     'stock.valuation.layer',
-            //     'stock.production.lot',
-            //     'procurement.group',
-            // ]
-            // seqs = [
-            //     'stock.',
-            //     'picking.',
-            //     'procurement.group',
-            //     'product.tracking.default',
-            //     'WH/',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveMessageAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_message(self):
-            // to_removes = [
-            //     'mail.message',
-            //     'mail.followers',
-            //     'mail.activity',
-            // ]
-            // seqs = []
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveMrpAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_mrp(self):
-            // to_removes = [
-            //     'mrp.workcenter.productivity',
-            //     'mrp.workorder',
-            //     'mrp.production.workcenter.line',
-            //     'change.production.qty',
-            //     'mrp.production',
-            //     'mrp.production.product.line',
-            //     'mrp.unbuild',
-            //     'change.production.qty',
-            //     'sale.forecast.indirect',
-            //     'sale.forecast',
-            // ]
-            // seqs = [
-            //     'mrp.',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveMrpBomAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_mrp_bom(self):
-            // to_removes = [
-            //     'mrp.bom.line',
-            //     'mrp.bom',
-            // ]
-            // seqs = []
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemovePosAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_pos(self):
-            // to_removes = [
-            //     'pos.payment',
-            //     'pos.order.line',
-            //     'pos.order',
-            //     'pos.session',
-            // ]
-            // seqs = [
-            //     'pos.',
-            // ]
-            // res = self.remove_data(to_removes, seqs)
-            // try:
-            //     statement = self.env['account.bank.statement'].sudo().search([])
-            //     for s in statement:
-            //         s._end_balance()
-            // except Exception as e:
-            //     _logger.error('reset sequence data error: %s', e)
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveProductAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_product(self):
-            // to_removes = [
-            //     'product.product',
-            //     'product.template',
-            // ]
-            // seqs = [
-            //     'product.product',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveProductAttributeAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_product_attribute(self):
-            // to_removes = [
-            //     'product.attribute.value',
-            //     'product.attribute',
-            // ]
-            // seqs = []
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveProjectAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_project(self):
-            // to_removes = [
-            //     'account.analytic.line',
-            //     'project.task',
-            //     'project.forecast',
-            //     'project.project',
-            // ]
-            // seqs = []
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemovePurchaseAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_purchase(self):
-            // to_removes = [
-            //     'purchase.order.line',
-            //     'purchase.order',
-            //     'purchase.requisition.line',
-            //     'purchase.requisition',
-            // ]
-            // seqs = [
-            //     'purchase.',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveQualityAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_quality(self):
-            // to_removes = [
-            //     'quality.check',
-            //     'quality.alert',
-            // ]
-            // seqs = [
-            //     'quality.check',
-            //     'quality.alert',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveQualitySettingAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_quality_setting(self):
-            // to_removes = [
-            //     'quality.point',
-            //     'quality.alert.stage',
-            //     'quality.alert.team',
-            //     'quality.point.test_type',
-            //     'quality.reason',
-            //     'quality.tag',
-            // ]
-            // return self.remove_data(to_removes)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveSalesAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_sales(self):
-            // to_removes = [
-            //     'sale.order.line',
-            //     'sale.order',
-            // ]
-            // seqs = [
-            //     'sale',
-            // ]
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> RemoveWebsiteAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def remove_website(self):
-            // to_removes = [
-            //     'blog.tag.category',
-            //     'blog.tag',
-            //     'blog.post',
-            //     'blog.blog',
-            //     'product.wishlist',
-            //     'website.published.multi.mixin',
-            //     'website.published.mixin',
-            //     'website.multi.mixin',
-            //     'website.visitor',
-            //     'website.redirect',
-            //     'website.seo.metadata',
-            // ]
-            // seqs = []
-            // return self.remove_data(to_removes, seqs)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> ResetCatLocNameAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
-            // def reset_cat_loc_name(self):
-            // ids = self.env['product.category'].search([
-            //     ('parent_id', '!=', False)
-            // ], order='complete_name')
-            // for rec in ids:
-            //     try:
-            //         rec._compute_complete_name()
-            //     except:
-            //         pass
-            // try:
-            //     ids = self.env['stock.location'].search([
-            //         ('location_id', '!=', False),
-            //         ('usage', '!=', 'views'),
-            //     ], order='complete_name')
-            //     for rec in ids:
-            //         rec._compute_complete_name()
-            // except:
-            //     pass
-            // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3250,6 +2899,7 @@ namespace Bamboo.Core.Application.Services
             // if self.env.company == self.company_id and self.chart_template \
             // and self.chart_template != self.company_id.chart_template:
             //     self.env['account.chart.template'].try_loading(self.chart_template, company=self.company_id)
+            //     self.company_id._initiate_account_onboardings()
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_config_settings.py) ---
             // def set_values(self):
             // super().set_values()
@@ -3266,10 +2916,11 @@ namespace Bamboo.Core.Application.Services
             // cloud_storage_provider_before = ICP.get_param('cloud_storage_provider')
             // if cloud_storage_provider_before and self.cloud_storage_provider != cloud_storage_provider_before:
             //     self._check_cloud_storage_uninstallable()
+            // self.cloud_storage_min_file_size = int(self.cloud_storage_min_file_size_mb * 1000000)
             // super().set_values()
             // cloud_storage_configuration = self._get_cloud_storage_configuration()
             // if not cloud_storage_configuration and self.cloud_storage_provider:
-            //     raise UserError(_('Please configure the Cloud Storage before enabling it'))
+            //     raise UserError(self.env._('Please configure the Cloud Storage before enabling it'))
             // if cloud_storage_configuration and cloud_storage_configuration != cloud_storage_configuration_before:
             //     self._setup_cloud_storage_provider()
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_azure, FILE: res_config_settings.py) ---
@@ -3282,10 +2933,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_config_settings.py) ---
             // def set_values(self):
             // group_use_lead_id = self.env['ir.model.data']._xmlid_to_res_id('crm.group_use_lead')
-            // has_group_lead_before = group_use_lead_id in self.env.user.groups_id.ids
+            // has_group_lead_before = group_use_lead_id in self.env.user.all_group_ids.ids
             // super(ResConfigSettings, self).set_values()
             // # update use leads / opportunities setting on all teams according to settings update
-            // has_group_lead_after = group_use_lead_id in self.env.user.groups_id.ids
+            // has_group_lead_after = group_use_lead_id in self.env.user.all_group_ids.ids
             // if has_group_lead_before != has_group_lead_after:
             //     teams = self.env['crm.team'].search([])
             //     teams.filtered('use_opportunities').use_leads = has_group_lead_after
@@ -3313,6 +2964,11 @@ namespace Bamboo.Core.Application.Services
             // cron = self.sudo().with_context(active_test=False).env.ref('crm_iap_enrich.ir_cron_lead_enrichment', raise_if_not_found=False)
             // if cron and cron.active != (self.lead_enrich_auto == 'auto'):
             //     cron.active = self.lead_enrich_auto == 'auto'
+            --- ODOO METHOD SOURCE (MODULE: google_recaptcha, FILE: res_config_settings.py) ---
+            // def set_values(self):
+            // super().set_values()
+            // icp = self.env['ir.config_parameter'].sudo()
+            // icp.set_param("enable_recaptcha", str(self.enable_recaptcha))
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_config_settings.py) ---
             // def set_values(self):
             // super().set_values()
@@ -3396,46 +3052,10 @@ namespace Bamboo.Core.Application.Services
             //     self.env['product.pricelist'].sudo().search([]).action_archive()
             --- ODOO METHOD SOURCE (MODULE: project, FILE: res_config_settings.py) ---
             // def set_values(self):
-            // # Ensure that settings on existing projects match the above fields
-            // projects = self.env["project.project"].search([])
-            // basic_projects = projects.filtered_domain(self._get_basic_project_domain())
-            // 
-            // features = {
-            //     # key: (config_flag, is_global), value: project_flag
-            //     ("group_project_rating", True): "rating_active",
-            //     ("group_project_task_dependencies", False): "allow_task_dependencies",
-            //     ("group_project_milestone", False): "allow_milestones",
-            // }
-            // 
-            // for (config_flag, is_global), project_flag in features.items():
-            //     config_flag_global = f"project.{config_flag}"
-            //     config_feature_enabled = self[config_flag]
-            //     if self.env.user.has_group(config_flag_global) != config_feature_enabled:
-            //         if config_feature_enabled and not is_global:
-            //             basic_projects[project_flag] = config_feature_enabled
-            //         else:
-            //             projects[project_flag] = config_feature_enabled
-            // 
-            // task_waiting_subtype_id = self.env.ref('project.mt_task_waiting')
-            // project_task_waiting_subtype_id = self.env.ref('project.mt_project_task_waiting')
-            // if task_waiting_subtype_id.hidden != (not self['group_project_task_dependencies']):
-            //     task_waiting_subtype_id.hidden = not self['group_project_task_dependencies']
-            //     project_task_waiting_subtype_id.hidden = not self['group_project_task_dependencies']
             // # Hide Project Stage Changed mail subtype according to the settings
             // project_stage_change_mail_type = self.env.ref('project.mt_project_stage_change')
             // if project_stage_change_mail_type.hidden == self['group_project_stages']:
             //     project_stage_change_mail_type.hidden = not self['group_project_stages']
-            // # Hide task rating tempalate when customer rating is disbled
-            // task_rating_subtype_id = self.env.ref('project.mt_project_task_rating')
-            // task_rating_subtype_id.hidden = not self['group_project_rating']
-            // self.env.ref('project.mt_task_rating').hidden = not self['group_project_rating']
-            // task_rating_subtype_id.default = self['group_project_rating']
-            // rating_project_request_email_template = self.env.ref('project.rating_project_request_email_template')
-            // if rating_project_request_email_template.active != self['group_project_rating']:
-            //     rating_project_request_email_template.active = self['group_project_rating']
-            // if not self['group_project_recurring_tasks']:
-            //     self.env['project.task'].sudo().search([('recurring_task', '=', True)]).write({'recurring_task': False})
-            // 
             // super().set_values()
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: res_config_settings.py) ---
             // def set_values(self):
@@ -3457,20 +3077,6 @@ namespace Bamboo.Core.Application.Services
             //     if companies:
             //         companies.sale_order_template_id = False
             // super().set_values()
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: res_config_settings.py) ---
-            // def set_values(self):
-            // super().set_values()
-            // if self.group_project_milestone:
-            //     # Search the milestones containing a SOL and change the qty_delivered_method field of the SOL and the
-            //     # service_policy field set on the product to convert from manual to milestones.
-            //     milestones = self.env['project.milestone'].search_fetch([('sale_line_id', '!=', False)], ['sale_line_id'])
-            //     sale_lines = milestones.sale_line_id.sudo()
-            //     sale_lines.product_id.service_policy = 'delivered_milestones'
-            // else:
-            //     product_domain = [('type', '=', 'service'), ('service_type', '=', 'milestones')]
-            //     products = self.env['product.product'].search(product_domain)
-            //     products.service_policy = 'delivered_manual'
-            //     self.env['sale.order.line'].sudo().search([('product_id', 'in', products.ids)]).qty_delivered_method = 'manual'
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_config_settings.py) ---
             // def set_values(self):
             // warehouse_grp = self.env.ref('stock.group_stock_multi_warehouses')
@@ -3520,46 +3126,35 @@ namespace Bamboo.Core.Application.Services
             //         raise UserError(_("You have product(s) in stock that have lot/serial number tracking enabled. \nSwitch off tracking on all the products before switching off this setting."))
             // 
             // return
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_config_settings.py) ---
-            // def set_values(self):
-            // automatic_before = self.env.user.has_group('stock_account.group_stock_accounting_automatic')
-            // super().set_values()
-            // if automatic_before and not self.env.user.has_group('stock_account.group_stock_accounting_automatic'):
-            //     self.env['product.category'].sudo().with_context(active_test=False).search([
-            //         ('property_valuation', '=', 'real_time')]).property_valuation = 'manual_periodic'
-            --- ODOO METHOD SOURCE (MODULE: website_payment_authorize, FILE: res_config_settings.py) ---
-            // def set_values(self):
-            // super().set_values()
-            // authorize = self.env.ref('payment.payment_provider_authorize').sudo()
-            // capture_manually = self.authorize_capture_method == 'manual'
-            // if authorize.capture_manually != capture_manually:
-            //     authorize.capture_manually = capture_manually
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
             // def set_values(self):
             // super().set_values()
             // if self.website_id:
             //     website = self.with_context(website_id=self.website_id.id).website_id
-            //     extra_step_view = website.viewref('website_sale.extra_info')
-            //     buy_now_view = website.viewref('website_sale.product_buy_now')
             // 
-            //     if extra_step_view.active != self.enabled_extra_checkout_step:
-            //         extra_step_view.active = self.enabled_extra_checkout_step
-            //     if buy_now_view.active != self.enabled_buy_now_button:
-            //         buy_now_view.active = self.enabled_buy_now_button
+            //     # Pre-populate the website feeds if none already exists.
+            //     if (
+            //         self.group_gmc_feed
+            //         and not self.env['product.feed'].search_count(
+            //             [('website_id', '=', website.id)], limit=1
+            //         )
+            //     ):
+            //         website._populate_product_feeds()
+            // 
+            //     # Due to an earlier oversight, the GMC feature flag was implemented as website-specific,
+            //     # even though a group-based feature flag is global. This has been corrected in future
+            //     # versions, but fixing it here would require a model change, which cannot be backported.
+            //     # This line serves as a workaround to ensure that all websites share the same setting,
+            //     # providing consistent behavior across versions.
+            //     self.env['website'].sudo().search_fetch([], []).enabled_gmc_src = self.group_gmc_feed
             --- ODOO METHOD SOURCE (MODULE: website_sale_mass_mailing, FILE: res_config_settings.py) ---
             // def set_values(self):
             // super().set_values()
-            // newsletter_view = self.env.ref('website_sale_mass_mailing.newsletter')
-            // if newsletter_view.active != self.is_newsletter_enabled:
-            //     newsletter_view.active = self.is_newsletter_enabled
-            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: res_config_settings.py) ---
-            // def set_values(self):
-            // super(ResConfigSettings, self).set_values()
-            // IrDefault = self.env['ir.default'].sudo()
-            // 
-            // IrDefault.set('product.template', 'allow_out_of_stock_order', self.allow_out_of_stock_order)
-            // IrDefault.set('product.template', 'available_threshold', self.available_threshold)
-            // IrDefault.set('product.template', 'show_availability', self.show_availability)
+            // if self.website_id:
+            //     website = self.with_context(website_id=self.website_id.id).website_id
+            //     website_newsletter_view = website.viewref('website_sale_mass_mailing.newsletter')
+            //     if website_newsletter_view.active != self.is_newsletter_enabled:
+            //         website_newsletter_view.active = self.is_newsletter_enabled
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
             // def set_values(self):
             // """
@@ -3747,6 +3342,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<ResConfigSettings> ViewDeliveryProviderModulesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
+            // def action_view_delivery_provider_modules(self):
+            // return self.env['delivery.carrier'].install_more_provider()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResConfigSettings> ViewInStoreDeliveryMethodsAsync(Guid id)
         {
             /*
@@ -3773,12 +3378,24 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResConfigSettings> WPaymentStartPaymentOnboardingAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
+            // def action_w_payment_start_payment_onboarding(self):
+            // menu = self.env.ref('website.menu_website_website_settings', raise_if_not_found=False)
+            // return self._start_payment_onboarding(menu and menu.id)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResConfigSettings> WebsiteCreateNewAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_config_settings.py) ---
             // def action_website_create_new(self):
             // return {
+            //     'name': _('Add Website'),
             //     'view_mode': 'form',
             //     'view_id': self.env.ref('website.view_website_form_view_themes_modal').id,
             //     'res_model': 'website',

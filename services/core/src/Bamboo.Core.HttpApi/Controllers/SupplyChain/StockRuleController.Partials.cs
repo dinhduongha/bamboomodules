@@ -17,5 +17,21 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/run")]
+        public async Task<IActionResult> RunAsync(Guid id, [FromBody] StockRuleRunRequestDto input)
+        {
+            var result = await _appService.RunAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/run-scheduler")]
+        public async Task<IActionResult> RunSchedulerAsync(Guid id, [FromBody] StockRuleRunSchedulerRequestDto input)
+        {
+            var result = await _appService.RunSchedulerAsync(id, input);
+            return Ok(result);
+        }
     }
 }

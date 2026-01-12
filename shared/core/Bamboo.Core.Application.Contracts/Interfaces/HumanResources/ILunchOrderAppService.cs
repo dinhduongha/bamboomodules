@@ -13,7 +13,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<LunchOrder> AddToCartAsync(Guid id);
         Task<LunchOrder> CancelAsync(Guid id);
         Task<LunchOrder> ConfirmAsync(Guid id);
-        Task<LunchOrder> InitAsync(Guid id);
         Task<LunchOrder> NotifyAsync(Guid id);
         Task<LunchOrder> OrderAsync(Guid id);
         Task<LunchOrder> ReorderAsync(Guid id);

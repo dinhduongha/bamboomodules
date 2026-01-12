@@ -17,13 +17,5 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.LeadValsFromResponseAsync(id, input);
             return Ok(result);
         }
-        
-        [HttpPost]
-        [Route("{id}/notify-no-more-credit")]
-        public async Task<IActionResult> NotifyNoMoreCreditAsync(Guid id, [FromBody] CrmIapLeadHelpersNotifyNoMoreCreditRequestDto input)
-        {
-            var result = await _appService.NotifyNoMoreCreditAsync(id, input);
-            return Ok(result);
-        }
     }
 }

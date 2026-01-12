@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-batch-detailed-operations")]
+        public async Task<IActionResult> ActionBatchDetailedOperationsAsync(Guid id)
+        {
+            var result = await _appService.BatchDetailedOperationsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-cancel")]
         public async Task<IActionResult> ActionCancelAsync(Guid id)
         {
@@ -43,6 +51,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-merge")]
+        public async Task<IActionResult> ActionMergeAsync(Guid id)
+        {
+            var result = await _appService.MergeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-open-label-layout")]
         public async Task<IActionResult> ActionOpenLabelLayoutAsync(Guid id)
         {
@@ -63,6 +79,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionPutInPackAsync(Guid id)
         {
             var result = await _appService.PutInPackAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-see-packages")]
+        public async Task<IActionResult> ActionSeePackagesAsync(Guid id)
+        {
+            var result = await _appService.SeePackagesAsync(id);
             return Ok(result);
         }
         

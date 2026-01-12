@@ -11,7 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IProjectTaskTypeAppService : IGenericApplicationService<ProjectTaskType>
     {
         Task<ProjectTaskType> CopyDataAsync(Guid id, ProjectTaskTypeCopyDataRequestDto input);
-        Task<ProjectTaskType> ToggleActiveAsync(Guid id);
+        Task<ProjectTaskType> UnarchiveAsync(Guid id);
         Task<ProjectTaskType> UnlinkWizardAsync(Guid id, ProjectTaskTypeUnlinkWizardRequestDto input);
     }
 }

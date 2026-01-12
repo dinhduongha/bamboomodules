@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-acknowledge")]
+        public async Task<IActionResult> ActionAcknowledgeAsync(Guid id)
+        {
+            var result = await _appService.AcknowledgeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-add-from-catalog")]
         public async Task<IActionResult> ActionAddFromCatalogAsync(Guid id)
         {
@@ -44,9 +52,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-create-invoice")]
-        public async Task<IActionResult> ActionCreateInvoiceAsync(Guid id)
+        public async Task<IActionResult> ActionCreateInvoiceAsync(Guid id, [FromBody] PurchaseOrderCreateInvoiceRequestDto input)
         {
-            var result = await _appService.CreateInvoiceAsync(id);
+            var result = await _appService.CreateInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -55,6 +63,30 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionMergeAsync(Guid id)
         {
             var result = await _appService.MergeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-business-doc")]
+        public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
+        {
+            var result = await _appService.OpenBusinessDocAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-purchase-comparison")]
+        public async Task<IActionResult> ActionPurchaseComparisonAsync(Guid id)
+        {
+            var result = await _appService.PurchaseComparisonAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-purchase-order-suggest")]
+        public async Task<IActionResult> ActionPurchaseOrderSuggestAsync(Guid id)
+        {
+            var result = await _appService.PurchaseOrderSuggestAsync(id);
             return Ok(result);
         }
         
@@ -147,18 +179,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-done")]
-        public async Task<IActionResult> ButtonDoneAsync(Guid id)
-        {
-            var result = await _appService.ButtonDoneAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-draft")]
         public async Task<IActionResult> ButtonDraftAsync(Guid id)
         {
             var result = await _appService.ButtonDraftAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/button-lock")]
+        public async Task<IActionResult> ButtonLockAsync(Guid id)
+        {
+            var result = await _appService.ButtonLockAsync(id);
             return Ok(result);
         }
         
@@ -171,10 +203,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/confirm-reminder-mail")]
-        public async Task<IActionResult> ConfirmReminderMailAsync(Guid id, [FromBody] PurchaseOrderConfirmReminderMailRequestDto input)
+        [Route("{id}/create-document-from-attachment")]
+        public async Task<IActionResult> CreateDocumentFromAttachmentAsync(Guid id, [FromBody] PurchaseOrderCreateDocumentFromAttachmentRequestDto input)
         {
-            var result = await _appService.ConfirmReminderMailAsync(id, input);
+            var result = await _appService.CreateDocumentFromAttachmentAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-acknowledge-url")]
+        public async Task<IActionResult> GetAcknowledgeUrlAsync(Guid id)
+        {
+            var result = await _appService.GetAcknowledgeUrlAsync(id);
             return Ok(result);
         }
         
@@ -183,6 +223,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetConfirmUrlAsync(Guid id, [FromBody] PurchaseOrderGetConfirmUrlRequestDto input)
         {
             var result = await _appService.GetConfirmUrlAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
             return Ok(result);
         }
         
@@ -247,14 +295,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OnchangePartnerIdAsync(Guid id)
         {
             var result = await _appService.OnchangePartnerIdAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/onchange-partner-id-warning")]
-        public async Task<IActionResult> OnchangePartnerIdWarningAsync(Guid id)
-        {
-            var result = await _appService.OnchangePartnerIdWarningAsync(id);
             return Ok(result);
         }
         

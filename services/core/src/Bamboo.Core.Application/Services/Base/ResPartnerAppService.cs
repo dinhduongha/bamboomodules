@@ -28,9 +28,10 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;
         private readonly IMailThreadPhoneAppService _mailThreadPhoneAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        private readonly IPropertiesBaseDefinitionMixinAppService _propertiesBaseDefinitionMixinAppService;
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
-        public ResPartnerAppService(IRepository<ResPartner, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAvatarMixinAppService avatarMixinAppService, IBusListenerMixinAppService busListenerMixinAppService, IFormatAddressMixinAppService formatAddressMixinAppService, IFormatVatLabelMixinAppService formatVatLabelMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService, IPosLoadMixinAppService posLoadMixinAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ResPartnerAppService(IRepository<ResPartner, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAvatarMixinAppService avatarMixinAppService, IBusListenerMixinAppService busListenerMixinAppService, IFormatAddressMixinAppService formatAddressMixinAppService, IFormatVatLabelMixinAppService formatVatLabelMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService, IPosLoadMixinAppService posLoadMixinAppService, IPropertiesBaseDefinitionMixinAppService propertiesBaseDefinitionMixinAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _avatarMixinAppService = avatarMixinAppService;
             _busListenerMixinAppService = busListenerMixinAppService;
@@ -40,8 +41,39 @@ namespace Bamboo.Core.Application.Services
             _mailThreadBlacklistAppService = mailThreadBlacklistAppService;
             _mailThreadPhoneAppService = mailThreadPhoneAppService;
             _posLoadMixinAppService = posLoadMixinAppService;
+            _propertiesBaseDefinitionMixinAppService = propertiesBaseDefinitionMixinAppService;
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
+        }
+
+        protected async Task<ResPartner> ActionShowInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            // def _action_show(self):
+            // """If self is a singleton, directly access the form view. If it is a recordset, open a list view"""
+            // view_id = self.env.ref('base.view_partner_form').id
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.partner',
+            //     'context': {'create': False},
+            // }
+            // if len(self) > 1:
+            //     action.update({
+            //         'name': _('Contacts'),
+            //         'view_mode': 'list,form',
+            //         'views': [[None, 'list'], [view_id, 'form']],
+            //         'domain': [('id', 'in', self.ids)],
+            //     })
+            // else:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'views': [[view_id, 'form']],
+            //         'res_id': self.id,
+            //     })
+            // return action
+            */
+            return default;
         }
 
         protected async Task<ResPartner> AddressFieldsInternalAsync()
@@ -115,7 +147,7 @@ namespace Bamboo.Core.Application.Services
             // sign = 1
             // if account_type == 'liability_payable':
             //     sign = -1
-            // res = self._cr.execute(f'''
+            // res = self.env.cr.execute(f'''
             //     SELECT aml.partner_id
             //       FROM res_partner partner
             //  LEFT JOIN account_move_line aml ON aml.partner_id = partner.id
@@ -123,29 +155,19 @@ namespace Bamboo.Core.Application.Services
             //       JOIN res_company line_company ON line_company.id = aml.company_id
             // RIGHT JOIN account_account acc ON aml.account_id = acc.id
             //      WHERE acc.account_type = %s
-            //        AND NOT acc.deprecated
+            //        AND acc.active
             //        AND SPLIT_PART(line_company.parent_path, '/', 1)::int = %s
             //        AND move.state = 'posted'
             //   GROUP BY aml.partner_id
             //     HAVING %s * COALESCE(SUM(aml.amount_residual), 0) {operator} %s''',
             //     (account_type, self.env.company.root_id.id, sign, operand)
             // )
-            // res = self._cr.fetchall()
+            // res = self.env.cr.fetchall()
             // if not res:
             //     return [('id', '=', '0')]
             // return [('id', 'in', [r[0] for r in res])]
             */
             return default;
-        }
-
-        public async Task<ResPartner> AutocompleteAsync(Guid id, ResPartnerAutocompleteRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
-            // def autocomplete(self, query, timeout=15):
-            // return []
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResPartner> AutocompleteByNameAsync(Guid id, ResPartnerAutocompleteByNameRequestDto input)
@@ -190,7 +212,6 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     vies_result = None
             //     try:
-            //         _logger.info('Calling VIES service to check VAT for autocomplete: %s', vat)
             //         vies_result = check_vies(vat, timeout=timeout)
             //     except Exception:
             //         _logger.warning("Failed VIES VAT check.", exc_info=True)
@@ -231,7 +252,9 @@ namespace Bamboo.Core.Application.Services
             // if self.type == 'delivery':
             //     return "base/static/img/truck.png"
             // if self.type == 'invoice':
-            //     return "base/static/img/money.png"
+            //     return "base/static/img/bill.png"
+            // if self.type == 'other':
+            //     return "base/static/img/puzzle.png"
             // return super()._avatar_get_placeholder_path()
             */
             return default;
@@ -251,6 +274,8 @@ namespace Bamboo.Core.Application.Services
             //     return _("The Peppol endpoint is not valid. "
             //              "It should contain exactly 10 digits (Company Registry number)."
             //              "The expected format is: 1234567890")
+            // if PEPPOL_ENDPOINT_INVALIDCHARS_RE.search(endpoint) or not 1 <= len(endpoint) <= 50:
+            //     return _("The Peppol endpoint (%s) is not valid. It should contain only letters and digit.", endpoint)
             */
             return default;
         }
@@ -258,17 +283,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> BuildVatErrorMessageInternalAsync(object country_code, object wrong_vat, object record_label)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _build_vat_error_message(self, country_code, wrong_vat, record_label):
-            // """ Prepare an error message for the VAT number that failed validation
-            // 
-            // :param country_code: string of lowercase country code
-            // :param wrong_vat: the vat number that was validated
-            // :param record_label: a string to desribe the record that failed a VAT validation check
-            // 
-            // :return: The error message string
-            // """
-            // return ""
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def _build_vat_error_message(self, country_code, wrong_vat, record_label):
             // # OVERRIDE account
@@ -281,23 +295,29 @@ namespace Bamboo.Core.Application.Services
             // if country_code and company.country_id and country_code == company.country_id.code.lower() and company.country_id.vat_label:
             //     vat_label = company.country_id.vat_label
             // 
-            // expected_format = _ref_vat.get(country_code, "'CC##' (CC=Country Code, ##=VAT Number)")
+            // expected_format = _ref_vat.get(country_code.lower())
+            // expected_note = ""
+            // if expected_format:
+            //     expected_note = ' \n' + _(
+            //         'Note: the expected format is %(expected_format)s',
+            //          expected_format=expected_format
+            //     )
             // 
             // # Catch use case where the record label is about the public user (name: False)
             // if 'False' not in record_label:
             //     return '\n' + _(
-            //         'The %(vat_label)s number [%(wrong_vat)s] for %(record_label)s does not seem to be valid. \nNote: the expected format is %(expected_format)s',
+            //         'The %(vat_label)s number [%(wrong_vat)s] for %(record_label)s does not seem to be valid. %(expected_note)s',
             //         vat_label=vat_label,
             //         wrong_vat=wrong_vat,
             //         record_label=record_label,
-            //         expected_format=expected_format,
+            //         expected_note=expected_note
             //     )
             // else:
             //     return '\n' + _(
-            //         'The %(vat_label)s number [%(wrong_vat)s] does not seem to be valid. \nNote: the expected format is %(expected_format)s',
+            //         'The %(vat_label)s number [%(wrong_vat)s] does not seem to be valid. %(expected_note)s',
             //         vat_label=vat_label,
             //         wrong_vat=wrong_vat,
-            //         expected_format=expected_format,
+            //         expected_note=expected_note,
             //     )
             */
             return default;
@@ -317,8 +337,6 @@ namespace Bamboo.Core.Application.Services
             // # Name
             // n = vcard.add('n')
             // n.value = vobject.vcard.Name(family=self.name or self.complete_name or '')
-            // if self.title:
-            //     n.value.prefix = self.title.name
             // # Formatted Name
             // fn = vcard.add('fn')
             // fn.value = self.name or self.complete_name or ''
@@ -339,10 +357,6 @@ namespace Bamboo.Core.Application.Services
             //     tel = vcard.add('tel')
             //     tel.type_param = 'work'
             //     tel.value = self.phone
-            // if self.mobile:
-            //     tel = vcard.add('tel')
-            //     tel.type_param = 'cell'
-            //     tel.value = self.mobile
             // # URL
             // if self.website:
             //     url = vcard.add('url')
@@ -393,7 +407,8 @@ namespace Bamboo.Core.Application.Services
             // The SML (Service Metadata Locator) assigns a DNS name to each peppol participant.
             // This DNS name resolves into the SMP (Service Metadata Publisher) of the participant.
             // The DNS address is of the following form:
-            // - "http://B-" + hexstring(md5(lowercase(ID-VALUE))) + "." + ID-SCHEME + "." + SML-ZONE-NAME + "/" + url_encoded(ID-SCHEME + "::" + ID-VALUE)
+            // strip-trailing(base32(sha256(lowercase(ID-VALUE))),"=") + "." + ID-SCHEME + "." + SML-ZONE-NAME
+            // The lookup should be done on NAPTR DNS from 2025-11-01
             // (ref:https://peppol.helger.com/public/locale-en_US/menuitem-docs-doc-exchange)
             // """
             // self.ensure_one()
@@ -401,16 +416,32 @@ namespace Bamboo.Core.Application.Services
             //     company = self.env.company
             // 
             // self_partner = self.with_company(company)
+            // if not self_partner.peppol_eas or not self_partner.peppol_endpoint:
+            //     return False
             // old_value = self_partner.peppol_verification_state
-            // self_partner.peppol_verification_state = self._get_peppol_verification_state(
-            //     self.peppol_endpoint,
-            //     self.peppol_eas,
+            // new_value = self._get_peppol_verification_state(
+            //     self_partner.peppol_endpoint,
+            //     self_partner.peppol_eas,
             //     self_partner._get_peppol_edi_format(),
             // )
-            // if self_partner.peppol_verification_state == 'valid' and not self_partner.invoice_sending_method:
-            //     self_partner.invoice_sending_method = 'peppol'
             // 
-            // self._log_verification_state_update(company, old_value, self_partner.peppol_verification_state)
+            // if (
+            //         new_value != 'valid'
+            //         and self_partner.peppol_eas in ('0208', '9925')
+            // ):
+            //     # checks the inverse `eas:endpoint` if the belgian user was not found on Peppol in the first try
+            //     inverse_eas = '9925' if self_partner.peppol_eas == '0208' else '0208'
+            //     inverse_endpoint = f'BE{self_partner.peppol_endpoint}' if self_partner.peppol_eas == '0208' else self_partner.peppol_endpoint[2:]
+            //     if (peppol_state := self._get_peppol_verification_state(inverse_endpoint, inverse_eas, self_partner._get_peppol_edi_format())) == 'valid':
+            //         self_partner.write({
+            //             'peppol_eas': inverse_eas,
+            //             'peppol_endpoint': inverse_endpoint,
+            //         })
+            //         new_value = peppol_state
+            // 
+            // if old_value != new_value:
+            //     self_partner.peppol_verification_state = new_value
+            //     self._log_verification_state_update(company, old_value, self_partner.peppol_verification_state)
             // return False
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -419,40 +450,44 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> CanBeEditedByCurrentCustomerInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_partner.py) ---
-            // def _can_be_edited_by_current_customer(self, sale_order, address_type):
+            --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: res_partner.py) ---
+            // def _can_be_edited_by_current_customer(self, **kwargs):
+            // return super()._can_be_edited_by_current_customer(**kwargs) and not self.is_mondialrelay
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_partner.py) ---
+            // def _can_be_edited_by_current_customer(self, **kwargs):
+            // """Return whether partner can be edited by current user."""
             // self.ensure_one()
+            // current_partner = self._get_current_partner(**kwargs)
+            // if self == current_partner:
+            //     return True
             // children_partner_ids = self.env['res.partner']._search([
-            //     ('id', 'child_of', sale_order.partner_id.commercial_partner_id.id),
+            //     ('id', 'child_of', current_partner.commercial_partner_id.id),
             //     ('type', 'in', ('invoice', 'delivery', 'other')),
             // ])
-            // return self == sale_order.partner_id or self.id in children_partner_ids
-            --- ODOO METHOD SOURCE (MODULE: website_sale_mondialrelay, FILE: res_partner.py) ---
-            // def _can_be_edited_by_current_customer(self, *args, **kwargs):
-            // return super()._can_be_edited_by_current_customer(*args, **kwargs) and not self.is_mondialrelay
+            // return self.id in children_partner_ids
             */
             return default;
         }
 
-        protected async Task<ResPartner> CanEditNameInternalAsync()
+        protected async Task<ResPartner> CanEditCountryInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _can_edit_name(self):
-            // """ Can't edit `name` if there is (non draft) issued invoices. """
-            // return super()._can_edit_name() and not self._has_invoice(
+            // def _can_edit_country(self):
+            // """ Can't edit `country_id` if there is (non draft) issued invoices. """
+            // return super()._can_edit_country() and not self._has_invoice(
             //     [('partner_id', '=', self.id)]
             // )
             --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_partner.py) ---
-            // def _can_edit_name(self):
-            // """ Name can be changed more often than the VAT """
+            // def _can_edit_country(self):
             // self.ensure_one()
             // return True
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: res_partner.py) ---
-            // def _can_edit_name(self):
-            // """ Can't edit `name` if there is (non draft) issued SO. """
-            // return super()._can_edit_name() and not self._has_order(
+            // def _can_edit_country(self):
+            // """ Can't edit `country_id` if there is (non draft) issued SO. """
+            // return super()._can_edit_country() and not self._has_order(
             //     [
+            //         '|',
             //         ('partner_invoice_id', '=', self.id),
             //         ('partner_id', '=', self.id),
             //     ]
@@ -499,31 +534,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> CheckDocumentTypeSupportInternalAsync(object participant_info, object ubl_cii_format)
+        protected async Task<ResPartner> CheckDocumentTypeSupportInternalAsync(object participant_info, object ubl_cii_format, object process_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
-            // def _check_document_type_support(self, participant_info, ubl_cii_format):
+            // def _check_document_type_support(self, participant_info, ubl_cii_format, process_type='billing'):
+            // edi_builder = self._get_edi_builder(ubl_cii_format)
+            // expected_customization_id = edi_builder._get_customization_id(process_type=process_type)
+            // if isinstance(participant_info, dict):
+            //     return any(expected_customization_id in (service.get('document_id') or '') for service in participant_info.get('services', []))
+            // 
+            // # DEPRECATED: participant_info as XML fetched directly from SMP
             // service_references = participant_info.findall(
             //     '{*}ServiceMetadataReferenceCollection/{*}ServiceMetadataReference'
             // )
-            // document_type = self.env['account.edi.xml.ubl_21']._get_customization_ids()[ubl_cii_format]
             // for service in service_references:
-            //     if document_type in parse.unquote_plus(service.attrib.get('href', '')):
+            //     if expected_customization_id in parse.unquote_plus(service.attrib.get('href', '')):
             //         return True
             // return False
             */
             return default;
-        }
-
-        public async Task<ResPartner> CheckGstInAsync(Guid id, ResPartnerCheckGstInRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
-            // def check_gst_in(self, vat):
-            // return False
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResPartner> CheckImportConsistencyInternalAsync(object vals_list)
@@ -596,47 +626,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> CheckPeppolParticipantExistsInternalAsync(object participant_info, object edi_identification, object check_company)
+        protected async Task<ResPartner> CheckPeppolParticipantExistsInternalAsync(object participant_info, object edi_identification)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
-            // def _check_peppol_participant_exists(self, participant_info, edi_identification, check_company=False):
-            // participant_identifier = participant_info.findtext('{*}ParticipantIdentifier')
-            // service_metadata = participant_info.find('.//{*}ServiceMetadataReference')
+            // def _check_peppol_participant_exists(self, participant_info, edi_identification):
             // service_href = ''
-            // if service_metadata is not None:
-            //     service_href = service_metadata.attrib.get('href', '')
+            // if isinstance(participant_info, dict):
+            //     participant_identifier = participant_info.get('identifier', '')
+            //     if services := participant_info.get('services', []):
+            //         service_href = services[0].get('href', '')
+            // else:
+            //     # DEPRECATED: we now use Odoo peppol API to fetch participant info and get a json response
+            //     # keeping this branch for compatibility
+            //     participant_identifier = participant_info.findtext('{*}ParticipantIdentifier') or ''
+            //     service_metadata = participant_info.find('.//{*}ServiceMetadataReference')
+            //     if service_metadata is not None:
+            //         service_href = service_metadata.attrib.get('href', '')
             // 
-            // if edi_identification != participant_identifier or 'hermes-belgium' in service_href:
-            //     # all Belgian companies are pre-registered on hermes-belgium, so they will
-            //     # technically have an existing SMP url but they are not real Peppol participants
-            //     return False
-            // 
-            // if check_company:
-            //     # if we are only checking company's existence on the network, we don't care about what documents they can receive
-            //     if not service_href:
-            //         return True
-            // 
-            //     access_point_contact = True
-            //     with contextlib.suppress(requests.exceptions.RequestException, etree.XMLSyntaxError):
-            //         response = requests.get(service_href, timeout=TIMEOUT)
-            //         if response.status_code == 200:
-            //             access_point_info = etree.fromstring(response.content)
-            //             access_point_contact = access_point_info.findtext('.//{*}TechnicalContactUrl') or access_point_info.findtext('.//{*}TechnicalInformationUrl')
-            //     return access_point_contact
-            // 
-            // return True
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> CheckRecursionAssociateMemberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: membership, FILE: partner.py) ---
-            // def _check_recursion_associate_member(self):
-            // if self._has_cycle('associate_member'):
-            //     raise ValidationError(_('You cannot create recursive associated members.'))
+            // # all Belgian companies are pre-registered on hermes-belgium, so they will
+            // # technically have an existing SMP url but they are not real Peppol participants
+            // # NOTE: peppol identifier must be case insensitive
+            // return edi_identification.lower() == participant_identifier.lower() and 'hermes-belgium' not in service_href
             */
             return default;
         }
@@ -648,34 +659,7 @@ namespace Bamboo.Core.Application.Services
             // def check_vat_al(self, vat):
             // """Check Albania VAT number"""
             // number = stdnum.util.get_cc_module('al', 'vat').compact(vat)
-            // 
-            // if len(number) == 10 and self.__check_vat_al_re.match(number):
-            //     return True
-            // return False
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResPartner> CheckVatAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // # The context key 'no_vat_validation' allows you to store/set a VAT number without doing validations.
-            // # This is for API pushes from external platforms where you have no control over VAT numbers.
-            // if self.env.context.get('no_vat_validation'):
-            //     return
-            // 
-            // for partner in self:
-            //     # Skip checks when only one character is used. Some users like to put '/' or other as VAT to differentiate between
-            //     # A partner for which they didn't input VAT, and the one not subject to VAT
-            //     if not partner.vat or len(partner.vat) == 1:
-            //         continue
-            //     country = partner.commercial_partner_id.country_id
-            //     if self._run_vat_test(partner.vat, country, partner.is_company) is False:
-            //         partner_label = _("partner [%s]", partner.name)
-            //         msg = partner._build_vat_error_message(country and country.code.lower() or None, partner.vat, partner_label)
-            //         raise ValidationError(msg)
+            // return len(number) == 10 and self._check_vat_al_re.match(number)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -713,8 +697,7 @@ namespace Bamboo.Core.Application.Services
             // #
             // # /!\ The english abbreviation VAT is not valid /!\
             // 
-            // match = self.__check_vat_ch_re.match(vat)
-            // 
+            // match = self._check_vat_ch_re.match(vat)
             // if match:
             //     # For new TVA numbers, the last digit is a MOD11 checksum digit build with weighting pattern: 5,4,3,2,7,6,5,4
             //     num = [s for s in match.group(1) if s.isdigit()]        # get the digits only
@@ -737,7 +720,7 @@ namespace Bamboo.Core.Application.Services
             // # CÉDULA DIMEX: 11 or 12 digits
             // # CÉDULA NITE: 10 digits
             // 
-            // return self.__check_vat_cr_re.match(vat) or False
+            // return self._check_vat_cr_re.match(vat) or False
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -750,6 +733,18 @@ namespace Bamboo.Core.Application.Services
             // is_valid_vat = stdnum.util.get_cc_module("de", "vat").is_valid
             // is_valid_stnr = stdnum.util.get_cc_module("de", "stnr").is_valid
             // return is_valid_vat(vat) or is_valid_stnr(vat)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> CheckVatDoAsync(Guid id, ResPartnerCheckVatDoRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def check_vat_do(self, vat):
+            // is_valid_vat = stdnum.util.get_cc_module("do", "vat").is_valid
+            // is_valid_cedula = stdnum.util.get_cc_module("do", "cedula").is_valid
+            // return is_valid_vat(vat) or is_valid_cedula(vat)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -779,6 +774,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResPartner> CheckVatGtAsync(Guid id, ResPartnerCheckVatGtRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def check_vat_gt(self, vat):
+            // """
+            // Allow some custom Guatemala NIT numbers to pass the test to be used for testing the Guatemalan EDI.
+            // """
+            // guatemalan_test_vats = ('11201220K', '11201350K')
+            // if vat in guatemalan_test_vats or self.__check_vat_gt_testing_infile.match(vat):
+            //     return True
+            // return stdnum.util.get_cc_module('gt', 'vat').is_valid(vat)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResPartner> CheckVatHuAsync(Guid id, ResPartnerCheckVatHuRequestDto input)
         {
             /*
@@ -786,18 +797,19 @@ namespace Bamboo.Core.Application.Services
             // def check_vat_hu(self, vat):
             // """
             //     Check Hungary VAT number that can be for example 'HU12345676 or 'xxxxxxxx-y-zz' or '8xxxxxxxxy'
+            // 
             //     - For xxxxxxxx-y-zz, 'x' can be any number, 'y' is a number between 1 and 5 depending on the person and the 'zz'
             //       is used for region code.
             //     - 8xxxxxxxxy, Tin number for individual, it has to start with an 8 and finish with the check digit
             //     - In case of EU format it will be the first 8 digits of the full VAT
             // """
-            // companies = self.__check_tin_hu_companies_re.match(vat)
+            // companies = self._check_tin_hu_companies_re.match(vat)
             // if companies:
             //     return True
-            // individual = self.__check_tin_hu_individual_re.match(vat)
+            // individual = self._check_tin_hu_individual_re.match(vat)
             // if individual:
             //     return True
-            // european = self.__check_tin_hu_european_re.match(vat)
+            // european = self._check_tin_hu_european_re.match(vat)
             // if european:
             //     return True
             // # Check the vat number
@@ -820,7 +832,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # VAT could be 15 (old numbers) or 16 digits. If there are 15 digits long, the 10th digit is a luhn checksum
             // # In some cases, the 15 digits can be transformed in a 16-digit by adding a 0 in front. In such case, we
-            // # we can verify the luhn checksum like for the 15 digits by removing the 0. 
+            // # we can verify the luhn checksum like for the 15 digits by removing the 0.
             // # However, for newly created VAT 16-digits VAT number, there is no checksum.
             // if (len(vat) == 16 and vat[0] != '0'):
             //     return True
@@ -876,6 +888,32 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResPartner> CheckVatInternalAsync(object validation)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _check_vat(self, validation="error"):
+            // for partner in self:
+            //     vat, _country_code = self._run_vat_checks(partner.commercial_partner_id.country_id, partner.vat,
+            //                                        partner_name=partner.name, validation=validation)
+            //     if vat != partner.vat:  # To avoid unnecessary queries (perf tested)
+            //         partner.vat = vat
+            */
+            return default;
+        }
+
+        public async Task<ResPartner> CheckVatJpAsync(Guid id, ResPartnerCheckVatJpRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def check_vat_jp(self, vat):
+            // if vat and vat[0] == 'T':
+            //     vat = vat[1:]
+            // return stdnum.util.get_cc_module('jp', 'vat').is_valid(vat)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<ResPartner> CheckVatMaAsync(Guid id, ResPartnerCheckVatMaRequestDto input)
         {
             /*
@@ -895,7 +933,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // Verificar RFC México
             // '''
-            // m = self.__check_vat_mx_re.fullmatch(vat)
+            // m = self._check_vat_mx_re.fullmatch(vat)
             // if not m:
             //     #No valid format
             //     return False
@@ -949,6 +987,19 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResPartner> CheckVatNumberInternalAsync(object country_code, object vat_number)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _check_vat_number(self, country_code, vat_number):
+            // ''' Low-level method directly calling stdnum or our own specific method. '''
+            // check_func_name = 'check_vat_' + country_code.lower()
+            // check_func = getattr(self, check_func_name, None) or getattr(stdnum.util.get_cc_module(country_code, 'vat'), 'is_valid', None)
+            // return check_func(vat_number) if check_func else True
+            */
+            return default;
+        }
+
         public async Task<ResPartner> CheckVatPeAsync(Guid id, ResPartnerCheckVatPeRequestDto input)
         {
             /*
@@ -971,7 +1022,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_ph(self, vat):
-            // return len(vat) >= 11 and len(vat) <= 17 and self.__check_vat_ph_re.match(vat)
+            // return len(vat) >= 11 and len(vat) <= 17 and self._check_vat_ph_re.match(vat)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -983,6 +1034,7 @@ namespace Bamboo.Core.Application.Services
             // def check_vat_ro(self, vat):
             // """
             //     Check Romanian VAT number that can be for example 'RO1234567897 or 'xyyzzaabbxxxx' or '9000xxxxxxxx'.
+            // 
             //     - For xyyzzaabbxxxx, 'x' can be any number, 'y' is the two last digit of a year (in the range 00…99),
             //       'a' is a month, b is a day of the month, the number 8 and 9 are Country or district code
             //       (For those twos digits, we decided to let some flexibility  to avoid complexifying the regex and also
@@ -991,14 +1043,25 @@ namespace Bamboo.Core.Application.Services
             // 
             //     Also stdum also checks the CUI or CIF (Romanian company identifier). So a number like '123456897' will pass.
             // """
-            // tin1 = self.__check_tin1_ro_natural_persons.match(vat)
+            // tin1 = self._check_tin1_ro_natural_persons.match(vat)
             // if tin1:
             //     return True
-            // tin2 = self.__check_tin2_ro_natural_persons.match(vat)
+            // tin2 = self._check_tin2_ro_natural_persons.match(vat)
             // if tin2:
             //     return True
             // # Check the vat number
             // return stdnum.util.get_cc_module('ro', 'vat').is_valid(vat)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> CheckVatRsAsync(Guid id, ResPartnerCheckVatRsRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def check_vat_rs(self, vat):
+            // vat = vat.removeprefix('RS')
+            // return stdnum.util.get_cc_module('rs', 'vat').is_valid(vat)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1056,18 +1119,18 @@ namespace Bamboo.Core.Application.Services
             //     Check company VAT TIN according to ZATCA specifications: The VAT number should start and begin with a '3'
             //     and be 15 digits long
             // """
-            // return self.__check_vat_sa_re.match(vat) or False
+            // return self._check_vat_sa_re.match(vat) or False
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatTAsync(Guid id, ResPartnerCheckVatTRequestDto input)
+        public async Task<ResPartner> CheckVatThAsync(Guid id, ResPartnerCheckVatThRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def check_vat_t(self, vat):
-            // if self.country_id.code == 'JP':
-            //     return self.simple_vat_check('jp', vat)
+            // def check_vat_th(self, vat):
+            // check_func = stdnum.util.get_cc_module('th', 'tin').is_valid
+            // return check_func(vat)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1078,6 +1141,44 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_tr(self, vat):
             // return stdnum.util.get_cc_module('tr', 'tckimlik').is_valid(vat) or stdnum.util.get_cc_module('tr', 'vkn').is_valid(vat)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> CheckVatTwAsync(Guid id, ResPartnerCheckVatTwRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def check_vat_tw(self, vat):
+            // """
+            // Since Feb. 2025, due to the imminent exhaustion of the UBN numbers, the validation logic was changed from using
+            // a division by 10 for the final check to using a division by 5, making numbers that were previously invalid now
+            // valid.
+            // 
+            // The stdnum implementation of the VAT validation is not up to date with this latest update, so we implement our
+            // own validation to support these new valid UBNs.
+            // """
+            // vat = stdnum.util.get_cc_module("tw", "vat").compact(vat)
+            // if len(vat) != 8:
+            //     return False  # The length is fixed, and we will expect it to be 8 in the following checks.
+            // 
+            // logic_multiplier = [1, 2, 1, 2, 1, 2, 4, 1]  # This multiplier is set by the official validation logic.
+            // # Multiply each of the 8 digits of the VAT number by the corresponding digit of the logic multiplier.
+            // # For the next steps, we will need to sum the results.
+            // # For a two-digit product like 20, you would add its digits (2 + 0) to the total sum, so we convert the sums here
+            // # to strings in order to make it easier later on.
+            // products = [str(a * int(b)) for a, b in zip(logic_multiplier, vat)]
+            // if vat[6] != '7':
+            //     # If the 7th number is not 7, we simply sum everything and check that the result is divisible by 5.
+            //     checksum = sum(int(d) for d in ''.join(products))
+            //     return checksum % 5 == 0
+            // else:
+            //     # If the 7th number is 7, we calculate two sums:
+            //     # z1: Calculate the total sum where the 7th position's contribution is taken as 1.
+            //     # z2: Calculate the total sum where the 7th position's contribution is taken as 0.
+            //     # The VAT number is valid if either Z1 or Z2 (or both) is evenly divisible by 5.
+            //     base_checksum = sum(int(d) for d in "".join(products[0:6] + products[7:]))
+            //     return (base_checksum + 1) % 5 == 0 or base_checksum % 5 == 0
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1214,7 +1315,7 @@ namespace Bamboo.Core.Application.Services
             // - 10-digit format (Enterprise tax ID): e.g., 0101243150
             // - 13-digit format with branch suffix: e.g., 0101243150-001
             // - 12-digit format (Personal ID / Citizen ID - CCCD): e.g., 079123456789
-            //   (used as tax ID for individuals from July 1st, 2025)
+            // (used as tax ID for individuals from July 1st, 2025)
             // 
             // Note:
             // - stdnum.vn.mst.validate() currently only supports 10- and 13-digit VAT numbers
@@ -1238,12 +1339,12 @@ namespace Bamboo.Core.Application.Services
             // # 2a. Commercial Fields: sync if commercial entity
             // if self.commercial_partner_id == self:
             //     fields_to_sync = values.keys() & self._commercial_fields()
-            //     self.sudo()._commercial_sync_to_children(fields_to_sync)
+            //     self.sudo()._commercial_sync_to_descendants(fields_to_sync)
             // # 2b. Address fields: sync if address changed
             // address_fields = self._address_fields()
             // if any(field in values for field in address_fields):
             //     contacts = self.child_ids.filtered(lambda c: c.type == 'contact')
-            //     contacts.update_address(values)
+            //     contacts._update_address(values)
             */
             return default;
         }
@@ -1263,28 +1364,46 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> ClearRemovedEdiFormatsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _clear_removed_edi_formats(self, *formats):
+            // """Helper to clear outdated EDI formats.
+            // 
+            // Usually called as an uninstall hook of modules that add these formats.
+            // It avoids the form view to become unusable after module uninstallation.
+            // """
+            // self.env.cr.execute(
+            //     """
+            //     UPDATE res_partner
+            //     SET invoice_edi_format_store = invoice_edi_format_store - res_company.id::char
+            //     FROM res_company
+            //     WHERE res_partner.invoice_edi_format_store ->> res_company.id::char IN %s
+            //     """,
+            //     (formats,),
+            // )
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> CommercialFieldsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _commercial_fields(self):
             // return super(ResPartner, self)._commercial_fields() + \
-            //     ['debit_limit', 'property_account_payable_id', 'property_account_receivable_id', 'property_account_position_id',
+            //     ['property_account_payable_id', 'property_account_receivable_id', 'property_account_position_id',
             //      'property_payment_term_id', 'property_supplier_payment_term_id', 'credit_limit']
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['property_product_pricelist']
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super(res_partner, self)._commercial_fields()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _commercial_fields(self):
             // """ Returns the list of fields that are managed by the commercial entity
             // to which a partner belongs. These fields are meant to be hidden on
-            // partners that aren't `commercial entities` themselves, and will be
+            // partners that aren't `commercial entities` themselves, or synchronized
+            // at update (if present in _synced_commercial_fields), and will be
             // delegated to the parent `commercial entity`. The list is meant to be
             // extended by inheriting classes. """
-            // return ['vat', 'company_registry', 'industry_id']
+            // return self._synced_commercial_fields() + ['company_registry', 'industry_id']
             */
             return default;
         }
@@ -1298,29 +1417,29 @@ namespace Bamboo.Core.Application.Services
             // as if they were related fields """
             // commercial_partner = self.commercial_partner_id
             // if commercial_partner != self:
-            //     sync_vals = commercial_partner._update_fields_values(self._commercial_fields())
-            //     self.write(sync_vals)
+            //     sync_vals = commercial_partner._get_commercial_values()
+            //     if sync_vals:
+            //         self.write(sync_vals)
+            //         self._commercial_sync_to_descendants()
             //     self._company_dependent_commercial_sync()
-            //     self._commercial_sync_to_children()
             */
             return default;
         }
 
-        protected async Task<ResPartner> CommercialSyncToChildrenInternalAsync(object fields_to_sync)
+        protected async Task<ResPartner> CommercialSyncToDescendantsInternalAsync(object fields_to_sync)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _commercial_sync_to_children(self, fields_to_sync=None):
+            // def _commercial_sync_to_descendants(self, fields_to_sync=None):
             // """ Handle sync of commercial fields to descendants """
             // commercial_partner = self.commercial_partner_id
             // if fields_to_sync is None:
             //     fields_to_sync = self._commercial_fields()
-            // sync_vals = commercial_partner._update_fields_values(fields_to_sync)
+            // sync_vals = commercial_partner._convert_fields_to_values(fields_to_sync)
             // sync_children = self.child_ids.filtered(lambda c: not c.is_company)
             // for child in sync_children:
-            //     child._commercial_sync_to_children(fields_to_sync)
-            // res = sync_children.write(sync_vals)
-            // return res
+            //     child._commercial_sync_to_descendants(fields_to_sync)
+            // sync_children.write(sync_vals)
             */
             return default;
         }
@@ -1328,12 +1447,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> CompanyDependentCommercialFieldsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: res_partner.py) ---
-            // def _company_dependent_commercial_fields(self):
-            // return [
-            //     *super()._company_dependent_commercial_fields(),
-            //     'specific_property_product_pricelist'
-            // ]
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _company_dependent_commercial_fields(self):
             // return [
@@ -1349,6 +1462,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _company_dependent_commercial_sync(self):
+            // """ Propagate sync of company dependant commercial fields to other
+            // commpanies. """
             // if not (fields_to_sync := self._company_dependent_commercial_fields()):
             //     return
             // 
@@ -1357,8 +1472,37 @@ namespace Bamboo.Core.Application.Services
             //         continue  # already handled by _commercial_sync_from_company
             //     self_in_company = self.with_company(company_sudo)
             //     self_in_company.write(
-            //         self_in_company.commercial_partner_id._update_fields_values(fields_to_sync)
+            //         self_in_company.commercial_partner_id._convert_fields_to_values(fields_to_sync)
             //     )
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeAccountMoveCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _compute_account_move_count(self):
+            // # retrieve all children partners and prefetch 'parent_id' on them
+            // all_partners = self.with_context(active_test=False).search_fetch(
+            //     [("id", "child_of", self.ids)],
+            //     ["parent_id"],
+            // )
+            // domain = [
+            //     ("partner_id", "in", all_partners.ids),
+            //     ("move_type", "in", ("out_invoice", "out_refund")),
+            // ]
+            // account_move_groups = self.env["account.move"]._read_group(
+            //     domain=domain, groupby=["partner_id"], aggregates=["__count"],
+            // )
+            // self_ids = set(self._ids)
+            // 
+            // self.account_move_count = 0
+            // for partner, count in account_move_groups:
+            //     while partner:
+            //         if partner.id in self_ids:
+            //             partner.account_move_count += count
+            //         partner = partner.parent_id
             */
             return default;
         }
@@ -1371,6 +1515,115 @@ namespace Bamboo.Core.Application.Services
             // lang_count = len(self.env['res.lang'].get_installed())
             // for partner in self:
             //     partner.active_lang_count = lang_count
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeApplicationStatisticsHookInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // if not self.env.user.has_group('account.group_account_invoice'):
+            //     return data_list
+            // for partner in self.filtered(lambda p: p._get_account_statistics_count()):
+            //     stat_info = {'iconClass': 'fa-pencil-square-o', 'value': partner._get_account_statistics_count(), 'label': _('Invoices/Bills/Mandates'), 'tagClass': 'o_tag_color_9'}
+            //     data_list[partner.id].append(stat_info)
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // for partner in self.filtered('meeting_count'):
+            //     stat_info = {'iconClass': 'fa-calendar', 'value': partner.meeting_count, 'label': _('Meetings'), 'tagClass': 'o_tag_color_3'}
+            //     data_list[partner.id].append(stat_info)
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // if not self.env.user.has_group('sales_team.group_sale_salesman'):
+            //     return data_list
+            // for partner in self.filtered('opportunity_count'):
+            //     data_list[partner.id].append(
+            //         {'iconClass': 'fa-star', 'value': partner.opportunity_count, 'label': _('Opportunities'), 'tagClass': 'o_tag_color_8'}
+            //     )
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // if not self.env.user.has_group('point_of_sale.group_pos_user'):
+            //     return data_list
+            // for partner in self.filtered('pos_order_count'):
+            //     stat_info = {'iconClass': 'fa-shopping-bag', 'value': partner.pos_order_count, 'label': _('Shopping cart'), 'tagClass': 'o_tag_color_7'}
+            //     data_list[partner.id].append(stat_info)
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // if not self.env.user.has_group('purchase.group_purchase_user'):
+            //     return data_list
+            // for partner in self.filtered(lambda partner: partner.purchase_order_count):
+            //     stat_info = {'iconClass': 'fa-credit-card', 'value': partner.purchase_order_count, 'label': _('Purchases'), 'tagClass': 'o_tag_color_5'}
+            //     data_list[partner.id].append(stat_info)
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // data_list = super()._compute_application_statistics_hook()
+            // if not self.env.user.has_group('sales_team.group_sale_salesman'):
+            //     return data_list
+            // for partner in self.filtered('sale_order_count'):
+            //     data_list[partner.id].append(
+            //         {'iconClass': 'fa-usd', 'value': partner.sale_order_count, 'label': self.env._('Sale Orders'), 'tagClass': 'o_tag_color_2'}
+            //     )
+            // return data_list
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // """ Hook for override, as overriding compute method does not update
+            // cache accordingly. All overrides receive False instead of previously
+            // assigned value. """
+            // return defaultdict(list)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeApplicationStatisticsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics(self):
+            // result = self._compute_application_statistics_hook()
+            // for p in self:
+            //     p.application_statistics = result.get(p.id, [])
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeAvailableInvoiceTemplatePdfReportIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _compute_available_invoice_template_pdf_report_ids(self):
+            // for partner in self:
+            //     partner.available_invoice_template_pdf_report_ids = self.env['account.move']._get_available_invoice_template_pdf_report_ids()
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeAvailablePeppolEasInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: res_partner.py) ---
+            // def _compute_available_peppol_eas(self):
+            // # TO OVERRIDE
+            // self.available_peppol_eas = list(dict(self._fields['peppol_eas'].selection))
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
+            // def _compute_available_peppol_eas(self):
+            // # EXTENDS 'account_edi_ubl_cii'
+            // super()._compute_available_peppol_eas()
+            // eas_codes = set(self[:1].available_peppol_eas)
+            // if self.env.company._get_peppol_edi_mode() != 'demo' and 'odemo' in eas_codes:
+            //     eas_codes.remove('odemo')
+            //     self.available_peppol_eas = list(eas_codes)
             */
             return default;
         }
@@ -1457,8 +1710,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_avatar(self, avatar_field, image_field):
-            // partners_with_internal_user = self.filtered(lambda partner: partner.user_ids - partner.user_ids.filtered('share'))
-            // super(Partner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
+            // partners_with_internal_user = self.filtered(
+            //     lambda partner: partner.user_ids - partner.user_ids.filtered('share') or partner.type == 'contact')
+            // super(ResPartner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
             // partners_without_image = (self - partners_with_internal_user).filtered(lambda p: not p[image_field])
             // for _, group in tools.groupby(partners_without_image, key=lambda p: p._avatar_get_placeholder_path()):
             //     group_partners = self.env['res.partner'].concat(*group)
@@ -1495,17 +1749,6 @@ namespace Bamboo.Core.Application.Services
             //         if partner.id == subcontractor.id or subcontractor.id in partner.child_ids.ids:
             //             bom_ids += ids
             //     partner.bom_ids = bom_ids
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeCanPublishInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
-            // def _compute_can_publish(self):
-            // self2 = self.with_context(can_publish_unsudo_main_object=False)
-            // super(Partner, self2)._compute_can_publish()
             */
             return default;
         }
@@ -1583,6 +1826,16 @@ namespace Bamboo.Core.Application.Services
             // for company in self:
             //     country_code = company.country_id.code
             //     company.company_registry_label = label_by_country.get(country_code, _("Company ID"))
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeCompanyRegistryPlaceholderInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_company_registry_placeholder(self):
+            // self.company_registry_placeholder = False
             */
             return default;
         }
@@ -1730,43 +1983,56 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> ComputeDisplayNameInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
+            // def _compute_display_name(self):
+            // if not self.env.context.get("im_livechat_hide_partner_company"):
+            //     super()._compute_display_name()
+            //     return
+            // portal_partners = self.filtered("partner_share")
+            // super(ResPartner, portal_partners)._compute_display_name()
+            // for partner in self - portal_partners:
+            //     partner.display_name = partner.name
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
             // def _compute_display_name(self):
             // super()._compute_display_name()
-            // if not self._context.get('display_website') or not self.env.user.has_group('website.group_multi_website'):
+            // if not self.env.context.get('display_website') or not self.env.user.has_group('website.group_multi_website'):
             //     return
             // for partner in self:
             //     if partner.website_id:
             //         partner.display_name += f' [{partner.website_id.name}]'
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_display_name(self):
+            // type_description = dict(self._fields['type']._description_selection(self.env))
             // for partner in self:
-            //     name = partner.with_context(lang=self.env.lang)._get_complete_name()
-            //     if partner._context.get('show_address'):
-            //         name = name + "\n" + partner._display_address(without_company=True)
-            //     name = re.sub(r'\s+\n', '\n', name)
-            //     if partner._context.get('partner_show_db_id'):
-            //         name = f"{name} ({partner.id})"
-            //     if partner._context.get('address_inline'):
-            //         splitted_names = name.split("\n")
-            //         name = ", ".join([n for n in splitted_names if n.strip()])
-            //     if partner._context.get('show_email') and partner.email:
-            //         name = f"{name} <{partner.email}>"
-            //     if partner._context.get('show_vat') and partner.vat:
-            //         name = f"{name} ‒ {partner.vat}"
+            //     if partner.env.context.get("formatted_display_name"):
+            //         name = partner.name or ''
+            //         if partner.parent_id or partner.company_name:
+            //             name = (f"{partner.company_name or partner.parent_id.name} \t "
+            //                     f"--{partner.name or type_description.get(partner.type, '')}--")
             // 
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} \t --{partner.email}--"
+            //         elif partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} \t --{partner.id}--"
+            // 
+            //     else:
+            //         name = partner.with_context(lang=self.env.lang)._get_complete_name()
+            //         if partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} ({partner.id})"
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} <{partner.email}>"
+            //         if partner.env.context.get('show_address'):
+            //             name = name + "\n" + partner._display_address(without_company=True)
+            // 
+            //         if partner.env.context.get('show_vat') and partner.vat:
+            //             if partner.env.context.get('show_address'):
+            //                 name = f"{name} \n {partner.vat}"
+            //             else:
+            //                 name = f"{name} - {partner.vat}"
+            // 
+            //     # Remove extra empty lines
+            //     name = re.sub(r'\s+\n', '\n', name)
             //     partner.display_name = name.strip()
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeDuplicatedBankAccountPartnersCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _compute_duplicated_bank_account_partners_count(self):
-            // for partner in self:
-            //     partner.duplicated_bank_account_partners_count = len(partner._get_duplicated_bank_accounts())
             */
             return default;
         }
@@ -1810,6 +2076,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> ComputeEmployeeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            // def _compute_employee(self):
+            // employee_data = self.env['hr.employee']._read_group(
+            //     domain=[('work_contact_id', 'in', self.ids)],
+            //     groupby=['work_contact_id'],
+            // )
+            // employees = {employee for [employee] in employee_data}
+            // for partner in self:
+            //     partner.employee = partner in employees
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> ComputeEmployeesCountInternalAsync()
         {
             /*
@@ -1840,7 +2122,37 @@ namespace Bamboo.Core.Application.Services
             // def _compute_fiscal_country_codes(self):
             // for record in self:
             //     allowed_companies = record.company_id or self.env.companies
-            //     record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
+            //     country_codes = allowed_companies.mapped('account_fiscal_country_id.code')
+            //     if record.country_code:
+            //         country_codes.append(record.country_code)
+            //     record.fiscal_country_codes = ",".join(set(country_codes))
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeFiscalCountryGroupCodesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _compute_fiscal_country_group_codes(self):
+            // for partner in self:
+            //     allowed_companies = partner.company_id or self.env.companies
+            //     partner.fiscal_country_group_codes = list({
+            //         code
+            //         for company in allowed_companies
+            //         for code in company.account_fiscal_country_group_codes
+            //     })
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeFiscalPositionIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def _compute_fiscal_position_id(self):
+            // for partner in self:
+            //     partner.fiscal_position_id = self.env['account.fiscal.position'].with_company(self.env.company)._get_fiscal_position(partner)
             */
             return default;
         }
@@ -1859,22 +2171,9 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> ComputeImStatusInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: res_partner.py) ---
-            // def _compute_im_status(self):
-            // status_by_partner = {}
-            // for presence in self.env["bus.presence"].search([("user_id", "in", self.user_ids.ids)]):
-            //     partner = presence.user_id.partner_id
-            //     if (
-            //         status_by_partner.get(partner, "offline") == "offline"
-            //         or presence.status == "online"
-            //     ):
-            //         status_by_partner[partner] = presence.status
-            // for partner in self:
-            //     default_status = "offline" if partner.user_ids else "im_partner"
-            //     partner.im_status = status_by_partner.get(partner, default_status)
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_partner.py) ---
             // def _compute_im_status(self):
-            // super(ResPartner, self)._compute_im_status()
+            // super()._compute_im_status()
             // absent_now = self._get_on_leave_ids()
             // for partner in self:
             //     if partner.id in absent_now:
@@ -1882,6 +2181,8 @@ namespace Bamboo.Core.Application.Services
             //             partner.im_status = 'leave_online'
             //         elif partner.im_status == 'away':
             //             partner.im_status = 'leave_away'
+            //         elif partner.im_status == 'busy':
+            //             partner.im_status = 'leave_busy'
             //         elif partner.im_status == 'offline':
             //             partner.im_status = 'leave_offline'
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking, FILE: res_partner.py) ---
@@ -1893,11 +2194,30 @@ namespace Bamboo.Core.Application.Services
             //     if not location_type:
             //         continue
             //     im_status = user.partner_id.im_status
-            //     if im_status == "online" or im_status == "away" or im_status == "offline":
+            //     if im_status in ["online", "away", "busy", "offline"]:
             //         user.partner_id.im_status = location_type + "_" + im_status
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def _compute_im_status(self):
-            // super()._compute_im_status()
+            // for partner in self:
+            //     all_status = partner.user_ids.presence_ids.mapped(
+            //         lambda p: "offline" if p.status == "offline" else p.user_id.manual_im_status or p.status
+            //     )
+            //     partner.im_status = (
+            //         "online"
+            //         if "online" in all_status
+            //         else "away"
+            //         if "away" in all_status
+            //         else "busy"
+            //         if "busy" in all_status
+            //         else "offline"
+            //         if partner.user_ids
+            //         else "im_partner"
+            //     )
+            //     partner.offline_since = (
+            //         max(partner.user_ids.presence_ids.mapped("last_poll"), default=None)
+            //         if partner.im_status == "offline"
+            //         else None
+            //     )
             // odoobot_id = self.env['ir.model.data']._xmlid_to_res_id('base.partner_root')
             // odoobot = self.env['res.partner'].browse(odoobot_id)
             // if odoobot in self:
@@ -1934,6 +2254,30 @@ namespace Bamboo.Core.Application.Services
             //         partner.invoice_edi_format = False
             //     else:
             //         partner.invoice_edi_format = partner.commercial_partner_id.invoice_edi_format_store or partner.commercial_partner_id._get_suggested_invoice_edi_format()
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeInvoiceEmailsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def _compute_invoice_emails(self):
+            // for record in self:
+            //     emails = [record.email] if record.email else []
+            //     emails.extend([child.email for child in record.child_ids if child.type == "invoice" and child.email])
+            //     record.invoice_emails = ', '.join(emails) if emails else ''
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeIsInCallInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _compute_is_in_call(self):
+            // for partner in self:
+            //     partner.is_in_call = bool(partner.rtc_session_ids)
             */
             return default;
         }
@@ -2001,36 +2345,68 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> ComputeJournalItemCountInternalAsync()
+        protected async Task<ResPartner> ComputeLangInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _compute_journal_item_count(self):
-            // AccountMoveLine = self.env['account.move.line']
-            // for partner in self:
-            //     partner.journal_item_count = AccountMoveLine.search_count([('partner_id', '=', partner.id)])
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_lang(self):
+            // """ While creating / updating child contact, take the parent lang by
+            // default if any. 0therwise, fallback to default context / DB lang """
+            // for partner in self.filtered('parent_id'):
+            //     partner.lang = partner.parent_id.lang or self.default_get(['lang']).get('lang') or self.env.lang
             */
             return default;
         }
 
-        protected async Task<ResPartner> ComputeLastWebsiteSoIdInternalAsync()
+        protected async Task<ResPartner> ComputeLeaveDateToInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_partner.py) ---
-            // def _compute_last_website_so_id(self):
-            // SaleOrder = self.env['sale.order']
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_partner.py) ---
+            // def _compute_leave_date_to(self):
             // for partner in self:
-            //     is_public = partner.is_public
-            //     website = ir_http.get_request_website()
-            //     if website and not is_public:
-            //         partner.last_website_so_id = SaleOrder.search([
-            //             ('partner_id', '=', partner.id),
-            //             ('pricelist_id', '=', partner.property_product_pricelist.id),
-            //             ('website_id', '=', website.id),
-            //             ('state', '=', 'draft'),
-            //         ], order='write_date desc', limit=1)
-            //     else:
-            //         partner.last_website_so_id = SaleOrder
+            //     # in the rare case of multi-user partner, return the earliest
+            //     # possible return date
+            //     dates = partner.user_ids.mapped("leave_date_to")
+            //     partner.leave_date_to = min(dates) if dates and all(dates) else False
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeLivechatChannelCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
+            // def _compute_livechat_channel_count(self):
+            // livechat_count_by_partner = dict(
+            //     self.env["im_livechat.channel.member.history"]._read_group(
+            //         domain=[("partner_id", "in", self.ids), ("livechat_member_type", "=", "visitor")],
+            //         groupby=["partner_id"],
+            //         aggregates=["channel_id:count_distinct"],
+            //     )
+            // )
+            // for partner in self:
+            //     partner.livechat_channel_count = livechat_count_by_partner.get(partner, 0)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputeMainUserIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_main_user_id(self):
+            // for partner in self:
+            //     if self.env.user.partner_id == partner:
+            //         partner.main_user_id = self.env.user
+            //         continue
+            //     users = partner.user_ids.filtered(lambda u: u.active).with_prefetch(self.user_ids.ids)
+            //     # Special case for OdooBot as its user might be archived.
+            //     if not users and partner.id == self.env["ir.model.data"]._xmlid_to_res_id("base.partner_root"):
+            //         partner.main_user_id = self.env["ir.model.data"]._xmlid_to_res_id("base.user_root")
+            //         continue
+            //     partner.main_user_id = users.sorted(
+            //         lambda u: (not u.share, -u.id), reverse=True,
+            //     )[:1]
             */
             return default;
         }
@@ -2087,48 +2463,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> ComputeMembershipStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: membership, FILE: partner.py) ---
-            // def _compute_membership_state(self):
-            // today = fields.Date.today()
-            // for partner in self:
-            //     partner.membership_start = self.env['membership.membership_line'].search([
-            //         ('partner', 'in', (partner.associate_member or partner).ids), ('date_cancel', '=', False)
-            //     ], limit=1, order='date_from').date_from
-            //     partner.membership_stop = self.env['membership.membership_line'].search([
-            //         ('partner', 'in', (partner.associate_member or partner).ids), ('date_cancel', '=', False)
-            //     ], limit=1, order='date_to desc').date_to
-            //     partner.membership_cancel = self.env['membership.membership_line'].search([
-            //         ('partner', 'in', partner.ids)
-            //     ], limit=1, order='date_cancel').date_cancel
-            // 
-            //     if partner.associate_member:
-            //         partner.membership_state = partner.associate_member.membership_state
-            //         continue
-            // 
-            //     if partner.free_member and partner.membership_state != 'paid':
-            //         partner.membership_state = 'free'
-            //         continue
-            // 
-            //     for mline in partner.member_lines:
-            //         if (mline.date_to or date.min) >= today and (mline.date_from or date.min) <= today:
-            //             partner.membership_state = mline.state
-            //             break
-            //         elif ((mline.date_from or date.min) < today and (mline.date_to or date.min) <= today and \
-            //               (mline.date_from or date.min) < (mline.date_to or date.min)):
-            //             if mline.account_invoice_id and mline.account_invoice_id.payment_state in ('in_payment', 'paid'):
-            //                 partner.membership_state = 'old'
-            //             elif mline.account_invoice_id and mline.account_invoice_id.state == 'cancel':
-            //                 partner.membership_state = 'canceled'
-            //             break
-            //     else:
-            //         partner.membership_state = 'none'
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> ComputeOnTimeRateInternalAsync()
         {
             /*
@@ -2139,7 +2473,7 @@ namespace Bamboo.Core.Application.Services
             //     ('partner_id', 'in', self.ids),
             //     ('date_order', '>', fields.Date.today() - timedelta(date_order_days_delta)),
             //     ('qty_received', '!=', 0),
-            //     ('order_id.state', 'in', ['done', 'purchase']),
+            //     ('order_id.state', '=', 'purchase'),
             //     ('product_id', 'in', self.env['product.product'].sudo()._search([('type', '!=', 'service')]))
             // ])
             // lines_quantity = defaultdict(lambda: 0)
@@ -2174,38 +2508,41 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
             // def _compute_opportunity_count(self):
             // self.opportunity_count = 0
-            // if not self.env.user._has_group('sales_team.group_sale_salesman'):
+            // if not self.env.user.has_group('sales_team.group_sale_salesman'):
             //     return
-            // 
-            // # retrieve all children partners and prefetch 'parent_id' on them
-            // all_partners = self.with_context(active_test=False).search_fetch(
-            //     [('id', 'child_of', self.ids)], ['parent_id'],
-            // )
-            // 
             // opportunity_data = self.env['crm.lead'].with_context(active_test=False)._read_group(
-            //     domain=[('partner_id', 'in', all_partners.ids)],
+            //     domain=self._get_contact_opportunities_domain(),
             //     groupby=['partner_id'], aggregates=['__count']
             // )
-            // self_ids = set(self._ids)
-            // 
+            // current_pids = set(self._ids)
             // for partner, count in opportunity_data:
             //     while partner:
-            //         if partner.id in self_ids:
+            //         if partner.id in current_pids:
             //             partner.opportunity_count += count
             //         partner = partner.parent_id
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
             // def _compute_opportunity_count(self):
-            // super()._compute_opportunity_count()
-            // if not self.env.user.has_group('sales_team.group_sale_salesman'):
-            //     return
+            // if not self.ids or not self.env.user.has_group('sales_team.group_sale_salesman'):
+            //     return super()._compute_opportunity_count()
             // 
+            // self.opportunity_count = 0
             // opportunity_data = self.env['crm.lead'].with_context(active_test=False)._read_group(
-            //     [('partner_assigned_id', 'in', self.ids)],
-            //     ['partner_assigned_id'], ['__count']
+            //     self._get_contact_opportunities_domain(),
+            //     ['partner_assigned_id', 'partner_id'], ['__count']
             // )
-            // assign_counts = {partner_assigned.id: count for partner_assigned, count in opportunity_data}
-            // for partner in self:
-            //     partner.opportunity_count += assign_counts.get(partner.id, 0)
+            // current_pids = set(self._ids)
+            // for assign_partner, partner, count in opportunity_data:
+            //     # this variable is used to keep the track of the partner
+            //     seen_partners = set()
+            //     while partner or assign_partner:
+            //         if assign_partner and assign_partner.id in current_pids and assign_partner not in seen_partners:
+            //             assign_partner.opportunity_count += count
+            //             seen_partners.add(assign_partner)
+            //         if partner and partner.id in current_pids and partner not in seen_partners:
+            //             partner.opportunity_count += count
+            //             seen_partners.add(partner)
+            //         assign_partner = assign_partner.parent_id
+            //         partner = partner.parent_id
             */
             return default;
         }
@@ -2253,7 +2590,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_partner_share(self):
-            // super_partner = self.env['res.users'].browse(SUPERUSER_ID).partner_id
+            // super_partner = self.env['res.users'].browse(api.SUPERUSER_ID).partner_id
             // if super_partner in self:
             //     super_partner.partner_share = False
             // for partner in self - super_partner:
@@ -2268,11 +2605,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _compute_partner_vat_placeholder(self):
             // for partner in self:
-            //     placeholder = _("/ if not applicable")
+            //     placeholder = _("not applicable")
             //     if partner.country_id:
             //         expected_vat = _ref_vat.get(partner.country_id.code.lower())
             //         if expected_vat:
-            //             placeholder = _("%s, or / if not applicable", expected_vat)
+            //             placeholder = _("%s, or not applicable", expected_vat)
             // 
             //     partner.partner_vat_placeholder = placeholder
             */
@@ -2323,8 +2660,9 @@ namespace Bamboo.Core.Application.Services
             //             new_eas = next(iter(EAS_MAPPING[country_code].keys()))
             //             # Iterate on the possible EAS until a valid one is found
             //             for eas, field in eas_to_field.items():
-            //                 if field and field in partner._fields and partner[field]:
-            //                     if not partner._build_error_peppol_endpoint(eas, partner[field]):
+            //                 if field and field in partner._fields:
+            //                     value = partner._get_peppol_endpoint_value(country_code, field, eas)
+            //                     if value and not partner._build_error_peppol_endpoint(eas, value):
             //                         new_eas = eas
             //                         break
             //             partner.peppol_eas = new_eas
@@ -2339,15 +2677,13 @@ namespace Bamboo.Core.Application.Services
             // def _compute_peppol_endpoint(self):
             // """ If the EAS changes and a valid endpoint is available, set it. Otherwise, keep the existing value."""
             // for partner in self:
-            //     partner.peppol_endpoint = partner.peppol_endpoint
+            //     partner.peppol_endpoint = sanitize_peppol_endpoint(partner.peppol_endpoint, partner.peppol_eas)
             //     country_code = partner._deduce_country_code()
             //     if country_code in EAS_MAPPING:
             //         field = EAS_MAPPING[country_code].get(partner.peppol_eas)
-            //         if field \
-            //                 and field in partner._fields \
-            //                 and partner[field] \
-            //                 and not partner._build_error_peppol_endpoint(partner.peppol_eas, partner[field]):
-            //             partner.peppol_endpoint = partner[field]
+            //         value = partner._get_peppol_endpoint_value(country_code, field, partner.peppol_eas)
+            //         if field and value and not partner._build_error_peppol_endpoint(partner.peppol_eas, value):
+            //             partner.peppol_endpoint = value
             */
             return default;
         }
@@ -2359,7 +2695,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_perform_vies_validation(self):
             // """ Determine whether to show VIES validity on the current VAT number """
             // for partner in self:
-            //     to_check = partner.vies_vat_to_check
+            //     to_check = partner.vat
             //     company_code = self.env.company.account_fiscal_country_id.code
             //     partner.perform_vies_validation = (
             //         to_check
@@ -2382,6 +2718,17 @@ namespace Bamboo.Core.Application.Services
             //         if partner_rg.id == partner.id or partner_rg.id in partner.child_ids.ids:
             //             picking_ids += ids
             //     partner.picking_ids = picking_ids
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ComputePosContactAddressInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def _compute_pos_contact_address(self):
+            // for partner in self:
+            //     partner.pos_contact_address = partner._display_address(without_company=True)
             */
             return default;
         }
@@ -2475,7 +2822,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: res_partner.py) ---
             // def _compute_sale_order_count(self):
             // self.sale_order_count = 0
-            // if not self.env.user._has_group('sales_team.group_sale_salesman'):
+            // if not self.env.user.has_group('sales_team.group_sale_salesman'):
             //     return
             // 
             // # retrieve all children partners and prefetch 'parent_id' on them
@@ -2484,7 +2831,7 @@ namespace Bamboo.Core.Application.Services
             //     ['parent_id'],
             // )
             // sale_order_groups = self.env['sale.order']._read_group(
-            //     domain=expression.AND([self._get_sale_order_domain_count(), [('partner_id', 'in', all_partners.ids)]]),
+            //     domain=Domain.AND([self._get_sale_order_domain_count(), [('partner_id', 'in', all_partners.ids)]]),
             //     groupby=['partner_id'], aggregates=['__count']
             // )
             // self_ids = set(self._ids)
@@ -2506,18 +2853,30 @@ namespace Bamboo.Core.Application.Services
             // for partner in self:
             //     # use _origin to deal with onchange()
             //     partner_id = partner._origin.id
-            //     #active_test = False because if a partner has been deactivated you still want to raise the error,
-            //     #so that you can reactivate it instead of creating a new one, which would loose its history.
+            //     # active_test = False because if a partner has been deactivated you still want to raise the error,
+            //     # so that you can reactivate it instead of creating a new one, which would lose its history.
             //     Partner = self.with_context(active_test=False).sudo()
+            //     vats = [partner.vat]
+            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
+            //     if should_check_vat and partner.country_id and 'EU_PREFIX' in partner.country_id.country_group_codes:
+            //         if partner.vat[:2].isalpha():
+            //             vats.append(partner.vat[2:])
+            //         else:
+            //             vats.append(partner.country_id.code + partner.vat)
+            //             if new_code := EU_EXTRA_VAT_CODES.get(partner.country_id.code):
+            //                 vats.append(new_code + partner.vat)
             //     domain = [
-            //         ('vat', '=', partner.vat),
+            //         ('vat', 'in', vats),
             //     ]
+            //     if partner.country_id:
+            //         domain += [('country_id', 'in', [partner.country_id.id, False])]
             //     if partner.company_id:
             //         domain += [('company_id', 'in', [False, partner.company_id.id])]
             //     if partner_id:
             //         domain += [('id', '!=', partner_id), '!', ('id', 'child_of', partner_id)]
             //     # For VAT number being only one character, we will skip the check just like the regular check_vat
-            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
             //     partner.same_vat_partner_id = should_check_vat and not partner.parent_id and Partner.search(domain, limit=1)
             //     # check company_registry
             //     domain = [
@@ -2536,8 +2895,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _compute_show_credit_limit(self):
-            // for partner in self:
-            //     partner.show_credit_limit = self.env.company.account_use_credit_limit
+            // self.show_credit_limit = self.env.company.account_use_credit_limit
             */
             return default;
         }
@@ -2690,6 +3048,24 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> ComputeTypeAddressLabelInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_type_address_label(self):
+            // for partner in self:
+            //     if partner.type == 'invoice':
+            //         partner.type_address_label = _('Invoice Address')
+            //     elif partner.type == 'delivery':
+            //         partner.type_address_label = _('Delivery Address')
+            //     elif partner.type == 'contact' and partner.parent_id:
+            //         partner.type_address_label = _('Company Address')
+            //     else:
+            //         partner.type_address_label = _('Address')
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> ComputeTzOffsetInternalAsync()
         {
             /*
@@ -2757,53 +3133,28 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // for partner in self:
-            //     if not partner.vies_vat_to_check:
+            //     if not partner.vat:
             //         partner.vies_valid = False
             //         continue
-            //     if partner.parent_id and partner.parent_id.vies_vat_to_check == partner.vies_vat_to_check:
+            //     if partner.parent_id and partner.parent_id.vat == partner.vat:
             //         partner.vies_valid = partner.parent_id.vies_valid
             //         continue
+            //     from odoo.tools import zeep  # noqa: PLC0415
             //     try:
-            //         _logger.info('Calling VIES service to check VAT for validation: %s', partner.vies_vat_to_check)
-            //         vies_valid = check_vies(partner.vies_vat_to_check, timeout=10)
+            //         vies_valid = check_vies(partner.vat, timeout=10)
             //         partner.vies_valid = vies_valid['valid']
             //     except (OSError, InvalidComponent, zeep.exceptions.Fault) as e:
             //         if partner._origin.id:
             //             msg = ""
             //             if isinstance(e, OSError):
-            //                 msg = _("Connection with the VIES server failed. The VAT number %s could not be validated.", partner.vies_vat_to_check)
+            //                 msg = _("Connection with the VIES server failed. The VAT number %s could not be validated.", partner.vat)
             //             elif isinstance(e, InvalidComponent):
-            //                 msg = _("The VAT number %s could not be interpreted by the VIES server.", partner.vies_vat_to_check)
+            //                 msg = _("The VAT number %s could not be interpreted by the VIES server.", partner.vat)
             //             elif isinstance(e, zeep.exceptions.Fault):
             //                 msg = _('The request for VAT validation was not processed. VIES service has responded with the following error: %s', e.message)
             //             partner._origin.message_post(body=msg)
-            //         _logger.warning("The VAT number %s failed VIES check.", partner.vies_vat_to_check)
+            //         _logger.warning("The VAT number %s failed VIES check.", partner.vat)
             //         partner.vies_valid = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeViesVatToCheckInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def _compute_vies_vat_to_check(self):
-            // """ Retrieve the VAT number, if one such exists, to be used when checking against the VIES system """
-            // eu_country_codes = self.env.ref('base.europe').country_ids.mapped('code')
-            // for partner in self:
-            //     # Skip checks when only one character is used. Some users like to put '/' or other as VAT to differentiate between
-            //     # a partner for which they haven't yet input VAT, and one not subject to VAT
-            //     if not partner.vat or len(partner.vat) == 1:
-            //         partner.vies_vat_to_check = ''
-            //         continue
-            //     country_code, number = partner._split_vat(partner.vat)
-            //     if not country_code.isalpha() and partner.country_id:
-            //         country_code = partner.country_id.code
-            //         number = partner.vat
-            //     partner.vies_vat_to_check = (
-            //         country_code.upper() in eu_country_codes or
-            //         country_code.lower() in _region_specific_vat_codes
-            //     ) and self._fix_vat_number(country_code + number, partner.country_id.id) or ''
             */
             return default;
         }
@@ -2813,9 +3164,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_partner, FILE: res_partner.py) ---
             // def _compute_website_url(self):
-            // super(WebsiteResPartner, self)._compute_website_url()
+            // super()._compute_website_url()
             // for partner in self:
-            //     partner.website_url = "/partners/%s" % self.env['ir.http']._slug(partner)
+            //     if partner.id:
+            //         partner.website_url = "/partners/%s" % self.env['ir.http']._slug(partner)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ConvertFieldsToValuesInternalAsync(object field_names)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _convert_fields_to_values(self, field_names):
+            // """ Returns dict of write() values for synchronizing ``field_names`` """
+            // if any(self._fields[fname].type == 'one2many' for fname in field_names):
+            //     raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
+            // return self._convert_to_write({fname: self[fname] for fname in field_names})
             */
             return default;
         }
@@ -2825,7 +3190,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def _convert_hu_local_to_eu_vat(self, local_vat):
-            // if self.__check_tin_hu_companies_re.match(local_vat):
+            // if self._check_tin_hu_companies_re.match(local_vat):
             //     return f'HU{local_vat[:8]}'
             // return False
             */
@@ -2869,10 +3234,6 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def create(self, vals_list):
-            // for values in vals_list:
-            //     if values.get('vat'):
-            //         country_id = values.get('country_id')
-            //         values['vat'] = self._fix_vat_number(values['vat'], country_id)
             // res = super().create(vals_list)
             // if self.env.context.get('import_file'):
             //     res.env.remove_to_compute(self._fields['vies_valid'], res)
@@ -2899,16 +3260,17 @@ namespace Bamboo.Core.Application.Services
             //     if vals.get('parent_id'):
             //         vals['company_name'] = False
             // partners = super().create(vals_list)
+            // # due to ir.default, compute is not called as there is a default value
+            // # hence calling the compute manually
+            // for partner, values in zip(partners, vals_list):
+            //     if 'lang' not in values and partner.parent_id:
+            //         partner._compute_lang()
             // 
             // if self.env.context.get('_partners_skip_fields_sync'):
             //     return partners
             // 
             // for partner, vals in zip(partners, vals_list):
             //     partner._fields_sync(vals)
-            //     # Lang: propagate from parent if no value was given
-            //     if 'lang' not in vals and partner.parent_id:
-            //         partner._onchange_parent_id_for_lang()
-            //     partner._handle_first_contact_creation()
             // return partners
             */
             return await base.CreateAsync(entity, fields);
@@ -2920,11 +3282,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def create_company(self):
             // self.ensure_one()
-            // if self.company_name:
-            //     # Create parent company
-            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
-            //     values.update(self._update_fields_values(self._address_fields()))
-            //     new_company = self.create(values)
+            // if (new_company := self._create_contact_parent_company()):
             //     # Set new company as my parent
             //     self.write({
             //         'parent_id': new_company.id,
@@ -2935,41 +3293,27 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CreateMembershipInvoiceAsync(Guid id, ResPartnerCreateMembershipInvoiceRequestDto input)
+        protected async Task<ResPartner> CreateContactParentCompanyInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: membership, FILE: partner.py) ---
-            // def create_membership_invoice(self, product, amount):
-            // """ Create Customer Invoice of Membership for partners.
-            // """
-            // invoice_vals_list = []
-            // for partner in self:
-            //     addr = partner.address_get(['invoice'])
-            //     if partner.free_member:
-            //         raise UserError(_("Partner is a free Member."))
-            //     if not addr.get('invoice', False):
-            //         raise UserError(_("Partner doesn't have an address to make the invoice."))
-            // 
-            //     invoice_vals_list.append({
-            //         'move_type': 'out_invoice',
-            //         'partner_id': partner.id,
-            //         'invoice_line_ids': [
-            //             (
-            //                 0,
-            //                 None,
-            //                 {
-            //                     'product_id': product.id,
-            //                     'quantity': 1,
-            //                     'price_unit': amount,
-            //                     'tax_ids': [(6, 0, product.taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(self.env.company)).ids)]
-            //                 }
-            //              )
-            //         ]
-            //     })
-            // 
-            // return self.env['account.move'].create(invoice_vals_list)
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _create_contact_parent_company(self):
+            // new_company = super()._create_contact_parent_company()
+            // if new_company and self.vies_valid:
+            //     new_company.env.remove_to_compute(self._fields['vies_valid'], new_company)
+            //     new_company.vies_valid = self.vies_valid
+            // return new_company
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _create_contact_parent_company(self):
+            // self.ensure_one()
+            // if self.company_name:
+            //     # Create parent company
+            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
+            //     values.update(self._convert_fields_to_values(self._address_fields()))
+            //     return self.create(values)
+            // return self.browse()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<ResPartner> CreatePortalUsersInternalAsync()
@@ -3004,10 +3348,10 @@ namespace Bamboo.Core.Application.Services
             //     self.debit = False
             //     self.credit = False
             //     return
-            // query = self.env['account.move.line']._where_calc([
+            // query = self.env['account.move.line']._search([
             //     ('parent_state', '=', 'posted'),
-            //     ('company_id', 'child_of', self.env.company.root_id.id)
-            // ])
+            //     ('company_id', 'child_of', self.env.company.root_id.id),
+            // ], bypass_access=True)
             // self.env['account.move.line'].flush_model(
             //     ['account_id', 'amount_residual', 'company_id', 'parent_state', 'partner_id', 'reconciled']
             // )
@@ -3056,18 +3400,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> CronUpdateMembershipInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: membership, FILE: partner.py) ---
-            // def _cron_update_membership(self):
-            // partners = self.search([('membership_state', 'in', ['invoiced', 'paid'])])
-            // # mark the field to be recomputed, and recompute it
-            // self.env.add_to_compute(self._fields['membership_state'], partners)
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> DebitSearchInternalAsync(object @operator, object operand)
         {
             /*
@@ -3090,11 +3422,8 @@ namespace Bamboo.Core.Application.Services
             // - if the VAT number has no ISO country code, use the country_code in that case.
             // """
             // self.ensure_one()
-            // 
-            // country_code = self.country_code
-            // if self.vat and self.vat[:2].isalpha():
-            //     country_code = self.vat[:2].upper()
-            // return country_code
+            // _vat, country_code = self._run_vat_checks(self.country_id, self.vat, validation=False)
+            // return country_code or self.country_code
             */
             return default;
         }
@@ -3104,7 +3433,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _default_category(self):
-            // return self.env['res.partner.category'].browse(self._context.get('category_id'))
+            // return self.env['res.partner.category'].browse(self.env.context.get('category_id'))
             */
             return default;
         }
@@ -3114,8 +3443,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _default_display_invoice_template_pdf_report_id(self):
-            // available_templates_count = self.env['ir.actions.report'].search_count([('is_invoice_report', '=', True)], limit=2)
-            // return available_templates_count > 1
+            // """ Show PDF template selection if there are more than 1 template available for invoices. """
+            // return len(self.available_invoice_template_pdf_report_ids) > 1
             */
             return default;
         }
@@ -3123,51 +3452,26 @@ namespace Bamboo.Core.Application.Services
         public override async Task<ResPartner> DefaultGetAsync(List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
-            // def default_get(self, fields):
-            // rec = super(Partner, self).default_get(fields)
-            // active_model = self.env.context.get('active_model')
-            // if active_model == 'crm.lead' and len(self.env.context.get('active_ids', [])) <= 1:
-            //     lead = self.env[active_model].browse(self.env.context.get('active_id')).exists()
-            //     if lead:
-            //         rec.update(
-            //             phone=lead.phone,
-            //             mobile=lead.mobile,
-            //             function=lead.function,
-            //             title=lead.title.id,
-            //             website=lead.website,
-            //             street=lead.street,
-            //             street2=lead.street2,
-            //             city=lead.city,
-            //             state_id=lead.state_id.id,
-            //             country_id=lead.country_id.id,
-            //             zip=lead.zip,
-            //         )
-            // return rec
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
-            // def default_get(self, fields_list):
-            // default_vals = super().default_get(fields_list)
+            // def default_get(self, fields):
+            // default_vals = super().default_get(fields)
             // if self.env.context.get('partner_set_default_grade_activation'):
             //     # sets the lowest grade and activation if no default values given, mainly useful while
             //     # creating assigned partner on the fly (to make it visible in same m2o again)
-            //     if 'grade_id' in fields_list and not default_vals.get('grade_id'):
+            //     if 'grade_id' in fields and not default_vals.get('grade_id'):
             //         default_vals['grade_id'] = self.env['res.partner.grade'].search([], order='sequence', limit=1).id
-            //     if 'activation' in fields_list and not default_vals.get('activation'):
+            //     if 'activation' in fields and not default_vals.get('activation'):
             //         default_vals['activation'] = self.env['res.partner.activation'].search([], order='sequence', limit=1).id
             // return default_vals
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def default_get(self, default_fields):
-            // """Add the company of the parent as default if we are creating a child partner.
-            // Also take the parent lang by default if any, otherwise, fallback to default DB lang."""
-            // values = super().default_get(default_fields)
-            // parent = self.env["res.partner"]
-            // if 'parent_id' in default_fields and values.get('parent_id'):
+            // def default_get(self, fields):
+            // """Add the company of the parent as default if we are creating a child partner. """
+            // values = super().default_get(fields)
+            // if 'parent_id' in fields and values.get('parent_id'):
             //     parent = self.browse(values.get('parent_id'))
             //     values['company_id'] = parent.company_id.id
-            // if 'lang' in default_fields:
-            //     values['lang'] = values.get('lang') or parent.lang or self.env.lang
             // # protection for `default_type` values leaking from menu action context (e.g. for crm's email)
-            // if 'type' in default_fields and values.get('type'):
+            // if 'type' in fields and values.get('type'):
             //     if values['type'] not in self._fields['type'].get_values(self.env):
             //         values['type'] = None
             // return values
@@ -3418,16 +3722,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> EnrichCompanyAsync(Guid id, ResPartnerEnrichCompanyRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
-            // def enrich_company(self, company_domain, partner_gid, vat, timeout=15):
-            // return {}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<ResPartner> EnsureSameCompanyThanProjectsInternalAsync()
         {
             /*
@@ -3465,13 +3759,52 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResPartner> FetchChildrenPartnersForHierarchyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
+            // def _fetch_children_partners_for_hierarchy(self):
+            // # retrieve all children partners and prefetch 'parent_id' on them, saving
+            // # queries for recursive parent_id browse
+            // return self.with_context(active_test=False).search_fetch(
+            //     [('id', 'child_of', self.ids)], ['parent_id'],
+            // )
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> FieldStoreReprInternalAsync(object field_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _field_store_repr(self, field_name):
+            // if field_name == "avatar_128":
+            //     return [
+            //         Store.Attr("avatar_128_access_token", lambda p: p._get_avatar_128_access_token()),
+            //         "write_date",
+            //     ]
+            // if field_name == "im_status":
+            //     return [
+            //         "im_status",
+            //         Store.Attr("im_status_access_token", lambda p: p._get_im_status_access_token()),
+            //     ]
+            // return [field_name]
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> FieldsSyncInternalAsync(object values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _fields_sync(self, values):
-            // """ Sync commercial fields and address fields from company and to children after create/update,
-            // just as if those were all modeled as fields.related to the parent """
+            // """ Sync commercial fields and address fields from company and to children.
+            // Also synchronize address to parent. This somehow mimics related fields
+            // to the parent, with more control. This method should be called after
+            // updating values in cache e.g. self should contain new values.
+            // 
+            // :param dict values: updated values, triggering sync
+            // """
             // # 1. From UPSTREAM: sync from parent
             // if values.get('parent_id') or values.get('type') == 'contact':
             //     # 1a. Commercial fields: sync if parent changed
@@ -3479,10 +3812,34 @@ namespace Bamboo.Core.Application.Services
             //         self.sudo()._commercial_sync_from_company()
             //     # 1b. Address fields: sync if parent or use_parent changed *and* both are now set
             //     if self.parent_id and self.type == 'contact':
-            //         onchange_vals = self.onchange_parent_id().get('value', {})
-            //         self.update_address(onchange_vals)
+            //         if address_values := self.parent_id._get_address_values():
+            //             self._update_address(address_values)
             // 
-            // # 2. To DOWNSTREAM: sync children
+            // # 2. To UPSTREAM: sync parent address, as well as editable synchronized commercial fields
+            // address_to_upstream = (
+            //     # parent is set, potential address update as contact address = parent address
+            //     bool(self.parent_id) and bool(self.type == 'contact') and
+            //     # address updated, or parent updated
+            //     (any(field in values for field in self._address_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._address_fields())
+            // )
+            // if address_to_upstream:
+            //     new_address = self._get_address_values()
+            //     self.parent_id.write(new_address)  # is going to trigger _fields_sync again
+            // commercial_to_upstream = (
+            //     # has a parent and is not a commercial entity itself
+            //     bool(self.parent_id) and (self.commercial_partner_id != self) and
+            //     # actually updated, or parent updated
+            //     (any(field in values for field in self._synced_commercial_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._synced_commercial_fields())
+            // )
+            // if commercial_to_upstream:
+            //     new_synced_commercials = self._get_synced_commercial_values()
+            //     self.parent_id.write(new_synced_commercials)
+            // 
+            // # 3. To DOWNSTREAM: sync children
             // self._children_sync(values)
             */
             return default;
@@ -3546,12 +3903,12 @@ namespace Bamboo.Core.Application.Services
             // return self.create(create_values)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def find_or_create(self, email, assert_valid_email=False):
-            // """ Find a partner with the given ``email`` or use :py:method:`~.name_create`
+            // """ Find a partner with the given ``email`` or use :meth:`name_create`
             // to create a new one.
             // 
             // :param str email: email-like string, which should contain at least one email,
             //     e.g. ``"Raoul Grosbedon <r.g@grosbedon.fr>"``
-            // :param boolean assert_valid_email: raise if no valid email is found
+            // :param bool assert_valid_email: raise if no valid email is found
             // :return: newly created record
             // """
             // if not email:
@@ -3574,38 +3931,48 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResPartner> FindOrCreateFromEmailsInternalAsync(object emails, object additional_values)
+        protected async Task<ResPartner> FindOrCreateFromEmailsInternalAsync(object emails, object ban_emails, object filter_found, object additional_values, object no_create, object sort_key, object sort_reverse)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
-            // def _find_or_create_from_emails(self, emails, additional_values=None):
-            // """ Based on a list of emails, find or create partners. Additional values
-            // can be given to newly created partners. If an email is not unique (e.g.
-            // multi-email input), only the first found email is considered.
+            // def _find_or_create_from_emails(self, emails, ban_emails=None,
+            //                             filter_found=None, additional_values=None,
+            //                             no_create=False, sort_key=None, sort_reverse=True):
+            // """ Based on a list of emails, find or (optionally) create partners.
+            // If an email is not unique (e.g. multi-email input), only the first found
+            // valid email in input is considered. Filter and sort options allow to
+            // tweak the way we link emails to partners (e.g. share partners only, ...).
             // 
-            // Additional values allow to customize the created partner when context
-            // allows to give more information. It data is based on email normalized
-            // as it is the main information used in this method to distinguish or
-            // find partners.
+            // Optional additional values allow to customize the created partner. Data
+            // are given per normalized email as it the creation criterion.
             // 
-            // If no valid email is found for a given item, the given value is used to
-            // find partners with same invalid email or create a new one with the wrong
-            // value. It allows updating it afterwards. Notably with notifications
-            // resend it is possible to update emails, if only a typo prevents from
-            // having a real email for example.
+            // When an email is invalid but not void, it is used for search or create.
+            // It allows updating it afterwards e.g. with notifications resend which
+            // allows fixing typos / wrong emails.
             // 
-            // :param list emails: list of emails that may be formatted (each input
-            //   will be parsed and normalized);
-            // :param dict additional_values: additional values per normalized email
-            //   given to create if the partner is not found. Typically used to
+            // :param list emails: list of emails that can be formatted;
+            // :param list ban_emails: optional list of banished emails e.g. because
+            //   it may interfere with master data like aliases;
+            // :param callable filter_found: if given, filters found partners based on emails;
+            // :param dict additional_values: additional values per normalized or
+            //   raw invalid email given to partner creation. Typically used to
             //   propagate a company_id and customer information from related record.
-            //   Values for key 'False' are used when creating partner for invalid
-            //   emails;
+            //   If email cannot be normalized, raw value is used as dict key instead;
+            // :param sort_key: an optional sorting key for sorting partners before
+            //   finding one with matching email normalized. When several partners
+            //   have the same email, users might want to give a preference based
+            //   on e.g. company, being a customer or not, ... Default ordering is
+            //   to use 'id ASC', which means older partners first as they are considered
+            //   as more relevant compared to default 'complete_name';
+            // :param bool sort_reverse: given to sorted (see 'reverse' argument of sort);
+            // :param bool no_create: skip the 'create' part of 'find or create'. Allows
+            //   to use tool as 'find and sort' without adding new partners in db;
             // 
-            // :return: res.partner records in a list, following order of emails. It
-            //   is not a recordset, to keep Falsy values.
+            // :return: res.partner records in a list, following order of emails. Using
+            //   a list allows to to keep Falsy values when no match;
+            // :rtype: list
             // """
-            // additional_values = additional_values if additional_values else {}
+            // additional_values = additional_values or {}
             // partners, tocreate_vals_list = self.env['res.partner'], []
             // name_emails = [tools.parse_contact_from_email(email) for email in emails]
             // 
@@ -3613,13 +3980,13 @@ namespace Bamboo.Core.Application.Services
             // # for existing partners based on those emails
             // emails_normalized = {email_normalized
             //                      for _name, email_normalized in name_emails
-            //                      if email_normalized}
+            //                      if email_normalized and email_normalized not in (ban_emails or [])}
             // # find partners for invalid (but not void) emails, aka either invalid email
             // # either no email and a name that will be used as email
             // names = {
             //     name.strip()
             //     for name, email_normalized in name_emails
-            //     if not email_normalized and name.strip()
+            //     if not email_normalized and name.strip() and name.strip() not in (ban_emails or [])
             // }
             // if emails_normalized or names:
             //     domains = []
@@ -3627,43 +3994,49 @@ namespace Bamboo.Core.Application.Services
             //         domains.append([('email_normalized', 'in', list(emails_normalized))])
             //     if names:
             //         domains.append([('email', 'in', list(names))])
-            //     partners += self.search(expression.OR(domains))
+            //     partners += self.search(Domain.OR(domains), order='id ASC')
+            //     if filter_found:
+            //         partners = partners.filtered(filter_found)
             // 
-            // # create partners for valid email without any existing partner. Keep
-            // # only first found occurrence of each normalized email, aka: ('Norbert',
-            // # 'norbert@gmail.com'), ('Norbert With Surname', 'norbert@gmail.com')'
-            // # -> a single partner is created for email 'norbert@gmail.com'
-            // seen = set()
-            // notfound_emails = (emails_normalized - set(partners.mapped('email_normalized'))) if partners else emails_normalized
-            // notfound_name_emails = [
-            //     name_email
-            //     for name_email in name_emails
-            //     if name_email[1] in notfound_emails and name_email[1] not in seen
-            //        and not seen.add(name_email[1])
-            // ]
-            // tocreate_vals_list += [
-            //     {
-            //         self._rec_name: name or email_normalized,
-            //         'email': email_normalized,
-            //         **additional_values.get(email_normalized, {}),
-            //     }
-            //     for name, email_normalized in notfound_name_emails
-            // ]
+            // if not no_create:
+            //     # create partners for valid email without any existing partner. Keep
+            //     # only first found occurrence of each normalized email, aka: ('Norbert',
+            //     # 'norbert@gmail.com'), ('Norbert With Surname', 'norbert@gmail.com')'
+            //     # -> a single partner is created for email 'norbert@gmail.com'
+            //     seen = set()
+            //     notfound_emails = emails_normalized - set(partners.mapped('email_normalized'))
+            //     notfound_name_emails = [
+            //         name_email
+            //         for name_email in name_emails
+            //         if name_email[1] in notfound_emails and name_email[1] not in seen
+            //         and not seen.add(name_email[1])
+            //     ]
+            //     tocreate_vals_list += [
+            //         {
+            //             self._rec_name: name or email_normalized,
+            //             'email': email_normalized,
+            //             **additional_values.get(email_normalized, {}),
+            //         }
+            //         for name, email_normalized in notfound_name_emails
+            //         if email_normalized not in (ban_emails or [])
+            //     ]
+            //     # create partners for invalid emails (aka name and not email_normalized)
+            //     # without any existing partner
+            //     tocreate_vals_list += [
+            //         {
+            //             self._rec_name: name,
+            //             'email': name,
+            //             **additional_values.get(name, {}),
+            //         }
+            //         for name in names if name not in partners.mapped('email') and name not in (ban_emails or [])
+            //     ]
+            //     # create partners once, avoid current user being followers of those
+            //     if tocreate_vals_list:
+            //         partners += self.with_context(mail_create_nosubscribe=True).create(tocreate_vals_list)
             // 
-            // # create partners for invalid emails (aka name and not email_normalized)
-            // # without any existing partner
-            // tocreate_vals_list += [
-            //     {
-            //         self._rec_name: name,
-            //         'email': name,
-            //         **additional_values.get(False, {}),
-            //     }
-            //     for name in names if name not in partners.mapped('email')
-            // ]
-            // 
-            // # create partners once
-            // if tocreate_vals_list:
-            //     partners += self.create(tocreate_vals_list)
+            // # sort partners (already ordered based on search)
+            // if sort_key:
+            //     partners = partners.sorted(key=sort_key, reverse=sort_reverse)
             // 
             // return [
             //     next(
@@ -3680,56 +4053,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FixEuVatNumberAsync(Guid id, ResPartnerFixEuVatNumberRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def fix_eu_vat_number(self, country_id, vat):
-            // europe = self.env.ref('base.europe')
-            // country = self.env["res.country"].browse(country_id)
-            // # In Romania, the CUI can be used as tax identifier and it is not prefixed with the country code
-            // country_codes_to_not_prepend = ['RO']
-            // if not europe:
-            //     europe = self.env["res.country.group"].search([('name', '=', 'Europe')], limit=1)
-            // if europe and country and country.id in europe.country_ids.ids:
-            //     vat = re.sub('[^A-Za-z0-9]', '', vat).upper()
-            //     country_code = _eu_country_vat.get(country.code, country.code).upper()
-            //     if vat[:2] != country_code and (
-            //         country_code not in country_codes_to_not_prepend or
-            //         country_code != self.env.company.country_code
-            //     ):
-            //         vat = country_code + vat
-            // return vat
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> FixVatNumberInternalAsync(object vat, Guid country_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def _fix_vat_number(self, vat, country_id):
-            // code = self.env['res.country'].browse(country_id).code if country_id else False
-            // vat_country, vat_number = self._split_vat(vat)
-            // if code and code.lower() != vat_country:
-            //     return vat
-            // stdnum_vat_fix_func = getattr(stdnum.util.get_cc_module(vat_country, 'vat'), 'compact', None)
-            // #If any localization module need to define vat fix method for it's country then we give first priority to it.
-            // format_func_name = 'format_vat_' + vat_country
-            // format_func = getattr(self, format_func_name, None) or stdnum_vat_fix_func
-            // if format_func:
-            //     vat_number = format_func(vat_number)
-            // return vat_country.upper() + vat_number
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> FormatDataCompanyInternalAsync(object iap_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
             // def _format_data_company(self, iap_data):
             // self._iap_replace_location_codes(iap_data)
+            // self._iap_replace_industry_code(iap_data)
             // self._iap_replace_language_codes(iap_data)
             // return iap_data
             */
@@ -3741,8 +4071,37 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def format_vat_ch(self, vat):
-            // stdnum_vat_format = getattr(stdnum.util.get_cc_module('ch', 'vat'), 'format', None)
-            // return stdnum_vat_format('CH' + vat)[2:] if stdnum_vat_format else vat
+            // stdnum_vat_format = stdnum.util.get_cc_module('ch', 'vat').format
+            // return stdnum_vat_format('CH' + vat)[2:]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> FormatVatClAsync(Guid id, ResPartnerFormatVatClRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def format_vat_cl(self, vat):
+            // """ It is better to always have the -"""
+            // vat = vat.replace('.', '').replace('CL', '').replace(' ', '').replace('-', '').upper()
+            // if len(vat) > 2:
+            //     return vat[:-1] + '-' + vat[-1]
+            // return vat
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> FormatVatCoAsync(Guid id, ResPartnerFormatVatCoRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def format_vat_co(self, vat):
+            // """ It is better to always have the -"""
+            // stdnum_vat_format = stdnum.util.get_cc_module('co', 'vat').format
+            // vat = stdnum_vat_format(vat).replace('.', '').replace('-', '')
+            // if len(vat) > 2:
+            //     return vat[:-1] + '-' + vat[-1]
+            // return vat
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3759,6 +4118,38 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<ResPartner> FormatVatHuAsync(Guid id, ResPartnerFormatVatHuRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def format_vat_hu(self, vat):
+            // """ We put the - back as we require it for the EDI and the different parts will make it clear to the user"""
+            // stdnum_vat_fix_func = stdnum.util.get_cc_module('hu', 'vat').compact
+            // vat = stdnum_vat_fix_func(vat)
+            // if self._check_tin_hu_companies_re.match(vat):
+            //     vat = vat[:8] + '-' + vat[8] + '-' + vat[9] + vat[10]
+            // return vat
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResPartner> FormatVatNumberInternalAsync(object country_code, object vat)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _format_vat_number(self, country_code, vat):
+            // """ Low-level method directly calling stdnum or our own specific method returning the formatted VAT. """
+            // stdnum_vat_fix_func = getattr(stdnum.util.get_cc_module(country_code, 'vat'), 'compact', None)
+            // # If any localization module needs to define vat fix method for its country then we give first priority to it.
+            // format_func_name = 'format_vat_' + country_code.lower()
+            // format_func = getattr(self, format_func_name, None) or stdnum_vat_fix_func
+            // if format_func:
+            //     vat = format_func(vat)
+            // return vat
+            */
+            return default;
+        }
+
         public async Task<ResPartner> FormatVatSmAsync(Guid id, ResPartnerFormatVatSmRequestDto input)
         {
             /*
@@ -3766,6 +4157,21 @@ namespace Bamboo.Core.Application.Services
             // def format_vat_sm(self, vat):
             // stdnum_vat_format = stdnum.util.get_cc_module('sm', 'vat').compact
             // return stdnum_vat_format('SM' + vat)[2:]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> FormatVatVnAsync(Guid id, ResPartnerFormatVatVnRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def format_vat_vn(self, vat):
+            // """ It is better to always have the -"""
+            // stdnum_vat_format = stdnum.util.get_cc_module('vn', 'vat').format
+            // if self.__check_vat_vn_companies_re.match(vat):
+            //     return stdnum_vat_format(vat)
+            // else:
+            //     return vat
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3786,15 +4192,19 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: res_partner.py) ---
             // def _gelato_prepare_address_payload(self):
+            // """Trim address fields according to maximum length allowed by Gelato."""
             // first_name, last_name = payment_utils.split_partner_name(self.name)
+            // address_2 = self.street2 or ''
+            // if remaining_address := self.street[35:]:
+            //     address_2 = remaining_address + ' ' + address_2
             // return {
-            //     'companyName': self.commercial_company_name or '',
-            //     'firstName': first_name or last_name,  # Gelato require a first name.
-            //     'lastName': last_name,
-            //     'addressLine1': self.street,
-            //     'addressLine2': self.street2 or '',
+            //     'companyName': (self.commercial_company_name or '')[:60],
+            //     'firstName': (first_name or last_name)[:25],  # Gelato require a first name.
+            //     'lastName': last_name[:25],
+            //     'addressLine1': self.street[:35],
+            //     'addressLine2': address_2[:35],
             //     'state': self.state_id.code,
-            //     'city': self.city,
+            //     'city': self.city[:30],
             //     'postCode': self.zip,
             //     'country': self.country_id.code,
             //     'email': self.email,
@@ -3809,11 +4219,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def _generate_signup_token(self, expiration=None):
-            // """ This function generate the signup token for the partner in self.
-            //     pre-condition: self.signup_type must be either 'signup' or 'reset'
-            //     :return: the signed payload/token that can be used to reset the password/signup.
-            //         - 'expiration': the time in hours before the expiration of the token
-            // Since the last_login_date is part of the payload, this token is invalidated as soon as the user logs in
+            // """ Generate the signup token for the partner in self.
+            // 
+            // Assume that :attr:`signup_type` is either ``'signup'`` or ``'reset'``.
+            // 
+            // :param expiration: the time in hours before the expiration of the token
+            // :return: the signed payload/token that can be used to reset the
+            //          password/signup.
+            // 
+            // Since ``last_login_date`` is part of the payload, this token is
+            // invalidated as soon as the user logs in.
             // """
             // self.ensure_one()
             // if not expiration:
@@ -3834,9 +4249,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base_geolocalize, FILE: res_partner.py) ---
             // def geo_localize(self):
             // # We need country names in English below
-            // if not self._context.get('force_geo_localize') \
-            //         and (self._context.get('import_file') \
-            //              or any(config[key] for key in ['test_enable', 'test_file', 'init', 'update'])):
+            // if not self.env.context.get('force_geo_localize') and (
+            //     self.env.context.get('import_file')
+            //     or modules.module.current_test
+            //     or not self.env.registry.ready
+            // ):
             //     return False
             // partners_not_geo_localized = self.env['res.partner']
             // for partner in self.with_context(lang='en_US'):
@@ -3858,7 +4275,8 @@ namespace Bamboo.Core.Application.Services
             //     self.env.user._bus_send("simple_notification", {
             //         'type': 'danger',
             //         'title': _("Warning"),
-            //         'message': _('No match found for %(partner_names)s address(es).', partner_names=', '.join(partners_not_geo_localized.mapped('name')))
+            //         'message': _('No match found for %(partner_names)s address(es).',
+            //                      partner_names=', '.join(partners_not_geo_localized.mapped('display_name')))
             //     })
             // return True
             */
@@ -3877,6 +4295,16 @@ namespace Bamboo.Core.Application.Services
             //     search = geo_obj.geo_query_address(city=city, state=state, country=country)
             //     result = geo_obj.geo_find(search, force_country=country)
             // return result
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetAccountStatisticsCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _get_account_statistics_count(self):
+            // return self.account_move_count + self.supplier_invoice_count
             */
             return default;
         }
@@ -3900,6 +4328,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _get_address_format(self):
             // return self.country_id.address_format or self._get_default_address_format()
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetAddressValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_address_values(self):
+            // """ Get address values from record if at least one value is set. Otherwise
+            // it is considered empty and nothing is returned. """
+            // address_fields = self._address_fields()
+            // if any(self[key] for key in address_fields):
+            //     return self._convert_fields_to_values(address_fields)
+            // return {}
             */
             return default;
         }
@@ -3971,8 +4414,9 @@ namespace Bamboo.Core.Application.Services
             // def get_attendee_detail(self, meeting_ids):
             // """ Return a list of dict of the given meetings with the attendees details
             //     Used by:
-            //         - many2many_attendee.js: Many2ManyAttendee
-            //         - calendar_model.js (calendar.CalendarModel)
+            // 
+            //     - many2many_attendee.js: Many2ManyAttendee
+            //     - calendar_model.js (calendar.CalendarModel)
             // """
             // attendees_details = []
             // meetings = self.env['calendar.event'].browse(meeting_ids)
@@ -4015,6 +4459,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> GetBusyCalendarEventsInternalAsync(object start_datetime, object end_datetime)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_partner.py) ---
+            // def _get_busy_calendar_events(self, start_datetime, end_datetime):
+            // """Get a mapping from partner id to attended events intersecting with the time interval.
+            // 
+            // :rtype: dict[int, <calendar.event>]
+            // """
+            // events = self.env['calendar.event'].search([
+            //     ('stop', '>=', start_datetime.replace(tzinfo=None)),
+            //     ('start', '<=', end_datetime.replace(tzinfo=None)),
+            //     ('partner_ids', 'in', self.ids),
+            //     ('show_as', '=', 'busy'),
+            // ])
+            // 
+            // event_by_partner_id = defaultdict(lambda: self.env['calendar.event'])
+            // for event in events:
+            //     for partner in event.partner_ids:
+            //         event_by_partner_id[partner.id] |= event
+            // return dict(event_by_partner_id)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetCommercialValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_commercial_values(self):
+            // """ Get commercial values from record. Return only set values, as they
+            // are considered individually, and only set values should be taken into
+            // account. """
+            // set_commercial_fields = [fname for fname in self._commercial_fields() if self[fname]]
+            // if set_commercial_fields:
+            //     return self._convert_fields_to_values(set_commercial_fields)
+            // return {}
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> GetCompanyCurrencyInternalAsync()
         {
             /*
@@ -4053,9 +4538,23 @@ namespace Bamboo.Core.Application.Services
             // if self.company_name or self.parent_id:
             //     if not name and self.type in displayed_types:
             //         name = type_description[self.type]
-            //     if not self.is_company:
+            //     if not self.is_company and not self.env.context.get('partner_display_name_hide_company'):
             //         name = f"{self.commercial_company_name or self.sudo().parent_id.name}, {name}"
             // return name.strip()
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetContactOpportunitiesDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
+            // def _get_contact_opportunities_domain(self):
+            // return [('partner_id', 'in', self._fetch_children_partners_for_hierarchy().ids)]
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
+            // def _get_contact_opportunities_domain(self):
+            // all_partners = self._fetch_children_partners_for_hierarchy().ids
+            // return ['|', ('partner_assigned_id', 'in', all_partners), ('partner_id', 'in', all_partners)]
             */
             return default;
         }
@@ -4076,6 +4575,28 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _get_country_name(self):
             // return self.country_id.name or ''
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetCurrentPartnerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_partner.py) ---
+            // def _get_current_partner(self, **kwargs):
+            // """ Get main partner of the current user base on logged in user and kwargs. """
+            // if self.env.user._is_public():
+            //     return self.env['res.partner']
+            // return self.env.user.partner_id
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_partner.py) ---
+            // def _get_current_partner(self, *, order_sudo=False, **kwargs):
+            // """ Override `portal` to get current partner from order_sudo if user is not signed up. """
+            // if order_sudo:
+            //     return (
+            //         (not order_sudo._is_anonymous_cart() and order_sudo.partner_id)
+            //         or self.env['res.partner'] # Avoid returning public user's partner
+            //     )
+            // return super()._get_current_partner(order_sudo=order_sudo, **kwargs)
             */
             return default;
         }
@@ -4102,22 +4623,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> GetDuplicatedBankAccountsInternalAsync()
+        protected async Task<ResPartner> GetDeliveryAddressDomainInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _get_duplicated_bank_accounts(self):
-            // self.ensure_one()
-            // if not self.bank_ids:
-            //     return self.env['res.partner.bank']
-            // domains = []
-            // for bank in self.bank_ids:
-            //     domains.append([('acc_number', '=', bank.acc_number), ('bank_id', '=', bank.bank_id.id)])
-            // domain = expression.OR(domains)
-            // if self.company_id:
-            //     domain = expression.AND([domain, [('company_id', 'in', (False, self.company_id.id))]])
-            // domain = expression.AND([domain, [('partner_id', '!=', self._origin.id)]])
-            // return self.env['res.partner.bank'].search(domain)
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: res_partner.py) ---
+            // def _get_delivery_address_domain(self):
+            // return super()._get_delivery_address_domain() & Domain('is_pickup_location', '=', False)
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_partner.py) ---
+            // def _get_delivery_address_domain(self):
+            // return Domain([
+            //     ('id', 'child_of', self.ids),
+            //     '|', ('type', 'in', ['delivery', 'other']), ('id', '=', self.id),
+            // ])
             */
             return default;
         }
@@ -4148,15 +4665,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: res_partner.py) ---
             // def _get_employees_from_attendees(self, everybody=False):
-            // domain = [
-            //     ('company_id', 'in', self.env.companies.ids),
-            //     ('work_contact_id', '!=', False),
-            // ]
+            // domain = (
+            //     Domain('company_id', 'in', self.env.companies.ids)
+            //     & Domain('work_contact_id', '!=', False)
+            // )
             // if not everybody:
-            //     domain = expression.AND([
-            //         domain,
-            //         [('work_contact_id', 'in', self.ids)]
-            //     ])
+            //     domain &= Domain('work_contact_id', 'in', self.ids)
             // return dict(self.env['hr.employee'].sudo()._read_group(domain, groupby=['work_contact_id'], aggregates=['id:recordset']))
             */
             return default;
@@ -4242,7 +4756,7 @@ namespace Bamboo.Core.Application.Services
             //             strbegin = "<TD>"
             //             strend = "</TD>"
             //             date = aml['date_maturity'] or aml['date']
-            //             date = datetime.strptime(date, "%d/%m/%Y").date()
+            //             date = datetime.strptime(date, "%m/%d/%Y").date()
             //             if date <= current_date and aml['balance'] > 0:
             //                 strbegin = "<TD><B>"
             //                 strend = "</B></TD>"
@@ -4266,22 +4780,56 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResPartner> GetGravatarImageInternalAsync(object email)
+        protected async Task<ResPartner> GetFrontendWritableFieldsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _get_gravatar_image(self, email):
-            // email_hash = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
-            // url = "https://www.gravatar.com/avatar/" + email_hash
-            // try:
-            //     res = requests.get(url, params={'d': '404', 's': '128'}, timeout=5)
-            //     if res.status_code != requests.codes.ok:
-            //         return False
-            // except requests.exceptions.ConnectionError as e:
-            //     return False
-            // except requests.exceptions.Timeout as e:
-            //     return False
-            // return base64.b64encode(res.content)
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _get_frontend_writable_fields(self):
+            // frontend_writable_fields = super()._get_frontend_writable_fields()
+            // frontend_writable_fields.update({'invoice_sending_method', 'invoice_edi_format'})
+            // 
+            // return frontend_writable_fields
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
+            // def _get_frontend_writable_fields(self):
+            // frontend_writable_fields = super()._get_frontend_writable_fields()
+            // frontend_writable_fields.update({'peppol_eas', 'peppol_endpoint'})
+            // 
+            // return frontend_writable_fields
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_partner.py) ---
+            // def _get_frontend_writable_fields(self):
+            // """Define the fields a portal/public user can change on their contact and address records.
+            // 
+            // :rtype: set
+            // """
+            // return {
+            //     'name', 'phone', 'email', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
+            //     'zipcode', 'vat', 'company_name',
+            // }
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_partner.py) ---
+            // def _get_frontend_writable_fields(self):
+            // """ Override `portal` to make website whitelist fields writable in portal address. """
+            // frontend_writable_fields = super()._get_frontend_writable_fields()
+            // frontend_writable_fields.update(
+            //     self.env['ir.model']._get('res.partner')._get_form_writable_fields().keys()
+            // )
+            // 
+            // return frontend_writable_fields
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetImStatusAccessTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _get_im_status_access_token(self):
+            // """Return a scoped access token for the `im_status` field. The token is used in
+            // `ir_websocket._prepare_subscribe_data` to grant access to presence channels.
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, "im_status", scope="mail.presence")
             */
             return default;
         }
@@ -4292,8 +4840,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Customers'),
-            //     'template': '/base/static/xls/res_partner.xlsx'
+            //     'label': _('Import Template for Contacts'),
+            //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -4359,7 +4907,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // domain = self._get_mention_suggestions_domain(search)
             // partners = self._search_mention_suggestions(domain, limit)
-            // return Store(partners).get_result()
+            // store = Store().add(partners, extra_fields=partners._get_store_mention_fields())
+            // try:
+            //     roles = self.env["res.role"].search([("name", "ilike", search)], limit=8)
+            //     store.add(roles, "name")
+            // except AccessError:
+            //     pass
+            // return store.get_result()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -4369,13 +4923,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def _get_mention_suggestions_domain(self, search):
-            // return expression.AND([
-            //     expression.OR([
-            //         [('name', 'ilike', search)],
-            //         [('email', 'ilike', search)],
-            //     ]),
-            //     [('active', '=', True)],
-            // ])
+            // return (Domain('name', 'ilike', search) | Domain('email', 'ilike', search)) & Domain('active', '=', True)
             */
             return default;
         }
@@ -4393,39 +4941,61 @@ namespace Bamboo.Core.Application.Services
             // channel = self.env["discuss.channel"].search([("id", "=", channel_id)])
             // if not channel:
             //     return []
-            // domain = expression.AND(
-            //     [
-            //         self._get_mention_suggestions_domain(search),
-            //         [("channel_ids", "in", channel.id)],
-            //     ]
-            // )
-            // extra_domain = expression.AND([
-            //     [('user_ids', '!=', False)],
-            //     [('user_ids.active', '=', True)],
-            //     [('partner_share', '=', False)]
+            // domain = Domain([
+            //     self._get_mention_suggestions_domain(search),
+            //     ("channel_ids", "in", (channel.parent_channel_id | channel).ids)
+            // ])
+            // extra_domain = Domain([
+            //     ('user_ids', '!=', False),
+            //     ('user_ids.active', '=', True),
+            //     ('partner_share', '=', False),
             // ])
             // allowed_group = (channel.parent_channel_id or channel).group_public_id
             // if allowed_group:
-            //     extra_domain = expression.AND(
-            //         [
-            //             extra_domain,
-            //             [("user_ids.groups_id", "in", allowed_group.id)],
-            //         ]
-            //     )
+            //     extra_domain &= Domain("user_ids.all_group_ids", "in", allowed_group.id)
             // partners = self._search_mention_suggestions(domain, limit, extra_domain)
-            // members = self.env["discuss.channel.member"].search(
-            //     [
-            //         ("channel_id", "=", channel.id),
-            //         ("partner_id", "in", partners.ids),
-            //     ]
+            // members_domain = [
+            //     ("channel_id", "in", (channel.parent_channel_id | channel).ids),
+            //     ("partner_id", "in", partners.ids)
+            // ]
+            // members = self.env["discuss.channel.member"].search(members_domain)
+            // member_fields = [
+            //     Store.One("channel_id", [], as_thread=True),
+            //     *self.env["discuss.channel.member"]._to_store_persona([]),
+            // ]
+            // store = (
+            //     Store()
+            //     .add(members, member_fields)
+            //     .add(partners, extra_fields=partners._get_store_mention_fields())
             // )
-            // store = Store(members, fields={"channel": [], "persona": []})
+            // store.add(channel, "group_public_id")
             // if allowed_group:
             //     for p in partners:
-            //         store.add(p, {"groups_id": [("ADD", (allowed_group & p.user_ids.groups_id).ids)]})
+            //         store.add(p, {"group_ids": [("ADD", (allowed_group & p.user_ids.all_group_ids).ids)]})
+            // try:
+            //     roles = self.env["res.role"].search([("name", "ilike", search)], limit=8)
+            //     store.add(roles, "name")
+            // except AccessError:
+            //     pass
             // return store.get_result()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResPartner> GetMentionTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _get_mention_token(self):
+            // """Return a scoped limited access token that indicates the current partner
+            // can be mentioned in messages.
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, "id", scope="mail.message_mention")
+            */
+            return default;
         }
 
         protected async Task<ResPartner> GetNeedactionCountInternalAsync()
@@ -4445,6 +5015,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<ResPartner> GetNewPartnerAsync(Guid id, ResPartnerGetNewPartnerRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def get_new_partner(self, config_id, domain, offset):
+            // config = self.env['pos.config'].browse(config_id)
+            // if len(domain) == 0:
+            //     limited_partner_ids = {partner[0] for partner in config.get_limited_partners_loading(offset)}
+            //     domain += [('id', 'in', list(limited_partner_ids))]
+            //     new_partners = self.search(domain)
+            // else:
+            //     # If search domain is not empty, we need to search inside all partners
+            //     new_partners = self.search(domain, offset=offset, limit=100)
+            // fiscal_positions = new_partners.fiscal_position_id
+            // return {
+            //     'res.partner': self._load_pos_data_read(new_partners, config),
+            //     'account.fiscal.position': self.env['account.fiscal.position']._load_pos_data_read(fiscal_positions, config),
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<ResPartner> GetOnLeaveIdsInternalAsync()
         {
             /*
@@ -4460,6 +5052,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
             // def _get_participant_info(self, edi_identification):
+            // # DEPRECATED: Peppol moved from CNAME to NAPTR DNS records
             // hash_participant = md5(edi_identification.lower().encode()).hexdigest()
             // endpoint_participant = parse.quote_plus(f"iso6523-actorid-upis::{edi_identification}")
             // edi_mode = self.env.company._get_peppol_edi_mode()
@@ -4536,6 +5129,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> GetPeppolEndpointValueInternalAsync(object country_code, object field, object eas)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: res_partner.py) ---
+            // def _get_peppol_endpoint_value(self, country_code, field, eas):
+            // self.ensure_one()
+            // value = field in self._fields and self[field]
+            // 
+            // if (
+            //     country_code == 'BE'
+            //     and field == 'company_registry'
+            //     and not value
+            //     and self.vat
+            // ):
+            //     value = self.vat
+            //     if value.isalnum():
+            //         value = value.removeprefix(country_code)
+            // 
+            // return sanitize_peppol_endpoint(value, eas)
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> GetPeppolFormatsInternalAsync()
         {
             /*
@@ -4547,22 +5163,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> GetPeppolVerificationStateInternalAsync(object peppol_endpoint, object peppol_eas, object invoice_edi_format)
+        protected async Task<ResPartner> GetPeppolVerificationStateInternalAsync(object peppol_endpoint, object peppol_eas, object invoice_edi_format, object process_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
-            // def _get_peppol_verification_state(self, peppol_endpoint, peppol_eas, invoice_edi_format):
+            // def _get_peppol_verification_state(self, peppol_endpoint, peppol_eas, invoice_edi_format, process_type='billing'):
             // if not (peppol_eas and peppol_endpoint) or invoice_edi_format not in self._get_peppol_formats():
             //     return 'not_verified'
             // 
             // edi_identification = f"{peppol_eas}:{peppol_endpoint}".lower()
-            // participant_info = self._get_participant_info(edi_identification)
+            // participant_info = self._peppol_lookup_participant(edi_identification)
             // if participant_info is None:
             //     return 'not_valid'
             // else:
             //     is_participant_on_network = self._check_peppol_participant_exists(participant_info, edi_identification)
             //     if is_participant_on_network:
-            //         is_valid_format = self._check_document_type_support(participant_info, invoice_edi_format)
+            //         is_valid_format = self._check_document_type_support(participant_info, invoice_edi_format, process_type=process_type)
             //         if is_valid_format:
             //             return 'valid'
             //         else:
@@ -4612,8 +5228,8 @@ namespace Bamboo.Core.Application.Services
             // employees = sum(employees_by_partner.values(), start=self.env['hr.employee'])
             // calendar_periods_by_employee = employees._get_calendar_periods(start_period, stop_period)
             // for employee, calendar_periods in calendar_periods_by_employee.items():
-            //     for (start, stop, calendar) in calendar_periods:
-            //         calendar = calendar or self.env.company.resource_calendar_id  # No calendar if fully flexible
+            //     for _start, _stop, calendar in calendar_periods:
+            //         calendar = calendar or self.env.company.resource_calendar_id
             //         resources_by_calendar[calendar] += employee.resource_id
             // 
             // # Compute all work intervals per calendar
@@ -4703,7 +5319,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //     signup_url = "/web/%s?%s" % (route, werkzeug.urls.url_encode(query))
             //     if not self.env.context.get('relative_url'):
-            //         signup_url = werkzeug.urls.url_join(base_url, signup_url)
+            //         signup_url = tools.urls.urljoin(base_url, signup_url)
             //     res[partner.id] = signup_url
             // return res
             */
@@ -4722,6 +5338,55 @@ namespace Bamboo.Core.Application.Services
             // if any(u._is_portal() for u in self.user_ids if u != self.env.user):
             //     self.env['res.partner'].check_access('write')
             // return result.get(self.id, False)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetStoreAvatarCardFieldsInternalAsync(object target)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // avatar_card_fields = super()._get_store_avatar_card_fields(target)
+            // if target.is_internal(self.env):
+            //     # sudo: res.partner - internal users can access employee information of partner
+            //     employee_fields = self.sudo().employee_ids._get_store_avatar_card_fields(target)
+            //     avatar_card_fields.append(Store.Many("employee_ids", employee_fields, mode="ADD", sudo=True))
+            // return avatar_card_fields
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // fields = [
+            //     "im_status",
+            //     "name",
+            //     "partner_share",
+            // ]
+            // if target.is_internal(self.env):
+            //     fields.extend(["email", "phone"])
+            // return fields
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetStoreLivechatUsernameFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
+            // def _get_store_livechat_username_fields(self):
+            // """Return the fields to be stored for live chat username."""
+            // return [
+            //     Store.Attr("name", predicate=lambda p: not p.user_livechat_username),
+            //     "user_livechat_username",
+            // ]
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetStoreMentionFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _get_store_mention_fields(self):
+            // return [Store.Attr("mention_token", lambda p: p._get_mention_token())]
             */
             return default;
         }
@@ -4790,6 +5455,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> GetSyncedCommercialValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_synced_commercial_values(self):
+            // """ Get synchronized commercial values from ercord. Return only set values
+            // as for other commercial values. """
+            // set_synced_fields = [fname for fname in self._synced_commercial_fields() if self[fname]]
+            // if set_synced_fields:
+            //     return self._convert_fields_to_values(set_synced_fields)
+            // return {}
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> GetUblCiiFormatsByCountryInternalAsync()
         {
             /*
@@ -4814,7 +5494,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: res_partner.py) ---
             // def _get_ubl_cii_formats_info(self):
             // return {
-            //     'ubl_bis3': {'countries': list(PEPPOL_DEFAULT_COUNTRIES), 'on_peppol': True, 'sequence': 200},
+            //     'ubl_bis3': {
+            //         'countries': list(PEPPOL_DEFAULT_COUNTRIES),
+            //         'on_peppol': True,
+            //         'sequence': 200,
+            //         'embed_attachments': True,
+            //     },
             //     'xrechnung': {'countries': ['DE'], 'on_peppol': True},
             //     'ubl_a_nz': {'countries': ['NZ', 'AU'], 'on_peppol': False},  # Not yet available through Odoo's Access Point, although it's a Peppol valid format
             //     'nlcius': {'countries': ['NL'], 'on_peppol': True},
@@ -4831,6 +5516,30 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: res_partner.py) ---
             // def _get_ubl_cii_formats(self):
             // return list(self._get_ubl_cii_formats_info().keys())
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> GetVatRequiredValidInternalAsync(object company)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            // def _get_vat_required_valid(self, company=None):
+            // """ Hook for determining VAT validity with more complex VAT requirements. (like VIES)"""
+            // self.ensure_one()
+            // return bool(self.vat)
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _get_vat_required_valid(self, company=None):
+            // # OVERRIDE
+            // # If VIES validation does not apply to this partner (e.g. they
+            // # are in the same country as the partner), then skip.
+            // vat_required_valid = super()._get_vat_required_valid(company=company)
+            // if (
+            //     company and company.country_id and self.with_company(company).perform_vies_validation
+            //     and ('EU' in company.country_id.country_group_codes or self.country_id and self.country_id.has_foreign_fiscal_position)
+            // ):
+            //     vat_required_valid = vat_required_valid and self.vies_valid
+            // return vat_required_valid
             */
             return default;
         }
@@ -4855,7 +5564,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_view_cache_key(self, view_id=None, view_type='form', **options):
             // """Add context variable force_email in the key as _get_view depends on it."""
             // key = super()._get_view_cache_key(view_id, view_type, **options)
-            // return key + (self._context.get('force_email'),)
+            // return key + (self.env.context.get('force_email'),)
             */
             return default;
         }
@@ -4868,7 +5577,7 @@ namespace Bamboo.Core.Application.Services
             // arch, view = super()._get_view(view_id, view_type, **options)
             // 
             // if view_type == 'form':
-            //     for node in arch.xpath("//field[@name='name' or @name='vat']"):
+            //     for node in arch.xpath("//field[@name='name' or @name='vat' or @name='duns']"):
             //         node.set('widget', 'field_partner_autocomplete')
             // 
             // return arch, view
@@ -4988,8 +5697,8 @@ namespace Bamboo.Core.Application.Services
             //     and not any(parent[f] for f in address_fields)
             //     and len(parent.child_ids) == 1
             // ):
-            //     addr_vals = self._update_fields_values(address_fields)
-            //     parent.update_address(addr_vals)
+            //     addr_vals = self._convert_fields_to_values(address_fields)
+            //     parent._update_address(addr_vals)
             */
             return default;
         }
@@ -5001,7 +5710,7 @@ namespace Bamboo.Core.Application.Services
             // def _has_invoice(self, partner_domain):
             // self.ensure_one()
             // invoice = self.env['account.move'].sudo().search(
-            //     expression.AND([
+            //     Domain.AND([
             //         partner_domain,
             //         [
             //             ('move_type', 'in', ['out_invoice', 'out_refund']),
@@ -5022,7 +5731,7 @@ namespace Bamboo.Core.Application.Services
             // def _has_order(self, partner_domain):
             // self.ensure_one()
             // sale_order = self.env['sale.order'].sudo().search(
-            //     expression.AND([
+            //     Domain.AND([
             //         partner_domain,
             //         [
             //             ('state', 'in', ('sent', 'sale')),
@@ -5035,11 +5744,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> IapPartnerAutocompleteAddTagsAsync(Guid id, ResPartnerIapPartnerAutocompleteAddTagsRequestDto input)
+        public async Task<ResPartner> IapPartnerAutocompleteGetTagIdsAsync(Guid id, ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
-            // def iap_partner_autocomplete_add_tags(self, unspsc_codes):
+            // def iap_partner_autocomplete_get_tag_ids(self, unspsc_codes):
             // """Called by JS to create the activity tags from the UNSPSC codes"""
             // # If the UNSPSC module is installed, we might have a translation, so let's use it
             // if self.env['ir.module.module']._get('product_unspsc').state == 'installed':
@@ -5060,6 +5769,19 @@ namespace Bamboo.Core.Application.Services
             // return tag_ids.ids
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResPartner> IapReplaceIndustryCodeInternalAsync(object iap_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
+            // def _iap_replace_industry_code(self, iap_data):
+            // if industry_code := iap_data.pop('industry_code', False):
+            //     if industry := self.env.ref(f'base.res_partner_industry_{industry_code}', raise_if_not_found=False):
+            //         iap_data['industry_id'] = {'id': industry.id, 'display_name': industry.display_name}
+            // return iap_data
+            */
+            return default;
         }
 
         protected async Task<ResPartner> IapReplaceLanguageCodesInternalAsync(object iap_data)
@@ -5132,55 +5854,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ImSearchAsync(Guid id, ResPartnerImSearchRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
-            // def im_search(self, name, limit=20, excluded_ids=None):
-            // """ Search partner with a name and return its id, name and im_status.
-            //     Note : the user must be logged
-            //     :param name : the partner name to search
-            //     :param limit : the limit of result to return
-            //     :param excluded_ids : the ids of excluded partners
-            // """
-            // # This method is supposed to be used only in the context of channel creation or
-            // # extension via an invite. As both of these actions require the 'create' access
-            // # right, we check this specific ACL.
-            // if excluded_ids is None:
-            //     excluded_ids = []
-            // users = self.env['res.users'].search([
-            //     ('id', '!=', self.env.user.id),
-            //     ('name', 'ilike', name),
-            //     ('active', '=', True),
-            //     ('share', '=', False),
-            //     ('partner_id', 'not in', excluded_ids)
-            // ], order='name, id', limit=limit)
-            // return Store(users.partner_id).get_result()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> IncreaseRankInternalAsync(object field, object n)
+        protected async Task<ResPartner> IncreaseRankInternalAsync(string field, int n)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _increase_rank(self, field, n=1):
-            // if self.ids and field in ['customer_rank', 'supplier_rank']:
+            // def _increase_rank(self, field: str, n: int = 1):
+            // assert field in ('customer_rank', 'supplier_rank')
+            // if not self:
+            //     return
+            // postcommit = self.env.cr.postcommit
+            // data = postcommit.data.setdefault(f'account.res.partner.increase_rank.{field}', defaultdict(int))
+            // already_registered = bool(data)
+            // for record in self.sudo():
+            //     # In case we alrady have a value, we will increase the rank in
+            //     # postcommit to avoid serialization errors.  However, if the record
+            //     # has a rank of 0, we increase it directly so that filtering on
+            //     # partner_type is correctly set to customer or supplier.
+            //     if record[field] and record.id:
+            //         data[record.id] += n
+            //     else:
+            //         record[field] += n
+            // 
+            // if already_registered or not data:
+            //     return
+            // 
+            // @postcommit.add
+            // def increase_partner_rank():
             //     try:
-            //         with self.env.cr.savepoint(flush=False), mute_logger('odoo.sql_db'):
-            //             self.env.execute_query(SQL("""
-            //                 SELECT %(field)s FROM res_partner WHERE ID IN %(partner_ids)s FOR NO KEY UPDATE NOWAIT;
-            //                 UPDATE res_partner SET %(field)s = %(field)s + %(n)s
-            //                 WHERE id IN %(partner_ids)s
-            //                 """,
-            //                 field=SQL.identifier(field),
-            //                 partner_ids=tuple(self.ids),
-            //                 n=n,
-            //             ))
-            //             self.invalidate_recordset([field])
-            //             self.modified([field])
-            //     except (pgerrors.LockNotAvailable, pgerrors.SerializationFailure):
-            //         _logger.debug('Another transaction already locked partner rows. Cannot update partner ranks.')
+            //         with self.env.registry.cursor() as cr:
+            //             partners = (
+            //                 self.env(cr=cr)[self._name]
+            //                 .sudo().browse(data)
+            //                 .with_context(prefetch_fields=False)
+            //             )
+            //             for partner in partners:
+            //                 partner[field] += data[partner.id]
+            //             data.clear()
+            //     except pgerrors.OperationalError:
+            //         _logger.debug('Cannot update partner ranks.')
             */
             return default;
         }
@@ -5269,6 +5980,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartner> InverseVatInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _inverse_vat(self):
+            // self._check_vat()
+            */
+            return default;
+        }
+
         protected async Task<ResPartner> InvoiceTotalInternalAsync()
         {
             /*
@@ -5309,18 +6030,16 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResPartner> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ResPartner> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // 
+            // def _load_pos_data_domain(self, data, config):
             // # Collect partner IDs from loaded orders
-            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']['data']}
+            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']}
             // 
             // # Extract partner IDs from the tuples returned by get_limited_partners_loading
-            // limited_partner_ids = {partner[0] for partner in config_id.get_limited_partners_loading()}
+            // limited_partner_ids = {partner[0] for partner in config.get_limited_partners_loading()}
             // 
             // limited_partner_ids.add(self.env.user.partner_id.id)  # Ensure current user is included
             // partner_ids = limited_partner_ids.union(loaded_order_partner_ids)
@@ -5329,16 +6048,29 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResPartner> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return [
-            //     'id', 'name', 'street', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'mobile', 'email',
-            //     'barcode', 'write_date', 'property_account_position_id', 'property_product_pricelist', 'parent_name', 'contact_address',
-            //     'company_type',
+            //     'id', 'name', 'street', 'street2', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'email',
+            //     'barcode', 'write_date', 'property_product_pricelist', 'parent_name', 'pos_contact_address',
+            //     'invoice_emails', 'fiscal_position_id', 'is_company', 'property_account_receivable_id',
             // ]
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: res_partner.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return super()._load_pos_data_fields(config) + ['sale_warn_msg']
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> LoadPosSelfDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_partner.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // return False
             */
             return default;
         }
@@ -5348,7 +6080,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _load_records_create(self, vals_list):
-            // partners = super(Partner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
+            // partners = super(ResPartner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
             // 
             // # batch up first part of _fields_sync
             // # group partners by commercial_partner_id (if not self) and parent_id (if type == contact)
@@ -5368,7 +6100,7 @@ namespace Bamboo.Core.Application.Services
             //     to_write = {}
             //     # commercial fields from commercial partner
             //     if cp_id:
-            //         to_write = self.browse(cp_id)._update_fields_values(self._commercial_fields())
+            //         to_write = self.browse(cp_id)._convert_fields_to_values(self._commercial_fields())
             //     # address fields from parent
             //     if add_id:
             //         parent = self.browse(add_id)
@@ -5450,35 +6182,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> MessageGetDefaultRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
-            // def _message_get_default_recipients(self):
-            // return {
-            //     r.id:
-            //     {'partner_ids': [r.id],
-            //      'email_to': False,
-            //      'email_cc': False
-            //     }
-            //     for r in self
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> MessageGetSuggestedRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // self._message_add_suggested_recipient(recipients, partner=self, reason=_('Partner Profile'))
-            // return recipients
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> MondialrelaySearchOrCreateInternalAsync(object data)
         {
             /*
@@ -5550,32 +6253,15 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> OnchangeCountryIdInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: base_address_extended, FILE: res_partner.py) ---
+            // def _onchange_country_id(self):
+            // super()._onchange_country_id()
+            // if self.country_id and self.country_id != self.city_id.country_id:
+            //     self.city_id = False
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _onchange_country_id(self):
             // if self.country_id and self.country_id != self.state_id.country_id:
             //     self.state_id = False
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> OnchangeEmailAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def onchange_email(self):
-            // if not self.image_1920 and self._context.get('gravatar_image') and self.email:
-            //     self.image_1920 = self._get_gravatar_image(self.email)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> OnchangeMobileValidationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: res_partner.py) ---
-            // def _onchange_mobile_validation(self):
-            // if self.mobile:
-            //     self.mobile = self._phone_format(fname='mobile', force_format='INTERNATIONAL') or self.mobile
             */
             return default;
         }
@@ -5590,38 +6276,15 @@ namespace Bamboo.Core.Application.Services
             //     return
             // result = {}
             // partner = self._origin
-            // if partner.parent_id and partner.parent_id != self.parent_id:
-            //     result['warning'] = {
-            //         'title': _('Warning'),
-            //         'message': _('Changing the company of a contact should only be done if it '
-            //                      'was never correctly set. If an existing contact starts working for a new '
-            //                      'company then a new contact should be created under that new '
-            //                      'company. You can use the "Discard" button to abandon this change.')}
-            // if partner.type == 'contact' or self.type == 'contact':
+            // if (partner.type or self.type) == 'contact':
             //     # for contacts: copy the parent address, if set (aka, at least one
             //     # value is set in the address: otherwise, keep the one from the
             //     # contact)
-            //     address_fields = self._address_fields()
-            //     if any(self.parent_id[key] for key in address_fields):
-            //         def convert(value):
-            //             return value.id if isinstance(value, models.BaseModel) else value
-            //         result['value'] = {key: convert(self.parent_id[key]) for key in address_fields}
+            //     if address_values := self.parent_id._get_address_values():
+            //         result['value'] = address_values
             // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> OnchangeParentIdForLangInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _onchange_parent_id_for_lang(self):
-            // # While creating / updating child contact, take the parent lang by default if any
-            // # otherwise, fallback to default context / DB lang
-            // if self.parent_id:
-            //     self.lang = self.parent_id.lang or self.env.context.get('default_lang') or self.env.lang
-            */
-            return default;
         }
 
         protected async Task<ResPartner> OnchangePhoneValidationInternalAsync()
@@ -5668,6 +6331,26 @@ namespace Bamboo.Core.Application.Services
             // def _onchange_state(self):
             // if self.state_id.country_id and self.country_id != self.state_id.country_id:
             //     self.country_id = self.state_id.country_id
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> OnchangeVatInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
+            // def _onchange_vat(self):
+            // self._check_vat(validation=False)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> OnchangeVerifyPeppolStatusInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
+            // def _onchange_verify_peppol_status(self):
+            // self.button_account_peppol_check_partner_endpoint()
             */
             return default;
         }
@@ -5753,8 +6436,8 @@ namespace Bamboo.Core.Application.Services
             // def _payment_due_search(self, operator, operand):
             // args = [('payment_amount_due', operator, operand)]
             // query, params = self._get_followup_overdue_query(args, overdue_only=False)
-            // self._cr.execute(query, params)
-            // res = self._cr.fetchall()
+            // self.env.cr.execute(query, params)
+            // res = self.env.cr.fetchall()
             // if not res:
             //     return [('id', '=', '0')]
             // return [('id', 'in', [x[0] for x in res])]
@@ -5782,8 +6465,8 @@ namespace Bamboo.Core.Application.Services
             // query = query % company_id
             // if having_where_clause:
             //     query += ' HAVING %s ' % (having_where_clause)
-            // self._cr.execute(query)
-            // res = self._cr.fetchall()
+            // self.env.cr.execute(query)
+            // res = self.env.cr.fetchall()
             // if not res:
             //     return [('id', '=', '0')]
             // return [('id', 'in', [x[0] for x in res])]
@@ -5798,8 +6481,8 @@ namespace Bamboo.Core.Application.Services
             // def _payment_overdue_search(self, operator, operand):
             // args = [('payment_amount_overdue', operator, operand)]
             // query, params = self._get_followup_overdue_query(args, overdue_only=True)
-            // self._cr.execute(query, params)
-            // res = self._cr.fetchall()
+            // self.env.cr.execute(query, params)
+            // res = self.env.cr.fetchall()
             // if not res:
             //     return [('id', '=', '0')]
             // return [('id', 'in', [x[0] for x in res])]
@@ -5815,6 +6498,45 @@ namespace Bamboo.Core.Application.Services
             // # field dependencies of methods _compute_peppol_endpoint() and _compute_peppol_eas()
             // # because we need to extend depends in l10n modules
             // return ['country_code', 'vat', 'company_registry']
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> PeppolLookupParticipantInternalAsync(object edi_identification)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
+            // def _peppol_lookup_participant(self, edi_identification):
+            // """NAPTR DNS peppol participant lookup through Odoo's Peppol proxy"""
+            // if (edi_mode := self.env.company._get_peppol_edi_mode()) == 'demo':
+            //     return
+            // 
+            // origin = self.env['account_edi_proxy_client.user']._get_proxy_urls()['peppol'][edi_mode]
+            // query = parse.urlencode({'peppol_identifier': edi_identification.lower()})
+            // endpoint = f'{origin}/api/peppol/1/lookup?{query}'
+            // 
+            // try:
+            //     response = requests.get(endpoint, timeout=TIMEOUT)
+            // except requests.exceptions.RequestException as e:
+            //     _logger.debug("failed to query peppol participant %s: %s", edi_identification, e)
+            //     return
+            // 
+            // try:
+            //     decoded_response = response.json()
+            // except ValueError:
+            //     _logger.error('invalid JSON response %s when querying peppol participant %s', response.status_code, edi_identification)
+            //     return
+            // 
+            // if error := decoded_response.get('error'):
+            //     if error.get('code') != 'NOT_FOUND':
+            //         _logger.error('error when querying peppol participant %s: %s', edi_identification, error.get('message', 'unknown error'))
+            //     return
+            // 
+            // if not response.ok:
+            //     _logger.error('unsuccessful response %s when querying peppol participant %s', response.status_code, edi_identification)
+            //     return
+            // 
+            // return decoded_response.get('result')
             */
             return default;
         }
@@ -5891,16 +6613,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ReadByVatAsync(Guid id, ResPartnerReadByVatRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
-            // def read_by_vat(self, vat, timeout=15):
-            // return []
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<ResPartner> RetrievePartnerInternalAsync(object name, object phone, object email, object vat, object domain, object company)
         {
             /*
@@ -5967,16 +6679,15 @@ namespace Bamboo.Core.Application.Services
             // domains = []
             // if phone:
             //     domains.append([('phone', '=', phone)])
-            //     domains.append([('mobile', '=', phone)])
             // if email:
             //     domains.append([('email', '=', email)])
             // 
             // if not domains:
             //     return None
             // 
-            // domain = expression.OR(domains)
+            // domain = Domain.OR(domains)
             // if extra_domain:
-            //     domain = expression.AND([domain, extra_domain])
+            //     domain &= Domain(extra_domain)
             // return self.env['res.partner'].search(domain, limit=2)
             */
             return default;
@@ -6039,57 +6750,86 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> RunVatTestInternalAsync(object vat_number, object default_country, object partner_is_company)
+        protected async Task<ResPartner> RunVatChecksInternalAsync(object country, object vat, object partner_name, object validation)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def _run_vat_test(self, vat_number, default_country, partner_is_company=True):
+            // def _run_vat_checks(self, country, vat, partner_name='', validation='error'):
             // """ Checks a VAT number syntactically to ensure its validity upon saving.
             // 
-            // :param vat_number: a string with the VAT number to check.
-            // :param default_country: a res.country object
-            // :param partner_is_company: True if the partner is a company, else False.
-            //     .. deprecated:: 16.0
-            //         Will be removed in 16.2
+            // :param country: a country to check for
+            // :param vat: a string with the VAT number to check.
+            // :param partner_name: to put into the error message
+            // :param validation: if False, it will only return the formatted vat without checking if it valid.
+            //     if 'error', an incorrect number will raise and if 'setnull' it will just return an empty vat
             // 
-            // :return: The country code (in lower case) of the country the VAT number
-            //          was validated for, if it was validated. False if it could not be validated
-            //          against the provided or guessed country. None if no country was available
-            //          for the check, and no conclusion could be made with certainty.
+            // :return: A two-elements tuple with:
+            // 
+            //     1. The vat number
+            //     2. The country code of the country the VAT number was validated for, if it was validated.
+            //        False if it could not be validated against the provided or guessed country.
             // """
-            // return default_country.code.lower()
+            // assert validation in (False, 'error', 'setnull')
+            // return vat, country and country.code or ''
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def _run_vat_test(self, vat_number, default_country, partner_is_company=True):
-            // # OVERRIDE account
-            // check_result = None
+            // def _run_vat_checks(self, country, vat, partner_name='', validation='error'):
+            // """ OVERRIDE """
+            // if not country or not vat:
+            //     return vat, False
+            // if len(vat) == 1:
+            //     if vat == '/' or not validation:
+            //         return vat, False
+            //     if validation == 'setnull':
+            //         return '', False
+            //     if validation == 'error':
+            //         raise ValidationError(_("To explicitly indicate no (valid) VAT, use '/' instead. "))
+            // vat_prefix, vat_number = self._split_vat(vat)
             // 
-            // # First check with country code as prefix of the TIN
-            // vat_country_code, vat_number_split = self._split_vat(vat_number)
-            // 
-            // if vat_country_code == 'eu' and default_country not in self.env.ref('base.europe').country_ids:
+            // if vat_prefix == 'EU' and country not in self.env.ref('base.europe').country_ids:
             //     # Foreign companies that trade with non-enterprises in the EU
             //     # may have a VATIN starting with "EU" instead of a country code.
-            //     return True
+            //     return vat, False
             // 
-            // vat_has_legit_country_code = self.env['res.country'].search([('code', '=', vat_country_code.upper())], limit=1)
-            // if not vat_has_legit_country_code:
-            //     vat_has_legit_country_code = vat_country_code.lower() in _region_specific_vat_codes
-            // if vat_has_legit_country_code:
-            //     check_result = self.simple_vat_check(vat_country_code, vat_number_split)
-            //     if check_result:
-            //         return vat_country_code
+            // do_eu_check = False
+            // prefixed_country = ''
+            // eu_prefix_country_group = self.env['res.country.group'].search([('code', '=', 'EU_PREFIX')], limit=1)
+            // country_code = EU_EXTRA_VAT_CODES_INV.get(vat_prefix, vat_prefix)
+            // if country_code in eu_prefix_country_group.country_ids.mapped('code'):
+            //     if 'EU_PREFIX' in country.country_group_codes and vat_prefix:
+            //         vat = vat_number
+            //         prefixed_country = vat_prefix
+            //     else:
+            //         do_eu_check = True
             // 
-            // # If it fails, check with default_country (if it exists)
-            // if default_country:
-            //     check_result = self.simple_vat_check(default_country.code.lower(), vat_number)
-            //     if check_result:
-            //         return default_country.code.lower()
+            // code_to_check = prefixed_country or country.code
+            // vat = self._format_vat_number(code_to_check, vat)
             // 
-            // # We allow any number if it doesn't start with a country code and the partner has no country.
-            // # This is necessary to support an ORM limitation: setting vat and country_id together on a company
-            // # triggers two distinct write on res.partner, one for each field, both triggering this constraint.
-            // # If vat is set before country_id, the constraint must not break.
-            // return check_result
+            // if prefixed_country == 'GR':
+            //     prefixed_country = 'EL'
+            // 
+            // vat_to_return = prefixed_country + vat
+            // 
+            // # The context key 'no_vat_validation' allows you to store/set a VAT number without doing validations.
+            // # This is for API pushes from external platforms where you have no control over VAT numbers.
+            // if not validation or self.env.context.get('no_vat_validation'):
+            //     return vat_to_return, code_to_check
+            // 
+            // # Avoid validating double prefix like BEBE0477472701
+            // double_prefix = prefixed_country and vat_to_return.startswith(prefixed_country + prefixed_country)
+            // if not self._check_vat_number(code_to_check, vat) or double_prefix:
+            //     partner_label = _("partner [%s]", partner_name)
+            //     if do_eu_check:
+            //         try:
+            //             return self._run_vat_checks(self.env['res.country'].search([('code', '=', country_code)], limit=1), vat_prefix + vat_number, partner_name, validation)
+            //         except ValidationError:
+            //             msg = self._build_vat_error_message(code_to_check, vat, partner_label)
+            //             raise ValidationError(msg + "\n\n" + _('If you are trying to input a European number, this is the expected format: ') + _ref_vat[country_code.lower()])
+            //     if validation == 'error':
+            //         msg = self._build_vat_error_message(code_to_check, vat, partner_label)
+            //         raise ValidationError(msg)
+            //     else:
+            //         return '', code_to_check
+            // return vat_to_return, code_to_check
             */
             return default;
         }
@@ -6118,17 +6858,63 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def search_for_channel_invite(self, search_term, channel_id=None, limit=30):
             // """Returns partners matching search_term that can be invited to a channel.
-            // If the channel_id is specified, only partners that can actually be invited to the channel
-            // are returned (not already members, and in accordance to the channel configuration).
+            // 
+            // - If `channel_id` is specified, only partners that can actually be invited to the channel
+            //   are returned (not already members, and in accordance to the channel configuration).
+            // 
+            // - If no matching partners are found and the search term is a valid email address,
+            //   then the method may return `selectable_email` as a fallback direct email invite, provided that
+            //   the channel allows invites by email.
+            // 
             // """
-            // domain = expression.AND(
+            // store = Store()
+            // channel_invites = self._search_for_channel_invite(store, search_term, channel_id, limit)
+            // selectable_email = None
+            // email_already_sent = None
+            // if channel_invites["count"] == 0 and single_email_re.match(search_term):
+            //     email = email_normalize(search_term)
+            //     channel = self.env["discuss.channel"].search_fetch([("id", "=", int(channel_id))])
+            //     member_domain = Domain("channel_id", "=", channel.id)
+            //     member_domain &= Domain("guest_id.email", "=", email) | Domain(
+            //         "partner_id.email", "=", email
+            //     )
+            //     if channel._allow_invite_by_email() and not self.env[
+            //         "discuss.channel.member"
+            //     ].search_count(member_domain):
+            //         selectable_email = email
+            //         # sudo - mail.mail: checking mail records to determine if an email was already sent is acceptable.
+            //         email_already_sent = (
+            //             self.env["mail.mail"]
+            //             .sudo()
+            //             .search_count(
+            //                 [
+            //                     ("email_to", "=", email),
+            //                     ("model", "=", "discuss.channel"),
+            //                     ("res_id", "=", channel.id),
+            //                 ]
+            //             )
+            //             > 0
+            //         )
+            // 
+            // return {
+            //     **channel_invites,
+            //     "email_already_sent": email_already_sent,
+            //     "selectable_email": selectable_email,
+            //     "store_data": store.get_result(),
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResPartner> SearchForChannelInviteInternalAsync(object store, object search_term, Guid channel_id, object limit)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _search_for_channel_invite(self, store: Store, search_term, channel_id=None, limit=30):
+            // domain = Domain.AND(
             //     [
-            //         expression.OR(
-            //             [
-            //                 [("name", "ilike", search_term)],
-            //                 [("email", "ilike", search_term)],
-            //             ]
-            //         ),
+            //         Domain("name", "ilike", search_term) | Domain("email", "ilike", search_term),
+            //         [('id', '!=', self.env.user.partner_id.id)],
             //         [("active", "=", True)],
             //         [("user_ids", "!=", False)],
             //         [("user_ids.active", "=", True)],
@@ -6138,22 +6924,20 @@ namespace Bamboo.Core.Application.Services
             // channel = self.env["discuss.channel"]
             // if channel_id:
             //     channel = self.env["discuss.channel"].search([("id", "=", int(channel_id))])
-            //     domain = expression.AND([domain, [("channel_ids", "not in", channel.id)]])
+            //     domain &= Domain("channel_ids", "not in", channel.id)
             //     if channel.group_public_id:
-            //         domain = expression.AND(
-            //             [domain, [("user_ids.groups_id", "in", channel.group_public_id.id)]]
-            //         )
+            //         domain &= Domain("user_ids.all_group_ids", "in", channel.group_public_id.id)
             // query = self._search(domain, limit=limit)
             // # bypass lack of support for case insensitive order in search()
             // query.order = SQL('LOWER(%s), "res_partner"."id"', self._field_to_sql(self._table, "name"))
-            // store = Store()
-            // self.env["res.partner"].browse(query)._search_for_channel_invite_to_store(store, channel)
+            // selectable_partners = self.env["res.partner"].browse(query)
+            // selectable_partners._search_for_channel_invite_to_store(store, channel)
             // return {
             //     "count": self.env["res.partner"].search_count(domain),
-            //     "data": store.get_result(),
+            //     "partner_ids": selectable_partners.ids,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<ResPartner> SearchForChannelInviteToStoreInternalAsync(object store, object channel)
@@ -6165,7 +6949,7 @@ namespace Bamboo.Core.Application.Services
             // if channel.channel_type != "livechat" or not self:
             //     return
             // lang_name_by_code = dict(self.env["res.lang"].get_installed())
-            // invite_by_self_count_by_partner_id = dict(
+            // invite_by_self_count_by_partner = dict(
             //     self.env["discuss.channel.member"]._read_group(
             //         [["create_uid", "=", self.env.user.id], ["partner_id", "in", self.ids]],
             //         groupby=["partner_id"],
@@ -6176,13 +6960,26 @@ namespace Bamboo.Core.Application.Services
             //     self.env["im_livechat.channel"].search([]).available_operator_ids.partner_id
             // )
             // for partner in self:
+            //     languages = list(OrderedSet([
+            //         lang_name_by_code[partner.lang],
+            //         # sudo: res.users.settings - operator can access other operators languages
+            //         *partner.user_ids.sudo().livechat_lang_ids.mapped("name")
+            //     ]))
             //     store.add(
             //         partner,
             //         {
-            //             "invite_by_self_count": invite_by_self_count_by_partner_id.get(partner, 0),
+            //             "invite_by_self_count": invite_by_self_count_by_partner.get(partner, 0),
             //             "is_available": partner in active_livechat_partners,
-            //             "lang_name": lang_name_by_code[partner.lang],
+            //             "lang_name": languages[0],
+            //             # sudo: res.users.settings - operator can access other operators expertises
+            //             "livechat_expertise": partner.user_ids.sudo().livechat_expertise_ids.mapped("name"),
+            //             "livechat_languages": languages[1:],
+            //             # sudo: res.users.settings - operator can access other operators livechat usernames
+            //             "user_livechat_username": partner.sudo().user_livechat_username,
             //         },
+            //         # sudo - res.partner: checking if operator is in call for live
+            //         # chat invitation is acceptable.
+            //         extra_fields=[Store.Attr("is_in_call", sudo=True)]
             //     )
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def _search_for_channel_invite_to_store(self, store: Store, channel):
@@ -6196,14 +6993,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: res_partner.py) ---
             // def _search_is_subcontractor(self, operator, value):
-            // assert operator in ('=', '!=', '<>') and value in (True, False), 'Operation not supported'
+            // if operator != 'in':
+            //     return NotImplemented
             // subcontractor_ids = self.env['mrp.bom'].search(
             //     [('type', '=', 'subcontract')]).subcontractor_ids.ids
-            // if (operator == '=' and value is True) or (operator in ('<>', '!=') and value is False):
-            //     search_operator = 'in'
-            // else:
-            //     search_operator = 'not in'
-            // return [('id', search_operator, subcontractor_ids)]
+            // return [('id', 'in', subcontractor_ids)]
             */
             return default;
         }
@@ -6213,14 +7007,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def _search_mention_suggestions(self, domain, limit, extra_domain=None):
-            // domain_is_user = expression.AND([[('user_ids', '!=', False)], [('user_ids.active', '=', True)], domain])
+            // domain = Domain(domain)
+            // domain_is_user = Domain('user_ids', '!=', False) & Domain('user_ids.active', '=', True) & domain
             // priority_conditions = [
-            //     expression.AND([domain_is_user, [('partner_share', '=', False)]]),  # Search partners that are internal users
+            //     domain_is_user & Domain('partner_share', '=', False),  # Search partners that are internal users
             //     domain_is_user,  # Search partners that are users
             //     domain,  # Search partners that are not users
             // ]
             // if extra_domain:
-            //     priority_conditions.append(extra_domain)
+            //     priority_conditions.append(Domain(extra_domain))
             // partners = self.env['res.partner']
             // for domain in priority_conditions:
             //     remaining_limit = limit - len(partners)
@@ -6229,7 +7024,7 @@ namespace Bamboo.Core.Application.Services
             //     # We are using _search to avoid the default order that is
             //     # automatically added by the search method. "Order by" makes the query
             //     # really slow.
-            //     query = self._search(expression.AND([[('id', 'not in', partners.ids)], domain]), limit=remaining_limit)
+            //     query = self._search(Domain('id', 'not in', partners.ids) & domain, limit=remaining_limit)
             //     partners |= self.browse(query)
             // return partners
             */
@@ -6241,11 +7036,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_partner.py) ---
             // def _search_slide_channel_completed_ids(self, operator, value):
-            // cp_done = self.env['slide.channel.partner'].sudo().search([
+            // subquery = self.env['slide.channel.partner'].sudo()._search([
             //     ('channel_id', operator, value),
             //     ('member_status', '=', 'completed')
             // ])
-            // return [('id', 'in', cp_done.partner_id.ids)]
+            // return [('id', 'in', subquery.subselect('partner_id'))]
             */
             return default;
         }
@@ -6326,9 +7121,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def signup_prepare(self, signup_type="signup"):
-            // """ generate a new token for the partners with the given validity, if necessary
-            //     :param expiration: the expiration datetime of the token (string, optional)
-            // """
+            // """ generate a new token for the partners with the given validity, if necessary """
             // self.write({'signup_type': signup_type})
             // return True
             */
@@ -6341,12 +7134,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def _signup_retrieve_info(self, token):
             // """ retrieve the user info about the token
-            //     :return: a dictionary with the user information if the token is valid, None otherwise:
-            //         - 'db': the name of the database
-            //         - 'token': the token, if token is valid
-            //         - 'name': the name of the partner, if token is valid
-            //         - 'login': the user login, if the user already exists
-            //         - 'email': the partner email, if the user does not exist
+            // 
+            // :rtype: dict | None
+            // :return: a dictionary with the user information if the token is valid,
+            //     None otherwise:
+            // 
+            //         db
+            //             the name of the database
+            //         token
+            //             the token, if token is valid
+            //         name
+            //             the name of the partner, if token is valid
+            //         login
+            //             the user login, if the user already exists
+            //         email
+            //             the partner email, if the user does not exist
             // """
             // partner = self._get_partner_from_token(token)
             // if not partner:
@@ -6369,10 +7171,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def _signup_retrieve_partner(self, token, check_validity=False, raise_exception=False):
             // """ find the partner corresponding to a token, and possibly check its validity
-            //     :param token: the token to resolve
-            //     :param check_validity: if True, also check validity
-            //     :param raise_exception: if True, raise exception instead of returning False
-            //     :return: partner (browse record) or False (if raise_exception is False)
+            // 
+            // :param token: the token to resolve
+            // :param bool check_validity: if True, also check validity
+            // :param bool raise_exception: if True, raise exception instead of returning False
+            // :return: partner (browse record) or False (if raise_exception is False)
             // """
             // partner = self._get_partner_from_token(token)
             // if not partner:
@@ -6382,123 +7185,97 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> SimpleVatCheckAsync(Guid id, ResPartnerSimpleVatCheckRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def simple_vat_check(self, country_code, vat_number):
-            // '''
-            // Check the VAT number depending of the country.
-            // http://sima-pc.com/nif.php
-            // '''
-            // if not country_code.encode().isalpha():
-            //     return False
-            // check_func_name = 'check_vat_' + country_code
-            // check_func = getattr(self, check_func_name, None) or getattr(stdnum.util.get_cc_module(country_code, 'vat'), 'is_valid', None)
-            // if not check_func:
-            //     # No VAT validation available, default to check that the country code exists
-            //     country_code = _eu_country_vat_inverse.get(country_code, country_code)
-            //     return bool(self.env['res.country'].search([('code', '=ilike', country_code)]))
-            // return check_func(vat_number)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<ResPartner> SplitVatInternalAsync(object vat)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def _split_vat(self, vat):
-            // '''
-            // Splits the VAT Number to get the country code in a first place and the code itself in a second place.
-            // This has to be done because some countries' code are one character long instead of two (i.e. "T" for Japan)
-            // '''
-            // if len(vat) > 1 and vat[1].isalpha():
-            //     vat_country, vat_number = vat[:2].lower(), vat[2:].replace(' ', '')
-            // else:
-            //     vat_country, vat_number = vat[:1].lower(), vat[1:].replace(' ', '')
-            // return vat_country, vat_number
+            // vat_prefix, vat_number = vat[:2].upper(), vat[2:].replace(' ', '')
+            // if not vat_prefix.isalpha():
+            //     return '', vat
+            // return vat_prefix, vat_number
             */
             return default;
         }
 
-        protected async Task<ResPartner> ToStoreInternalAsync()
+        protected async Task<ResPartner> SyncedCommercialFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: res_partner.py) ---
+            // def _synced_commercial_fields(self):
+            // return [
+            //     *super()._synced_commercial_fields(),
+            //     'specific_property_product_pricelist',
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _synced_commercial_fields(self):
+            // """ Returns the list of fields that are managed by the commercial entity
+            // to which a partner belongs. When modified on a children, update is
+            // propagated until the commercial entity. """
+            // return ['vat']
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_partner.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None, **kwargs):
-            // """Override to add the current leave status."""
-            // super()._to_store(store, fields=fields, **kwargs)
-            // if fields is None:
-            //     fields = ["out_of_office_date_end"]
-            // for partner in self:
-            //     if "out_of_office_date_end" in fields:
-            //         # in the rare case of multi-user partner, return the earliest possible return date
-            //         dates = partner.mapped("user_ids.leave_date_to")
-            //         states = partner.mapped("user_ids.current_leave_state")
-            //         date = sorted(dates)[0] if dates and all(dates) else False
-            //         state = sorted(states)[0] if states and all(states) else False
-            //         store.add(
-            //             partner, {"out_of_office_date_end": date if state == "validate" else False}
-            //         )
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None, **kwargs):
-            // """Override to add name when user_livechat_username is not set."""
-            // super()._to_store(store, fields=fields, **kwargs)
-            // if fields and "user_livechat_username" in fields:
-            //     if partners := self.filtered(lambda p: not p.user_livechat_username):
-            //         super(Partners, partners)._to_store(store, fields=["name"])
+            // def _to_store_defaults(self, target):
+            // defaults = super()._to_store_defaults(target)
+            // if target.is_internal(self.env):
+            //     defaults.append(
+            //         Store.One("main_user_id", Store.Many("employee_ids", "leave_date_to"))
+            //     )
+            // return defaults
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None, main_user_by_partner=None):
-            // if fields is None:
-            //     fields = ["active", "avatar_128", "email", "im_status", "is_company", "name", "user"]
-            // if not self.env.user._is_internal() and "email" in fields:
-            //     fields.remove("email")
-            // for partner in self:
-            //     data = partner._read_format(
-            //         [
-            //             field
-            //             for field in fields
-            //             if field
-            //             not in [
-            //                 "avatar_128",
-            //                 "country",
-            //                 "display_name",
-            //                 "isAdmin",
-            //                 "notification_type",
-            //                 "signature",
-            //                 "user",
-            //             ]
-            //         ],
-            //         load=False,
-            //     )[0]
-            //     if "avatar_128" in fields:
-            //         data["avatar_128_access_token"] = limited_field_access_token(partner, "avatar_128")
-            //         data["write_date"] = partner.write_date
-            //     if "country" in fields:
-            //         c = partner.country_id
-            //         data["country"] = {"code": c.code, "id": c.id, "name": c.name} if c else False
-            //     if "display_name" in fields:
-            //         data["displayName"] = partner.display_name
-            //     if 'user' in fields:
-            //         main_user = main_user_by_partner and main_user_by_partner.get(partner)
-            //         if not main_user:
-            //             users = partner.with_context(active_test=False).user_ids
-            //             internal_users = users - users.filtered("share")
-            //             main_user = (
-            //                 internal_users[0]
-            //                 if len(internal_users) > 0
-            //                 else users[0] if len(users) > 0 else self.env["res.users"]
-            //             )
-            //         data['userId'] = main_user.id
-            //         data["isInternalUser"] = not main_user.share if main_user else False
-            //         if "isAdmin" in fields:
-            //             data["isAdmin"] = main_user._is_admin()
-            //         if "notification_type" in fields:
-            //             data["notification_preference"] = main_user.notification_type
-            //         if "signature" in fields:
-            //             data["signature"] = main_user.signature
-            //     store.add(partner, data)
+            // def _to_store_defaults(self, target: Store.Target):
+            // res = [
+            //     "active",
+            //     "avatar_128",
+            //     "im_status",
+            //     "is_company",
+            //     Store.One("main_user_id", ["share"], sudo=True),  # sudo: to access portal user of another company in chatter
+            //     "name",
+            // ]
+            // if target.is_internal(self.env):
+            //     res.append("email")
+            // return res
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> TrackSubtypeInternalAsync(object init_values)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_partner, FILE: res_partner.py) ---
+            // def _track_subtype(self, init_values):
+            // self.ensure_one()
+            // if 'is_published' in init_values:
+            //     if self.is_published:
+            //         return self.env.ref('website_partner.mt_partner_published', raise_if_not_found=False)
+            //     return self.env.ref('website_partner.mt_partner_unpublished', raise_if_not_found=False)
+            // return super()._track_subtype(init_values)
+            */
+            return default;
+        }
+
+        protected async Task<ResPartner> UnlinkContactRelEmployeeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            // def _unlink_contact_rel_employee(self):
+            // partners = self.filtered(lambda partner: partner.sudo().employee_ids)
+            // if len(self) == 1 and len(partners) == 1 and self.id == partners[0].id:
+            //     raise UserError(_('You cannot delete contact that are linked to an employee, please archive them instead.'))
+            // if partners:
+            //     error_msg = _(
+            //         'You cannot delete contact(s) linked to employee(s).\n'
+            //         'Please archive them instead.\n\n'
+            //         'Affected contact(s): %(names)s', names=", ".join([u.name for u in partners]),
+            //     )
+            //     action_error = partners._action_show()
+            //     raise RedirectWarning(error_msg, action_error, _('Go to contact'))
             */
             return default;
         }
@@ -6545,36 +7322,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> UpdateAddressAsync(Guid id, ResPartnerUpdateAddressRequestDto input)
+        protected async Task<ResPartner> UnlinkIfPosNoOrdersInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def update_address(self, vals):
-            // addr_vals = {key: vals[key] for key in self._address_fields() if key in vals}
-            // if addr_vals:
-            //     return super().write(addr_vals)
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            // def _unlink_if_pos_no_orders(self):
+            // if self.sudo().pos_order_ids:
+            //     raise ValidationError(_('You cannot delete a customer that has point of sales orders. You can archive it instead.'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
-        protected async Task<ResPartner> UpdateFieldsValuesInternalAsync(object fields)
+        protected async Task<ResPartner> UpdateAddressInternalAsync(object vals)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _update_fields_values(self, fields):
-            // """ Returns dict of write() values for synchronizing ``fields`` """
-            // values = {}
-            // for fname in fields:
-            //     field = self._fields[fname]
-            //     if field.type == 'many2one':
-            //         values[fname] = self[fname].id
-            //     elif field.type == 'one2many':
-            //         raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
-            //     elif field.type == 'many2many':
-            //         values[fname] = [Command.set(self[fname].ids)]
-            //     else:
-            //         values[fname] = self[fname]
-            // return values
+            // def _update_address(self, vals):
+            // """ Filter values from vals that are liked to address definition, and
+            // update recordset using super().write to avoid loops and side effects
+            // due to synchronization of address fields through partner hierarchy. """
+            // addr_vals = {key: vals[key] for key in self._address_fields() if key in vals}
+            // if addr_vals:
+            //     super().write(addr_vals)
             */
             return default;
         }
@@ -6597,7 +7366,11 @@ namespace Bamboo.Core.Application.Services
             //         continue
             // 
             //     if all_companies is None:
-            //         all_companies = self.env['res.company'].sudo().search([])
+            //         # We only check it for companies that are actually using Peppol.
+            //         can_send = self.env['account_edi_proxy_client.user']._get_can_send_domain()
+            //         all_companies = self.env['res.company'].sudo().search([
+            //             ('account_peppol_proxy_state', 'in', can_send),
+            //         ])
             // 
             //     for company in all_companies:
             //         partner.button_account_peppol_check_partner_endpoint(company=company)
@@ -6632,11 +7405,11 @@ namespace Bamboo.Core.Application.Services
             // action['display_name'] = _('Courses')
             // action['domain'] = [('member_status', '!=', 'invited')]
             // if len(self) == 1 and self.is_company:
-            //     action['domain'] = expression.AND([action['domain'], [('partner_id', 'in', self.child_ids.ids)]])
+            //     action['domain'] = Domain.AND([action['domain'], [('partner_id', 'in', self.child_ids.ids)]])
             // elif len(self) == 1:
             //     action['context'] = {'search_default_partner_id': self.id}
             // else:
-            //     action['domain'] = expression.AND([action['domain'], [('partner_id', 'in', self.ids)]])
+            //     action['domain'] = Domain.AND([action['domain'], [('partner_id', 'in', self.ids)]])
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -6653,6 +7426,25 @@ namespace Bamboo.Core.Application.Services
             //         category=self.env['res.partner.category'].browse(self.env.context['category_id']).name,
             //     )
             // return super().view_header_get(view_id, view_type)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResPartner> ViewLivechatSessionsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
+            // def action_view_livechat_sessions(self):
+            // action = self.env["ir.actions.act_window"]._for_xml_id("im_livechat.discuss_channel_action")
+            // livechat_channel_ids = self.env['im_livechat.channel.member.history'].search([
+            //     ('partner_id', '=', self.id),
+            //     ('livechat_member_type', '=', 'visitor'),
+            // ]).channel_id.ids
+            // action["domain"] = Domain.AND([
+            //     ast.literal_eval(action["domain"]),
+            //     [('id', 'in', livechat_channel_ids)]
+            // ])
+            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -6676,33 +7468,16 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
             // def action_view_opportunity(self):
-            // '''
-            // This function returns an action that displays the opportunities from partner.
-            // '''
             // action = self.env['ir.actions.act_window']._for_xml_id('crm.crm_lead_opportunities')
-            // action['context'] = {}
-            // if self.is_company:
-            //     action['domain'] = [('partner_id.commercial_partner_id', '=', self.id)]
-            // else:
-            //     action['domain'] = [('partner_id', '=', self.id)]
-            // action['domain'] = expression.AND([action['domain'], [('active', 'in', [True, False])]])
-            // return action
-            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
-            // def action_view_opportunity(self):
-            // self.ensure_one()  # especially here as we are doing an id, in, IDS domain
-            // action = super().action_view_opportunity()
-            // action_domain_origin = action.get('domain')
-            // action_context_origin = action.get('context') or {}
-            // action_domain_assign = [('partner_assigned_id', '=', self.id)]
-            // if not action_domain_origin:
-            //     action['domain'] = action_domain_assign
-            //     return action
-            // # perform searches independently as having OR with those leaves seems to
-            // # be counter productive
-            // Lead = self.env['crm.lead'].with_context(**action_context_origin, active_test=False)
-            // ids_origin = Lead.search(action_domain_origin).ids
-            // ids_new = Lead.search(action_domain_assign).ids
-            // action['domain'] = [('id', 'in', sorted(list(set(ids_origin) | set(ids_new))))]
+            // action['context'] = {
+            //     'search_default_filter_won': 1,
+            //     'search_default_filter_ongoing': 1,
+            //     'search_default_filter_lost': 1,
+            //     'active_test': False,
+            // }
+            // # we want the list view first
+            // action['views'] = sorted(action['views'], key=lambda view: view[1] != 'list')
+            // action['domain'] = self._get_contact_opportunities_domain()
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -6726,37 +7501,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> ViewPartnerWithSameBankAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
-            // def action_view_partner_with_same_bank(self):
-            // self.ensure_one()
-            // bank_partners = self._get_duplicated_bank_accounts()
-            // # Open a list view or form view of the partner(s) with the same bank accounts
-            // if self.duplicated_bank_account_partners_count == 1:
-            //     action_vals = {
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'res.partner',
-            //         'view_mode': 'form',
-            //         'res_id': bank_partners.partner_id.id,
-            //         'views': [(False, 'form')],
-            //     }
-            // else:
-            //     action_vals = {
-            //         'name': _("Partners"),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'res.partner',
-            //         'view_mode': 'list,form',
-            //         'views': [(False, 'list'), (False, 'form')],
-            //         'domain': [('id', 'in', bank_partners.partner_id.ids)],
-            //     }
-            // 
-            // return action_vals
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResPartner> ViewPosOrderAsync(Guid id)
         {
             /*
@@ -6775,28 +7519,14 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> ViewSaleOrderAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: res_partner.py) ---
-            // def action_view_sale_order(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('sale.act_res_partner_2_sale_order')
-            // all_child = self.with_context(active_test=False).search([('id', 'child_of', self.ids)])
-            // action["domain"] = [("partner_id", "in", all_child.ids)]
-            // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResPartner> ViewStockLotsAsync(Guid id)
+        public async Task<ResPartner> ViewStockSerialAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_partner.py) ---
-            // def action_view_stock_lots(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_lot_report')
-            // all_child = self.with_context(active_test=False).search([('id', 'child_of', self.ids)])
-            // action["domain"] = [("partner_id", "in", all_child.ids)]
-            // action["context"] = {'search_default_filter_not_has_return': True}
+            // def action_view_stock_serial(self):
+            // action = self.env["ir.actions.act_window"]._for_xml_id("stock.action_production_lot_form")
+            // action['domain'] = [('partner_ids', 'child_of', self.ids)]
+            // action['context'] = {'display_complete': True}
             // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -6834,25 +7564,22 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def write(self, vals):
             // if 'parent_id' in vals:
-            //     partner2moves = self.sudo().env['account.move'].search([('partner_id', 'in', self.ids)]).grouped('partner_id')
+            //     partner2move_lines = self.sudo().env['account.move.line'].search([('partner_id', 'in', self.ids)]).grouped('partner_id')
             //     parent_vat = self.env['res.partner'].browse(vals['parent_id']).vat
-            //     if partner2moves and vals['parent_id'] and {parent_vat} != set(self.mapped('vat')):
+            //     if partner2move_lines and vals['parent_id'] and any((partner.vat or '') != (parent_vat or '') for partner in self):
             //         raise UserError(_("You cannot set a partner as an invoicing address of another if they have a different %(vat_label)s.", vat_label=self.vat_label))
             // 
             // res = super().write(vals)
             // 
             // if 'parent_id' in vals:
-            //     for partner, moves in partner2moves.items():
+            //     for partner, move_lines in partner2move_lines.items():
             //         partner._compute_commercial_partner()
             //         # Make sure to write on all the lines at the same time to avoid breaking the reconciliation check
-            //         moves.line_ids.with_context(bypass_lock_check=BYPASS_LOCK_CHECK).partner_id = partner.commercial_partner_id
-            //         moves.with_context(bypass_lock_check=BYPASS_LOCK_CHECK).commercial_partner_id = partner.commercial_partner_id
+            //         move_lines.with_context(bypass_lock_check=BYPASS_LOCK_CHECK).partner_id = partner.commercial_partner_id
+            // 
+            //         # Update the commercial partner on account.move that were *entirely* dedicated to that partner (exclude moves shared between partners, e.g misc entries or batch bank payments)
+            //         move_lines.move_id.filtered(lambda m: m.partner_id == partner).with_context(bypass_lock_check=BYPASS_LOCK_CHECK).commercial_partner_id = partner.commercial_partner_id
             //         partner._message_log(body=_("The commercial partner has been updated for all related accounting entries."))
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
-            // def write(self, vals):
-            // res = super().write(vals)
-            // self._update_peppol_state_per_company(vals=vals)
             // return res
             --- ODOO METHOD SOURCE (MODULE: base_geolocalize, FILE: res_partner.py) ---
             // def write(self, vals):
@@ -6866,11 +7593,8 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
-            // def write(self, values):
-            // if values.get('vat') and len(self.mapped('country_id')) == 1:
-            //     country_id = values.get('country_id', self.country_id.id)
-            //     values['vat'] = self._fix_vat_number(values['vat'], country_id)
-            // res = super().write(values)
+            // def write(self, vals):
+            // res = super().write(vals)
             // if self.env.context.get('import_file'):
             //     self.env.remove_to_compute(self._fields['vies_valid'], self)
             // return res
@@ -6901,6 +7625,20 @@ namespace Bamboo.Core.Application.Services
             //             } for partner in missing_partners
             //         ])
             // return res
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: res_partner.py) ---
+            // def write(self, vals):
+            // if vals.get('grade_id'):
+            //     grade = self.env['res.partner.grade'].browse(vals['grade_id'])
+            //     if grade.default_pricelist_id:
+            //         pricelist = vals.get('specific_property_product_pricelist') or vals.get('property_product_pricelist')
+            //         if pricelist and pricelist != grade.default_pricelist_id.id:
+            //             raise UserError(self.env._(
+            //                 "You are trying to assign two different pricelists (one directly and one from grade (%(grade_name)s)).",
+            //                 grade_name=grade.name,
+            //             ))
+            //         else:
+            //             vals['specific_property_product_pricelist'] = grade.default_pricelist_id.id
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: res_partner.py) ---
             // def write(self, vals):
             // letter_address_vals = {}
@@ -6959,15 +7697,28 @@ namespace Bamboo.Core.Application.Services
             //             raise ValidationError(_('You cannot archive contacts linked to an active user.\n'
             //                                     'Ask an administrator to archive their associated user first.\n\n'
             //                                     'Linked active users :\n%(names)s', names=", ".join([u.display_name for u in users])))
+            // if vals.get('website'):
+            //     vals['website'] = self._clean_website(vals['website'])
+            // if vals.get('parent_id'):
+            //     vals['company_name'] = False
+            // if vals.get('name'):
+            //     for partner in self:
+            //         for bank in partner.bank_ids:
+            //             if bank.acc_holder_name == partner.name:
+            //                 bank.acc_holder_name = vals['name']
+            // 
+            // # filter to keep only really updated values -> field synchronize goes through
+            // # partner tree and we should avoid infinite loops in case same value is
+            // # updated due to cycles. Use case: updating a property field, which updated
+            // # a computed field, which has an inverse writing the same value on property
+            // # field. Yay.
+            // pre_values_list = [{fname: partner[fname] for fname in vals} for partner in self]
+            // 
             // # res.partner must only allow to set the company_id of a partner if it
             // # is the same as the company of all users that inherit from this partner
             // # (this is to allow the code from res_users to write to the partner!) or
             // # if setting the company_id to False (this is compatible with any user
             // # company)
-            // if vals.get('website'):
-            //     vals['website'] = self._clean_website(vals['website'])
-            // if vals.get('parent_id'):
-            //     vals['company_name'] = False
             // if 'company_id' in vals:
             //     company_id = vals['company_id']
             //     for partner in self:
@@ -6976,19 +7727,21 @@ namespace Bamboo.Core.Application.Services
             //             companies = set(user.company_id for user in partner.user_ids)
             //             if len(companies) > 1 or company not in companies:
             //                 raise UserError(
-            //                     ("The selected company is not compatible with the companies of the related user(s)"))
+            //                     self.env._("The selected company is not compatible with the companies of the related user(s)"))
             //         if partner.child_ids:
             //             partner.child_ids.write({'company_id': company_id})
             // result = True
             // # To write in SUPERUSER on field is_company and avoid access rights problems.
             // if 'is_company' in vals and not self.env.su and self.env.user.has_group('base.group_partner_manager'):
-            //     result = super(Partner, self.sudo()).write({'is_company': vals.get('is_company')})
+            //     result = super(ResPartner, self.sudo()).write({'is_company': vals.get('is_company')})
             //     del vals['is_company']
             // result = result and super().write(vals)
-            // for partner in self:
-            //     if any(u._is_internal() for u in partner.user_ids if u != self.env.user):
-            //         self.env['res.users'].check_access('write')
-            //     partner._fields_sync(vals)
+            // for partner, pre_values in zip(self, pre_values_list, strict=True):
+            //     if internal_users := partner.user_ids.filtered(lambda u: u._is_internal() and u != self.env.user):
+            //         internal_users.check_access('write')
+            //     updated = {fname: fvalue for fname, fvalue in vals.items() if partner[fname] != pre_values[fname]}
+            //     if updated:
+            //         partner._fields_sync(updated)
             // return result
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
             // def write(self, vals):

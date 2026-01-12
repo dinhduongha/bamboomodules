@@ -36,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             // for server in self:
             //     connection = None
             //     try:
-            //         connection = server.connect(allow_archived=True)
+            //         connection = server._connect__(allow_archived=True)
             //         server.write({'state': 'done'})
             //     except UnicodeError as e:
             //         raise UserError(_("Invalid server name!\n %s", tools.exception_to_unicode(e)))
@@ -52,17 +52,25 @@ namespace Bamboo.Core.Application.Services
             //     finally:
             //         try:
             //             if connection:
-            //                 connection_type = server._get_connection_type()
-            //                 if connection_type == 'imap':
-            //                     connection.close()
-            //                 elif connection_type == 'pop':
-            //                     connection.quit()
+            //                 connection.disconnect()
             //         except Exception:
             //             # ignored, just a consequence of the previous exception
             //             pass
             // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<FetchmailServer> CheckUseGoogleGmailServiceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: fetchmail_server.py) ---
+            // def _check_use_google_gmail_service(self):
+            // for server in self:
+            //     if server.server_type == 'gmail' and not server.is_ssl:
+            //         raise UserError(_('SSL is required for server “%s”.', server.name))
+            */
+            return default;
         }
 
         protected async Task<FetchmailServer> CheckUseMicrosoftOutlookServiceInternalAsync()
@@ -73,18 +81,6 @@ namespace Bamboo.Core.Application.Services
             // for server in self:
             //     if server.server_type == 'outlook' and not server.is_ssl:
             //         raise UserError(_('SSL is required for server “%s”.', server.name))
-            */
-            return default;
-        }
-
-        protected async Task<FetchmailServer> ComputeIsMicrosoftOutlookConfiguredInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: fetchmail_server.py) ---
-            // def _compute_is_microsoft_outlook_configured(self):
-            // outlook_servers = self.filtered(lambda server: server.server_type == 'outlook')
-            // (self - outlook_servers).is_microsoft_outlook_configured = False
-            // super(FetchmailServer, outlook_servers)._compute_is_microsoft_outlook_configured()
             */
             return default;
         }
@@ -119,11 +115,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FetchmailServer> ConnectAsync(Guid id, FetchmailServerConnectRequestDto input)
+        protected async Task<FetchmailServer> ConnectInternalAsync(object allow_archived)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def connect(self, allow_archived=False):
+            // def _connect__(self, allow_archived=False):  # noqa: PLW3201
             // """
             // :param bool allow_archived: by default (False), an exception is raised when calling this method on an
             //    archived record. It can be set to True for testing so that the exception is no longer raised.
@@ -133,115 +129,133 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_('The server "%s" cannot be used because it is archived.', self.display_name))
             // connection_type = self._get_connection_type()
             // if connection_type == 'imap':
-            //     connection = IMAP4Connection(self.server, int(self.port), self.is_ssl)
-            //     self._imap_login(connection)
+            //     server, port, is_ssl = self.server, int(self.port), self.is_ssl
+            //     connection = OdooIMAP4_SSL(server, port, timeout=MAIL_TIMEOUT) if is_ssl else OdooIMAP4(server, port, timeout=MAIL_TIMEOUT)
+            //     self._imap_login__(connection)
             // elif connection_type == 'pop':
-            //     connection = POP3Connection(self.server, int(self.port), self.is_ssl)
+            //     server, port, is_ssl = self.server, int(self.port), self.is_ssl
+            //     connection = OdooPOP3_SSL(server, port, timeout=MAIL_TIMEOUT) if is_ssl else OdooPOP3(server, port, timeout=MAIL_TIMEOUT)
             //     #TODO: use this to remove only unread messages
             //     #connection.user("recent:"+server.user)
             //     connection.user(self.user)
             //     connection.pass_(self.password)
             // return connection
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
-        public async Task<FetchmailServer> FetchMailAsync(Guid id, FetchmailServerFetchMailRequestDto input)
+        public async Task<FetchmailServer> FetchMailAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def fetch_mail(self, raise_exception=True):
-            // """ WARNING: meant for cron usage only - will commit() after each email! """
-            // additionnal_context = {
-            //     'fetchmail_cron_running': True
-            // }
-            // MailThread = self.env['mail.thread']
-            // for server in self:
-            //     _logger.info('start checking for new emails on %s server %s', server.server_type, server.name)
-            //     additionnal_context['default_fetchmail_server_id'] = server.id
-            //     count, failed = 0, 0
-            //     imap_server = None
-            //     pop_server = None
-            //     connection_type = server._get_connection_type()
-            //     if connection_type == 'imap':
-            //         try:
-            //             imap_server = server.connect()
-            //             imap_server.select()
-            //             result, data = imap_server.search(None, '(UNSEEN)')
-            //             for num in data[0].split():
-            //                 res_id = None
-            //                 result, data = imap_server.fetch(num, '(RFC822)')
-            //                 imap_server.store(num, '-FLAGS', '\\Seen')
-            //                 try:
-            //                     res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, data[0][1], save_original=server.original, strip_attachments=(not server.attach))
-            //                 except Exception:
-            //                     _logger.info('Failed to process mail from %s server %s.', server.server_type, server.name, exc_info=True)
-            //                     failed += 1
-            //                 imap_server.store(num, '+FLAGS', '\\Seen')
-            //                 self._cr.commit()
-            //                 count += 1
-            //             _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", count, server.server_type, server.name, (count - failed), failed)
-            //         except Exception as e:
-            //             if raise_exception:
-            //                 raise ValidationError(_("Couldn't get your emails. Check out the error message below for more info:\n%s", e)) from e
-            //             else:
-            //                 _logger.info("General failure when trying to fetch mail from %s server %s.", server.server_type, server.name, exc_info=True)
-            //         finally:
-            //             if imap_server:
-            //                 try:
-            //                     imap_server.close()
-            //                     imap_server.logout()
-            //                 except (OSError, IMAP4.abort):
-            //                     _logger.warning('Failed to properly finish imap connection: %s.', server.name, exc_info=True)
-            //     elif connection_type == 'pop':
-            //         try:
-            //             while True:
-            //                 failed_in_loop = 0
-            //                 num = 0
-            //                 pop_server = server.connect()
-            //                 (num_messages, total_size) = pop_server.stat()
-            //                 pop_server.list()
-            //                 for num in range(1, min(MAX_POP_MESSAGES, num_messages) + 1):
-            //                     (header, messages, octets) = pop_server.retr(num)
-            //                     message = (b'\n').join(messages)
-            //                     res_id = None
-            //                     try:
-            //                         res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, message, save_original=server.original, strip_attachments=(not server.attach))
-            //                         pop_server.dele(num)
-            //                     except Exception:
-            //                         _logger.info('Failed to process mail from %s server %s.', server.server_type, server.name, exc_info=True)
-            //                         failed += 1
-            //                         failed_in_loop += 1
-            //                     self.env.cr.commit()
-            //                 _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", num, server.server_type, server.name, (num - failed_in_loop), failed_in_loop)
-            //                 # Stop if (1) no more message left or (2) all messages have failed
-            //                 if num_messages < MAX_POP_MESSAGES or failed_in_loop == num:
-            //                     break
-            //                 pop_server.quit()
-            //         except Exception as e:
-            //             if raise_exception:
-            //                 raise ValidationError(_("Couldn't get your emails. Check out the error message below for more info:\n%s", e)) from e
-            //             else:
-            //                 _logger.info("General failure when trying to fetch mail from %s server %s.", server.server_type, server.name, exc_info=True)
-            //         finally:
-            //             if pop_server:
-            //                 try:
-            //                     pop_server.quit()
-            //                 except OSError:
-            //                     _logger.warning('Failed to properly finish pop connection: %s.', server.name, exc_info=True)
-            //     server.write({'date': fields.Datetime.now()})
-            // return True
+            // def fetch_mail(self):
+            // """ Action to fetch the mail from the current server. """
+            // self.ensure_one().check_access('write')
+            // exception = self.sudo()._fetch_mail()
+            // if exception is not None:
+            //     raise exception
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<FetchmailServer> FetchMailInternalAsync(object batch_limit)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
+            // def _fetch_mail(self, batch_limit=50) -> Exception | None:
+            // """ Fetch e-mails from multiple servers.
+            // 
+            // Commit after each message.
+            // """
+            // result_exception = None
+            // servers = self.with_context(fetchmail_cron_running=True)
+            // total_remaining = len(servers)  # number of remaining messages + number of unchecked servers
+            // self.env['ir.cron']._commit_progress(remaining=total_remaining)
+            // 
+            // for server in servers:
+            //     total_remaining -= 1  # the server is checked
+            //     if not server.try_lock_for_update(allow_referencing=True).filtered_domain(MAIL_SERVER_DOMAIN):
+            //         _logger.info('Skip checking for new mails on mail server id %d (unavailable)', server.id)
+            //         continue
+            //     server_type_and_name = server.server_type, server.name  # avoid reading this after each commit
+            //     _logger.info('Start checking for new emails on %s server %s', *server_type_and_name)
+            //     count, failed = 0, 0
+            // 
+            //     # processing messages in a separate transaction to keep lock on the server
+            //     server_connection = None
+            //     message_cr = None
+            //     try:
+            //         server_connection = server._connect__()
+            //         message_cr = self.env.registry.cursor()
+            //         MailThread = server.env['mail.thread'].with_env(self.env(cr=message_cr)).with_context(default_fetchmail_server_id=server.id)
+            //         thread_process_message = functools.partial(
+            //             MailThread.message_process,
+            //             model=server.object_id.model,
+            //             save_original=server.original,
+            //             strip_attachments=(not server.attach),
+            //         )
+            //         unread_message_count = server_connection.check_unread_messages()
+            //         _logger.debug('%d unread messages on %s server %s.', unread_message_count, *server_type_and_name)
+            //         total_remaining += unread_message_count
+            //         for message_num, message in server_connection.retrieve_unread_messages():
+            //             _logger.debug('Fetched message %r on %s server %s.', message_num, *server_type_and_name)
+            //             count += 1
+            //             total_remaining -= 1
+            //             try:
+            //                 thread_process_message(message=message)
+            //                 remaining_time = MailThread.env['ir.cron']._commit_progress(1)
+            //             except Exception:  # noqa: BLE001
+            //                 MailThread.env.cr.rollback()
+            //                 failed += 1
+            //                 _logger.info('Failed to process mail from %s server %s.', *server_type_and_name, exc_info=True)
+            //                 remaining_time = MailThread.env['ir.cron']._commit_progress()
+            //             server_connection.handled_message(message_num)
+            //             if count >= batch_limit or not remaining_time:
+            //                 break
+            //         server.error_date = False
+            //         server.error_message = False
+            //     except Exception as e:  # noqa: BLE001
+            //         result_exception = e
+            //         _logger.info("General failure when trying to fetch mail from %s server %s.", *server_type_and_name, exc_info=True)
+            //         if not server.error_date:
+            //             server.error_date = fields.Datetime.now()
+            //             server.error_message = exception_to_unicode(e)
+            //         elif server.error_date < fields.Datetime.now() - MAIL_SERVER_DEACTIVATE_TIME:
+            //             message = "Deactivating fetchmail %s server %s (too many failures)" % server_type_and_name
+            //             server.set_draft()
+            //             server.env['ir.cron']._notify_admin(message)
+            //     finally:
+            //         if message_cr is not None:
+            //             message_cr.close()
+            //         try:
+            //             if server_connection:
+            //                 server_connection.disconnect()
+            //         except (OSError, IMAP4.abort):
+            //             _logger.warning('Failed to properly finish %s connection: %s.', *server_type_and_name, exc_info=True)
+            //     _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", count, *server_type_and_name, (count - failed), failed)
+            //     server.write({'date': fields.Datetime.now()})
+            //     # Commit before updating the progress because progress may be
+            //     # updated for messages using another transaction. Without a commit
+            //     # before updating the progress, we would have a serialization error.
+            //     self.env.cr.commit()
+            //     if not self.env['ir.cron']._commit_progress(remaining=total_remaining):
+            //         break
+            // return result_exception
+            */
+            return default;
         }
 
         protected async Task<FetchmailServer> FetchMailsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def _fetch_mails(self):
+            // def _fetch_mails(self, **kw):
             // """ Method called by cron to fetch mails from servers """
-            // return self.search([('state', '=', 'done'), ('server_type', '!=', 'local')]).fetch_mail(raise_exception=False)
+            // assert self.env.context.get('cron_id') == self.env.ref('mail.ir_cron_mail_gateway_action').id, "Meant for cron usage only"
+            // self.search(MAIL_SERVER_DOMAIN)._fetch_mail(**kw)
+            // if not self.search_count(MAIL_SERVER_DOMAIN):
+            //     # no server is active anymore
+            //     self.env['ir.cron']._commit_progress(deactivate=True)
             */
             return default;
         }
@@ -279,7 +293,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: fetchmail_server.py) ---
-            // def _imap_login(self, connection):
+            // def _imap_login__(self, connection):  # noqa: PLW3201
             // """Authenticate the IMAP connection.
             // 
             // If the mail server is Gmail, we use the OAuth2 authentication protocol.
@@ -290,9 +304,9 @@ namespace Bamboo.Core.Application.Services
             //     connection.authenticate('XOAUTH2', lambda x: auth_string)
             //     connection.select('INBOX')
             // else:
-            //     super(FetchmailServer, self)._imap_login(connection)
+            //     super()._imap_login__(connection)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def _imap_login(self, connection):
+            // def _imap_login__(self, connection):  # noqa: PLW3201
             // """Authenticate the IMAP connection.
             // 
             // Can be overridden in other module for different authentication methods.
@@ -302,7 +316,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // connection.login(self.user, self.password)
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: fetchmail_server.py) ---
-            // def _imap_login(self, connection):
+            // def _imap_login__(self, connection):  # noqa: PLW3201
             // """Authenticate the IMAP connection.
             // 
             // If the mail server is Outlook, we use the OAuth2 authentication protocol.
@@ -313,7 +327,7 @@ namespace Bamboo.Core.Application.Services
             //     connection.authenticate('XOAUTH2', lambda x: auth_string)
             //     connection.select('INBOX')
             // else:
-            //     super()._imap_login(connection)
+            //     super()._imap_login__(connection)
             */
             return default;
         }
@@ -329,11 +343,10 @@ namespace Bamboo.Core.Application.Services
             //     self.is_ssl = True
             //     self.port = 993
             // else:
-            //     self.google_gmail_authorization_code = False
             //     self.google_gmail_refresh_token = False
             //     self.google_gmail_access_token = False
             //     self.google_gmail_access_token_expiration = False
-            //     super(FetchmailServer, self).onchange_server_type()
+            //     super().onchange_server_type()
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
             // def onchange_server_type(self):
             //         self.port = 0
@@ -365,7 +378,7 @@ namespace Bamboo.Core.Application.Services
             //     self.microsoft_outlook_refresh_token = False
             //     self.microsoft_outlook_access_token = False
             //     self.microsoft_outlook_access_token_expiration = False
-            //     super(FetchmailServer, self).onchange_server_type()
+            //     super().onchange_server_type()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -391,7 +404,7 @@ namespace Bamboo.Core.Application.Services
             // try:
             //     # Enabled/Disable cron based on the number of 'done' server of type pop or imap
             //     cron = self.env.ref('mail.ir_cron_mail_gateway_action')
-            //     cron.toggle(model=self._name, domain=[('state', '=', 'done'), ('server_type', '!=', 'local')])
+            //     cron.toggle(model=self._name, domain=MAIL_SERVER_DOMAIN)
             // except ValueError:
             //     pass
             */

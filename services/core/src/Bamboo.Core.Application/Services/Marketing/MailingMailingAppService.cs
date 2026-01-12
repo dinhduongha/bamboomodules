@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "utm", "link_tracker", "web_editor", "social_media", "web_tour", "digest" })]
+    [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
     public class MailingMailingAppService : GenericApplicationService<MailingMailing>, IMailingMailingAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _action_send_mail(self, res_ids=None):
-            // author_id = self.env.user.partner_id.id
+            // odoobot = self.env.ref('base.partner_root')
+            // user_partner = self.env.user.partner_id
             // 
             // for mailing in self:
             //     context_user = mailing.user_id or mailing.write_uid or self.env.user
@@ -52,7 +53,8 @@ namespace Bamboo.Core.Application.Services
             //         'auto_delete': not mailing.keep_archives,
             //         # email-mode: keep original message for routing
             //         'auto_delete_keep_log': mailing.reply_to_mode == 'update',
-            //         'author_id': author_id,
+            //         # If current user is odoobot, use mailing responsible (no impact on email_from)
+            //         'author_id': mailing.user_id.partner_id.id if user_partner == odoobot else user_partner.id,
             //         'attachment_ids': [(4, attachment.id) for attachment in mailing.attachment_ids],
             //         'body': mailing._prepend_preview(mailing.body_html or '', mailing.preview),
             //         'composition_mode': 'mass_mail',
@@ -61,10 +63,10 @@ namespace Bamboo.Core.Application.Services
             //         'mailing_list_ids': [(4, l.id) for l in mailing.contact_list_ids],
             //         'mass_mailing_id': mailing.id,
             //         'model': mailing.mailing_model_real,
-            //         'record_name': False,
             //         'reply_to_force_new': mailing.reply_to_mode == 'new',
             //         'subject': mailing.subject,
             //         'template_id': False,
+            //         'use_exclusion_list': mailing.use_exclusion_list,
             //     }
             //     if mailing.reply_to_mode == 'new':
             //         composer_values['reply_to'] = mailing.reply_to
@@ -76,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             //     ).create(composer_values)
             // 
             //     # auto-commit except in testing mode
-            //     auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            //     auto_commit = not modules.module.current_test
             //     composer._action_send_mail(auto_commit=auto_commit)
             // 
             //     mailing.write({
@@ -96,7 +98,7 @@ namespace Bamboo.Core.Application.Services
             // mass_sms = self.filtered(lambda m: m.mailing_type == 'sms')
             // if mass_sms:
             //     mass_sms.action_send_sms(res_ids=res_ids)
-            // return super(Mailing, self - mass_sms)._action_send_mail(res_ids=res_ids)
+            // return super(MailingMailing, self - mass_sms)._action_send_mail(res_ids=res_ids)
             */
             return default;
         }
@@ -113,7 +115,7 @@ namespace Bamboo.Core.Application.Services
             // for mailing in self:
             //     if mailing.user_id:
             //         mailing = mailing.with_user(mailing.user_id).with_context(
-            //             lang=mailing.user_id.lang or self._context.get('lang')
+            //             lang=mailing.user_id.lang or self.env.context.get('lang')
             //         )
             //     mailing_type = mailing._get_pretty_mailing_type()
             //     mail_user = mailing.user_id or self.env.user
@@ -177,41 +179,37 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _action_view_documents_filtered(self, view_filter):
             // def _fetch_trace_res_ids(trace_domain):
-            //     trace_domain = expression.AND([
-            //         trace_domain,
-            //         [('mass_mailing_id', '=', self.id)],
-            //     ])
-            //     result = self.env['mailing.trace'].search_read(domain=trace_domain, fields=['res_id'])
-            //     return [line['res_id'] for line in result]
+            //     trace_domain &= Domain('mass_mailing_id', '=', self.id)
+            //     return self.env['mailing.trace'].search_fetch(domain=trace_domain, field_names=['res_id']).mapped('res_id')
             // 
             // model_name = self.env['ir.model']._get(self.mailing_model_real).display_name
             // helper_header = None
             // helper_message = None
             // if view_filter == 'reply':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', '=', 'reply')])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', '=', 'reply'))
             //     helper_header = _("No %s replied to your mailing yet!", model_name)
             //     helper_message = _("To track how many replies this mailing gets, make sure "
             //                        "its reply-to address belongs to this database.")
             // elif view_filter == 'bounce':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', '=', 'bounce')])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', '=', 'bounce'))
             //     helper_header = _("No %s address bounced yet!", model_name)
             //     helper_message = _("Bounce happens when a mailing cannot be delivered (fake address, "
             //                        "server issues, ...). Check each record to see what went wrong.")
             // elif view_filter == 'clicked':
-            //     res_ids = _fetch_trace_res_ids([('links_click_ids', '!=', False)])
+            //     res_ids = _fetch_trace_res_ids(Domain('links_click_ids', '!=', False))
             //     helper_header = _("No %s clicked your mailing yet!", model_name)
             //     helper_message = _(
             //         "Come back once your mailing has been sent to track who clicked on the embedded links.")
             // elif view_filter == 'open':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', 'in', ('open', 'reply'))])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', 'in', ('open', 'reply')))
             //     helper_header = _("No %s opened your mailing yet!", model_name)
             //     helper_message = _("Come back once your mailing has been sent to track who opened your mailing.")
             // elif view_filter == 'delivered':
-            //     res_ids = _fetch_trace_res_ids([('trace_status', 'in', ('sent', 'open', 'reply'))])
+            //     res_ids = _fetch_trace_res_ids(Domain('trace_status', 'in', ('sent', 'open', 'reply')))
             //     helper_header = _("No %s received your mailing yet!", model_name)
             //     helper_message = _("Wait until your mailing has been sent to check how many recipients you managed to reach.")
             // elif view_filter == 'sent':
-            //     res_ids = _fetch_trace_res_ids([('sent_datetime', '!=', False)])
+            //     res_ids = _fetch_trace_res_ids(Domain('sent_datetime', '!=', False))
             // else:
             //     res_ids = []
             // 
@@ -221,7 +219,7 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             //     'res_model': self.mailing_model_real,
             //     'domain': [('id', 'in', res_ids)],
-            //     'context': dict(self._context, create=False),
+            //     'context': dict(self.env.context, create=False),
             // }
             // if helper_header and helper_message:
             //     action['help'] = Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
@@ -249,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             // return action
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
             // def _action_view_traces_filtered(self, view_filter):
-            // action = super(Mailing, self)._action_view_traces_filtered(view_filter)
+            // action = super()._action_view_traces_filtered(view_filter)
             // if self.mailing_type == 'sms':
             //     action['views'] = [(self.env.ref('mass_mailing_sms.mailing_trace_view_tree_sms').id, 'list'),
             //                        (self.env.ref('mass_mailing_sms.mailing_trace_view_form_sms').id, 'form')]
@@ -326,7 +324,7 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'list,kanban,form,calendar,graph',
             //     'res_model': 'mailing.mailing',
-            //     'domain': expression.AND([
+            //     'domain': Domain.AND([
             //         [('campaign_id', '=', self.campaign_id.id)],
             //         [('ab_testing_enabled', '=', True)],
             //         [('mailing_type', '=', self.mailing_type)]
@@ -549,7 +547,7 @@ namespace Bamboo.Core.Application.Services
             //     elif mailing.mailing_filter_id:
             //         mailing.mailing_domain = mailing.mailing_filter_id.mailing_domain
             //     else:
-            //         mailing.mailing_domain = repr(mailing._get_default_mailing_domain())
+            //         mailing.mailing_domain = repr(mailing._get_default_mailing_domain() or [])
             */
             return default;
         }
@@ -635,7 +633,7 @@ namespace Bamboo.Core.Application.Services
             //         mailing.medium_id = self.env['utm.medium']._fetch_or_create_utm_medium('email').id
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
             // def _compute_medium_id(self):
-            // super(Mailing, self)._compute_medium_id()
+            // super()._compute_medium_id()
             // for mailing in self:
             //     if mailing.mailing_type == 'sms' and (not mailing.medium_id or mailing.medium_id == self.env['utm.medium']._fetch_or_create_utm_medium('email')):
             //         mailing.medium_id = self.env['utm.medium']._fetch_or_create_utm_medium("sms", module="mass_mailing_sms").id
@@ -662,9 +660,9 @@ namespace Bamboo.Core.Application.Services
             // for mass_mailing in self:
             //     if mass_mailing.schedule_date:
             //         # max in case the user schedules a date in the past
-            //         mass_mailing.next_departure = max(mass_mailing.schedule_date, fields.datetime.now())
+            //         mass_mailing.next_departure = max(mass_mailing.schedule_date, fields.Datetime.now())
             //     else:
-            //         mass_mailing.next_departure = fields.datetime.now()
+            //         mass_mailing.next_departure = fields.Datetime.now()
             // past = self.filtered(
             //     lambda mailing: mailing.state == 'in_queue' and mailing.next_departure < fields.Datetime.now()
             // )
@@ -723,7 +721,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: mailing_mailing.py) ---
             // def _compute_sale_invoiced_amount(self):
-            // domain = expression.AND([
+            // domain = Domain.AND([
             //     [('source_id', 'in', self.source_id.ids)],
             //     [('state', 'not in', ['draft', 'cancel'])]
             // ])
@@ -941,7 +939,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Apply the changes.
             // urls = self._create_attachments_from_inline_images([(image, original_id) for (image, _, _, original_id) in conversion_info])
-            // for ((image, node, old_url, original_id), new_url) in zip(conversion_info, urls):
+            // for ((_image, node, old_url, _original_id), new_url) in zip(conversion_info, urls):
             //     did_modify_body = True
             //     if node.tag == 'img':
             //         node.attrib['src'] = new_url
@@ -986,7 +984,7 @@ namespace Bamboo.Core.Application.Services
             //     tracker_values = mailing._get_link_tracker_values()
             //     body = mailing._shorten_links_text(mailing.body_plaintext, tracker_values)
             //     res[mailing.id] = body
-            // res.update(super(Mailing, self - sms_mailings).convert_links())
+            // res.update(super(MailingMailing, self - sms_mailings).convert_links())
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1126,20 +1124,20 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def default_get(self, fields_list):
-            // vals = super(MassMailing, self).default_get(fields_list)
+            // def default_get(self, fields):
+            // vals = super().default_get(fields)
             // 
             // # field sent by the calendar view when clicking on a date block
             // # we use it to setup the scheduled date of the created mailing.mailing
             // default_calendar_date = self.env.context.get('default_calendar_date')
-            // if default_calendar_date and ('schedule_type' in fields_list and 'schedule_date' in fields_list) \
-            //    and fields.Datetime.from_string(default_calendar_date) > fields.Datetime.now():
+            // if default_calendar_date and ('schedule_type' in fields and 'schedule_date' in fields) \
+            //    and Datetime.to_datetime(default_calendar_date) > Datetime.now():
             //     vals.update({
             //         'schedule_type': 'scheduled',
             //         'schedule_date': default_calendar_date
             //     })
             // 
-            // if 'contact_list_ids' in fields_list and not vals.get('contact_list_ids') and vals.get('mailing_model_id'):
+            // if 'contact_list_ids' in fields and not vals.get('contact_list_ids') and vals.get('mailing_model_id'):
             //     if vals.get('mailing_model_id') == self.env['ir.model']._get_id('mailing.list'):
             //         mailing_list = self.env['mailing.list'].search([], limit=2)
             //         if len(mailing_list) == 1:
@@ -1147,7 +1145,7 @@ namespace Bamboo.Core.Application.Services
             // return vals
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
             // def default_get(self, fields):
-            // res = super(Mailing, self).default_get(fields)
+            // res = super().default_get(fields)
             // if fields is not None and 'keep_archives' in fields and res.get('mailing_type') == 'sms':
             //     res['keep_archives'] = True
             // return res
@@ -1185,9 +1183,9 @@ namespace Bamboo.Core.Application.Services
             // while keeping using it, without cluttering the Kanban view if they're a lot of
             // templates.
             // """
-            // domain = [('favorite', '=', True)]
+            // domain = Domain('favorite', '=', True)
             // if extra_domain:
-            //     domain = expression.AND([domain, extra_domain])
+            //     domain &= Domain(extra_domain)
             // 
             // values_list = self.with_context(active_test=False).search_read(
             //     domain=domain,
@@ -1389,20 +1387,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_default_mailing_domain(self):
-            // mailing_domain = []
+            // mailing_domain = Domain.TRUE
             // if hasattr(self.env[self.mailing_model_name], '_mailing_get_default_domain'):
-            //     mailing_domain = self.env[self.mailing_model_name]._mailing_get_default_domain(self)
-            // 
-            // if self.mailing_type == 'mail' and 'is_blacklisted' in self.env[self.mailing_model_name]._fields:
-            //     mailing_domain = expression.AND([[('is_blacklisted', '=', False)], mailing_domain])
-            // 
-            // return mailing_domain
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
-            // def _get_default_mailing_domain(self):
-            // mailing_domain = super(Mailing, self)._get_default_mailing_domain()
-            // if self.mailing_type == 'sms' and 'phone_sanitized_blacklisted' in self.env[self.mailing_model_name]._fields:
-            //     mailing_domain = expression.AND([mailing_domain, [('phone_sanitized_blacklisted', '=', False)]])
-            // 
+            //     mailing_domain = Domain(self.env[self.mailing_model_name]._mailing_get_default_domain(self))
             // return mailing_domain
             */
             return default;
@@ -1413,10 +1400,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_image_by_url(self, url, session):
-            // maxsize = int(tools.config.get("import_image_maxbytes", DEFAULT_IMAGE_MAXBYTES))
+            // maxsize = tools.config.get("import_file_maxbytes")
             // _logger.debug("Trying to import image from URL: %s", url)
             // try:
-            //     response = session.get(url, timeout=int(tools.config.get("import_image_timeout", DEFAULT_IMAGE_TIMEOUT)))
+            //     response = session.get(url, timeout=tools.config.get("import_file_timeout"))
             //     response.raise_for_status()
             // 
             //     if response.headers.get('Content-Length') and int(response.headers['Content-Length']) > maxsize:
@@ -1490,8 +1477,11 @@ namespace Bamboo.Core.Application.Services
             // """ Give list of opt-outed emails, depending on specific model-based
             // computation if available.
             // 
-            // :return list: opt-outed emails, preferably normalized (aka not records)
+            // :returns: opt-outed emails, preferably normalized (aka not records)
             // """
+            // # FIXME: The function and docstring say it returns a list but opt_out
+            // #        is initialized as a dict, and `_mailing_get_opt_out_list`
+            // #        actually returns a set. So is it a list, a set, or a dict?
             // self.ensure_one()
             // opt_out = {}
             // target = self.env[self.mailing_model_real]
@@ -1515,7 +1505,8 @@ namespace Bamboo.Core.Application.Services
             // """ Give list of opt-outed records, depending on specific model-based
             // computation if available.
             // 
-            // :return list: opt-outed record IDs
+            // :returns: opt-outed record IDs
+            // :rtype: list
             // """
             // self.ensure_one()
             // opt_out = []
@@ -1540,7 +1531,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_pretty_mailing_type(self):
             // if self.mailing_type == 'sms':
             //     return _('SMS Text Message')
-            // return super(Mailing, self)._get_pretty_mailing_type()
+            // return super()._get_pretty_mailing_type()
             */
             return default;
         }
@@ -1551,15 +1542,15 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: mailing_mailing.py) ---
             // def _get_recipients_domain(self):
             // """Domain with an additional condition that the card must exist for the records."""
-            // domain = super()._get_recipients_domain()
+            // domain = Domain(super()._get_recipients_domain())
             // if self.card_campaign_id:
             //     res_ids = self.env['card.card'].search_fetch([('campaign_id', '=', self.card_campaign_id.id)], ['res_id']).mapped('res_id')
-            //     domain = osv.expression.AND([domain, [('id', 'in', res_ids)]])
+            //     domain &= Domain('id', 'in', res_ids)
             // return domain
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_recipients_domain(self):
             // """Overridable getter used to get the domain of the recipients at the time of sending."""
-            // return self._parse_mailing_domain()
+            // return Domain(self._parse_mailing_domain())
             */
             return default;
         }
@@ -1597,14 +1588,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_remaining_recipients(self):
             // res_ids = self._get_recipients()
-            // trace_domain = [('model', '=', self.mailing_model_real)]
+            // trace_domain = Domain('model', '=', self.mailing_model_real)
             // if self.ab_testing_enabled and self.ab_testing_is_winner_mailing:
-            //     trace_domain = expression.AND([trace_domain, [('mass_mailing_id', 'in', self._get_ab_testing_siblings_mailings().ids)]])
+            //     trace_domain &= Domain('mass_mailing_id', 'in', self._get_ab_testing_siblings_mailings().ids)
             // else:
-            //     trace_domain = expression.AND([trace_domain, [
-            //         ('res_id', 'in', res_ids),
-            //         ('mass_mailing_id', '=', self.id),
-            //     ]])
+            //     trace_domain &= Domain('res_id', 'in', res_ids) & Domain('mass_mailing_id', '=', self.id)
             // already_mailed = self.env['mailing.trace'].search_read(trace_domain, ['res_id'])
             // done_res_ids = {record['res_id'] for record in already_mailed}
             // return [rid for rid in res_ids if rid not in done_res_ids]
@@ -1652,8 +1640,8 @@ namespace Bamboo.Core.Application.Services
             // join_domain, where_domain = self._get_seen_list_extra()
             // query = query % {'target': target._table, 'join_domain': join_domain, 'where_domain': where_domain}
             // params = {'mailing_id': self.id, 'mailing_campaign_id': self.campaign_id.id, 'target_model': self.mailing_model_real}
-            // self._cr.execute(query, params)
-            // seen_list = set(m[0] for m in self._cr.fetchall())
+            // self.env.cr.execute(query, params)
+            // seen_list = {m[0] for m in self.env.cr.fetchall()}
             // _logger.info(
             //     "Mass-mailing %s has already reached %s %s emails", self, len(seen_list), target._name)
             // return seen_list
@@ -1702,7 +1690,7 @@ namespace Bamboo.Core.Application.Services
             //     join_add_query = ''
             // else:
             //     # phone fields are checked on res.partner model
-            //     partner_phone_fields = ['mobile', 'phone']
+            //     partner_phone_fields = ['phone']
             //     select_query = 'target.id, ' + ', '.join('partner.%s' % fname for fname in partner_phone_fields)
             //     where_query = ' OR '.join('partner.%s IS NOT NULL' % fname for fname in partner_phone_fields)
             //     join_add_query = 'JOIN res_partner partner ON (target.%s = partner.id)' % partner_field
@@ -1714,8 +1702,8 @@ namespace Bamboo.Core.Application.Services
             //     'join_add_query': join_add_query,
             // }
             // params = {'mailing_id': self.id, 'target_model': self.mailing_model_real}
-            // self._cr.execute(query, params)
-            // query_res = self._cr.fetchall()
+            // self.env.cr.execute(query, params)
+            // query_res = self.env.cr.fetchall()
             // seen_list = set(number for item in query_res for number in item[1:] if number)
             // seen_ids = set(item[0] for item in query_res)
             // _logger.info("Mass SMS %s targets %s: already reached %s SMS", self, target._name, len(seen_list))
@@ -1732,10 +1720,11 @@ namespace Bamboo.Core.Application.Services
             // """Get placeholders for replaced links in sms widget for accurate computation of sms counts.
             // 
             // Reminders and assumptions:
-            //   * Links wille be transformed to the format "[base_url]/r/[link_tracker_code]/s/[sms_id]".
-            //   * unsubscribe is formatted as: "\nSTOP SMS : [base_url]/sms/[mailing_id]/[trace_code]".
             // 
-            // :return: Character counts used for links, formatted as `{link: str, unsubscribe: str}`.
+            // * Links wille be transformed to the format ``"[base_url]/r/[link_tracker_code]/s/[sms_id]"``.
+            // * unsubscribe is formatted as: ``"STOP SMS : [base_url]/sms/[mailing_id]/[trace_code]"``.
+            // 
+            // :returns: Character counts used for links, formatted as ``{link: str, unsubscribe: str}``.
             // """
             // if self:
             //     self.ensure_one()
@@ -1769,7 +1758,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_unsubscribe_oneclick_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/unsubscribe_oneclick?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -1777,7 +1766,7 @@ namespace Bamboo.Core.Application.Services
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -1789,7 +1778,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_unsubscribe_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/confirm_unsubscribe?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -1797,7 +1786,7 @@ namespace Bamboo.Core.Application.Services
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -1809,7 +1798,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _get_view_url(self, email_to, res_id):
-            // url = werkzeug.urls.url_join(
+            // url = tools.urls.urljoin(
             //     self.get_base_url(), 'mailing/%(mailing_id)s/view?%(params)s' % {
             //         'mailing_id': self.id,
             //         'params': werkzeug.urls.url_encode({
@@ -1817,7 +1806,7 @@ namespace Bamboo.Core.Application.Services
             //             'email': email_to,
             //             'hash_token': self._generate_mailing_recipient_token(res_id, email_to),
             //         }),
-            //     }
+            //     },
             // )
             // return url
             */
@@ -1886,7 +1875,7 @@ namespace Bamboo.Core.Application.Services
             //     }
             // 
             // random_tip = self.env['digest.tip'].search(
-            //     [('group_id.category_id', '=', self.env.ref('base.module_category_marketing_email_marketing').id)]
+            //     [('group_id.privilege_id', '=', self.env.ref('mass_mailing.res_groups_privilege_email_marketing').id)]
             // )
             // if random_tip:
             //     random_tip = random.choice(random_tip).tip_description
@@ -1903,7 +1892,7 @@ namespace Bamboo.Core.Application.Services
             //                mailing_name=self.subject
             //                ),
             //     'top_button_label': _('More Info'),
-            //     'top_button_url': url_join(web_base_url, f'/odoo/mailing.mailing/{self.id}'),
+            //     'top_button_url': tools.urls.urljoin(web_base_url, f'/odoo/mailing.mailing/{self.id}'),
             //     'kpi_data': [
             //         kpi,
             //         {
@@ -1924,7 +1913,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_crm, FILE: mailing_mailing.py) ---
             // def _prepare_statistics_email_values(self):
             // self.ensure_one()
-            // values = super(MassMailing, self)._prepare_statistics_email_values()
+            // values = super()._prepare_statistics_email_values()
             // if not self.user_id:
             //     return values
             // if not self.env['crm.lead'].has_access('read'):
@@ -1938,7 +1927,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: mailing_mailing.py) ---
             // def _prepare_statistics_email_values(self):
             // self.ensure_one()
-            // values = super(MassMailing, self)._prepare_statistics_email_values()
+            // values = super()._prepare_statistics_email_values()
             // if not self.user_id:
             //     return values
             // 
@@ -1963,7 +1952,7 @@ namespace Bamboo.Core.Application.Services
             // Each item in the returned list will be displayed as a table, with a title and
             // 1, 2 or 3 columns.
             // """
-            // values = super(Mailing, self)._prepare_statistics_email_values()
+            // values = super()._prepare_statistics_email_values()
             // if self.mailing_type == 'sms':
             //     mailing_type = self._get_pretty_mailing_type()
             //     values['title'] = _('24H Stats of %(mailing_type)s "%(mailing_name)s"',
@@ -2001,8 +1990,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def _process_mass_mailing_queue(self):
             // mass_mailings = self.search([('state', 'in', ('in_queue', 'sending')), '|', ('schedule_date', '<', fields.Datetime.now()), ('schedule_date', '=', False)])
-            // count_total = len(mass_mailings)
-            // for count_done, mass_mailing in enumerate(mass_mailings, start=1):
+            // self.env['ir.cron']._commit_progress(remaining=len(mass_mailings))
+            // for mass_mailing in mass_mailings:
             //     context_user = mass_mailing.user_id or mass_mailing.write_uid or self.env.user
             //     mass_mailing = mass_mailing.with_context(
             //         **self.env['res.users'].with_user(context_user).context_get()
@@ -2017,7 +2006,7 @@ namespace Bamboo.Core.Application.Services
             //             # send the KPI mail only if it's the first sending
             //             'kpi_mail_required': not mass_mailing.sent_date,
             //         })
-            //     self.env['ir.cron']._notify_progress(done=count_done, remaining=count_total - count_done)
+            //     self.env['ir.cron']._commit_progress(processed=1)
             // 
             // if self.env['ir.config_parameter'].sudo().get_param('mass_mailing.mass_mailing_reports'):
             //     mailings = self.env['mailing.mailing'].search([
@@ -2062,7 +2051,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: mailing_mailing.py) ---
             // def action_redirect_to_invoiced(self):
-            // domain = expression.AND([
+            // domain = Domain.AND([
             //     [('source_id', '=', self.source_id.id)],
             //     [('state', 'not in', ['draft', 'cancel'])]
             // ])
@@ -2185,19 +2174,27 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_retry_failed(self):
-            // failed_mails = self.env['mail.mail'].sudo().search([
+            // """ Remove all failed emails and their traces, and try sending them again."""
+            // # Use batching to prevent cache overfill in unlink()
+            // batch_size = 1000
+            // failed_emails = self.env['mail.mail'].sudo().with_context(prefetch_fields=False).search([
             //     ('mailing_id', 'in', self.ids),
             //     ('state', '=', 'exception')
-            // ])
-            // failed_mails.mapped('mailing_trace_ids').unlink()
-            // failed_mails.unlink()
+            // ], limit=batch_size)
+            // while failed_emails:
+            //     failed_emails.mapped('mailing_trace_ids').unlink()
+            //     failed_emails.unlink()
+            //     failed_emails = failed_emails.search([
+            //         ('mailing_id', 'in', self.ids),
+            //         ('state', '=', 'exception')
+            //     ], limit=batch_size)
             // self.action_put_in_queue()
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
             // def action_retry_failed(self):
             // mass_sms = self.filtered(lambda m: m.mailing_type == 'sms')
             // if mass_sms:
             //     mass_sms.action_retry_failed_sms()
-            // return super(Mailing, self - mass_sms).action_retry_failed()
+            // return super(MailingMailing, self - mass_sms).action_retry_failed()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2306,6 +2303,7 @@ namespace Bamboo.Core.Application.Services
             //     'mass_keep_log': self.keep_archives,
             //     'mass_force_send': self.sms_force_send,
             //     'mass_sms_allow_unsubscribe': self.sms_allow_unsubscribe,
+            //     'use_exclusion_list': self.use_exclusion_list,
             // }
             */
             return default;
@@ -2318,10 +2316,12 @@ namespace Bamboo.Core.Application.Services
             // def action_send_winner_mailing(self):
             // """Send the winner mailing based on the winner selection field.
             // This action is used in 2 cases:
-            //     - When the user clicks on a button to send the winner mailing. There is only one mailing in self
-            //     - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
-            //     case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
-            //     winner.
+            // 
+            // - When the user clicks on a button to send the winner mailing. There is only one mailing in self
+            // - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
+            //   case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
+            //   winner.
+            // 
             // If the winner mailing is computed automatically, we sudo the mailings of the campaign in order to sort correctly
             // the mailings based on the selection that can be used with sub-modules like CRM and Sales
             // """
@@ -2395,7 +2395,7 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'new',
             //         'context': ctx,
             //     }
-            // return super(Mailing, self).action_test()
+            // return super().action_test()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2468,7 +2468,7 @@ namespace Bamboo.Core.Application.Services
             //     'help': Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
             //         helper_header, helper_message,
             //     ),
-            //     'context': dict(self._context, create=False)
+            //     'context': dict(self.env.context, create=False)
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;

@@ -28,6 +28,17 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
+        public async Task<SurveySurvey> ArchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def action_archive(self):
+            // super().action_archive()
+            // self.certification_badge_id.action_archive()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<SurveySurvey> CanGoBackInternalAsync(object answer, object page_or_question)
         {
             /*
@@ -111,11 +122,10 @@ namespace Bamboo.Core.Application.Services
             //         - and there is a survey responsible,
             //         - and this responsible is not survey manager (just survey officer),
             //     check the responsible is part of the list."""
-            // surveys_to_check = self.filtered(lambda s: bool(s.user_id - s.restrict_user_ids))
-            // if surveys_to_check:
-            //     valid_surveys = surveys_to_check._filtered_access("write")
-            //     failing_surveys_sudo = (self - valid_surveys).sudo()
-            //     if failing_surveys_sudo:
+            // for user_id, surveys in self.filtered(lambda s: bool(s.user_id - s.restrict_user_ids)).grouped('user_id').items():
+            //     accessible = surveys.with_user(user_id)._filtered_access("write")
+            //     if len(accessible) < len(surveys):
+            //         failing_surveys_sudo = (self - accessible).sudo()
             //         raise ValidationError(
             //             _('The access of the following surveys is restricted. Make sure their responsible still has access to it: \n%(survey_names)s\n',
             //                 survey_names='\n'.join(f'- {survey.title}: {survey.user_id.name}' for survey in failing_surveys_sudo)))
@@ -235,6 +245,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SurveySurvey> ComputeGenerateLeadInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def _compute_generate_lead(self):
+            // for survey in self:
+            //     survey.generate_lead = survey.survey_type in ['survey', 'live_session', 'custom'] and \
+            //                            any(question_id.generate_lead for question_id in survey.question_ids)
+            */
+            return default;
+        }
+
         protected async Task<SurveySurvey> ComputeHasConditionalQuestionsInternalAsync()
         {
             /*
@@ -256,6 +278,24 @@ namespace Bamboo.Core.Application.Services
             //        (survey.access_mode == 'public' and not survey.users_login_required) or \
             //        any(question.triggering_answer_ids for question in survey.question_and_page_ids):
             //         survey.is_attempts_limited = False
+            */
+            return default;
+        }
+
+        protected async Task<SurveySurvey> ComputeLeadCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def _compute_lead_count(self):
+            // for survey in self:
+            //     if self.ids and self.env['crm.lead'].has_access('read'):
+            //         leads = self.env['crm.lead']._read_group(
+            //             [('origin_survey_id', 'in', self.ids)], ['origin_survey_id'], ['__count'])
+            //         leads_count_by_survey = {survey.id: count for survey, count in leads}
+            //         for survey in self:
+            //             survey.lead_count = leads_count_by_survey.get(survey.id, 0)
+            //     else:
+            //         self.lead_count = 0
             */
             return default;
         }
@@ -358,11 +398,11 @@ namespace Bamboo.Core.Application.Services
             // def _compute_session_link(self):
             // for survey in self:
             //     if survey.session_code:
-            //         survey.session_link = werkzeug.urls.url_join(
+            //         survey.session_link = url_join(
             //             survey.get_base_url(),
             //             '/s/%s' % survey.session_code)
             //     else:
-            //         survey.session_link = werkzeug.urls.url_join(
+            //         survey.session_link = url_join(
             //             survey.get_base_url(),
             //             survey.get_start_url())
             */
@@ -490,6 +530,7 @@ namespace Bamboo.Core.Application.Services
             //         user = partner.user_ids[0]
             // 
             //     invite_token = additional_vals.pop('invite_token', False)
+            //     nickname = additional_vals.pop('nickname', False)
             //     survey._check_answer_creation(user, partner, email, test_entry=test_entry, check_attempts=check_attempts, invite_token=invite_token)
             //     answer_vals = {
             //         'survey_id': survey.id,
@@ -505,14 +546,14 @@ namespace Bamboo.Core.Application.Services
             //     if user and not user._is_public():
             //         answer_vals['partner_id'] = user.partner_id.id
             //         answer_vals['email'] = user.email
-            //         answer_vals['nickname'] = user.name
+            //         answer_vals['nickname'] = nickname or user.name
             //     elif partner:
             //         answer_vals['partner_id'] = partner.id
             //         answer_vals['email'] = partner.email
-            //         answer_vals['nickname'] = partner.name
+            //         answer_vals['nickname'] = nickname or partner.name
             //     else:
             //         answer_vals['email'] = email
-            //         answer_vals['nickname'] = email
+            //         answer_vals['nickname'] = nickname
             // 
             //     if invite_token:
             //         answer_vals['invite_token'] = invite_token
@@ -593,6 +634,14 @@ namespace Bamboo.Core.Application.Services
             // self.sudo().write({'session_state': False})
             // self.user_input_ids.sudo().write({'state': 'done'})
             // self.env['bus.bus']._sendone(self.access_token, 'end_session', {})
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def action_end_session(self):
+            // ''' Checks if leads need to be created for live sessions (either custom or live_session) '''
+            // super().action_end_session()
+            // 
+            // user_inputs = self.user_input_ids.filtered(
+            //     lambda user_input: user_input.create_date >= self.session_start_time)
+            // user_inputs._create_leads_from_generative_answers()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -718,7 +767,6 @@ namespace Bamboo.Core.Application.Services
             //     return Question
             // 
             // # Conditional Questions Management
-            // triggering_answers_by_question, _, selected_answers = user_input._get_conditional_values()
             // inactive_questions = user_input._get_inactive_conditional_questions()
             // if survey.questions_layout == 'page_per_question':
             //     question_candidates = pages_or_questions[0:current_page_index] if go_back \
@@ -731,8 +779,7 @@ namespace Bamboo.Core.Application.Services
             //             if contains_active_question or is_description_section:
             //                 return question
             //         else:
-            //             triggering_answers = triggering_answers_by_question.get(question)
-            //             if not triggering_answers or triggering_answers & selected_answers:
+            //             if question not in inactive_questions:
             //                 # question is visible because not conditioned or conditioned by a selected answer
             //                 return question
             // elif survey.questions_layout == 'page_per_section':
@@ -756,19 +803,19 @@ namespace Bamboo.Core.Application.Services
             // """ Returns the number of attempts left. """
             // self.ensure_one()
             // 
-            // domain = [
+            // domain = Domain([
             //     ('survey_id', '=', self.id),
             //     ('test_entry', '=', False),
             //     ('state', '=', 'done')
-            // ]
+            // ])
             // 
             // if partner:
-            //     domain = expression.AND([domain, [('partner_id', '=', partner.id)]])
+            //     domain &= Domain('partner_id', '=', partner.id)
             // else:
-            //     domain = expression.AND([domain, [('email', '=', email)]])
+            //     domain &= Domain('email', '=', email)
             // 
             // if invite_token:
-            //     domain = expression.AND([domain, [('invite_token', '=', invite_token)]])
+            //     domain &= Domain('invite_token', '=', invite_token)
             // 
             // return self.attempts_limit - self.env['survey.user_input'].search_count(domain)
             */
@@ -930,6 +977,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<SurveySurvey> GetSupportedLangCodesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def _get_supported_lang_codes(self):
+            // self.ensure_one()
+            // return self.lang_ids.mapped('code') or [lg[0] for lg in self.env['res.lang'].get_installed()]
+            */
+            return default;
+        }
+
         protected async Task<SurveySurvey> GetSurveyQuestionsInternalAsync(object answer, Guid page_id, Guid question_id)
         {
             /*
@@ -957,7 +1015,7 @@ namespace Bamboo.Core.Application.Services
             //         raise ValueError("Page id is needed for question layout 'page_per_section'")
             //     page_or_question_id = int(page_id)
             //     questions = self.env['survey.question'].sudo().search(
-            //         expression.AND([[('survey_id', '=', self.id)], [('page_id', '=', page_or_question_id)]]))
+            //         Domain('survey_id', '=', self.id) & Domain('page_id', '=', page_or_question_id))
             // elif self.questions_layout == 'page_per_question':
             //     if not question_id:
             //         raise ValueError("Question id is needed for question layout 'page_per_question'")
@@ -974,6 +1032,67 @@ namespace Bamboo.Core.Application.Services
             // return questions, page_or_question_id
             */
             return default;
+        }
+
+        protected async Task<SurveySurvey> GetSurveyTemplateValuesInternalAsync(object template_key)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def _get_survey_template_values(self, template_key):
+            // # Load the correct template
+            // if template_key == 'survey':
+            //     return self._prepare_survey_template_values()
+            // elif template_key == 'assessment':
+            //     return self._prepare_assessment_template_values()
+            // elif template_key == 'live_session':
+            //     return self._prepare_live_session_template_values()
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def _get_survey_template_values(self, template_key):
+            // if template_key == 'lead_qualification':
+            //     return self._prepare_lead_qualification_template_values()
+            // return super()._get_survey_template_values(template_key)
+            */
+            return default;
+        }
+
+        public async Task<SurveySurvey> GetSurveyTemplatesDataAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def get_survey_templates_data(self):
+            // return {
+            //     'survey': {
+            //         'description': _('Gather feedbacks from your employees and customers'),
+            //         'icon': '/survey/static/src/img/survey_sample_survey.png',
+            //         'template_key': 'survey',
+            //         'title': _('Survey'),
+            //     },
+            //     'assessment': {
+            //         'description': _('Handle quiz & certifications'),
+            //         'icon': '/survey/static/src/img/survey_sample_assessment.png',
+            //         'template_key': 'assessment',
+            //         'title': _('Assessment'),
+            //     },
+            //     'live_session': {
+            //         'description': _('Make your presentations more fun by sharing questions live'),
+            //         'icon': '/survey/static/src/img/survey_sample_live_session.png',
+            //         'template_key': 'live_session',
+            //         'title': _('Live Session'),
+            //     },
+            // }
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def get_survey_templates_data(self):
+            // return super().get_survey_templates_data() | {
+            //     'lead_qualification': {
+            //         'description': _('Create leads when key answers are chosen'),
+            //         'icon': '/survey_crm/static/src/img/survey_sample_lead_qualification.svg',
+            //         'template_key': 'lead_qualification',
+            //         'title': _('Lead Qualification'),
+            //     },
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<SurveySurvey> HandleCertificationBadgesInternalAsync(object vals)
@@ -1042,8 +1161,8 @@ namespace Bamboo.Core.Application.Services
             // A question/page will be determined as the last one if any of the following is true:
             //   - The survey layout is "one_page",
             //   - There are no more questions/page after `page_or_question` in `user_input`,
-            //   - All the following questions are conditional AND were not triggered by previous answers,
-            //     AND cannot be triggered by any answer given on the current page/question.
+            //   - All the following questions are conditional AND were not triggered by previous answers.
+            //     Not accounting for the question/page own conditionals.
             // """
             // if self.questions_layout == "one_page":
             //     return True
@@ -1053,16 +1172,11 @@ namespace Bamboo.Core.Application.Services
             // if not next_page_or_question_candidates:
             //     return True
             // inactive_questions = user_input._get_inactive_conditional_questions()
-            // __, triggered_questions_by_answer, __ = user_input._get_conditional_values()
             // if self.questions_layout == 'page_per_question':
             //     return not (
             //         any(next_question not in inactive_questions for next_question in next_page_or_question_candidates)
-            //         or any(answer in triggered_questions_by_answer for answer in page_or_question.suggested_answer_ids)
             //     )
             // elif self.questions_layout == 'page_per_section':
-            //     for question in page_or_question.question_ids:
-            //         if any(answer in triggered_questions_by_answer for answer in question.suggested_answer_ids):
-            //             return False
             //     for section in next_page_or_question_candidates:
             //         if any(next_question not in inactive_questions for next_question in section.question_ids):
             //             return False
@@ -1071,110 +1185,10 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveySurvey> LoadSampleAssessmentAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey_template.py) ---
-            // def action_load_sample_assessment(self):
-            // survey_values = {
-            //     'survey_type': 'assessment',
-            //     'title': _('Certification'),
-            //     'certification': True,
-            //     'access_mode': 'token',
-            //     'is_time_limited': True,
-            //     'time_limit': 15, # 15 minutes
-            //     'is_attempts_limited': True,
-            //     'attempts_limit': 1,
-            //     'progression_mode': 'number',
-            //     'scoring_type': 'scoring_without_answers',
-            //     'users_can_go_back': True,
-            //     'description': ''.join([
-            //         _('Welcome to this Odoo certification. You will receive 2 random questions out of a pool of 3.'),
-            //         '(<span style="font-style: italic">',
-            //         _('Cheating on your neighbors will not help!'),
-            //         '</span> 😁).<br>',
-            //         _('Good luck!')
-            //     ]),
-            //     'description_done': _('Thank you. We will contact you soon.'),
-            //     'questions_layout': 'page_per_section',
-            //     'questions_selection': 'random',
-            //     'question_and_page_ids': [
-            //         (0, 0, { # survey.question
-            //             'title': _('Odoo Certification'),
-            //             'is_page': True,
-            //             'question_type': False,
-            //             'random_questions_count': 2
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('What does "ODOO" stand for?'),
-            //             'question_type': 'simple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It\'s a Belgian word for "Management"')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Object-Directed Open Organization')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Organizational Development for Operation Officers')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It does not mean anything specific'),
-            //                     'is_correct': True,
-            //                     'answer_score': 10
-            //                 }),
-            //             ]
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('On Survey questions, one can define "placeholders". But what are they for?'),
-            //             'question_type': 'simple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('They are a default answer, used if the participant skips the question')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It is a small bit of text, displayed to help participants answer'),
-            //                     'is_correct': True,
-            //                     'answer_score': 10
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('They are technical parameters that guarantees the responsiveness of the page')
-            //                 })
-            //             ]
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('What does one need to get to pass an Odoo Survey?'),
-            //             'question_type': 'simple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It is an option that can be different for each Survey'),
-            //                     'is_correct': True,
-            //                     'answer_score': 10
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('One needs to get 50% of the total score')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('One needs to answer at least half the questions correctly')
-            //                 })
-            //             ]
-            //         }),
-            //     ]
-            // }
-            // mail_template = self.env.ref('survey.mail_template_certification', raise_if_not_found=False)
-            // if mail_template:
-            //     survey_values.update({
-            //         'certification_mail_template_id': mail_template.id
-            //     })
-            // return self.env['survey.survey'].create(survey_values).action_show_sample()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<SurveySurvey> LoadSampleCustomAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
             // def action_load_sample_custom(self):
             // return self.env['survey.survey'].create({
             //     'survey_type': 'custom',
@@ -1184,152 +1198,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SurveySurvey> LoadSampleLiveSessionAsync(Guid id)
+        public async Task<SurveySurvey> LoadSurveyTemplateSampleAsync(Guid id, SurveySurveyLoadSurveyTemplateSampleRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey_template.py) ---
-            // def action_load_sample_live_session(self):
-            // return self.env['survey.survey'].create({
-            //     'survey_type': 'live_session',
-            //     'title': _('Live Session'),
-            //     'description': '<br>'.join([
-            //         _('How good of a presenter are you? Let\'s find out!'),
-            //         _('But first, keep listening to the host.')
-            //     ]),
-            //     'description_done': _('Thank you for your participation, hope you had a blast!'),
-            //     'progression_mode': 'number',
-            //     'scoring_type': 'scoring_with_answers',
-            //     'questions_layout': 'page_per_question',
-            //     'session_speed_rating': True,
-            //     'session_speed_rating_time_limit': 90,
-            //     'question_and_page_ids': [
-            //         (0, 0, { # survey.question
-            //             'title': _('What is the best way to catch the attention of an audience?'),
-            //             'question_type': 'simple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Speak softly so that they need to focus to hear you')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Use a fun visual support, like a live presentation'),
-            //                     'is_correct': True,
-            //                     'answer_score': 20
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Show them slides with a ton of text they need to read fast')
-            //                 })
-            //             ]
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('What is a frequent mistake public speakers do?'),
-            //             'question_type': 'simple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Practice in front of a mirror')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Speak too fast'),
-            //                     'is_correct': True,
-            //                     'answer_score': 20
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Use humor and make jokes')
-            //                 })
-            //             ]
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('Why should you consider making your presentation more fun with a small quiz?'),
-            //             'question_type': 'multiple_choice',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It helps attendees focus on what you are saying'),
-            //                     'is_correct': True,
-            //                     'answer_score': 20
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It is more engaging for your audience'),
-            //                     'is_correct': True,
-            //                     'answer_score': 20
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('It helps attendees remember the content of your presentation'),
-            //                     'is_correct': True,
-            //                     'answer_score': 20
-            //                 })
-            //             ]
-            //         }),
-            // 
-            //     ]
-            // }).action_show_sample()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<SurveySurvey> LoadSampleSurveyAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey_template.py) ---
-            // def action_load_sample_survey(self):
-            // return self.env['survey.survey'].create({
-            //     'survey_type': 'survey',
-            //     'title': _('Feedback Form'),
-            //     'description': '<br>'.join([
-            //         _('Please complete this very short survey to let us know how satisfied your are with our products.'),
-            //         _('Your responses will help us improve our product range to serve you even better.')
-            //     ]),
-            //     'description_done': _('Thank you very much for your feedback. We highly value your opinion!'),
-            //     'progression_mode': 'number',
-            //     'questions_layout': 'page_per_question',
-            //     'question_and_page_ids': [
-            //         (0, 0, { # survey.question
-            //             'title': _('How frequently do you use our products?'),
-            //             'question_type': 'simple_choice',
-            //             'constr_mandatory': True,
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Often (1-3 times per week)')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Rarely (1-3 times per month)')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Never (less than once a month)')
-            //                 })
-            //             ]
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('How many orders did you pass during the last 6 months?'),
-            //             'question_type': 'numerical_box',
-            //         }),
-            //         (0, 0, { # survey.question
-            //             'title': _('How likely are you to recommend the following products to a friend?'),
-            //             'question_type': 'matrix',
-            //             'matrix_subtype': 'simple',
-            //             'suggested_answer_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Unlikely')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Neutral')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Likely')
-            //                 }),
-            //             ],
-            //             'matrix_row_ids': [
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Red Pen')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Blue Pen')
-            //                 }),
-            //                 (0, 0, { # survey.question.answer
-            //                     'value': _('Yellow Pen')
-            //                 })
-            //             ]
-            //         })
-            //     ]
-            // }).action_show_sample()
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def action_load_survey_template_sample(self, template_key):
+            // template_values = self._get_survey_template_values(template_key)
+            // return self.env['survey.survey'].create(template_values).action_show_sample()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1414,6 +1289,106 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<SurveySurvey> PrepareAssessmentTemplateValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def _prepare_assessment_template_values(self):
+            // survey_values = {
+            //     'survey_type': 'assessment',
+            //     'title': _('Certification'),
+            //     'certification': True,
+            //     'access_mode': 'token',
+            //     'is_time_limited': True,
+            //     'time_limit': 15,  # 15 minutes
+            //     'is_attempts_limited': True,
+            //     'attempts_limit': 1,
+            //     'progression_mode': 'number',
+            //     'scoring_type': 'scoring_without_answers',
+            //     'users_can_go_back': True,
+            //     'description': ''.join([
+            //         _('Welcome to this Odoo certification. You will receive 2 random questions out of a pool of 3.'),
+            //         '(<span style="font-style: italic">',
+            //         _('Cheating on your neighbors will not help!'),
+            //         '</span> 😁).<br>',
+            //         _('Good luck!')
+            //     ]),
+            //     'description_done': _('Thank you. We will contact you soon.'),
+            //     'questions_layout': 'page_per_section',
+            //     'questions_selection': 'random',
+            //     'question_and_page_ids': [
+            //         (0, 0, {  # survey.question
+            //             'title': _('Odoo Certification'),
+            //             'is_page': True,
+            //             'question_type': False,
+            //             'random_questions_count': 2
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('What does "ODOO" stand for?'),
+            //             'question_type': 'simple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It\'s a Belgian word for "Management"')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Object-Directed Open Organization')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Organizational Development for Operation Officers')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It does not mean anything specific'),
+            //                     'is_correct': True,
+            //                     'answer_score': 10
+            //                 }),
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('On Survey questions, one can define "placeholders". But what are they for?'),
+            //             'question_type': 'simple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('They are a default answer, used if the participant skips the question')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It is a small bit of text, displayed to help participants answer'),
+            //                     'is_correct': True,
+            //                     'answer_score': 10
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('They are technical parameters that guarantees the responsiveness of the page')
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('What does one need to get to pass an Odoo Survey?'),
+            //             'question_type': 'simple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It is an option that can be different for each Survey'),
+            //                     'is_correct': True,
+            //                     'answer_score': 10
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('One needs to get 50% of the total score')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('One needs to answer at least half the questions correctly')
+            //                 })
+            //             ]
+            //         }),
+            //     ]
+            // }
+            // mail_template = self.env.ref('survey.mail_template_certification', raise_if_not_found=False)
+            // if mail_template:
+            //     survey_values.update({
+            //         'certification_mail_template_id': mail_template.id
+            //     })
+            // return survey_values
+            */
+            return default;
+        }
+
         protected async Task<SurveySurvey> PrepareChallengeCategoryInternalAsync()
         {
             /*
@@ -1424,6 +1399,84 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_challenge_category(self):
             // slide_survey = self.env['slide.slide'].search([('survey_id', '=', self.id)])
             // return 'slides' if slide_survey else 'certification'
+            */
+            return default;
+        }
+
+        protected async Task<SurveySurvey> PrepareLeadQualificationTemplateValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def _prepare_lead_qualification_template_values(self):
+            // return {
+            //     'survey_type': 'survey',
+            //     'title': _('Getting to know you'),
+            //     'description_done': _('Thanks for answering!'),
+            //     'progression_mode': 'number',
+            //     'questions_layout': 'page_per_question',
+            //     'question_and_page_ids': [
+            //         (0, 0, {  # survey.question
+            //             'title': _('Let\'s start with a basic question. What\'s your email address?'),
+            //             'question_type': 'char_box',
+            //             'constr_mandatory': True,
+            //             'validation_email': True,
+            //             'save_as_email': True,
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('What is the size of your company?'),
+            //             'question_type': 'simple_choice',
+            //             'constr_mandatory': True,
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('1-10 employees'),
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('11-100 employees'),
+            //                     'generate_lead': True
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('100+ employees'),
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('Which of the following best describes your main goal?'),
+            //             'question_type': 'simple_choice',
+            //             'constr_mandatory': True,
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Improving efficiency'),
+            //                     'generate_lead': True
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Reducing costs'),
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Expanding sales'),
+            //                     'generate_lead': True
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('Who will make the final decision on this purchase?'),
+            //             'question_type': 'simple_choice',
+            //             'constr_mandatory': True,
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Me'),
+            //                     'generate_lead': True
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('My Manager/Executive'),
+            //                     'generate_lead': True
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('A team/committee'),
+            //                 })
+            //             ]
+            //         }),
+            //     ]
+            // }
             */
             return default;
         }
@@ -1488,6 +1541,87 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<SurveySurvey> PrepareLiveSessionTemplateValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def _prepare_live_session_template_values(self):
+            // return {
+            //     'survey_type': 'live_session',
+            //     'title': _('Live Session'),
+            //     'description': '<br>'.join([
+            //         _('How good of a presenter are you? Let\'s find out!'),
+            //         _('But first, keep listening to the host.')
+            //     ]),
+            //     'description_done': _('Thank you for your participation, hope you had a blast!'),
+            //     'progression_mode': 'number',
+            //     'scoring_type': 'scoring_with_answers',
+            //     'questions_layout': 'page_per_question',
+            //     'session_speed_rating': True,
+            //     'session_speed_rating_time_limit': 90,
+            //     'question_and_page_ids': [
+            //         (0, 0, {  # survey.question
+            //             'title': _('What is the best way to catch the attention of an audience?'),
+            //             'question_type': 'simple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Speak softly so that they need to focus to hear you')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Use a fun visual support, like a live presentation'),
+            //                     'is_correct': True,
+            //                     'answer_score': 20
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Show them slides with a ton of text they need to read fast')
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('What is a frequent mistake public speakers do?'),
+            //             'question_type': 'simple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Practice in front of a mirror')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Speak too fast'),
+            //                     'is_correct': True,
+            //                     'answer_score': 20
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Use humor and make jokes')
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('Why should you consider making your presentation more fun with a small quiz?'),
+            //             'question_type': 'multiple_choice',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It helps attendees focus on what you are saying'),
+            //                     'is_correct': True,
+            //                     'answer_score': 20
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It is more engaging for your audience'),
+            //                     'is_correct': True,
+            //                     'answer_score': 20
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('It helps attendees remember the content of your presentation'),
+            //                     'is_correct': True,
+            //                     'answer_score': 20
+            //                 })
+            //             ]
+            //         }),
+            // 
+            //     ]
+            // }
+            */
+            return default;
+        }
+
         protected async Task<SurveySurvey> PrepareStatisticsInternalAsync(object user_input_lines)
         {
             /*
@@ -1522,6 +1656,75 @@ namespace Bamboo.Core.Application.Services
             //     'count_finished': completed_count,
             //     'count_failed': scoring_failed_count,
             //     'count_passed': total - scoring_failed_count
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<SurveySurvey> PrepareSurveyTemplateValuesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
+            // def _prepare_survey_template_values(self):
+            // return {
+            //     'survey_type': 'survey',
+            //     'title': _('Feedback Form'),
+            //     'description': '<br>'.join([
+            //         _('Please complete this very short survey to let us know how satisfied your are with our products.'),
+            //         _('Your responses will help us improve our product range to serve you even better.')
+            //     ]),
+            //     'description_done': _('Thank you very much for your feedback. We highly value your opinion!'),
+            //     'progression_mode': 'number',
+            //     'questions_layout': 'page_per_question',
+            //     'question_and_page_ids': [
+            //         (0, 0, {  # survey.question
+            //             'title': _('How frequently do you use our products?'),
+            //             'question_type': 'simple_choice',
+            //             'constr_mandatory': True,
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Often (1-3 times per week)')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Rarely (1-3 times per month)')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Never (less than once a month)')
+            //                 })
+            //             ]
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('How many orders did you pass during the last 6 months?'),
+            //             'question_type': 'numerical_box',
+            //         }),
+            //         (0, 0, {  # survey.question
+            //             'title': _('How likely are you to recommend the following products to a friend?'),
+            //             'question_type': 'matrix',
+            //             'matrix_subtype': 'simple',
+            //             'suggested_answer_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Unlikely')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Neutral')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Likely')
+            //                 }),
+            //             ],
+            //             'matrix_row_ids': [
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Red Pen')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Blue Pen')
+            //                 }),
+            //                 (0, 0, {  # survey.question.answer
+            //                     'value': _('Yellow Pen')
+            //                 })
+            //             ]
+            //         })
+            //     ]
             // }
             */
             return default;
@@ -1644,7 +1847,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<SurveySurvey> ShowSampleAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
             // def action_show_sample(self):
             // action = self.env['ir.actions.act_window']._for_xml_id('survey.action_survey_form')
             // action['views'] = [[self.env.ref('survey.survey_survey_view_form').id, 'form']]
@@ -1710,6 +1913,24 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             //     'url': f'/survey/{self.id}/certification_preview'
             // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<SurveySurvey> SurveySeeLeadsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_survey.py) ---
+            // def action_survey_see_leads(self):
+            // ''' Shows the leads created from the current survey '''
+            // self.ensure_one()
+            // action = self.env['ir.actions.actions']._for_xml_id('crm.crm_lead_all_leads')
+            // action['context'] = dict(
+            //     ast.literal_eval(action.get('context', '{}').strip()),  # ".strip()" prevents a crash of literal_eval which doesn't interpret the "\n" after the dictionary is closed in the string
+            //     create=False,
+            // )
+            // action['domain'] = [('origin_survey_id', 'in', self.ids)]
+            // return action
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1808,15 +2029,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SurveySurvey> ToggleActiveAsync(Guid id)
+        public async Task<SurveySurvey> UnarchiveAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_survey.py) ---
-            // def toggle_active(self):
-            // super(Survey, self).toggle_active()
-            // activated = self.filtered(lambda survey: survey.active)
-            // activated.certification_badge_id.action_unarchive()
-            // (self - activated).certification_badge_id.action_archive()
+            // def action_unarchive(self):
+            // super().action_unarchive()
+            // self.certification_badge_id.action_unarchive()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1831,15 +2050,16 @@ namespace Bamboo.Core.Application.Services
             // certifications = self.sudo().slide_ids.filtered(lambda slide: slide.slide_type == "certification").mapped('survey_id').exists()
             // if certifications:
             //     certifications_course_mapping = [
-            //         _(
+            //         self.env._(
             //             "- %(certification)s (Courses - %(courses)s)",
             //             certification=certi.title,
-            //             courses=format_list(self.env, certi.slide_channel_ids.mapped("name")),
+            //             courses=certi.slide_channel_ids.mapped("name"),
             //         )
             //         for certi in certifications
             //     ]
             //     raise ValidationError(_(
-            //         'Any Survey listed below is currently used as a Course Certification and cannot be deleted:\n%s',
+            //         'Uh-oh! You can’t delete surveys used as a Course Certification! Otherwise, students might think diplomas just grow on trees.\n'
+            //         'The courses that need them are:\n%s',
             //         '\n'.join(certifications_course_mapping)))
             */
             return default;

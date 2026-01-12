@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-allocation-wizard")]
+        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid id)
+        {
+            var result = await _appService.OpenAllocationWizardAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/build-qr-code-base64")]
         public async Task<IActionResult> BuildQrCodeBase64Async(Guid id, [FromBody] ResPartnerBankBuildQrCodeBase64RequestDto input)
         {

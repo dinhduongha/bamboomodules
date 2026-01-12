@@ -76,7 +76,7 @@ namespace Bamboo.Core.Application.Services
             //     return
             // if not date:
             //     raise ValidationError(_("The API key must have an expiration date"))
-            // max_duration = max(group.api_key_duration for group in self.env.user.groups_id) or 1.0
+            // max_duration = max(group.api_key_duration for group in self.env.user.all_group_ids) or 1.0
             // if date > datetime.datetime.now() + datetime.timedelta(days=max_duration):
             //     raise ValidationError(_("You cannot exceed %(duration)s days.", duration=max_duration))
             */
@@ -130,6 +130,28 @@ namespace Bamboo.Core.Application.Services
             //     self._description, scope, self.env.user.login, self.env.uid, ip)
             // 
             // return k
+            */
+            return default;
+        }
+
+        protected async Task<ResUsersApikeys> GetTrustedDeviceAgeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: auth_totp.py) ---
+            // def _get_trusted_device_age(self):
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // try:
+            //     nbr_days = int(ICP.get_param('auth_totp.trusted_device_age', TRUSTED_DEVICE_AGE_DAYS))
+            //     if nbr_days <= 0:
+            //         nbr_days = None
+            // except ValueError:
+            //     nbr_days = None
+            // 
+            // if nbr_days is None:
+            //     _logger.warning("Invalid value for 'auth_totp.trusted_device_age', using default value.")
+            //     nbr_days = TRUSTED_DEVICE_AGE_DAYS
+            // 
+            // return nbr_days * 86400
             */
             return default;
         }

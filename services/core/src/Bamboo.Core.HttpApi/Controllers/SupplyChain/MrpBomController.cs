@@ -8,11 +8,11 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Manufacturing/Manufacturing, Module: mrp
+    // Category: Supply Chain/Manufacturing, Module: mrp
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
-    [Route("api/v1/manufacturing/MrpBom")]
+    [Route("api/v1/supply-chain/MrpBom")]
     public partial class MrpBomController : AbpController
     {
         private readonly IMrpBomAppService _appService;

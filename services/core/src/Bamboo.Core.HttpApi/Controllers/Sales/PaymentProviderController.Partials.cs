@@ -27,22 +27,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-razorpay-redirect-to-oauth-url")]
-        public async Task<IActionResult> ActionRazorpayRedirectToOauthUrlAsync(Guid id)
-        {
-            var result = await _appService.RazorpayRedirectToOauthUrlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-razorpay-reset-oauth-account")]
-        public async Task<IActionResult> ActionRazorpayResetOauthAccountAsync(Guid id)
-        {
-            var result = await _appService.RazorpayResetOauthAccountAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-recompute-pending-msg")]
         public async Task<IActionResult> ActionRecomputePendingMsgAsync(Guid id)
         {
@@ -51,10 +35,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-stripe-connect-account")]
-        public async Task<IActionResult> ActionStripeConnectAccountAsync(Guid id, [FromBody] PaymentProviderStripeConnectAccountRequestDto input)
+        [Route("{id}/action-reset-credentials")]
+        public async Task<IActionResult> ActionResetCredentialsAsync(Guid id)
         {
-            var result = await _appService.StripeConnectAccountAsync(id, input);
+            var result = await _appService.ResetCredentialsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-start-onboarding")]
+        public async Task<IActionResult> ActionStartOnboardingAsync(Guid id, [FromBody] PaymentProviderStartOnboardingRequestDto input)
+        {
+            var result = await _appService.StartOnboardingAsync(id, input);
             return Ok(result);
         }
         
@@ -71,6 +63,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionStripeVerifyApplePayDomainAsync(Guid id)
         {
             var result = await _appService.StripeVerifyApplePayDomainAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-sync-paymob-payment-methods")]
+        public async Task<IActionResult> ActionSyncPaymobPaymentMethodsAsync(Guid id)
+        {
+            var result = await _appService.SyncPaymobPaymentMethodsAsync(id);
             return Ok(result);
         }
         

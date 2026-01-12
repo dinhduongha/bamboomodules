@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(BarcodeConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     symbology=dict(type='string', string=_('Barcode symbology'), description=_('Barcode type, eg: UPCA, EAN13, Code128'), default_value='Code128'),
             //     width=dict(type='integer', string=_('Width'), default_value=600),

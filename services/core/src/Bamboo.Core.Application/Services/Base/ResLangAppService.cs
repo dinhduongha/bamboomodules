@@ -26,6 +26,23 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
+        protected async Task<ResLang> ActivateAndInstallLangInternalAsync(object code)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
+            // def _activate_and_install_lang(self, code):
+            // """ Activate languages and update their translations
+            // :param code: code of the language to activate
+            // :return: the language matching 'code' activated
+            // """
+            // lang = self.with_context(active_test=False).search([('code', '=', code)])
+            // if lang and not lang.active:
+            //     lang.action_unarchive()
+            // return lang
+            */
+            return default;
+        }
+
         protected async Task<ResLang> ActivateLangInternalAsync(object code)
         {
             /*
@@ -63,8 +80,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
             // def action_activate_langs(self):
             // """ Activate the selected languages """
-            // for lang in self.filtered(lambda l: not l.active):
-            //     lang.toggle_active()
+            // self.action_unarchive()
             // message = _("The languages that you selected have been successfully installed. Users can choose their favorite language in their preferences.")
             // return {
             //     'type': 'ir.actions.client',
@@ -93,7 +109,7 @@ namespace Bamboo.Core.Application.Services
             // implementation of LangData
             // """
             // return OrderedSet(['id', 'name', 'code', 'iso_code', 'url_code', 'active', 'direction', 'date_format',
-            //                    'time_format', 'short_time_format', 'week_start', 'grouping', 'decimal_point', 'thousands_sep', 'flag_image_url'])
+            //                    'time_format', 'week_start', 'grouping', 'decimal_point', 'thousands_sep', 'flag_image_url'])
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -122,25 +138,6 @@ namespace Bamboo.Core.Application.Services
             //             raise ValidationError(_('Invalid date/time format directive specified. '
             //                                     'Please refer to the list of allowed directives, '
             //                                     'displayed when you edit a language.'))
-            */
-            return default;
-        }
-
-        protected async Task<ResLang> CheckGroupingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
-            // def _check_grouping(self):
-            // warning = _('The Separator Format should be like [,n] where 0 < n :starting from Unit digit. '
-            //             '-1 will end the separation. e.g. [3,2,-1] will represent 106500 to be 1,06,500;'
-            //             '[1,2,-1] will represent it to be 106,50,0;[3] will represent it as 106,500. '
-            //             'Provided as the thousand separator in each case.')
-            // for lang in self:
-            //     try:
-            //         if any(not isinstance(x, int) for x in json.loads(lang.grouping)):
-            //             raise ValidationError(warning)
-            //     except Exception:
-            //         raise ValidationError(warning)
             */
             return default;
         }
@@ -233,7 +230,7 @@ namespace Bamboo.Core.Application.Services
             //     'time_format' : fix_datetime_format(locale.nl_langinfo(locale.T_FMT)),
             //     'decimal_point' : fix_xa0(str(conv['decimal_point'])),
             //     'thousands_sep' : fix_xa0(str(conv['thousands_sep'])),
-            //     'grouping' : str(conv.get('grouping', [])),
+            //     'grouping': str(conv.get('grouping') or '[3,0]'),
             // }
             // try:
             //     return self.create(lang_info)
@@ -255,12 +252,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // formatted = percent % value
             // 
+            // data = self._get_data(id=self.id)
+            // if not data:
+            //     raise UserError(_("The language %s is not installed.", self.name))
+            // decimal_point = data.decimal_point
             // # floats and decimal ints need special action!
             // if grouping:
-            //     data = self._get_data(id=self.id)
-            //     if not data:
-            //         raise UserError(_("The language %s is not installed.", self.name))
-            //     lang_grouping, thousands_sep, decimal_point = data.grouping, data.thousands_sep or '', data.decimal_point
+            //     lang_grouping, thousands_sep = data.grouping, data.thousands_sep or ''
             //     eval_lang_grouping = ast.literal_eval(lang_grouping)
             // 
             //     if percent[-1] in 'eEfFgG':
@@ -272,9 +270,12 @@ namespace Bamboo.Core.Application.Services
             //     elif percent[-1] in 'diu':
             //         formatted = intersperse(formatted, eval_lang_grouping, thousands_sep)[0]
             // 
+            // elif percent[-1] in 'eEfFgG' and '.' in formatted:
+            //     formatted = formatted.replace('.', decimal_point)
+            // 
             // return formatted
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<object> GetActiveByInternalAsync(string field)
@@ -285,7 +286,7 @@ namespace Bamboo.Core.Application.Services
             // """ Return a LangDataDict mapping active languages' **unique**
             // **required** ``self.CACHED_FIELDS`` values to their LangData.
             // Its items are ordered by languages' names
-            // Try to reuse the used ``field``s: 'id', 'code', 'url_code'
+            // Try to reuse the used ``field``: 'id', 'code', 'url_code'
             // """
             // if field not in self.CACHED_FIELDS:
             //     raise UserError(_('Field "%s" is not cached', field))
@@ -315,22 +316,42 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
-            // def _get_data(self, **kwargs: Any) -> LangData:
+            // def _get_data(self, **kwargs) -> LangData:
             // """ Get the language data for the given field value in kwargs
             // For example, get_data(code='en_US') will return the LangData
             // for the res.lang record whose 'code' field value is 'en_US'
             // 
-            // :param dict kwargs: {field_name: field_value}
+            // :param dict kwargs: ``{field_name: field_value}``
             //         field_name is the only key in kwargs and in ``self.CACHED_FIELDS``
-            //         Try to reuse the used ``field_name``s: 'id', 'code', 'url_code'
+            //         Try to reuse the used ``field_name``: 'id', 'code', 'url_code'
             // :return: Valid LangData if (field_name, field_value) pair is for an
             //         **active** language. Otherwise, Dummy LangData which will return
             //         ``False`` for all ``self.CACHED_FIELDS``
-            // :rtype: LangData
             // :raise: UserError if field_name is not in ``self.CACHED_FIELDS``
             // """
             // [[field_name, field_value]] = kwargs.items()
             // return self._get_active_by(field_name)[field_value]
+            */
+            return default;
+        }
+
+        protected async Task<ResLang> GetDateFormatSelectionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
+            // def _get_date_format_selection(self):
+            // current_year = fields.Date.today().year
+            // return [
+            //     ('%d/%m/%Y', '31/01/%s' % current_year),
+            //     ('%m/%d/%Y', '01/31/%s' % current_year),
+            //     ('%Y/%m/%d', '%s/01/31' % current_year),
+            //     ('%d-%m-%Y', '31-01-%s' % current_year),
+            //     ('%m-%d-%Y', '01-31-%s' % current_year),
+            //     ('%Y-%m-%d', '%s-01-31' % current_year),
+            //     ('%d.%m.%Y', '31.01.%s' % current_year),
+            //     ('%m.%d.%Y', '01.31.%s' % current_year),
+            //     ('%Y.%m.%d', '%s.01.31' % current_year),
+            // ]
             */
             return default;
         }
@@ -351,8 +372,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // if request and getattr(request, 'is_frontend', True):
             //     # get languages while ignoring current language as the one in the context may be invalid
-            //     lang_ids = self.env['website'].get_current_website().with_context(lang=False).language_ids.sorted('name').ids
-            //     langs = [dict(self.env['res.lang']._get_data(id=id_)) for id_ in lang_ids]
+            //     if self.env.context.get('web_force_installed_langs'):
+            //         langs = sorted(map(dict, self._get_active_by('code').values()),
+            //                        key=lambda lang: lang['name'])
+            //     else:
+            //         lang_ids = self.env['website'].get_current_website().with_context(lang=False).language_ids.sorted('name').ids
+            //         langs = [dict(self.env['res.lang']._get_data(id=id_)) for id_ in lang_ids]
             //     es_419_exists = any(lang['code'] == 'es_419' for lang in langs)
             //     already_shortened = []
             //     for lang in langs:
@@ -389,7 +414,7 @@ namespace Bamboo.Core.Application.Services
             // """ Return installed languages' (code, name) pairs sorted by name. """
             // return [(code, data.name) for code, data in self._get_active_by('code').items()]
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id)
@@ -459,11 +484,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResLang> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResLang> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_lang.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'code', 'flag_image_url', 'display_name']
             */
             return default;
@@ -524,17 +549,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> ToggleActiveAsync(Guid id)
+        public async Task<ResLang> UnarchiveAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
-            // def toggle_active(self):
-            // super().toggle_active()
+            // def action_unarchive(self):
+            // activated = self.filtered(lambda rec: not rec.active)
+            // res = super(ResLang, activated).action_unarchive()
             // # Automatically load translation
-            // active_lang = [lang.code for lang in self.filtered(lambda l: l.active)]
-            // if active_lang:
+            // if activated:
+            //     active_lang = activated.mapped('code')
             //     mods = self.env['ir.module.module'].search([('state', '=', 'installed')])
             //     mods._update_translations(active_lang)
+            // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -547,7 +574,7 @@ namespace Bamboo.Core.Application.Services
             // for language in self:
             //     if language.code == 'en_US':
             //         raise UserError(_("Base Language 'en_US' can not be deleted."))
-            //     ctx_lang = self._context.get('lang')
+            //     ctx_lang = self.env.context.get('lang')
             //     if ctx_lang and (language.code == ctx_lang):
             //         raise UserError(_("You cannot delete the language which is the user's preferred language."))
             //     if language.active:
@@ -559,12 +586,31 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, ResLang entity, List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: res_lang.py) ---
+            // def write(self, vals):
+            // """ When languages are disabled, clear corresponding survey languages. """
+            // if 'active' in vals and not vals['active']:
+            //     self.env['survey.user_input'].sudo().search([('lang_id', 'in', self.ids)]).lang_id = False
+            //     surveys_sudo = self.env['survey.survey'].sudo().search([('lang_ids', 'in', self.ids)])
+            //     if will_be_all_lang_survey_sudo := surveys_sudo.filtered(lambda survey: survey.lang_ids <= self):
+            //         if len(self) > 1:
+            //             error = _("Cannot deactivate languages currently used by survey(s) only supporting those languages.")
+            //         else:
+            //             error = _("Cannot deactivate a language currently used by survey(s) only supporting that language.")
+            //         if self.env['survey.survey'].search(
+            //                 [('id', 'in', will_be_all_lang_survey_sudo.ids)]) == will_be_all_lang_survey_sudo:
+            //             error += '\n'
+            //             error += _("Survey(s): %(surveys_list)s",
+            //                        surveys_list=', '.join(f'"{survey.title}"' for survey in will_be_all_lang_survey_sudo))
+            //         raise UserError(error)
+            //     surveys_sudo.write({'lang_ids': [Command.unlink(lang.id) for lang in self]})
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_lang.py) ---
             // def write(self, vals):
             // if 'active' in vals and not vals['active']:
             //     if self.env['website'].search_count([('language_ids', 'in', self._ids)], limit=1):
             //         raise UserError(_("Cannot deactivate a language that is currently used on a website."))
-            // return super(Lang, self).write(vals)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
             // def write(self, vals):
             // lang_codes = self.mapped('code')
@@ -580,7 +626,7 @@ namespace Bamboo.Core.Application.Services
             //     # delete linked ir.default specifying default partner's language
             //     self.env['ir.default'].discard_values('res.partner', 'lang', lang_codes)
             // 
-            // res = super(Lang, self).write(vals)
+            // res = super().write(vals)
             // 
             // if vals.get('active'):
             //     # If we activate a lang, set it's url_code to the shortest version
@@ -602,7 +648,7 @@ namespace Bamboo.Core.Application.Services
             //             long_lang.url_code = short_code
             // 
             // self.env.flush_all()
-            // self.env.registry.clear_cache()
+            // self.env.registry.clear_cache('stable')
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

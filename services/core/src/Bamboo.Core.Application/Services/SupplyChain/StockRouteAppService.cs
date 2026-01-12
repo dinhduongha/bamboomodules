@@ -74,6 +74,26 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<StockRoute> IsValidResupplyRouteForProductInternalAsync(object product)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_rule.py) ---
+            // def _is_valid_resupply_route_for_product(self, product):
+            // if any(rule.action == 'manufacture' for rule in self.rule_ids):
+            //     return any(bom.type == 'normal' for bom in product.bom_ids)
+            // return super()._is_valid_resupply_route_for_product(product)
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock_rule.py) ---
+            // def _is_valid_resupply_route_for_product(self, product):
+            // if any(rule.action == 'buy' for rule in self.rule_ids):
+            //     return bool(product.seller_ids)
+            // return super()._is_valid_resupply_route_for_product(product)
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
+            // def _is_valid_resupply_route_for_product(self, product):
+            // return False
+            */
+            return default;
+        }
+
         protected async Task<StockRoute> OnchangeCompanyInternalAsync()
         {
             /*
@@ -94,18 +114,6 @@ namespace Bamboo.Core.Application.Services
             //     self.warehouse_ids = [(5, 0, 0)]
             */
             return default;
-        }
-
-        public async Task<StockRoute> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
-            // def toggle_active(self):
-            // for route in self:
-            //     route.with_context(active_test=False).rule_ids.sudo().filtered(lambda ru: ru.location_dest_id.active and ru.active == route.active).toggle_active()
-            // super().toggle_active()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

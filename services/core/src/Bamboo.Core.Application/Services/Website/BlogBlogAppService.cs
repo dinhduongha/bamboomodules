@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner" })]
+    [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner", "html_builder" })]
     public class BlogBlogAppService : GenericApplicationService<BlogBlog>, IBlogBlogAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -54,10 +54,10 @@ namespace Bamboo.Core.Application.Services
             //     ORDER BY
             //         count(*) DESC
             // """
-            // self._cr.execute(req, [tuple(self.ids)])
+            // self.env.cr.execute(req, [tuple(self.ids)])
             // tag_by_blog = {i.id: [] for i in self}
             // all_tags = set()
-            // for blog_id, freq, tag_id in self._cr.fetchall():
+            // for blog_id, freq, tag_id in self.env.cr.fetchall():
             //     if freq >= min_limit:
             //         if join:
             //             all_tags.add(tag_id)
@@ -86,6 +86,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<BlogBlog> DefaultSequenceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
+            // def _default_sequence(self):
+            // return (self.search([], order="sequence desc", limit=1).sequence or 0) + 1
+            */
+            return default;
+        }
+
         public async Task<BlogBlog> MessagePostAsync(Guid id)
         {
             /*
@@ -99,7 +109,7 @@ namespace Bamboo.Core.Application.Services
             //     parent_message = self.env['mail.message'].sudo().browse(parent_id)
             //     if parent_message.subtype_id and parent_message.subtype_id == self.env.ref('website_blog.mt_blog_blog_published'):
             //         subtype_id = self.env.ref('mail.mt_note').id
-            // return super(Blog, self).message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
+            // return super().message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("PointOfSale", Category = "Sales", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
+    [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public class PosPaymentMethodAppService : GenericApplicationService<PosPaymentMethod>, IPosPaymentMethodAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -29,39 +29,42 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosPaymentMethod> BearerTokenInternalAsync(object session)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def _bearer_token(self, session):
             // self.ensure_one()
             // 
             // data = {'grant_type': 'client_credentials'}
-            // auth = requests.auth.HTTPBasicAuth(self.viva_wallet_client_id, self.viva_wallet_client_secret)
+            // auth = requests.auth.HTTPBasicAuth(self.viva_com_client_id, self.viva_com_client_secret)
             // try:
-            //     resp = session.post(f"{self._viva_wallet_account_get_endpoint()}/connect/token", auth=auth, data=data, timeout=TIMEOUT)
+            //     resp = session.post(f"{self._viva_com_account_get_endpoint()}/connect/token", auth=auth, data=data, timeout=TIMEOUT)
             // except requests.exceptions.RequestException:
-            //     _logger.exception("Failed to call viva_wallet_bearer_token endpoint")
+            //     _logger.exception("Failed to call viva_com_bearer_token endpoint")
             // 
             // access_token = resp.json().get('access_token')
             // if access_token:
-            //     self.viva_wallet_bearer_token = access_token
+            //     self.viva_com_bearer_token = access_token
             //     return {'Authorization': f"Bearer {access_token}"}
             // else:
-            //     raise UserError(_('Unable to retrieve Viva Wallet Bearer Token: Please verify that the Client ID and Client Secret are correct'))
+            //     raise UserError(_(
+            //         'Unable to retrieve Viva.com Bearer Token: Please verify that the Client ID '
+            //         'and Client Secret are correct'
+            //     ))
             */
             return default;
         }
 
-        protected async Task<PosPaymentMethod> CallVivaWalletInternalAsync(object endpoint, object action, object data, object should_retry)
+        protected async Task<PosPaymentMethod> CallVivaComInternalAsync(object endpoint, object action, object data, object should_retry)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _call_viva_wallet(self, endpoint, action, data=None, should_retry=True):
-            // session = get_viva_wallet_session(should_retry)
-            // session.headers.update({'Authorization': f"Bearer {self.viva_wallet_bearer_token}"})
-            // endpoint = f"{self._viva_wallet_api_get_endpoint()}/ecr/v1/{endpoint}"
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _call_viva_com(self, endpoint, action, data=None, should_retry=True):
+            // session = get_viva_com_session(should_retry)
+            // session.headers.update({'Authorization': f"Bearer {self.viva_com_bearer_token}"})
+            // endpoint = f"{self._viva_com_api_get_endpoint()}/ecr/v1/{endpoint}"
             // try:
             //     resp = session.request(action, endpoint, json=data, timeout=TIMEOUT)
             // except requests.exceptions.RequestException as e:
-            //     return {'error': _("There are some issues between us and Viva Wallet, try again later.%s)", e)}
+            //     return {'error': _("There are some issues between us and Viva.com, try again later.%s)", e)}
             // if resp.text and resp.json().get('detail') == 'Could not validate credentials':
             //     session.headers.update(self._bearer_token(session))
             //     resp = session.request(action, endpoint, json=data, timeout=TIMEOUT)
@@ -71,7 +74,7 @@ namespace Bamboo.Core.Application.Services
             //         return resp.json()
             //     return {'success': resp.status_code}
             // else:
-            //     return {'error': _("There are some issues between us and Viva Wallet, try again later. %s", resp.json().get('detail'))}
+            //     return {'error': _("There are some issues between us and Viva.com, try again later. %s", resp.json().get('detail'))}
             */
             return default;
         }
@@ -119,18 +122,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosPaymentMethod> CheckPaytmTerminalInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _check_paytm_terminal(self):
-            // for record in self:
-            //     if record.use_payment_terminal == 'paytm' and record.company_id.currency_id.name != 'INR':
-            //         raise UserError(_('This Payment Terminal is only valid for INR Currency'))
-            */
-            return default;
-        }
-
         protected async Task<PosPaymentMethod> CheckPineLabsTerminalInternalAsync()
         {
             /*
@@ -138,6 +129,17 @@ namespace Bamboo.Core.Application.Services
             // def _check_pine_labs_terminal(self):
             // if any(record.use_payment_terminal == 'pine_labs' and record.company_id.currency_id.name != 'INR' for record in self):
             //     raise UserError(_('This Payment Terminal is only valid for INR Currency'))
+            */
+            return default;
+        }
+
+        protected async Task<PosPaymentMethod> CheckQfpayTerminalInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
+            // def _check_qfpay_terminal(self):
+            // if any(record.use_payment_terminal == 'qfpay' and record.company_id.currency_id.name != 'HKD' for record in self):
+            //     raise UserError(_('QFPay is only valid for HKD Currency'))
             */
             return default;
         }
@@ -182,22 +184,23 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosPaymentMethod> CheckVivaWalletCredentialsInternalAsync()
+        protected async Task<PosPaymentMethod> CheckVivaComCredentialsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _check_viva_wallet_credentials(self):
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _check_viva_com_credentials(self):
             // for record in self:
-            //     if (record.use_payment_terminal == 'viva_wallet'
+            //     if (
+            //         record.use_payment_terminal == 'viva_com'
             //         and not all(record[f] for f in [
-            //             'viva_wallet_merchant_id',
-            //             'viva_wallet_api_key',
-            //             'viva_wallet_client_id',
-            //             'viva_wallet_client_secret',
-            //             'viva_wallet_terminal_id']
-            //         )
+            //             'viva_com_merchant_id',
+            //             'viva_com_api_key',
+            //             'viva_com_client_id',
+            //             'viva_com_client_secret',
+            //             'viva_com_terminal_id',
+            //         ])
             //     ):
-            //         raise UserError(_('It is essential to provide API key for the use of viva wallet'))
+            //         raise UserError(_('It is essential to provide API key for the use of Viva.com'))
             */
             return default;
         }
@@ -306,13 +309,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosPaymentMethod> ComputeVivaWalletWebhookEndpointInternalAsync()
+        protected async Task<PosPaymentMethod> ComputeVivaComWebhookEndpointInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _compute_viva_wallet_webhook_endpoint(self):
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _compute_viva_com_webhook_endpoint(self):
             // web_base_url = self.get_base_url()
-            // self.viva_wallet_webhook_endpoint = f"{web_base_url}/pos_viva_wallet/notification?company_id={self.company_id.id}&token={self.viva_wallet_webhook_verification_key}"
+            // self.viva_com_webhook_endpoint = (
+            //     f"{web_base_url}/pos_viva_com/notification?company_id={self.company_id.id}"
+            //     f"&token={self.viva_com_webhook_verification_key}"
+            // )
             */
             return default;
         }
@@ -344,8 +350,8 @@ namespace Bamboo.Core.Application.Services
             //         self._force_payment_method_type_values(vals, vals['payment_method_type'])
             // return super().create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
-            // def create(self, vals):
-            // records = super().create(vals)
+            // def create(self, vals_list):
+            // records = super().create(vals_list)
             // 
             // for record in records:
             //     if record.mp_bearer_token:
@@ -358,23 +364,88 @@ namespace Bamboo.Core.Application.Services
             //     if vals.get('is_online_payment', False):
             //         self._force_online_payment_values(vals)
             // return super().create(vals_list)
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def create(self, vals):
-            // records = super().create(vals)
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def create(self, vals_list):
+            // records = super().create(vals_list)
             // 
             // for record in records:
-            //     if record.viva_wallet_merchant_id and record.viva_wallet_api_key:
-            //         record.viva_wallet_webhook_verification_key = record._get_verification_key(
-            //             record._viva_wallet_webhook_get_endpoint(),
-            //             record.viva_wallet_merchant_id,
-            //             record.viva_wallet_api_key,
+            //     if record.viva_com_merchant_id and record.viva_com_api_key:
+            //         record.viva_com_webhook_verification_key = get_verification_key(
+            //             record._viva_com_webhook_get_endpoint(),
+            //             record.viva_com_merchant_id,
+            //             record.viva_com_api_key,
             //         )
-            //         if not record.viva_wallet_webhook_verification_key:
+            //         if not record.viva_com_webhook_verification_key:
             //             raise UserError(_("Can't create payment method. Please check the data and update it."))
             // 
             // return records
             */
             return await base.CreateAsync(entity, fields);
+        }
+
+        protected async Task<PosPaymentMethod> DpopayHeadersInternalAsync(object token_expired)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _dpopay_headers(self, token_expired=False):
+            // self.ensure_one()
+            // token = self._generate_dpopay_token() if token_expired else self.dpopay_bearer_token
+            // return {
+            //     'Authorization': f'Bearer {token}',
+            //     'Chain-ID': self.dpopay_chain_id,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<PosPaymentMethod> ExecuteDpopayApiRequestInternalAsync(object payload, object endpoint)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _execute_dpopay_api_request(self, payload, endpoint):
+            // self.ensure_one()
+            // if endpoint not in ('start-transaction', 'get-result', 'get-status', 'cancel-transaction'):
+            //     raise UserError(_('Invalid endpoint'))
+            // 
+            // mode = 'Test' if self.dpopay_test_mode else 'Production'
+            // url = f'{self._get_dpopay_base_url()}/{endpoint}'
+            // try:
+            //     def _send_request(token_expired=False):
+            //         headers = self._dpopay_headers(token_expired)
+            //         _logger.info('Sending request to %s | Mode: %s | Headers: %s', url, mode, list(headers.keys()))
+            //         response = requests.post(url, json=payload, headers=headers, timeout=DPOPAY_DEFAULT_TIMEOUT)
+            //         response_json = response.json()
+            //         return response, response_json
+            // 
+            //     response, response_json = _send_request()
+            //     errorCode = response_json.get('error_code') or response_json.get('resultCode')
+            //     # Refresh Token and Retry the request if the token is expired (999912) or invalid (999913)
+            //     if response.status_code == 401 and errorCode in ('999912', '999913'):
+            //         _logger.info('Token expired or invalid — regenerating token...')
+            //         response, response_json = _send_request(token_expired=True)
+            // 
+            //     response.raise_for_status()
+            //     return response_json
+            // 
+            // except HTTPError as error:
+            //     _logger.warning('HTTPError: %s', error)
+            //     error_json = error.response.json()
+            //     error_code = str(error_json.get('error_code') or error_json.get('errorCode') or error_json.get('resultCode'))
+            //     error_message = error_json.get('errorMessage') or error_json.get('error_description') or error_json.get('resultDescription') or str(error_json)
+            // 
+            //     if error_code == "403":
+            //         error_message = _("Please ensure the device is online and confirm that the Merchant ID (MID) and Terminal ID (TID) are correct. %s", error_message)
+            // 
+            //     if error_code == "999911":
+            //         error_message = _("Invalid Chain ID. Please verify the configuration. %s", error_message)
+            // 
+            //     return {'errorMessage': error_message}
+            // 
+            // except RequestException as error:
+            //     _logger.warning('%s: %s', error.__class__.__name__, error)
+            //     return {'errorMessage': str(error)}
+            */
+            return default;
         }
 
         protected async Task<PosPaymentMethod> FindTerminalInternalAsync(object token, object point_smart)
@@ -467,6 +538,32 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<PosPaymentMethod> GenerateDpopayTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _generate_dpopay_token(self):
+            // self.ensure_one()
+            // auth = requests.auth.HTTPBasicAuth(self.dpopay_client_id, self.dpopay_client_secret)
+            // url = f'{self._get_dpopay_base_url(is_token=True)}/tokenkc/generate'
+            // 
+            // _logger.info('Sending request to %s to generate new token', url)
+            // response = requests.get(url, auth=auth, timeout=DPOPAY_DEFAULT_TIMEOUT)
+            // response_json = response.json()
+            // response.raise_for_status()
+            // access_token = response_json.get('access_token')
+            // 
+            // if not access_token:
+            //     raise UserError(_('Unable to retrieve DPO Pay bearer token: check Client ID and Client Secret.'))
+            // 
+            // # The token is short-lived and refreshed automatically to keep the payment flow working.
+            // # sudo() is used because POS users only have read access to this model.
+            // self.sudo().write({'dpopay_bearer_token': access_token})
+            // return access_token
+            */
+            return default;
+        }
+
         protected async Task<PosPaymentMethod> GetAdyenEndpointsInternalAsync()
         {
             /*
@@ -482,6 +579,21 @@ namespace Bamboo.Core.Application.Services
             //     'adjust': 'https://pal-%s.adyen.com/pal/servlet/Payment/v52/adjustAuthorisation',
             //     'capture': 'https://pal-%s.adyen.com/pal/servlet/Payment/v52/capture',
             // }
+            */
+            return default;
+        }
+
+        protected async Task<PosPaymentMethod> GetDpopayBaseUrlInternalAsync(object is_token)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _get_dpopay_base_url(self, is_token=False):
+            // self.ensure_one()
+            // host = (self.dpopay_test_mode and 'api-dev.network.global') or 'api.network.global'
+            // 
+            // if is_token:
+            //     return f'https://{host}/v1'
+            // return f'https://{host}/ngenius-webapi/payments/push/v1/tid:{self.dpopay_tid}/mid:{self.dpopay_mid}'
             */
             return default;
         }
@@ -566,17 +678,13 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosPaymentMethod> GetLatestVivaWalletStatusAsync(Guid id)
+        public async Task<PosPaymentMethod> GetLatestVivaComStatusAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def get_latest_viva_wallet_status(self):
-            // if not self.env.user.has_group('point_of_sale.group_pos_user'):
-            //     raise AccessError(_("Only 'group_pos_user' are allowed to get latest transaction status"))
-            // 
-            // self.ensure_one()
-            // latest_response = self.sudo().viva_wallet_latest_response
-            // return latest_response
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def get_latest_viva_com_status(self):
+            // # Not used anymore, to remove in master
+            // return {'error': 'Your POS is out of date, please refresh the page.'}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -638,10 +746,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
             // def _get_payment_method_type(self):
-            // selection = [('none', 'None required'), ('terminal', 'Terminal')]
+            // selection = [('none', self.env._("None required")), ('terminal', self.env._("Terminal"))]
             // if self.env['res.partner.bank'].get_available_qr_methods_in_sequence():
-            //     selection.append(('qr_code', 'Bank App (QR Code)'))
+            //     selection.append(('qr_code', self.env._("Bank App (QR Code)")))
             // return selection
+            --- ODOO METHOD SOURCE (MODULE: pos_glory_cash, FILE: pos_payment_method.py) ---
+            // def _get_payment_method_type(self):
+            // return super()._get_payment_method_type() + [('glory_cash', 'Cash Machine (Glory)')]
             */
             return default;
         }
@@ -655,32 +766,44 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_adyen, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super(PosPaymentMethod, self)._get_payment_terminal_selection() + [('adyen', 'Adyen')]
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _get_payment_terminal_selection(self):
+            // return super()._get_payment_terminal_selection() + [('dpopay', 'DPO Pay')]
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super()._get_payment_terminal_selection() + [('mercado_pago', 'Mercado Pago')]
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super(PosPaymentMethod, self)._get_payment_terminal_selection() if not self.is_online_payment else []
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _get_payment_terminal_selection(self):
-            // return super()._get_payment_terminal_selection() + [('paytm', 'PayTM')]
             --- ODOO METHOD SOURCE (MODULE: pos_pine_labs, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super()._get_payment_terminal_selection() + [('pine_labs', 'Pine Labs')]
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
+            // def _get_payment_terminal_selection(self):
+            // return super()._get_payment_terminal_selection() + [('qfpay', 'QFPay')]
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super()._get_payment_terminal_selection() + [('razorpay', 'Razorpay')]
-            --- ODOO METHOD SOURCE (MODULE: pos_six, FILE: pos_payment_method.py) ---
-            // def _get_payment_terminal_selection(self):
-            // return super(PosPaymentMethod, self)._get_payment_terminal_selection() + [('six', 'SIX')]
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
             // return super()._get_payment_terminal_selection() + [('stripe', 'Stripe')]
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def _get_payment_terminal_selection(self):
-            // return super()._get_payment_terminal_selection() + [('viva_wallet', 'Viva Wallet')]
+            // return super()._get_payment_terminal_selection() + [('viva_com', 'Viva.com')]
             */
             return default;
+        }
+
+        public async Task<PosPaymentMethod> GetProviderStatusAsync(Guid id, PosPaymentMethodGetProviderStatusRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
+            // def get_provider_status(self, modules_list):
+            // return {
+            //     'state': self.env['ir.module.module'].search_read([('name', 'in', modules_list)], ['name', 'state']),
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<PosPaymentMethod> GetQrCodeAsync(Guid id, PosPaymentMethodGetQrCodeRequestDto input)
@@ -721,18 +844,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosPaymentMethod> GetStripeSecretKeyInternalAsync()
+        protected async Task<PosPaymentMethod> GetTransactionTypeInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
-            // def _get_stripe_secret_key(self):
-            // # TODO: unused, remove in master
-            // stripe_secret_key = self._get_stripe_payment_provider().stripe_secret_key
-            // 
-            // if not stripe_secret_key:
-            //     raise ValidationError(_('Complete the Stripe onboarding for company %s.', self.env.company.name))
-            // 
-            // return stripe_secret_key
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _get_transaction_type(self):
+            // if self.dpopay_payment_mode == 'momo':
+            //     return 'pushPaymentDpoMomoSale'
+            // return 'pushPaymentSale'
             */
             return default;
         }
@@ -751,27 +870,6 @@ namespace Bamboo.Core.Application.Services
             // res = super()._get_valid_acquirer_data()
             // res['metadata.self_order_id'] = UNPREDICTABLE_ADYEN_DATA
             // return res
-            */
-            return default;
-        }
-
-        protected async Task<PosPaymentMethod> GetVerificationKeyInternalAsync(object endpoint, Guid viva_wallet_merchant_id, object viva_wallet_api_key)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _get_verification_key(self, endpoint, viva_wallet_merchant_id, viva_wallet_api_key):
-            // # Get a key to configure the webhook.
-            // # this key need to be the response when we receive a notifiaction
-            // # do not execute this query in test mode
-            // if tools.config['test_enable']:
-            //     return 'viva_wallet_test'
-            // 
-            // auth = requests.auth.HTTPBasicAuth(viva_wallet_merchant_id, viva_wallet_api_key)
-            // try:
-            //     resp = requests.get(f"{endpoint}/api/messages/config/token", auth=auth, timeout=TIMEOUT)
-            // except requests.exceptions.RequestException:
-            //     _logger.exception('Failed to call https://%s/api/messages/config/token endpoint', endpoint)
-            // return resp.json().get('Key')
             */
             return default;
         }
@@ -809,90 +907,129 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_adyen, FILE: pos_payment_method.py) ---
             // def _is_write_forbidden(self, fields):
             // return super(PosPaymentMethod, self)._is_write_forbidden(fields - {'adyen_latest_response'})
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def _is_write_forbidden(self, fields):
+            // # Allow the modification of these fields even if a pos_session is open
+            // whitelisted_fields = {'dpopay_bearer_token', 'dpopay_payment_mode'}
+            // return super()._is_write_forbidden(fields - whitelisted_fields)
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment_method.py) ---
             // def _is_write_forbidden(self, fields):
             // return super(PosPaymentMethod, self)._is_write_forbidden(fields - {'online_payment_provider_ids'})
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
+            // def _is_write_forbidden(self, fields):
+            // return super()._is_write_forbidden(fields - {'qfpay_latest_response'})
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def _is_write_forbidden(self, fields):
             // # Allow the modification of these fields even if a pos_session is open
-            // whitelisted_fields = {'viva_wallet_bearer_token', 'viva_wallet_webhook_verification_key', 'viva_wallet_latest_response'}
+            // whitelisted_fields = {'viva_com_bearer_token', 'viva_com_webhook_verification_key', 'viva_com_latest_response'}
             // return super(PosPaymentMethod, self)._is_write_forbidden(fields - whitelisted_fields)
             */
             return default;
         }
 
-        protected async Task<PosPaymentMethod> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<PosPaymentMethod> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_domain(self, data):
+            // def _load_pos_data_domain(self, data, config):
             // return ['|', ('active', '=', False), ('active', '=', True)]
             */
             return default;
         }
 
-        protected async Task<PosPaymentMethod> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<PosPaymentMethod> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'is_cash_count', 'use_payment_terminal', 'split_transactions', 'type', 'image', 'sequence', 'payment_method_type', 'default_qr']
             --- ODOO METHOD SOURCE (MODULE: pos_adyen, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
             // params += ['adyen_terminal_identifier']
             // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_glory_cash, FILE: pos_payment_method.py) ---
             // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
+            // return super()._load_pos_data_fields(config_id) + ['glory_websocket_address', 'glory_username', 'glory_password']
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment_method.py) ---
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
             // params += ['is_online_payment']
             // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant_adyen, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
             // def _load_pos_data_fields(self, config_id):
             // params = super()._load_pos_data_fields(config_id)
+            // params += ['qfpay_terminal_ip_address', 'qfpay_payment_type']
+            // return params
+            --- ODOO METHOD SOURCE (MODULE: pos_restaurant_adyen, FILE: pos_payment_method.py) ---
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
             // params += ['adyen_merchant_account']
             // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_six, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // params += ['six_terminal_ip']
-            // return params
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
             // params += ['stripe_serial_number']
             // return params
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // data = super()._load_pos_data_fields(config_id)
-            // data += ['viva_wallet_terminal_id']
-            // return data
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return [*super()._load_pos_data_fields(config), 'viva_com_terminal_id']
             */
             return default;
         }
 
-        protected async Task<PosPaymentMethod> LoadPosSelfDataDomainInternalAsync(object data)
+        protected async Task<PosPaymentMethod> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_payment_method.py) ---
-            // def _load_pos_self_data_domain(self, data):
-            // if data['pos.config']['data'][0]['self_ordering_mode'] == 'kiosk':
-            //     domain = super()._load_pos_self_data_domain(data)
-            //     domain = expression.OR([[('is_online_payment', '=', True)], domain])
+            // def _load_pos_self_data_domain(self, data, config):
+            // if config.self_ordering_mode == 'kiosk':
+            //     domain = super()._load_pos_self_data_domain(data, config)
+            //     domain = Domain.OR([[('is_online_payment', '=', True), ('id', 'in', config.payment_method_ids.ids)], domain])
             //     return domain
             // else:
-            //     return [('is_online_payment', '=', True)]
+            //     return [('is_online_payment', '=', True), ('id', '=', config.self_order_online_payment_method_id.id)]
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_payment_method.py) ---
-            // def _load_pos_self_data_domain(self, data):
-            // if data['pos.config']['data'][0]['self_ordering_mode'] == 'kiosk':
-            //     return [('use_payment_terminal', 'in', ['adyen', 'stripe']), ('id', 'in', data['pos.config']['data'][0]['payment_method_ids'])]
-            // else:
-            //     [('id', '=', False)]
+            // def _load_pos_self_data_domain(self, data, config):
+            // return [('id', '=', False)]
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_adyen, FILE: pos_payment_method.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // domain = super()._load_pos_self_data_domain(data, config)
+            // if config.self_ordering_mode == 'kiosk':
+            //     domain = Domain.OR([
+            //         [('use_payment_terminal', '=', 'adyen'), ('id', 'in', config.payment_method_ids.ids)],
+            //         domain
+            //     ])
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_pine_labs, FILE: pos_payment_method.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // domain = super()._load_pos_self_data_domain(data, config)
+            // if data['pos.config'][0]['self_ordering_mode'] == 'kiosk':
+            //     domain = Domain.OR([[('use_payment_terminal', '=', 'pine_labs'), ('id', 'in', config.payment_method_ids.ids)], domain])
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_qfpay, FILE: pos_payment_method.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // domain = super()._load_pos_self_data_domain(data, config)
+            // if config.self_ordering_mode == 'kiosk':
+            //     domain = Domain.OR([[('use_payment_terminal', '=', 'qfpay'), ('id', 'in', config.payment_method_ids.ids)], domain])
+            // return domain
             --- ODOO METHOD SOURCE (MODULE: pos_self_order_razorpay, FILE: pos_payment_method.py) ---
-            // def _load_pos_self_data_domain(self, data):
-            // domain = super()._load_pos_self_data_domain(data)
-            // if data['pos.config']['data'][0]['self_ordering_mode'] == 'kiosk':
-            //     domain = expression.OR([[('use_payment_terminal', '=', 'razorpay')], domain])
+            // def _load_pos_self_data_domain(self, data, config):
+            // domain = super()._load_pos_self_data_domain(data, config)
+            // if config.self_ordering_mode == 'kiosk':
+            //     domain = Domain.OR([
+            //         [('use_payment_terminal', '=', 'razorpay'), ('id', 'in', config.payment_method_ids.ids)],
+            //         domain
+            //     ])
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_stripe, FILE: pos_payment_method.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // domain = super()._load_pos_self_data_domain(data, config)
+            // if config.self_ordering_mode == 'kiosk':
+            //     domain = Domain.OR([
+            //         [('use_payment_terminal', '=', 'stripe'), ('id', 'in', config.payment_method_ids.ids)],
+            //         domain
+            //     ])
             // return domain
             */
             return default;
@@ -974,6 +1111,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<PosPaymentMethod> OnchangeIsOnlinePaymentInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment_method.py) ---
+            // def _onchange_is_online_payment(self):
+            // """Reset method to hide widget `pos_payment_provider_cards` in form view."""
+            // self.payment_method_type = 'none'
+            */
+            return default;
+        }
+
         protected async Task<PosPaymentMethod> OnchangeJournalIdInternalAsync()
         {
             /*
@@ -997,12 +1145,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
             // def _onchange_payment_method_type(self):
             // # We don't display the field if there is only one option and cannot set a default on it
+            // if self.payment_method_type == 'none':
+            //     self.use_payment_terminal = False
+            // 
             // selection_options = self.env['res.partner.bank'].get_available_qr_methods_in_sequence()
             // if len(selection_options) == 1:
             //     self.qr_code_method = selection_options[0][0]
-            // # Unset the use_payment_terminal field when switching to a payment method that doesn't use it
-            // if self.payment_method_type != 'terminal':
-            //     self.use_payment_terminal = None
             */
             return default;
         }
@@ -1065,6 +1213,21 @@ namespace Bamboo.Core.Application.Services
             //     req = self.proxy_adyen_request(data)
             // 
             //     return req and (isinstance(req, bool) or not req.get('error'))
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_pine_labs, FILE: pos_payment_method.py) ---
+            // def _payment_request_from_kiosk(self, order):
+            // if self.use_payment_terminal != 'pine_labs':
+            //     return super()._payment_request_from_kiosk(order)
+            // reference_prefix = order.config_id.name.replace(' ', '')
+            // # We need to provide the amount in paisa since Pine Labs processes amounts in paisa.
+            // # The conversion rate between INR and paisa is set as 1 INR = 100 paisa.
+            // data = {
+            //     'amount': order.amount_total * 100,
+            //     'transactionNumber': f'{reference_prefix}/Order/{order.id}/{uuid.uuid4().hex}',
+            //     'sequenceNumber': '1'
+            // }
+            // payment_response = self.pine_labs_make_payment_request(data)
+            // payment_response['payment_ref_no'] = data['transactionNumber']
+            // return payment_response
             --- ODOO METHOD SOURCE (MODULE: pos_self_order_razorpay, FILE: pos_payment_method.py) ---
             // def _payment_request_from_kiosk(self, order):
             // if self.use_payment_terminal != 'razorpay':
@@ -1081,176 +1244,6 @@ namespace Bamboo.Core.Application.Services
             //     return super()._payment_request_from_kiosk(order)
             // else:
             //     return self.stripe_payment_intent(order.amount_total)
-            */
-            return default;
-        }
-
-        public async Task<PosPaymentMethod> PaytmFetchPaymentStatusAsync(Guid id, PosPaymentMethodPaytmFetchPaymentStatusRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def paytm_fetch_payment_status(self, transaction_id, reference_id, timestamp):
-            // body = self._paytm_get_request_body(transaction_id, reference_id, timestamp)
-            // head = self._paytm_get_request_head(body)
-            // head_error = head.get('error') and head
-            // if head_error:
-            //     return head_error
-            // payload = {'head': head, 'body': body}
-            // response = self._paytm_make_request('V2/payment/status', payload=payload)
-            // result_code = response.get('resultInfo', {}).get('resultCode')
-            // if result_code == 'S':
-            //     # Since we don't want to send extra data on RPC call
-            //     # Only sending essential data when the transaction is successful
-            //     data = response['resultInfo']
-            //     data.update({
-            //             'authCode': response.get('authCode'),
-            //             'issuerMaskCardNo': response.get('issuerMaskCardNo'),
-            //             'issuingBankName': response.get('issuingBankName'),
-            //             'payMethod': response.get('payMethod'),
-            //             'cardType': response.get('cardType'),
-            //             'cardScheme': response.get('cardScheme'),
-            //             'merchantReferenceNo': response.get('merchantReferenceNo'),
-            //             'merchantTransactionId': response.get('merchantTransactionId'),
-            //             'transactionDateTime': response.get('transactionDateTime'),
-            //     })
-            //     return data
-            // elif result_code == 'F':
-            //     return {'error': "%s" % response['resultInfo'].get('resultMsg', _('paytm transaction failure'))}
-            // elif result_code == 'P':
-            //     return response['resultInfo']
-            // default_error_msg = _('paymentFetchRequest expected resultCode not found in the response')
-            // error = response.get('error') or default_error_msg
-            // return {'error': '%s' % error}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<PosPaymentMethod> PaytmGenerateSignatureInternalAsync(object params_dict, object key)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _paytm_generate_signature(self, params_dict, key):
-            // params_list = []
-            // for k in sorted(params_dict.keys()):
-            //     value = params_dict[k]
-            //     if value is None or params_dict[k].lower() == "null":
-            //         value = ""
-            //     params_list.append(str(value))
-            // salt = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(4))
-            // params_list.append(salt)
-            // params_with_salt = '|'.join(params_list)
-            // hashed_params = hashlib.sha256(params_with_salt.encode())
-            // hashed_params_with_salt = hashed_params.hexdigest() + salt
-            // padding = 12 #the padding value is a constant
-            // padded_hashed_params_with_salt = bytes(hashed_params_with_salt + padding * chr(padding), 'utf-8')
-            // try:
-            //     cipher = Cipher(algorithms.AES(key.encode()), modes.CBC(iv))
-            //     encryptor = cipher.encryptor()
-            //     encrypted_hashed_params = encryptor.update(padded_hashed_params_with_salt) + encryptor.finalize()
-            //     return base64.b64encode(encrypted_hashed_params).decode("UTF-8")
-            // except ValueError as error:
-            //     _logger.warning("Cannot generate PayTM signature. Error: %s", error)
-            //     return {'error': '%s' % error}
-            */
-            return default;
-        }
-
-        protected async Task<PosPaymentMethod> PaytmGetRequestBodyInternalAsync(Guid transaction_id, Guid reference_id, object timestamp)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _paytm_get_request_body(self, transaction_id, reference_id, timestamp):
-            // 
-            // time = datetime.fromtimestamp(timestamp).astimezone(tz=tz.gettz('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S")
-            // return {
-            //     'paytmMid': self.paytm_mid,
-            //     'paytmTid': self.paytm_tid,
-            //     'transactionDateTime': time,
-            //     'merchantTransactionId': transaction_id,
-            //     'merchantReferenceNo': reference_id,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<PosPaymentMethod> PaytmGetRequestHeadInternalAsync(object body)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _paytm_get_request_head(self, body):
-            // paytm_signature = self._paytm_generate_signature(body, self.paytm_merchant_key)
-            // error = isinstance(paytm_signature, dict) and paytm_signature.get('error')
-            // if error:
-            //     return {'error': '%s' % error}
-            // return {
-            //     'requestTimeStamp' : body["transactionDateTime"],
-            //     'channelId' : self.channel_id,
-            //     'checksum' : paytm_signature,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<PosPaymentMethod> PaytmMakePaymentRequestAsync(Guid id, PosPaymentMethodPaytmMakePaymentRequestRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def paytm_make_payment_request(self, amount, transaction_id, reference_id, timestamp):
-            // body = self._paytm_get_request_body(transaction_id, reference_id, timestamp)
-            // body['transactionAmount'] = str(int(amount))
-            // if self.accept_payment == 'auto':
-            //     body['autoAccept'] = 'True'
-            // body['paymentMode'] = self.allowed_payment_modes.upper()
-            // head = self._paytm_get_request_head(body)
-            // head_error = head.get('error')
-            // if head_error:
-            //     return {'error': '%s' % head_error}
-            // merchantExtendedInfo = {'paymentMode': self.allowed_payment_modes.upper()}
-            // if self.accept_payment == 'auto':
-            //     merchantExtendedInfo['autoAccept'] = 'True'
-            // body['merchantExtendedInfo'] = merchantExtendedInfo
-            // payload = {'head': head, 'body': body}
-            // response = self._paytm_make_request('payment/request', payload=payload)
-            // result_code = response.get('resultInfo', {}).get('resultCode')
-            // if result_code == 'A':
-            //     return response['resultInfo']
-            // elif result_code == 'F':
-            //     return {'error': "%s" % response['resultInfo'].get('resultMsg', _('paytm transaction request declined'))}
-            // default_error_msg = _('makePaymentRequest expected resultCode not found in the response')
-            // error = response.get('error') or default_error_msg
-            // return {'error': '%s' % error}
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<PosPaymentMethod> PaytmMakeRequestInternalAsync(object url, object payload)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_paytm, FILE: pos_payment_method.py) ---
-            // def _paytm_make_request(self, url, payload=None):
-            // """ Make a request to PayTM API.
-            // 
-            // :param str url: The url to be reached by the request.
-            // :param dict payload: The payload of the request.
-            // :return The JSON-formatted content of the response.
-            // :rtype: dict
-            // """
-            // try:
-            //     if self.paytm_test_mode:
-            //         api_url = 'https://securegw-stage.paytm.in/ecr/'
-            //     else:
-            //         api_url = 'https://securegw-edc.paytm.in/ecr/'
-            //     response = requests.post(api_url+url, json=payload, timeout=REQUEST_TIMEOUT)
-            //     response.raise_for_status()
-            // except (requests.exceptions.Timeout, requests.exceptions.RequestException) as error:
-            //     _logger.warning("Cannot connect with PayTM. Error: %s", error)
-            //     return {'error': '%s' % error}
-            // res_json = response.json()
-            // if res_json.get('body'):
-            //     return res_json['body']
-            // default_error_msg = _('Something went wrong with paytm request. Please try later.')
-            // error = res_json.get('error') or default_error_msg
-            // return {'error': '%s' % error}
             */
             return default;
         }
@@ -1473,6 +1466,83 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosPaymentMethod> QfpayHandleWebhookInternalAsync(object config, object data, object uuid)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
+            // def _qfpay_handle_webhook(self, config, data, uuid):
+            // config._notify("QFPAY_LATEST_RESPONSE", {
+            //     'response': data,
+            //     'line_uuid': uuid,
+            // })
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_qfpay, FILE: pos_payment_method.py) ---
+            // def _qfpay_handle_webhook(self, config, data, uuid):
+            // if config.self_ordering_mode != 'kiosk':
+            //     return super()._qfpay_handle_webhook(config, data, uuid)
+            // 
+            // if data.get('notify_type') != 'payment':
+            //     return
+            // 
+            // if data['status'] == "1":
+            //     order = self.env['pos.order'].search([('uuid', '=', uuid)], limit=1)
+            //     if order:
+            //         order.add_payment({
+            //             'amount': order.amount_total,
+            //             'payment_date': fields.Datetime.now(),
+            //             'payment_method_id': self.id,
+            //             'payment_ref_no': data['chnlsn'],
+            //             'transaction_id': data['syssn'],
+            //             'pos_order_id': order.id,
+            //         })
+            //         order.action_pos_order_paid()
+            // 
+            //         order._send_payment_result("Success")
+            // else:
+            //     order._send_payment_result("fail")
+            */
+            return default;
+        }
+
+        public async Task<PosPaymentMethod> QfpaySignRequestAsync(Guid id, PosPaymentMethodQfpaySignRequestRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
+            // def qfpay_sign_request(self, payload):
+            // self.ensure_one()
+            // if not self.env.su and not self.env.user.has_group('point_of_sale.group_pos_user'):
+            //     raise AccessDenied()
+            // 
+            // if self.use_payment_terminal != 'qfpay':
+            //     raise UserError(_('This method can only be used with QFPay payment terminal.'))
+            // 
+            // key = self.sudo().qfpay_pos_key
+            // # AES IV is a constant as stated in the documentation
+            // aes_iv = 'qfpay202306_hjsh'
+            // 
+            // # Sort the payload items and format
+            // payload_items = sorted((k, '' if v is None else v) for k, v in payload.items())
+            // formated_payload = ','.join(f"{k}='{v}'" if isinstance(v, str) else f"{k}={v}" for k, v in payload_items)
+            // formated_payload = '{' + formated_payload + '}'
+            // 
+            // # Generate Digest
+            // md5 = hashlib.md5()
+            // md5.update((formated_payload + key).encode('utf-8'))
+            // digest = md5.hexdigest().upper()
+            // 
+            // # Prepare the payload to encrypt
+            // payload_to_encrypt = "{content:" + formated_payload + ", digest:'" + digest + "'}"
+            // 
+            // # Encrypt the payload
+            // cipher = Cipher(algorithms.AES(key.encode('utf-8')), modes.CBC(aes_iv.encode('utf-8')))
+            // encryptor = cipher.encryptor()
+            // padder = padding.PKCS7(128).padder()
+            // padded_data = padder.update(payload_to_encrypt.encode('utf-8')) + padder.finalize()
+            // encrypted = encryptor.update(padded_data) + encryptor.finalize()
+            // return base64.b64encode(encrypted).decode('utf-8')
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<PosPaymentMethod> RazorpayCancelPaymentRequestAsync(Guid id, PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
         {
             /*
@@ -1497,7 +1567,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
             // def razorpay_fetch_payment_status(self, data):
             // razorpay = RazorpayPosRequest(self)
-            // body = razorpay._razorpay_get_payment_status_request_body()
+            // body = razorpay._razorpay_get_request_parameters()
             // body.update({'origP2pRequestId': data.get('p2pRequestId')})
             // response = razorpay._call_razorpay(endpoint='status', payload=body)
             // if response.get('success') and not response.get('errorCode'):
@@ -1517,6 +1587,13 @@ namespace Bamboo.Core.Application.Services
             //             'nameOnCard': response.get('nameOnCard'),
             //             'acquirerCode': response.get('acquirerCode'),
             //             'createdTime': response.get('createdTime'),
+            //             'p2pRequestId': response.get('p2pRequestId'),
+            //             'settlementStatus': response.get('settlementStatus'),
+            //         }
+            //     elif payment_status in ['VOIDED', 'AUTHORIZED_REFUNDED'] and payment_messageCode == 'P2P_DEVICE_TXN_DONE':
+            //         return {
+            //             'status': payment_status,
+            //             'settlementStatus': response.get('settlementStatus'),
             //         }
             //     elif payment_status == 'FAILED' or payment_messageCode == 'P2P_DEVICE_CANCELED':
             //         return {'error': str(response.get('message', _('Razorpay POS transaction failed'))),
@@ -1554,50 +1631,103 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<PosPaymentMethod> RazorpayMakeRefundRequestAsync(Guid id, PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
+            // def razorpay_make_refund_request(self, data):
+            // razorpay = RazorpayPosRequest(self)
+            // request_body = razorpay._razorpay_get_request_parameters()
+            // if data.get('refund_type') == 'refund':
+            //     request_body.update({
+            //         'amount': data.get('amount'),
+            //         'originalTransactionId': data.get('transaction_id'),
+            //         'externalRefNumber': data.get('externalRefNumber')
+            //     })
+            // else:
+            //     request_body.update({
+            //         'txnId': data.get('transaction_id'),
+            //     })
+            // endpoint = 'unified/refund' if data.get('refund_type') == 'refund' else 'void'
+            // response = razorpay._call_razorpay(endpoint=endpoint, payload=request_body)
+            // if response.get('success') and not response.get('errorCode'):
+            //     return {
+            //         'status': response.get('status'),
+            //         'authCode': response.get('authCode'),
+            //         'cardLastFourDigit': response.get('cardLastFourDigit'),
+            //         'externalRefNumber': response.get('externalRefNumber'),
+            //         'reverseReferenceNumber': response.get('reverseReferenceNumber'),
+            //         'txnId': response.get('txnId'),
+            //         'paymentMode': response.get('paymentMode'),
+            //         'paymentCardType': response.get('paymentCardType'),
+            //         'paymentCardBrand': response.get('paymentCardBrand'),
+            //         'nameOnCard': response.get('nameOnCard'),
+            //         'acquirerCode': response.get('acquirerCode'),
+            //         'postingDate': response.get('postingDate'),
+            //     }
+            // default_error_msg = _('The Razorpay POS refund request has encountered an unexpected error code.')
+            // error = response.get('errorMessage') or default_error_msg
+            // return {'error': str(error)}
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<PosPaymentMethod> RetrieveSessionIdInternalAsync(object data_webhook)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def _retrieve_session_id(self, data_webhook):
             // # Send a request to confirm the status of the sesions_id
             // # Need wait to the status of sesions_id is updated setted in session headers; code 202
             // 
             // MerchantTrns = data_webhook.get('MerchantTrns')
             // if not MerchantTrns:
-            //     return self._send_notification(
-            //         {'error': _(
-            //             "Your transaction with Viva Wallet failed. Please try again later."
-            //             )}
-            //         )
+            //     return self._send_notification({
+            //         'error': _("Your transaction with Viva.com failed. Please try again later.")
+            //     })
             // session_id, pos_session_id = MerchantTrns.split("/")  # Split to retrieve pos_sessions_id
             // endpoint = f"sessions/{session_id}"
-            // data = self._call_viva_wallet(endpoint, 'get')
+            // data = self._call_viva_com(endpoint, 'get')
             // 
             // if data.get('success'):
             //     data.update({'pos_session_id': pos_session_id, 'data_webhook': data_webhook})
-            //     self.viva_wallet_latest_response = data
             //     self._send_notification(data)
             // else:
-            //     self._send_notification(
-            //         {'error': _(
-            //             "There are some issues between us and Viva Wallet, try again later. %s",
-            //             data.get('detail')
-            //             )}
-            //         )
+            //     self._send_notification({
+            //         'error': _("There are some issues between us and Viva.com, try again later. %s",data.get('detail'))
+            //     })
             */
             return default;
+        }
+
+        public async Task<PosPaymentMethod> SendDpopayRequestAsync(Guid id, PosPaymentMethodSendDpopayRequestRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
+            // def send_dpopay_request(self, data, endpoint):
+            // self.ensure_one()
+            // if endpoint == 'start-transaction':
+            //     data['transactionType'] = self._get_transaction_type()
+            // return self._execute_dpopay_api_request(data, endpoint)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PosPaymentMethod> SendNotificationInternalAsync(object data)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def _send_notification(self, data):
             // # Send a notification to the point of sale channel to indicate that the transaction are finish
             // pos_session_sudo = self.env["pos.session"].browse(int(data.get('pos_session_id', False)))
             // if pos_session_sudo:
-            //     pos_session_sudo.config_id._notify('VIVA_WALLET_LATEST_RESPONSE', {
-            //         'config_id': pos_session_sudo.config_id.id
+            //     pos_session_sudo.config_id._notify('VIVA_COM_LATEST_RESPONSE', {
+            //         'config_id': pos_session_sudo.config_id.id,
+            //         'session_id': data.get('sessionId'),
+            //         'success': data.get('success', False),
+            //         'transaction_id': data.get('transactionId'),
+            //         'card_type': data.get('applicationLabel'),
+            //         'cardholder_name': data.get('FullName', ''),
             //     })
             */
             return default;
@@ -1633,11 +1763,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // data = None
             // if amount is not None:
+            //     # No rounding values stored in a model method
+            //     rounding = self.env.context.get('stripe_currency_rounding', 0.01)
             //     data = {
-            //         "amount_to_capture": self._stripe_calculate_amount(amount),
+            //         "amount_to_capture": round(amount / rounding),
             //     }
             // 
-            // return self.sudo()._get_stripe_payment_provider()._stripe_make_request(endpoint, data)
+            // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', endpoint, data=data)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1650,7 +1782,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.user.has_group('point_of_sale.group_pos_user'):
             //     raise AccessError(_("Do not have access to fetch token from Stripe"))
             // 
-            // return self.sudo()._get_stripe_payment_provider()._stripe_make_request('terminal/connection_tokens')
+            // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', 'terminal/connection_tokens')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1699,85 +1831,99 @@ namespace Bamboo.Core.Application.Services
             // elif currency.name == 'CAD' and self.company_id.country_code == 'CA':
             //     params.append(("payment_method_types[]", "interac_present"))
             // 
-            // return self.sudo()._get_stripe_payment_provider()._stripe_make_request('payment_intents', params)
+            // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', 'payment_intents', data=params)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosPaymentMethod> VivaWalletAccountGetEndpointInternalAsync()
+        protected async Task<PosPaymentMethod> VivaComAccountGetEndpointInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _viva_wallet_account_get_endpoint(self):
-            // if self.viva_wallet_test_mode:
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _viva_com_account_get_endpoint(self):
+            // if self.viva_com_test_mode:
             //     return 'https://demo-accounts.vivapayments.com'
             // return 'https://accounts.vivapayments.com'
             */
             return default;
         }
 
-        protected async Task<PosPaymentMethod> VivaWalletApiGetEndpointInternalAsync()
+        protected async Task<PosPaymentMethod> VivaComApiGetEndpointInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _viva_wallet_api_get_endpoint(self):
-            // if self.viva_wallet_test_mode:
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _viva_com_api_get_endpoint(self):
+            // if self.viva_com_test_mode:
             //     return 'https://demo-api.vivapayments.com'
             // return 'https://api.vivapayments.com'
             */
             return default;
         }
 
-        public async Task<PosPaymentMethod> VivaWalletGetPaymentStatusAsync(Guid id, PosPaymentMethodVivaWalletGetPaymentStatusRequestDto input)
+        public async Task<PosPaymentMethod> VivaComGetPaymentStatusAsync(Guid id, PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def viva_wallet_get_payment_status(self, session_id):
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def viva_com_get_payment_status(self, session_id):
             // if not self.env.user.has_group('point_of_sale.group_pos_user'):
-            //     raise AccessError(_("Only 'group_pos_user' are allowed to get the payment status from Viva Wallet"))
+            //     raise AccessError(_("Only 'group_pos_user' are allowed to get the payment status from Viva.com"))
             // 
             // endpoint = f"sessions/{session_id}"
-            // return self._call_viva_wallet(endpoint, 'get', should_retry=False)
+            // return self._call_viva_com(endpoint, 'get', should_retry=False)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosPaymentMethod> VivaWalletSendPaymentCancelAsync(Guid id, PosPaymentMethodVivaWalletSendPaymentCancelRequestDto input)
+        public async Task<PosPaymentMethod> VivaComSendPaymentCancelAsync(Guid id, PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def viva_wallet_send_payment_cancel(self, data):
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def viva_com_send_payment_cancel(self, data):
             // if not self.env.user.has_group('point_of_sale.group_pos_user'):
-            //     raise AccessError(_("Only 'group_pos_user' are allowed to cancel a Viva Wallet payment"))
+            //     raise AccessError(_("Only 'group_pos_user' are allowed to cancel a Viva.com payment"))
             // 
             // session_id = data.get('sessionId')
             // cash_register_id = data.get('cashRegisterId')
             // endpoint = f"sessions/{session_id}?cashRegisterId={cash_register_id}"
-            // return self._call_viva_wallet(endpoint, 'delete')
+            // return self._call_viva_com(endpoint, 'delete')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosPaymentMethod> VivaWalletSendPaymentRequestAsync(Guid id, PosPaymentMethodVivaWalletSendPaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> VivaComSendPaymentRequestAsync(Guid id, PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def viva_wallet_send_payment_request(self, data):
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def viva_com_send_payment_request(self, data):
             // if not self.env.user.has_group('point_of_sale.group_pos_user'):
-            //     raise AccessError(_("Only 'group_pos_user' are allowed to send a Viva Wallet payment request"))
+            //     raise AccessError(_("Only 'group_pos_user' are allowed to send a Viva.com payment request"))
             // 
             // endpoint = "transactions:sale"
-            // return self._call_viva_wallet(endpoint, 'post', data)
+            // return self._call_viva_com(endpoint, 'post', data)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosPaymentMethod> VivaWalletWebhookGetEndpointInternalAsync()
+        public async Task<PosPaymentMethod> VivaComSendRefundRequestAsync(Guid id, PosPaymentMethodVivaComSendRefundRequestRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
-            // def _viva_wallet_webhook_get_endpoint(self):
-            // if self.viva_wallet_test_mode:
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def viva_com_send_refund_request(self, data):
+            // if not self.env.user.has_group('point_of_sale.group_pos_user'):
+            //     raise AccessError(_("Only 'group_pos_user' are allowed to send a Viva.com refund request"))
+            // 
+            // endpoint = "transactions:refund" if data.get("parentSessionId") else "transactions:unreferenced-refund"
+            // return self._call_viva_com(endpoint, 'post', data)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PosPaymentMethod> VivaComWebhookGetEndpointInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
+            // def _viva_com_webhook_get_endpoint(self):
+            // if self.viva_com_test_mode:
             //     return 'https://demo.vivapayments.com'
             // return 'https://www.vivapayments.com'
             */
@@ -1840,17 +1986,17 @@ namespace Bamboo.Core.Application.Services
             //     res = super(PosPaymentMethod, not_opm).write(vals) and res
             // 
             // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_viva_wallet, FILE: pos_payment_method.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
             // def write(self, vals):
             // record = super().write(vals)
             // 
-            // if vals.get('viva_wallet_merchant_id') and vals.get('viva_wallet_api_key'):
-            //     self.viva_wallet_webhook_verification_key = self._get_verification_key(
-            //         self._viva_wallet_webhook_get_endpoint(),
-            //         self.viva_wallet_merchant_id,
-            //         self.viva_wallet_api_key
-            //         )
-            //     if not self.viva_wallet_webhook_verification_key:
+            // if vals.get('viva_com_merchant_id') and vals.get('viva_com_api_key'):
+            //     self.viva_com_webhook_verification_key = get_verification_key(
+            //         self._viva_com_webhook_get_endpoint(),
+            //         self.viva_com_merchant_id,
+            //         self.viva_com_api_key,
+            //     )
+            //     if not self.viva_com_webhook_verification_key:
             //         raise UserError(_("Can't update payment method. Please check the data and update it."))
             // 
             // return record

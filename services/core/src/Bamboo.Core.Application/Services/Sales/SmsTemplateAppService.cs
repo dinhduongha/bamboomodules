@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("Sms", Category = "Misc", Depends = new[] { "base", "iap_mail", "mail", "phone_validation" })]
+    [Module("Sms", Category = "Sales", Depends = new[] { "base", "iap_mail", "mail", "phone_validation" })]
     public class SmsTemplateAppService : GenericApplicationService<SmsTemplate>, ISmsTemplateAppService
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
@@ -90,7 +90,7 @@ namespace Bamboo.Core.Application.Services
             // method to filtrate the SMS templates.
             // """
             // if self.env.context.get('filter_template_on_event'):
-            //     domain = expression.AND([[('model', '=', 'event.registration')], domain])
+            //     domain = Domain('model', '=', 'event.registration') & Domain(domain)
             // return super()._search(domain, *args, **kwargs)
             */
             return default;
@@ -109,7 +109,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
             // def unlink(self):
             // self.sudo().mapped('sidebar_action_id').unlink()
-            // return super(SMSTemplate, self).unlink()
+            // return super().unlink()
             */
             return await base.UnlinkAsync(ids);
         }

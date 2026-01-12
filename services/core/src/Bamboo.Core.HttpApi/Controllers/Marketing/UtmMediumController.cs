@@ -8,11 +8,11 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden, Module: utm
+    // Category: Marketing, Module: utm
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
-    [Route("api/v1/utm/UtmMedium")]
+    [Route("api/v1/marketing/UtmMedium")]
     public partial class UtmMediumController : AbpController
     {
         private readonly IUtmMediumAppService _appService;

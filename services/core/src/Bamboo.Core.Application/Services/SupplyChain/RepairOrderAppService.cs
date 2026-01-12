@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("Repair", Category = "SupplyChain", Depends = new[] { "stock", "sale_management" })]
+    [Module("Repair", Category = "SupplyChain", Depends = new[] { "sale_stock", "sale_management" })]
     public class RepairOrderAppService : GenericApplicationService<RepairOrder>, IRepairOrderAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -57,8 +57,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def action_add_from_catalog(self):
             // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'repair.order':
-            //     res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
+            // res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -80,10 +79,21 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _compute_allowed_lot_ids(self):
             // for repair in self:
-            //     domain = [('product_id', '=', repair.product_id.id)]
+            //     domain = Domain('product_id', '=', repair.product_id.id)
             //     if repair.picking_id:
-            //         domain = expression.AND([domain, [('id', 'in', repair.picking_id.move_ids.lot_ids.ids)]])
+            //         domain &= Domain('id', 'in', repair.picking_id.move_ids.lot_ids.ids)
             //     repair.allowed_lot_ids = self.env['stock.lot'].search(domain)
+            */
+            return default;
+        }
+
+        protected async Task<RepairOrder> ComputeAllowedUomIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for repair in self:
+            //     repair.allowed_uom_ids = repair.product_id.uom_id | repair.product_id.uom_ids | repair.product_id.seller_ids.product_uom_id
             */
             return default;
         }
@@ -111,19 +121,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _compute_has_uncomplete_moves(self):
             // for repair in self:
-            //     repair.has_uncomplete_moves = any(float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0 for move in repair.move_ids)
-            */
-            return default;
-        }
-
-        protected async Task<RepairOrder> ComputeIsReturnedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def _compute_is_returned(self):
-            // self.is_returned = False
-            // returned = self.filtered(lambda r: r.picking_id and r.picking_id.state == 'done')
-            // returned.is_returned = True
+            //     repair.has_uncomplete_moves = any(move.product_uom and move.product_uom.compare(move.quantity, move.product_uom_qty) < 0 for move in repair.move_ids)
             */
             return default;
         }
@@ -181,7 +179,7 @@ namespace Bamboo.Core.Application.Services
             // # Force to prefetch more than 1000 by 1000
             // all_moves._fields['forecast_availability'].compute_value(all_moves)
             // for repair in repairs:
-            //     if any(float_compare(move.forecast_availability, move.product_qty, precision_rounding=move.product_id.uom_id.rounding) < 0 for move in repair.move_ids):
+            //     if any(move.product_id.uom_id.compare(move.forecast_availability, move.product_qty) < 0 for move in repair.move_ids):
             //         repair.parts_availability = _('Not Available')
             //         repair.parts_availability_state = 'late'
             //         continue
@@ -215,6 +213,21 @@ namespace Bamboo.Core.Application.Services
             // for ro in self:
             //     ro.picking_type_id = picking_type_by_company.get((ro.company_id, ro.user_id)) or\
             //         picking_type_by_company.get((ro.company_id, False))
+            */
+            return default;
+        }
+
+        protected async Task<RepairOrder> ComputePickingTypeVisibleInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _compute_picking_type_visible(self):
+            // repair_type_by_company = dict(self.env['stock.picking.type']._read_group([
+            //         ('code', '=', 'repair_operation'),
+            //         ('company_id', 'in', self.company_id.ids)
+            //     ], groupby=['company_id'], aggregates=['__count']))
+            // for ro in self:
+            //     ro.picking_type_visible = repair_type_by_company.get(ro.company_id, 0) > 1
             */
             return default;
         }
@@ -268,7 +281,7 @@ namespace Bamboo.Core.Application.Services
             // for repair in self:
             //     if not repair.product_id:
             //         repair.product_uom = False
-            //     elif not repair.product_uom or repair.product_uom.category_id != repair.product_id.uom_id.category_id:
+            //     elif not repair.product_uom:
             //         repair.product_uom = repair.product_id.uom_id
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -280,7 +293,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
             // def _compute_production_count(self):
             // for repair in self:
-            //     repair.production_count = len(repair.procurement_group_id.stock_move_ids.created_production_id)
+            //     repair.production_count = len(repair.reference_ids.production_ids)
             */
             return default;
         }
@@ -344,8 +357,8 @@ namespace Bamboo.Core.Application.Services
             //         vals['picking_type_id'] = picking_type.id
             //     if not vals.get('name', False) or vals['name'] == 'New':
             //         vals['name'] = picking_type.sequence_id.next_by_id()
-            //     if not vals.get('procurement_group_id'):
-            //         vals['procurement_group_id'] = self.env["procurement.group"].create({'name': vals['name']}).id
+            //     if not vals.get('reference_ids'):
+            //         vals['reference_ids'] = [Command.link(self.env["stock.reference"].create({'name': vals['name']}).id)]
             // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
@@ -381,6 +394,7 @@ namespace Bamboo.Core.Application.Services
             //         "partner_id": self.partner_id.id,
             //         "warehouse_id": self.picking_type_id.warehouse_id.id,
             //         "repair_order_ids": [Command.link(repair.id)],
+            //         "origin": repair.name,
             //     })
             // self.env['sale.order'].create(sale_order_values_list)
             // # Add Sale Order Lines for 'add' move_ids
@@ -438,6 +452,27 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<RepairOrder> GenerateSerialAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_generate_serial(self):
+            // self.ensure_one()
+            // name = self.product_id.lot_sequence_id.next_by_id()
+            // exist_lot = not name or self.env['stock.lot'].search([
+            //     ('product_id', '=', self.product_id.id),
+            //     '|', ('company_id', '=', False), ('company_id', '=', self.company_id.id),
+            //     ('name', '=', name),
+            // ], limit=1)
+            // if exist_lot:
+            //     name = self.env['stock.lot']._get_next_serial(self.company_id, self.product_id)
+            // if not name:
+            //     raise UserError(_("Please set the first Serial Number or a default sequence"))
+            // self.lot_id = self.env['stock.lot'].create({'product_id': self.product_id.id, 'name': name})
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<RepairOrder> GetActionAddFromCatalogExtraContextInternalAsync()
         {
             /*
@@ -478,7 +513,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // picking_type_by_company_user = {}
             // without_default_warehouse_companies = set()
-            // for (company, user), dummy in groupby(self, lambda r: (r.company_id, r.user_id)):
+            // for company, user in unique((r.company_id, r.user_id) for r in self):
             //     default_warehouse = user.with_company(company.id)._get_default_warehouse_id()
             //     if default_warehouse and default_warehouse.repair_type_id:
             //         picking_type_by_company_user[(company, user)] = default_warehouse.repair_type_id
@@ -507,7 +542,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _get_product_catalog_domain(self):
-            // return expression.AND([super()._get_product_catalog_domain(), [('type', '=', 'consu')]])
+            // return super()._get_product_catalog_domain() & Domain('type', '=', 'consu')
             */
             return default;
         }
@@ -552,6 +587,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<RepairOrder> IsDisplayStockInCatalogInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def _is_display_stock_in_catalog(self):
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<RepairOrder> MessagePostAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def message_post(self, **kwargs):
+            // kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
+            // return super().message_post(**kwargs)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<RepairOrder> OnchangeLocationPickingInternalAsync()
         {
             /*
@@ -575,8 +631,6 @@ namespace Bamboo.Core.Application.Services
             // res = {}
             // if not self.product_id or not self.product_uom:
             //     return res
-            // if self.product_uom.category_id != self.product_id.uom_id.category_id:
-            //     res['warning'] = {'title': _('Warning'), 'message': _('The product unit of measure you chose has a different category than the product unit of measure.')}
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -615,7 +669,7 @@ namespace Bamboo.Core.Application.Services
             // def action_repair_cancel_draft(self):
             // if self.filtered(lambda repair: repair.state != 'cancel'):
             //     self.action_repair_cancel()
-            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and float_is_zero(l.product_uom_qty, precision_rounding=l.product_uom.rounding))
+            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and l.product_uom_id.is_zero(l.product_uom_qty))
             // sale_line_to_update.move_ids._update_repair_sale_order_line()
             // self.move_ids.state = 'draft'
             // self.state = 'draft'
@@ -635,11 +689,11 @@ namespace Bamboo.Core.Application.Services
             // @return: True
             // """
             // 
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // product_move_vals = []
             // 
             // # Cancel moves with 0 quantity
-            // self.move_ids.filtered(lambda m: float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding))._action_cancel()
+            // self.move_ids.filtered(lambda m: m.product_uom.is_zero(m.quantity))._action_cancel()
             // 
             // no_service_policy = 'service_policy' not in self.env['product.template']
             // #SOL qty delivered = repair.move_ids.quantity
@@ -667,7 +721,6 @@ namespace Bamboo.Core.Application.Services
             //         owner_id = repair.partner_id.id
             // 
             //     product_move_vals.append({
-            //         'name': repair.name,
             //         'product_id': repair.product_id.id,
             //         'product_uom': repair.product_uom.id or repair.product_id.uom_id.id,
             //         'product_uom_qty': repair.product_qty,
@@ -726,7 +779,7 @@ namespace Bamboo.Core.Application.Services
             // partial_moves = set()
             // picked_moves = set()
             // for move in self.move_ids:
-            //     if float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0:
+            //     if move.product_uom.compare(move.quantity, move.product_uom_qty) < 0:
             //         partial_moves.add(move.id)
             //     if move.picked:
             //         picked_moves.add(move.id)
@@ -754,12 +807,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def _search_date_category(self, operator, value):
-            // if operator != '=':
-            //     raise NotImplementedError(_('Operation not supported'))
-            // search_domain = self.env['stock.picking'].date_category_to_domain(value)
-            // return expression.AND([
-            //     [('schedule_date', operator, value)] for operator, value in search_domain
-            // ])
+            // if operator != 'in':
+            //     return NotImplemented
+            // return Domain.OR(
+            //     self.env['stock.picking'].date_category_to_domain('schedule_date', item)
+            //     for item in value
+            // )
             */
             return default;
         }
@@ -836,7 +889,7 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You can not enter negative quantities."))
             // if not self.product_id or not self.product_id.is_storable:
             //     return self._action_repair_confirm()
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // available_qty_owner = sum(self.env['stock.quant'].search([
             //     ('product_id', '=', self.product_id.id),
             //     ('location_id', '=', self.product_location_src_id.id),
@@ -879,7 +932,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
             // def action_view_mrp_productions(self):
             // self.ensure_one()
-            // production_order_ids = self.procurement_group_id.stock_move_ids.created_production_id
+            // production_order_ids = self.reference_ids.production_ids
             // action = {
             //     'type': 'ir.actions.act_window',
             //     'res_model': 'mrp.production',

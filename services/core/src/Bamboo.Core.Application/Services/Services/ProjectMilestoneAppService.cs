@@ -64,7 +64,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
             // def _compute_display_name(self):
             // super()._compute_display_name()
-            // if not self._context.get('display_milestone_deadline'):
+            // if not self.env.context.get('display_milestone_deadline'):
             //     return
             // for milestone in self:
             //     if milestone.deadline:
@@ -106,6 +106,17 @@ namespace Bamboo.Core.Application.Services
             //         milestone.product_uom_qty = milestone.quantity_percentage * milestone.sale_line_id.product_uom_qty
             //     else:
             //         milestone.product_uom_qty = milestone.sale_line_id.product_uom_qty
+            */
+            return default;
+        }
+
+        protected async Task<ProjectMilestone> ComputeProjectAllowMilestonesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
+            // def _compute_project_allow_milestones(self):
+            // for milestone in self:
+            //     milestone.project_allow_milestones = milestone.project_id.allow_milestones
             */
             return default;
         }
@@ -155,7 +166,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_milestone.py) ---
             // def _default_sale_line_id(self):
-            // project_id = self._context.get('default_project_id')
+            // sale_line_id = self.env.context.get('default_sale_line_id')
+            // if sale_line_id:
+            //     return self.env['sale.order.line'].search([
+            //         ('id', '=', sale_line_id),
+            //         ('qty_delivered_method', '=', 'milestones'),
+            //     ], limit=1)
+            // 
+            // project_id = self.env.context.get('default_project_id')
             // if not project_id:
             //     return []
             // project = self.env['project.project'].browse(project_id)
@@ -203,10 +221,23 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
             // def _get_fields_to_export(self):
-            // return ['id', 'name', 'deadline', 'is_reached', 'reached_date', 'is_deadline_exceeded', 'is_deadline_future', 'can_be_marked_as_done']
+            // return ['id', 'name', 'deadline', 'is_reached', 'reached_date', 'is_deadline_exceeded', 'is_deadline_future', 'can_be_marked_as_done', 'sequence']
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_milestone.py) ---
             // def _get_fields_to_export(self):
             // return super()._get_fields_to_export() + ['allow_billable', 'quantity_percentage', 'sale_line_display_name']
+            */
+            return default;
+        }
+
+        protected async Task<ProjectMilestone> SearchProjectAllowMilestonesInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
+            // def _search_project_allow_milestones(self, operator, value):
+            // query = self.env['project.project'].sudo()._search([
+            //     ('allow_milestones', operator, value),
+            // ])
+            // return [('project_id', 'in', query)]
             */
             return default;
         }

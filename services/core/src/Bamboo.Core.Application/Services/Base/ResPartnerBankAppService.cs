@@ -111,8 +111,7 @@ namespace Bamboo.Core.Application.Services
             //             }
             // 
             //     if not silent_errors:
-            //         error_header = _("The following error prevented '%s' QR-code to be generated though it was detected as eligible: ", candidate_name)
-            //         raise UserError(error_header + error_message)
+            //         raise UserError(self.env._("The following error prevented '%(candidate)s' QR-code to be generated though it was detected as eligible: ", candidate=candidate_name) + error_message)
             // 
             // return None
             */
@@ -228,6 +227,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartnerBank> ComputeColorInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
+            // def _compute_color(self):
+            // for bank in self:
+            //     bank.color = 10 if bank.allow_out_payment else 1
+            */
+            return default;
+        }
+
+        protected async Task<ResPartnerBank> ComputeCountryProxyKeysInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
+            // def _compute_country_proxy_keys(self):
+            // self.country_proxy_keys = ""
+            */
+            return default;
+        }
+
         protected async Task<ResPartnerBank> ComputeDisplayAccountWarningInternalAsync()
         {
             /*
@@ -261,7 +281,7 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             name = f'{acc.acc_number} ({trusted_label})'
             //         acc.display_name = name
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
             // def _compute_display_name(self):
             // account_employee = self.browse()
             // if not self.env.user.has_group('hr.group_hr_user'):
@@ -300,7 +320,10 @@ namespace Bamboo.Core.Application.Services
             //           FROM res_partner_bank this
             //      LEFT JOIN res_partner_bank other ON this.acc_number = other.acc_number
             //                                      AND this.id != other.id
+            //                                      AND other.active = TRUE
             //          WHERE this.id = ANY(%(ids)s)
+            //          AND other.partner_id IS NOT NULL
+            //            AND this.active = TRUE
             //            AND (
             //                 ((this.company_id = other.company_id) OR (this.company_id IS NULL AND other.company_id IS NULL))
             //                 OR
@@ -311,7 +334,23 @@ namespace Bamboo.Core.Application.Services
             //     ids=self.ids,
             // )))
             // for bank in self:
-            //     bank.duplicate_bank_partner_ids = self.env['res.partner'].browse(id2duplicates.get(bank._origin.id))
+            //     duplicate_record = id2duplicates.get(bank._origin.id) or []
+            //     duplicate_record = [x for x in duplicate_record if x]
+            //     bank.duplicate_bank_partner_ids = self.env['res.partner'].browse(duplicate_record) if duplicate_record else False
+            */
+            return default;
+        }
+
+        protected async Task<ResPartnerBank> ComputeEmployeeIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
+            // def _compute_employee_id(self):
+            // for bank in self:
+            //     if bank.partner_id.employee:
+            //         bank.employee_id = bank.partner_id.employee_ids.filtered(lambda e: e.company_id in self.env.companies)[:1]
+            //     else:
+            //         bank.employee_id = False
             */
             return default;
         }
@@ -345,6 +384,24 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartnerBank> ComputeSalaryAmountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
+            // def _compute_salary_amount(self):
+            // for bank in self:
+            //     if bank.employee_id and bank.employee_id.salary_distribution:
+            //         bank.employee_salary_amount, bank.employee_salary_amount_is_percentage = bank.employee_id.get_bank_account_salary_allocation(bank.id)
+            //         continue
+            //     bank.employee_salary_amount_is_percentage = True
+            //     if bank.employee_id.salary_distribution:
+            //         bank.employee_salary_amount = bank.employee_id.get_remaining_percentage()
+            //     else:
+            //         bank.employee_salary_amount = 0
+            */
+            return default;
+        }
+
         protected async Task<ResPartnerBank> ComputeSanitizedAccNumberInternalAsync()
         {
             /*
@@ -368,22 +425,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<object> ConditionToSqlInternalAsync(string @alias, string fname, string @operator, object @value, object query)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
-            // def _condition_to_sql(self, alias: str, fname: str, operator: str, value, query) -> SQL:
-            // if fname == 'acc_number':
-            //     fname = 'sanitized_acc_number'
-            //     if not isinstance(value, str) and isinstance(value, Iterable):
-            //         value = [sanitize_account_number(i) for i in value]
-            //     else:
-            //         value = sanitize_account_number(value)
-            // return super()._condition_to_sql(alias, fname, operator, value, query)
-            */
-            return default;
-        }
-
         public override async Task<ResPartnerBank> CreateAsync(ResPartnerBank entity, List<string> fields)
         {
             /*
@@ -403,6 +444,7 @@ namespace Bamboo.Core.Application.Services
             //             raise UserError(_("A bank account with Account Number %(number)s already exists for Partner %(partner)s, but is archived. Please unarchive it instead.", number=acc_number, partner=archived_res_partner_bank.partner_id.name))
             // 
             // res = super().create(vals_list)
+            // res._check_allow_out_payment()
             // for account in res:
             //     msg = _("Bank Account %s created", account._get_html_link(title=f"#{account.id}"))
             //     account.partner_id._message_log(body=msg)
@@ -417,6 +459,11 @@ namespace Bamboo.Core.Application.Services
             //         except ValidationError:
             //             pass
             // return super(ResPartnerBank, self).create(vals_list)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
+            // def create(self, vals_list):
+            // for vals in vals_list:
+            //     self._sanitize_vals(vals)
+            // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
         }
@@ -425,15 +472,15 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
-            // def default_get(self, fields_list):
-            // if 'acc_number' not in fields_list:
-            //     return super().default_get(fields_list)
+            // def default_get(self, fields):
+            // if 'acc_number' not in fields:
+            //     return super().default_get(fields)
             // 
             // # When create & edit, `name` could be used to pass (in the context) the
             // # value input by the user. However, we want to set the default value of
             // # `acc_number` variable instead.
-            // default_acc_number = self._context.get('default_acc_number', False) or self._context.get('default_name', False)
-            // return super(ResPartnerBank, self.with_context(default_acc_number=default_acc_number)).default_get(fields_list)
+            // default_acc_number = self.env.context.get('default_acc_number', False) or self.env.context.get('default_name', False)
+            // return super(ResPartnerBank, self.with_context(default_acc_number=default_acc_number)).default_get(fields)
             */
             return await base.DefaultGetAsync(fields);
         }
@@ -576,6 +623,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResPartnerBank> GetMerchantCategoryCodeInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
+            // def _get_merchant_category_code(self):
+            // return '0000'
+            */
+            return default;
+        }
+
         protected async Task<ResPartnerBank> GetMoneyTransferServicesInternalAsync()
         {
             /*
@@ -629,6 +686,7 @@ namespace Bamboo.Core.Application.Services
             // if qr_method == 'emv_qr':
             //     return {
             //         'barcode_type': 'QR',
+            //         'quiet': 0,
             //         'width': 128,
             //         'height': 128,
             //         'humanreadable': 1,
@@ -640,6 +698,7 @@ namespace Bamboo.Core.Application.Services
             // if qr_method == 'sct_qr':
             //     return {
             //         'barcode_type': 'QR',
+            //         'quiet': 0,
             //         'width': 128,
             //         'height': 128,
             //         'humanreadable': 1,
@@ -689,11 +748,12 @@ namespace Bamboo.Core.Application.Services
             // comment = structured_communication or free_communication or ''
             // comment = re.sub(r'[^ A-Za-z0-9_@.\\/#&+-]+', '', self._remove_accents(comment))
             // additional_data_field = self._get_additional_data_field(comment) if self.include_reference else None
+            // merchant_category_code = self._get_merchant_category_code()
             // return [
             //     (0, '01'),                                                              # Payload Format Indicator
             //     (1, '12'),                                                              # Dynamic QR Codes
             //     (tag, merchant_account_info),                                           # Merchant Account Information
-            //     (52, '0000'),                                                           # Merchant Category Code
+            //     (52, merchant_category_code),                                           # Merchant Category Code
             //     (53, currency_code),                                                    # Transaction Currency
             //     (54, amount),                                                           # Transaction Amount
             //     (58, self.country_code),                                                # Country Code
@@ -777,6 +837,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<ResPartnerBank> OpenAllocationWizardAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
+            // def action_open_allocation_wizard(self):
+            // self.ensure_one()
+            // return self.employee_id.action_open_allocation_wizard()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<ResPartnerBank> RemoveAccentsInternalAsync(object @string)
         {
             /*
@@ -804,6 +875,44 @@ namespace Bamboo.Core.Application.Services
             // return 'bank'
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResPartnerBank> SanitizeValsInternalAsync(object vals)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
+            // def _sanitize_vals(self, vals):
+            // if 'sanitized_acc_number' in vals:  # do not allow to write on sanitized directly
+            //     vals['acc_number'] = vals.pop('sanitized_acc_number')
+            // if 'acc_number' in vals:
+            //     vals['sanitized_acc_number'] = sanitize_account_number(vals['acc_number'])
+            */
+            return default;
+        }
+
+        protected async Task<ResPartnerBank> SearchAccNumberInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
+            // def _search_acc_number(self, operator, value):
+            // if operator in ('in', 'not in'):
+            //     value = [sanitize_account_number(i) for i in value]
+            // else:
+            //     value = sanitize_account_number(value)
+            // return [('sanitized_acc_number', operator, value)]
+            */
+            return default;
+        }
+
+        protected async Task<ResPartnerBank> SearchEmployeeIdInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
+            // def _search_employee_id(self, operator, value):
+            // matching_employees = self.env['hr.employee'].sudo().search([('id', operator, value)])
+            // return [('id', 'in', matching_employees.bank_account_ids.ids)]
+            */
+            return default;
         }
 
         protected async Task<ResPartnerBank> SerializeInternalAsync(object header, object @value)
@@ -867,20 +976,32 @@ namespace Bamboo.Core.Application.Services
             // # leaves them vulnerable to edits via the shell/... So we need to ensure that the user has the rights to edit
             // # these fields when writing too.
             // # While we do lock changes if the account is trusted, we still want to allow to change them if we go from not trusted -> trusted or from trusted -> not trusted.
-            // any_trusted_accounts = any(account.lock_trust_fields for account in self)
-            // if not any_trusted_accounts:
+            // trusted_accounts = self.filtered(lambda x: x.lock_trust_fields)
+            // if not trusted_accounts:
             //     should_allow_changes = True  # If we were on a non-trusted account, we will allow to change (setting/... one last time before trusting)
             // else:
             //     # If we were on a trusted account, we only allow changes if the account is moving to untrusted.
-            //     should_allow_changes = ('allow_out_payment' in vals and vals['allow_out_payment'] is False)
+            //     should_allow_changes = self.env.su or ('allow_out_payment' in vals and vals['allow_out_payment'] is False)
             // 
-            // if ('acc_number' in vals or 'partner_id' in vals) and not should_allow_changes:
+            // lock_fields = {'acc_number', 'sanitized_acc_number', 'partner_id', 'acc_type'}
+            // if not should_allow_changes and any(
+            //     account[fname] != account._fields[fname].convert_to_record(
+            //         account._fields[fname].convert_to_cache(vals[fname], account),
+            //         account,
+            //     )
+            //     for fname in lock_fields & set(vals)
+            //     for account in trusted_accounts
+            // ):
             //     raise UserError(_("You cannot modify the account number or partner of an account that has been trusted."))
             // 
-            // if 'allow_out_payment' in vals and not self.env.user.has_group('account.group_validate_bank_account'):
+            // if 'allow_out_payment' in vals and not self.env.user.has_group('account.group_validate_bank_account') and not self.env.su:
             //     raise UserError(_("You do not have the rights to trust or un-trust accounts."))
             // 
             // res = super().write(vals)
+            // 
+            // # Check
+            // if "allow_out_payment" in vals:
+            //     self._check_allow_out_payment()
             // 
             // # Log changes to move lines on each move
             // for account, initial_values in account_initial_values.items():
@@ -900,6 +1021,10 @@ namespace Bamboo.Core.Application.Services
             //     except ValidationError:
             //         pass
             // return super(ResPartnerBank, self).write(vals)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
+            // def write(self, vals):
+            // self._sanitize_vals(vals)
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

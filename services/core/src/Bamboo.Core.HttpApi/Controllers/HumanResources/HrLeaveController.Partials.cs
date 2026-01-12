@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-back-to-approval")]
+        public async Task<IActionResult> ActionBackToApprovalAsync(Guid id)
+        {
+            var result = await _appService.BackToApprovalAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-cancel")]
         public async Task<IActionResult> ActionCancelAsync(Guid id)
         {
@@ -27,26 +35,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
-        {
-            var result = await _appService.ConfirmAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-documents")]
         public async Task<IActionResult> ActionDocumentsAsync(Guid id)
         {
             var result = await _appService.DocumentsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-records")]
-        public async Task<IActionResult> ActionOpenRecordsAsync(Guid id, [FromBody] HrLeaveOpenRecordsRequestDto input)
-        {
-            var result = await _appService.OpenRecordsAsync(id, input);
             return Ok(result);
         }
         
@@ -63,14 +55,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionResetConfirmAsync(Guid id)
         {
             var result = await _appService.ResetConfirmAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-validate")]
-        public async Task<IActionResult> ActionValidateAsync(Guid id, [FromBody] HrLeaveValidateRequestDto input)
-        {
-            var result = await _appService.ValidateAsync(id, input);
             return Ok(result);
         }
         

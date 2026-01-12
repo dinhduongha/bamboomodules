@@ -38,14 +38,16 @@ namespace Bamboo.Core.Application.Services
             //     resources_list = [resources]
             // else:
             //     resources_list = list(resources) + [self.env['resource.resource']]
-            // resource_ids = [r.id for r in resources_list]
-            // domain = domain if domain is not None else []
-            // domain = expression.AND([domain, [
-            //     ('calendar_id', '=', self.id),
-            //     ('resource_id', 'in', resource_ids),
-            //     ('display_type', '=', False),
-            //     ('day_period', '!=' if not lunch else '=', 'lunch'),
-            // ]])
+            // 
+            // if self.flexible_hours and lunch:
+            //     return {resource.id: Intervals([], keep_distinct=True) for resource in resources_list}
+            // 
+            // domain = Domain.AND([
+            //     Domain(domain or Domain.TRUE),
+            //     Domain('calendar_id', '=', self.id),
+            //     Domain('display_type', '=', False),
+            //     Domain('day_period', '!=' if not lunch else '=', 'lunch'),
+            // ])
             // 
             // attendances = self.env['resource.calendar.attendance'].search(domain)
             // # Since we only have one calendar to take in account
@@ -54,14 +56,11 @@ namespace Bamboo.Core.Application.Services
             // for resource in resources_list:
             //     resources_per_tz[tz or timezone((resource or self).tz)].append(resource)
             // # Resource specific attendances
-            // attendance_per_resource = defaultdict(lambda: self.env['resource.calendar.attendance'])
             // # Calendar attendances per day of the week
             // # * 7 days per week * 2 for two week calendars
             // attendances_per_day = [self.env['resource.calendar.attendance']] * 7 * 2
             // weekdays = set()
             // for attendance in attendances:
-            //     if attendance.resource_id:
-            //         attendance_per_resource[attendance.resource_id] |= attendance
             //     weekday = int(attendance.dayofweek)
             //     weekdays.add(weekday)
             //     if self.two_weeks_calendar:
@@ -75,31 +74,23 @@ namespace Bamboo.Core.Application.Services
             // end = end_dt.astimezone(utc)
             // bounds_per_tz = {
             //     tz: (start_dt.astimezone(tz), end_dt.astimezone(tz))
-            //     for tz in resources_per_tz.keys()
+            //     for tz in resources_per_tz
             // }
             // # Use the outer bounds from the requested timezones
-            // for tz, bounds in bounds_per_tz.items():
-            //     start = min(start, bounds[0].replace(tzinfo=utc))
-            //     end = max(end, bounds[1].replace(tzinfo=utc))
+            // for low, high in bounds_per_tz.values():
+            //     start = min(start, low.replace(tzinfo=utc))
+            //     end = max(end, high.replace(tzinfo=utc))
             // # Generate once with utc as timezone
             // days = rrule(DAILY, start.date(), until=end.date(), byweekday=weekdays)
             // ResourceCalendarAttendance = self.env['resource.calendar.attendance']
             // base_result = []
-            // per_resource_result = defaultdict(list)
             // for day in days:
             //     week_type = ResourceCalendarAttendance.get_week_type(day)
             //     attendances = attendances_per_day[day.weekday() + 7 * week_type]
             //     for attendance in attendances:
-            //         if (attendance.date_from and day.date() < attendance.date_from) or\
-            //             (attendance.date_to and attendance.date_to < day.date()):
-            //             continue
             //         day_from = datetime.combine(day, float_to_time(attendance.hour_from))
             //         day_to = datetime.combine(day, float_to_time(attendance.hour_to))
-            //         if attendance.resource_id:
-            //             per_resource_result[attendance.resource_id].append((day_from, day_to, attendance))
-            //         else:
-            //             base_result.append((day_from, day_to, attendance))
-            // 
+            //         base_result.append((day_from, day_to, attendance))
             // 
             // # Copy the result localized once per necessary timezone
             // # Strictly speaking comparing start_dt < time or start_dt.astimezone(tz) < time
@@ -110,17 +101,19 @@ namespace Bamboo.Core.Application.Services
             //         min(bounds_per_tz[tz][1], tz.localize(val[1])),
             //         val[2])
             //             for val in base_result]
-            //     for tz in resources_per_tz.keys()
+            //     for tz in resources_per_tz
             // }
+            // resource_calendars = resources._get_calendar_at(start_dt, tz)
             // result_per_resource_id = dict()
-            // for tz, resources in resources_per_tz.items():
+            // for tz, tz_resources in resources_per_tz.items():
             //     res = result_per_tz[tz]
-            //     res_intervals = WorkIntervals(res)
+            // 
+            //     res_intervals = Intervals(res, keep_distinct=True)
             //     start_datetime = start_dt.astimezone(tz)
             //     end_datetime = end_dt.astimezone(tz)
             // 
-            //     for resource in resources:
-            //         if resource and resource._is_fully_flexible():
+            //     for resource in tz_resources:
+            //         if resource and not resource_calendars.get(resource, False):
             //             # If the resource is fully flexible, return the whole period from start_dt to end_dt with a dummy attendance
             //             hours = (end_dt - start_dt).total_seconds() / 3600
             //             days = hours / 24
@@ -128,8 +121,8 @@ namespace Bamboo.Core.Application.Services
             //                 'duration_hours': hours,
             //                 'duration_days': days,
             //             })
-            //             result_per_resource_id[resource.id] = WorkIntervals([(start_dt, end_dt, dummy_attendance)])
-            //         elif resource and resource.calendar_id.flexible_hours:
+            //             result_per_resource_id[resource.id] = Intervals([(start_datetime, end_datetime, dummy_attendance)], keep_distinct=True)
+            //         elif self.flexible_hours or (resource and resource_calendars[resource].flexible_hours):
             //             # For flexible Calendars, we create intervals to fill in the weekly intervals with the average daily hours
             //             # until the full time required hours are met. This gives us the most correct approximation when looking at a daily
             //             # and weekly range for time offs and overtime calculations and work entry generation
@@ -137,25 +130,28 @@ namespace Bamboo.Core.Application.Services
             //             end_datetime_adjusted = end_datetime - relativedelta(seconds=1)
             //             end_date = end_datetime_adjusted.date()
             // 
-            //             full_time_required_hours = resource.calendar_id.full_time_required_hours
-            //             max_hours_per_day = resource.calendar_id.hours_per_day
+            //             calendar = resource_calendars[resource] if resource else self
+            // 
+            //             full_time_required_hours = calendar.full_time_required_hours
+            //             max_hours_per_day = calendar.hours_per_day
             // 
             //             intervals = []
-            //             current_monday = start_date - timedelta(days=start_date.weekday())
+            //             current_start_day = start_date
             // 
-            //             while current_monday <= end_date:
-            //                 current_sunday = current_monday + timedelta(days=6)
+            //             while current_start_day <= end_date:
+            //                 current_end_of_week = current_start_day + timedelta(days=6)
             // 
-            //                 week_start = max(current_monday, start_date)
-            //                 week_end = min(current_sunday, end_date)
+            //                 week_start = max(current_start_day, start_date)
+            //                 week_end = min(current_end_of_week, end_date)
             // 
-            //                 if current_monday < start_date:
-            //                     prior_days = (start_date - current_monday).days
+            //                 if current_start_day < start_date:
+            //                     prior_days = (start_date - current_start_day).days
             //                     prior_hours = min(full_time_required_hours, max_hours_per_day * prior_days)
             //                 else:
             //                     prior_hours = 0
             // 
             //                 remaining_hours = max(0, full_time_required_hours - prior_hours)
+            //                 remaining_hours = min(remaining_hours, (end_dt - start_dt).total_seconds() / 3600)
             // 
             //                 current_day = week_start
             //                 while current_day <= week_end:
@@ -177,40 +173,12 @@ namespace Bamboo.Core.Application.Services
             // 
             //                     current_day += timedelta(days=1)
             // 
-            //                 current_monday += timedelta(days=7)
+            //                 current_start_day += timedelta(days=7)
             // 
-            //             result_per_resource_id[resource.id] = WorkIntervals(intervals)
-            //         elif resource in per_resource_result:
-            //             resource_specific_result = [(max(bounds_per_tz[tz][0], tz.localize(val[0])), min(bounds_per_tz[tz][1], tz.localize(val[1])), val[2])
-            //                 for val in per_resource_result[resource]]
-            //             result_per_resource_id[resource.id] = WorkIntervals(itertools.chain(res, resource_specific_result))
+            //             result_per_resource_id[resource.id] = Intervals(intervals, keep_distinct=True)
             //         else:
             //             result_per_resource_id[resource.id] = res_intervals
             // return result_per_resource_id
-            */
-            return default;
-        }
-
-        protected async Task<ResourceCalendar> CalculateHoursPerWeekInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: resource_calendar.py) ---
-            // def _calculate_hours_per_week(self):
-            // self.ensure_one()
-            // sum_hours = sum(
-            //     (a.hour_to - a.hour_from) for a in self.attendance_ids.filtered(lambda a: a.day_period != 'lunch'))
-            // return sum_hours / 2 if self.two_weeks_calendar else sum_hours
-            */
-            return default;
-        }
-
-        protected async Task<ResourceCalendar> CalculateIsFulltimeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: resource_calendar.py) ---
-            // def _calculate_is_fulltime(self):
-            // self.ensure_one()
-            // return not float_compare(self.full_time_required_hours, self._calculate_hours_per_week(), 3)
             */
             return default;
         }
@@ -220,28 +188,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
             // def _check_attendance_ids(self):
-            // for resource in self:
-            //     if (resource.two_weeks_calendar and
-            //             resource.attendance_ids.filtered(lambda a: a.display_type == 'line_section') and
-            //             not resource.attendance_ids.sorted('sequence')[0].display_type):
-            //         raise ValidationError(_("In a calendar with 2 weeks mode, all periods need to be in the sections."))
-            */
-            return default;
-        }
-
-        protected async Task<ResourceCalendar> CheckAttendanceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _check_attendance(self):
-            // # Avoid superimpose in attendance
-            // for calendar in self:
-            //     attendance_ids = calendar.attendance_ids.filtered(lambda attendance: not attendance.resource_id and attendance.display_type is False)
-            //     if calendar.two_weeks_calendar:
-            //         calendar._check_overlap(attendance_ids.filtered(lambda attendance: attendance.week_type == '0'))
-            //         calendar._check_overlap(attendance_ids.filtered(lambda attendance: attendance.week_type == '1'))
+            // for res_calendar in self:
+            //     if (res_calendar.two_weeks_calendar and
+            //             res_calendar.attendance_ids.filtered(lambda a: a.display_type == 'line_section') and
+            //             not res_calendar.attendance_ids.sorted('sequence')[0].display_type):
+            //         raise ValidationError(self.env._("In a calendar with 2 weeks mode, all periods need to be in the sections."))
+            // 
+            //     # Avoid superimpose in attendance
+            //     attendance_ids = res_calendar.attendance_ids.filtered(
+            //         lambda attendance: not attendance.display_type)
+            //     if res_calendar.two_weeks_calendar:
+            //         res_calendar._check_overlap(attendance_ids.filtered(lambda attendance: attendance.week_type == '0'))
+            //         res_calendar._check_overlap(attendance_ids.filtered(lambda attendance: attendance.week_type == '1'))
             //     else:
-            //         calendar._check_overlap(attendance_ids)
+            //         res_calendar._check_overlap(attendance_ids)
             */
             return default;
         }
@@ -254,13 +214,13 @@ namespace Bamboo.Core.Application.Services
             // """ attendance_ids correspond to attendance of a week,
             //     will check for each day of week that there are no superimpose. """
             // result = []
-            // for attendance in attendance_ids.filtered(lambda att: not att.date_from and not att.date_to):
+            // for attendance in attendance_ids:
             //     # 0.000001 is added to each start hour to avoid to detect two contiguous intervals as superimposing.
             //     # Indeed Intervals function will join 2 intervals with the start and stop hour corresponding.
             //     result.append((int(attendance.dayofweek) * 24 + attendance.hour_from + 0.000001, int(attendance.dayofweek) * 24 + attendance.hour_to, attendance))
             // 
             // if len(Intervals(result)) != len(result):
-            //     raise ValidationError(_("Attendances can't overlap."))
+            //     raise ValidationError(self.env._("Attendances can't overlap."))
             */
             return default;
         }
@@ -271,7 +231,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: resource.py) ---
             // def _compute_associated_leaves_count(self):
             // leaves_read_group = self.env['resource.calendar.leaves']._read_group(
-            //     [('resource_id', '=', False), ('calendar_id', 'in', [False, *self.ids])],
+            //     [('resource_id', '=', False), ('calendar_id', 'in', self.ids)],
             //     ['calendar_id'],
             //     ['__count'],
             // )
@@ -288,30 +248,36 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
             // def _compute_attendance_ids(self):
-            // for calendar in self.filtered(lambda c: not c._origin or c._origin.company_id != c.company_id and c.company_id):
+            // for calendar in self.filtered(lambda c: not c._origin or (c._origin.company_id != c.company_id and c.company_id)):
             //     company_calendar = calendar.company_id.resource_calendar_id
             //     calendar.update({
             //         'two_weeks_calendar': company_calendar.two_weeks_calendar,
             //         'tz': company_calendar.tz,
             //         'attendance_ids': [(5, 0, 0)] + [
-            //             (0, 0, attendance._copy_attendance_vals()) for attendance in company_calendar.attendance_ids if not attendance.resource_id]
+            //             (0, 0, attendance._copy_attendance_vals()) for attendance in company_calendar.attendance_ids],
             //     })
             */
             return default;
         }
 
-        protected async Task<ResourceCalendar> ComputeContractsCountInternalAsync()
+        protected async Task<ResourceCalendar> ComputeFlexibleHoursInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: resource.py) ---
-            // def _compute_contracts_count(self):
-            // count_data = self.env['hr.contract']._read_group(
-            //     [('resource_calendar_id', 'in', self.ids), ('employee_id', '!=', False)],
-            //     ['resource_calendar_id'],
-            //     ['__count'])
-            // mapped_counts = {resource_calendar.id: count for resource_calendar, count in count_data}
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_flexible_hours(self):
             // for calendar in self:
-            //     calendar.contracts_count = mapped_counts.get(calendar.id, 0)
+            //     calendar.flexible_hours = calendar.schedule_type == 'flexible'
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> ComputeFullTimeRequiredHoursInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_full_time_required_hours(self):
+            // for calendar in self.filtered("company_id"):
+            //     calendar.full_time_required_hours = calendar.company_id.resource_calendar_id.hours_per_week
             */
             return default;
         }
@@ -324,7 +290,7 @@ namespace Bamboo.Core.Application.Services
             // for calendar in self.filtered(lambda c: not c._origin or c._origin.company_id != c.company_id):
             //     calendar.update({
             //         'global_leave_ids': [(5, 0, 0)] + [
-            //             (0, 0, leave._copy_leave_vals()) for leave in calendar.company_id.resource_calendar_id.global_leave_ids]
+            //             (0, 0, leave._copy_leave_vals()) for leave in calendar.company_id.resource_calendar_id.global_leave_ids],
             //     })
             */
             return default;
@@ -335,11 +301,39 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
             // def _compute_hours_per_day(self):
+            // """ Compute the average hours per day.
+            //     Cannot directly depend on hours_per_week because of rounding issues. """
+            // for calendar in self.filtered(lambda c: not c.flexible_hours):
+            //     calendar.hours_per_day = float_round(calendar._get_hours_per_day(), precision_digits=2)
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> ComputeHoursPerWeekInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: resource_calendar.py) ---
+            // def _compute_hours_per_week(self):
+            // super()._compute_hours_per_week()
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_hours_per_week(self):
+            // """ Compute the average hours per week """
+            // for calendar in self.filtered(lambda c: not c.flexible_hours):
+            //     calendar.hours_per_week = float_round(calendar._get_hours_per_week(), precision_digits=2)
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> ComputeTwoWeeksAttendanceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_two_weeks_attendance(self):
             // for calendar in self:
-            //     if calendar.flexible_hours:
+            //     if not calendar.two_weeks_calendar:
             //         continue
-            //     attendances = calendar._get_global_attendances()
-            //     calendar.hours_per_day = calendar._get_hours_per_day(attendances)
+            //     calendar.attendance_ids_1st_week = calendar.attendance_ids.filtered(lambda a: a.week_type == '0')
+            //     calendar.attendance_ids_2nd_week = calendar.attendance_ids.filtered(lambda a: a.week_type == '1')
             */
             return default;
         }
@@ -351,11 +345,11 @@ namespace Bamboo.Core.Application.Services
             // def _compute_two_weeks_explanation(self):
             // today = fields.Date.today()
             // week_type = self.env['resource.calendar.attendance'].get_week_type(today)
-            // week_type_str = _("second") if week_type else _("first")
+            // week_type_str = self.env._("even") if week_type else self.env._("odd")
             // first_day = date_utils.start_of(today, 'week')
             // last_day = date_utils.end_of(today, 'week')
-            // self.two_weeks_explanation = _(
-            //     "The current week (from %(first_day)s to %(last_day)s) corresponds to week number %(number)s.",
+            // self.two_weeks_explanation = self.env._(
+            //     "The current week (from %(first_day)s to %(last_day)s) corresponds to %(number)s week.",
             //     first_day=first_day,
             //     last_day=last_day,
             //     number=week_type_str,
@@ -371,6 +365,37 @@ namespace Bamboo.Core.Application.Services
             // def _compute_tz_offset(self):
             // for calendar in self:
             //     calendar.tz_offset = datetime.now(timezone(calendar.tz or 'GMT')).strftime('%z')
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> ComputeWorkResourcesCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_work_resources_count(self):
+            // resources_per_calendar = dict(self.env['resource.resource']._read_group(
+            //     domain=[('calendar_id', 'in', self.ids)],
+            //     groupby=['calendar_id'],
+            //     aggregates=['__count']))
+            // for calendar in self:
+            //     calendar.work_resources_count = resources_per_calendar.get(calendar, 0)
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> ComputeWorkTimeRateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _compute_work_time_rate(self):
+            // for calendar in self:
+            //     if calendar.full_time_required_hours:
+            //         calendar.work_time_rate = calendar.hours_per_week / calendar.full_time_required_hours * 100
+            //     else:
+            //         calendar.work_time_rate = 100
+            // 
+            //     calendar.is_fulltime = float_compare(calendar.full_time_required_hours, calendar.hours_per_week, 3) == 0
             */
             return default;
         }
@@ -406,11 +431,10 @@ namespace Bamboo.Core.Application.Services
             //     # If the interval covers only a part of the original attendance, we
             //     # take durations in days proportionally to what is left of the interval.
             //     interval_hours = (stop - start).total_seconds() / 3600
+            //     day_hours[start.date()] += interval_hours
             //     if len(self) == 1 and self.flexible_hours:
-            //         day_hours[start.date()] += meta.duration_hours
-            //         day_days[start.date()] += meta.duration_days
+            //         day_days[start.date()] += interval_hours / self.hours_per_day if self.hours_per_day else 0
             //     else:
-            //         day_hours[start.date()] += interval_hours
             //         day_days[start.date()] += sum(meta.mapped('duration_days')) * interval_hours / sum(meta.mapped('duration_hours'))
             // 
             // return {
@@ -442,8 +466,8 @@ namespace Bamboo.Core.Application.Services
             // if resource is None:
             //     resource = self.env['resource.resource']
             // 
-            // if not dt.tzinfo or search_range and not (search_range[0].tzinfo and search_range[1].tzinfo):
-            //     raise ValueError('Provided datetimes needs to be timezoned')
+            // if not dt.tzinfo or (search_range and not (search_range[0].tzinfo and search_range[1].tzinfo)):
+            //     raise ValueError(self.env._('Provided datetimes needs to be timezoned'))
             // 
             // dt = dt.astimezone(timezone(tz))
             // 
@@ -464,29 +488,60 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResourceCalendar> GetDaysDataInternalAsync(object intervals, object day_total)
+        protected async Task<ResourceCalendar> GetDaysPerWeekInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _get_days_data(self, intervals, day_total):
-            // """
-            // helper function to compute duration of `intervals`
-            // expressed in days and hours.
-            // `day_total` is a dict {date: n_hours} with the number of hours for each day.
-            // """
-            // day_hours = defaultdict(float)
-            // for start, stop, meta in intervals:
-            //     day_hours[start.date()] += (stop - start).total_seconds() / 3600
-            // 
-            // # compute number of days the hours span over
-            // days = float_round(sum(
-            //     day_hours[day] / day_total[day] if day_total[day] else 0
-            //     for day in day_hours
-            // ), precision_rounding=0.001)
-            // return {
-            //     'days': days,
-            //     'hours': sum(day_hours.values()),
-            // }
+            // def _get_days_per_week(self):
+            // # If the employee didn't work a full day, it is still counted, i.e. 19h / week (M/T/W(half day)) -> 3 days
+            // self.ensure_one()
+            // attendances = self._get_global_attendances()
+            // if self.two_weeks_calendar:
+            //     number_of_days = len(set(attendances.filtered(lambda cal: cal.week_type == '1').mapped('dayofweek')))
+            //     number_of_days += len(set(attendances.filtered(lambda cal: cal.week_type == '0').mapped('dayofweek')))
+            // else:
+            //     number_of_days = len(set(attendances.mapped('dayofweek')))
+            // return number_of_days / 2 if self.two_weeks_calendar else number_of_days
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> GetDefaultAttendanceIdsInternalAsync(Guid company_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _get_default_attendance_ids(self, company_id=None):
+            // """ return a copy of the company's calendar attendance or default 40 hours/week """
+            // if company_id and (attendances := company_id.resource_calendar_id.attendance_ids):
+            //     return [
+            //         Command.create({
+            //             'name': attendance.name,
+            //             'dayofweek': attendance.dayofweek,
+            //             'week_type': attendance.week_type,
+            //             'hour_from': attendance.hour_from,
+            //             'hour_to': attendance.hour_to,
+            //             'day_period': attendance.day_period,
+            //             'display_type': attendance.display_type,
+            //         })
+            //         for attendance in attendances
+            //     ]
+            // return [
+            //     Command.create({'name': self.env._('Monday Morning'), 'dayofweek': '0', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+            //     Command.create({'name': self.env._('Monday Lunch'), 'dayofweek': '0', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
+            //     Command.create({'name': self.env._('Monday Afternoon'), 'dayofweek': '0', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+            //     Command.create({'name': self.env._('Tuesday Morning'), 'dayofweek': '1', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+            //     Command.create({'name': self.env._('Tuesday Lunch'), 'dayofweek': '1', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
+            //     Command.create({'name': self.env._('Tuesday Afternoon'), 'dayofweek': '1', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+            //     Command.create({'name': self.env._('Wednesday Morning'), 'dayofweek': '2', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+            //     Command.create({'name': self.env._('Wednesday Lunch'), 'dayofweek': '2', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
+            //     Command.create({'name': self.env._('Wednesday Afternoon'), 'dayofweek': '2', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+            //     Command.create({'name': self.env._('Thursday Morning'), 'dayofweek': '3', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+            //     Command.create({'name': self.env._('Thursday Lunch'), 'dayofweek': '3', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
+            //     Command.create({'name': self.env._('Thursday Afternoon'), 'dayofweek': '3', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+            //     Command.create({'name': self.env._('Friday Morning'), 'dayofweek': '4', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+            //     Command.create({'name': self.env._('Friday Lunch'), 'dayofweek': '4', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
+            //     Command.create({'name': self.env._('Friday Afternoon'), 'dayofweek': '4', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+            // ]
             */
             return default;
         }
@@ -494,90 +549,139 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResourceCalendar> GetGlobalAttendancesInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: resource_calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: resource_calendar.py) ---
             // def _get_global_attendances(self):
             // return super()._get_global_attendances().filtered(lambda a: not a.work_entry_type_id.is_leave)
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
             // def _get_global_attendances(self):
             // return self.attendance_ids.filtered(lambda attendance:
             //     attendance.day_period != 'lunch'
-            //     and not attendance.date_from and not attendance.date_to
-            //     and not attendance.resource_id and not attendance.display_type)
+            //     and not attendance.display_type)
             */
             return default;
         }
 
-        protected async Task<ResourceCalendar> GetHoursPerDayInternalAsync(object attendances)
+        protected async Task<ResourceCalendar> GetHoursForDateInternalAsync(object target_date, object day_period)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _get_hours_per_day(self, attendances):
+            // def _get_hours_for_date(self, target_date, day_period=None):
             // """
-            // Calculate the average hours worked per workday.
+            // An instance method on a calendar to get the start and end float hours for a given date.
+            // :param target_date: The date to find working hours.
+            // :param day_period: Optional string ('morning', 'afternoon') to filter for half-days.
+            // :return: A tuple of floats (hour_from, hour_to).
             // """
-            // if not attendances:
-            //     return 0
+            // self.ensure_one()
+            // if not target_date:
+            //     err = "Target Date cannot be empty"
+            //     raise ValueError(err)
+            // if self.flexible_hours:
+            //     # Quick calculation to center flexible hours around 12PM midday
+            //     datetimes = [12.0 - self.hours_per_day / 2.0, 12.0, 12.0 + self.hours_per_day / 2.0]
+            //     if day_period:
+            //         return (datetimes[0], datetimes[1]) if day_period == 'morning' else (datetimes[1], datetimes[2])
+            //     return (datetimes[0], datetimes[2])
             // 
-            // hour_count = 0.0
-            // for attendance in attendances:
-            //     hour_count += attendance.hour_to - attendance.hour_from
+            // domain = [
+            //     ('calendar_id', '=', self.id),
+            //     ('display_type', '=', False),
+            //     ('day_period', '!=', 'lunch'),
+            // ]
             // 
+            // init_attendances = self.env['resource.calendar.attendance']._read_group(domain=domain,
+            // groupby=['week_type', 'dayofweek', 'day_period'],
+            // aggregates=['hour_from:min', 'hour_to:max'],
+            // order='dayofweek,hour_from:min')
+            // 
+            // init_attendances = [DummyAttendance(hour_from, hour_to, dayofweek, day_period, week_type)
+            //     for week_type, dayofweek, day_period, hour_from, hour_to in init_attendances]
+            // 
+            // if day_period:
+            //     attendances = [att for att in init_attendances if att.day_period == day_period]
+            //     for attendance in filter(lambda att: att.day_period == 'full_day', init_attendances):
+            //         attendances.append(attendance._replace(
+            //             hour_from=attendance.hour_from if day_period == 'morning' else 12,
+            //             hour_to=attendance.hour_to if day_period == 'afternoon' else 12,
+            //         ))
+            // 
+            // else:
+            //     attendances = init_attendances
+            // 
+            // default_start = min((att.hour_from for att in attendances), default=0.0)
+            // default_end = max((att.hour_to for att in attendances), default=0.0)
+            // 
+            // week_type = False
             // if self.two_weeks_calendar:
-            //     number_of_days = len(set(attendances.filtered(lambda cal: cal.week_type == '1').mapped('dayofweek')))
-            //     number_of_days += len(set(attendances.filtered(lambda cal: cal.week_type == '0').mapped('dayofweek')))
-            // else:
-            //     number_of_days = len(set(attendances.mapped('dayofweek')))
+            //     week_type = str(self.env['resource.calendar.attendance'].get_week_type(target_date))
             // 
-            // if not number_of_days:
-            //     return 0
+            // filtered_attendances = [att for att in attendances if att.week_type == week_type and int(att.dayofweek) == target_date.weekday()]
+            // hour_from = min((att.hour_from for att in filtered_attendances), default=default_start)
+            // hour_to = max((att.hour_to for att in filtered_attendances), default=default_end)
             // 
-            // return float_round(hour_count / float(number_of_days), precision_digits=2)
+            // return (hour_from, hour_to)
             */
             return default;
         }
 
-        protected async Task<ResourceCalendar> GetMaxNumberOfHoursInternalAsync(object start, object end)
+        protected async Task<ResourceCalendar> GetHoursPerDayInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _get_max_number_of_hours(self, start, end):
-            // self.ensure_one()
-            // if not self.attendance_ids:
-            //     return 0
-            // mapped_data = defaultdict(lambda: 0)
-            // for attendance in self.attendance_ids.filtered(lambda a: a.day_period != 'lunch' and ((not a.date_from or not a.date_to) or (a.date_from <= end.date() and a.date_to >= start.date()))):
-            //     mapped_data[(attendance.week_type, attendance.dayofweek)] += attendance.hour_to - attendance.hour_from
-            // return max(mapped_data.values())
+            // def _get_hours_per_day(self):
+            // """ Calculate the average hours worked per workday. """
+            // hour_per_week = self._get_hours_per_week()
+            // number_of_days = self._get_days_per_week()
+            // return hour_per_week / number_of_days if number_of_days else 0
             */
             return default;
         }
 
-        protected async Task<ResourceCalendar> GetResourcesDayTotalInternalAsync(object from_datetime, object to_datetime, object resources)
+        protected async Task<ResourceCalendar> GetHoursPerWeekInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _get_resources_day_total(self, from_datetime, to_datetime, resources=None):
-            // """
-            // @return dict with hours of attendance in each day between `from_datetime` and `to_datetime`
-            // """
+            // def _get_hours_per_week(self):
+            // """ Calculate the average hours worked per week. """
             // self.ensure_one()
-            // if not resources:
-            //     resources = self.env['resource.resource']
-            //     resources_list = [resources]
-            // else:
-            //     resources_list = list(resources) + [self.env['resource.resource']]
-            // # total hours per day:  retrieve attendances with one extra day margin,
-            // # in order to compute the total hours on the first and last days
-            // from_full = from_datetime - timedelta(days=1)
-            // to_full = to_datetime + timedelta(days=1)
-            // intervals = self._attendance_intervals_batch(from_full, to_full, resources=resources)
-            // 
-            // result = defaultdict(lambda: defaultdict(float))
-            // for resource in resources_list:
-            //     day_total = result[resource.id]
-            //     for start, stop, meta in intervals[resource.id]:
-            //         day_total[start.date()] += (stop - start).total_seconds() / 3600
-            // return result
+            // hour_count = 0.0
+            // for attendance in self._get_global_attendances():
+            //     hour_count += attendance.hour_to - attendance.hour_from
+            // return hour_count / 2 if self.two_weeks_calendar else hour_count
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> GetTwoWeeksAttendanceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _get_two_weeks_attendance(self):
+            // final_attendances = [
+            //     Command.create({
+            //         'name': 'First week',
+            //         'dayofweek': '0',
+            //         'sequence': '0',
+            //         'hour_from': 0,
+            //         'day_period': 'morning',
+            //         'week_type': '0',
+            //         'hour_to': 0,
+            //         'display_type':
+            //         'line_section'}),
+            //     Command.create({
+            //         'name': 'Second week',
+            //         'dayofweek': '0',
+            //         'sequence': '25',
+            //         'hour_from': 0,
+            //         'day_period': 'morning',
+            //         'week_type': '1',
+            //         'hour_to': 0,
+            //         'display_type': 'line_section'}),
+            // ]
+            // for idx, att in enumerate(self.attendance_ids):
+            //     final_attendances.append(Command.create(dict(att._copy_attendance_vals(), week_type='0', sequence=idx + 1)))
+            //     final_attendances.append(Command.create(dict(att._copy_attendance_vals(), week_type='1', sequence=idx + 26)))
+            // return final_attendances
             */
             return default;
         }
@@ -599,7 +703,10 @@ namespace Bamboo.Core.Application.Services
             // if company_id:
             //     domain = [('company_id', 'in', (company_id.id, False))]
             // if self.flexible_hours:
-            //     works = {d[0].date() for d in self._leave_intervals_batch(start_dt, end_dt, domain=domain)[False]}
+            //     leave_intervals = self._leave_intervals_batch(start_dt, end_dt, domain=domain)[False]
+            //     works = set()
+            //     for start_int, end_int, _ in leave_intervals:
+            //         works.update(start_int.date() + timedelta(days=i) for i in range((end_int.date() - start_int.date()).days + 1))
             //     return {fields.Date.to_string(day.date()): (day.date() in works) for day in rrule(DAILY, start_dt, until=end_dt)}
             // works = {d[0].date() for d in self._work_intervals_batch(start_dt, end_dt, domain=domain)[False]}
             // return {fields.Date.to_string(day.date()): (day.date() not in works) for day in rrule(DAILY, start_dt, until=end_dt)}
@@ -624,8 +731,8 @@ namespace Bamboo.Core.Application.Services
             //     quantity of working time expressed as days and as hours.
             // """
             // # naive datetimes are made explicit in UTC
-            // from_datetime, dummy = make_aware(from_datetime)
-            // to_datetime, dummy = make_aware(to_datetime)
+            // from_datetime = localized(from_datetime)
+            // to_datetime = localized(to_datetime)
             // 
             // # actual hours per day
             // if compute_leaves:
@@ -701,16 +808,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResourceCalendar> LeaveIntervalsBatchInternalAsync(object start_dt, object end_dt, object resources, object domain, object tz, object any_calendar)
+        protected async Task<ResourceCalendar> InverseFlexibleHoursInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
-            // def _leave_intervals_batch(self, start_dt, end_dt, resources=None, domain=None, tz=None, any_calendar=False):
+            // def _inverse_flexible_hours(self):
+            // for calendar in self:
+            //     calendar.schedule_type = 'flexible' if calendar.flexible_hours else 'fully_fixed'
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> InverseTwoWeeksCalendarInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _inverse_two_weeks_calendar(self):
+            // for calendar in self:
+            //     if not calendar.two_weeks_calendar:
+            //         continue
+            //     calendar.attendance_ids = calendar.attendance_ids_1st_week + calendar.attendance_ids_2nd_week
+            */
+            return default;
+        }
+
+        protected async Task<ResourceCalendar> LeaveIntervalsBatchInternalAsync(object start_dt, object end_dt, object resources, object domain, object tz)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _leave_intervals_batch(self, start_dt, end_dt, resources=None, domain=None, tz=None):
             // """ Return the leave intervals in the given datetime range.
             //     The returned intervals are expressed in specified tz or in the calendar's timezone.
             // """
             // assert start_dt.tzinfo and end_dt.tzinfo
-            // self.ensure_one()
             // 
             // if not resources:
             //     resources = self.env['resource.resource']
@@ -719,18 +849,19 @@ namespace Bamboo.Core.Application.Services
             //     resources_list = list(resources) + [self.env['resource.resource']]
             // if domain is None:
             //     domain = [('time_type', '=', 'leave')]
-            // if not any_calendar:
-            //     domain = domain + [('calendar_id', 'in', [False, self.id])]
+            // if self:
+            //     domain = domain + [('calendar_id', 'in', [False] + self.ids)]
+            // 
             // # for the computation, express all datetimes in UTC
             // # Public leave don't have a resource_id
             // domain = domain + [
             //     ('resource_id', 'in', [False] + [r.id for r in resources_list]),
-            //     ('date_from', '<=', datetime_to_string(end_dt)),
-            //     ('date_to', '>=', datetime_to_string(start_dt)),
+            //     ('date_from', '<=', end_dt.astimezone(utc).replace(tzinfo=None)),
+            //     ('date_to', '>=', start_dt.astimezone(utc).replace(tzinfo=None)),
             // ]
             // 
             // # retrieve leave intervals in (start_dt, end_dt)
-            // result = defaultdict(lambda: [])
+            // result = defaultdict(list)
             // tz_dates = {}
             // all_leaves = self.env['resource.calendar.leaves'].search(domain)
             // for leave in all_leaves:
@@ -743,17 +874,17 @@ namespace Bamboo.Core.Application.Services
             //             continue
             //         tz = tz if tz else timezone((resource or self).tz)
             //         if (tz, start_dt) in tz_dates:
-            //             start = tz_dates[(tz, start_dt)]
+            //             start = tz_dates[tz, start_dt]
             //         else:
             //             start = start_dt.astimezone(tz)
-            //             tz_dates[(tz, start_dt)] = start
+            //             tz_dates[tz, start_dt] = start
             //         if (tz, end_dt) in tz_dates:
-            //             end = tz_dates[(tz, end_dt)]
+            //             end = tz_dates[tz, end_dt]
             //         else:
             //             end = end_dt.astimezone(tz)
-            //             tz_dates[(tz, end_dt)] = end
-            //         dt0 = string_to_datetime(leave_date_from).astimezone(tz)
-            //         dt1 = string_to_datetime(leave_date_to).astimezone(tz)
+            //             tz_dates[tz, end_dt] = end
+            //         dt0 = leave_date_from.astimezone(tz)
+            //         dt1 = leave_date_to.astimezone(tz)
             //         if leave_resource and leave_resource._is_fully_flexible():
             //             dt0, dt1 = self._handle_flexible_leave_interval(dt0, dt1, leave)
             //         result[resource.id].append((max(start, dt0), min(end, dt1), leave))
@@ -771,7 +902,7 @@ namespace Bamboo.Core.Application.Services
             // if resource is None:
             //     resource = self.env['resource.resource']
             // return self._leave_intervals_batch(
-            //     start_dt, end_dt, resources=resource, domain=domain, tz=tz
+            //     start_dt, end_dt, resources=resource, domain=domain, tz=tz,
             // )[resource.id]
             */
             return default;
@@ -788,7 +919,7 @@ namespace Bamboo.Core.Application.Services
             // even_week_seq = self.attendance_ids.filtered(lambda att: att.display_type == 'line_section' and att.week_type == '0')
             // odd_week_seq = self.attendance_ids.filtered(lambda att: att.display_type == 'line_section' and att.week_type == '1')
             // if len(even_week_seq) != 1 or len(odd_week_seq) != 1:
-            //     raise ValidationError(_("You can't delete section between weeks."))
+            //     raise ValidationError(self.env._("You can't delete section between weeks."))
             // 
             // even_week_seq = even_week_seq.sequence
             // odd_week_seq = odd_week_seq.sequence
@@ -800,19 +931,6 @@ namespace Bamboo.Core.Application.Services
             //         line.week_type = '0' if odd_week_seq > line.sequence else '1'
             */
             return default;
-        }
-
-        public async Task<ResourceCalendar> OpenContractsAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: resource.py) ---
-            // def action_open_contracts(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("hr_contract.action_hr_contract")
-            // action.update({'domain': [('resource_calendar_id', '=', self.id), ('employee_id', '!=', False)]})
-            // return action
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResourceCalendar> PlanDaysAsync(Guid id, ResourceCalendarPlanDaysRequestDto input)
@@ -829,7 +947,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // Returns the datetime of a days scheduling.
             // """
-            // day_dt, revert = make_aware(day_dt)
+            // revert = to_timezone(day_dt.tzinfo)
+            // day_dt = localized(day_dt)
             // 
             // # which method to use for retrieving intervals
             // if compute_leaves:
@@ -842,26 +961,25 @@ namespace Bamboo.Core.Application.Services
             //     delta = timedelta(days=14)
             //     for n in range(100):
             //         dt = day_dt + delta * n
-            //         for start, stop, meta in get_intervals(dt, dt + delta)[False]:
+            //         for start, stop, _meta in get_intervals(dt, dt + delta)[False]:
             //             found.add(start.date())
             //             if len(found) == days:
             //                 return revert(stop)
             //     return False
             // 
-            // elif days < 0:
+            // if days < 0:
             //     days = abs(days)
             //     found = set()
             //     delta = timedelta(days=14)
             //     for n in range(100):
             //         dt = day_dt - delta * n
-            //         for start, stop, meta in reversed(get_intervals(dt - delta, dt)[False]):
+            //         for start, _stop, _meta in reversed(get_intervals(dt - delta, dt)[False]):
             //             found.add(start.date())
             //             if len(found) == days:
             //                 return revert(start)
             //     return False
             // 
-            // else:
-            //     return revert(day_dt)
+            // return revert(day_dt)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -880,7 +998,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // Return datetime after having planned hours
             // """
-            // day_dt, revert = make_aware(day_dt)
+            // revert = to_timezone(day_dt.tzinfo)
+            // day_dt = localized(day_dt)
             // 
             // if resource is None:
             //     resource = self.env['resource.resource']
@@ -897,23 +1016,68 @@ namespace Bamboo.Core.Application.Services
             //     delta = timedelta(days=14)
             //     for n in range(100):
             //         dt = day_dt + delta * n
-            //         for start, stop, meta in get_intervals(dt, dt + delta)[resource_id]:
+            //         for start, stop, _meta in get_intervals(dt, dt + delta)[resource_id]:
             //             interval_hours = (stop - start).total_seconds() / 3600
             //             if hours <= interval_hours:
             //                 return revert(start + timedelta(hours=hours))
             //             hours -= interval_hours
             //     return False
+            // hours = abs(hours)
+            // delta = timedelta(days=14)
+            // for n in range(100):
+            //     dt = day_dt - delta * n
+            //     for start, stop, _meta in reversed(get_intervals(dt - delta, dt)[resource_id]):
+            //         interval_hours = (stop - start).total_seconds() / 3600
+            //         if hours <= interval_hours:
+            //             return revert(stop - timedelta(hours=hours))
+            //         hours -= interval_hours
+            // return False
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResourceCalendar> SearchWorkTimeRateInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def _search_work_time_rate(self, operator, value):
+            // if operator in ('in', 'not in'):
+            //     if not all(isinstance(v, int) for v in value):
+            //         return NotImplemented
+            // elif operator in ('<', '>'):
+            //     if not isinstance(value, int):
+            //         return NotImplemented
             // else:
-            //     hours = abs(hours)
-            //     delta = timedelta(days=14)
-            //     for n in range(100):
-            //         dt = day_dt - delta * n
-            //         for start, stop, meta in reversed(get_intervals(dt - delta, dt)[resource_id]):
-            //             interval_hours = (stop - start).total_seconds() / 3600
-            //             if hours <= interval_hours:
-            //                 return revert(stop - timedelta(hours=hours))
-            //             hours -= interval_hours
-            //     return False
+            //     return NotImplemented
+            // 
+            // calendar_ids = self.env['resource.calendar'].search([])
+            // if operator == 'in':
+            //     calender = calendar_ids.filtered(lambda m: m.work_time_rate in value)
+            // elif operator == 'not in':
+            //     calender = calendar_ids.filtered(lambda m: m.work_time_rate not in value)
+            // elif operator == '<':
+            //     calender = calendar_ids.filtered(lambda m: m.work_time_rate < value)
+            // elif operator == '>':
+            //     calender = calendar_ids.filtered(lambda m: m.work_time_rate > value)
+            // return [('id', 'in', calender.ids)]
+            */
+            return default;
+        }
+
+        public async Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
+            // def switch_based_on_duration(self):
+            // self.ensure_one()
+            // self.duration_based = not self.duration_based
+            // if self.duration_based:
+            //     self.attendance_ids.filtered(lambda att: att.day_period == 'lunch').unlink()
+            // else:
+            //     self.attendance_ids.unlink()
+            //     self.attendance_ids = self._get_default_attendance_ids(self.company_id)
+            //     if self.two_weeks_calendar:
+            //         self.attendance_ids = self._get_two_weeks_attendance()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -923,44 +1087,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
             // def switch_calendar_type(self):
+            // self.ensure_one()
             // if not self.two_weeks_calendar:
-            //     self.attendance_ids.unlink()
-            //     self.attendance_ids = [
-            //         (0, 0, {
-            //             'name': 'First week',
-            //             'dayofweek': '0',
-            //             'sequence': '0',
-            //             'hour_from': 0,
-            //             'day_period': 'morning',
-            //             'week_type': '0',
-            //             'hour_to': 0,
-            //             'display_type':
-            //             'line_section'}),
-            //         (0, 0, {
-            //             'name': 'Second week',
-            //             'dayofweek': '0',
-            //             'sequence': '25',
-            //             'hour_from': 0,
-            //             'day_period': 'morning',
-            //             'week_type': '1',
-            //             'hour_to': 0,
-            //             'display_type': 'line_section'}),
-            //     ]
-            // 
             //     self.two_weeks_calendar = True
-            //     default_attendance = self.default_get(['attendance_ids'])['attendance_ids']
-            //     for idx, att in enumerate(default_attendance):
-            //         att[2]["week_type"] = '0'
-            //         att[2]["sequence"] = idx + 1
-            //     self.attendance_ids = default_attendance
-            //     for idx, att in enumerate(default_attendance):
-            //         att[2]["week_type"] = '1'
-            //         att[2]["sequence"] = idx + 26
-            //     self.attendance_ids = default_attendance
+            //     final_attendances = self._get_two_weeks_attendance()
+            //     self.attendance_ids = [Command.clear()] + final_attendances
+            // 
             // else:
             //     self.two_weeks_calendar = False
             //     self.attendance_ids.unlink()
-            //     self.attendance_ids = self.default_get(['attendance_ids'])['attendance_ids']
+            //     self.duration_based = False
+            //     self.attendance_ids = self._get_default_attendance_ids(self.company_id)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -968,7 +1105,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<ResourceCalendar> TransferLeavesToAsync(Guid id, ResourceCalendarTransferLeavesToRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: resource.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: resource_calendar.py) ---
             // def transfer_leaves_to(self, other_calendar, resources=None, from_date=None):
             // """
             //     Transfer some resource.calendar.leaves from 'self' to another calendar 'other_calendar'.
@@ -980,7 +1117,7 @@ namespace Bamboo.Core.Application.Services
             //     ('calendar_id', 'in', self.ids),
             //     ('date_from', '>=', from_date),
             // ]
-            // domain = AND([domain, [('resource_id', 'in', resources.ids)]]) if resources else domain
+            // domain = Domain.AND([domain, [('resource_id', 'in', resources.ids)]]) if resources else domain
             // 
             // self.env['resource.calendar.leaves'].search(domain).write({
             //     'calendar_id': other_calendar.id,
@@ -1010,7 +1147,7 @@ namespace Bamboo.Core.Application.Services
             //     # start + flatten(intervals) + end
             //     work_intervals = [start_dt] + list(chain.from_iterable(work_intervals)) + [end_dt]
             //     # put it back to UTC
-            //     work_intervals = list(map(lambda dt: dt.astimezone(utc), work_intervals))
+            //     work_intervals = [dt.astimezone(utc) for dt in work_intervals]
             //     # pick groups of two
             //     work_intervals = list(zip(work_intervals[0::2], work_intervals[1::2]))
             //     result[resource.id] = work_intervals
@@ -1027,7 +1164,7 @@ namespace Bamboo.Core.Application.Services
             // if resource is None:
             //     resource = self.env['resource.resource']
             // return self._unavailable_intervals_batch(
-            //     start_dt, end_dt, resources=resource, domain=domain, tz=tz
+            //     start_dt, end_dt, resources=resource, domain=domain, tz=tz,
             // )[resource.id]
             */
             return default;
@@ -1051,10 +1188,9 @@ namespace Bamboo.Core.Application.Services
             //     return {
             //         r.id: (attendance_intervals[r.id] - leave_intervals[r.id]) for r in resources_list
             //     }
-            // else:
-            //     return {
-            //         r.id: attendance_intervals[r.id] for r in resources_list
-            //     }
+            // return {
+            //     r.id: attendance_intervals[r.id] for r in resources_list
+            // }
             */
             return default;
         }

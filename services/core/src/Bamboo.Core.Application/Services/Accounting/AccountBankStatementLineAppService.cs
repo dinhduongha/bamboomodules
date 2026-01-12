@@ -26,6 +26,18 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<AccountBankStatementLine> CheckAllowUnlinkInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
+            // def _check_allow_unlink(self):
+            // if self.statement_id.filtered(lambda stmt: stmt.is_valid and stmt.is_complete):
+            //     raise UserError(_("You can not delete a transaction from a valid statement.\n"
+            //                       "If you want to delete it, please remove the statement first."))
+            */
+            return default;
+        }
+
         protected async Task<AccountBankStatementLine> CheckAmountsCurrenciesInternalAsync()
         {
             /*
@@ -170,7 +182,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //     # Find the oldest index for each journal.
             //     self.env['account.bank.statement'].flush_model(['first_line_index', 'journal_id', 'balance_start'])
-            //     self._cr.execute(
+            //     self.env.cr.execute(
             //         """
             //             SELECT first_line_index, COALESCE(balance_start, 0.0)
             //             FROM account_bank_statement
@@ -180,11 +192,11 @@ namespace Bamboo.Core.Application.Services
             //             ORDER BY first_line_index DESC
             //             LIMIT 1
             //         """,
-            //         [min_index, journal.id],
+            //         [min_index or '', journal.id],
             //     )
             //     current_running_balance = 0.0
             //     extra_clause = SQL()
-            //     row = self._cr.fetchone()
+            //     row = self.env.cr.fetchone()
             //     if row:
             //         starting_index, current_running_balance = row
             //         extra_clause = SQL("AND st_line.internal_index >= %s", starting_index)
@@ -192,7 +204,7 @@ namespace Bamboo.Core.Application.Services
             //     self.flush_model(['amount', 'move_id', 'statement_id', 'journal_id', 'internal_index'])
             //     self.env['account.bank.statement'].flush_model(['first_line_index', 'balance_start'])
             //     self.env['account.move'].flush_model(['state'])
-            //     self._cr.execute(SQL(
+            //     self.env.cr.execute(SQL(
             //         """
             //             SELECT
             //                 st_line.id,
@@ -210,13 +222,13 @@ namespace Bamboo.Core.Application.Services
             //                 %s
             //             ORDER BY st_line.internal_index
             //         """,
-            //         max_index,
+            //         max_index or '',
             //         journal.id,
             //         company2children[journal.company_id].ids,
             //         extra_clause,
             //     ))
             //     pending_items = self
-            //     for st_line_id, amount, is_anchor, balance_start, state in self._cr.fetchall():
+            //     for st_line_id, amount, is_anchor, balance_start, state in self.env.cr.fetchall():
             //         if is_anchor:
             //             current_running_balance = balance_start
             //         if state == 'posted':
@@ -247,7 +259,21 @@ namespace Bamboo.Core.Application.Services
             //     ('acc_number', '=', self.account_number),
             //     ('partner_id', '=', self.partner_id.id),
             // ])
-            // if not bank_account and not str2bool(
+            // 
+            // if bank_account:
+            //     return bank_account.filtered(lambda x: x.company_id.id in (False, self.company_id.id))
+            // 
+            // # Avoid creating a bank account during reconciliation if it already exists on another active partner
+            // bank_account_on_other_partner = self.env['res.partner.bank'].sudo().search([
+            //     ('acc_number', '=', self.account_number),
+            //     ('partner_id', '!=', self.partner_id.id),
+            //     ('partner_id.active', '=', True),
+            // ], limit=1)
+            // 
+            // if bank_account_on_other_partner:
+            //     return self.env['res.partner.bank']
+            // 
+            // if not str2bool(
             //         self.env['ir.config_parameter'].sudo().get_param("account.skip_create_bank_account_on_reconcile")
             // ):
             //     bank_account = self.env['res.partner.bank'].create({
@@ -255,9 +281,33 @@ namespace Bamboo.Core.Application.Services
             //         'partner_id': self.partner_id.id,
             //         'journal_id': None,
             //     })
-            // return bank_account.filtered(lambda x: x.company_id.id in (False, self.company_id.id))
+            // 
+            // return bank_account
             */
             return default;
+        }
+
+        public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(Guid id, AccountBankStatementLineFormattedReadGroupRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
+            // def formatted_read_group(self, domain, groupby=(), aggregates=(), having=(), offset=0, limit=None, order=None) -> list[dict]:
+            // # Add latest running_balance in the formatted_read_group
+            // result = super().formatted_read_group(
+            //     domain, groupby, aggregates, having=having,
+            //     offset=offset, limit=limit, order=order)
+            // show_running_balance = False
+            // # We loop over the content of groupby because the groupby date is in the form of "date:granularity"
+            // for el in groupby:
+            //     if (el == 'statement_id' or el == 'journal_id' or el.startswith('date')) and self.env.context.get('show_running_balance_latest'):
+            //         show_running_balance = True
+            //         break
+            // if show_running_balance:
+            //     for group_line in result:
+            //         group_line['running_balance'] = self.search(group_line['__extra_domain'] + domain, limit=1).running_balance or 0.0
+            // return result
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<AccountBankStatementLine> GetAccountingAmountsAndCurrenciesInternalAsync()
@@ -296,20 +346,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountBankStatementLine> GetDefaultAmlsMatchingDomainInternalAsync()
+        protected async Task<AccountBankStatementLine> GetDefaultAmlsMatchingDomainInternalAsync(object allow_draft)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
-            // def _get_default_amls_matching_domain(self):
+            // def _get_default_amls_matching_domain(self, allow_draft=False):
             // self.ensure_one()
-            // all_reconcilable_account_ids = self.env['account.account'].search([
+            // all_reconcilable_account_ids = self.env['account.account'].sudo().search([
             //     ("company_ids", "child_of", self.company_id.root_id.id),
             //     ('reconcile', '=', True),
             // ]).ids
-            // return [
+            // state_domain = [('parent_state', '=', 'posted')]
+            // if allow_draft:
+            //     # Set if bank recon will display draft invoices/bills that have a partner.
+            //     # Usually not applied when used by bank recon models (no suggestions & auto matching for draft entries)
+            //     partnered_drafts_domain = [('parent_state', '=', 'draft'), ('partner_id', '!=', False)]
+            //     state_domain = Domain.OR([state_domain, partnered_drafts_domain])
+            // return state_domain + [
             //     # Base domain.
-            //     ('display_type', 'not in', ('line_section', 'line_note')),
-            //     ('parent_state', '=', 'posted'),
+            //     ('display_type', 'not in', ('line_section', 'line_subsection', 'line_note')),
             //     ('company_id', 'in', self.env['res.company'].search([('id', 'child_of', self.company_id.id)]).ids),  # allow to match invoices from same or children companies to be consistant with what's shown in the interface
             //     # Reconciliation domain.
             //     ('reconciled', '=', False),
@@ -358,36 +413,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountBankStatementLine> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(  # used for default filters
-            //     self.env.cr,
-            //     indexname='account_bank_statement_line_unreconciled_idx',
-            //     tablename='account_bank_statement_line',
-            //     expressions=['journal_id', 'company_id', 'internal_index'],
-            //     where='NOT is_reconciled OR is_reconciled IS NULL',
-            // )
-            // create_index(  # used for the dashboard
-            //     self.env.cr,
-            //     indexname='account_bank_statement_line_orphan_idx',
-            //     tablename='account_bank_statement_line',
-            //     expressions=['journal_id', 'company_id', 'internal_index'],
-            //     where='statement_id IS NULL',
-            // )
-            // create_index(  # used in other cases
-            //     self.env.cr,
-            //     indexname='account_bank_statement_line_main_idx',
-            //     tablename='account_bank_statement_line',
-            //     expressions=['journal_id', 'company_id', 'internal_index'],
-            // )
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<AccountBankStatementLine> NewAsync(Guid id, AccountBankStatementLineNewRequestDto input)
         {
             /*
@@ -421,8 +446,8 @@ namespace Bamboo.Core.Application.Services
             // transaction_amount, transaction_currency, journal_amount, journal_currency, company_amount, company_currency \
             //     = self._get_accounting_amounts_and_currencies()
             // 
-            // rate_journal2foreign_curr = abs(transaction_amount) / abs(journal_amount) if journal_amount else 0.0
-            // rate_comp2journal_curr = abs(journal_amount) / abs(company_amount) if company_amount else 0.0
+            // rate_journal2foreign_curr = journal_amount and abs(transaction_amount) / abs(journal_amount)
+            // rate_comp2journal_curr = company_amount and abs(journal_amount) / abs(company_amount)
             // 
             // if currency == transaction_currency:
             //     trans_amount_currency = amount_currency
@@ -440,9 +465,6 @@ namespace Bamboo.Core.Application.Services
             //         new_balance = company_currency.round(amount_currency / rate_comp2journal_curr)
             //     else:
             //         new_balance = 0.0
-            // elif balance is None:
-            //     trans_amount_currency = amount_currency
-            //     new_balance = currency._convert(amount_currency, company_currency, company=self.company_id, date=self.date)
             // else:
             //     journ_amount_currency = journal_currency.round(balance * rate_comp2journal_curr)
             //     trans_amount_currency = transaction_currency.round(journ_amount_currency * rate_journal2foreign_curr)
@@ -559,7 +581,7 @@ namespace Bamboo.Core.Application.Services
             // Also, check both models are still consistent.
             // :param changed_fields: A set containing all modified fields on account.move.
             // """
-            // if self._context.get('skip_account_move_synchronization'):
+            // if self.env.context.get('skip_account_move_synchronization'):
             //     return
             // 
             // for st_line in self.with_context(skip_account_move_synchronization=True):
@@ -650,7 +672,7 @@ namespace Bamboo.Core.Application.Services
             // """ Update the account.move regarding the modified account.bank.statement.line.
             // :param changed_fields: A list containing all modified fields on account.bank.statement.line.
             // """
-            // if self._context.get('skip_account_move_synchronization'):
+            // if self.env.context.get('skip_account_move_synchronization'):
             //     return
             // 
             // if not any(field_name in changed_fields for field_name in (

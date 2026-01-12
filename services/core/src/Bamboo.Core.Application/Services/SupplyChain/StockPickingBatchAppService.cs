@@ -67,6 +67,33 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<StockPickingBatch> BatchDetailedOperationsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
+            // def action_batch_detailed_operations(self):
+            // self.ensure_one()
+            // view_id = self.env.ref('stock_picking_batch.view_move_line_tree').id
+            // return {
+            //     'name': _('Detailed Operations'),
+            //     'view_mode': 'list',
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'stock.move.line',
+            //     'views': [(view_id, 'list')],
+            //     'domain': [('id', 'in', self.picking_ids.move_line_ids.ids)],
+            //     'context': {
+            //         'default_company_id': self.company_id.id,
+            //         'default_picking_id': self.picking_ids and self.picking_ids[0].id or False,
+            //         'picking_ids': self.picking_ids.ids,
+            //         'show_lots_text': self.show_lots_text,
+            //         'picking_code': self.picking_type_code,
+            //         'create': self.state not in ('done', 'cancel'),
+            //     }
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<StockPickingBatch> CancelAsync(Guid id)
         {
             /*
@@ -137,9 +164,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
             // def _compute_dock_id(self):
             // for batch in self:
-            //     if batch.picking_ids:
-            //         if len(batch.picking_ids.location_id) == 1 and batch.picking_ids.location_id.is_a_dock:
-            //             batch.dock_id = batch.picking_ids.location_id
+            //     if batch.picking_type_id != batch._origin.picking_type_id and batch.dock_id:
+            //         batch.dock_id = False
+            //     if batch.picking_ids and len(batch.picking_ids.location_id) == 1 and batch.picking_ids.location_id in batch.allowed_dock_ids:
+            //         batch.dock_id = batch.picking_ids.location_id
             */
             return default;
         }
@@ -155,6 +183,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockPickingBatch> ComputeEndDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
+            // def _compute_end_date(self):
+            // for batch in self:
+            //     if not batch.end_date or (batch.scheduled_date and batch.end_date < batch.scheduled_date):
+            //         batch.end_date = batch.scheduled_date + timedelta(hours=1) if batch.scheduled_date else False
+            */
+            return default;
+        }
+
         protected async Task<StockPickingBatch> ComputeEstimatedShippingCapacityInternalAsync()
         {
             /*
@@ -163,17 +203,23 @@ namespace Bamboo.Core.Application.Services
             // for batch in self:
             //     estimated_shipping_weight = 0
             //     estimated_shipping_volume = 0
+            //     done_package_ids = set()
             //     # packs
             //     for pack in self.move_line_ids.result_package_id:
             //         p_type = pack.package_type_id
-            //         estimated_shipping_weight += pack.shipping_weight
-            //         if p_type:
+            //         if pack.shipping_weight:
+            //             # shipping_weight was computed, so base_weight should be included.
+            //             estimated_shipping_weight += pack.shipping_weight
+            //             done_package_ids.add(pack.id)
+            //         elif p_type:
             //             estimated_shipping_weight += p_type.base_weight or 0
             //             estimated_shipping_volume += (p_type.packaging_length * p_type.width * p_type.height) / 1000.0**3
             //     # move without packs
-            //     for move in self.picking_ids.move_ids_without_package:
-            //         estimated_shipping_weight += move.product_id.weight * move.product_qty
-            //         estimated_shipping_volume += move.product_id.volume * move.product_qty
+            //     for move_line in self.picking_ids.move_ids.move_line_ids:
+            //         if move_line.result_package_id.id in done_package_ids:
+            //             continue
+            //         estimated_shipping_weight += move_line.product_id.weight * move_line.quantity_product_uom
+            //         estimated_shipping_volume += move_line.product_id.volume * move_line.quantity_product_uom
             //     batch.estimated_shipping_weight = estimated_shipping_weight
             //     batch.estimated_shipping_volume = estimated_shipping_volume
             */
@@ -320,10 +366,10 @@ namespace Bamboo.Core.Application.Services
             // for vals in vals_list:
             //     if vals.get('name', '/') == '/':
             //         company_id = vals.get('company_id', self.env.company.id)
-            //         if vals.get('is_wave'):
-            //             vals['name'] = self.env['ir.sequence'].with_company(company_id).next_by_code('picking.wave') or '/'
-            //         else:
-            //             vals['name'] = self.env['ir.sequence'].with_company(company_id).next_by_code('picking.batch') or '/'
+            //         picking_type = self.env['stock.picking.type'].browse(vals.get('picking_type_id'))
+            //         if picking_type:
+            //             sequence_code = 'picking.wave' if vals.get('is_wave') else 'picking.batch'
+            //             vals['name'] = self._prepare_name(picking_type, sequence_code, company_id)
             // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
@@ -335,10 +381,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
             // def action_done(self):
             // def has_no_quantity(picking):
-            //     return all(not m.picked or float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding) for m in picking.move_ids if m.state not in ('done', 'cancel'))
+            //     return all(not m.picked or m.product_uom.is_zero(m.quantity) for m in picking.move_ids if m.state not in ('done', 'cancel'))
             // 
             // def is_empty(picking):
-            //     return all(float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding) for m in picking.move_ids if m.state not in ('done', 'cancel'))
+            //     return all(m.product_uom.is_zero(m.quantity) for m in picking.move_ids if m.state not in ('done', 'cancel'))
             // 
             // self.ensure_one()
             // self._check_company()
@@ -366,9 +412,39 @@ namespace Bamboo.Core.Application.Services
             //             picking.batch_id.id,
             //             picking.batch_id.name))
             // 
+            // if empty_waiting_pickings:
+            //     self.message_post(body=_(
+            //         "%s was removed from the batch, no quantity processed",
+            //         Markup(', ').join([picking._get_html_link() for picking in empty_waiting_pickings])
+            //     ))
+            // 
             // return pickings.with_context(**context).button_validate()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<StockPickingBatch> GetMergedBatchValsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
+            // def _get_merged_batch_vals(self):
+            // self.ensure_one()
+            // vals = super()._get_merged_batch_vals()
+            // vals.update({
+            //     'vehicle_id': self.vehicle_id.id,
+            //     'dock_id': self.dock_id.id,
+            // })
+            // return vals
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
+            // def _get_merged_batch_vals(self):
+            // self.ensure_one()
+            // return {
+            //     'user_id': self.user_id.id,
+            //     'description': self.description,
+            //     'scheduled_date': self.scheduled_date,
+            // }
+            */
+            return default;
         }
 
         protected async Task<StockPickingBatch> IsLineAutoMergeableInternalAsync(object num_of_moves, object num_of_pickings, object weight)
@@ -420,6 +496,50 @@ namespace Bamboo.Core.Application.Services
             // return res
             */
             return default;
+        }
+
+        public async Task<StockPickingBatch> MergeAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
+            // def action_merge(self):
+            // if not self:
+            //     return
+            // if len(self) < 2:
+            //     raise UserError(self.env._('Please select at least two batch/wave transfers to merge.'))
+            // if len(self.picking_type_id) > 1:
+            //     raise UserError(_('Batch/Wave transfers with different operation types cannot be merged.'))
+            // if len(set(self.mapped('is_wave'))) > 1:
+            //     raise UserError(_('Batch transfers cannot be merged with wave transfers and vice versa.'))
+            // if len(set(self.mapped('state'))) > 1:
+            //     raise UserError(_('Batch/Wave transfers with different states cannot be merged.'))
+            // if self[0].state in ['done', 'cancel']:
+            //     raise UserError(_('You cannot merge done or cancelled batch/wave transfers.'))
+            // 
+            // target_batch = self[:1]
+            // other_batches = self[1:]
+            // earliest_batch = self.filtered(lambda b: b.scheduled_date).sorted(key=lambda b: b.scheduled_date)[0]
+            // merged_batch_vals = earliest_batch._get_merged_batch_vals()
+            // target_batch.move_line_ids |= other_batches.move_line_ids
+            // target_batch.picking_ids |= other_batches.picking_ids
+            // target_batch.write(merged_batch_vals)
+            // other_batches.unlink()
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'title': _('Batch/Wave transfers have been merged into the following transfer'),
+            //         'message': '%s',
+            //         'links': [{
+            //             'label': target_batch.name,
+            //             'url': f"/odoo/action-stock_picking_batch.{'action_picking_tree_wave' if target_batch.is_wave else 'stock_picking_batch_action'}/{target_batch.id}",
+            //         }],
+            //         'sticky': False,
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //     }
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<StockPickingBatch> OnchangeScheduledDateAsync(Guid id)
@@ -478,6 +598,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<StockPickingBatch> PrepareNameInternalAsync(object picking_type, object sequence_code, Guid company_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
+            // def _prepare_name(self, picking_type, sequence_code, company_id):
+            // sequence_prefix, sequence_number = (self.env['ir.sequence'].with_company(company_id).next_by_code(sequence_code) or '/').split('/')
+            // return f"{sequence_prefix}/{picking_type.sequence_code}/{sequence_number}"
+            */
+            return default;
+        }
+
         public async Task<StockPickingBatch> PrintAsync(Guid id)
         {
             /*
@@ -493,20 +624,13 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
-            // def action_put_in_pack(self):
+            // def action_put_in_pack(self, *, package_id=False, package_type_id=False, package_name=False):
             // """ Action to put move lines with 'Done' quantities into a new pack
             // This method follows same logic to stock.picking.
             // """
             // self.ensure_one()
             // if self.state not in ('done', 'cancel'):
-            //     move_line_ids = self.picking_ids[0]._package_move_lines(batch_pack=True)
-            //     if move_line_ids:
-            //         res = move_line_ids.picking_id[0]._pre_put_in_pack_hook(move_line_ids)
-            //         if res:
-            //             return res
-            //         package = move_line_ids.picking_id._put_in_pack(move_line_ids)
-            //         return move_line_ids.picking_id[0]._post_put_in_pack_hook(package)
-            //     raise UserError(_("Please add 'Done' quantities to the batch picking to create a new pack."))
+            //     return self.move_line_ids.action_put_in_pack(package_id=package_id, package_type_id=package_type_id, package_name=package_name)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -524,7 +648,7 @@ namespace Bamboo.Core.Application.Services
             //             "Please check their states and operation types.\n\n"
             //             "Incompatibilities: %(incompatible_transfers)s",
             //             batch=batch.name,
-            //             incompatible_transfers=format_list(self.env, erroneous_pickings.mapped('name'))))
+            //             incompatible_transfers=erroneous_pickings.mapped('name')))
             */
             return default;
         }
@@ -537,6 +661,43 @@ namespace Bamboo.Core.Application.Services
             // return [('picking_ids.move_line_ids',operator,value)]
             */
             return default;
+        }
+
+        public async Task<StockPickingBatch> SeePackagesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
+            // def action_see_packages(self):
+            // self.ensure_one()
+            // if self.state == 'done':
+            //     return {
+            //         'name': self.env._("Packages"),
+            //         'res_model': 'stock.package.history',
+            //         'view_mode': 'list',
+            //         'views': [(False, 'list')],
+            //         'type': 'ir.actions.act_window',
+            //         'domain': [('picking_ids', 'in', self.picking_ids.ids)],
+            //         'context': {
+            //             'search_default_main_packages': True,
+            //         }
+            //     }
+            // 
+            // return {
+            //     'name': self.env._("Packages"),
+            //     'res_model': 'stock.package',
+            //     'view_mode': 'list,kanban,form',
+            //     'views': [(self.env.ref('stock.stock_package_view_list_editable').id, 'list'), (False, 'kanban'), (False, 'form')],
+            //     'type': 'ir.actions.act_window',
+            //     'domain': [('picking_ids', 'in', self.picking_ids.ids)],
+            //     'context': {
+            //         'picking_ids': self.picking_ids.ids,
+            //         'location_id': self.picking_ids[:1].location_id.id,
+            //         'can_add_entire_packs': self.picking_type_code != 'incoming',
+            //         'search_default_main_packages': True,
+            //     },
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<StockPickingBatch> SetMoveLineIdsInternalAsync()
@@ -617,11 +778,18 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
             // def write(self, vals):
+            // batches_to_rename = self.env['stock.picking.batch']
+            // if vals.get('picking_type_id'):
+            //     picking_type = self.env['stock.picking.type'].browse(vals.get('picking_type_id'))
+            //     batches_to_rename = self.filtered(lambda b: b.picking_type_id != picking_type)
             // res = super().write(vals)
             // if not self.picking_ids:
             //     self.filtered(lambda b: b.state == 'in_progress').action_cancel()
             // if vals.get('picking_type_id'):
             //     self._sanity_check()
+            //     for batch in batches_to_rename:
+            //         sequence_code = 'picking.wave' if batch.is_wave else 'picking.batch'
+            //         batch.name = self._prepare_name(picking_type, sequence_code, batch.company_id)
             // if vals.get('picking_ids'):
             //     batch_without_picking_type = self.filtered(lambda batch: not batch.picking_type_id)
             //     if batch_without_picking_type:

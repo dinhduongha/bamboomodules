@@ -77,11 +77,11 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmIapLeadHelpers> NotifyNoMoreCreditAsync(Guid id, CrmIapLeadHelpersNotifyNoMoreCreditRequestDto input)
+        protected async Task<CrmIapLeadHelpers> NotifyNoMoreCreditInternalAsync(object service_name, object model_name, object notification_parameter)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_helpers.py) ---
-            // def notify_no_more_credit(self, service_name, model_name, notification_parameter):
+            // def _notify_no_more_credit(self, service_name, model_name, notification_parameter):
             // """
             // Notify about the number of credit.
             // In order to avoid to spam people each hour, an ir.config_parameter is set
@@ -103,7 +103,7 @@ namespace Bamboo.Core.Application.Services
             // mail_template.send_mail(iap_account.id, force_send=True, email_values=email_values)
             // self.env['ir.config_parameter'].sudo().set_param(notification_parameter, True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
     }
 }

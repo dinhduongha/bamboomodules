@@ -40,4 +40,10 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object RecurrenceUpdateSetting { get; set; }
     }
+    
+    public class CalendarEventUnlinkEventRequestDto
+    {
+        public Guid AttendeeId { get; set; }
+        public object Recurrence { get; set; }
+    }
 }

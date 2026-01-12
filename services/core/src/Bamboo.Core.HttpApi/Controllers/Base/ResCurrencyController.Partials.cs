@@ -35,6 +35,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-all-currencies")]
+        public async Task<IActionResult> GetAllCurrenciesAsync(Guid id)
+        {
+            var result = await _appService.GetAllCurrenciesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-company-currency-for-spreadsheet")]
         public async Task<IActionResult> GetCompanyCurrencyForSpreadsheetAsync(Guid id, [FromBody] ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
         {

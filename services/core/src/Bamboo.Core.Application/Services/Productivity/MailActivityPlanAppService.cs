@@ -153,7 +153,7 @@ namespace Bamboo.Core.Application.Services
             // return [
             //     (model.model, model.name)
             //     for model in self.env['ir.model'].sudo().search(
-            //         ['&', ('is_mail_thread', '=', True), ('transient', '=', False)])
+            //         ['&', ('is_mail_activity', '=', True), ('transient', '=', False)])
             // ]
             */
             return default;

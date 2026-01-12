@@ -13,10 +13,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<PurchaseOrderLine> AddFromCatalogAsync(Guid id);
         Task<PurchaseOrderLine> ChooseAsync(Guid id);
         Task<PurchaseOrderLine> ClearQuantitiesAsync(Guid id);
+        Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid id);
         Task<PurchaseOrderLine> OnchangeProductIdAsync(Guid id);
-        Task<PurchaseOrderLine> OnchangeProductIdWarningAsync(Guid id);
         Task<PurchaseOrderLine> OpenOrderAsync(Guid id);
         Task<PurchaseOrderLine> ProductForecastReportAsync(Guid id);
-        Task<PurchaseOrderLine> PurchaseHistoryAsync(Guid id);
     }
 }

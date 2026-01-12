@@ -54,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             //         'free_input_multi',
             //     ]
             //     welcome_steps = script.script_step_ids and script._get_welcome_steps()
-            //     if welcome_steps and welcome_steps[-1].step_type == 'forward_operator':
+            //     if welcome_steps and welcome_steps[-1].is_forward_operator:
             //         script.first_step_warning = 'first_step_operator'
             //     elif welcome_steps and welcome_steps[-1].step_type not in allowed_first_step_types:
             //         script.first_step_warning = 'first_step_invalid'
@@ -101,27 +101,6 @@ namespace Bamboo.Core.Application.Services
             // return [dict(vals, title=self.env._("%s (copy)", script.title)) for script, vals in zip(self, vals_list)]
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ChatbotScript> FormatForFrontendInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
-            // def _format_for_frontend(self):
-            // """ Small utility method that formats the script into a dict usable by the frontend code. """
-            // self.ensure_one()
-            // 
-            // return {
-            //     'id': self.id,
-            //     'name': self.title,
-            //     'partner': {'id': self.operator_partner_id.id, 'type': 'partner', 'name': self.operator_partner_id.name},
-            //     'welcomeSteps': [
-            //         step._format_for_frontend()
-            //         for step in self._get_welcome_steps()
-            //     ]
-            // }
-            */
-            return default;
         }
 
         protected async Task<ChatbotScript> GetChatbotLanguageInternalAsync()
@@ -206,9 +185,9 @@ namespace Bamboo.Core.Application.Services
             //     discuss_channel.chatbot_current_step_id = welcome_step.id
             // 
             //     if not is_html_empty(welcome_step.message):
-            //         posted_messages += discuss_channel.with_context(mail_create_nosubscribe=True).message_post(
+            //         posted_messages += discuss_channel.with_context(mail_post_autofollow_author_skip=True).message_post(
             //             author_id=self.operator_partner_id.id,
-            //             body=plaintext2html(welcome_step.message),
+            //             body=plaintext2html(welcome_step.message, with_paragraph=False),
             //             message_type='comment',
             //             subtype_xmlid='mail.mt_comment',
             //         )
@@ -231,6 +210,16 @@ namespace Bamboo.Core.Application.Services
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ChatbotScript> ToStoreDefaultsInternalAsync(object target)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
+            // def _to_store_defaults(self, target):
+            // return [Store.One("operator_partner_id", ["name"]), "title"]
+            */
+            return default;
         }
 
         protected async Task<ChatbotScript> ValidateEmailInternalAsync(object email_address, object discuss_channel)

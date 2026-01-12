@@ -24,22 +24,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ActionOpenMatchedSerialAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def action_open_matched_serial(self):
-            // self.ensure_one()
-            // action = self.env.ref('stock.action_production_lot_form', raise_if_not_found=False)
-            // if not action:
-            //     return True
-            // action_dict = action._get_action_dict()
-            // action_dict['context'] = {'search_default_name': self.serial_no}
-            // return action_dict
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
         {
             /*
@@ -73,7 +57,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_maintenance_request(self):
             // for record in self:
             //     maintenance_requests = record.maintenance_ids.filtered(lambda mr: mr.maintenance_type == 'corrective' and mr.stage_id.done)
-            //     record.mttr = len(maintenance_requests) and (sum(int((request.close_date - request.request_date).days) for request in maintenance_requests) / len(maintenance_requests)) or 0
+            //     record.mttr = len(maintenance_requests) and (sum(int((request.close_date - request.request_date).days) if request.close_date and request.request_date else 0 for request in maintenance_requests) / len(maintenance_requests)) or 0
             //     record.latest_failure_date = max((request.request_date for request in maintenance_requests), default=False)
             //     record.mtbf = record.latest_failure_date and (record.latest_failure_date - record.effective_date).days / len(maintenance_requests) or 0
             //     record.estimated_next_failure = record.mtbf and record.latest_failure_date + relativedelta(days=record.mtbf) or False
@@ -89,26 +73,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.maintenance_team_id.company_id and record.maintenance_team_id.company_id.id != record.company_id.id:
             //         record.maintenance_team_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeMatchSerialInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def _compute_match_serial(self):
-            // if 'stock.lot' not in self.env or not self.env['stock.lot'].has_access('read'):
-            //     self.match_serial = False
-            //     return
-            // matched_serial_data = self.env['stock.lot']._read_group(
-            //     [('name', 'in', self.mapped('serial_no'))],
-            //     ['name'],
-            //     ['__count'],
-            // )
-            // matched_serial_count = dict(matched_serial_data)
-            // for equipment in self:
-            //     equipment.match_serial = matched_serial_count.get(equipment.serial_no, 0)
             */
             return default;
         }

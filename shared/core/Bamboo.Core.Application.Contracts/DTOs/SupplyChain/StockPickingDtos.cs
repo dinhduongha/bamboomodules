@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class StockPickingAddEntirePacksRequestDto
+    {
+        public List<Guid> PackageIds { get; set; }
+    }
+    
     public class StockPickingAssignBatchUserRequestDto
     {
         public Guid UserId { get; set; }
@@ -16,16 +21,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class StockPickingDateCategoryToDomainRequestDto
     {
+        public object FieldName { get; set; }
         public object DateCategory { get; set; }
     }
     
     public class StockPickingGetEmptyListHelpRequestDto
     {
         public object HelpMessage { get; set; }
-    }
-    
-    public class StockPickingPutInPackRequestDto
-    {
-        public object MoveLinesToPack { get; set; }
     }
 }

@@ -38,6 +38,20 @@ namespace Bamboo.Core.Application.Services
             _utmMixinAppService = utmMixinAppService;
         }
 
+        protected async Task<CrmLead> AssertPortalWriteAccessInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
+            // def _assert_portal_write_access(self):
+            // if (
+            //     self.env.user._is_portal() and not self.env.su and
+            //     self != self.filtered_domain([('partner_assigned_id', 'child_of', self.env.user.commercial_partner_id.id)])
+            // ):
+            //     raise AccessError(_('Only users with commercial partner which is a parent of the assigned partner can edit this lead.'))
+            */
+            return default;
+        }
+
         public async Task<CrmLead> AssignGeoLocalizeAsync(Guid id, CrmLeadAssignGeoLocalizeRequestDto input)
         {
             /*
@@ -135,16 +149,55 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<CrmLead> AutoInitInternalAsync()
+        protected async Task<CrmLead> AssignUserlessLeadInTeamInternalAsync(string creation_source)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _auto_init(self):
-            // super()._auto_init()
-            // tools.create_index(self._cr, 'crm_lead_user_id_team_id_type_index',
-            //                    self._table, ['user_id', 'team_id', 'type'])
-            // tools.create_index(self._cr, 'crm_lead_create_date_team_id_idx',
-            //                    self._table, ['create_date', 'team_id'])
+            // def _assign_userless_lead_in_team(self, creation_source: str):
+            // """ Assign userless leads to their team's leader. """
+            // if not self._is_rule_based_assignment_activated() and self.team_id:
+            //     for team_id, leads in self.filtered(lambda lead: not lead.user_id).grouped('team_id').items():
+            //         if team_id.user_id:
+            //             leads.user_id = team_id.user_id
+            //             message = _('This new lead created by %(creation_source)s was automatically assigned to team leader %(user_name)s',
+            //                 user_name=team_id.user_id.name,
+            //                 creation_source=creation_source,
+            //             )
+            //             leads._message_log_batch(bodies={lead.id: message for lead in leads})
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> CheckWonValidityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _check_won_validity(self):
+            // for lead in self:
+            //     if lead.stage_id.is_won and lead.probability != 100:
+            //         raise ValidationError(_("A lead in a Won stage cannot be lost. Move it to another stage first."))
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> ComputeCommercialPartnerIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _compute_commercial_partner_id(self):
+            // leads_w_partners = self.filtered('partner_id')
+            // for lead in leads_w_partners:
+            //     commercial_partner = lead.partner_id.commercial_partner_id
+            //     lead.commercial_partner_id = commercial_partner.is_company and commercial_partner != lead.partner_id and commercial_partner
+            // # match by name if exists
+            // remaining_leads_w_pname = (self - leads_w_partners).filtered('partner_name')
+            // commercial_partner_by_name = self.env['res.partner']._read_group(
+            //     [('is_company', '=', True), ('name', 'in', remaining_leads_w_pname.mapped('partner_name'))],
+            //     ['name'], ['id:array_agg'],
+            // )
+            // remaining_leads_by_name = remaining_leads_w_pname.grouped('partner_name')
+            // for commercial_partner_name, commercial_partner_ids in commercial_partner_by_name:
+            //     remaining_leads_by_name[commercial_partner_name].commercial_partner_id = commercial_partner_ids[0]
             */
             return default;
         }
@@ -212,7 +265,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _compute_contact_name(self):
             // """ compute the new values when partner_id has changed """
-            // for lead in self:
+            // to_reset = self.filtered(lambda l: not l.partner_id)
+            // to_reset.contact_name = False
+            // for lead in (self - to_reset):
             //     lead.update(lead._prepare_contact_name_from_partner(lead.partner_id))
             */
             return default;
@@ -325,7 +380,7 @@ namespace Bamboo.Core.Application.Services
             //     email_state = False
             //     if lead.email_from:
             //         email_state = 'incorrect'
-            //         for email in email_split(lead.email_from):
+            //         for email in email_normalize_all(lead.email_from):
             //             if mail_validation.mail_validate(email):
             //                 email_state = 'correct'
             //                 break
@@ -445,19 +500,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> ComputeMobileInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _compute_mobile(self):
-            // """ compute the new values when partner_id has changed """
-            // for lead in self:
-            //     if not lead.mobile or lead.partner_id.mobile:
-            //         lead.mobile = lead.partner_id.mobile
-            */
-            return default;
-        }
-
         protected async Task<CrmLead> ComputeNameInternalAsync()
         {
             /*
@@ -499,7 +541,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _compute_partner_name(self):
             // """ compute the new values when partner_id has changed """
-            // for lead in self:
+            // to_reset = self.filtered(lambda l: not l.partner_id)
+            // to_reset.partner_name = False
+            // for lead in (self - to_reset):
             //     lead.update(lead._prepare_partner_name_from_partner(lead.partner_id))
             */
             return default;
@@ -573,12 +617,12 @@ namespace Bamboo.Core.Application.Services
             //     records. Idea is that counter indicates duplicates are present and
             //     the lead could be escalated to managers.
             //     """
-            //     model = self.env[model_name].sudo().with_context(active_test=False)
+            //     model = self.env[model_name].with_context(active_test=False)
             //     res = model.search(domain, limit=SEARCH_RESULT_LIMIT)
             //     return res if len(res) < SEARCH_RESULT_LIMIT else model
             // 
             // for lead in self:
-            //     lead_id = lead._origin.id if isinstance(lead.id, models.NewId) else lead.id
+            //     lead_id = lead._origin.id
             //     common_lead_domain = [
             //         ('id', '!=', lead_id)
             //     ]
@@ -597,7 +641,7 @@ namespace Bamboo.Core.Application.Services
             //         ])
             //     # check the phone number duplicates, based on phone_sanitized. Only
             //     # exact matches are found, and the single one stored in phone_sanitized
-            //     # in case phone and mobile are both set.
+            //     # in case phone is set.
             //     if lead.phone_sanitized:
             //         duplicate_lead_ids |= return_if_relevant('crm.lead', common_lead_domain + [
             //             ('phone_sanitized', '=', lead.phone_sanitized)
@@ -614,7 +658,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _compute_probabilities(self):
-            // lead_probabilities = self._pls_get_naive_bayes_probabilities()
+            // lead_probabilities, _unused = self._pls_get_naive_bayes_probabilities()
             // for lead in self:
             //     if lead.id in lead_probabilities:
             //         was_automated = lead.active and lead.is_automated_probability
@@ -720,7 +764,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _compute_stage_id(self):
             // for lead in self:
-            //     if not lead.stage_id:
+            //     if not lead.stage_id or (lead.team_id and lead.stage_id.team_ids and lead.team_id not in lead.stage_id.team_ids):
             //         lead.stage_id = lead._stage_find(domain=[('fold', '=', False)]).id
             */
             return default;
@@ -744,19 +788,6 @@ namespace Bamboo.Core.Application.Services
             //     team = self.env['crm.team']._get_default_team_id(user_id=user.id, domain=team_domain)
             //     if lead.team_id != team:
             //         lead.team_id = team.id
-            */
-            return default;
-        }
-
-        protected async Task<CrmLead> ComputeTitleInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _compute_title(self):
-            // """ compute the new values when partner_id has changed """
-            // for lead in self:
-            //     if not lead.title or lead.partner_id.title:
-            //         lead.title = lead.partner_id.title
             */
             return default;
         }
@@ -825,6 +856,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<CrmLead> ComputeWonStatusInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _compute_won_status(self):
+            // for lead in self:
+            //     if lead.probability == 100 and lead.stage_id.is_won:
+            //         lead.won_status = 'won'
+            //     elif not lead.active and lead.probability == 0:
+            //         lead.won_status = 'lost'
+            //     else:
+            //         lead.won_status = 'pending'
+            */
+            return default;
+        }
+
         public async Task<CrmLead> ConvertOpportunityAsync(Guid id, CrmLeadConvertOpportunityRequestDto input)
         {
             /*
@@ -832,7 +879,7 @@ namespace Bamboo.Core.Application.Services
             // def convert_opportunity(self, partner, user_ids=False, team_id=False):
             // customer = partner if partner else self.env['res.partner']
             // for lead in self:
-            //     if not lead.active or lead.probability == 100:
+            //     if not lead.active or lead.won_status == 'won':
             //         continue
             //     vals = lead._convert_opportunity_data(customer, team_id)
             //     lead.write(vals)
@@ -885,7 +932,7 @@ namespace Bamboo.Core.Application.Services
             // for lead, vals in zip(self, vals_list):
             //     vals.setdefault('type', lead.type)
             //     vals.setdefault('team_id', lead.team_id.id)
-            //     vals['date_open'] = now if lead.type == 'opportunity' else False
+            //     vals['date_open'] = now if lead.type == 'opportunity' and lead.user_id.active else False
             //     if not lead.user_id.active:
             //         vals['user_id'] = False
             // return vals_list
@@ -901,33 +948,65 @@ namespace Bamboo.Core.Application.Services
             // for vals in vals_list:
             //     if vals.get('website'):
             //         vals['website'] = self.env['res.partner']._clean_website(vals['website'])
-            // leads = super(Lead, self).create(vals_list)
+            // leads = super().create(vals_list)
             // 
-            // for lead, values in zip(leads, vals_list):
-            //     if any(field in ['active', 'stage_id'] for field in values):
-            //         lead._handle_won_lost(values)
+            // # handling a date_closed value if the lead is directly created in the won stage
+            // won_to_set = leads.filtered(lambda l: not l.date_closed and l.stage_id.is_won)
+            // won_to_set.write({'date_closed': fields.Datetime.now()})
+            // 
+            // if self.default_get(['partner_id']).get('partner_id') is None:
+            //     commercial_partner_ids = [vals['commercial_partner_id'] for vals in vals_list if vals.get('commercial_partner_id')]
+            //     CommercialPartners = self.env['res.partner'].with_prefetch(commercial_partner_ids)
+            //     for lead, lead_vals in zip(leads, vals_list, strict=True):
+            //         if not lead_vals.get('partner_id') and lead_vals.get('commercial_partner_id'):
+            //             commercial_partner = CommercialPartners.browse(lead_vals['commercial_partner_id'])
+            //             if (lead.phone or lead.email_from) and (
+            //                 lead.phone_sanitized != commercial_partner.phone_sanitized or
+            //                 lead.email_normalized != commercial_partner.email_normalized
+            //             ):
+            //                 lead.partner_name = lead.partner_name or commercial_partner.name
+            //                 continue
+            //             lead.partner_id = commercial_partner
+            // 
+            // leads._handle_won_lost({}, {
+            //     lead.id: {
+            //         'is_lost': lead.won_status == 'lost',
+            //         'is_won': lead.won_status == 'won',
+            //     } for lead in leads
+            // })
             // 
             // return leads
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: crm_lead.py) ---
             // def create(self, vals_list):
-            // leads = super(Lead, self).create(vals_list)
+            // leads = super().create(vals_list)
             // enrich_mode = self.env['ir.config_parameter'].sudo().get_param('crm.iap.lead.enrich.setting', 'auto')
             // if enrich_mode == 'auto':
             //     cron = self.env.ref('crm_iap_enrich.ir_cron_lead_enrichment', raise_if_not_found=False)
             //     if cron:
             //         cron._trigger()
             // return leads
+            --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: crm_lead.py) ---
+            // def create(self, vals_list):
+            // origin_channel_ids = [
+            //     vals["origin_channel_id"] for vals in vals_list if vals.get("origin_channel_id")
+            // ]
+            // if not self.env["discuss.channel"].browse(origin_channel_ids).has_access("read"):
+            //     raise AccessError(
+            //         self.env._("You cannot create leads linked to channels you don't have access to.")
+            //     )
+            // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
         }
 
-        protected async Task<CrmLead> CreateCustomerInternalAsync()
+        protected async Task<CrmLead> CreateCustomerInternalAsync(object with_parent)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _create_customer(self):
+            // def _create_customer(self, with_parent=None):
             // """ Create a partner from lead data and link it to the lead.
             // 
+            // :param with_parent: if set, create the new partner with the given parent
             // :return: newly-created partner browse record
             // """
             // Partner = self.env['res.partner']
@@ -935,15 +1014,17 @@ namespace Bamboo.Core.Application.Services
             // if not contact_name:
             //     contact_name = parse_contact_from_email(self.email_from)[0] if self.email_from else False
             // 
-            // if self.partner_name:
+            // if with_parent:
+            //     partner_company = with_parent
+            // elif self.partner_name:
             //     partner_company = Partner.create(self._prepare_customer_values(self.partner_name, is_company=True))
             // elif self.partner_id:
             //     partner_company = self.partner_id
             // else:
-            //     partner_company = None
+            //     partner_company = self.env['res.partner']
             // 
             // if contact_name:
-            //     return Partner.create(self._prepare_customer_values(contact_name, is_company=False, parent_id=partner_company.id if partner_company else False))
+            //     return Partner.create(self._prepare_customer_values(contact_name, is_company=False, parent_id=partner_company.id))
             // 
             // if partner_company:
             //     return partner_company
@@ -1026,32 +1107,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> FindMatchingPartnerInternalAsync(object email_only)
+        protected async Task<object> FieldToSqlInternalAsync(object @alias, object field_expr, object query)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _find_matching_partner(self, email_only=False):
+            // def _field_to_sql(self, alias, field_expr, query=None) -> SQL:
+            // if field_expr == 'company_currency':
+            //     alias_company = query.make_alias(self._table, 'company_id')
+            //     company_field_sql = self._field_to_sql(self._table, 'company_id', query)
+            //     query.add_join('LEFT JOIN', alias_company, 'res_company', SQL(
+            //         "%s = %s", company_field_sql, SQL.identifier(alias_company, 'id'),
+            //     ))
+            //     company_currency_expr = self.env['res.company']._field_to_sql(alias_company, 'currency_id', query)
+            //     return SQL(
+            //         '(CASE WHEN %s IS NOT NULL THEN %s ELSE %s END)',
+            //         company_field_sql, company_currency_expr, self.env.company.currency_id.id
+            //     )
+            // return super()._field_to_sql(alias, field_expr, query)
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> FindMatchingPartnerInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _find_matching_partner(self):
             // """ Try to find a matching partner with available information on the
-            // lead, using notably customer's name, email, ...
+            // lead, using currently customer's email
             // 
-            // :param email_only: Only find a matching based on the email. To use
-            //     for automatic process where ilike based on name can be too dangerous
             // :return: partner browse record
             // """
             // self.ensure_one()
             // partner = self.partner_id
-            // 
-            // if not partner and self.email_from:
-            //     partner = self.env['res.partner'].search([('email', '=', self.email_from)], limit=1)
-            // 
-            // if not partner and not email_only:
-            //     # search through the existing partners based on the lead's partner or contact name
-            //     # to be aligned with _create_customer, search on lead's name as last possibility
-            //     for customer_potential_name in [self[field_name] for field_name in ['partner_name', 'contact_name', 'name'] if self[field_name]]:
-            //         partner = self.env['res.partner'].search([('name', 'ilike', customer_potential_name)], limit=1)
-            //         if partner:
-            //             break
-            // 
+            // if not partner and (self.email_normalized or self.email_from):
+            //     partner = self._partner_find_from_emails_single(
+            //         [self.email_normalized or self.email_from],
+            //         no_create=True,
+            //     )
             // return partner
             */
             return default;
@@ -1215,18 +1308,27 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _get_customer_information(self):
-            // email_normalized_to_values = super()._get_customer_information()
-            // Partner = self.env['res.partner']
+            // email_keys_to_values = super()._get_customer_information()
             // 
-            // for record in self.filtered('email_normalized'):
-            //     values = email_normalized_to_values.setdefault(record.email_normalized, {})
-            //     contact_name = record.contact_name or record.partner_name or parse_contact_from_email(record.email_from)[0] or record.email_from
+            // for lead in self:
+            //     email_key = lead.email_normalized or lead.email_from
+            //     # do not fill Falsy with random data, unless monorecord (= always correct)
+            //     if not email_key and len(self) > 1:
+            //         continue
+            //     values = email_keys_to_values.setdefault(email_key, {})
+            //     contact_name = lead.contact_name or parse_contact_from_email(lead.email_from)[0] or lead.email_from
+            //     is_company = bool(lead.partner_name) and contact_name == lead.partner_name
             //     # Note that we don't attempt to create the parent company even if partner name is set
-            //     values.update(record._prepare_customer_values(contact_name, is_company=False))
-            //     values['company_name'] = record.partner_name
-            //     if contact_name == record.partner_name:
-            //         values['company_type'] = 'company'
-            // return email_normalized_to_values
+            //     values.update({
+            //         key: val for key, val in lead._prepare_customer_values(
+            //             contact_name, is_company=is_company, parent_id=False
+            //         ).items() if val and key != 'email'  # don't force email used as criterion
+            //     })
+            //     values['is_company'] = is_company
+            //     if not is_company and lead.commercial_partner_id:
+            //         values['parent_id'] = lead.commercial_partner_id.id
+            //         values.pop('company_name', None)
+            // return email_keys_to_values
             */
             return default;
         }
@@ -1244,7 +1346,7 @@ namespace Bamboo.Core.Application.Services
             //     return help_message
             // 
             // help_title, sub_title = "", ""
-            // if self._context.get('default_type') == 'lead':
+            // if self.env.context.get('default_type') == 'lead':
             //     help_title = _('Create a new lead')
             // else:
             //     help_title = _('Create an opportunity to start playing with your pipeline.')
@@ -1300,8 +1402,9 @@ namespace Bamboo.Core.Application.Services
             //     return self.env['crm.lead']
             // 
             // domain = []
-            // for normalized_email in [tools.email_normalize(email) for email in tools.email_split(email)]:
-            //     domain.append(('email_normalized', '=', normalized_email))
+            // normalized_emails = email_normalize_all(email)
+            // if normalized_emails:
+            //     domain.append(('email_normalized', 'in', normalized_emails))
             // if partner:
             //     domain.append(('partner_id', '=', partner.id))
             // 
@@ -1310,9 +1413,11 @@ namespace Bamboo.Core.Application.Services
             // 
             // domain = ['|'] * (len(domain) - 1) + domain
             // if include_lost:
-            //     domain += ['|', ('type', '=', 'opportunity'), ('active', '=', True)]
+            //     # include lost means archived opportunities are allowed, if lost
+            //     domain += [('won_status', '!=', 'won'), '|', ('type', '=', 'opportunity'), ('active', '=', True)]
             // else:
-            //     domain += ['&', ('active', '=', True), '|', ('stage_id', '=', False), ('stage_id.is_won', '=', False)]
+            //     # always filter out archived, those are not actionable anymore
+            //     domain += [('won_status', '=', 'pending'), ('active', '=', True)]
             // 
             // return self.with_context(active_test=False).search(domain)
             */
@@ -1363,8 +1468,7 @@ namespace Bamboo.Core.Application.Services
             // if not meeting_results:
             //     return "week", False
             // 
-            // user_tz = self.env.user.tz or self.env.context.get('tz')
-            // user_pytz = pytz.timezone(user_tz) if user_tz else pytz.utc
+            // user_pytz = self.env.tz
             // 
             // # meeting_dts will contain one tuple of datetimes per meeting : (Start, Stop)
             // # meetings_dts and now_dt are as per user time zone.
@@ -1440,6 +1544,12 @@ namespace Bamboo.Core.Application.Services
             //     partner_email_normalized = tools.email_normalize(self.partner_id.email) or self.partner_id.email or False
             //     return lead_email_normalized != partner_email_normalized
             // return False
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
+            // def _get_partner_email_update(self, force_void=True):
+            // self.ensure_one()
+            // if self.env.user._is_portal() and self.partner_id.user_id:
+            //     return False
+            // return super()._get_partner_email_update(force_void)
             */
             return default;
         }
@@ -1488,31 +1598,34 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _get_rainbowman_message(self):
-            // if not self.user_id or not self.team_id:
+            // self.ensure_one()
+            // if not self.user_id:
             //     return False
-            // if not self.expected_revenue:
-            //     # Show rainbow man for the first won lead of a salesman, even if expected revenue is not set. It is not
-            //     # very often that leads without revenues are marked won, so simply get count using ORM instead of query
-            //     today = fields.Datetime.today()
-            //     user_won_leads_count = self.search_count([
-            //         ('type', '=', 'opportunity'),
-            //         ('user_id', '=', self.user_id.id),
-            //         ('probability', '=', 100),
-            //         ('date_closed', '>=', date_utils.start_of(today, 'year')),
-            //         ('date_closed', '<', date_utils.end_of(today, 'year')),
-            //     ])
-            //     if user_won_leads_count == 1:
-            //         return _('Go, go, go! Congrats for your first deal.')
-            //     return False
-            // 
             // self.flush_model()  # flush fields to make sure DB is up to date
-            // query = """
-            //     SELECT
-            //         SUM(CASE WHEN user_id = %(user_id)s THEN 1 ELSE 0 END) as total_won,
-            //         MAX(CASE WHEN date_closed >= CURRENT_DATE - INTERVAL '30 days' AND user_id = %(user_id)s THEN expected_revenue ELSE 0 END) as max_user_30,
-            //         MAX(CASE WHEN date_closed >= CURRENT_DATE - INTERVAL '7 days' AND user_id = %(user_id)s THEN expected_revenue ELSE 0 END) as max_user_7,
-            //         MAX(CASE WHEN date_closed >= CURRENT_DATE - INTERVAL '30 days' AND team_id = %(team_id)s THEN expected_revenue ELSE 0 END) as max_team_30,
-            //         MAX(CASE WHEN date_closed >= CURRENT_DATE - INTERVAL '7 days' AND team_id = %(team_id)s THEN expected_revenue ELSE 0 END) as max_team_7
+            // 
+            // # checked here as it is its position in the priority order
+            // if len(self.message_ids) >= 25:
+            //     return _('Phew, that took some effort — but you nailed it. Good job!')
+            // 
+            // team_condition = f'team_id = {self.team_id.id}' if self.team_id else 'team_id IS NULL'
+            // source_case = f'source_id = {self.source_id.id} AND {team_condition}' if self.source_id else 'false'
+            // country_case = f'country_id = {self.country_id.id} AND {team_condition}' if self.country_id else 'false'
+            // tz_midnight = fields.Datetime.now().astimezone(pytz.timezone(self.env.user.tz or self.user_id.tz or 'UTC')).replace(hour=0, minute=0, second=0)
+            // tz_midnight_in_utc = tz_midnight.astimezone(pytz.UTC).replace(tzinfo=None)
+            // query = f"""
+            // SELECT
+            //     MAX(CASE WHEN team_id = %(team_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '31 days' AND id <> %(lead_id)s THEN expected_revenue ELSE 0 END) AS max_team_31,
+            //     MAX(CASE WHEN team_id = %(team_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '7 days'  AND id <> %(lead_id)s THEN expected_revenue ELSE 0 END) AS max_team_7,
+            //     MAX(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '31 days' AND id <> %(lead_id)s THEN expected_revenue ELSE 0 END) AS max_user_31,
+            //     MAX(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '7 days'  AND id <> %(lead_id)s THEN expected_revenue ELSE 0 END) AS max_user_7,
+            //     MIN(CASE WHEN COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '31 days' THEN day_close ELSE 31 END) AS min_day_close_31,
+            //     COUNT(CASE WHEN user_id = %(user_id)s THEN 1 ELSE NULL END) AS count_user_closed_year,
+            //     COUNT(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '3 days' AND COALESCE(date_closed, create_date) < %(tz_midnight)s - INTERVAL '2 days' THEN 1 ELSE NULL END) AS count_user_closed_minus3day,
+            //     COUNT(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '2 days' AND COALESCE(date_closed, create_date) < %(tz_midnight)s - INTERVAL '1 days' THEN 1 ELSE NULL END) AS count_user_closed_minus2day,
+            //     COUNT(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s - INTERVAL '1 days' AND COALESCE(date_closed, create_date) < %(tz_midnight)s THEN 1 ELSE NULL END) AS count_user_closed_yesterday,
+            //     COUNT(CASE WHEN user_id = %(user_id)s AND COALESCE(date_closed, create_date) >= %(tz_midnight)s THEN 1 ELSE NULL END) AS count_user_closed_today,
+            //     COUNT(CASE WHEN {source_case} THEN 1 ELSE NULL END) AS count_source_closed_year,
+            //     COUNT(CASE WHEN {country_case} THEN 1 ELSE NULL END) AS count_country_closed_year
             //     FROM crm_lead
             //     WHERE
             //         type = 'opportunity'
@@ -1521,35 +1634,82 @@ namespace Bamboo.Core.Application.Services
             //     AND
             //         probability = 100
             //     AND
-            //         DATE_TRUNC('year', date_closed) = DATE_TRUNC('year', CURRENT_DATE)
+            //         DATE_TRUNC('year', COALESCE(date_closed, create_date)) = DATE_TRUNC('year', %(tz_midnight)s)
             //     AND
             //         (user_id = %(user_id)s OR team_id = %(team_id)s)
             // """
-            // self.env.cr.execute(query, {'user_id': self.user_id.id,
-            //                             'team_id': self.team_id.id})
+            // self.env.cr.execute(query, {
+            //     'user_id': self.env.user.id,
+            //     'team_id': self.team_id.id or -1,
+            //     'lead_id': self.id,
+            //     'tz_midnight': tz_midnight_in_utc,
+            // })
             // query_result = self.env.cr.dictfetchone()
             // 
-            // message = False
-            // if query_result['total_won'] == 1:
-            //     message = _('Go, go, go! Congrats for your first deal.')
-            // elif query_result['max_team_30'] == self.expected_revenue:
-            //     message = _('Boom! Team record for the past 30 days.')
-            // elif query_result['max_team_7'] == self.expected_revenue:
-            //     message = _('Yeah! Deal of the last 7 days for the team.')
-            // elif query_result['max_user_30'] == self.expected_revenue:
-            //     message = _('You just beat your personal record for the past 30 days.')
-            // elif query_result['max_user_7'] == self.expected_revenue:
-            //     message = _('You just beat your personal record for the past 7 days.')
-            // return message
+            // if query_result['count_user_closed_year'] == 1:
+            //     return _('Go, go, go! Congrats for your first deal.')
+            // elif self.expected_revenue and query_result['max_team_31'] < self.expected_revenue:
+            //     return _('Boom! Team record for the past 30 days.')
+            // elif self.expected_revenue and query_result['max_team_7'] < self.expected_revenue:
+            //     return _('Yeah! Best deal out of the last 7 days for the team.')
+            // elif self.expected_revenue and query_result['max_user_31'] < self.expected_revenue:
+            //     return _('You just beat your personal record for the past 30 days.')
+            // elif self.expected_revenue and query_result['max_user_7'] < self.expected_revenue:
+            //     return _('You just beat your personal record for the past 7 days.')
+            // elif query_result['count_user_closed_today'] == 5:
+            //     return _('You\'re on fire! Fifth deal won today 🔥')
+            // elif query_result['count_user_closed_today'] == 1 and query_result['count_user_closed_yesterday'] and query_result['count_user_closed_minus2day'] and not query_result['count_user_closed_minus3day']:
+            //     return _('You\'re on a winning streak. 3 deals in 3 days, congrats!')
+            // # check that at least one minute has elapsed since record creation to only account for 'real' leads
+            // elif query_result['min_day_close_31'] == self.day_close and self.day_close < 31 \
+            //     and self.date_closed and (self.date_closed - self.create_date).total_seconds() > 60:
+            //     return _('Wow, that was fast. That deal didn’t stand a chance!')
+            // # use duration tracking field to determine if the task jumped from first to last stage
+            // # only takes into accounts stages on which the lead has spent at least a minute,
+            // # to only account for valid stage movements
+            // elif len(stage_ids := [int(stage_id) for stage_id, duration in self.duration_tracking.items() if duration >= 60]) == 1:
+            //     first_stage = self.env['crm.stage'].search([
+            //         '|', ('team_ids', 'in', False), ('team_ids', 'in', self.team_id.id),
+            //     ], order='sequence ASC', limit=1)
+            //     if first_stage.id == stage_ids[0]:
+            //         return _('No detours, no delays - from %(stage_name)s straight to the win! 🚀', stage_name=first_stage.name)
+            // if query_result['count_country_closed_year'] == 1 and self.country_id:
+            //     return _('You just expanded the map! First win in %(country)s.', country=self.country_id.name)
+            // elif query_result['count_source_closed_year'] == 1 and self.source_id:
+            //     return _('Yay, your first win from %(utm_source_name)s!', utm_source_name=self.source_id.name)
+            // return False
             */
             return default;
         }
 
-        protected async Task<CrmLead> HandlePartnerAssignmentInternalAsync(Guid force_partner_id, object create_missing)
+        protected async Task<CrmLead> GetRottingDependsFieldsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _handle_partner_assignment(self, force_partner_id=False, create_missing=True):
+            // def _get_rotting_depends_fields(self):
+            // return super()._get_rotting_depends_fields() + ['won_status', 'type']
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> GetRottingDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _get_rotting_domain(self):
+            // return super()._get_rotting_domain() & Domain([
+            //     ('won_status', '=', 'pending'),
+            //     ('type', '=', 'opportunity'),
+            // ])
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> HandlePartnerAssignmentInternalAsync(Guid force_partner_id, object create_missing, object with_parent)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _handle_partner_assignment(self, force_partner_id=False, create_missing=True, with_parent=None):
             // """ Update customer (partner_id) of leads. Purpose is to set the same
             // partner on most leads; either through a newly created partner either
             // through a given partner_id.
@@ -1557,12 +1717,13 @@ namespace Bamboo.Core.Application.Services
             // :param int force_partner_id: if set, update all leads to that customer;
             // :param create_missing: for leads without customer, create a new one
             //   based on lead information;
+            // :param with_parent: if set, create the new partner with the given parent
             // """
             // for lead in self:
             //     if force_partner_id:
             //         lead.partner_id = force_partner_id
             //     if not lead.partner_id and create_missing:
-            //         partner = lead._create_customer()
+            //         partner = lead._create_customer(with_parent=with_parent)
             //         lead.partner_id = partner.id
             */
             return default;
@@ -1599,117 +1760,171 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> HandleWonLostInternalAsync(object vals)
+        protected async Task<CrmLead> HandleWonLostInternalAsync(object old_status_by_lead, object new_status_by_lead)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _handle_won_lost(self, vals):
-            // """ This method handle the state changes :
-            // - To lost : We need to increment corresponding lost count in scoring frequency table
-            // - To won : We need to increment corresponding won count in scoring frequency table
-            // - From lost to Won : We need to decrement corresponding lost count + increment corresponding won count
-            // in scoring frequency table.
-            // - From won to lost : We need to decrement corresponding won count + increment corresponding lost count
-            // in scoring frequency table."""
-            // Lead = self.env['crm.lead']
-            // leads_reach_won = Lead
-            // leads_leave_won = Lead
-            // leads_reach_lost = Lead
-            // leads_leave_lost = Lead
-            // won_stage_ids = self.env['crm.stage'].search([('is_won', '=', True)]).ids
-            // for lead in self:
-            //     if 'stage_id' in vals:
-            //         if vals['stage_id'] in won_stage_ids:
-            //             if lead.probability == 0:
-            //                 leads_leave_lost += lead
-            //             leads_reach_won += lead
-            //         elif lead.stage_id.id in won_stage_ids and lead.active:  # a lead can be lost at won_stage
-            //             leads_leave_won += lead
-            //     if 'active' in vals:
-            //         if not vals['active'] and lead.active:  # archive lead
-            //             if lead.stage_id.id in won_stage_ids and lead not in leads_leave_won:
-            //                 leads_leave_won += lead
-            //             leads_reach_lost += lead
-            //         elif vals['active'] and not lead.active:  # restore lead
-            //             leads_leave_lost += lead
+            // def _handle_won_lost(self, old_status_by_lead, new_status_by_lead):
+            // """ This method handles all changes of won / lost status of leads on creation / writing,
+            // and update the scoring frequency table accordingly:
+            // - To lost : Increment corresponding lost count
+            // - To won : Increment corresponding won count
+            // - Leaving lost : Decrement corresponding lost count
+            // - Leaving won : Decrement corresponding won count
+            // More than one operation can happen simultaneously, for instance, going from lost to won:
+            // Decrement corresponding lost count + increment corresponding won count.
             // 
-            // leads_reach_won._pls_increment_frequencies(to_state='won')
-            // leads_leave_won._pls_increment_frequencies(from_state='won')
-            // leads_reach_lost._pls_increment_frequencies(to_state='lost')
-            // leads_leave_lost._pls_increment_frequencies(from_state='lost')
+            // A lead is WON when in won stage (and probability = 100% but that is implied and constrained)
+            // A lead is LOST when active = False AND probability = 0
+            // In every other case, the lead is not won nor lost.
+            // 
+            // :param old_status_by_lead: dict of old status by lead: {lead.id: {'is_lost': ..., 'is_won': ...}}
+            // :param new_status_by_lead: dict of new status by lead: {lead.id: {'is_lost': ..., 'is_won': ...}}
+            // """
+            // leads_reach_won_ids = self.env['crm.lead']
+            // leads_leave_won_ids = self.env['crm.lead']
+            // leads_reach_lost_ids = self.env['crm.lead']
+            // leads_leave_lost_ids = self.env['crm.lead']
+            // 
+            // for lead in self:
+            //     new_status = new_status_by_lead.get(
+            //         lead.id, {'is_lost': False, 'is_won': False}
+            //     )
+            //     old_status = old_status_by_lead.get(
+            //         lead.id, {'is_lost': False, 'is_won': False}
+            //     )
+            //     if new_status['is_lost'] and new_status['is_won']:
+            //         raise ValidationError(_("The lead %s cannot be won and lost at the same time.", lead))
+            // 
+            //     if new_status['is_lost'] and not old_status['is_lost']:
+            //         leads_reach_lost_ids += lead
+            //     elif not new_status['is_lost'] and old_status['is_lost']:
+            //         leads_leave_lost_ids += lead
+            // 
+            //     if new_status['is_won'] and not old_status['is_won']:
+            //         leads_reach_won_ids += lead
+            //     elif not new_status['is_won'] and old_status['is_won']:
+            //         leads_leave_won_ids += lead
+            // 
+            // leads_reach_won_ids._pls_increment_frequencies(to_state='won')
+            // leads_leave_won_ids._pls_increment_frequencies(from_state='won')
+            // leads_reach_lost_ids._pls_increment_frequencies(to_state='lost')
+            // leads_leave_lost_ids._pls_increment_frequencies(from_state='lost')
+            // 
+            // return True
             */
             return default;
         }
 
-        public async Task<CrmLead> IapEnrichAsync(Guid id, CrmLeadIapEnrichRequestDto input)
+        public async Task<CrmLead> IapEnrichAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: crm_lead.py) ---
-            // def iap_enrich(self, from_cron=False):
-            // # Split self in a list of sub-recordsets or 50 records to prevent timeouts
-            // batches = [self[index:index + 50] for index in range(0, len(self), 50)]
-            // for leads in batches:
+            // def iap_enrich(self, *, batch_size=50):
+            // from_cron = bool(self.env.context.get('cron_id'))
+            // send_notification = not from_cron
+            // 
+            // def process_leads(leads):
             //     lead_emails = {}
-            //     with self._cr.savepoint():
-            //         try:
-            //             self._cr.execute(
-            //                 "SELECT 1 FROM {} WHERE id in %(lead_ids)s FOR UPDATE NOWAIT".format(self._table),
-            //                 {'lead_ids': tuple(leads.ids)}, log_exceptions=False)
-            //             for lead in leads:
-            //                 # If lead is lost, active == False, but is anyway removed from the search in the cron.
-            //                 if lead.probability == 100 or lead.iap_enrich_done:
-            //                     continue
-            //                 # Skip if no email (different from wrong email leading to no email_normalized)
-            //                 if not lead.email_from:
-            //                     continue
-            // 
-            //                 normalized_email = tools.email_normalize(lead.email_from)
-            //                 if not normalized_email:
-            //                     lead.message_post_with_source(
-            //                         'crm_iap_enrich.mail_message_lead_enrich_no_email',
-            //                         subtype_xmlid='mail.mt_note',
-            //                     )
-            //                     continue
-            // 
-            //                 email_domain = normalized_email.split('@')[1]
-            //                 # Discard domains of generic email providers as it won't return relevant information
-            //                 if email_domain in iap_tools._MAIL_PROVIDERS:
-            //                     lead.write({'iap_enrich_done': True})
-            //                     lead.message_post_with_source(
-            //                         'crm_iap_enrich.mail_message_lead_enrich_notfound',
-            //                         subtype_xmlid='mail.mt_note',
-            //                     )
-            //                 else:
-            //                     lead_emails[lead.id] = email_domain
-            // 
-            //             if lead_emails:
-            //                 try:
-            //                     iap_response = self.env['iap.enrich.api']._request_enrich(lead_emails)
-            //                 except iap_tools.InsufficientCreditError:
-            //                     _logger.info('Lead enrichment failed because of insufficient credit')
-            //                     if not from_cron:
-            //                         self.env['iap.account']._send_no_credit_notification(
-            //                             service_name='reveal',
-            //                             title=_("Not enough credits for Lead Enrichment"))
-            //                     # Since there are no credits left, there is no point to process the other batches
-            //                     break
-            //                 except Exception as e:
-            //                     if not from_cron:
-            //                         self.env['iap.account']._send_error_notification(
-            //                             message=_('An error occurred during lead enrichment'))
-            //                     _logger.info('An error occurred during lead enrichment: %s', e)
-            //                 else:
-            //                     if not from_cron:
-            //                         self.env['iap.account']._send_success_notification(
-            //                             message=_("The leads/opportunities have successfully been enriched"))
-            //                     _logger.info('Batch of %s leads successfully enriched', len(lead_emails))
-            //                     self._iap_enrich_from_response(iap_response)
-            //         except OperationalError:
-            //             _logger.error('A batch of leads could not be enriched :%s', repr(leads))
+            //     for lead in leads:
+            //         # If lead is lost, active == False, but is anyway removed from the search in the cron.
+            //         if lead.probability == 100 or lead.iap_enrich_done:
             //             continue
-            //     # Commit processed batch to avoid complete rollbacks and therefore losing credits.
-            //     if not self.env.registry.in_test_mode():
-            //         self.env.cr.commit()
+            //         # Skip if no email (different from wrong email leading to no email_normalized)
+            //         if not lead.email_from:
+            //             continue
+            // 
+            //         normalized_email = tools.email_normalize(lead.email_from)
+            //         if not normalized_email:
+            //             lead.write({'iap_enrich_done': True})
+            //             lead.message_post_with_source(
+            //                 'crm_iap_enrich.mail_message_lead_enrich_no_email',
+            //                 subtype_xmlid='mail.mt_note',
+            //             )
+            //             continue
+            // 
+            //         email_domain = normalized_email.split('@')[1]
+            //         # Discard domains of generic email providers as it won't return relevant information
+            //         if email_domain in iap_tools._MAIL_PROVIDERS:
+            //             lead.write({'iap_enrich_done': True})
+            //             lead.message_post_with_source(
+            //                 'crm_iap_enrich.mail_message_lead_enrich_notfound',
+            //                 subtype_xmlid='mail.mt_note',
+            //             )
+            //         else:
+            //             lead_emails[lead.id] = email_domain
+            //     if not lead_emails:
+            //         return
+            // 
+            //     try:
+            //         iap_response = self.env['iap.enrich.api']._request_enrich(lead_emails)
+            //     except iap_tools.InsufficientCreditError:
+            //         _logger.info('Lead enrichment failed because of insufficient credit')
+            //         if send_notification:
+            //             self.env['iap.account']._send_no_credit_notification(
+            //                 service_name='reveal',
+            //                 title=_("Not enough credits for Lead Enrichment"))
+            //         raise
+            //     except Exception as e:
+            //         if send_notification:
+            //             self.env['iap.account']._send_error_notification(
+            //                 message=_('An error occurred during lead enrichment'))
+            //         _logger.info('An error occurred during lead enrichment: %s', e)
+            //         return
+            //     else:
+            //         if send_notification:
+            //             self.env['iap.account']._send_success_notification(
+            //                 message=_("The leads/opportunities have successfully been enriched"))
+            //         _logger.info('Batch of %s leads successfully enriched', len(lead_emails))
+            //     self._iap_enrich_from_response(iap_response)
+            // 
+            // if from_cron:
+            //     self.env['ir.cron']._commit_progress(remaining=len(self))
+            // all_lead_ids = OrderedSet(self.ids)
+            // while all_lead_ids:
+            //     leads = self.browse(all_lead_ids).try_lock_for_update(limit=batch_size)
+            //     if not leads:
+            //         _logger.error('A batch of leads could not be enriched (locked): %s', repr(self.browse(all_lead_ids)))
+            //         # all are locked, schedule the cron later when the records might be unlocked
+            //         self.env.ref('crm_iap_enrich.ir_cron_lead_enrichment')._trigger(self.env.cr.now() + datetime.timedelta(minutes=5))
+            //         if from_cron:
+            //             # mark the cron as fully done to prevent immediate reschedule
+            //             self.env['ir.cron']._commit_progress(remaining=0)
+            //         break
+            //     all_lead_ids -= set(leads._ids)
+            // 
+            //     if from_cron:
+            //         # Using commit progress for processed leads
+            //         try:
+            //             process_leads(leads)
+            //             time_left = self.env['ir.cron']._commit_progress(len(leads))
+            //         except iap_tools.InsufficientCreditError:
+            //             # Since there are no credits left, there is no point to process the other batches
+            //             # set remaining=0 to avoid being called again
+            //             self.env['ir.cron']._commit_progress(remaining=0)
+            //             break
+            //         except Exception:
+            //             self.env.cr.rollback()
+            //             _logger.error('A batch of leads could not be enriched: %s', repr(leads))
+            //             time_left = self.env['ir.cron']._commit_progress(len(leads))
+            //         if not time_left:
+            //             break
+            //     else:
+            //         # Commit processed batch to avoid complete rollbacks and therefore losing credits.
+            //         try:
+            //             if modules.module.current_test:
+            //                 with self.env.cr.savepoint():
+            //                     process_leads(leads)
+            //             else:
+            //                 process_leads(leads)
+            //                 self.env.cr.commit()
+            //         except iap_tools.InsufficientCreditError:
+            //             # Since there are no credits left, there is no point to process the other batches
+            //             break
+            //         except Exception:
+            //             if not modules.module.current_test:
+            //                 self.env.cr.rollback()
+            //             _logger.error('A batch of leads could not be enriched: %s', repr(leads))
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1742,8 +1957,6 @@ namespace Bamboo.Core.Application.Services
             // 
             //     if not lead.phone and iap_data.get('phone_numbers'):
             //         values['phone'] = iap_data['phone_numbers'][0]
-            //     if not lead.mobile and iap_data.get('phone_numbers') and len(iap_data['phone_numbers']) > 1:
-            //         values['mobile'] = iap_data['phone_numbers'][1]
             //     if not lead.country_id and iap_data.get('country_code'):
             //         country = self.env['res.country'].search([('code', '=', iap_data['country_code'].upper())])
             //         values['country_id'] = country.id
@@ -1769,20 +1982,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> IapEnrichLeadsCronInternalAsync(object enrich_hours_delay, object leads_batch_size)
+        protected async Task<CrmLead> IapEnrichLeadsCronInternalAsync(object enrich_hours_delay, object batch_size)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: crm_lead.py) ---
-            // def _iap_enrich_leads_cron(self, enrich_hours_delay=1, leads_batch_size=1000):
+            // def _iap_enrich_leads_cron(self, enrich_hours_delay=24, batch_size=50):
             // timeDelta = self.env.cr.now() - datetime.timedelta(hours=enrich_hours_delay)
             // # Get all leads not lost nor won (lost: active = False)
             // leads = self.search([
             //     ('iap_enrich_done', '=', False),
-            //     ('reveal_id', '=', False),
             //     '|', ('probability', '<', 100), ('probability', '=', False),
-            //     ('create_date', '>', timeDelta)
-            // ], limit=leads_batch_size)
-            // leads.iap_enrich(from_cron=True)
+            //     ('email_from', '!=', False),
+            //     ('reveal_id', '=', False),
+            //     ('create_date', '>', timeDelta),
+            //     ('active', '=', True),
+            // ])
+            // leads.iap_enrich(batch_size=batch_size)
             */
             return default;
         }
@@ -1807,6 +2022,18 @@ namespace Bamboo.Core.Application.Services
             // for lead in self:
             //     if lead._get_partner_phone_update(force_void=False):
             //         lead.partner_id.phone = lead.phone
+            */
+            return default;
+        }
+
+        protected async Task<CrmLead> IsRuleBasedAssignmentActivatedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def _is_rule_based_assignment_activated(self):
+            // """ Returns whether a rule-based assignment method is activated (cron-enabled or manually-ran).
+            // """
+            // return self.env['ir.config_parameter'].sudo().get_param('crm.lead.auto.assignment', False)
             */
             return default;
         }
@@ -1851,8 +2078,9 @@ namespace Bamboo.Core.Application.Services
             //         - m2o: the first not null value prevails (the other are dropped)
             //         - any other type of field: same as m2o
             // 
-            //     :param fields: list of fields to process
-            //     :return dict data: contains the merged values of the new opportunity
+            //     :param fnames: list of fields to process
+            //     :returns: contains the merged values of the new opportunity
+            //     :rtype: dict
             // """
             // if fnames is None:
             //     fnames = self._merge_get_fields()
@@ -1996,7 +2224,7 @@ namespace Bamboo.Core.Application.Services
             // self._merge_dependences_calendar_events(opportunities)
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: crm_lead.py) ---
             // def _merge_dependences(self, opportunities):
-            // super(Lead, self)._merge_dependences(opportunities)
+            // super()._merge_dependences(opportunities)
             // 
             // # merge registrations as sudo, as crm people may not have access to event rights
             // self.sudo().write({
@@ -2089,16 +2317,16 @@ namespace Bamboo.Core.Application.Services
             // )
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_lead.py) ---
             // def _merge_get_fields(self):
-            // return super(Lead, self)._merge_get_fields() + ['lead_mining_request_id']
+            // return super()._merge_get_fields() + ['lead_mining_request_id']
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: crm_lead.py) ---
             // def _merge_get_fields(self):
-            // return super(Lead, self)._merge_get_fields() + ['event_lead_rule_id', 'event_id']
+            // return super()._merge_get_fields() + ['event_lead_rule_id', 'event_id']
             --- ODOO METHOD SOURCE (MODULE: iap_crm, FILE: crm_lead.py) ---
             // def _merge_get_fields(self):
-            // return super(Lead, self)._merge_get_fields() + ['reveal_id']
+            // return super()._merge_get_fields() + ['reveal_id']
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_lead.py) ---
             // def _merge_get_fields(self):
-            // return super(Lead, self)._merge_get_fields() + ['reveal_ip', 'reveal_iap_credits', 'reveal_rule_id']
+            // return super()._merge_get_fields() + ['reveal_ip', 'reveal_iap_credits', 'reveal_rule_id']
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
             // def _merge_get_fields(self):
             // fields_list = super(CrmLead, self)._merge_get_fields()
@@ -2125,7 +2353,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: crm_lead.py) ---
             // def _merge_get_fields_specific(self):
             // return {
-            //     ** super(Lead, self)._merge_get_fields_specific(),
+            //     ** super()._merge_get_fields_specific(),
             //     'iap_enrich_done': lambda fname, leads: any(lead.iap_enrich_done for lead in leads),
             // }
             --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_lead.py) ---
@@ -2136,7 +2364,7 @@ namespace Bamboo.Core.Application.Services
             // return fields_info
             --- ODOO METHOD SOURCE (MODULE: website_crm, FILE: crm_lead.py) ---
             // def _merge_get_fields_specific(self):
-            // fields_info = super(Lead, self)._merge_get_fields_specific()
+            // fields_info = super()._merge_get_fields_specific()
             // # add all the visitors from all lead to merge
             // fields_info['visitor_ids'] = lambda fname, leads: [(6, 0, leads.visitor_ids.ids)]
             // return fields_info
@@ -2169,16 +2397,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def merge_opportunity(self, user_id=False, team_id=False, auto_unlink=True):
-            // """ Merge opportunities in one. Different cases of merge:
-            //         - merge leads together = 1 new lead
-            //         - merge at least 1 opp with anything else (lead or opp) = 1 new opp
-            //     The resulting lead/opportunity will be the most important one (based on its confidence level)
-            //     updated with values from other opportunities to merge.
+            // """
+            // Merge opportunities in one. Different cases of merge:
             // 
-            // :param user_id : the id of the saleperson. If not given, will be determined by `_merge_data`.
-            // :param team : the id of the Sales Team. If not given, will be determined by `_merge_data`.
+            // - merge leads together = 1 new lead
+            // - merge at least 1 opp with anything else (lead or opp) = 1 new opp
             // 
-            // :return crm.lead record resulting of th merge
+            // The resulting lead/opportunity will be the most important one (based on its confidence level)
+            // updated with values from other opportunities to merge.
+            // 
+            // :param user_id: the id of the saleperson. If not given, will be determined by :meth:`_merge_data`.
+            // :param team_id: the id of the Sales Team. If not given, will be determined by :meth:`_merge_data`.
+            // :returns: crm.lead record resulting of th merge
             // """
             // return self._merge_opportunity(user_id=user_id, team_id=team_id, auto_unlink=auto_unlink)
             */
@@ -2226,7 +2456,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # check if the stage is in the stages of the Sales Team. If not, assign the stage with the lowest sequence
             // if merged_data.get('team_id'):
-            //     team_stage_ids = self.env['crm.stage'].search(['|', ('team_id', '=', merged_data['team_id']), ('team_id', '=', False)], order='sequence, id')
+            //     team_stage_ids = self.env['crm.stage'].search(['|', ('team_ids', 'in', merged_data['team_id']), ('team_ids', '=', False)], order='sequence, id')
             //     if merged_data.get('stage_id') not in team_stage_ids.ids:
             //         merged_data['stage_id'] = team_stage_ids[0].id if team_stage_ids else False
             // 
@@ -2248,53 +2478,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> MessageGetDefaultRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _message_get_default_recipients(self):
-            // return {
-            //     r.id: {
-            //         'partner_ids': [],
-            //         'email_to': ','.join(tools.email_normalize_all(r.email_from)) or r.email_from,
-            //         'email_cc': False,
-            //     } for r in self
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<CrmLead> MessageGetSuggestedRecipientsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _message_get_suggested_recipients(self):
-            // recipients = super()._message_get_suggested_recipients()
-            // try:
-            //     # check if that language is correctly installed (and active) before using it
-            //     lang_code = self.env['res.lang']._get_data(code=self.lang_code).code or None
-            //     if self.partner_id:
-            //         self._message_add_suggested_recipient(
-            //             recipients, partner=self.partner_id, lang=lang_code, reason=_('Customer'))
-            //     elif self.email_from:
-            //         self._message_add_suggested_recipient(
-            //             recipients, email=self.email_from, lang=lang_code, reason=_('Customer Email'))
-            // except AccessError:  # no read access rights -> just ignore suggested recipients because this imply modifying followers
-            //     pass
-            // return recipients
-            */
-            return default;
-        }
-
         public async Task<CrmLead> MessageNewAsync(Guid id, CrmLeadMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def message_new(self, msg_dict, custom_values=None):
-            // """ Overrides mail_thread message_new that is called by the mailgateway
-            //     through message_process.
-            //     This override updates the document according to the email.
-            // """
             // # remove default author when going through the mail gateway. Indeed we
             // # do not want to explicitly set an user as responsible. We prefer that
             // # assignment is done automatically (scoring) or manually. Otherwise it
@@ -2313,42 +2501,11 @@ namespace Bamboo.Core.Application.Services
             //     defaults['priority'] = msg_dict.get('priority')
             // defaults.update(custom_values)
             // 
-            // return super(Lead, self).message_new(msg_dict, custom_values=defaults)
+            // new_lead = super().message_new(msg_dict, custom_values=defaults)
+            // new_lead._assign_userless_lead_in_team(_('incoming email'))
+            // return new_lead
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<CrmLead> MessagePartnerInfoFromEmailsInternalAsync(object emails, object link_mail)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _message_partner_info_from_emails(self, emails, link_mail=False):
-            // """ Try to propose a better recipient when having only an email by populating
-            // it with the partner_name / contact_name field of the lead e.g. if lead
-            // contact_name is "Raoul" and email is "raoul@raoul.fr", suggest
-            // "Raoul" <raoul@raoul.fr> as recipient. """
-            // result = super(Lead, self)._message_partner_info_from_emails(emails, link_mail=link_mail)
-            // if not (self.partner_name or self.contact_name) or not self.email_from:
-            //     return result
-            // for email, partner_info in zip(emails, result):
-            //     if partner_info.get('partner_id') or not email:
-            //         continue
-            //     # reformat email if no name information
-            //     name_emails = tools.mail.email_split_tuples(email)
-            //     name_from_email = name_emails[0][0] if name_emails else False
-            //     if name_from_email:
-            //         continue  # already containing name + email
-            //     name_from_email = self.partner_name or self.contact_name
-            //     emails_normalized = tools.email_normalize_all(email)
-            //     email_normalized = emails_normalized[0] if emails_normalized else False
-            //     if email.lower() == self.email_from.lower() or (email_normalized and self.email_normalized == email_normalized):
-            //         partner_info['full_name'] = tools.formataddr((
-            //             name_from_email,
-            //             ','.join(emails_normalized) if emails_normalized else email))
-            //         break
-            // return result
-            */
-            return default;
         }
 
         protected async Task<CrmLead> MessagePostAfterHookInternalAsync(object message, object msg_vals)
@@ -2371,7 +2528,7 @@ namespace Bamboo.Core.Application.Services
             //         self.search([
             //             ('partner_id', '=', False), email_domain, ('stage_id.fold', '=', False)
             //         ]).write({'partner_id': new_partner[0].id})
-            // return super(Lead, self)._message_post_after_hook(message, msg_vals)
+            // return super()._message_post_after_hook(message, msg_vals)
             */
             return default;
         }
@@ -2389,15 +2546,17 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<CrmLead> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang)
+        protected async Task<CrmLead> NotifyByEmailPrepareRenderingContextInternalAsync(object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
-            //                                            force_email_company=False, force_email_lang=False):
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
             // render_context = super()._notify_by_email_prepare_rendering_context(
-            //     message, msg_vals, model_description=model_description,
-            //     force_email_company=force_email_company, force_email_lang=force_email_lang
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
             // )
             // if self.date_deadline:
             //     render_context['subtitles'].append(
@@ -2407,71 +2566,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> NotifyGetRecipientsGroupsInternalAsync(object message, object model_description, object msg_vals)
+        protected async Task<CrmLead> NotifyGetReplyToInternalAsync(object @default, Guid author_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Handle salesman recipients that can convert leads into opportunities
-            // and set opportunities as won / lost. """
-            // groups = super()._notify_get_recipients_groups(
-            //     message, model_description, msg_vals=msg_vals
-            // )
-            // if not self:
-            //     return groups
-            // 
-            // local_msg_vals = dict(msg_vals or {})
-            // 
-            // self.ensure_one()
-            // if self.type == 'lead':
-            //     convert_action = self._notify_get_action_link('controller', controller='/lead/convert', **local_msg_vals)
-            //     salesman_actions = [{'url': convert_action, 'title': _('Convert to opportunity')}]
-            // else:
-            //     won_action = self._notify_get_action_link('controller', controller='/lead/case_mark_won', **local_msg_vals)
-            //     lost_action = self._notify_get_action_link('controller', controller='/lead/case_mark_lost', **local_msg_vals)
-            //     salesman_actions = [
-            //         {'url': won_action, 'title': _('Mark Won')},
-            //         {'url': lost_action, 'title': _('Mark Lost')}]
-            // 
-            // salesman_group_id = self.env.ref('sales_team.group_sale_salesman').id
-            // new_group = (
-            //     'group_sale_salesman',
-            //     lambda pdata: pdata['type'] == 'user' and salesman_group_id in pdata['groups'],
-            //     {
-            //         'actions': salesman_actions,
-            //         'active': True,
-            //         'has_button_access': True,
-            //     }
-            // )
-            // 
-            // return [new_group] + groups
-            */
-            return default;
-        }
-
-        protected async Task<CrmLead> NotifyGetReplyToInternalAsync(object @default)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _notify_get_reply_to(self, default=None):
-            // """ Override to set alias of lead and opportunities to their sales team if any. """
-            // aliases = self.mapped('team_id').sudo()._notify_get_reply_to(default=default)
+            // def _notify_get_reply_to(self, default=None, author_id=False):
+            // # Override to set alias of lead and opportunities to their sales team if any
+            // aliases = self.mapped('team_id').sudo()._notify_get_reply_to(default=default, author_id=author_id)
             // res = {lead.id: aliases.get(lead.team_id.id) for lead in self}
             // leftover = self.filtered(lambda rec: not rec.team_id)
             // if leftover:
-            //     res.update(super(Lead, leftover)._notify_get_reply_to(default=default))
+            //     res.update(super(CrmLead, leftover)._notify_get_reply_to(default=default, author_id=author_id))
             // return res
             */
             return default;
         }
 
-        protected async Task<CrmLead> OnchangeMobileValidationInternalAsync()
+        protected async Task<CrmLead> OnchangeCommercialPartnerIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _onchange_mobile_validation(self):
-            // if self.mobile:
-            //     self.mobile = self._phone_format(fname='mobile', force_format='INTERNATIONAL') or self.mobile
+            // def _onchange_commercial_partner_id(self):
+            // for lead in self:
+            //     if lead.partner_id and lead.commercial_partner_id and lead.commercial_partner_id != lead.partner_id.commercial_partner_id:
+            //         # writing to partner will invalidate and recompute
+            //         # re-write the original value to keep user selection
+            //         commercial_partner = lead.commercial_partner_id
+            //         lead.update({
+            //             'partner_id': False,
+            //             'email_from': False,
+            //             'phone': False,
+            //         })
+            //         lead.commercial_partner_id = commercial_partner
+            //     if not lead.name and lead.commercial_partner_id:
+            //         lead.name = _("%s's opportunity", lead.commercial_partner_id.name)
             */
             return default;
         }
@@ -2487,28 +2615,42 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<CrmLead> OpenLivechatAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: crm_lead.py) ---
+            // def action_open_livechat(self):
+            // Store(bus_channel=self.env.user).add(
+            //     self.origin_channel_id,
+            //     extra_fields={"open_chat_window": True},
+            // ).bus_send()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<CrmLead> PartnerDesinterestedAsync(Guid id, CrmLeadPartnerDesinterestedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
             // def partner_desinterested(self, comment=False, contacted=False, spam=False):
+            // self._assert_portal_write_access()
             // if contacted:
             //     message = Markup('<p>%s</p>') % _('I am not interested by this lead. I contacted the lead.')
             // else:
             //     message = Markup('<p>%s</p>') % _('I am not interested by this lead. I have not contacted the lead.')
             // partner_ids = self.env['res.partner'].search(
             //     [('id', 'child_of', self.env.user.partner_id.commercial_partner_id.id)])
-            // self.message_unsubscribe(partner_ids=partner_ids.ids)
+            // self.sudo().message_unsubscribe(partner_ids=partner_ids.ids)
             // if comment:
             //     message += Markup('<p>%s</p>') % comment
-            // self.message_post(body=message)
+            // self.sudo().message_post(body=message)
             // values = {
             //     'partner_assigned_id': False,
             // }
             // 
             // if spam:
             //     tag_spam = self.env.ref('website_crm_partner_assign.tag_portal_lead_is_spam', False)
-            //     if tag_spam and tag_spam not in self.tag_ids:
+            //     if tag_spam and tag_spam not in self.sudo().tag_ids:
             //         values['tag_ids'] = [(4, tag_spam.id, False)]
             // if partner_ids:
             //     values['partner_declined_ids'] = [(4, p, 0) for p in partner_ids.ids]
@@ -2522,11 +2664,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
             // def partner_interested(self, comment=False):
+            // self._assert_portal_write_access()
             // message = Markup('<p>%s</p>') % _('I am interested by this lead.')
             // if comment:
             //     message += Markup('<p>%s</p>') % comment
             // for lead in self:
-            //     lead.message_post(body=message)
+            //     lead.sudo().message_post(body=message)
             //     lead.sudo().convert_opportunity(lead.partner_id)
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2536,7 +2679,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _pls_get_lead_pls_values(self, domain=[]):
+            // def _pls_get_lead_pls_values(self, domain=None):
             // """
             // This methods builds a dict where, for each lead in self or matching the given domain,
             // we will get a list of field/value couple.
@@ -2563,26 +2706,26 @@ namespace Bamboo.Core.Application.Services
             //     # Get leads values
             //     self.flush_model()
             //     # active_test = False as domain should take active into 'active' field it self
-            //     query = self.env['crm.lead'].with_context(active_test=False)._where_calc(domain)
+            //     query = self.env['crm.lead'].with_context(active_test=False)._search(domain, bypass_access=True)
             //     table = query.table
             //     query.order = SQL("%(table)s.team_id asc, %(table)s.id desc", table=SQL.identifier(table))
             //     sql_fields = [SQL.identifier(field) for field in pls_fields]
-            //     self._cr.execute(query.select(
+            //     self.env.cr.execute(query.select(
             //         SQL("id"),
             //         SQL("probability"),
             //         *sql_fields,
             //     ))
-            //     lead_results = self._cr.dictfetchall()
+            //     lead_results = self.env.cr.dictfetchall()
             // 
             //     if use_tags:
             //         # Get tags values
             //         tag_rel_alias = query.left_join(table, 'id', 'crm_tag_rel', 'lead_id', 'crm_tag_rel')
             //         tag_alias = query.left_join(tag_rel_alias, 'tag_id', 'crm_tag', 'id', 'crm_tag')
-            //         self._cr.execute(query.select(
+            //         self.env.cr.execute(query.select(
             //             SQL("%s AS lead_id", SQL.identifier(table, "id")),
             //             SQL("%s AS tag_id", SQL.identifier(tag_alias, "id")),
             //         ))
-            //         tag_results = self._cr.dictfetchall()
+            //         tag_results = self.env.cr.dictfetchall()
             //     else:
             //         tag_results = []
             // 
@@ -2621,11 +2764,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmLead> PlsGetNaiveBayesProbabilitiesInternalAsync(object batch_mode)
+        protected async Task<CrmLead> PlsGetNaiveBayesProbabilitiesInternalAsync(object batch_mode, object is_tooltip)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def _pls_get_naive_bayes_probabilities(self, batch_mode=False):
+            // def _pls_get_naive_bayes_probabilities(self, batch_mode=False, is_tooltip=False):
             // """
             // In machine learning, naive Bayes classifiers (NBC) are a family of simple "probabilistic classifiers" based on
             // applying Bayes theorem with strong (naive) independence assumptions between the variables taken into account.
@@ -2648,22 +2791,35 @@ namespace Bamboo.Core.Application.Services
             // This is called 'zero frequency' and that leads to division (or at least multiplication) by zero.
             // To avoid this, we add 0.1 in each frequency. With few data, the computation is than not really realistic.
             // The more we have records to analyse, the more the estimation will be precise.
-            // :return: probability in percent (and integer rounded) that the lead will be won at the current stage.
+            // 
+            // :param bool is_tooltip: If true, method recomputes the probability of self, that should be a singleton, and
+            //     also returns a dict containing probability, and a list of all (score, field, value) triplets for all value of
+            //     PLS fields that impact the computation of the probability. Score is a simple value that indicates whether the
+            //     impact is positive (>.5) or negative (<.5). See method prepare_pls_tooltip_data, or test_pls_tooltip_data for
+            //     more details
+            // 
+            // :return: probability in percent (and rounded at 2 decimals) that the lead will be won at the current stage.
             // """
             // lead_probabilities = {}
             // if not self:
             //     return lead_probabilities
             // 
+            // # Initialize tooltip data. A returned 0.00 probability means computation was not possible.
+            // tooltip_data = {}
+            // if is_tooltip:
+            //     self.ensure_one()
+            //     tooltip_data = {
+            //         'probability': 0.0,
+            //         'scores': [],
+            //     }
+            // 
             // # Get all leads values, no matter the team_id
             // domain = []
             // if batch_mode:
             //     domain = [
-            //         '&',
-            //             ('active', '=', True), ('id', 'in', self.ids),
-            //             '|',
-            //                 ('probability', '=', None),
-            //                 '&',
-            //                     ('probability', '<', 100), ('probability', '>', 0)
+            //         ('active', '=', True),
+            //         ('id', 'in', self.ids),
+            //         ('won_status', '=', 'pending'),
             //     ]
             // leads_values_dict = self._pls_get_lead_pls_values(domain=domain)
             // 
@@ -2687,6 +2843,13 @@ namespace Bamboo.Core.Application.Services
             // frequency_teams = frequencies.mapped('team_id')
             // frequency_team_ids = [team.id for team in frequency_teams]
             // 
+            // # restrict to frequencies of lead team if any exist.
+            // if is_tooltip and self.team_id & frequency_teams:
+            //     frequency_team_ids = [self.team_id.id]
+            //     frequencies = frequencies.filtered(
+            //         lambda frequency: frequency.team_id & self.team_id
+            //     )
+            // 
             // # 1. Compute each variable value count individually
             // # regroup each variable to be able to compute their own probabilities
             // # As all the variable does not enter into account (as we reject unset values in the process)
@@ -2697,7 +2860,7 @@ namespace Bamboo.Core.Application.Services
             // result[-1] = dict((field, dict(won_total=0, lost_total=0)) for field in leads_fields)
             // for frequency in frequencies:
             //     field = frequency['variable']
-            //     value = frequency['value']
+            //     value = frequency['value']  # This is always a string
             // 
             //     # To avoid that a tag take too much importance if its subset is too small,
             //     # we ignore the tag frequencies if we have less than 50 won or lost for this tag.
@@ -2758,17 +2921,28 @@ namespace Bamboo.Core.Application.Services
             //         if value_result:
             //             total_won = team_won if field == 'stage_id' else field_result['won_total']
             //             total_lost = team_lost if field == 'stage_id' else field_result['lost_total']
-            // 
             //             # if one count = 0, we cannot compute lead probability
             //             if not total_won or not total_lost:
             //                 continue
-            //             s_lead_won *= value_result['won'] / total_won
-            //             s_lead_lost *= value_result['lost'] / total_lost
+            //             p_field_value_won = value_result['won'] / total_won
+            //             p_field_value_lost = value_result['lost'] / total_lost
+            //             s_lead_won *= p_field_value_won
+            //             s_lead_lost *= p_field_value_lost
             // 
+            //             if is_tooltip:
+            //                 score = (
+            //                     1 - p_field_value_lost if field == 'stage_id'
+            //                     else p_field_value_won / (p_field_value_won + p_field_value_lost)
+            //                 )
+            //                 tooltip_data['scores'].append((score, field, value))
             //     # 3. Compute Probability to win
             //     probability = s_lead_won / (s_lead_won + s_lead_lost)
             //     lead_probabilities[lead_id] = min(max(round(100 * probability, 2), 0.01), 99.99)
-            // return lead_probabilities
+            // 
+            // if tooltip_data and self.id in lead_probabilities:
+            //     tooltip_data['probability'] = lead_probabilities[self.id]
+            // 
+            // return lead_probabilities, tooltip_data
             */
             return default;
         }
@@ -2817,11 +2991,11 @@ namespace Bamboo.Core.Application.Services
             //        first stage can be used to know how many lost and won there is
             //        as won count are equals for all stage
             //        and first stage is always incremented in lost_count
-            // :param frequencies: lead_scoring_frequencies
+            // :param team_results:
             // :return: won count, lost count and total count for all records in frequencies
             // """
             // # TODO : check if we need to handle specific team_id stages [for lost count] (if first stage in sequence is team_specific)
-            // first_stage_id = self.env['crm.stage'].search([('team_id', '=', False)], order='sequence, id', limit=1)
+            // first_stage_id = self.env['crm.stage'].search([('team_ids', '=', False)], order='sequence, id', limit=1)
             // if str(first_stage_id.id) not in team_results.get('stage_id', []):
             //     return 0, 0, 0
             // stage_result = team_results['stage_id'][str(first_stage_id.id)]
@@ -2961,12 +3135,8 @@ namespace Bamboo.Core.Application.Services
             // # Extract target leads values
             // if rebuild:  # rebuild is ok
             //     domain = [
-            //         '&',
-            //             ('create_date', '>=', pls_start_date),
-            //             '|',
-            //                 ('probability', '=', 100),
-            //                 '&',
-            //                     ('probability', '=', 0), ('active', '=', False)
+            //         ('create_date', '>=', pls_start_date),
+            //         ('won_status', 'in', ['lost', 'won']),
             //       ]
             //     team_ids = self.env['crm.team'].with_context(active_test=False).search([]).ids + [0]  # If team_id is unset, consider it as team 0
             // else:  # increment
@@ -2979,7 +3149,7 @@ namespace Bamboo.Core.Application.Services
             // # get current frequencies related to the target leads
             // leads_frequency_values_by_team = dict((team_id, []) for team_id in team_ids)
             // leads_pls_fields = set()  # ensure to keep each field unique (can have multiple tag_id leads_values_dict)
-            // for lead_id, values in leads_values_dict.items():
+            // for values in leads_values_dict.values():
             //     team_id = values.get('team_id', 0)  # If team_id is unset, consider it as team 0
             //     lead_frequency_values = {'count': 1}
             //     for field, value in values['values']:
@@ -3106,7 +3276,7 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
             // """ Extract data from lead to create a partner.
             // 
-            // :param name : furtur name of the partner
+            // :param partner_name : future name of the partner
             // :param is_company : True if the partner is a company
             // :param parent_id : id of the parent partner (False if no parent)
             // 
@@ -3117,12 +3287,10 @@ namespace Bamboo.Core.Application.Services
             //     'name': partner_name,
             //     'user_id': self.env.context.get('default_user_id') or self.user_id.id,
             //     'comment': self.description,
-            //     'parent_id': parent_id,
             //     'phone': self.phone,
-            //     'mobile': self.mobile,
             //     'email': email_parts[0] if email_parts else False,
-            //     'title': self.title.id,
             //     'function': self.function,
+            //     # address
             //     'street': self.street,
             //     'street2': self.street2,
             //     'zip': self.zip,
@@ -3130,7 +3298,10 @@ namespace Bamboo.Core.Application.Services
             //     'country_id': self.country_id.id,
             //     'state_id': self.state_id.id,
             //     'website': self.website,
+            //     # company / hierarchy
+            //     'parent_id': parent_id,
             //     'is_company': is_company,
+            //     'company_name': not is_company and not parent_id and self.partner_name,
             //     'type': 'contact'
             // }
             // if self.lang_id.active:
@@ -3191,6 +3362,92 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<CrmLead> PreparePlsTooltipDataAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def prepare_pls_tooltip_data(self):
+            // """
+            // Compute and return all necessary information to render CrmPlsTooltip, displayed when
+            // pressing the small AI button, located next to the label of probability when automated,
+            // in the crm.lead form view. This method first replaces ids with display names of relational
+            // fields before returning data, then also recomputes probabilities and writes them on self.
+            // 
+            // :returns:
+            // 
+            //     ::
+            //         {
+            //             low_3_data: list of field-value couples for lowest 3 criterions, lowest first
+            //             probability: numerical value, used for display on tooltip
+            //             team_name: string, name of lead team if any
+            //             top_3_data: list of field-value couples for top 3 criterions, highest first
+            //         }
+            // 
+            // :rtype: dict
+            // """
+            // self.ensure_one()
+            // _unused, tooltip_data = self._pls_get_naive_bayes_probabilities(is_tooltip=True)
+            // sorted_scores_with_name = []
+            // 
+            // # We want to display names in the tooltip, not ids.
+            // # The last element in tuple is only used for tags to ensure same color in tooltip.
+            // for score, field, value in sorted(tooltip_data['scores']):
+            //     # Skip nonsense results for phone and email states. May happen in a db having a few leads.
+            //     if field in ['phone_state', 'email_state']:
+            //         if value in [False, 'incorrect'] and tools.float_compare(score, 0.50, 2) > 0:
+            //             continue
+            //         if value == 'correct' and tools.float_compare(score, 0.50, 2) < 0:
+            //             continue
+            //     if field == 'tag_id':
+            //         tag = self.tag_ids.filtered(lambda tag: tag.id == value)
+            //         sorted_scores_with_name.append((score, field, tag.display_name, tag.color))
+            //     elif isinstance(self[field], models.BaseModel):
+            //         sorted_scores_with_name.append((score, field, self[field].display_name, False))
+            //     else:
+            //         sorted_scores_with_name.append((score, field, str(value), False))
+            // 
+            // # Update automated probability, as it may have changed since last computation
+            // # -> avoids differences in display between tooltip and record. A 0.00 probability implies
+            // # that the computation was not possible. Sample data will be used instead.
+            // probability_values = {'automated_probability': tooltip_data['probability']}
+            // if self.is_automated_probability:
+            //     probability_values['probability'] = tooltip_data['probability']
+            // self.write(probability_values)
+            // 
+            // # Sample values if probability could not be computed. If it was, but if all scores
+            // # were excluded above, a placeholder will be used instead in the tooltip.
+            // if tools.float_is_zero(tooltip_data['probability'], 2):
+            //     sorted_scores_with_name = [
+            //         (.1, 'email_state', False, False),
+            //         (.2, 'tag_id', _('Exploration'), 4),
+            //         (.3, 'stage_id', _('New'), False),
+            //         (.7, 'phone_state', 'correct', False),
+            //         (.8, 'country_id', _('Belgium'), False),
+            //         (.9, 'tag_id', _('Consulting'), 3),
+            //     ]
+            // 
+            // return {
+            //     'low_3_data': [
+            //         {
+            //             'field': element[1],
+            //             'value': element[2],
+            //             'color': element[3]
+            //         } for element in sorted_scores_with_name[:3] if tools.float_compare(element[0], 0.50, 2) < 0
+            //     ],
+            //     'probability': tooltip_data['probability'],
+            //     'team_name': self.team_id.display_name,
+            //     'top_3_data': [
+            //         {
+            //             'field': element[1],
+            //             'value': element[2],
+            //             'color': element[3]
+            //         } for element in sorted_scores_with_name[::-1][:3] if tools.float_compare(element[0], 0.50, 2) > 0
+            //     ],
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<CrmLead> PrepareValuesFromPartnerInternalAsync(object partner)
         {
             /*
@@ -3226,11 +3483,12 @@ namespace Bamboo.Core.Application.Services
             // # - ('id', 'in', stages.ids): add columns that should be present
             // # - OR ('fold', '=', False): add default columns that are not folded
             // # - OR ('team_ids', '=', team_id), ('fold', '=', False) if team_id: add team columns that are not folded
-            // team_id = self._context.get('default_team_id')
-            // if team_id:
-            //     search_domain = ['|', ('id', 'in', stages.ids), '|', ('team_id', '=', False), ('team_id', '=', team_id)]
-            // else:
-            //     search_domain = ['|', ('id', 'in', stages.ids), ('team_id', '=', False)]
+            // team_id = self.env.context.get('default_team_id')
+            // team_ids = self.env.user.crm_team_ids._ids if self.env.context.get('show_user_team_stages') else ()
+            // team_ids += (team_id,) if team_id else ()
+            // search_domain = ['|', ('id', 'in', stages.ids), ('team_ids', '=', False)]
+            // if team_ids:
+            //     search_domain = ['|', ('id', 'in', stages.ids), '|', ('team_ids', '=', False), ('team_ids', 'in', team_ids)]
             // 
             // # perform search
             // stage_ids = stages.sudo()._search(search_domain, order=stages._order)
@@ -3250,7 +3508,7 @@ namespace Bamboo.Core.Application.Services
             // except AccessError:
             //     raise UserError(_("You don't have the access needed to run this cron."))
             // else:
-            //     self._cr.execute('TRUNCATE TABLE crm_lead_scoring_frequency')
+            //     self.env.cr.execute('TRUNCATE TABLE crm_lead_scoring_frequency')
             // 
             // new_frequencies_by_team, unused = self._pls_prepare_update_frequency_table(rebuild=True)
             // # update frequency table
@@ -3325,6 +3583,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        public async Task<CrmLead> RestoreAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_restore(self):
+            // """ Restoring a lost lead means that it should go back to its normal life cycle.
+            // This should reactivate the lead but also force the recompute of its probability, for the stage where the lead
+            // is currently at. During toggle_active, when reactivating a lost lead,only the automated probability will be
+            // recomputed, because the probability is not automated anymore. Restore will reset this automation."""
+            // self.action_unarchive()
+            // for lead in self:
+            //     lead.probability = lead.automated_probability
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<CrmLead> SaleQuotationsNewAsync(Guid id)
         {
             /*
@@ -3345,9 +3619,10 @@ namespace Bamboo.Core.Application.Services
             // def action_schedule_meeting(self, smart_calendar=True):
             // """ Open meeting's calendar view to schedule meeting on current opportunity.
             // 
-            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
+            //     :param bool smart_calendar: to set to False if the view should not try to choose relevant
             //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
-            //     :return dict: dictionary value for created Meeting view
+            //     :returns: dictionary value for created Meeting view
+            //     :rtype: dict
             // """
             // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
@@ -3378,7 +3653,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+            // def search_fetch(self, domain, field_names=None, offset=0, limit=None, order=None):
             // """ Override to support ordering on my_activity_date_deadline.
             // 
             // Ordering through web client calls search_read() with an order parameter
@@ -3411,6 +3686,7 @@ namespace Bamboo.Core.Application.Services
             // if not order or 'my_activity_date_deadline' not in order:
             //     return super().search_fetch(domain, field_names, offset, limit, order)
             // order_items = [order_item.strip().lower() for order_item in (order or self._order).split(',')]
+            // domain = Domain(domain)
             // 
             // # Perform a read_group on my activities to get a mapping lead_id / deadline
             // # Remember date_deadline is required, we always have a value for it. Only
@@ -3424,7 +3700,7 @@ namespace Bamboo.Core.Application.Services
             // )
             // my_lead_mapping = dict(my_lead_activities)
             // my_lead_ids = list(my_lead_mapping.keys())
-            // my_lead_domain = expression.AND([[('id', 'in', my_lead_ids)], domain])
+            // my_lead_domain = Domain('id', 'in', my_lead_ids) & domain
             // my_lead_order = ', '.join(item for item in order_items if 'my_activity_date_deadline' not in item)
             // 
             // # Search leads linked to those activities and order them. See docstring
@@ -3452,7 +3728,7 @@ namespace Bamboo.Core.Application.Services
             // lead_order = ', '.join(item for item in order_items if 'my_activity_date_deadline' not in item)
             // 
             // other_lead_res = super().search_fetch(
-            //     expression.AND([[('id', 'not in', my_lead_ids_skip)], domain]),
+            //     Domain('id', 'not in', my_lead_ids_skip) & domain,
             //     field_names, lead_offset, lead_limit, lead_order,
             // )
             // return self.browse(my_lead_ids_keep) + other_lead_res
@@ -3481,7 +3757,7 @@ namespace Bamboo.Core.Application.Services
             //             ('partner_latitude', '>', latitude - 2), ('partner_latitude', '<', latitude + 2),
             //             ('partner_longitude', '>', longitude - 1.5), ('partner_longitude', '<', longitude + 1.5),
             //             ('country_id', '=', lead.country_id.id),
-            //             ('id', 'not in', lead.partner_declined_ids.mapped('id')),
+            //             ('id', 'not in', lead.partner_declined_ids.ids),
             //         ])
             // 
             //         # 2. second way: in the same country, big area
@@ -3491,7 +3767,7 @@ namespace Bamboo.Core.Application.Services
             //                 ('partner_latitude', '>', latitude - 4), ('partner_latitude', '<', latitude + 4),
             //                 ('partner_longitude', '>', longitude - 3), ('partner_longitude', '<', longitude + 3),
             //                 ('country_id', '=', lead.country_id.id),
-            //                 ('id', 'not in', lead.partner_declined_ids.mapped('id')),
+            //                 ('id', 'not in', lead.partner_declined_ids.ids),
             //             ])
             // 
             //         # 3. third way: in the same country, extra large area
@@ -3501,7 +3777,7 @@ namespace Bamboo.Core.Application.Services
             //                 ('partner_latitude', '>', latitude - 8), ('partner_latitude', '<', latitude + 8),
             //                 ('partner_longitude', '>', longitude - 8), ('partner_longitude', '<', longitude + 8),
             //                 ('country_id', '=', lead.country_id.id),
-            //                 ('id', 'not in', lead.partner_declined_ids.mapped('id')),
+            //                 ('id', 'not in', lead.partner_declined_ids.ids),
             //             ])
             // 
             //         # 5. fifth way: anywhere in same country
@@ -3510,13 +3786,13 @@ namespace Bamboo.Core.Application.Services
             //             partner_ids = Partner.search([
             //                 ('partner_weight', '>', 0),
             //                 ('country_id', '=', lead.country_id.id),
-            //                 ('id', 'not in', lead.partner_declined_ids.mapped('id')),
+            //                 ('id', 'not in', lead.partner_declined_ids.ids),
             //             ])
             // 
             //         # 6. sixth way: closest partner whatsoever, just to have at least one result
             //         if not partner_ids:
             //             # warning: point() type takes (longitude, latitude) as parameters in this order!
-            //             self._cr.execute("""SELECT id, distance
+            //             self.env.cr.execute("""SELECT id, distance
             //                           FROM  (select id, (point(partner_longitude, partner_latitude) <-> point(%s,%s)) AS distance FROM res_partner
             //                           WHERE active
             //                                 AND partner_longitude is not null
@@ -3525,7 +3801,7 @@ namespace Bamboo.Core.Application.Services
             //                                 AND id not in (select partner_id from crm_lead_declined_partner where lead_id = %s)
             //                                 ) AS d
             //                           ORDER BY distance LIMIT 1""", (longitude, latitude, lead.id))
-            //             res = self._cr.dictfetchone()
+            //             res = self.env.cr.dictfetchone()
             //             if res:
             //                 partner_ids = Partner.browse([res['id']])
             // 
@@ -3545,6 +3821,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def action_set_automated_probability(self):
+            // """ Update the automated probability and align probability to that value """
+            // self.ensure_one()
+            // self._compute_probabilities()
             // self.write({'probability': self.automated_probability})
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -3555,10 +3834,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def action_set_lost(self, **additional_values):
-            // """ Lost semantic: probability = 0 or active = False """
+            // """ Lost semantic: probability = 0 AND active = False """
             // res = self.action_archive()
-            // if additional_values:
-            //     self.write(dict(additional_values))
+            // self.write({**additional_values, 'probability': 0, 'automated_probability': 0})
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -3569,7 +3847,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def action_set_won(self):
-            // """ Won semantic: probability = 100 (active untouched) """
+            // """ Won semantic: stage.is_won (AND probability = 100 but implied) """
             // self.action_unarchive()
             // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
             // leads_by_won_stage = {}
@@ -3640,19 +3918,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> SnoozeAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_snooze(self):
-            // self.ensure_one()
-            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // my_next_activity.action_snooze()
-            // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<CrmLead> SortByConfidenceLevelInternalAsync(object reverse)
         {
             /*
@@ -3705,9 +3970,9 @@ namespace Bamboo.Core.Application.Services
             //         team_ids.add(lead.team_id.id)
             // # generate the domain
             // if team_ids:
-            //     search_domain = ['|', ('team_id', '=', False), ('team_id', 'in', list(team_ids))]
+            //     search_domain = ['|', ('team_ids', '=', False), ('team_ids', 'in', list(team_ids))]
             // else:
-            //     search_domain = [('team_id', '=', False)]
+            //     search_domain = [('team_ids', '=', False)]
             // # AND with the domain in parameter
             // if domain:
             //     search_domain += list(domain)
@@ -3717,45 +3982,43 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def toggle_active(self):
-            // """ When archiving: mark probability as 0. When re-activating
-            // update probability again, for leads and opportunities. """
-            // res = super(Lead, self).toggle_active()
-            // activated = self.filtered(lambda lead: lead.active)
-            // archived = self.filtered(lambda lead: not lead.active)
-            // if activated:
-            //     activated.write({'lost_reason_id': False})
-            //     activated._compute_probabilities()
-            // if archived:
-            //     archived.write({'probability': 0, 'automated_probability': 0})
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<CrmLead> TrackSubtypeInternalAsync(object init_values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
             // def _track_subtype(self, init_values):
             // self.ensure_one()
-            // if 'stage_id' in init_values and self.probability == 100 and self.stage_id:
+            // if 'stage_id' in init_values and self.won_status == 'won':
             //     return self.env.ref('crm.mt_lead_won')
             // elif 'lost_reason_id' in init_values and self.lost_reason_id:
             //     return self.env.ref('crm.mt_lead_lost')
             // elif 'stage_id' in init_values:
             //     return self.env.ref('crm.mt_lead_stage')
-            // elif 'active' in init_values and self.active:
+            // elif 'won_status' in init_values and self.won_status != 'lost':
             //     return self.env.ref('crm.mt_lead_restored')
-            // elif 'active' in init_values and not self.active:
+            // elif 'won_status' in init_values and self.won_status == 'lost':
             //     return self.env.ref('crm.mt_lead_lost')
-            // return super(Lead, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             */
             return default;
+        }
+
+        public async Task<CrmLead> UnarchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_unarchive(self):
+            // """ When re-activating, force update probability for both leads and
+            // opportunities. Note that archiving triggers nothing more, as a lead
+            // can be archived and not lost. """
+            // activated = self.filtered(lambda rec: not rec.active)
+            // res = super().action_unarchive()
+            // if activated:
+            //     activated.write({'lost_reason_id': False})
+            //     activated._compute_probabilities()
+            // return res
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<CrmLead> UpdateAutomatedProbabilitiesInternalAsync()
@@ -3776,16 +4039,10 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // # 1. Get all the leads to recompute created after pls_start_date that are nor won nor lost
-            // # (Won : probability = 100 | Lost : probability = 0 or inactive. Here, inactive won't be returned anyway)
-            // # Get also all the lead without probability --> These are the new leads. Activate auto probability on them.
             // pending_lead_domain = [
-            //     '&',
-            //         '&',
-            //             ('stage_id', '!=', False), ('create_date', '>=', pls_start_date),
-            //         '|',
-            //             ('probability', '=', False),
-            //             '&',
-            //                 ('probability', '<', 100), ('probability', '>', 0)
+            //     ('stage_id', '!=', False),
+            //     ('create_date', '>=', pls_start_date),
+            //     ('won_status', '=', 'pending'),
             // ]
             // leads_to_update = self.env['crm.lead'].search(pending_lead_domain)
             // leads_to_update_count = len(leads_to_update)
@@ -3794,7 +4051,8 @@ namespace Bamboo.Core.Application.Services
             // lead_probabilities = {}
             // for i in range(0, leads_to_update_count, PLS_COMPUTE_BATCH_STEP):
             //     leads_to_update_part = leads_to_update[i:i + PLS_COMPUTE_BATCH_STEP]
-            //     lead_probabilities.update(leads_to_update_part._pls_get_naive_bayes_probabilities(batch_mode=True))
+            //     batch_probabilites, _unused = leads_to_update_part._pls_get_naive_bayes_probabilities(batch_mode=True)
+            //     lead_probabilities.update(batch_probabilites)
             // _logger.info("Predictive Lead Scoring : New automated probabilities computed")
             // 
             // # 3. Group by new probability to reduce server roundtrips when executing the update
@@ -3816,7 +4074,7 @@ namespace Bamboo.Core.Application.Services
             // # - avoid blocking the table for too long with a too big transaction
             // transactions_count, transactions_failed_count = 0, 0
             // cron_update_lead_start_date = datetime.now()
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // self.flush_model()
             // for probability, probability_lead_ids in probability_leads.items():
             //     for lead_ids_current in tools.split_every(PLS_UPDATE_BATCH_STEP, probability_lead_ids):
@@ -3848,8 +4106,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
             // def update_contact_details_from_portal(self, values):
-            // self.browse().check_access('write')
-            // fields = ['partner_name', 'phone', 'mobile', 'email_from', 'street', 'street2',
+            // self._assert_portal_write_access()
+            // fields = ['partner_name', 'phone', 'email_from', 'street', 'street2',
             //     'city', 'zip', 'state_id', 'country_id']
             // if any([key not in fields for key in values]):
             //     raise UserError(_("Not allowed to update the following field(s): %s.", ", ".join([key for key in values if not key in fields])))
@@ -3863,7 +4121,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
             // def update_lead_portal(self, values):
-            // self.browse().check_access('write')
+            // self._assert_portal_write_access()
             // for lead in self:
             //     lead_values = {
             //         'expected_revenue': values['expected_revenue'],
@@ -3892,7 +4150,9 @@ namespace Bamboo.Core.Application.Services
             //                 'summary': values['activity_summary'],
             //                 'date_deadline': values['activity_date_deadline'],
             //             })
-            //     lead.write(lead_values)
+            // 
+            //     # access checked with '_assert_portal_write_access' at method beginning
+            //     lead.sudo().write(lead_values)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3925,7 +4185,7 @@ namespace Bamboo.Core.Application.Services
             //     'default_partner_id': self.partner_id.id,
             //     'default_opportunity_id': self.id,
             // }
-            // action['domain'] = expression.AND([[('opportunity_id', '=', self.id)], self._get_lead_sale_order_domain()])
+            // action['domain'] = Domain.AND([[('opportunity_id', '=', self.id)], self._get_lead_sale_order_domain()])
             // orders = self.order_ids.filtered_domain(self._get_lead_sale_order_domain())
             // if len(orders) == 1:
             //     action['views'] = [(self.env.ref('sale.view_order_form').id, 'form')]
@@ -3944,7 +4204,7 @@ namespace Bamboo.Core.Application.Services
             // action = self.env["ir.actions.actions"]._for_xml_id("sale.action_quotations_with_onboarding")
             // action['context'] = self._prepare_opportunity_quotation_context()
             // action['context']['search_default_draft'] = 1
-            // action['domain'] = expression.AND([[('opportunity_id', '=', self.id)], self._get_action_view_sale_quotation_domain()])
+            // action['domain'] = Domain.AND([[('opportunity_id', '=', self.id)], self._get_action_view_sale_quotation_domain()])
             // quotations = self.order_ids.filtered_domain(self._get_action_view_sale_quotation_domain())
             // if len(quotations) == 1:
             //     action['views'] = [(self.env.ref('sale.view_order_form').id, 'form')]
@@ -3966,6 +4226,8 @@ namespace Bamboo.Core.Application.Services
             //                     request.website.crm_default_team_id.id
             // values['user_id'] = values.get('user_id') or \
             //                     request.website.crm_default_user_id.id
+            // if not values['user_id'] and values['team_id'] and not self._is_rule_based_assignment_activated():
+            //     values['user_id'] = self.env['crm.team'].sudo().browse([values['team_id']]).user_id.id
             // if values.get('team_id'):
             //     values['type'] = 'lead' if self.env['crm.team'].sudo().browse(values['team_id']).use_leads else 'opportunity'
             // else:
@@ -3974,6 +4236,95 @@ namespace Bamboo.Core.Application.Services
             // return values
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public override async Task<List<object>> WriteAsync(List<Guid> ids, CrmLead entity, List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def write(self, vals):
+            // if vals.get('website'):
+            //     vals['website'] = self.env['res.partner']._clean_website(vals['website'])
+            // 
+            // now = self.env.cr.now()
+            // stage_updated, stage_is_won = False, False
+            // # stage change (or reset): update date_last_stage_update if at least one
+            // # lead does not have the same stage
+            // if 'stage_id' in vals:
+            //     stage_updated = any(lead.stage_id.id != vals['stage_id'] for lead in self)
+            //     if stage_updated:
+            //         vals['date_last_stage_update'] = now
+            //     if stage_updated and vals.get('stage_id'):
+            //         stage = self.env['crm.stage'].browse(vals['stage_id'])
+            //         if stage.is_won:
+            //             vals.update({'active': True, 'probability': 100, 'automated_probability': 100})
+            //             stage_is_won = True
+            // # user change; update date_open if at least one lead does not
+            // # have the same user
+            // if 'user_id' in vals and not vals.get('user_id'):
+            //     vals['date_open'] = False
+            // elif vals.get('user_id'):
+            //     user_updated = any(lead.user_id.id != vals['user_id'] for lead in self)
+            //     if user_updated:
+            //         vals['date_open'] = now
+            // 
+            // # stage change with new stage: update probability and date_closed
+            // if vals.get('probability', 0) >= 100 or not vals.get('active', True):
+            //     vals['date_closed'] = fields.Datetime.now()
+            // elif vals.get('probability', 0) > 0:
+            //     vals['date_closed'] = False
+            // elif stage_updated and not stage_is_won and not 'probability' in vals:
+            //     vals['date_closed'] = False
+            // 
+            // update_frequencies = any(field in ['active', 'stage_id', 'probability'] for field in vals)
+            // old_status_by_lead = {
+            //     lead.id: {
+            //         'is_lost': lead.won_status == 'lost',
+            //         'is_won': lead.won_status == 'won',
+            //     } for lead in self
+            // } if update_frequencies else {}
+            // 
+            // if not stage_is_won:
+            //     result = super().write(vals)
+            // else:
+            //     # stage change between two won stages: does not change the date_closed
+            //     leads_already_won = self.filtered(lambda lead: lead.stage_id.is_won)
+            //     remaining = self - leads_already_won
+            //     if remaining:
+            //         result = super(CrmLead, remaining).write(vals)
+            //     if leads_already_won:
+            //         vals.pop('date_closed', False)
+            //         result = super(CrmLead, leads_already_won).write(vals)
+            // 
+            // if update_frequencies:
+            //     self._handle_won_lost(old_status_by_lead, {
+            //         lead.id: {
+            //             'is_lost': lead.won_status == 'lost',
+            //             'is_won': lead.won_status == 'won',
+            //         } for lead in self
+            //     })
+            // 
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: crm_lead.py) ---
+            // def write(self, vals):
+            // if origin_channel_id := vals.get("origin_channel_id"):
+            //     if not self.env["discuss.channel"].browse(origin_channel_id).has_access("read"):
+            //         raise AccessError(
+            //             self.env._(
+            //                 "You cannot update a lead and link it to a channel you don't have access to."
+            //             )
+            //         )
+            // return super().write(vals)
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
+            // def write(self, vals):
+            // if self.env.user._is_portal() and not self.env.su:
+            //     for fname, value in vals.items():
+            //         field = self._fields.get(fname)
+            //         if field and field.type == 'many2one':
+            //             self.env[field.comodel_name].browse(value).check_access('read')
+            // return super().write(vals)
+            */
+            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class DeliveryCarrierAvailableCarriersRequestDto
     {
         public object Partner { get; set; }
-        public object Order { get; set; }
+        public object Source { get; set; }
     }
     
     public class DeliveryCarrierBaseOnRuleCancelShipmentRequestDto

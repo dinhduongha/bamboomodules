@@ -32,7 +32,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
             // def _check_parent_id(self):
             // if self._has_cycle():
-            //     raise ValidationError(_('Error! You cannot create recursive menus.'))
+            //     raise ValidationError(self.env._('Error! You cannot create recursive menus.'))
             */
             return default;
         }
@@ -64,11 +64,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
             // def _compute_web_icon_data(self, web_icon):
-            // """ Returns the image associated to `web_icon`.
-            //     `web_icon` can either be:
-            //       - an image icon [module, path]
-            //       - a built icon [icon_class, icon_color, background_color]
-            //     and it only has to call `_read_image` if it's an image.
+            // """ Returns the image associated to ``web_icon``.
+            // 
+            // :param str web_icon: a comma-separated value string for either:
+            // 
+            //   * an image icon: ``f"{module},{path}"``
+            //   * a built icon: ``f"{icon_class},{icon_color},{background_color}"``
+            // 
+            // The ``web_icon_data`` computed field uses :meth:`_read_image` for image
+            // web icons, and is ``False`` for built icons.
             // """
             // if web_icon and len(web_icon.split(',')) == 2:
             //     return self._read_image(web_icon)
@@ -116,7 +120,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param str res_model: the model name for which we want to find the best
             //     menu root id
-            // :return (int): the best menu root id or None if not found
+            // :return: the best menu root id or None if not found
+            // :rtype: int
             // """
             // with contextlib.suppress(AccessError):  # if no access to the menu, return None
             //     visible_menu_ids = self._visible_menu_ids()
@@ -170,10 +175,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
             // def _get_menuitems_xmlids(self):
-            // menuitems = self.env['ir.model.data'].sudo().search([
-            //         ('res_id', 'in', self.ids),
-            //         ('model', '=', 'ir.ui.menu')
-            //     ])
+            // menuitems = self.env['ir.model.data'].sudo().search_fetch(
+            //     [('res_id', 'in', self.ids), ('model', '=', 'ir.ui.menu')],
+            //     ['res_id', 'complete_name'],
+            // )
             // 
             // return {
             //     menu.res_id: menu.complete_name
@@ -193,7 +198,7 @@ namespace Bamboo.Core.Application.Services
             // :return: the root menu ids
             // :rtype: list(int)
             // """
-            // return self.search([('parent_id', '=', False)])
+            // return self.search([('parent_id', '=', False)])._filter_visible_menus()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -203,86 +208,83 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
             // def load_menus(self, debug):
-            // """ Loads all menu items (all applications and their sub-menus).
-            // 
-            // :return: the menu root
-            // :rtype: dict('children': menu_nodes)
-            // """
-            // fields = ['name', 'sequence', 'parent_id', 'action', 'web_icon']
-            // menu_roots = self.get_user_roots()
-            // menu_roots_data = menu_roots.read(fields) if menu_roots else []
-            // menu_root = {
-            //     'id': False,
-            //     'name': 'root',
-            //     'parent_id': [-1, ''],
-            //     'children': [menu['id'] for menu in menu_roots_data],
-            // }
-            // 
-            // all_menus = {'root': menu_root}
-            // 
-            // if not menu_roots_data:
-            //     return all_menus
-            // 
-            // # menus are loaded fully unlike a regular tree view, cause there are a
-            // # limited number of items (752 when all 6.1 addons are installed)
-            // menus_domain = [('id', 'child_of', menu_roots.ids)]
             // blacklisted_menu_ids = self._load_menus_blacklist()
-            // if blacklisted_menu_ids:
-            //     menus_domain = expression.AND([menus_domain, [('id', 'not in', blacklisted_menu_ids)]])
-            // menus = self.search(menus_domain)
-            // menu_items = menus.read(fields)
-            // xmlids = (menu_roots + menus)._get_menuitems_xmlids()
+            // visible_menus = self.search_fetch(
+            //     [('id', 'not in', blacklisted_menu_ids)],
+            //     ['name', 'parent_id', 'action', 'web_icon'],
+            // )._filter_visible_menus()
             // 
-            // # add roots at the end of the sequence, so that they will overwrite
-            // # equivalent menu items from full menu read when put into id:item
-            // # mapping, resulting in children being correctly set on the roots.
-            // menu_items.extend(menu_roots_data)
+            // children_dict = defaultdict(list)  # {parent_id: []} / parent_id == False for root menus
+            // for menu in visible_menus:
+            //     children_dict[menu.parent_id.id].append(menu.id)
             // 
-            // mi_attachments = self.env['ir.attachment'].sudo().search_read(
+            // app_info = {}
+            // # recursively set app ids to related children
+            // def _set_app_id(menu_app_id, menu_id):
+            //     app_info[menu_id] = menu_app_id
+            //     for child_id in children_dict[menu_id]:
+            //         _set_app_id(menu_app_id, child_id)
+            // 
+            // for root_menu_id in children_dict[False]:
+            //     _set_app_id(root_menu_id, root_menu_id)
+            // 
+            // # Filter out menus not related to an app (+ keep root menu), it happens when
+            // # some parent menu are not visible for group.
+            // visible_menus = visible_menus.filtered(lambda menu: menu.id in app_info)
+            // 
+            // xmlids = visible_menus._get_menuitems_xmlids()
+            // icon_attachments = self.env['ir.attachment'].sudo().search_read(
             //     domain=[('res_model', '=', 'ir.ui.menu'),
-            //             ('res_id', 'in', [menu_item['id'] for menu_item in menu_items if menu_item['id']]),
+            //             ('res_id', 'in', visible_menus._ids),
             //             ('res_field', '=', 'web_icon_data')],
             //     fields=['res_id', 'datas', 'mimetype'])
+            // icon_attachments_res_id = {attachment['res_id']: attachment for attachment in icon_attachments}
             // 
-            // mi_attachment_by_res_id = {attachment['res_id']: attachment for attachment in mi_attachments}
+            // menus_dict = {}
+            // action_ids_by_type = defaultdict(list)
+            // for menu in visible_menus:
             // 
-            // # set children ids and xmlids
-            // menu_items_map = {menu_item["id"]: menu_item for menu_item in menu_items}
-            // for menu_item in menu_items:
-            //     menu_item.setdefault('children', [])
-            //     parent = menu_item['parent_id'] and menu_item['parent_id'][0]
-            //     menu_item['xmlid'] = xmlids.get(menu_item['id'], "")
-            //     if parent in menu_items_map:
-            //         menu_items_map[parent].setdefault(
-            //             'children', []).append(menu_item['id'])
-            //     attachment = mi_attachment_by_res_id.get(menu_item['id'])
-            //     if attachment:
-            //         menu_item['web_icon_data'] = attachment['datas'].decode()
-            //         menu_item['web_icon_data_mimetype'] = attachment['mimetype']
+            //     menu_id = menu.id
+            //     attachment = icon_attachments_res_id.get(menu_id)
+            // 
+            //     if action := menu.action:
+            //         action_model = action._name
+            //         action_id = action.id
+            //         action_ids_by_type[action_model].append(action_id)
             //     else:
-            //         menu_item['web_icon_data'] = False
-            //         menu_item['web_icon_data_mimetype'] = False
-            // all_menus.update(menu_items_map)
+            //         action_model = False
+            //         action_id = False
             // 
-            // # sort by sequence
-            // for menu_id in all_menus:
-            //     all_menus[menu_id]['children'].sort(key=lambda id: all_menus[id]['sequence'])
+            //     menus_dict[menu_id] = {
+            //         'id': menu_id,
+            //         'name': menu.name,
+            //         'app_id': app_info[menu_id],
+            //         'action_model': action_model,
+            //         'action_id': action_id,
+            //         'web_icon': menu.web_icon,
+            //         'web_icon_data': attachment['datas'].decode() if attachment else False,
+            //         'web_icon_data_mimetype': attachment['mimetype'] if attachment else False,
+            //         'xmlid': xmlids.get(menu_id, ""),
+            //     }
             // 
-            // # recursively set app ids to related children
-            // def _set_app_id(app_id, menu):
-            //     menu['app_id'] = app_id
-            //     for child_id in menu['children']:
-            //         _set_app_id(app_id, all_menus[child_id])
+            // # prefetch action.path
+            // for model_name, action_ids in action_ids_by_type.items():
+            //     self.env[model_name].sudo().browse(action_ids).fetch(['path'])
             // 
-            // for app in menu_roots_data:
-            //     app_id = app['id']
-            //     _set_app_id(app_id, all_menus[app_id])
+            // # set children + model_path
+            // for menu_dict in menus_dict.values():
+            //     if menu_dict['action_model']:
+            //         menu_dict['action_path'] = self.env[menu_dict['action_model']].sudo().browse(menu_dict['action_id']).path
+            //     else:
+            //         menu_dict['action_path'] = False
+            //     menu_dict['children'] = children_dict[menu_dict['id']]
             // 
-            // # filter out menus not related to an app (+ keep root menu)
-            // all_menus = {menu['id']: menu for menu in all_menus.values() if menu.get('app_id')}
-            // all_menus['root'] = menu_root
-            // 
-            // return all_menus
+            // menus_dict['root'] = {
+            //     'id': False,
+            //     'name': 'root',
+            //     'children': children_dict[False],
+            // }
+            // return menus_dict
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -290,56 +292,53 @@ namespace Bamboo.Core.Application.Services
         protected async Task<IrUiMenu> LoadMenusBlacklistInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_ui_menu.py) ---
-            // def _load_menus_blacklist(self):
-            // res = super()._load_menus_blacklist()
-            // menu = self.env.ref('account.account_audit_trail_menu', raise_if_not_found=False)
-            // if menu and not any(company.check_account_audit_trail for company in self.env.user.company_ids):
-            //     res.append(menu.id)
-            // return res
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
             // res = super()._load_menus_blacklist()
-            // if self.env.user.has_group('hr.group_hr_user'):
-            //     res.append(self.env.ref('hr.menu_hr_employee').id)
+            // if self.env.user.has_group('hr.group_hr_user') and (emp_menu := self.env.ref('hr.menu_hr_employee', raise_if_not_found=False)):
+            //     res.append(emp_menu.id)
             // else:
             //     is_department_manager = bool(self.env["hr.department"].search_count([
             //         ('manager_id', 'in', self.env.user.employee_ids.ids)
-            //     ]))
-            //     if not is_department_manager:
-            //         res.append(self.env.ref('hr.menu_hr_department_kanban').id)
+            //     ], limit=1))
+            //     if not is_department_manager and (dep_menu := self.env.ref('hr.menu_hr_department_kanban', raise_if_not_found=False)):
+            //         res.append(dep_menu.id)
             // return res
-            --- ODOO METHOD SOURCE (MODULE: hr_contract, FILE: ir_ui_menu.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
             // res = super()._load_menus_blacklist()
-            // is_contract_employee_manager = self.env.user.has_group('hr_contract.group_hr_contract_employee_manager')
-            // is_employee_officer = self.env.user.has_group('hr.group_hr_user')
-            // if not is_contract_employee_manager or is_employee_officer:
-            //     res.append(self.env.ref('hr_contract.menu_hr_employee_contracts').id)
+            // if not (
+            //     self.env.user.has_group('hr_attendance.group_hr_attendance_manager') and
+            //     self.env.user.has_group('hr_holidays.group_hr_holidays_user')
+            // ):
+            //     res.append(self.env.ref('hr_holidays_attendance.hr_leave_attendance_report').id)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
             // res = super()._load_menus_blacklist()
             // is_interviewer = self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer')
-            // is_user = self.env.user.has_group('hr_recruitment.group_hr_recruitment_user')
-            // if not is_interviewer:
-            //     res.append(self.env.ref('hr.menu_view_hr_job').id)
-            // elif is_interviewer and not is_user:
-            //     res.append(self.env.ref('hr_recruitment.menu_hr_job_position').id)
-            // else:
-            //     res.append(self.env.ref('hr_recruitment.menu_hr_job_position_interviewer').id)
+            // if not is_interviewer and (job_menu := self.env.ref('hr.menu_view_hr_job', raise_if_not_found=False)):
+            //     res.append(job_menu.id)
+            // elif (
+            //     is_interviewer
+            //     and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user')
+            //     and (pos_menu := self.env.ref('hr_recruitment.menu_hr_job_position', raise_if_not_found=False))
+            // ):
+            //     res.append(pos_menu.id)
+            // elif int_menu := self.env.ref('hr_recruitment.menu_hr_job_position_interviewer', raise_if_not_found=False):
+            //     res.append(int_menu.id)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
             // res = super()._load_menus_blacklist()
-            // if self.env.user.has_group('hr_timesheet.group_hr_timesheet_approver'):
-            //     res.append(self.env.ref('hr_timesheet.timesheet_menu_activity_user').id)
+            // if self.env.user.has_group('hr_timesheet.group_hr_timesheet_approver') and (time_menu := self.env.ref('hr_timesheet.timesheet_menu_activity_user', raise_if_not_found=False)):
+            //     res.append(time_menu.id)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet_attendance, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
             // res = super()._load_menus_blacklist()
-            // if not (self.env.user.has_group('hr_timesheet.group_hr_timesheet_user')):
-            //     res.append(self.env.ref('hr_timesheet_attendance.menu_hr_timesheet_attendance_report').id)
+            // if not self.env.user.has_group('hr_timesheet.group_hr_timesheet_user') and (att_menu := self.env.ref('hr_timesheet_attendance.menu_hr_timesheet_attendance_report', raise_if_not_found=False)):
+            //     res.append(att_menu.id)
             // return res
             --- ODOO METHOD SOURCE (MODULE: project, FILE: ir_ui_menu.py) ---
             // def _load_menus_blacklist(self):
@@ -432,15 +431,19 @@ namespace Bamboo.Core.Application.Services
             //             "backgroundImage": menu.get('backgroundImage'),
             //         }
             //     else:
-            //         action = menu['action']
+            //         action_id = menu['action_id']
+            //         action_model = menu['action_model']
+            //         action_path = menu['action_path']
             //         web_icon = menu['web_icon']
             //         web_icon_data = menu['web_icon_data']
             // 
             //         if menu['id'] == menu['app_id']:
             //             # if it's an app take action of first (sub)child having one defined
             //             child = menu
-            //             while child and not action:
-            //                 action = child['action']
+            //             while child and not action_id:
+            //                 action_id = child['action_id']
+            //                 action_model = child['action_model']
+            //                 action_path = child['action_path']
             //                 child = menus[child['children'][0]] if child['children'] else False
             // 
             //             webIcon = menu.get('web_icon', '')
@@ -458,13 +461,6 @@ namespace Bamboo.Core.Application.Services
             //                 web_icon = ",".join([iconClass or "", color or "", backgroundColor])
             //             else:
             //                 web_icon_data = '/web/static/img/default_icon_app.png'
-            // 
-            //         action_model, action_id = action.split(',') if action else (False, False)
-            //         action_id = int(action_id) if action_id else False
-            //         if action_model and action_id:
-            //             action_path = self.env[action_model].browse(action_id).sudo().path
-            //         else:
-            //             action_path = False
             // 
             //         web_menus[menu['id']] = {
             //             "id": menu['id'],
@@ -503,93 +499,72 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiMenu> SearchCountAsync(Guid id, IrUiMenuSearchCountRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
-            // def search_count(self, domain, limit=None):
-            // # to be consistent with search() above
-            // return len(self.search(domain, limit=limit))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<IrUiMenu> SearchFetchAsync(Guid id, IrUiMenuSearchFetchRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
-            // def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
-            // menus = super().search_fetch(domain, field_names, order=order)
-            // if menus:
-            //     # menu filtering is done only on main menu tree, not other menu lists
-            //     if not self._context.get('ir.ui.menu.full_list'):
-            //         menus = menus._filter_visible_menus()
-            //     if offset:
-            //         menus = menus[offset:]
-            //     if limit:
-            //         menus = menus[:limit]
-            // return menus
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<IrUiMenu> VisibleMenuIdsInternalAsync(object debug)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
             // def _visible_menu_ids(self, debug=False):
             // """ Return the ids of the menu items visible to the user. """
-            // # retrieve all menus, and determine which ones are visible
-            // context = {'ir.ui.menu.full_list': True}
-            // menus = self.with_context(context).search_fetch([], ['action', 'parent_id']).sudo()
-            // 
-            // # first discard all menus with groups the user does not have
             // group_ids = set(self.env.user._get_group_ids())
             // if not debug:
-            //     group_ids = group_ids - {self.env['ir.model.data']._xmlid_to_res_id('base.group_no_one', raise_if_not_found=False)}
-            // menus = menus.filtered(
-            //     lambda menu: not (menu.groups_id and group_ids.isdisjoint(menu.groups_id._ids)))
+            //     group_ids.discard(self.env['ir.model.data']._xmlid_to_res_id('base.group_no_one', raise_if_not_found=False))
+            // 
+            // # retrieve menus with a domain to filter out menus with groups the user does not have.
+            // # It will be used to determine which ones are visible
+            // menus = self.with_context({}).search_fetch(
+            //     # Don't use 'any' operator in the domain to avoid ir.rule
+            //     ['|', ('group_ids', '=', False), ('group_ids', 'in', tuple(group_ids))],
+            //     ['parent_id', 'action'], order='id',
+            // ).sudo()
             // 
             // # take apart menus that have an action
-            // actions_by_model = defaultdict(set)
+            // action_ids_by_model = defaultdict(list)
             // for action in menus.mapped('action'):
             //     if action:
-            //         actions_by_model[action._name].add(action.id)
-            // existing_actions = {
-            //     action
-            //     for model_name, action_ids in actions_by_model.items()
-            //     for action in self.env[model_name].browse(action_ids).exists()
-            // }
-            // action_menus = menus.filtered(lambda m: m.action and m.action in existing_actions)
-            // folder_menus = menus - action_menus
-            // visible = self.browse()
+            //         action_ids_by_model[action._name].append(action.id)
             // 
-            // # process action menus, check whether their action is allowed
-            // access = self.env['ir.model.access']
             // MODEL_BY_TYPE = {
             //     'ir.actions.act_window': 'res_model',
             //     'ir.actions.report': 'model',
             //     'ir.actions.server': 'model_name',
             // }
+            // def exists_actions(model_name, action_ids):
+            //     """ Return existing actions and fetch model name field if exists"""
+            //     if model_name not in MODEL_BY_TYPE:
+            //         return self.env[model_name].browse(action_ids).exists()
+            //     records = self.env[model_name].sudo().with_context(active_test=False).search_fetch(
+            //         [('id', 'in', action_ids)], [MODEL_BY_TYPE[model_name]], order='id',
+            //     )
+            //     if model_name == 'ir.actions.server':
+            //         # Because it is computed, `search_fetch` doesn't fill the cache for it
+            //         records.mapped('model_name')
+            //     return records
             // 
-            // # performance trick: determine the ids to prefetch by type
-            // prefetch_ids = defaultdict(list)
-            // for action in action_menus.mapped('action'):
-            //     prefetch_ids[action._name].append(action.id)
-            // 
-            // for menu in action_menus:
+            // existing_actions = {
+            //     action
+            //     for model_name, action_ids in action_ids_by_model.items()
+            //     for action in exists_actions(model_name, action_ids)
+            // }
+            // menu_ids = set(menus._ids)
+            // visible_ids = set()
+            // access = self.env['ir.model.access']
+            // # process action menus, check whether their action is allowed
+            // for menu in menus:
             //     action = menu.action
-            //     action = action.with_prefetch(prefetch_ids[action._name])
-            //     model_name = action._name in MODEL_BY_TYPE and action[MODEL_BY_TYPE[action._name]]
-            //     if not model_name or access.check(model_name, 'read', False):
-            //         # make menu visible, and its folder ancestors, too
-            //         visible += menu
+            //     if not action or action not in existing_actions:
+            //         continue
+            //     model_fname = MODEL_BY_TYPE.get(action._name)
+            //     # action[model_fname] has been fetched in batch in `exists_actions`
+            //     if model_fname and not access.check(action[model_fname], 'read', False):
+            //         continue
+            //     # make menu visible, and its folder ancestors, too
+            //     menu_id = menu.id
+            //     while menu_id not in visible_ids and menu_id in menu_ids:
+            //         visible_ids.add(menu_id)
             //         menu = menu.parent_id
-            //         while menu and menu in folder_menus and menu not in visible:
-            //             visible += menu
-            //             menu = menu.parent_id
+            //         menu_id =  menu.id
             // 
-            // return set(visible.ids)
+            // return frozenset(visible_ids)
             */
             return default;
         }

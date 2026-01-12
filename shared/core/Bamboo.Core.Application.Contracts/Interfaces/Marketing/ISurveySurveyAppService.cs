@@ -10,6 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISurveySurveyAppService : IGenericApplicationService<SurveySurvey>
     {
+        Task<SurveySurvey> ArchiveAsync(Guid id);
         Task<SurveySurvey> CheckValidityAsync(Guid id);
         Task<SurveySurvey> CopyDataAsync(Guid id, SurveySurveyCopyDataRequestDto input);
         Task<SurveySurvey> EndSessionAsync(Guid id);
@@ -17,10 +18,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<SurveySurvey> GetPrintUrlAsync(Guid id);
         Task<SurveySurvey> GetStartShortUrlAsync(Guid id);
         Task<SurveySurvey> GetStartUrlAsync(Guid id);
-        Task<SurveySurvey> LoadSampleAssessmentAsync(Guid id);
+        Task<SurveySurvey> GetSurveyTemplatesDataAsync(Guid id);
         Task<SurveySurvey> LoadSampleCustomAsync(Guid id);
-        Task<SurveySurvey> LoadSampleLiveSessionAsync(Guid id);
-        Task<SurveySurvey> LoadSampleSurveyAsync(Guid id);
+        Task<SurveySurvey> LoadSurveyTemplateSampleAsync(Guid id, SurveySurveyLoadSurveyTemplateSampleRequestDto input);
         Task<SurveySurvey> OpenSessionManagerAsync(Guid id);
         Task<SurveySurvey> PrintSurveyAsync(Guid id, SurveySurveyPrintSurveyRequestDto input);
         Task<SurveySurvey> ResultSurveyAsync(Guid id);
@@ -29,11 +29,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<SurveySurvey> StartSessionAsync(Guid id);
         Task<SurveySurvey> StartSurveyAsync(Guid id, SurveySurveyStartSurveyRequestDto input);
         Task<SurveySurvey> SurveyPreviewCertificationTemplateAsync(Guid id);
+        Task<SurveySurvey> SurveySeeLeadsAsync(Guid id);
         Task<SurveySurvey> SurveyUserInputAsync(Guid id);
         Task<SurveySurvey> SurveyUserInputCertifiedAsync(Guid id);
         Task<SurveySurvey> SurveyUserInputCompletedAsync(Guid id);
         Task<SurveySurvey> SurveyViewSlideChannelsAsync(Guid id);
         Task<SurveySurvey> TestSurveyAsync(Guid id);
-        Task<SurveySurvey> ToggleActiveAsync(Guid id);
+        Task<SurveySurvey> UnarchiveAsync(Guid id);
     }
 }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<EventRegistration> SendBadgeEmailAsync(Guid id);
         Task<EventRegistration> SetDoneAsync(Guid id);
         Task<EventRegistration> SetDraftAsync(Guid id);
-        Task<EventRegistration> ToggleActiveAsync(Guid id);
+        Task<EventRegistration> ViewPosOrderAsync(Guid id);
         Task<EventRegistration> ViewSaleOrderAsync(Guid id);
     }
 }

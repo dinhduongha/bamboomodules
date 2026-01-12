@@ -11,6 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IEventSponsorAppService : IGenericApplicationService<EventSponsor>
     {
         Task<EventSponsor> GetBackendMenuIdAsync(Guid id);
-        Task<EventSponsor> OpenWebsiteUrlAsync(Guid id);
+        Task<EventSponsor> GetBaseUrlAsync(Guid id);
     }
 }

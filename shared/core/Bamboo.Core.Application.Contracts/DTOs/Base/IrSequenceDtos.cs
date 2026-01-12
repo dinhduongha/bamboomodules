@@ -4,17 +4,6 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class IrSequenceGetRequestDto
-    {
-        public object Code { get; set; }
-    }
-    
-    public class IrSequenceGetIdRequestDto
-    {
-        public Guid SequenceCodeOrId { get; set; }
-        public Guid CodeOrId { get; set; }
-    }
-    
     public class IrSequenceGetNextCharRequestDto
     {
         public object NumberNext { get; set; }

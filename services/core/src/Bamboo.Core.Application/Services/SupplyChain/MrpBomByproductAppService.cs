@@ -65,7 +65,8 @@ namespace Bamboo.Core.Application.Services
             //                 )
             //             )
             //         ),
-            //         'readOnly': len(self) > 1
+            //         'readOnly': len(self) > 1,
+            //         'uomDisplayName': len(self) == 1 and self.product_uom_id.display_name or self.product_id.uom_id.display_name,
             //     }
             // return {
             //     'quantity': 0,
@@ -74,11 +75,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpBomByproduct> SkipByproductLineInternalAsync(object product)
+        protected async Task<MrpBomByproduct> SkipByproductLineInternalAsync(object product, object never_attribute_values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def _skip_byproduct_line(self, product):
+            // def _skip_byproduct_line(self, product, never_attribute_values=False):
             // """ Control if a byproduct line should be produced, can be inherited to add
             // custom control.
             // """
@@ -86,7 +87,6 @@ namespace Bamboo.Core.Application.Services
             // if not product or product._name == 'product.template':
             //     return False
             // 
-            // never_attribute_values = self.env.context.get('never_attribute_ids')
             // return self.env['mrp.bom']._skip_for_no_variant(product, self.bom_product_template_attribute_value_ids, never_attribute_values)
             */
             return default;

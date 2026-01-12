@@ -10,7 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpWorkorderAppService : IGenericApplicationService<MrpWorkorder>
     {
-        Task<MrpWorkorder> ButtonDoneAsync(Guid id);
         Task<MrpWorkorder> ButtonFinishAsync(Guid id);
         Task<MrpWorkorder> ButtonPendingAsync(Guid id);
         Task<MrpWorkorder> ButtonScrapAsync(Guid id);
@@ -25,5 +24,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MrpWorkorder> OpenWizardAsync(Guid id);
         Task<MrpWorkorder> ReplanAsync(Guid id);
         Task<MrpWorkorder> SeeMoveScrapAsync(Guid id);
+        Task<MrpWorkorder> SetStateAsync(Guid id, MrpWorkorderSetStateRequestDto input);
     }
 }

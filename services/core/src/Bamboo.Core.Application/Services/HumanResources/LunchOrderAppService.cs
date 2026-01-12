@@ -82,7 +82,7 @@ namespace Bamboo.Core.Application.Services
             // self.env.flush_all()
             // for line in self:
             //     if self.env['lunch.cashmove'].get_wallet_balance(line.user_id) < 0:
-            //         raise ValidationError(_('Your wallet does not contain enough money to order that. To add some money to your wallet, please contact your lunch manager.'))
+            //         raise ValidationError(_('Oh no! You don’t have enough money in your wallet to order your selected lunch! Contact your lunch manager to add some money to your wallet.'))
             */
             return default;
         }
@@ -127,7 +127,7 @@ namespace Bamboo.Core.Application.Services
             //     if user_new_orders:
             //         user_new_orders = user_new_orders.filtered(lambda lunch_order: lunch_order.date == order.date)
             //         price = sum(order.price for order in user_new_orders)
-            //     wallet_amount = self.env['lunch.cashmove'].get_wallet_balance(order.user_id, False) - price
+            //     wallet_amount = self.env['lunch.cashmove'].get_wallet_balance(order.user_id) - price
             //     order.display_add_button = wallet_amount >= order.price
             */
             return default;
@@ -248,7 +248,7 @@ namespace Bamboo.Core.Application.Services
             //     ('lunch_location_id', '=', values.get('lunch_location_id', default_location_id)),
             // ]
             // if values.get('state'):
-            //     domain = AND([domain, [('state', '=', values['state'])]])
+            //     domain = Domain.AND([domain, [('state', '=', values['state'])]])
             // toppings = values.get('toppings', [])
             // return self.search(domain).filtered(lambda line: (line.topping_ids_1 | line.topping_ids_2 | line.topping_ids_3).ids == toppings)
             */
@@ -263,17 +263,6 @@ namespace Bamboo.Core.Application.Services
             // return list(self._fields[field].convert_to_cache(values, self))
             */
             return default;
-        }
-
-        public async Task<LunchOrder> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
-            // def init(self):
-            // self._cr.execute("""CREATE INDEX IF NOT EXISTS lunch_order_user_product_date ON %s (user_id, product_id, date)"""
-            //     % self._table)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<LunchOrder> NotifyAsync(Guid id)

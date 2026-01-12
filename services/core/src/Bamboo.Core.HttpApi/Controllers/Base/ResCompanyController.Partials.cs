@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-close-stock-valuation")]
+        public async Task<IActionResult> ActionCloseStockValuationAsync(Guid id, [FromBody] ResCompanyCloseStockValuationRequestDto input)
+        {
+            var result = await _appService.CloseStockValuationAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-open-website-theme-selector")]
         public async Task<IActionResult> ActionOpenWebsiteThemeSelectorAsync(Guid id)
         {
@@ -247,6 +255,30 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SettingInitBankAccountActionAsync(Guid id)
         {
             var result = await _appService.SettingInitBankAccountActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/setting-init-credit-card-account-action")]
+        public async Task<IActionResult> SettingInitCreditCardAccountActionAsync(Guid id)
+        {
+            var result = await _appService.SettingInitCreditCardAccountActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/stock-accounting-value")]
+        public async Task<IActionResult> StockAccountingValueAsync(Guid id, [FromBody] ResCompanyStockAccountingValueRequestDto input)
+        {
+            var result = await _appService.StockAccountingValueAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/stock-value")]
+        public async Task<IActionResult> StockValueAsync(Guid id, [FromBody] ResCompanyStockValueRequestDto input)
+        {
+            var result = await _appService.StockValueAsync(id, input);
             return Ok(result);
         }
         

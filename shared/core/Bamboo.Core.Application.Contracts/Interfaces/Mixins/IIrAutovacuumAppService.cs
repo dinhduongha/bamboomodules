@@ -10,6 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IIrAutovacuumAppService : IMixinAppService
     {
+        Task<TEntity> GcOrmSignalingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrAutovacuumable;
         Task<TEntity> RunVacuumCleanerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrAutovacuumable;
     }
 }

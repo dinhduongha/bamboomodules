@@ -26,6 +26,37 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<StockPackageType> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---
+            // def _compute_display_name(self):
+            // packages_to_process_ids = []
+            // for package in self:
+            //     if package.env.context.get('formatted_display_name') and package.packaging_length and package.width and package.height:
+            //         package.display_name = f"{package.name}\t--{package.packaging_length} x {package.width} x {package.height}--"
+            //     else:
+            //         packages_to_process_ids.append(package.id)
+            // if packages_to_process_ids:
+            //     super(StockPackageType, self.env['stock.package.type'].browse(packages_to_process_ids))._compute_display_name()
+            */
+            return default;
+        }
+
+        protected async Task<StockPackageType> ComputeHasQuantsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---
+            // def _compute_has_quants(self):
+            // pack_type_quants = dict(self.env['stock.package']._read_group(
+            //     domain=[('quant_ids', '!=', False), ('package_type_id', 'in', self.ids)], groupby=['package_type_id'], aggregates=['__count']))
+            // 
+            // for package_type in self:
+            //     package_type.has_quants = pack_type_quants.get(package_type, 0) > 0
+            */
+            return default;
+        }
+
         protected async Task<StockPackageType> ComputeLengthUomNameInternalAsync()
         {
             /*
@@ -46,7 +77,7 @@ namespace Bamboo.Core.Application.Services
             //         package.length_uom_name = ""
             //     else:
             //         package_without_carrier |= package
-            // super(PackageType, package_without_carrier)._compute_length_uom_name()
+            // super(StockPackageType, package_without_carrier)._compute_length_uom_name()
             */
             return default;
         }
@@ -89,6 +120,18 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---
             // def _get_default_weight_uom(self):
             // return self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
+            */
+            return default;
+        }
+
+        protected async Task<StockPackageType> GetNextNameBySequenceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---
+            // def _get_next_name_by_sequence(self):
+            // if len(self) == 1 and self.sequence_id:
+            //     return self.sequence_id.next_by_id()
+            // return self.env['ir.sequence'].next_by_code('stock.package')
             */
             return default;
         }

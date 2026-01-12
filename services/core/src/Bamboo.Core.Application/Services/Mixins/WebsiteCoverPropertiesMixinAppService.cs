@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class WebsiteCoverPropertiesMixinAppService : ApplicationService, IWebsiteCoverPropertiesMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         :return: returns the union of new records and the ones unarchived.
             // """
             // SlideChannelPartnerSudo = self.env['slide.channel.partner'].sudo()
-            // allowed_channels = self._filter_add_members(target_partners, raise_on_access=raise_on_access)
+            // allowed_channels = self._filter_add_members(raise_on_access=raise_on_access)
             // if not allowed_channels or not target_partners:
             //     return SlideChannelPartnerSudo
             // 
@@ -93,6 +93,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             subtype_ids=[self.env.ref('website_slides.mt_channel_slide_published').id]
             //         )
             // return result_channel_partners
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_archive(self):
+            // """ Archiving a channel does it on its slides, too.
+            // 
+            // We want to be archiving the channel FIRST.
+            // So that when slides are archived and the recompute is triggered,
+            // it does not try to mark the channel as "completed".
+            // That happens because it counts slide_done / slide_total, but slide_total
+            // will be 0 since all the slides for the course have been archived as well.
+            // """
+            // archived = self.filtered(self._active_name)
+            // res = super().action_archive()
+            // archived.is_published = False
+            // archived.slide_ids.action_archive()
+            // return res
             */
             return default;
         }
@@ -155,11 +177,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActionGenerateLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> ActionGenerateLeadsAsync<TEntity>(IEnumerable<TEntity> entities, object event_lead_rules) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_event.py) ---
-            // def action_generate_leads(self):
+            // def action_generate_leads(self, event_lead_rules=False):
             // """ Re-generate leads based on event.lead.rules.
             // The method is ran synchronously if there is a low amount of registrations, otherwise it
             // goes through a CRON job that runs in batches. """
@@ -167,23 +189,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not self.env.user.has_group('event.group_event_manager'):
             //     raise UserError(_("Only Event Managers are allowed to re-generate all leads."))
             // 
-            // self.ensure_one()
             // registrations_count = self.env['event.registration'].search_count([
-            //     ('event_id', '=', self.id),
+            //     ('event_id', 'in', self.ids),
             //     ('state', 'not in', ['draft', 'cancel']),
             // ])
             // 
             // if registrations_count <= self.env['event.lead.request']._REGISTRATIONS_BATCH_SIZE:
             //     leads = self.env['event.registration'].search([
-            //         ('event_id', '=', self.id),
+            //         ('event_id', 'in', self.ids),
             //         ('state', 'not in', ['draft', 'cancel']),
-            //     ])._apply_lead_generation_rules()
+            //     ])._apply_lead_generation_rules(event_lead_rules)
             //     if leads:
             //         notification = _("Yee-ha, %(leads_count)s Leads have been created!", leads_count=len(leads))
             //     else:
             //         notification = _("Aww! No Leads created, check your Lead Generation Rules and try again.")
             // else:
-            //     self.env['event.lead.request'].sudo().create({'event_id': self.id})
+            //     self.env['event.lead.request'].sudo().create([{
+            //         'event_id': event.id,
+            //         'event_lead_rule_ids': event_lead_rules,
+            //     } for event in self])
             //     self.env.ref('event_crm.ir_cron_generate_leads')._trigger()
             //     notification = _("Got it! We've noted your request. Your leads will be created soon!")
             // 
@@ -210,8 +234,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if partner:
             //     if self._action_add_members(partner):
             //         self.activity_search(
-            //             ['website_slides.mail_activity_data_access_request'],
-            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //             ['mail.mail_activity_data_todo'],
+            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)],
+            //             only_automated=False,
             //         ).action_feedback(feedback=_('Access Granted'))
             */
             return default;
@@ -236,7 +261,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
             // def action_invite_contacts(self):
             // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_invite_contacts()
+            // action = super().action_invite_contacts()
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
             */
@@ -263,7 +288,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
             // def action_mass_mailing_attendees(self):
             // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_mass_mailing_attendees()
+            // action = super().action_mass_mailing_attendees()
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
             */
@@ -291,9 +316,43 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track_sms, FILE: event.py) ---
             // def action_mass_mailing_track_speakers(self):
             // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_mass_mailing_track_speakers()
+            // action = super().action_mass_mailing_track_speakers()
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenSlotCalendarAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def action_open_slot_calendar(self):
+            // self.ensure_one()
+            // now = datetime.now().astimezone(pytz.timezone(self.env.user.tz or 'UTC'))
+            // next_hour = now + timedelta(hours=1)
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Slots'),
+            //     'view_mode': 'calendar,list,form',
+            //     'mobile_view_mode': 'list',
+            //     'res_model': 'event.slot',
+            //     'target': 'current',
+            //     'domain': [('event_id', '=', self.id)],
+            //     'context': {
+            //         'default_event_id': self.id,
+            //         # Default hours for the list view and mobile quick create.
+            //         # Desktop calendar multi create using defaults in local storage
+            //         # (= the last selected time range or fallback on 12PM-1PM).
+            //         'default_start_hour': next_hour.hour,
+            //         'default_end_hour': (next_hour + timedelta(hours=1)).hour,
+            //         # To disable calendar days outside of event date range.
+            //         'event_calendar_range_start_date': self.date_begin.astimezone(pytz.timezone(self.date_tz)).date(),
+            //         'event_calendar_range_end_date': self.date_end.astimezone(pytz.timezone(self.date_tz)).date(),
+            //         # Calendar view initial date.
+            //         'initial_date': min(max(datetime.now(), self.date_begin), self.date_end),
+            //     },
+            // }
             */
             return default;
         }
@@ -372,8 +431,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // partner = self.env['res.partner'].browse(partner_id).exists()
             // if partner:
             //     self.activity_search(
-            //         ['website_slides.mail_activity_data_access_request'],
-            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //         ['mail.mail_activity_data_todo'],
+            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)],
+            //         only_automated=False,
             //     ).action_feedback(feedback=_('Access Refused'))
             */
             return default;
@@ -409,14 +469,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _action_request_access(self, partner):
             // activities = self.env['mail.activity']
             // requested_cids = self.sudo().activity_search(
-            //     ['website_slides.mail_activity_data_access_request'],
-            //     additional_domain=[('request_partner_id', '=', partner.id)]
+            //     ['mail.mail_activity_data_todo'],
+            //     additional_domain=[('request_partner_id', '=', partner.id)],
             // ).mapped('res_id')
             // for channel in self:
             //     if channel.id not in requested_cids and channel.user_id:
             //         activities += channel.activity_schedule(
-            //             'website_slides.mail_activity_data_access_request',
+            //             'mail.mail_activity_data_todo',
             //             note=_('<b>%s</b> is requesting access to this course.', partner.name),
+            //             summary=_('Access Request'),
             //             user_id=channel.user_id.id,
             //             request_partner_id=partner.id
             //         )
@@ -442,15 +503,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionUnarchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_unarchive(self):
+            // """ Unarchiving a channel does it on its slides, too.
+            // 
+            // We want to archive the channel LAST.
+            // So that when it recomputes stats for the channel and completion, it correctly
+            // counts the slides_total by counting slides that are already un-archived.
+            // """
+            // to_activate = self.filtered(lambda channel: not channel.active)
+            // to_activate.with_context(active_test=False).slide_ids.action_unarchive()
+            // return super(SlideChannel, to_activate).action_unarchive()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionViewLinkedOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_event.py) ---
             // def action_view_linked_orders(self):
-            // """ Redirects to the orders linked to the current events """
+            // """ Redirects to only the confirmed orders linked to the current events """
             // sale_order_action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
             // sale_order_action.update({
-            //     'domain': [('state', '!=', 'cancel'), ('order_line.event_id', 'in', self.ids)],
+            //     'domain': [('state', '=', 'sale'), ('order_line.event_id', 'in', self.ids)],
             //     'context': {'create': 0},
             // })
             // return sale_order_action
@@ -465,7 +544,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def action_view_ratings(self):
             // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
             // action['name'] = _('Rating of %s', self.name)
-            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
+            // action['domain'] = Domain.AND([ast.literal_eval(action.get('domain', '[]')), Domain('res_id', 'in', self.ids)])
             // return action
             */
             return default;
@@ -493,7 +572,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _add_groups_members(self):
             // for channel in self:
-            //     channel._action_add_members(channel.mapped('enroll_group_ids.users.partner_id'))
+            //     channel._action_add_members(channel.mapped('enroll_group_ids.all_user_ids.partner_id'))
             */
             return default;
         }
@@ -518,10 +597,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ORDER BY
             //         count(*) DESC
             // """
-            // self._cr.execute(req, [tuple(self.ids)])
+            // self.env.cr.execute(req, [tuple(self.ids)])
             // tag_by_blog = {i.id: [] for i in self}
             // all_tags = set()
-            // for blog_id, freq, tag_id in self._cr.fetchall():
+            // for blog_id, freq, tag_id in self.env.cr.fetchall():
             //     if freq >= min_limit:
             //         if join:
             //             all_tags.add(tag_id)
@@ -539,6 +618,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> AllowPublishRatingStatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _allow_publish_rating_stats(self):
+            // return True
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckClosingDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -547,6 +636,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for event in self:
             //     if event.date_end < event.date_begin:
             //         raise ValidationError(_('The closing date cannot be earlier than the beginning date.'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckEventUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _check_event_url(self):
+            // for event in self.filtered('event_url'):
+            //     url = urlparse(event.event_url)
+            //     if not (url.scheme and url.netloc):
+            //         raise ValidationError(_('Please enter a valid event URL.'))
             */
             return default;
         }
@@ -570,22 +672,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckSeatsAvailabilityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object minimal_availability) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> CheckSlotsDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _check_seats_availability(self, minimal_availability=0):
-            // sold_out_events = []
-            // for event in self:
-            //     if event.seats_limited and event.seats_max and event.seats_available < minimal_availability:
-            //         sold_out_events.append(_(
-            //             '- "%(event_name)s": Missing %(nb_too_many)i seats.',
-            //             event_name=event.name,
-            //             nb_too_many=minimal_availability - event.seats_available,
-            //         ))
-            // if sold_out_events:
-            //     raise ValidationError(_('There are not enough seats available for:')
-            //                           + '\n%s\n' % '\n'.join(sold_out_events))
+            // def _check_slots_dates(self):
+            // multi_slots_event_ids = self.filtered(lambda event: event.is_multi_slots).ids
+            // if not multi_slots_event_ids:
+            //     return
+            // min_max_slot_dates_per_event = {
+            //     event: (min_start, max_end)
+            //     for event, min_start, max_end in self.env['event.slot']._read_group(
+            //         domain=[('event_id', 'in', multi_slots_event_ids)],
+            //         groupby=['event_id'],
+            //         aggregates=['start_datetime:min', 'end_datetime:max']
+            //     )
+            // }
+            // events_w_slots_outside_bounds = []
+            // for event, (min_start, max_end) in min_max_slot_dates_per_event.items():
+            //     if (not (event.date_begin <= min_start <= event.date_end) or
+            //         not (event.date_begin <= max_end <= event.date_end)):
+            //         events_w_slots_outside_bounds.append(event)
+            // if events_w_slots_outside_bounds:
+            //     raise ValidationError(_(
+            //         "These events cannot have slots scheduled outside of their time range:\n%(event_names)s",
+            //         event_names="\n".join(f"- {event.name}" for event in events_w_slots_outside_bounds)
+            //     ))
             */
             return default;
         }
@@ -650,6 +762,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeAllowCommentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_allow_comment(self):
+            // """Comment allowed by default except for documentation channels."""
+            // for record in self:
+            //     record.allow_comment = record.channel_type != 'documentation'
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeBlogPostCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -705,8 +829,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.user_id == self.env.user:
             //         record.can_upload = True
-            //     elif record.upload_group_ids:
-            //         record.can_upload = bool(record.upload_group_ids & self.env.user.groups_id)
+            //     elif record.sudo().upload_group_ids:
+            //         record.can_upload = bool(record.sudo().upload_group_ids & self.env.user.group_ids)
             //     else:
             //         record.can_upload = self.env.user.has_group('website_slides.group_website_slides_manager')
             */
@@ -734,36 +858,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // (meet or track_quiz). """
             // for event in self:
             //     event.community_menu = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeDateBeginTzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _compute_date_begin_tz(self):
-            // for event in self:
-            //     if event.date_begin:
-            //         event.date_begin_located = format_datetime(
-            //             self.env, event.date_begin, tz=event.date_tz, dt_format='medium')
-            //     else:
-            //         event.date_begin_located = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeDateEndTzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _compute_date_end_tz(self):
-            // for event in self:
-            //     if event.date_end:
-            //         event.date_end_located = format_datetime(
-            //             self.env, event.date_end, tz=event.date_tz, dt_format='medium')
-            //     else:
-            //         event.date_end_located = False
             */
             return default;
         }
@@ -937,7 +1031,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _compute_event_register_url(self):
             // for event in self:
-            //     event.event_register_url = werkzeug.urls.url_join(event.get_base_url(), f"{event.website_url}/register")
+            //     event.event_register_url = tools.urls.urljoin(event.get_base_url(), f"{event.website_url}/register")
             */
             return default;
         }
@@ -949,6 +1043,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_event_registrations_open(self):
             // """ Compute whether people may take registrations for this event
             // 
+            //   * for cancelled events, registrations are not open;
             //   * event.date_end -> if event is done, registrations are not open anymore;
             //   * event.start_sale_datetime -> lowest start date of tickets (if any; start_sale_datetime
             //     is False if no ticket are defined, see _compute_start_sale_date);
@@ -959,10 +1054,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     event = event._set_tz_context()
             //     current_datetime = fields.Datetime.context_timestamp(event, fields.Datetime.now())
             //     date_end_tz = event.date_end.astimezone(pytz.timezone(event.date_tz or 'UTC')) if event.date_end else False
-            //     event.event_registrations_open = event.event_registrations_started and \
+            //     event.event_registrations_open = event.kanban_state != 'cancel' and \
+            //         event.event_registrations_started and \
             //         (date_end_tz >= current_datetime if date_end_tz else True) and \
             //         (not event.seats_limited or not event.seats_max or event.seats_available) and \
-            //         (not event.event_ticket_ids or any(ticket.sale_available for ticket in event.event_ticket_ids))
+            //         (
+            //             # Not multi slots: open if no tickets or at least a sale available ticket
+            //             (not event.is_multi_slots and
+            //                 (not event.event_ticket_ids or any(ticket.sale_available for ticket in event.event_ticket_ids)))
+            //             or
+            //             # Multi slots: open if at least a slot and no tickets or at least an ongoing ticket with availability
+            //             (event.is_multi_slots and event.event_slot_count and (
+            //                 not event.event_ticket_ids or any(
+            //                     ticket.is_launched and not ticket.is_expired and (
+            //                         any(availability is None or availability > 0
+            //                             for availability in event._get_seats_availability([
+            //                                 (slot, ticket)
+            //                                 for slot in event.event_slot_ids
+            //                             ])
+            //                         )
+            //                     ) for ticket in event.event_ticket_ids
+            //                 )
+            //             ))
+            //         )
             */
             return default;
         }
@@ -977,11 +1091,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // E.g. max 20 seats for ticket A, 20 seats for ticket B
             //     * With max 20 seats for the event
             //     * Without limit set on the event (=40, but the customer didn't explicitly write 40)
+            // When the event is multi slots, instead of checking if every tickets is sold out,
+            // checking if every slot-ticket combination is sold out.
             // """
             // for event in self:
             //     event.event_registrations_sold_out = (
-            //         (event.seats_limited and event.seats_max and not event.seats_available)
-            //         or (event.event_ticket_ids and all(ticket.is_sold_out for ticket in event.event_ticket_ids))
+            //         (event.seats_limited and event.seats_max and not event.seats_available > 0)
+            //         or (event.event_ticket_ids and (
+            //             not any(availability is None or availability > 0
+            //                 for availability in event._get_seats_availability([
+            //                     (slot, ticket)
+            //                     for slot in event.event_slot_ids
+            //                     for ticket in event.event_ticket_ids
+            //                 ])
+            //             )
+            //             if event.is_multi_slots else
+            //             all(ticket.is_sold_out for ticket in event.event_ticket_ids)
+            //         ))
             //     )
             */
             return default;
@@ -1000,6 +1126,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         event.event_registrations_started = (current_datetime >= start_sale_datetime)
             //     else:
             //         event.event_registrations_started = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeEventShareUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            // def _compute_event_share_url(self):
+            // """Fall back on the website_url to share the event."""
+            // for event in self:
+            //     event.event_share_url = event.event_url or tools.urls.urljoin(event.get_base_url(), event.website_url)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeEventSlotCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _compute_event_slot_count(self):
+            // slot_count_per_event = dict(self.env['event.slot']._read_group(
+            //     domain=[('event_id', 'in', self.ids)],
+            //     groupby=['event_id'],
+            //     aggregates=['__count']
+            // ))
+            // for event in self:
+            //     event.event_slot_count = slot_count_per_event.get(event, 0)
             */
             return default;
         }
@@ -1042,6 +1196,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeEventUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _compute_event_url(self):
+            // """Reset url field as it should only be used for events with no physical location."""
+            // self.filtered('address_id').event_url = ''
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeExhibitorMenuInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -1074,30 +1239,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeHasLeadRequestInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_event.py) ---
-            // def _compute_has_lead_request(self):
-            // lead_requests_data = self.env['event.lead.request']._read_group(
-            //     [('event_id', 'in', self.ids)],
-            //     ['event_id'], ['__count'],
-            // )
-            // mapped_data = {event.id: count for event, count in lead_requests_data}
-            // for event in self:
-            //     event.has_lead_request = mapped_data.get(event.id, 0) != 0
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeHasRequestedAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_has_requested_access(self):
             // requested_cids = self.sudo().activity_search(
-            //     ['website_slides.mail_activity_data_access_request'],
-            //     additional_domain=[('request_partner_id', '=', self.env.user.partner_id.id)]
+            //     ['mail.mail_activity_data_todo'],
+            //     additional_domain=[('request_partner_id', '=', self.env.user.partner_id.id)],
+            //     only_automated=False,
             // ).mapped('res_id')
             // for channel in self:
             //     channel.has_requested_access = channel.id in requested_cids
@@ -1146,6 +1296,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeIsVisibleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_is_visible(self):
+            // for channel in self:
+            //     channel.is_visible = (
+            //         channel.visibility == 'public'
+            //         or channel.is_member
+            //         or (not self.env.user._is_public() and channel.visibility == 'connected')
+            //     )
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeIsVisibleOnWebsiteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -1165,18 +1330,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeKanbanStateLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> ComputeKanbanStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _compute_kanban_state_label(self):
-            // for event in self:
-            //     if event.kanban_state == 'normal':
-            //         event.kanban_state_label = event.stage_id.legend_normal
-            //     elif event.kanban_state == 'blocked':
-            //         event.kanban_state_label = event.stage_id.legend_blocked
-            //     else:
-            //         event.kanban_state_label = event.stage_id.legend_done
+            // def _compute_kanban_state(self):
+            // for task in self:
+            //     if task.kanban_state != 'cancel':
+            //         task.kanban_state = 'normal'
             */
             return default;
         }
@@ -1193,44 +1354,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // mapped_data = {event.id: count for event, count in lead_data}
             // for event in self:
             //     event.lead_count = mapped_data.get(event.id, 0)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeMeetingRoomAllowCreationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_meet, FILE: event_event.py) ---
-            // def _compute_meeting_room_allow_creation(self):
-            // for event in self:
-            //     if event.event_type_id and event.event_type_id != event._origin.event_type_id:
-            //         event.meeting_room_allow_creation = event.event_type_id.meeting_room_allow_creation
-            //     elif event.community_menu and event.community_menu != event._origin.community_menu:
-            //         event.meeting_room_allow_creation = True
-            //     elif not event.community_menu or not event.meeting_room_allow_creation:
-            //         event.meeting_room_allow_creation = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeMeetingRoomCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_event_meet, FILE: event_event.py) ---
-            // def _compute_meeting_room_count(self):
-            // meeting_room_count = self.env["event.meeting.room"].sudo()._read_group(
-            //     domain=[("event_id", "in", self.ids)],
-            //     groupby=['event_id'],
-            //     aggregates=['__count'],
-            // )
-            // 
-            // meeting_room_count = {
-            //     event.id: count
-            //     for event, count in meeting_room_count
-            // }
-            // 
-            // for event in self:
-            //     event.meeting_room_count = meeting_room_count.get(event.id, 0)
             */
             return default;
         }
@@ -1378,18 +1501,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // When synchronizing questions:
             // 
-            //   * lines with no registered answers are removed;
+            //   * lines with no registered answers for the event are removed;
             //   * type lines are added;
             // """
-            // if self._origin.question_ids:
-            //     # lines to keep: those with already given answers
-            //     questions_tokeep_ids = self.env['event.registration.answer'].search(
-            //         [('question_id', 'in', self._origin.question_ids.ids)]
-            //     ).question_id.ids
-            // else:
-            //     questions_tokeep_ids = []
             // for event in self:
-            //     if not event.event_type_id and not event.question_ids:
+            //     questions_tokeep_ids = []
+            //     if self._origin.question_ids:
+            //         # Keep questions with attendee answers for the event.
+            //         questions_tokeep_ids.extend(
+            //             (event.registration_ids.registration_answer_ids.question_id & self._origin.question_ids).ids
+            //         )
+            // 
+            //     if not event.event_type_id and not questions_tokeep_ids:
             //         event.question_ids = self._default_question_ids()
             //         continue
             // 
@@ -1400,11 +1523,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         command = [(5, 0)]
             //     event.question_ids = command
-            // 
-            //     # copy questions so changes in the event don't affect the event type
-            //     event.question_ids += event.event_type_id.question_ids.copy({
-            //         'event_type_id': False,
-            //     })
+            //     event.question_ids = [Command.link(question_id.id) for question_id in event.event_type_id.question_ids]
             */
             return default;
         }
@@ -1414,19 +1533,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_rating_stats(self):
-            // super(Channel, self)._compute_rating_stats()
+            // super()._compute_rating_stats()
             // for record in self:
             //     record.rating_avg_stars = record.rating_avg
             */
             return default;
         }
 
-        public async Task<TEntity> ComputeSalePriceSubtotalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> ComputeSalePriceTotalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_event.py) ---
-            // def _compute_sale_price_subtotal(self):
-            // """ Takes all the sale.order.lines related to this event and converts amounts
+            // def _compute_sale_price_total(self):
+            // """ Takes only confirmed the sale.order.lines related to this event and converts amounts
             // from the currency of the sale order to the currency of the event company.
             // 
             // To avoid extra overhead, we use conversion rates as of 'today'.
@@ -1436,21 +1555,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // we sell a single event ticket). """
             // date_now = fields.Datetime.now()
             // event_subtotals = self.env['sale.order.line']._read_group(
-            //     [('event_id', 'in', self.ids), ('price_subtotal', '!=', 0), ('state', '!=', 'cancel')],
+            //     [('event_id', 'in', self.ids), ('price_total', '!=', 0), ('state', '=', 'sale')],
             //     ['event_id', 'currency_id'],
-            //     ['price_subtotal:sum'],
+            //     ['price_total:sum'],
             // )
             // event_subtotals_mapping = dict.fromkeys(self._origin, 0)
-            // for event, currency, sum_price_subtotal in event_subtotals:
+            // for event, currency, sum_price_total in event_subtotals:
             //     event_subtotals_mapping[event] += event.currency_id._convert(
-            //         sum_price_subtotal,
+            //         sum_price_total,
             //         currency,
             //         event.company_id or self.env.company,
             //         date_now,
             //     )
             // 
             // for event in self:
-            //     event.sale_price_subtotal = event_subtotals_mapping.get(event._origin, 0)
+            //     event.sale_price_total = event_subtotals_mapping.get(event._origin, 0)
             */
             return default;
         }
@@ -1478,16 +1597,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 GROUP BY event_id, state
             //             """
             //     self.env['event.registration'].flush_model(['event_id', 'state', 'active'])
-            //     self._cr.execute(query, (tuple(self.ids),))
-            //     res = self._cr.fetchall()
+            //     self.env.cr.execute(query, (tuple(self.ids),))
+            //     res = self.env.cr.fetchall()
             //     for event_id, state, num in res:
             //         results[event_id][state_field[state]] = num
             // 
             // # compute seats_available and expected
             // for event in self:
             //     event.update(results.get(event._origin.id or event.id, base_vals))
-            //     if event.seats_max > 0:
-            //         event.seats_available = event.seats_max - (event.seats_reserved + event.seats_used)
+            //     seats_max = event.seats_max * event.event_slot_count if event.is_multi_slots else event.seats_max
+            //     if seats_max > 0:
+            //         event.seats_available = seats_max - (event.seats_reserved + event.seats_used)
             // 
             //     event.seats_taken = event.seats_reserved + event.seats_used
             */
@@ -1718,6 +1838,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeWebsiteAbsoluteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _compute_website_absolute_url(self):
+            // super()._compute_website_absolute_url()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeWebsiteDefaultBackgroundImageUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -1738,7 +1868,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // at will afterwards. """
             // for event in self:
             //     event.introduction_menu = event.website_menu
-            //     event.location_menu = event.website_menu
             //     event.register_menu = event.website_menu
             */
             return default;
@@ -1805,17 +1934,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         blog_post.website_url = "/blog/%s/%s" % (self.env['ir.http']._slug(blog_post.blog_id), self.env['ir.http']._slug(blog_post))
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _compute_website_url(self):
-            // super(Event, self)._compute_website_url()
+            // super()._compute_website_url()
             // for event in self:
             //     if event.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
             //         event.website_url = '/event/%s' % self.env['ir.http']._slug(event)
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _compute_website_url(self):
-            // super(Channel, self)._compute_website_url()
+            // super()._compute_website_url()
             // for channel in self:
             //     if channel.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
-            //         base_url = channel.get_base_url()
-            //         channel.website_url = '%s/slides/%s' % (base_url, self.env['ir.http']._slug(channel))
+            //         channel.website_url = f"/slides/{self.env['ir.http']._slug(channel)}"
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            // def copy(self, default=None):
+            // res = super().copy(default=default)
+            // res.copy_event_menus(self)
+            // return res
             */
             return default;
         }
@@ -1837,6 +1977,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if 'enroll' not in default and channel.visibility == "members":
             //         vals['enroll'] = 'invite'
             // return vals_list
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CopyEventMenusAsync<TEntity>(IEnumerable<TEntity> entities, object old_events) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            // def copy_event_menus(self, old_events):
+            // for new_event, old_event in zip(self, old_events):
+            //     default_menu_values = {'event_id': new_event.id}
+            //     new_event.menu_id = old_event.menu_id.copy({'name': new_event.name, 'website_id': new_event.website_id.id})
+            //     new_event.introduction_menu_ids = old_event.introduction_menu_ids.copy(default_menu_values)
+            //     new_event.other_menu_ids = old_event.other_menu_ids.copy(default_menu_values)
+            //     (new_event.introduction_menu_ids + new_event.other_menu_ids + new_event.community_menu_ids + new_event.register_menu_ids).menu_id.parent_id = new_event.menu_id
             */
             return default;
         }
@@ -1866,7 +2021,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not is_html_empty(vals.get('description')) and is_html_empty(vals.get('description_short')):
             //         vals['description_short'] = vals['description']
             // 
-            // channels = super(Channel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+            // channels = super(SlideChannel, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
             // 
             // for channel in channels:
             //     if channel.user_id:
@@ -1879,11 +2034,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateMenuInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sequence, object name, object url, Guid xml_id, object menu_type) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> CreateMenuInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sequence, object name, object url, Guid xml_id, object menu_type, object parent_menu_type) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
-            // def _create_menu(self, sequence, name, url, xml_id, menu_type):
+            // def _create_menu(self, sequence, name, url, xml_id, menu_type, parent_menu_type=False):
             // """ Create a new menu for the current event.
             // 
             // If url: create a website menu. Menu leads directly to the URL that
@@ -1893,10 +2048,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // xml_id. Take its url back thanks to new_page of website, then link
             // it to a menu. Template is duplicated and linked to a new url, meaning
             // each menu will have its own copy of the template. This is currently
-            // limited to two menus: introduction and location.
+            // limited to one menu: introduction(Home).
             // 
             // :param menu_type: type of menu. Mainly used for inheritance purpose
             //   allowing more fine-grain tuning of menus.
+            // :param parent_menu_type: The type of the parent menu. If specified, the
+            //   menu will be created as a child of the parent menu with the given type.
             // """
             // self.browse().check_access('write')
             // view_id = False
@@ -1910,10 +2067,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     view = self.env["ir.ui.view"].browse(view_id)
             //     url = f"/event/{self.env['ir.http']._slug(self)}/page/{view.key.split('.')[-1]}"  # url contains starting "/"
             // 
+            // parent_id = self.menu_id.id
+            // if parent_menu_type:
+            //     parent_menu = self.env['website.event.menu'].search([
+            //         ('event_id', '=', self.id),
+            //         ('menu_type', '=', parent_menu_type)
+            //     ], limit=1)
+            //     if parent_menu:
+            //         parent_id = parent_menu.menu_id.id
             // website_menu = self.env['website.menu'].sudo().create({
             //     'name': name,
             //     'url': url,
-            //     'parent_id': self.menu_id.id,
+            //     'parent_id': parent_id,
             //     'sequence': sequence,
             //     'website_id': self.website_id.id,
             // })
@@ -1945,7 +2110,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _default_content(self):
             // text = html_escape(_("Start writing here..."))
             // return """
-            //     <p class="o_default_snippet_text">%(text)s</p>
+            //     <p>%(text)s</p>
             // """ % {"text": text}
             */
             return default;
@@ -1979,7 +2144,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // its height is set to fit to content (snippet option to change this also disabled on the view)."""
             // res = super()._default_cover_properties()
             // res.update({
-            //     "background_color_class": "o_cc3",
+            //     "background_color_class": "o_cc4",
             //     'background_color_style': (
             //         'background-color: rgba(0, 0, 0, 0); '
             //         'background-image: linear-gradient(120deg, #875A7B, #78516F);'
@@ -2014,17 +2179,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def default_get(self, fields_list):
-            // result = super().default_get(fields_list)
-            // if 'date_begin' in fields_list and 'date_begin' not in result:
-            //     now = fields.Datetime.now()
+            // def default_get(self, fields):
+            // result = super().default_get(fields)
+            // if 'date_begin' in fields and 'date_begin' not in result:
+            //     now = Datetime.now()
             //     # Round the datetime to the nearest half hour (e.g. 08:17 => 08:30 and 08:37 => 09:00)
             //     result['date_begin'] = now.replace(second=0, microsecond=0) + timedelta(minutes=-now.minute % 30)
-            // if 'date_end' in fields_list and 'date_end' not in result and result.get('date_begin'):
+            // if 'date_end' in fields and 'date_end' not in result and result.get('date_begin'):
             //     result['date_end'] = result['date_begin'] + timedelta(days=1)
             // return result
             */
@@ -2037,6 +2202,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _default_question_ids(self):
             // return self.env['event.type']._default_question_ids()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> DefaultSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
+            // def _default_sequence(self):
+            // return (self.search([], order="sequence desc", limit=1).sequence or 0) + 1
             */
             return default;
         }
@@ -2059,7 +2234,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _default_website_meta(self):
-            // res = super(Event, self)._default_website_meta()
+            // res = super()._default_website_meta()
             // event_cover_properties = json.loads(self.cover_properties)
             // # background-image might contain single quotes eg `url('/my/url')`
             // res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = event_cover_properties.get('background-image', 'none')[4:-1].strip("'")
@@ -2094,38 +2269,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.env.user._is_public() and not current_visitor:
             //     return self.env['event.event']
             // 
-            // base_domain = [('state', 'in', ['open', 'done'])]
+            // base_domain = Domain('state', 'in', ['open', 'done'])
             // if self:
-            //     base_domain = expression.AND([[('event_id', 'in', self.ids)], base_domain])
+            //     base_domain = Domain('event_id', 'in', self.ids) & base_domain
             // 
-            // visitor_domain = []
+            // visitor_domain = Domain.TRUE
             // partner_id = self.env.user.partner_id
             // if current_visitor:
-            //     visitor_domain = [('visitor_id', '=', current_visitor.id)]
+            //     visitor_domain = Domain('visitor_id', '=', current_visitor.id)
             //     partner_id = current_visitor.partner_id
             // if partner_id:
-            //     visitor_domain = expression.OR([visitor_domain, [('partner_id', '=', partner_id.id)]])
+            //     visitor_domain |= Domain('partner_id', '=', partner_id.id)
             // 
             // registrations_events = self.env['event.registration'].sudo()._read_group(
-            //     expression.AND([visitor_domain, base_domain]),
+            //     visitor_domain & base_domain,
             //     ['event_id'], ['__count'])
             // return self.env['event.event'].browse([event.id for event, _reg_count in registrations_events])
             */
             return default;
         }
 
-        public async Task<TEntity> FilterAddMembersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_partners, object raise_on_access) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> FilterAddMembersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object raise_on_access) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def _filter_add_members(self, target_partners, raise_on_access=False):
+            // def _filter_add_members(self, raise_on_access=False):
             // allowed = self.filtered(lambda channel: channel.enroll == 'public')
-            // on_invite = self.filtered(lambda channel: channel.enroll == 'invite')
-            // if on_invite:
-            //     if on_invite.has_access('write'):
-            //         allowed |= on_invite
-            //     elif raise_on_access:
-            //         raise AccessError(_('You are not allowed to add members to this course. Please contact the course responsible or an administrator.'))
+            // if controlled_access := (self - allowed):
+            //     allowed += controlled_access._filtered_access('write')
+            //     if raise_on_access and allowed != self:
+            //         raise AccessError(_('You are not allowed to add members to this course. '
+            //                             'Please contact the course responsible or an administrator.'))
             // return allowed
             */
             return default;
@@ -2165,6 +2339,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'target_type': 'public',
             //     'res_id': self.id,
             // }
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _get_access_action(self, access_uid=None, force_website=False):
+            // """ Instead of the classic form view, redirect to website if it is published. """
+            // self.ensure_one()
+            // if force_website or self.website_published:
+            //     return {
+            //         "type": "ir.actions.act_url",
+            //         "url": self.website_url,
+            //         "target": "self",
+            //         "target_type": "public",
+            //     }
+            // return super()._get_access_action(access_uid=access_uid, force_website=force_website)
             */
             return default;
         }
@@ -2287,14 +2473,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDateRangeStrInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lang_code) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> GetDateRangeStrInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start_datetime, object lang_code) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_date_range_str(self, lang_code=False):
+            // def _get_date_range_str(self, start_datetime=False, lang_code=False):
             // self.ensure_one()
+            // datetime = start_datetime or self.date_begin
             // today_tz = pytz.utc.localize(fields.Datetime.now()).astimezone(pytz.timezone(self.date_tz))
-            // event_date_tz = pytz.utc.localize(self.date_begin).astimezone(pytz.timezone(self.date_tz))
+            // event_date_tz = pytz.utc.localize(datetime).astimezone(pytz.timezone(self.date_tz))
             // diff = (event_date_tz.date() - today_tz.date())
             // if diff.days <= 0:
             //     return _('today')
@@ -2306,7 +2493,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return _('next week')
             // if event_date_tz.month == (today_tz + relativedelta(months=+1)).month:
             //     return _('next month')
-            // return _('on %(date)s', date=format_date(self.env, self.date_begin, lang_code=lang_code, date_format='medium'))
+            // return _('on %(date)s', date=format_date(self.env, datetime, lang_code=lang_code, date_format='medium'))
             */
             return default;
         }
@@ -2381,31 +2568,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetEventPrintDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_event_print_details(self):
-            // self.ensure_one()
-            // return {
-            //     'name': self.name,
-            //     'badge_image': self.badge_image,
-            //     'timeframe': self._get_event_timeframe_string(),
-            //     'address': self.address_id.name if self.address_id else None,
-            //     'logo': self.company_id.logo,
-            //     'sponsor_text': self._get_printing_sponsor_text()
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetEventResourceUrlsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> GetEventResourceUrlsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object slot) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
-            // def _get_event_resource_urls(self):
-            // url_date_start = self.date_begin.astimezone(timezone(self.date_tz)).strftime('%Y%m%dT%H%M%S')
-            // url_date_stop = self.date_end.astimezone(timezone(self.date_tz)).strftime('%Y%m%dT%H%M%S')
+            // def _get_event_resource_urls(self, slot=False):
+            // """ Prepare the Google and iCal urls for the event.
+            // :param slot: If a slot is given, prepare the urls for the given slot.
+            // Returns:
+            //     The google and iCal url in a dictionnary
+            // """
+            // start = slot.start_datetime if slot else self.date_begin
+            // end = slot.end_datetime if slot else self.date_end
+            // url_date_start = start.astimezone(timezone(self.date_tz)).strftime('%Y%m%dT%H%M%S')
+            // url_date_stop = end.astimezone(timezone(self.date_tz)).strftime('%Y%m%dT%H%M%S')
             // params = {
             //     'action': 'TEMPLATE',
             //     'text': self.name,
@@ -2417,24 +2593,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     params.update(location=self.address_inline)
             // encoded_params = werkzeug.urls.url_encode(params)
             // google_url = GOOGLE_CALENDAR_URL + encoded_params
-            // iCal_url = f'/event/{self.id:d}/ics?{encoded_params}'
+            // iCal_url = f'/event/{self.id:d}/ics'
+            // if slot:
+            //     iCal_url += '?' + werkzeug.urls.url_encode({'slot_id': slot.id})
             // return {'google_url': google_url, 'iCal_url': iCal_url}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetEventTimeframeStringInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_event_timeframe_string(self):
-            // self.ensure_one()
-            // start_datetime = format_datetime(self.env, self.date_begin, self.date_tz, "short")
-            // if self.is_one_day:
-            //     end_datetime = format_time(self.env, self.date_end, self.date_tz, "short")
-            // else:
-            //     end_datetime = format_datetime(self.env, self.date_end, self.date_tz, "short")
-            // return _("%(start_date)s to %(end_date)s", start_date=start_datetime, end_date=end_datetime)
             */
             return default;
         }
@@ -2442,23 +2604,43 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetExternalDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _get_external_description(self):
-            // """ Adding the URL of the event into the description """
+            // """
+            // Description of the event shortened to maximum 1900 characters to
+            // leave some space for addition by sub-modules.
+            // Meant to be used for external content (ics/icalc/Gcal).
+            // 
+            // Reference Docs for URL limit -: https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
+            // """
             // self.ensure_one()
-            // event_url = f'<a href="{self.event_register_url}">{self.name}</a>'
-            // description = event_url + '\n' + super()._get_external_description()
+            // description = ''
+            // if self.event_share_url:
+            //     description = f'<a href="{escape(self.event_share_url)}">{escape(self.name)}</a>\n'
+            // description += textwrap.shorten(html_to_inner_content(self.description), 1900)
             // return description
             */
             return default;
         }
 
-        public async Task<TEntity> GetIcsFileInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> GetExternalDescriptionUrlEncodedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_ics_file(self):
+            // def _get_external_description_url_encoded(self):
+            // """Get a url-encoded version of the description for mail templates."""
+            // return urllib.parse.quote_plus(self._get_external_description())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetIcsFileInternalAsync<TEntity>(IEnumerable<TEntity> entities, object slot) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _get_ics_file(self, slot=False):
             // """ Returns iCalendar file for the event invitation.
+            //     :param slot: If a slot is given, schedule with the given slot datetimes
             //     :returns a dict of .ics file content for each event
             // """
             // result = {}
@@ -2468,10 +2650,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for event in self:
             //     cal = vobject.iCalendar()
             //     cal_event = cal.add('vevent')
+            //     start = slot.start_datetime or event.date_begin
+            //     end = slot.end_datetime or event.date_end
             // 
             //     cal_event.add('created').value = fields.Datetime.now().replace(tzinfo=pytz.timezone('UTC'))
-            //     cal_event.add('dtstart').value = event.date_begin.astimezone(pytz.timezone(event.date_tz))
-            //     cal_event.add('dtend').value = event.date_end.astimezone(pytz.timezone(event.date_tz))
+            //     cal_event.add('dtstart').value = start.astimezone(pytz.timezone(event.date_tz))
+            //     cal_event.add('dtend').value = end.astimezone(pytz.timezone(event.date_tz))
             //     cal_event.add('summary').value = event.name
             //     cal_event.add('description').value = event._get_external_description()
             //     if event.address_id:
@@ -2493,25 +2677,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetMailMessageAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object operation, object model_name) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_mail_message_access(self, res_ids, operation, model_name=None):
-            // if (
-            //     operation == 'create'
-            //     and self.env.user.has_group('event.group_event_registration_desk')
-            //     and (not model_name or model_name == 'event.event')
-            // ):
-            //     # allow the registration desk users to post messages on Event
-            //     # can not be done with "_mail_post_access" otherwise public user will be
-            //     # able to post on published Event (see website_event)
-            //     return 'read'
-            // return super(EventEvent, self)._get_mail_message_access(res_ids, operation, model_name)
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetMenuTypeFieldMatchingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -2520,7 +2685,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return {
             //     'community': 'community_menu',
             //     'introduction': 'introduction_menu',
-            //     'location': 'location_menu',
             //     'register': 'register_menu',
             // }
             */
@@ -2536,9 +2700,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // menu to de-activate. Due to saas-13.3 improvement of menu management
             // this is done using side-methods to ease inheritance.
             // 
-            // :return list: list of fields, each of which triggering a menu update
-            //   like website_menu, website_track, ... """
-            // return ['community_menu', 'introduction_menu', 'location_menu', 'register_menu']
+            // :returns: list of fields, each of which triggering a menu update
+            //   like website_menu, website_track, ...
+            // :rtype: list"""
+            // return ['community_menu', 'introduction_menu', 'register_menu']
             */
             return default;
         }
@@ -2557,7 +2722,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //   is used notably when a direct write to a stored editable field messes with
             //   its pre-computed value, notably in a transient mode (aka demo for example);
             // 
-            // :return dict: key = name of field triggering a website menu update, get {
+            // :returns: key = name of field triggering a website menu update, get {
             //   'activated': subset of self having its menu toggled to True
             //   'deactivated': subset of self having its menu toggled to False
             // } """
@@ -2587,13 +2752,64 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetPrintingSponsorTextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> GetSeatsAvailabilityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object slot_tickets) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _get_printing_sponsor_text(self):
-            // sponsor_text = self.env['ir.config_parameter'].sudo().get_param('event.badge_printing_sponsor_text')
-            // return sponsor_text or "Powered by Odoo"
+            // def _get_seats_availability(self, slot_tickets):
+            // """ Get availabilities for given combinations of slot / ticket. Returns
+            // a list following input order. None denotes no limit. """
+            // self.ensure_one()
+            // if not (all(len(item) == 2 for item in slot_tickets)):
+            //     raise ValueError('Input should be a list of tuples containing slot, ticket')
+            // 
+            // if any(slot for (slot, _ticket) in slot_tickets):
+            //     slot_tickets_nb_registrations = {
+            //         (slot.id, ticket.id): count
+            //         for (slot, ticket, count) in self.env['event.registration'].sudo()._read_group(
+            //             domain=[('event_slot_id', '!=', False), ('event_id', 'in', self.ids),
+            //                     ('state', 'in', ['open', 'done']), ('active', '=', True)],
+            //             groupby=['event_slot_id', 'event_ticket_id'],
+            //             aggregates=['__count']
+            //         )
+            //     }
+            // 
+            // availabilities = []
+            // for slot, ticket in slot_tickets:
+            //     available = None
+            //     # event is constrained: max stands for either each slot, either global (no slots)
+            //     if self.seats_limited and self.seats_max:
+            //         if slot:
+            //             available = slot.seats_available
+            //         else:
+            //             available = self.seats_available
+            //     # ticket is constrained: max standard for either each slot / ticket, either global (no slots)
+            //     if available != 0 and ticket and ticket.seats_max:
+            //         if slot:
+            //             ticket_available = ticket.seats_max - slot_tickets_nb_registrations.get((slot.id, ticket.id), 0)
+            //         else:
+            //             ticket_available = ticket.seats_available
+            //         available = ticket_available if available is None else min(available, ticket_available)
+            //     availabilities.append(available)
+            // return availabilities
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSlotTicketsAvailabilityPosAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> slot_ticket_ids) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            // def get_slot_tickets_availability_pos(self, slot_ticket_ids):
+            // self.ensure_one()
+            // slot_tickets = [
+            //     (
+            //         self.event_slot_ids.filtered(lambda slot: slot.id == slot_id) if slot_id else self.env['event.slot'],
+            //         self.event_ticket_ids.filtered(lambda ticket: ticket.id == ticket_id) if ticket_id else self.env['event.event.ticket']
+            //     )
+            //     for slot_id, ticket_id in slot_ticket_ids
+            // ]
+            // return self._get_seats_availability(slot_tickets)
             */
             return default;
         }
@@ -2628,13 +2844,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //   * menu_type: type of menu entry (used in inheriting modules to ease
             //     menu management; not used in this module in 13.3 due to technical
             //     limitations);
+            //   * parent_menu_type: menu_type of already created menu entry (used for
+            //     making submenu of existing menu entry)
             // """
             // self.ensure_one()
             // return [
-            //     (_('Introduction'), False, 'website_event.template_intro', 1, 'introduction'),
-            //     (_('Location'), False, 'website_event.template_location', 50, 'location'),
-            //     (_('Info'), '/event/%s/register' % self.env['ir.http']._slug(self), False, 100, 'register'),
-            //     (_('Community'), '/event/%s/community' % self.env['ir.http']._slug(self), False, 80, 'community'),
+            //     (_('Home'), False, 'website_event.template_intro', 1, 'introduction', False),
+            //     (_('Practical'), '/event/%s/register' % self.env['ir.http']._slug(self), False, 100, 'register', False),
+            //     (_('Rooms'), '/event/%s/community' % self.env['ir.http']._slug(self), False, 80, 'community', False),
             // ]
             */
             return default;
@@ -2664,6 +2881,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> HasPublishedTrackInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_event.py) ---
+            // def _has_published_track(self):
+            // self.ensure_one()
+            // return bool(self.track_ids.filtered('is_published'))
+            */
+            return default;
+        }
+
         public async Task<TEntity> InitColumnInternalAsync<TEntity>(IEnumerable<TEntity> entities, object column_name) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -2675,7 +2903,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     it for every record.
             // """
             // if column_name != 'access_token':
-            //     super(Channel, self)._init_column(column_name)
+            //     super()._init_column(column_name)
             // else:
             //     query = """
             //         UPDATE %(table_name)s
@@ -2697,35 +2925,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('event_ticket_ids', 'in', [ticket['id'] for ticket in data['event.event.ticket']['data']])]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('event_ticket_ids', 'in', [ticket['id'] for ticket in data['event.event.ticket']])]
             */
             return default;
         }
 
-        public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'seats_available', 'event_ticket_ids', 'registration_ids', 'seats_limited', 'write_date',
-            //         'question_ids', 'general_question_ids', 'specific_question_ids', 'badge_format']
+            //         'question_ids', 'general_question_ids', 'specific_question_ids', 'seats_max',
+            //         'is_multi_slots', 'event_slot_ids']
             */
             return default;
         }
 
-        public async Task<TEntity> MailAttendeesAsync<TEntity>(IEnumerable<TEntity> entities, Guid template_id, object force_send, object filter_func) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> MailGetOperationForMailMessageOperationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message_operation) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def mail_attendees(self, template_id, force_send=False, filter_func=lambda self: self.state not in ('cancel', 'draft')):
-            // for event in self:
-            //     for attendee in event.registration_ids.filtered(filter_func):
-            //         self.env['mail.template'].browse(template_id).send_mail(attendee.id, force_send=force_send)
+            // def _mail_get_operation_for_mail_message_operation(self, message_operation):
+            // if (message_operation == 'create' and self.env.user.has_group('event.group_event_registration_desk')):
+            //     # allow the registration desk users to post messages on Event
+            //     # can not be done with "_mail_post_access" otherwise public user will be
+            //     # able to post on published Event (see website_event)
+            //     return dict.fromkeys(self, 'read')
+            // return super()._mail_get_operation_for_mail_message_operation(message_operation)
             */
             return default;
         }
@@ -2753,7 +2985,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     parent_message = self.env['mail.message'].sudo().browse(parent_id)
             //     if parent_message.subtype_id and parent_message.subtype_id == self.env.ref('website_blog.mt_blog_blog_published'):
             //         subtype_id = self.env.ref('mail.mt_note').id
-            // return super(Blog, self).message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
+            // return super().message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def message_post(self, *, parent_id=False, subtype_id=False, **kwargs):
             // """ Temporary workaround to avoid spam. If someone replies on a channel
@@ -2776,6 +3008,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ("author_id", "=", message.author_id.id),
             //         ("model", "=", "slide.channel"),
             //         ("subtype_id", "=", self.env.ref("mail.mt_comment").id),
+            //         ("rating_ids", "!=", False),
             //     ]
             //     if self.env["mail.message"].search_count(domain, limit=2) > 1:
             //         raise ValidationError(_("Only a single review can be posted per course."))
@@ -2809,8 +3042,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Add access button to everyone if the document is published. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -2832,11 +3064,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
             // def _notify_thread_by_inbox(self, message, recipients_data, msg_vals=False, **kwargs):
-            // """ Override to avoid keeping all notified recipients of a comment.
-            // We avoid tracking needaction on post comments. Only emails should be
-            // sufficient. """
-            // if msg_vals is None:
-            //     msg_vals = {}
+            // # Override to avoid keeping all notified recipients of a comment.
+            // # We avoid tracking needaction on post comments. Only emails should be
+            // # sufficient.
+            // msg_vals = msg_vals or {}
             // if msg_vals.get('message_type', message.message_type) == 'comment':
             //     return
             // return super(BlogPost, self)._notify_thread_by_inbox(message, recipients_data, msg_vals=msg_vals, **kwargs)
@@ -2844,15 +3075,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenWebsiteUrlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        public async Task<TEntity> OnchangeEventUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def open_website_url(self):
-            // """ Overridden to use a relative URL instead of an absolute when website_id is False. """
-            // if self.website_id:
-            //     return super().open_website_url()
-            // return self.env['website'].get_client_action(f'/slides/{self.env["ir.http"]._slug(self)}')
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _onchange_event_url(self):
+            // """Correct the url by adding scheme if it is missing."""
+            // for event in self.filtered('event_url'):
+            //     parsed_url = urlparse(event.event_url)
+            //     if parsed_url.scheme not in ('http', 'https'):
+            //         event.event_url = 'https://' + event.event_url
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeSeatsMaxInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _onchange_seats_max(self):
+            // for event in self:
+            //     if event.seats_limited and event.seats_max and event.seats_available <= 0 and \
+            //         (event.event_slot_ids if event.is_multi_slots else True):
+            //         return {
+            //             'warning': {
+            //                 'title': _("Update the limit of registrations?"),
+            //                 'message': _("There are more registrations than this limit, "
+            //                             "the event will be sold out and the extra registrations will remain."),
+            //             }
+            //         }
             */
             return default;
         }
@@ -2863,8 +3114,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _rating_domain(self):
             // """ Only take the published rating into account to compute avg and count """
-            // domain = super(Channel, self)._rating_domain()
-            // return expression.AND([domain, [('is_internal', '=', False)]])
+            // return super()._rating_domain() & Domain('is_internal', '=', False)
             */
             return default;
         }
@@ -2880,11 +3130,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not partner_ids:
             //     raise ValueError("Do not use this method with an empty partner_id recordset")
             // 
-            // removed_channel_partner_domain = expression.OR([
-            //     [('partner_id', 'in', partner_ids),
-            //      ('channel_id', '=', channel.id)]
+            // removed_channel_partner_domain = Domain.OR(
+            //     Domain('partner_id', 'in', partner_ids)
+            //     & Domain('channel_id', '=', channel.id)
             //     for channel in self
-            // ])
+            // )
             // 
             // self.message_unsubscribe(partner_ids=partner_ids)
             // if self:
@@ -2930,18 +3180,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _search_address_search(self, operator, value):
-            // if operator != 'ilike' or not isinstance(value, str):
-            //     raise NotImplementedError(_('Operation not supported.'))
-            // 
-            // return expression.OR([
-            //     [('address_id.name', 'ilike', value)],
-            //     [('address_id.street', 'ilike', value)],
-            //     [('address_id.street2', 'ilike', value)],
-            //     [('address_id.city', 'ilike', value)],
-            //     [('address_id.zip', 'ilike', value)],
-            //     [('address_id.state_id', 'ilike', value)],
-            //     [('address_id.country_id', 'ilike', value)],
-            // ])
+            // def make_codomain(value):
+            //     return Domain.OR(
+            //         Domain(field, 'ilike', value)
+            //         for field in ('name', 'street', 'street2', 'city', 'zip', 'state_id', 'country_id')
+            //     )
+            // if isinstance(value, Domain):
+            //     domain = value.map_conditions(lambda cond: cond if cond.field_expr != 'display_name' else make_codomain(cond.value))
+            //     return Domain('address_id', operator, domain)
+            // if operator == 'ilike' and isinstance(value, str):
+            //     return Domain('address_id', 'any', make_codomain(value))
+            // # for the trivial "empty" case, there is no empty address
+            // if operator == 'in' and (not value or not any(value)):
+            //     return Domain(False)
+            // return NotImplemented
             */
             return default;
         }
@@ -2951,33 +3203,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _search_build_dates(self):
-            // today = fields.Datetime.today()
-            // 
-            // def sdn(date):
-            //     return fields.Datetime.to_string(date.replace(hour=23, minute=59, second=59))
+            // now = fields.Datetime.now()
+            // # To fetch the remaining events of the user's current day, the end of the user's day must
+            // # be localized and then converted in UTC, as it is the timezone used to record dates and
+            // # times in db.
+            // tz = timezone(self.env.user.tz or self.env.context.get('tz') or 'UTC')
+            // localized_today_begin = tz.localize(fields.Datetime.today())
+            // utc_today_end = localized_today_begin.replace(hour=23, minute=59, second=59).astimezone(utc)
             // 
             // def sd(date):
             //     return fields.Datetime.to_string(date)
             // 
             // def get_month_filter_domain(filter_name, months_delta):
-            //     first_day_of_the_month = today.replace(day=1)
+            //     localized_month_begin = localized_today_begin.replace(day=1)
+            //     utc_months_delta_end = (localized_month_begin + relativedelta(months=months_delta + 1)).astimezone(utc)
             //     filter_string = _('This month') if months_delta == 0 \
-            //         else format_date(self.env, value=today + relativedelta(months=months_delta),
+            //         else format_date(self.env, value=localized_today_begin + relativedelta(months=months_delta),
             //             date_format='LLLL', lang_code=get_lang(self.env).code).capitalize()
             //     return [filter_name, filter_string, [
-            //         ("date_end", ">=", sd(first_day_of_the_month + relativedelta(months=months_delta))),
-            //         ("date_begin", "<", sd(first_day_of_the_month + relativedelta(months=months_delta+1)))],
+            //         ("date_end", ">=", sd(now)),
+            //         ("date_begin", "<", sd(utc_months_delta_end))],
             //         0]
             // 
             // return [
-            //     ['upcoming', _('Upcoming Events'), [("date_end", ">", sd(today))], 0],
+            //     ['scheduled', _('Scheduled Events'), [("date_end", ">=", sd(now))], 0],
             //     ['today', _('Today'), [
-            //         ("date_end", ">", sd(today)),
-            //         ("date_begin", "<", sdn(today))],
+            //         ("date_end", ">", sd(now)),
+            //         ("date_begin", "<", sd(utc_today_end))],
             //         0],
             //     get_month_filter_domain('month', 0),
             //     ['old', _('Past Events'), [
-            //         ("date_end", "<", sd(today))],
+            //         ("date_end", "<", sd(now))],
             //         0],
             //     ['all', _('All Events'), [], 0]
             // ]
@@ -3077,7 +3333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // search_tags = self.env['event.tag']
             // if tags:
             //     try:
-            //         tag_ids = literal_eval(tags)
+            //         tag_ids = list(filter(None, [self.env['ir.http']._unslug(tag)[1] for tag in tags.split(',')])) or literal_eval(tags)
             //     except SyntaxError:
             //         pass
             //     else:
@@ -3105,7 +3361,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if date == date_details[0]:
             //         domain.append(date_details[2])
             //         no_country_domain.append(date_details[2])
-            //         if date_details[0] != 'upcoming':
+            //         if date_details[0] != 'scheduled':
             //             current_date = date_details[1]
             // 
             // search_fields = ['name']
@@ -3151,7 +3407,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // my = options.get('my')
             // search_tags = options.get('tag')
             // slide_category = options.get('slide_category')
-            // domain = [website.website_domain()]
+            // domain = [website.website_domain(), [('is_visible', '=', True)]]
             // if my:
             //     domain.append([('is_member', '=', True)])
             // if search_tags:
@@ -3163,8 +3419,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         tags = ChannelTag
             //     # Group by group_id
             //     # OR inside a group, AND between groups.
-            //     for tags in tags.grouped('group_id').values():
-            //         domain.append([('tag_ids', 'in', tags.ids)])
+            //     for tags_ in tags.grouped('group_id').values():
+            //         domain.append([('tag_ids', 'in', tags_.ids)])
             // if slide_category and 'nbr_%s' % slide_category in self:
             //     domain.append([('nbr_%s' % slide_category, '>', 0)])
             // search_fields = ['name']
@@ -3197,16 +3453,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _search_is_finished(self, operator, value):
-            // if operator not in ['=', '!=']:
-            //     raise ValueError(_('This operator is not supported'))
-            // if not isinstance(value, bool):
-            //     raise ValueError(_('Value should be True or False (not %s)'), value)
-            // now = fields.Datetime.now()
-            // if (operator == '=' and value) or (operator == '!=' and not value):
-            //     domain = [('date_end', '<=', now)]
-            // else:
-            //     domain = [('date_end', '>', now)]
-            // return domain
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('date_end', '<=', fields.Datetime.now())]
             */
             return default;
         }
@@ -3229,10 +3478,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_is_member(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // check_has_access = operator == '=' and value or operator == '!=' and not value
-            // return [('id', 'in' if check_has_access else 'not in', self._search_is_member_channel_ids())]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('id', 'in', self._search_is_member_channel_ids())]
             */
             return default;
         }
@@ -3242,10 +3490,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_is_member_invited(self, operator, value):
-            // if operator not in ['=', '!='] or not isinstance(value, bool):
-            //     raise NotImplementedError(_('Operation not supported'))
-            // check_has_access = operator == '=' and value or operator == '!=' and not value
-            // return [('id', 'in' if check_has_access else 'not in', self._search_is_member_channel_ids(invited=True))]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('id', 'in', self._search_is_member_channel_ids(invited=True))]
             */
             return default;
         }
@@ -3255,16 +3502,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _search_is_ongoing(self, operator, value):
-            // if operator not in ['=', '!=']:
-            //     raise UserError(_('This operator is not supported'))
-            // if not isinstance(value, bool):
-            //     raise UserError(_('Value should be True or False (not %s)', value))
+            // if operator != 'in':
+            //     return NotImplemented
             // now = fields.Datetime.now()
-            // if (operator == '=' and value) or (operator == '!=' and not value):
-            //     domain = [('date_begin', '<=', now), ('date_end', '>', now)]
-            // else:
-            //     domain = ['|', ('date_begin', '>', now), ('date_end', '<=', now)]
-            // return domain
+            // return [('date_begin', '<=', now), ('date_end', '>', now)]
             */
             return default;
         }
@@ -3274,13 +3515,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _search_is_participating(self, operator, value):
-            // if operator not in ['=', '!=']:
-            //     raise NotImplementedError(_('This operator is not supported'))
-            // if not isinstance(value, bool):
-            //     raise UserError(_('Value should be True or False (not %)', value))
-            // check_is_participating = operator == '=' and value or operator == '!=' and not value
-            // 
-            // return [('id', 'in' if check_is_participating else 'not in', self._fetch_is_participating_events().ids)]
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [('id', 'in', self._fetch_is_participating_events().ids)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchIsVisibleInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def _search_is_visible(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
+            // return [
+            //     '|', ('is_member', '=', True),
+            //     ('visibility', 'in', ['public'] if self.env.user._is_public() else ['public', 'connected']),
+            // ]
             */
             return default;
         }
@@ -3290,21 +3542,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _search_is_visible_on_website(self, operator, value):
-            // if operator not in ['=', '!=']:
-            //     raise NotImplementedError(_('This operator is not supported'))
-            // if not isinstance(value, bool):
-            //     raise UserError(_('Value should be True or False (not %)', value))
-            // check_is_visible_on_website = operator == '=' and value or operator == '!=' and not value
+            // if operator != 'in':
+            //     return NotImplemented
             // user = self.env.user
-            // domain = [('is_participating', '=', True)]
-            // 
+            // visibility = ['public']
             // if not user._is_public():
-            //     domain = expression.OR([domain, [('website_visibility', 'in', ['public', 'logged_users'])]])
-            // else:
-            //     domain = expression.OR([domain, [('website_visibility', '=', 'public')]])
-            // 
-            // event_ids = self.env['event.event']._search(domain)
-            // return [('id', 'in' if check_is_visible_on_website else 'not in', event_ids)]
+            //     visibility.append('logged_users')
+            // return ['|', ('is_participating', '=', True), ('website_visibility', 'in', visibility)]
             */
             return default;
         }
@@ -3314,10 +3558,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _search_partner_ids(self, operator, value):
-            // if isinstance(value, int) and operator == 'in':
-            //     value = [value]
             // return [(
-            //     'channel_partner_ids', '=', self.env['slide.channel.partner'].sudo()._search(
+            //     'channel_partner_ids', 'in', self.env['slide.channel.partner'].sudo()._search(
             //         [('partner_id', operator, value),
             //          ('active', '=', True),
             //          ('member_status', '!=', 'invited')],
@@ -3433,7 +3675,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // menu activated and de-activated. Purpose is to find those whose value
             // changed and update the underlying menus.
             // 
-            // :return dict: key = name of field triggering a website menu update, get {
+            // :returns: key = name of field triggering a website menu update, get {
             //   'activated': subset of self having its menu currently set to True
             //   'deactivated': subset of self having its menu currently set to False
             // } """
@@ -3445,37 +3687,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'deactivated': self - activated,
             //     }
             // return menus_state_by_field
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def toggle_active(self):
-            // """ Archiving/unarchiving a channel does it on its slides, too.
-            // 1. When archiving
-            // We want to be archiving the channel FIRST.
-            // So that when slides are archived and the recompute is triggered,
-            // it does not try to mark the channel as "completed".
-            // That happens because it counts slide_done / slide_total, but slide_total
-            // will be 0 since all the slides for the course have been archived as well.
-            // 
-            // 2. When un-archiving
-            // We want to archive the channel LAST.
-            // So that when it recomputes stats for the channel and completion, it correctly
-            // counts the slides_total by counting slides that are already un-archived. """
-            // 
-            // to_archive = self.filtered(lambda channel: channel.active)
-            // to_activate = self.filtered(lambda channel: not channel.active)
-            // if to_archive:
-            //     super(Channel, to_archive).toggle_active()
-            //     to_archive.is_published = False
-            //     to_archive.mapped('slide_ids').action_archive()
-            // if to_activate:
-            //     to_activate.with_context(active_test=False).mapped('slide_ids').action_unarchive()
-            //     super(Channel, to_activate).toggle_active()
             */
             return default;
         }
@@ -3540,7 +3751,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if self.is_published:
             //         return self.env.ref('website_event.mt_event_published', raise_if_not_found=False)
             //     return self.env.ref('website_event.mt_event_unpublished', raise_if_not_found=False)
-            // return super(Event, self)._track_subtype(init_values)
+            // return super()._track_subtype(init_values)
             */
             return default;
         }
@@ -3580,7 +3791,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :param fname_o2m: o2m linking towards website.event.menu matching the
             //   boolean fields (normally an entry of website.event.menu with type matching
             //   the boolean field name)
-            // :param method_name: method returning menu entries information: url, sequence, ...
+            // :param fmenu_type:
             // """
             // self.ensure_one()
             // new_menu = None
@@ -3589,8 +3800,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //              if menu_info[4] == fmenu_type]
             // if self[fname_bool] and not self[fname_o2m]:
             //     # menus not found but boolean True: get menus to create
-            //     for name, url, xml_id, menu_sequence, menu_type in menu_data:
-            //         new_menu = self._create_menu(menu_sequence, name, url, xml_id, menu_type)
+            //     for name, url, xml_id, menu_sequence, menu_type, parent_menu_type in menu_data:
+            //         new_menu = self._create_menu(menu_sequence, name, url, xml_id, menu_type, parent_menu_type)
             // elif not self[fname_bool]:
             //     # will cascade delete to the website.event.menu
             //     self[fname_o2m].mapped('menu_id').sudo().unlink()
@@ -3620,10 +3831,56 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         event._update_website_menu_entry('community_menu', 'community_menu_ids', 'community')
             //     if event.menu_id and (not menus_update_by_field or event in menus_update_by_field.get('introduction_menu')):
             //         event._update_website_menu_entry('introduction_menu', 'introduction_menu_ids', 'introduction')
-            //     if event.menu_id and (not menus_update_by_field or event in menus_update_by_field.get('location_menu')):
-            //         event._update_website_menu_entry('location_menu', 'location_menu_ids', 'location')
             //     if event.menu_id and (not menus_update_by_field or event in menus_update_by_field.get('register_menu')):
             //         event._update_website_menu_entry('register_menu', 'register_menu_ids', 'register')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> VerifySeatsAvailabilityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object slot_tickets) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _verify_seats_availability(self, slot_tickets):
+            // """ Check event seats availability, for combinations of slot / ticket.
+            // 
+            // :param slot_tickets: a list of tuples(slot, ticket, count). Slot and
+            //   ticket are optional, depending on event configuration. If count is 0
+            //   it is a simple check current values do not overflow limit. If count
+            //   is given, it serves as a check there are enough remaining seats.
+            // :raises ValidationError: if the event / slot / ticket do not have
+            //   enough available seats
+            // """
+            // self.ensure_one()
+            // if not (all(len(item) == 3 for item in slot_tickets)):
+            //     raise ValueError('Input should be a list of tuples containing slot, ticket, count')
+            // 
+            // sold_out = []
+            // availabilities = self._get_seats_availability([(item[0], item[1]) for item in slot_tickets])
+            // for (slot, ticket, count), available in zip(slot_tickets, availabilities, strict=True):
+            //     if available is None:  # unconstrained
+            //         continue
+            //     if available < count:
+            //         if slot and ticket:
+            //             name = f'{ticket.name} - {slot.display_name}'
+            //         elif slot:
+            //             name = slot.display_name
+            //         elif ticket:
+            //             name = ticket.name
+            //         else:
+            //             name = self.name
+            //         sold_out.append((name, count - available))
+            // 
+            // if sold_out:
+            //     info = []  # note: somehow using list comprehension make translate.py crash in default lang
+            //     for item in sold_out:
+            //         info.append(_('%(slot_name)s: missing %(count)s seat(s)', slot_name=item[0], count=item[1]))
+            //     raise ValidationError(
+            //         _('There are not enough seats available for %(event_name)s:\n%(sold_out_info)s',
+            //           event_name=self.name,
+            //           sold_out_info='\n'.join(info),
+            //         )
+            //     )
             */
             return default;
         }
@@ -3652,11 +3909,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     old_cover_properties = json_safe.loads(item.cover_properties)
             //     cover_properties['resize_class'] = old_cover_properties.get('resize_class', classes[0])
             //     copy_vals['cover_properties'] = json_safe.dumps(cover_properties)
-            //     super(WebsiteCoverPropertiesMixin, item).write(copy_vals)
+            //     super(WebsiteCover_PropertiesMixin, item).write(copy_vals)
             // return True
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
             // def write(self, vals):
-            // res = super(Blog, self).write(vals)
+            // res = super().write(vals)
             // if 'active' in vals:
             //     # archiving/unarchiving a blog does it on its posts, too
             //     post_ids = self.env['blog.post'].with_context(active_test=False).search([
@@ -3683,7 +3940,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def write(self, vals):
             // menus_state_by_field = self._split_menus_state_by_field()
-            // res = super(Event, self).write(vals)
+            // res = super().write(vals)
             // menus_update_by_field = self._get_menus_update_by_field(menus_state_by_field, force_update=vals.keys())
             // self._update_website_menus(menus_update_by_field=menus_update_by_field)
             // return res
@@ -3693,11 +3950,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not is_html_empty(vals.get('description')) and is_html_empty(vals.get('description_short')) and self.description == self.description_short:
             //     vals['description_short'] = vals.get('description')
             // 
-            // res = super(Channel, self).write(vals)
+            // res = super().write(vals)
             // 
             // if vals.get('user_id'):
             //     self._action_add_members(self.env['res.users'].sudo().browse(vals['user_id']).partner_id)
-            //     self.activity_reschedule(['website_slides.mail_activity_data_access_request'], new_user_id=vals.get('user_id'))
+            //     self.activity_reschedule(
+            //         ['mail_activity_data_todo'],
+            //         new_user_id=vals.get('user_id'),
+            //     )
             // if 'enroll_group_ids' in vals:
             //     self._add_groups_members()
             // 

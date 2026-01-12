@@ -15,7 +15,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class WebsiteMultiMixinAppService : ApplicationService, IWebsiteMultiMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -30,7 +30,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def action_open_loyalty_cards(self):
             // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id("loyalty.loyalty_card_action")
+            // action = self.env['ir.actions.act_window']._for_xml_id('loyalty.loyalty_card_action')
             // action['name'] = self._program_items_name()[self.program_type]
             // action['display_name'] = action['name']
             // action['context'] = {
@@ -76,10 +76,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ORDER BY
             //         count(*) DESC
             // """
-            // self._cr.execute(req, [tuple(self.ids)])
+            // self.env.cr.execute(req, [tuple(self.ids)])
             // tag_by_blog = {i.id: [] for i in self}
             // all_tags = set()
-            // for blog_id, freq, tag_id in self._cr.fetchall():
+            // for blog_id, freq, tag_id in self.env.cr.fetchall():
             //     if freq >= min_limit:
             //         if join:
             //             all_tags.add(tag_id)
@@ -108,6 +108,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         can_access = False
             //         continue
             // return can_access
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CanReturnContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object access_token) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_tag.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // if field_name == "image" and self.sudo().visible_to_customers:
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
             */
             return default;
         }
@@ -293,6 +305,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeHasImageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
+            // def _compute_has_image(self):
+            // for record in self:
+            //     record.has_image = bool(record.image)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeHasPendingPostInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -309,6 +332,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ])
             // pending_forums.has_pending_post = True
             // (self - pending_forums).has_pending_post = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHasPublishedProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _compute_has_published_products(self):
+            // grouped_product_templates = self.env['product.template']._read_group(
+            //     domain=[('public_categ_ids', 'in', self.ids), ('is_published', '=', True)],
+            //     groupby=['public_categ_ids']
+            // )
+            // published_category_ids = {group[0].id for group in grouped_product_templates}
+            // for category in self:
+            //     has_published = category.id in published_category_ids
+            //     category.has_published_products = (
+            //         has_published or any(c.has_published_products for c in category.child_id)
+            //     )
             */
             return default;
         }
@@ -452,8 +494,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         WHERE program.id = ANY(%s)
             //             GROUP BY program.id
             //         """
-            // self._cr.execute(query, (self.ids,))
-            // res = self._cr.dictfetchall()
+            // self.env.cr.execute(query, (self.ids,))
+            // res = self.env.cr.dictfetchall()
             // res = {k['id']: k['sum'] for k in res}
             // 
             // for rec in self:
@@ -480,6 +522,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_product_ids(self):
             // for tag in self:
             //     tag.product_ids = tag.product_template_ids.product_variant_ids | tag.product_product_ids
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowNonPublishedProductWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_program.py) ---
+            // def _compute_show_non_published_product_warning(self):
+            // for program in self:
+            //     program.show_non_published_product_warning = (
+            //         program.program_type == 'ewallet'
+            //         and any(not product.website_published for product in program.trigger_product_ids)
+            //     )
             */
             return default;
         }
@@ -519,17 +575,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeTeaserInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_forum.py) ---
-            // def _compute_teaser(self):
-            // for forum in self:
-            //     forum.teaser = textwrap.shorten(forum.description, width=180, placeholder='...') if forum.description else ""
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeTotalOrderCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -555,7 +600,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: mixins.py) ---
             // def _compute_website_published(self):
-            // current_website_id = self._context.get('website_id')
+            // current_website_id = self.env.context.get('website_id')
             // for record in self:
             //     if current_website_id:
             //         record.website_published = record.is_published and (not record.website_id or record.website_id.id == current_website_id)
@@ -585,7 +630,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.env.context.get('loyalty_skip_reward_check'):
             //     return
             // if any(not program.reward_ids for program in self):
-            //     raise ValidationError(_('A program must have at least one reward.'))
+            //     raise ValidationError(_("A program must have at least one reward."))
             */
             return default;
         }
@@ -607,7 +652,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_forum.py) ---
             // def create(self, vals_list):
             // forums = super(
-            //     Forum,
+            //     ForumForum,
             //     self.with_context(mail_create_nolog=True, mail_create_nosubscribe=True)
             // ).create(vals_list)
             // self.env['website'].sudo()._update_forum_count()
@@ -646,18 +691,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
-            // def default_get(self, fields_list):
-            // defaults = super().default_get(fields_list)
+            // def default_get(self, fields):
+            // defaults = super().default_get(fields)
             // program_type = defaults.get('program_type')
             // if program_type:
             //     program_default_values = self._program_type_default_values()
             //     if program_type in program_default_values:
             //         default_values = program_default_values[program_type]
-            //         defaults.update({k: v for k, v in default_values.items() if k in fields_list})
+            //         defaults.update({k: v for k, v in default_values.items() if k in fields})
             // return defaults
             */
             return default;
@@ -666,12 +711,59 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
+            // def _default_sequence(self):
+            // return (self.search([], order="sequence desc", limit=1).sequence or 0) + 1
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
             // def _default_sequence(self):
             // cat = self.search([], limit=1, order='sequence DESC')
             // if cat:
             //     return cat.sequence + 5
             // return 10000
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvailableCategoryDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid website_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _get_available_category_domain(self, website_id):
+            // """Build a search domain for product categories to be used in dynamic snippets.
+            // 
+            // :param int website_id: ID of the current website
+            // :return: A domain to filter product categories for the given website
+            // :rtype: Domain
+            // """
+            // domain = Domain('website_id', 'in', [False, website_id])
+            // # Public and portal users should only see categories with published products.
+            // if not self.env.user.has_group('website.group_website_designer'):
+            //     domain &= Domain('has_published_products', '=', True)
+            // return domain
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvailableSnippetCategoriesAsync<TEntity>(IEnumerable<TEntity> entities, Guid website_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def get_available_snippet_categories(self, website_id):
+            // """Return parent categories available for selection in the dynamic category snippet.
+            // 
+            // :param int website_id: ID of the current website
+            // :return: Available parent categories
+            // :rtype: list[dict]
+            // """
+            // child_count_by_parent = self._read_group(
+            //     domain=self._get_available_category_domain(website_id),
+            //     aggregates=['id:count'],
+            //     groupby=['parent_id'],
+            // )
+            // return [{
+            //     'id': parent_category.id,
+            //     'name': f'{parent_category.name} ({child_count})',
+            // } for parent_category, child_count in child_count_by_parent if parent_category]
             */
             return default;
         }
@@ -704,9 +796,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return Markup("""
             //         <h2 class="display-3-fs" style="text-align: center;clear-both;font-weight: bold;">%(message_intro)s</h2>
             //         <div class="text-white">
-            //             <p class="lead o_default_snippet_text" style="text-align: center;">%(message_post)s</p>
+            //             <p class="lead" style="text-align: center;">%(message_post)s</p>
             //             <p style="text-align: center;">
-            //                 <a class="btn btn-primary forum_register_url" href="/web/login">%(register_text)s</a>
+            //                 <a class="btn btn-primary forum_register_url o_translate_inline" href="/web/login">%(register_text)s</a>
             //                 <button type="button" class="btn btn-light js_close_intro" aria-label="Dismiss message">
             //                     %(hide_text)s
             //                 </button>
@@ -823,47 +915,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             // product = self.env['product.product'].search([('sale_ok', '=', True)], limit=1)
             // return {
             //     'gift_card': {
-            //         'name': _('Gift Card'),
+            //         'name': _("Gift Card"),
             //         'program_type': 'gift_card',
             //         **program_type_defaults['gift_card']
             //     },
             //     'ewallet': {
-            //         'name': _('eWallet'),
+            //         'name': _("eWallet"),
             //         'program_type': 'ewallet',
             //         **program_type_defaults['ewallet'],
             //     },
             //     'loyalty': {
-            //         'name': _('Loyalty Cards'),
+            //         'name': _("Loyalty Cards"),
             //         'program_type': 'loyalty',
             //         **program_type_defaults['loyalty'],
             //     },
             //     'coupons': {
-            //         'name': _('Coupons'),
+            //         'name': _("Coupons"),
             //         'program_type': 'coupons',
             //         **program_type_defaults['coupons'],
             //     },
             //     'promotion': {
-            //         'name': _('Promotional Program'),
+            //         'name': _("Promotional Program"),
             //         'program_type': 'promotion',
             //         **program_type_defaults['promotion'],
             //     },
             //     'promo_code': {
-            //         'name': _('Discount code'),
+            //         'name': _("Discount code"),
             //         'program_type': 'promo_code',
             //         **program_type_defaults['promo_code'],
             //     },
             //     'buy_x_get_y': {
-            //         'name': _('2+1 Free'),
+            //         'name': _("2+1 Free"),
             //         'program_type': 'buy_x_get_y',
             //         **program_type_defaults['buy_x_get_y'],
             //     },
             //     'next_order_coupons': {
-            //         'name': _('Next Order Coupons'),
+            //         'name': _("Next Order Coupons"),
             //         'program_type': 'next_order_coupons',
             //         **program_type_defaults['next_order_coupons'],
             //     },
             //     'fidelity': {
-            //         'name': _('Fidelity Cards'),
+            //         'name': _("Fidelity Cards"),
             //         'program_type': 'loyalty',
             //         'applies_on': 'both',
             //         'trigger': 'auto',
@@ -905,7 +997,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     domain = rule._get_valid_product_domain()
             //     if domain:
             //         rule_products[rule] = products.filtered_domain(domain)
-            //     elif not domain and rule.program_type != "gift_card":
+            //     elif not domain and rule.program_type != 'gift_card':
             //         rule_products[rule] = products
             //     else:
             //         continue
@@ -934,7 +1026,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _inverse_mail_template_id(self):
             // for program in self:
-            //     if program.program_type not in ("gift_card", "ewallet"):
+            //     if program.program_type not in ('gift_card', 'ewallet'):
             //         continue
             //     if not program.mail_template_id:
             //         program.communication_plan_ids = [(5, 0, 0)]
@@ -999,38 +1091,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // return [('id', 'in', config_id._get_program_ids().ids)]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', 'in', config._get_program_ids().ids)]
             */
             return default;
         }
 
-        public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['name']
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return [
+            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
+            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
+            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
+            // ]
             */
             return default;
         }
 
-        public async Task<TEntity> LoadPosDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        public async Task<TEntity> LoadPosDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(data['pos.config']['data'][0]['id'])
-            // return {
-            //     'data': self.sudo().search_read(domain, fields, load=False),
-            //     'fields': fields,
-            // }
+            // def _load_pos_data_read(self, records, config):
+            // return super()._load_pos_data_read(records.sudo(), config)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_tag.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // return [('visible_to_customers', '=', True)]
             */
             return default;
         }
@@ -1048,7 +1148,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     parent_message = self.env['mail.message'].sudo().browse(parent_id)
             //     if parent_message.subtype_id and parent_message.subtype_id == self.env.ref('website_blog.mt_blog_blog_published'):
             //         subtype_id = self.env.ref('mail.mt_note').id
-            // return super(Blog, self).message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
+            // return super().message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
             */
             return default;
         }
@@ -1080,14 +1180,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _program_items_name(self):
             // return {
-            //     'coupons': _('Coupons'),
-            //     'promotion': _('Promos'),
-            //     'gift_card': _('Gift Cards'),
-            //     'loyalty': _('Loyalty Cards'),
-            //     'ewallet': _('eWallets'),
-            //     'promo_code': _('Discounts'),
-            //     'buy_x_get_y': _('Promos'),
-            //     'next_order_coupons': _('Coupons'),
+            //     'coupons': _("Coupons"),
+            //     'promotion': _("Promos"),
+            //     'gift_card': _("Gift Cards"),
+            //     'loyalty': _("Loyalty Cards"),
+            //     'ewallet': _("eWallets"),
+            //     'promo_code': _("Discounts"),
+            //     'buy_x_get_y': _("Promos"),
+            //     'next_order_coupons': _("Coupons"),
             // }
             */
             return default;
@@ -1106,7 +1206,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'current',
             //         'trigger': 'with_code',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Coupon point(s)'),
+            //         'portal_point_name': _("Coupon point(s)"),
             //         'rule_ids': [(5, 0, 0)],
             //         'reward_ids': [(5, 0, 0), (0, 0, {
             //             'required_points': 1,
@@ -1121,7 +1221,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'current',
             //         'trigger': 'auto',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Promo point(s)'),
+            //         'portal_point_name': _("Promo point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_amount': 1,
             //             'reward_point_mode': 'order',
@@ -1152,7 +1252,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'discount': 1,
             //             'discount_applicability': 'order',
             //             'required_points': 1,
-            //             'description': _('Gift Card'),
+            //             'description': _("Gift Card"),
             //         })],
             //         'communication_plan_ids': [(5, 0, 0), (0, 0, {
             //             'trigger': 'create',
@@ -1163,7 +1263,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'both',
             //         'trigger': 'auto',
             //         'portal_visible': True,
-            //         'portal_point_name': _('Loyalty point(s)'),
+            //         'portal_point_name': _("Loyalty point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_mode': 'money',
             //         })],
@@ -1190,7 +1290,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'discount': 1,
             //             'discount_applicability': 'order',
             //             'required_points': 1,
-            //             'description': _('eWallet'),
+            //             'description': _("eWallet"),
             //         })],
             //         'communication_plan_ids': [(5, 0, 0)],
             //     },
@@ -1198,7 +1298,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'current',
             //         'trigger': 'with_code',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Discount point(s)'),
+            //         'portal_point_name': _("Discount point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'mode': 'with_code',
             //             'code': 'PROMO_CODE_' + str(uuid4())[:4], # We should try not to trigger any unicity constraint
@@ -1216,7 +1316,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'current',
             //         'trigger': 'auto',
             //         'portal_visible': False,
-            //         'portal_point_name': _('Credit(s)'),
+            //         'portal_point_name': _("Credit(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'reward_point_mode': 'unit',
             //             'product_ids': first_sale_product,
@@ -1233,7 +1333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'applies_on': 'future',
             //         'trigger': 'auto',
             //         'portal_visible': True,
-            //         'portal_point_name': _('Coupon point(s)'),
+            //         'portal_point_name': _("Coupon point(s)"),
             //         'rule_ids': [(5, 0, 0), (0, 0, {
             //             'minimum_amount': 100,
             //             'minimum_qty': 0,
@@ -1340,13 +1440,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SearchHasPublishedProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
+            // def _search_has_published_products(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
+            // published_categ_ids = self._search(
+            //     [('product_tmpl_ids.is_published', 'in', True)]
+            // ).get_result_ids()
+            // # Note that if the `value` is False, the ORM will invert the domain below
+            // return [
+            //     '|',
+            //     ('id', 'in', published_categ_ids),
+            //     ('id', 'parent_of', published_categ_ids),
+            // ]
+            */
+            return default;
+        }
+
         public async Task<TEntity> SearchProductIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_tag.py) ---
             // def _search_product_ids(self, operator, operand):
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     return [('product_template_ids.product_variant_ids', operator, operand), ('product_product_ids', operator, operand)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
             // return ['|', ('product_template_ids.product_variant_ids', operator, operand), ('product_product_ids', operator, operand)]
             */
             return default;
@@ -1382,18 +1502,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: mixins.py) ---
             // def _search_website_published(self, operator, value):
-            // if not isinstance(value, bool) or operator not in ('=', '!='):
-            //     logger.warning('unsupported search on website_published: %s, %s', operator, value)
-            //     return [()]
+            // if operator != 'in':
+            //     return NotImplemented
+            // assert list(value) == [True]
             // 
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     value = not value
-            // 
-            // current_website_id = self._context.get('website_id')
-            // is_published = [('is_published', '=', value)]
+            // current_website_id = self.env.context.get('website_id')
+            // is_published = Domain('is_published', '=', True)
             // if current_website_id:
-            //     on_current_website = self.env['website'].website_domain(current_website_id)
-            //     return (['!'] if value is False else []) + expression.AND([is_published, on_current_website])
+            //     on_current_website = self.env['website'].browse(current_website_id).website_domain()
+            //     return is_published & on_current_website
             // else:  # should be in the backend, return things that are published anywhere
             //     return is_published
             */
@@ -1439,23 +1556,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
-            // def toggle_active(self):
-            // res = super().toggle_active()
-            // # Propagate active state to children
-            // for program in self.with_context(active_test=False):
-            //     program.rule_ids.active = program.active
-            //     program.reward_ids.active = program.active
-            //     program.communication_plan_ids.active = program.active
-            //     program.reward_ids.with_context(active_test=True).discount_line_product_id.active = program.active
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> UnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1473,7 +1573,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _unlink_except_active(self):
             // if any(program.active for program in self):
-            //     raise UserError(_('You can not delete a program in an active state'))
+            //     raise UserError(_("You can not delete a program in an active state"))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UnrelevantRecordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            // def _unrelevant_records(self, config):
+            // valid_record = config._get_program_ids()
+            // return self.filtered(lambda record: record.id not in valid_record.ids).ids
             */
             return default;
         }
@@ -1483,7 +1594,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
             // def write(self, vals):
-            // res = super(Blog, self).write(vals)
+            // res = super().write(vals)
             // if 'active' in vals:
             //     # archiving/unarchiving a blog does it on its posts, too
             //     post_ids = self.env['blog.post'].with_context(active_test=False).search([

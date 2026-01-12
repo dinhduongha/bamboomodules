@@ -49,7 +49,7 @@ namespace Bamboo.Core.Application.Services
             //     details = _('(scheduled for %s)', format_date(self.env, mailing_id.schedule_date))
             //     return f'{base} {details}'
             // 
-            // usages_super = super(IrMailServer, self)._active_usages_compute()
+            // usages_super = super()._active_usages_compute()
             // default_mail_server_id = self.env['mailing.mailing']._get_default_mail_server_id()
             // for record in self:
             //     usages = []
@@ -72,11 +72,46 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> BuildEmailAsync(Guid id, IrMailServerBuildEmailRequestDto input)
+        protected async Task<IrMailServer> AlterMessageInternalAsync(object message, object smtp_from, object smtp_to_list)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def build_email(self, email_from, email_to, subject, body, email_cc=None, email_bcc=None, reply_to=False,
+            // def _alter_message__(self, message, smtp_from, smtp_to_list):  # noqa: PLW3201
+            // # `To:` header forged, e.g. for posting on discuss.channels, to avoid confusion
+            // if x_forge_to := message['X-Forge-To']:
+            //     message.replace_header('To', x_forge_to)
+            // # `To:` header extended, e.g. for adding "virtual" recipients, aka fake recipients
+            // # that do not impact SMTP To
+            // elif x_msg_add_to := message['X-Msg-To-Add']:
+            //     to = message['To'] or ''
+            //     to_normalized = tools.mail.email_normalize_all(to)
+            //     message.replace_header(
+            //         'To', ', '.join([
+            //             to,
+            //             ', '.join(
+            //                 address for address in tools.mail.email_split_and_format(x_msg_add_to)
+            //                 if tools.mail.email_normalize(address, strict=False) not in to_normalized
+            //             ),
+            //         ]
+            //         ))
+            // 
+            // if message['From'] != smtp_from:
+            //     message.replace_header('From', smtp_from)
+            // 
+            // # cleanup unwanted headers
+            // del message['Bcc']                   # see odoo/odoo@2445f9e3c22db810d61996afde883e4ca608f15b
+            // del message['X-Forge-To']
+            // del message['X-Msg-To-Add']
+            // del message['X-Msg-To-Consolidate']
+            */
+            return default;
+        }
+
+        protected async Task<IrMailServer> BuildEmailInternalAsync(object email_from, object email_to, object subject, object body, object email_cc, object email_bcc, object reply_to, object attachments, Guid message_id, object references, Guid object_id, object subtype, object headers, object body_alternative, object subtype_alternative)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _build_email__(self, email_from, email_to, subject, body, email_cc=None, email_bcc=None, reply_to=False,  # noqa: PLW3201
             //             attachments=None, message_id=None, references=None, object_id=False, subtype='plain', headers=None,
             //             body_alternative=None, subtype_alternative='plain'):
             // """Constructs an RFC2822 email.message.Message object based on the keyword arguments passed, and returns it.
@@ -154,13 +189,34 @@ namespace Bamboo.Core.Application.Services
             //     for (fname, fcontent, mime) in attachments:
             //         maintype, subtype = mime.split('/') if mime and '/' in mime else ('application', 'octet-stream')
             //         if maintype == 'message' and subtype == 'rfc822':
-            //             #  Use binary encoding for "message/rfc822" attachments (see RFC 2046 Section 5.2.1)
-            //             msg.add_attachment(fcontent, maintype, subtype, filename=fname, cte='binary')
+            //             msg.add_attachment(BytesParser().parsebytes(fcontent), filename=fname)
             //         else:
             //             msg.add_attachment(fcontent, maintype, subtype, filename=fname)
             // return msg
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<IrMailServer> CheckForcedMailServerInternalAsync(object mail_server, object allow_archived, object smtp_from)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _check_forced_mail_server(self, mail_server, allow_archived, smtp_from):
+            // super()._check_forced_mail_server(mail_server, allow_archived, smtp_from)
+            // 
+            // if mail_server.owner_user_id:
+            //     if email_normalize(smtp_from) != mail_server.from_filter:
+            //         raise UserError(_('The server "%s" cannot be forced as it belongs to a user.', mail_server.display_name))
+            //     if not mail_server.active:
+            //         raise UserError(_('The server "%s" cannot be forced as it belongs to a user and is archived.', mail_server.display_name))
+            //     if mail_server.owner_user_id.outgoing_mail_server_id != mail_server:
+            //         raise UserError(_('The server "%s" cannot be forced as the owner does not use it anymore.', mail_server.display_name))
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _check_forced_mail_server(self, mail_server, allow_archived, smtp_from):
+            // if not allow_archived and not mail_server.active:
+            //     raise UserError(_('The server "%s" cannot be used because it is archived.', mail_server.display_name))
+            */
+            return default;
         }
 
         protected async Task<IrMailServer> CheckSmtpSslFilesInternalAsync()
@@ -228,18 +284,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrMailServer> ComputeIsMicrosoftOutlookConfiguredInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
-            // def _compute_is_microsoft_outlook_configured(self):
-            // outlook_servers = self.filtered(lambda server: server.smtp_authentication == 'outlook')
-            // (self - outlook_servers).is_microsoft_outlook_configured = False
-            // super(IrMailServer, outlook_servers)._compute_is_microsoft_outlook_configured()
-            */
-            return default;
-        }
-
         protected async Task<IrMailServer> ComputeSmtpAuthenticationInfoInternalAsync()
         {
             /*
@@ -250,7 +294,7 @@ namespace Bamboo.Core.Application.Services
             //     'Connect your Gmail account with the OAuth Authentication process.  \n'
             //     'By default, only a user with a matching email address will be able to use this server. '
             //     'To extend its use, you should set a "mail.default.from" system parameter.')
-            // super(IrMailServer, self - gmail_servers)._compute_smtp_authentication_info()
+            // super(IrMail_Server, self - gmail_servers)._compute_smtp_authentication_info()
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
             // def _compute_smtp_authentication_info(self):
             // outlook_servers = self.filtered(lambda server: server.smtp_authentication == 'outlook')
@@ -258,7 +302,7 @@ namespace Bamboo.Core.Application.Services
             //     'Connect your Outlook account with the OAuth Authentication process.  \n'
             //     'By default, only a user with a matching email address will be able to use this server. '
             //     'To extend its use, you should set a "mail.default.from" system parameter.')
-            // super(IrMailServer, self - outlook_servers)._compute_smtp_authentication_info()
+            // super(IrMail_Server, self - outlook_servers)._compute_smtp_authentication_info()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
             // def _compute_smtp_authentication_info(self):
             // for server in self:
@@ -280,11 +324,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> ConnectAsync(Guid id, IrMailServerConnectRequestDto input)
+        protected async Task<IrMailServer> ConnectInternalAsync(object host, object port, object user, object password, object encryption, object smtp_from, object ssl_certificate, object ssl_private_key, object smtp_debug, Guid mail_server_id, object allow_archived)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def connect(self, host=None, port=None, user=None, password=None, encryption=None,
+            // def _connect__(self, host=None, port=None, user=None, password=None, encryption=None,  # noqa: PLW3201
             //         smtp_from=None, ssl_certificate=None, ssl_private_key=None, smtp_debug=False, mail_server_id=None,
             //         allow_archived=False):
             // """Returns a new SMTP connection to the given SMTP server.
@@ -294,7 +338,8 @@ namespace Bamboo.Core.Application.Services
             //    :param int port: SMTP port to connect to
             //    :param user: optional username to authenticate with
             //    :param password: optional password to authenticate with
-            //    :param string encryption: optional, ``'ssl'`` | ``'starttls'``
+            //    :param str encryption: optional, ``'none'`` | ``'ssl'`` | ``'ssl_strict'`` | ``'starttls'`` | ``'starttls_strict'``.
+            //        The 'strict' variants verify the remote server's certificate against the operating system trust store.
             //    :param smtp_from: FROM SMTP envelop, used to find the best mail server
             //    :param ssl_certificate: filename of the SSL certificate used for authentication
             //        Used when no mail server is given and overwrite  the odoo-bin argument "smtp_ssl_certificate"
@@ -304,17 +349,17 @@ namespace Bamboo.Core.Application.Services
             //                       will be output in logs)
             //    :param mail_server_id: ID of specific mail server to use (overrides other parameters)
             //    :param bool allow_archived: by default (False), an exception is raised when calling this method on an
-            //    archived record (using mail_server_id param). It can be set to True for testing so that the exception is no
-            //    longer raised.
+            //        archived record (using mail_server_id param). It can be set to True for testing so that the exception is
+            //        no longer raised.
             // """
             // # Do not actually connect while running in test mode
-            // if modules.module.current_test:
-            //     return
+            // if self._disable_send():
+            //     return None
             // mail_server = smtp_encryption = None
             // if mail_server_id:
             //     mail_server = self.sudo().browse(mail_server_id)
-            //     if not allow_archived and not mail_server.active:
-            //         raise UserError(_('The server "%s" cannot be used because it is archived.', mail_server.display_name))
+            //     self._check_forced_mail_server(mail_server, allow_archived, smtp_from)
+            // 
             // elif not host:
             //     mail_server, smtp_from = self.sudo()._find_mail_server(smtp_from)
             // 
@@ -334,21 +379,38 @@ namespace Bamboo.Core.Application.Services
             //     smtp_encryption = mail_server.smtp_encryption
             //     smtp_debug = smtp_debug or mail_server.smtp_debug
             //     from_filter = mail_server.from_filter
+            // 
             //     if mail_server.smtp_authentication == "certificate":
             //         try:
             //             ssl_context = PyOpenSSLContext(ssl.PROTOCOL_TLS)
-            //             smtp_ssl_certificate = base64.b64decode(mail_server.smtp_ssl_certificate)
-            //             certificate = SSLCrypto.load_certificate(FILETYPE_PEM, smtp_ssl_certificate)
-            //             smtp_ssl_private_key = base64.b64decode(mail_server.smtp_ssl_private_key)
-            //             private_key = SSLCrypto.load_privatekey(FILETYPE_PEM, smtp_ssl_private_key)
-            //             ssl_context._ctx.use_certificate(certificate)
-            //             ssl_context._ctx.use_privatekey(private_key)
+            //             if mail_server.smtp_encryption in ('ssl_strict', 'starttls_strict'):
+            //                 ssl_context.set_default_verify_paths()
+            //                 ssl_context._ctx.set_verify(
+            //                     VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT,
+            //                     functools.partial(_verify_check_hostname_callback, hostname=smtp_server)
+            //                 )
+            //             else:  # ssl, starttls
+            //                 ssl_context.verify_mode = ssl.CERT_NONE
+            //             ssl_context._ctx.use_certificate(load_pem_x509_certificate(
+            //                 base64.b64decode(mail_server.smtp_ssl_certificate)))
+            //             ssl_context._ctx.use_privatekey(load_pem_private_key(
+            //                 base64.b64decode(mail_server.smtp_ssl_private_key),
+            //                 password=None))
             //             # Check that the private key match the certificate
             //             ssl_context._ctx.check_privatekey()
             //         except SSLCryptoError as e:
             //             raise UserError(_('The private key or the certificate is not a valid file. \n%s', str(e)))
             //         except SSLError as e:
             //             raise UserError(_('Could not load your certificate / private key. \n%s', str(e)))
+            //     elif mail_server.smtp_encryption != 'none':
+            //         if mail_server.smtp_encryption in ('ssl_strict', 'starttls_strict'):
+            //             ssl_context = ssl.create_default_context()
+            //             ssl_context.check_hostname = True
+            //             ssl_context.verify_mode = ssl.CERT_REQUIRED
+            //         else:  # ssl, starttls
+            //             ssl_context = ssl.create_default_context()
+            //             ssl_context.check_hostname = False
+            //             ssl_context.verify_mode = ssl.CERT_NONE
             // 
             // else:
             //     # we were passed individual smtp parameters or nothing and there is no default server
@@ -370,6 +432,7 @@ namespace Bamboo.Core.Application.Services
             //     if smtp_ssl_certificate_filename and smtp_ssl_private_key_filename:
             //         try:
             //             ssl_context = PyOpenSSLContext(ssl.PROTOCOL_TLS)
+            //             ssl_context.verify_mode = ssl.CERT_NONE
             //             ssl_context.load_cert_chain(smtp_ssl_certificate_filename, keyfile=smtp_ssl_private_key_filename)
             //             # Check that the private key match the certificate
             //             ssl_context._ctx.check_privatekey()
@@ -385,16 +448,12 @@ namespace Bamboo.Core.Application.Services
             //         "or provide the SMTP parameters explicitly.",
             //     ))
             // 
-            // if smtp_encryption == 'ssl':
-            //     if 'SMTP_SSL' not in smtplib.__all__:
-            //         raise UserError(
-            //             _("Your Odoo Server does not support SMTP-over-SSL. "
-            //               "You could use STARTTLS instead. "
-            //                "If SSL is needed, an upgrade to Python 2.6 on the server-side "
-            //                "should do the trick."))
-            // connection = SMTPConnection(smtp_server, smtp_port, smtp_encryption, context=ssl_context)
+            // if smtp_encryption in ('ssl', 'ssl_strict'):
+            //     connection = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=SMTP_TIMEOUT, context=ssl_context)
+            // else:
+            //     connection = smtplib.SMTP(smtp_server, smtp_port, timeout=SMTP_TIMEOUT)
             // connection.set_debuglevel(smtp_debug)
-            // if smtp_encryption == 'starttls':
+            // if smtp_encryption in ('starttls', 'starttls_strict'):
             //     # starttls() will perform ehlo() if needed first
             //     # and will discard the previous list of services
             //     # after successfully performing STARTTLS command,
@@ -408,7 +467,7 @@ namespace Bamboo.Core.Application.Services
             //     local, at, domain = smtp_user.rpartition('@')
             //     if at:
             //         smtp_user = local + at + idna.encode(domain).decode('ascii')
-            //     mail_server._smtp_login(connection, smtp_user, smtp_password or '')
+            //     mail_server._smtp_login__(connection, smtp_user, smtp_password or '')
             // 
             // # Some methods of SMTP don't check whether EHLO/HELO was sent.
             // # Anyway, as it may have been sent by login(), all subsequent usages should consider this command as sent.
@@ -421,7 +480,50 @@ namespace Bamboo.Core.Application.Services
             // 
             // return connection
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
+        }
+
+        protected async Task<IrMailServer> DisableSendInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _disable_send(cls):
+            // """Whether to disable sending e-mails"""
+            // # no e-mails during testing or when registry is initializing
+            // return modules.module.current_test or cls.pool._init
+            */
+            return default;
+        }
+
+        protected async Task<IrMailServer> FilterMailServersFallbackInternalAsync(object servers)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _filter_mail_servers_fallback(self, servers):
+            // return servers.filtered(lambda s: not s.owner_user_id)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _filter_mail_servers_fallback(self, servers):
+            // """Filter the mail servers that can be used as fallback, or for default email from."""
+            // return servers
+            */
+            return default;
+        }
+
+        protected async Task<IrMailServer> FindMailServerAllowedDomainInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _find_mail_server_allowed_domain(self):
+            // """Restrict search to 'public' servers."""
+            // domain = super()._find_mail_server_allowed_domain()
+            // domain &= Domain('owner_user_id', '=', False)
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _find_mail_server_allowed_domain(self):
+            // """Overridable domain getter for all mail servers that may be used as default."""
+            // return fields.Domain.TRUE
+            */
+            return default;
         }
 
         protected async Task<IrMailServer> FindMailServerInternalAsync(object email_from, object mail_servers)
@@ -431,10 +533,12 @@ namespace Bamboo.Core.Application.Services
             // def _find_mail_server(self, email_from, mail_servers=None):
             // """Find the appropriate mail server for the given email address.
             // 
-            // Returns: Record<ir.mail_server>, email_from
-            // - Mail server to use to send the email (None if we use the odoo-bin arguments)
-            // - Email FROM to use to send the email (in some case, it might be impossible
-            //   to use the given email address directly if no mail server is configured for)
+            // :rtype: tuple[IrMail_Server | None, str]
+            // :returns: A two-elements tuple: ``(Record<ir.mail_server>, email_from)``
+            // 
+            //   1. Mail server to use to send the email (``None`` if we use the odoo-bin arguments)
+            //   2. Email FROM to use to send the email (in some case, it might be impossible
+            //      to use the given email address directly if no mail server is configured for)
             // """
             // email_from_normalized = email_normalize(email_from)
             // email_from_domain = email_domain_extract(email_from_normalized)
@@ -442,7 +546,7 @@ namespace Bamboo.Core.Application.Services
             // notifications_domain = email_domain_extract(notifications_email)
             // 
             // if mail_servers is None:
-            //     mail_servers = self.sudo().search([], order='sequence')
+            //     mail_servers = self.sudo().search(self._find_mail_server_allowed_domain(), order='sequence')
             // # 0. Archived mail server should never be used
             // mail_servers = mail_servers.filtered('active')
             // 
@@ -462,6 +566,8 @@ namespace Bamboo.Core.Application.Services
             // 
             //     if mail_server := first_match(email_from_domain, email_domain_normalize):
             //         return mail_server, email_from
+            // 
+            // mail_servers = self._filter_mail_servers_fallback(mail_servers)
             // 
             // # 2. Try to find a mail server for <notifications@domain.com>
             // if notifications_email:
@@ -518,7 +624,8 @@ namespace Bamboo.Core.Application.Services
             // """ Computes the default bounce address. It is used to set the envelop
             // address if no envelop address is provided in the message.
             // 
-            // :return str/None: defaults to the ``--email-from`` CLI/config parameter.
+            // :return: defaults to the ``--email-from`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return tools.config.get("email_from")
             */
@@ -540,7 +647,8 @@ namespace Bamboo.Core.Application.Services
             // """ Computes the default from address. It is used for the "header from"
             // address when no other has been received.
             // 
-            // :return str/None: defaults to the ``--email-from`` CLI/config parameter.
+            // :return: defaults to the ``--email-from`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return tools.config.get("email_from")
             */
@@ -556,8 +664,9 @@ namespace Bamboo.Core.Application.Services
             // ir.mail_server is used when sending emails, hence having no value for
             // from_filter.
             // 
-            // :return str/None: defaults to 'mail.default.from_filter', then
+            // :return: defaults to 'mail.default.from_filter', then
             //   ``--from-filter`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return self.env['ir.config_parameter'].sudo().get_param(
             //     'mail.default.from_filter', tools.config.get('from_filter')
@@ -574,6 +683,31 @@ namespace Bamboo.Core.Application.Services
             // if self.max_email_size:
             //     return self.max_email_size
             // return float(self.env['ir.config_parameter'].sudo().get_param('base.default_max_email_size', '10'))
+            */
+            return default;
+        }
+
+        protected async Task<IrMailServer> GetPersonalMailServersLimitInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _get_personal_mail_servers_limit(self):
+            // """Return the number of email we can send in 1 minutes for this outgoing server.
+            // 
+            // 0 fallbacks to 30 to avoid blocking servers.
+            // """
+            // return int(self.env['ir.config_parameter'].sudo().get_param('mail.server.personal.limit.minutes')) or 30
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
+            // def _get_personal_mail_servers_limit(self):
+            // """Return the number of email we can send in 1 minutes for this outgoing server.
+            // 
+            // 0 fallbacks to 30 to avoid blocking servers.
+            // """
+            // if self.smtp_authentication == 'outlook':
+            //     # Outlook flag way faster email as spam, so we set a lower limit
+            //     return int(self.env['ir.config_parameter'].sudo()
+            //         .get_param('mail.server.personal.limit.minutes_outlook')) or 10
+            // return super()._get_personal_mail_servers_limit()
             */
             return default;
         }
@@ -606,7 +740,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_test_email_from(self):
             // self.ensure_one()
             // email_from = False
-            // if from_filter_parts := [part.strip() for part in (self.from_filter or '').split(",") if part.strip()]:
+            // if from_filter_parts := self._parse_from_filter(self.from_filter):
             //     # find first found complete email in filter parts
             //     email_from = next((email for email in from_filter_parts if "@" in email), False)
             //     # no complete email -> consider noreply
@@ -649,7 +783,7 @@ namespace Bamboo.Core.Application.Services
             // normalized_mail_from = email_normalize(email_from)
             // normalized_domain = email_domain_extract(normalized_mail_from)
             // 
-            // for email_filter in [part.strip() for part in (from_filter or '').split(',') if part.strip()]:
+            // for email_filter in self._parse_from_filter(from_filter):
             //     if '@' in email_filter and email_normalize(email_filter) == normalized_mail_from:
             //         return True
             //     if '@' not in email_filter and email_domain_normalize(email_filter) == normalized_domain:
@@ -691,7 +825,7 @@ namespace Bamboo.Core.Application.Services
             // """Do not change the SMTP configuration if it's a Gmail server
             // (e.g. the port which is already set)"""
             // if self.smtp_authentication != 'gmail':
-            //     super(IrMailServer, self)._onchange_encryption()
+            //     super()._onchange_encryption()
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
             // def _onchange_encryption(self):
             // """Do not change the SMTP configuration if it's a Outlook server
@@ -726,7 +860,6 @@ namespace Bamboo.Core.Application.Services
             //     self.smtp_encryption = 'starttls'
             //     self.smtp_port = 587
             // else:
-            //     self.google_gmail_authorization_code = False
             //     self.google_gmail_refresh_token = False
             //     self.google_gmail_access_token = False
             //     self.google_gmail_access_token_expiration = False
@@ -751,16 +884,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrMailServer> ParseFromFilterInternalAsync(object from_filter)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _parse_from_filter(self, from_filter):
+            // return [part.strip() for part in (from_filter or '').split(',') if part.strip()]
+            */
+            return default;
+        }
+
         protected async Task<IrMailServer> PrepareEmailMessageInternalAsync(object message, object smtp_session)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def _prepare_email_message(self, message, smtp_session):
+            // def _prepare_email_message__(self, message, smtp_session):  # noqa: PLW3201
             // """Prepare the SMTP information (from, to, message) before sending.
             // 
             // :param message: the email.message.Message to send, information like the
             //     Return-Path, the From, etc... will be used to find the smtp_from and to smtp_to
             // :param smtp_session: the opened SMTP session to use to authenticate the sender
+            // 
             // :return: smtp_from, smtp_to_list, message
             //     smtp_from: email to used during the authentication to the mail server
             //     smtp_to_list: list of email address which will receive the email
@@ -775,33 +919,8 @@ namespace Bamboo.Core.Application.Services
             // smtp_from = message['From'] or bounce_address
             // assert smtp_from, self.NO_FOUND_SMTP_FROM
             // 
-            // email_to = message['To']
-            // email_cc = message['Cc']
-            // email_bcc = message['Bcc']
-            // del message['Bcc']
-            // 
-            // # All recipient addresses must only contain ASCII characters; support
-            // # optional pre-validated To list, used notably when formatted emails may
-            // # create fake emails using extract_rfc2822_addresses, e.g.
-            // # '"Bike@Home" <email@domain.com>' which can be considered as containing
-            // # 2 emails by extract_rfc2822_addresses
-            // validated_to = self.env.context.get('send_validated_to') or []
-            // smtp_to_list = [
-            //     address
-            //     for base in [email_to, email_cc, email_bcc]
-            //     # be sure a given address does not return duplicates (but duplicates
-            //     # in final smtp to list is still ok)
-            //     for address in tools.misc.unique(extract_rfc2822_addresses(base))
-            //     if address and (not validated_to or address in validated_to)
-            // ]
+            // smtp_to_list = self._prepare_smtp_to_list(message, smtp_session)
             // assert smtp_to_list, self.NO_VALID_RECIPIENT
-            // 
-            // x_forge_to = message['X-Forge-To']
-            // if x_forge_to:
-            //     # `To:` header forged, e.g. for posting on discuss.channels, to avoid confusion
-            //     del message['X-Forge-To']
-            //     del message['To']           # avoid multiple To: headers!
-            //     message['To'] = x_forge_to
             // 
             // # Try to not spoof the mail from headers; fetch session-based or contextualized
             // # values for encapsulation computation
@@ -813,9 +932,8 @@ namespace Bamboo.Core.Application.Services
             // if notifications_email and email_normalize(smtp_from) == notifications_email and email_normalize(message['From']) != notifications_email:
             //     smtp_from = encapsulate_email(message['From'], notifications_email)
             // 
-            // if message['From'] != smtp_from:
-            //     del message['From']
-            //     message['From'] = smtp_from
+            // # alter message
+            // self._alter_message__(message, smtp_from, smtp_to_list)
             // 
             // # Check if it's still possible to put the bounce address as smtp_from
             // if self._match_from_filter(bounce_address, from_filter):
@@ -834,6 +952,47 @@ namespace Bamboo.Core.Application.Services
             // smtp_from = smtp_from_rfc2822[-1]
             // 
             // return smtp_from, smtp_to_list, message
+            */
+            return default;
+        }
+
+        protected async Task<IrMailServer> PrepareSmtpToListInternalAsync(object message, object smtp_session)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _prepare_smtp_to_list(self, message, smtp_session):
+            // """ Prepare SMTP To address list, based on To / Cc / Bcc.
+            // 
+            // Optional 'send_validated_to' context key filter restricts addresses to
+            // be part of that list.
+            // 
+            // Optional 'send_smtp_skip_to' context key holds a recipients block list
+            // """
+            // email_to = message['To']
+            // email_cc = message['Cc']
+            // email_bcc = message['Bcc']
+            // 
+            // # Support optional pre-validated To list, used notably when formatted
+            // # emails may create fake emails using extract_rfc2822_addresses, e.g.
+            // # '"Bike@Home" <email@domain.com>' which can be considered as containing
+            // # 2 emails by extract_rfc2822_addresses
+            // validated_to = self.env.context.get('send_validated_to') or []
+            // 
+            // # Support optional skip To list
+            // skip_to_lst = self.env.context.get('send_smtp_skip_to') or []
+            // 
+            // # All recipient addresses must only contain ASCII characters
+            // return [
+            //     address
+            //     for base in [email_to, email_cc, email_bcc]
+            //     # be sure a given address does not return duplicates (but duplicates
+            //     # in final smtp to list is still ok)
+            //     for address in tools.misc.unique(extract_rfc2822_addresses(base))
+            //     if (
+            //         address and (not validated_to or address in validated_to)
+            //         and email_normalize(address, strict=False) not in skip_to_lst
+            //     )
+            // ]
             */
             return default;
         }
@@ -878,7 +1037,8 @@ namespace Bamboo.Core.Application.Services
             //                      messages. The caller is in charge of disconnecting the session.
             // :param mail_server_id: optional id of ir.mail_server to use for sending. overrides other smtp_* arguments.
             // :param smtp_server: optional hostname of SMTP server to use
-            // :param smtp_encryption: optional TLS mode, one of 'none', 'starttls' or 'ssl' (see ir.mail_server fields for explanation)
+            // :param smtp_encryption: optional TLS mode, one of 'none', 'starttls', 'starttls_strict', 'ssl', or 'ssl_strict'.
+            //     The 'strict' variants verify the remote server's certificate against the operating system trust store.
             // :param smtp_port: optional SMTP port, if mail_server_id is not passed
             // :param smtp_user: optional SMTP user, if mail_server_id is not passed
             // :param smtp_password: optional SMTP password to use, if mail_server_id is not passed
@@ -890,15 +1050,15 @@ namespace Bamboo.Core.Application.Services
             // """
             // smtp = smtp_session
             // if not smtp:
-            //     smtp = self.connect(
+            //     smtp = self._connect__(
             //         smtp_server, smtp_port, smtp_user, smtp_password, smtp_encryption,
             //         smtp_from=message['From'], ssl_certificate=smtp_ssl_certificate, ssl_private_key=smtp_ssl_private_key,
             //         smtp_debug=smtp_debug, mail_server_id=mail_server_id,)
             // 
-            // smtp_from, smtp_to_list, message = self._prepare_email_message(message, smtp)
+            // smtp_from, smtp_to_list, message = self._prepare_email_message__(message, smtp)
             // 
             // # Do not actually send emails in testing mode!
-            // if modules.module.current_test:
+            // if self._disable_send():
             //     _test_logger.debug("skip sending email in test mode")
             //     return message['Message-Id']
             // 
@@ -930,25 +1090,25 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: ir_mail_server.py) ---
-            // def _smtp_login(self, connection, smtp_user, smtp_password):
+            // def _smtp_login__(self, connection, smtp_user, smtp_password):  # noqa: PLW3201
             // if len(self) == 1 and self.smtp_authentication == 'gmail':
             //     auth_string = self._generate_oauth2_string(smtp_user, self.google_gmail_refresh_token)
             //     oauth_param = base64.b64encode(auth_string.encode()).decode()
             //     connection.ehlo()
             //     connection.docmd('AUTH', f'XOAUTH2 {oauth_param}')
             // else:
-            //     super(IrMailServer, self)._smtp_login(connection, smtp_user, smtp_password)
+            //     super()._smtp_login__(connection, smtp_user, smtp_password)
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
-            // def _smtp_login(self, connection, smtp_user, smtp_password):
+            // def _smtp_login__(self, connection, smtp_user, smtp_password):  # noqa: PLW3201
             // if len(self) == 1 and self.smtp_authentication == 'outlook':
             //     auth_string = self._generate_outlook_oauth2_string(smtp_user)
             //     oauth_param = base64.b64encode(auth_string.encode()).decode()
             //     connection.ehlo()
             //     connection.docmd('AUTH', f'XOAUTH2 {oauth_param}')
             // else:
-            //     super()._smtp_login(connection, smtp_user, smtp_password)
+            //     super()._smtp_login__(connection, smtp_user, smtp_password)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def _smtp_login(self, connection, smtp_user, smtp_password):
+            // def _smtp_login__(self, connection, smtp_user, smtp_password):  # noqa: PLW3201
             // """Authenticate the SMTP connection.
             // 
             // Can be overridden in other module for different authentication methods.Can be
@@ -971,19 +1131,20 @@ namespace Bamboo.Core.Application.Services
             // """Test the connection and if autodetect_max_email_size, set auto-detected max email size.
             // 
             // :param bool autodetect_max_email_size: whether to autodetect the max email size
-            // :return (dict): client action to notify the user of the result of the operation (connection test or
-            // auto-detection successful depending on the autodetect_max_email_size parameter)
+            // :return: client action to notify the user of the result of the operation (connection test or
+            //     auto-detection successful depending on the ``autodetect_max_email_size`` parameter)
+            // :rtype: dict
             // 
-            // :raises UserError: if the connection fails and if autodetect_max_email_size and
+            // :raises UserError: if the connection fails and if ``autodetect_max_email_size`` and
             //     the server doesn't support the auto-detection of email max size
             // """
             // for server in self:
             //     smtp = False
             //     try:
-            //         smtp = self.connect(mail_server_id=server.id, allow_archived=True)
             //         # simulate sending an email from current user's address - without sending it!
             //         email_from = server._get_test_email_from()
             //         email_to = server._get_test_email_to()
+            //         smtp = self._connect__(mail_server_id=server.id, allow_archived=True, smtp_from=email_from)
             //         # Testing the MAIL FROM step should detect sender filter problems
             //         (code, repl) = smtp.mail(email_from)
             //         if code != 250:
@@ -1016,6 +1177,8 @@ namespace Bamboo.Core.Application.Services
             //         raise UserError(_("An option is not supported by the server:\n %s", e)) from e
             //     except smtplib.SMTPException as e:
             //         raise UserError(_("An SMTP exception occurred. Check port number and connection security type.\n %s", e)) from e
+            //     except CertificateError as e:
+            //         raise UserError(_("An SSL exception occurred. Check connection security type.\n CertificateError: %s", e)) from e
             //     except (ssl.SSLError, SSLError) as e:
             //         raise UserError(_("An SSL exception occurred. Check connection security type.\n %s", e)) from e
             //     except UserError:

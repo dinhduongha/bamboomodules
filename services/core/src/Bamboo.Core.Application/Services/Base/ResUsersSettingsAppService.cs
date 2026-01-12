@@ -31,22 +31,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: res_users_settings.py) ---
             // def _bus_channel(self):
-            // return self.user_id._bus_channel()
-            */
-            return default;
-        }
-
-        protected async Task<ResUsersSettings> CleanupExpiredMutesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
-            // def _cleanup_expired_mutes(self):
-            // """
-            // Cron job for cleanup expired unmute by resetting mute_until_dt and sending bus notifications.
-            // """
-            // settings = self.search([("mute_until_dt", "<=", fields.Datetime.now())])
-            // settings.write({"mute_until_dt": False})
-            // settings._notify_mute()
+            // return self.user_id
             */
             return default;
         }
@@ -74,18 +59,63 @@ namespace Bamboo.Core.Application.Services
             //     volume_settings = self.volume_settings_ids._discuss_users_settings_volume_format()
             //     res.pop('volume_settings_ids', None)
             //     res['volumes'] = [('ADD', volume_settings)]
-            // if "mute_until_dt" in fields_to_format:
-            //     res["mute_until_dt"] = fields.Datetime.to_string(self.mute_until_dt)
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users_settings.py) ---
+            // def _format_settings(self, fields_to_format):
+            // res = super()._format_settings(fields_to_format)
+            // if 'embedded_actions_config_ids' in fields_to_format:
+            //     res['embedded_actions_config_ids'] = self.embedded_actions_config_ids._embedded_action_settings_format()
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users_settings.py) ---
             // def _format_settings(self, fields_to_format):
-            // res = self._read_format(fnames=fields_to_format)[0]
+            // res = self._read_format(fnames=[fname for fname in fields_to_format if fname != 'user_id'])[0]
             // if 'user_id' in fields_to_format:
-            //     res = self._read_format(fnames=fields_to_format)[0]
             //     res['user_id'] = {'id': self.user_id.id}
             // return res
             */
             return default;
+        }
+
+        public async Task<ResUsersSettings> GetEmbeddedActionsSettingsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: res_users_settings.py) ---
+            // def get_embedded_actions_settings(self):
+            // embedded_actions_settings_dict = super().get_embedded_actions_settings()
+            // res_model = self.env.context.get('res_model')
+            // res_id = self.env.context.get('res_id')
+            // if not (res_model == 'project.project' and res_id):
+            //     return embedded_actions_settings_dict
+            // 
+            // project_manager = self.env['project.project'].browse(res_id).user_id
+            // if self.user_id == project_manager:
+            //     return embedded_actions_settings_dict
+            // 
+            // user_configs = self.env['res.users.settings.embedded.action'].search(
+            //     domain=[
+            //         ('user_setting_id', '=', self.id),
+            //         ('res_model', '=', res_model),
+            //         ('res_id', '=', res_id),
+            //     ],
+            // )
+            // manager_configs_sudo = self.env['res.users.settings.embedded.action'].sudo().search(
+            //     domain=[
+            //         ('user_setting_id', '=', project_manager.sudo().res_users_settings_id.id),
+            //         ('res_model', '=', res_model),
+            //         ('res_id', '=', res_id),
+            //         ('action_id', 'not in', user_configs.action_id.ids),
+            //     ],
+            // )
+            // if manager_configs_sudo:
+            //     embedded_actions_settings_dict.update(manager_configs_sudo.copy({'user_setting_id': self.id})._embedded_action_settings_format())
+            // 
+            // return embedded_actions_settings_dict
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users_settings.py) ---
+            // def get_embedded_actions_settings(self):
+            // self.ensure_one()
+            // return self.embedded_actions_config_ids._embedded_action_settings_format()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResUsersSettings> GetFieldsBlacklistInternalAsync()
@@ -120,7 +150,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users_settings.py) ---
             // def _get_fields_blacklist(self):
             // """ Get list of fields that won't be formatted. """
-            // return []
+            // return ['display_name']
             */
             return default;
         }
@@ -143,19 +173,6 @@ namespace Bamboo.Core.Application.Services
             // def _is_google_calendar_valid(self):
             // self.ensure_one()
             // return self.sudo().google_calendar_token_validity and self.sudo().google_calendar_token_validity >= (fields.Datetime.now() + timedelta(minutes=1))
-            */
-            return default;
-        }
-
-        protected async Task<ResUsersSettings> NotifyMuteInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
-            // def _notify_mute(self):
-            // for setting in self:
-            //     setting._bus_send("res.users.settings", {"mute_until_dt": setting.mute_until_dt})
-            //     if setting.mute_until_dt and setting.mute_until_dt != -1:
-            //         self.env.ref("mail.ir_cron_discuss_users_settings_unmute")._trigger(setting.mute_until_dt)
             */
             return default;
         }
@@ -198,19 +215,37 @@ namespace Bamboo.Core.Application.Services
             // if fields_to_format:
             //     fields_to_format = [field for field in fields_to_format if field not in fields_blacklist]
             // else:
-            //     fields_to_format = [name for name, field in self._fields.items() if name == 'id' or (not field.automatic and name not in fields_blacklist)]
+            //     fields_to_format = [name for name, field in self._fields.items() if name == 'id' or (name not in models.MAGIC_COLUMNS and name not in fields_blacklist)]
             // res = self._format_settings(fields_to_format)
             // return res
             */
             return default;
         }
 
-        public async Task<ResUsersSettings> SetCustomNotificationsAsync(Guid id, ResUsersSettingsSetCustomNotificationsRequestDto input)
+        public async Task<ResUsersSettings> SetEmbeddedActionsSettingAsync(Guid id, ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
-            // def set_custom_notifications(self, custom_notifications):
-            // self.set_res_users_settings({"channel_notifications": custom_notifications})
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users_settings.py) ---
+            // def set_embedded_actions_setting(self, action_id, res_id, vals):
+            // self.ensure_one()
+            // embedded_actions_config = self.env['res.users.settings.embedded.action'].search([
+            //     ('user_setting_id', '=', self.id), ('action_id', '=', action_id), ('res_id', '=', res_id)
+            // ], limit=1)
+            // new_vals = {}
+            // for field, value in vals.items():
+            //     if field in ('embedded_actions_order', 'embedded_actions_visibility'):
+            //         new_vals[field] = ','.join('false' if action_id is False else str(action_id) for action_id in value)
+            //     else:
+            //         new_vals[field] = value
+            // if embedded_actions_config:
+            //     embedded_actions_config.write(new_vals)
+            // else:
+            //     self.env['res.users.settings.embedded.action'].create({
+            //         **new_vals,
+            //         'user_setting_id': self.id,
+            //         'action_id': action_id,
+            //         'res_id': res_id,
+            //     })
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

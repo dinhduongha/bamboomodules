@@ -16,16 +16,18 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ProductTemplate> ComputeIsStorableAsync(Guid id);
         Task<ProductTemplate> CopyDataAsync(Guid id, ProductTemplateCopyDataRequestDto input);
         Task<ProductTemplate> CreateProductVariantAsync(Guid id, ProductTemplateCreateProductVariantRequestDto input);
+        Task<ProductTemplate> CreateProductVariantFromPosAsync(Guid id, ProductTemplateCreateProductVariantFromPosRequestDto input);
         Task<ProductTemplate> CreateProductVariantsFromGelatoTemplateAsync(Guid id);
         Task<ProductTemplate> GetContextualPriceAsync(Guid id, ProductTemplateGetContextualPriceRequestDto input);
         Task<ProductTemplate> GetEmptyListHelpAsync(Guid id, ProductTemplateGetEmptyListHelpRequestDto input);
         Task<ProductTemplate> GetImportTemplatesAsync(Guid id);
         Task<ProductTemplate> GetProductAccountsAsync(Guid id, ProductTemplateGetProductAccountsRequestDto input);
+        Task<ProductTemplate> GetProductInfoPosAsync(Guid id, ProductTemplateGetProductInfoPosRequestDto input);
         Task<ProductTemplate> GetSingleProductVariantAsync(Guid id);
         Task<ProductTemplate> HasDynamicAttributesAsync(Guid id);
+        Task<ProductTemplate> LoadProductFromPosAsync(Guid id, ProductTemplateLoadProductFromPosRequestDto input);
         Task<ProductTemplate> OpenDocumentsAsync(Guid id);
         Task<ProductTemplate> OpenLabelLayoutAsync(Guid id);
-        Task<ProductTemplate> OpenPricelistRulesAsync(Guid id);
         Task<ProductTemplate> OpenProductLotAsync(Guid id);
         Task<ProductTemplate> OpenQuantsAsync(Guid id);
         Task<ProductTemplate> OpenRoutesDiagramAsync(Guid id);
@@ -35,7 +37,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ProductTemplate> SetSequenceTopAsync(Guid id);
         Task<ProductTemplate> SetSequenceUpAsync(Guid id);
         Task<ProductTemplate> SyncGelatoTemplateInfoAsync(Guid id);
-        Task<ProductTemplate> UpdateQuantityOnHandAsync(Guid id);
         Task<ProductTemplate> UsedInBomAsync(Guid id);
         Task<ProductTemplate> ViewMosAsync(Guid id);
         Task<ProductTemplate> ViewOrderpointsAsync(Guid id);

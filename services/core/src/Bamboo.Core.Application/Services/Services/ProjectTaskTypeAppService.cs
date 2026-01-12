@@ -37,17 +37,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProjectTaskType> ComputeDisabledRatingWarningInternalAsync()
+        protected async Task<ProjectTaskType> ComputeRatingRequestDeadlineInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
-            // def _compute_disabled_rating_warning(self):
+            // def _compute_rating_request_deadline(self):
+            // periods = {'daily': 1, 'weekly': 7, 'bimonthly': 15, 'monthly': 30, 'quarterly': 90, 'yearly': 365}
             // for stage in self:
-            //     disabled_projects = stage.project_ids.filtered(lambda p: not p.rating_active)
-            //     if disabled_projects:
-            //         stage.disabled_rating_warning = '\n'.join('- %s' % p.name for p in disabled_projects)
-            //     else:
-            //         stage.disabled_rating_warning = False
+            //     stage.rating_request_deadline = fields.Datetime.now() + timedelta(days=periods.get(stage.rating_status_period, 0))
+            */
+            return default;
+        }
+
+        protected async Task<ProjectTaskType> ComputeShowRatingActiveInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_task_type.py) ---
+            // def _compute_show_rating_active(self):
+            // for stage in self:
+            //     stage.show_rating_active = any(stage.project_ids.mapped('allow_billable'))
             */
             return default;
         }
@@ -98,6 +106,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ProjectTaskType> OnchangeProjectIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_task_type.py) ---
+            // def _onchange_project_ids(self):
+            // if not any(self.project_ids.mapped('allow_billable')):
+            //     self.rating_active = False
+            */
+            return default;
+        }
+
         protected async Task<ProjectTaskType> PreparePersonalStagesDeletionInternalAsync(object remaining_stages_dict, object personal_stages_to_update)
         {
             /*
@@ -135,16 +154,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTaskType> ToggleActiveAsync(Guid id)
+        protected async Task<ProjectTaskType> SendRatingAllInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
-            // def toggle_active(self):
-            // res = super().toggle_active()
-            // stage_active = self.filtered('active')
-            // inactive_tasks = self.env['project.task'].with_context(active_test=False).search(
-            //     [('active', '=', False), ('stage_id', 'in', stage_active.ids)], limit=1)
-            // if stage_active and inactive_tasks:
+            // def _send_rating_all(self):
+            // stages = self.search([
+            //     ('rating_active', '=', True),
+            //     ('rating_status', '=', 'periodic'),
+            //     ('rating_request_deadline', '<=', fields.Datetime.now())
+            // ])
+            // for stage in stages:
+            //     stage.project_ids.task_ids._send_task_rating_mail()
+            //     stage._compute_rating_request_deadline()
+            //     self.env.cr.commit()
+            */
+            return default;
+        }
+
+        public async Task<ProjectTaskType> UnarchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
+            // def action_unarchive(self):
+            // res = super().action_unarchive()
+            // stage_active = self.filtered(self._active_name)
+            // if stage_active and self.env['project.task'].with_context(active_test=False).search_count(
+            //     [('active', '=', False), ('stage_id', 'in', stage_active.ids)], limit=1
+            // ):
             //     wizard = self.env['project.task.type.delete.wizard'].create({
             //         'stage_ids': stage_active.ids,
             //     })

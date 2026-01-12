@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountBankStatementLineAppService : IGenericApplicationService<AccountBankStatementLine>
     {
-        Task<AccountBankStatementLine> InitAsync(Guid id);
+        Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(Guid id, AccountBankStatementLineFormattedReadGroupRequestDto input);
         Task<AccountBankStatementLine> NewAsync(Guid id, AccountBankStatementLineNewRequestDto input);
         Task<AccountBankStatementLine> UndoReconciliationAsync(Guid id);
     }

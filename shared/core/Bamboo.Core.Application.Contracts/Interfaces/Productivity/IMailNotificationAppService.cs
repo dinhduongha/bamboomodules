@@ -11,6 +11,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IMailNotificationAppService : IGenericApplicationService<MailNotification>
     {
         Task<MailNotification> FormatFailureReasonAsync(Guid id);
-        Task<MailNotification> InitAsync(Guid id);
     }
 }

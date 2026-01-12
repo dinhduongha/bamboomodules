@@ -35,7 +35,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: product_pricelist.py) ---
             // def action_archive(self):
-            // loyalty_programs = self.env['loyalty.program'].search([
+            // loyalty_programs = self.env['loyalty.program'].sudo().search([
             //     ('active', '=', True),
             //     ('pricelist_ids', 'in', self.ids)
             // ])
@@ -48,6 +48,19 @@ namespace Bamboo.Core.Application.Services
             // return super().action_archive()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ProductPricelist> BaseDomainItemIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
+            // def _base_domain_item_ids(self):
+            // return [
+            //     '|', ('product_tmpl_id', '=', None), ('product_tmpl_id.active', '=', True),
+            //     '|', ('product_id', '=', None), ('product_id.active', '=', True),
+            // ]
+            */
+            return default;
         }
 
         protected async Task<ProductPricelist> CheckWebsitesInCompanyInternalAsync()
@@ -81,13 +94,30 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductPricelist> ComputePriceRuleInternalAsync(object products, object quantity, object currency, object uom, object date, object compute_price)
+        protected async Task<ProductPricelist> ComputePartnersCountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: partnership, FILE: product_pricelist.py) ---
+            // def _compute_partners_count(self):
+            // partners_data = self.env['res.partner']._read_group(
+            //     domain=[('specific_property_product_pricelist', 'in', self.ids)],
+            //     groupby=['specific_property_product_pricelist'],
+            //     aggregates=['__count'],
+            // )
+            // mapped_data = {pricelist.id: count for pricelist, count in partners_data}
+            // for pricelist in self:
+            //     pricelist.partners_count = mapped_data.get(pricelist.id, 0)
+            */
+            return default;
+        }
+
+        protected async Task<ProductPricelist> ComputePriceRuleInternalAsync(object products, object quantity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
             // def _compute_price_rule(
-            //         self, products, quantity, currency=None, uom=None, date=False, compute_price=True,
-            //         **kwargs
+            //     self, products, quantity, *, currency=None, uom=None, date=False, compute_price=True,
+            //     **kwargs
             // ):
             //     """ Low-level method - Mono pricelist, multi products
             //     Returns: dict{product_id: (price, suitable_rule) for the given pricelist}
@@ -145,10 +175,11 @@ namespace Bamboo.Core.Application.Services
             // 
             //         if compute_price:
             //             price = suitable_rule._compute_price(
-            //                 product, quantity, target_uom, date=date, currency=currency)
+            //                 product, quantity, target_uom, date=date, currency=currency, **kwargs)
             //         else:
             //             # Skip price computation when only the rule is requested.
             //             price = 0.0
+            // 
             //         results[product.id] = (price, suitable_rule.id)
             // 
             //     return results
@@ -232,11 +263,21 @@ namespace Bamboo.Core.Application.Services
             // """ Find the first company's website, if there is one. """
             // company_id = self.env.company.id
             // 
-            // if self._context.get('default_company_id'):
-            //     company_id = self._context.get('default_company_id')
+            // if self.env.context.get('default_company_id'):
+            //     company_id = self.env.context.get('default_company_id')
             // 
             // domain = [('company_id', '=', company_id)]
             // return self.env['website'].search(domain, limit=1)
+            */
+            return default;
+        }
+
+        protected async Task<ProductPricelist> DomainItemIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
+            // def _domain_item_ids(self):
+            // return self._base_domain_item_ids()
             */
             return default;
         }
@@ -275,12 +316,9 @@ namespace Bamboo.Core.Application.Services
             // if not self:
             //     return self.env['product.pricelist.item']
             // 
-            // # Do not filter out archived pricelist items, since it means current pricelist is also archived
-            // # We do not want the computation of prices for archived pricelist to always fallback on the Sales price
-            // # because no rule was found (thanks to the automatic orm filtering on active field)
-            // return self.env['product.pricelist.item'].with_context(active_test=False).search(
+            // return self.env['product.pricelist.item'].search(
             //     self._get_applicable_rules_domain(products=products, date=date, **kwargs)
-            // ).with_context(self.env.context)
+            // )
             */
             return default;
         }
@@ -329,17 +367,18 @@ namespace Bamboo.Core.Application.Services
             // Else, it will return the generic property (res_id not set)
             // Else, it will return the first available pricelist if any
             // 
-            // :param int company_id: if passed, used for looking up properties,
-            //     instead of current user's company
             // :return: a dict {partner_id: pricelist}
             // """
+            // ProductPricelist = self.env['product.pricelist']
+            // 
+            // if not self.env['res.groups']._is_feature_enabled('product.group_product_pricelist'):
+            //     # Skip pricelist computation if pricelists are disabled.
+            //     return defaultdict(lambda: ProductPricelist)
+            // 
             // # `partner_ids` might be ID from inactive users. We should use active_test
             // # as we will do a search() later (real case for website public user).
             // Partner = self.env['res.partner'].with_context(active_test=False)
             // company_id = self.env.company.id
-            // 
-            // IrConfigParameter = self.env['ir.config_parameter'].sudo()
-            // Pricelist = self.env['product.pricelist']
             // pl_domain = self._get_partner_pricelist_multi_search_domain_hook(company_id)
             // 
             // # if no specific property, try to find a fitting pricelist
@@ -352,6 +391,8 @@ namespace Bamboo.Core.Application.Services
             //         remaining_partner_ids.append(partner.id)
             // 
             // if remaining_partner_ids:
+            //     IrConfigParameter = self.env['ir.config_parameter'].sudo()
+            // 
             //     def convert_to_int(string_value):
             //         try:
             //             return int(string_value)
@@ -359,7 +400,7 @@ namespace Bamboo.Core.Application.Services
             //             return None
             //     # get fallback pricelist when no pricelist for a given country
             //     pl_fallback = (
-            //         Pricelist.search(pl_domain + [('country_group_ids', '=', False)], limit=1) or
+            //         ProductPricelist.search(pl_domain + [('country_group_ids', '=', False)], limit=1) or
             //         # save data in ir.config_parameter instead of ir.default for
             //         # res.partner.property_product_pricelist
             //         # otherwise the data will become the default value while
@@ -367,9 +408,9 @@ namespace Bamboo.Core.Application.Services
             //         # however if the property_product_pricelist is not specified
             //         # the result of the previous line should have high priority
             //         # when computing
-            //         Pricelist.browse(convert_to_int(IrConfigParameter.get_param(f'res.partner.property_product_pricelist_{company_id}'))) or
-            //         Pricelist.browse(convert_to_int(IrConfigParameter.get_param('res.partner.property_product_pricelist'))) or
-            //         Pricelist.search(pl_domain, limit=1)
+            //         ProductPricelist.browse(convert_to_int(IrConfigParameter.get_param(f'res.partner.property_product_pricelist_{company_id}'))) or
+            //         ProductPricelist.browse(convert_to_int(IrConfigParameter.get_param('res.partner.property_product_pricelist'))) or
+            //         ProductPricelist.search(pl_domain, limit=1)
             //     )
             //     # group partners by country, and find a pricelist for each country
             //     remaining_partners = self.env['res.partner'].browse(remaining_partner_ids)
@@ -377,7 +418,7 @@ namespace Bamboo.Core.Application.Services
             //     for country, partners in partners_by_country.items():
             //         if not country and (country_code := self.env.context.get('country_code')):
             //             country = self.env['res.country'].search([('code', '=', country_code)], limit=1)
-            //         pl = Pricelist.search(pl_domain + [('country_group_ids.country_ids', '=', country.id if country else False)], limit=1)
+            //         pl = ProductPricelist.search(pl_domain + [('country_group_ids.country_ids', '=', country.id if country else False)], limit=1)
             //         pl = pl or pl_fallback
             //         result.update(dict.fromkeys(partners._ids, pl))
             // 
@@ -569,22 +610,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductPricelist> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ProductPricelist> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // return [('id', 'in', config_id._get_available_pricelists().ids)]
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_pricelist.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // pricelist_ids = [preset['pricelist_id'] for preset in data['pos.preset']]
+            // return [('id', 'in', config._get_available_pricelists().ids + pricelist_ids)]
             */
             return default;
         }
 
-        protected async Task<ProductPricelist> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ProductPricelist> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_pricelist.py) ---
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'display_name', 'item_ids']
             */
             return default;
@@ -635,7 +676,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
             // def _unlink_except_used_as_rule_base(self):
-            // linked_items = self.env['product.pricelist.item'].sudo().with_context(active_test=False).search([
+            // linked_items = self.env['product.pricelist.item'].sudo().search([
             //     ('base', '=', 'pricelist'),
             //     ('base_pricelist_id', 'in', self.ids),
             //     ('pricelist_id', 'not in', self.ids),
@@ -654,18 +695,18 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
-            // def write(self, values):
-            // res = super().write(values)
+            // def write(self, vals):
+            // res = super().write(vals)
             // 
             // # Make sure that there is no multi-company issue in the existing rules after the company
             // # change.
-            // if 'company_id' in values and len(self) == 1:
+            // if 'company_id' in vals and len(self) == 1:
             //     self.item_ids._check_company()
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_pricelist.py) ---
-            // def write(self, data):
-            // res = super().write(data)
+            // def write(self, vals):
+            // res = super().write(vals)
             // self and self.env.registry.clear_cache()
             // return res
             */

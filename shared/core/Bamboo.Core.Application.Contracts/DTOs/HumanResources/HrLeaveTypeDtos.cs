@@ -12,7 +12,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class HrLeaveTypeGetAllocationDataRequestDto
     {
         public object Employees { get; set; }
-        public object Date { get; set; }
+        public object TargetDate { get; set; }
     }
     
     public class HrLeaveTypeGetAllocationDataRequestRequestDto

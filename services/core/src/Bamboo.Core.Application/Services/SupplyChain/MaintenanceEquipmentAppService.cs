@@ -67,9 +67,9 @@ namespace Bamboo.Core.Application.Services
         protected async Task<MaintenanceEquipment> ComputeMatchSerialInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: maintenance.py) ---
             // def _compute_match_serial(self):
-            // if 'stock.lot' not in self.env or not self.env['stock.lot'].has_access('read'):
+            // if not self.env['stock.lot'].has_access('read') or not self.env.user.has_group('stock.group_production_lot'):
             //     self.match_serial = False
             //     return
             // matched_serial_data = self.env['stock.lot']._read_group(
@@ -106,6 +106,7 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // equipments = super().create(vals_list)
             // for equipment in equipments:
+            //     # TDE FIXME: check if we can use suggested recipients for employee and department manager
             //     # subscribe employee or department manager when equipment assign to him.
             //     partner_ids = []
             //     if equipment.employee_id and equipment.employee_id.user_id:
@@ -139,14 +140,25 @@ namespace Bamboo.Core.Application.Services
         public async Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: maintenance.py) ---
             // def action_open_matched_serial(self):
             // self.ensure_one()
             // action = self.env.ref('stock.action_production_lot_form', raise_if_not_found=False)
             // if not action:
             //     return True
             // action_dict = action._get_action_dict()
-            // action_dict['context'] = {'search_default_name': self.serial_no}
+            // matching_serials = self.env['stock.lot'].search([('name', '=', self.serial_no)])
+            // if len(matching_serials) == 1:
+            //     action_dict.update({
+            //         'views': [(False, 'form')],
+            //         'res_id': matching_serials.id,
+            //     })
+            // else:
+            //     action_dict.update({
+            //         'context': {},
+            //         'views': [(False, 'list'), (False, 'form')],
+            //         'domain': [('id', 'in', matching_serials.ids)],
+            //     })
             // return action_dict
             */
             var entity = await Repository.GetAsync(id); return entity;

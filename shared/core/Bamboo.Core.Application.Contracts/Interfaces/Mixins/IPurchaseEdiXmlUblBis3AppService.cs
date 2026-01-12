@@ -10,22 +10,28 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IPurchaseEdiXmlUblBis3AppService : IMixinAppService
     {
-        Task<TEntity> ExportOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> ExportOrderValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> ExportPurchaseOrderFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetAnticipatedMonetaryTotalValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order, object order_lines) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetCountryValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetDeliveryPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object delivery) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetItemValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object order_line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetLineAllowanceChargeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetLineItemPriceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetOrderLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPartnerAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPartnerContactValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPartnerPartyLegalEntityValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPartnerPartyTaxSchemeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPartnerPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetPaymentTermsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object payment_term) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
-        Task<TEntity> GetTaxCategoryValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object order_line) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderBaseLinesValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderBuyerCustomerPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderConfigValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderCurrencyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderDeliveryNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderHeaderNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLineAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLineAmountNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLineIdNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLineItemNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLineNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderLinePriceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderMonetaryTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderMonetaryTotalsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderPaymentTermsNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderSellerSupplierPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderTaxGroupingFunctionValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> AddPurchaseOrderTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> ExportOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object purchase_order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> GetPurchaseOrderNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> RetrieveOrderValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object tree) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
+        Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able;
     }
 }

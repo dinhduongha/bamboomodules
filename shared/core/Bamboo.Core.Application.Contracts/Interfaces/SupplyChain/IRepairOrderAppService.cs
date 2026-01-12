@@ -16,6 +16,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<RepairOrder> ComputeProductUomAsync(Guid id);
         Task<RepairOrder> CreateSaleOrderAsync(Guid id);
         Task<RepairOrder> ExplodeAsync(Guid id);
+        Task<RepairOrder> GenerateSerialAsync(Guid id);
+        Task<RepairOrder> MessagePostAsync(Guid id);
         Task<RepairOrder> OnchangeProductUomAsync(Guid id);
         Task<RepairOrder> PrintRepairOrderAsync(Guid id);
         Task<RepairOrder> RepairCancelAsync(Guid id);

@@ -8,4 +8,9 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Username { get; set; }
     }
+    
+    public class ImLivechatChannelWebReadRequestDto
+    {
+        public object Specification { get; set; }
+    }
 }

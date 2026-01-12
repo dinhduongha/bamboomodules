@@ -66,17 +66,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpWorkcenter> CheckCapacityInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _check_capacity(self):
-            // if any(workcenter.default_capacity <= 0.0 for workcenter in self):
-            //     raise exceptions.UserError(_('The capacity must be strictly positive.'))
-            */
-            return default;
-        }
-
         protected async Task<MrpWorkcenter> ComputeBlockedTimeInternalAsync()
         {
             /*
@@ -109,13 +98,27 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MrpWorkcenter> ComputeDisplayNameInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def _compute_display_name(self):
+            // super()._compute_display_name()
+            // for workcenter in self:
+            //     # Show the red icon(workcenter is blocked) only when the Gantt view is accessed from MRP > Planning > Planning by Workcenter.
+            //     if self.env.context.get('group_by') and self.env.context.get('show_workcenter_status') and workcenter.working_state == 'blocked':
+            //         workcenter.display_name = f"{workcenter.display_name}\u00A0\u00A0🔴"
+            */
+            return default;
+        }
+
         protected async Task<MrpWorkcenter> ComputeHasRoutingLinesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_has_routing_lines(self):
             // for workcenter in self:
-            //     workcenter.has_routing_lines = self.env['mrp.routing.workcenter'].search_count([('workcenter_id', '=', workcenter.id)], limit=1)
+            //     workcenter.has_routing_lines = self.env['mrp.routing.workcenter'].search_count([('workcenter_id', 'in', workcenter.ids)], limit=1)
             */
             return default;
         }
@@ -139,11 +142,28 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_oee(self):
-            // for order in self:
-            //     if order.productive_time:
-            //         order.oee = round(order.productive_time * 100.0 / (order.productive_time + order.blocked_time), 2)
+            // time_data = self.env['mrp.workcenter.productivity']._read_group(
+            //     domain=[
+            //         ('date_start', '>=', fields.Datetime.to_string(datetime.now() - relativedelta.relativedelta(months=1))),
+            //         ('workcenter_id', 'in', self.ids),
+            //         ('date_end', '!=', False),
+            //     ],
+            //     groupby=['workcenter_id', 'loss_type'],
+            //     aggregates=['duration:sum'],
+            // )
+            // time_by_workcenter = defaultdict(lambda: {'productive_time': 0.0, 'blocked_time': 0.0})
+            // for data in time_data:
+            //     workcenter, loss_type, duration = data
+            //     time_to_update = 'productive_time' if loss_type == 'productive' else 'blocked_time'
+            //     time_by_workcenter[workcenter.id][time_to_update] += duration
+            // for workcenter in self:
+            //     workcenter_time = time_by_workcenter[workcenter.id]
+            //     productive_time = workcenter_time['productive_time']
+            //     if productive_time:
+            //         blocked_time = workcenter_time['blocked_time']
+            //         workcenter.oee = float_round(productive_time * 100.0 / (productive_time + blocked_time), precision_digits=2)
             //     else:
-            //         order.oee = 0.0
+            //         workcenter.oee = 0.0
             */
             return default;
         }
@@ -192,14 +212,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
             // def _compute_working_state(self):
+            // # We search for a productivity line associated to this workcenter having no `date_end`.
+            // # If we do not find one, the workcenter is not currently being used. If we find one, according
+            // # to its `type_loss`, the workcenter is either being used or blocked.
+            // time_log_by_workcenter = {}
+            // for time_log in self.env['mrp.workcenter.productivity'].search([
+            //     ('workcenter_id', 'in', self.ids),
+            //     ('date_end', '=', False),
+            // ]):
+            //     wc = time_log.workcenter_id
+            //     if wc not in time_log_by_workcenter:
+            //         time_log_by_workcenter[wc] = time_log
+            // 
             // for workcenter in self:
-            //     # We search for a productivity line associated to this workcenter having no `date_end`.
-            //     # If we do not find one, the workcenter is not currently being used. If we find one, according
-            //     # to its `type_loss`, the workcenter is either being used or blocked.
-            //     time_log = self.env['mrp.workcenter.productivity'].search([
-            //         ('workcenter_id', '=', workcenter.id),
-            //         ('date_end', '=', False)
-            //     ], limit=1)
+            //     time_log = time_log_by_workcenter.get(workcenter._origin)
             //     if not time_log:
             //         # the workcenter is not being used
             //         workcenter.working_state = 'normal'
@@ -223,7 +249,7 @@ namespace Bamboo.Core.Application.Services
             // result_duration_expected = {wid: 0 for wid in self._ids}
             // # Count Late Workorder
             // data = MrpWorkorder._read_group(
-            //     [('workcenter_id', 'in', self.ids), ('state', 'in', ('pending', 'waiting', 'ready')), ('date_start', '<', datetime.now().strftime('%Y-%m-%d'))],
+            //     [('workcenter_id', 'in', self.ids), ('state', 'in', ('blocked', 'ready')), ('date_start', '<', datetime.now().strftime('%Y-%m-%d'))],
             //     ['workcenter_id'], ['__count'])
             // count_data = {workcenter.id: count for workcenter, count in data}
             // # Count All, Pending, Ready, Progress Workorder
@@ -232,11 +258,11 @@ namespace Bamboo.Core.Application.Services
             //     ['workcenter_id', 'state'], ['duration_expected:sum', '__count'])
             // for workcenter, state, duration_sum, count in res:
             //     result[workcenter.id][state] = count
-            //     if state in ('pending', 'waiting', 'ready', 'progress'):
+            //     if state in ('blocked', 'ready', 'progress'):
             //         result_duration_expected[workcenter.id] += duration_sum
             // for workcenter in self:
             //     workcenter.workorder_count = sum(count for state, count in result[workcenter.id].items() if state not in ('done', 'cancel'))
-            //     workcenter.workorder_pending_count = result[workcenter.id].get('pending', 0)
+            //     workcenter.workorder_blocked_count = result[workcenter.id].get('blocked', 0)
             //     workcenter.workcenter_load = result_duration_expected[workcenter.id]
             //     workcenter.workorder_ready_count = result[workcenter.id].get('ready', 0)
             //     workcenter.workorder_progress_count = result[workcenter.id].get('progress', 0)
@@ -245,27 +271,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpWorkcenter> GetCapacityInternalAsync(object product)
+        protected async Task<MrpWorkcenter> GetCapacityInternalAsync(object product, object unit, object default_capacity)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _get_capacity(self, product):
-            // product_capacity = self.capacity_ids.filtered(lambda capacity: capacity.product_id == product)
-            // return product_capacity.capacity if product_capacity else self.default_capacity
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkcenter> GetExpectedDurationInternalAsync(Guid product_id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def _get_expected_duration(self, product_id):
-            // """Compute the expected duration when using this work-center
-            // Always use the startup / clean-up time from specific capacity if defined.
-            // """
-            // capacity = self.capacity_ids.filtered(lambda p: p.product_id == product_id)
-            // return capacity.time_start + capacity.time_stop if capacity else self.time_start + self.time_stop
+            // def _get_capacity(self, product, unit, default_capacity=1):
+            // capacity = self.capacity_ids.sorted(lambda c: (
+            //     not (c.product_id == product and c.product_uom_id == product.uom_id),
+            //     not (not c.product_id and c.product_uom_id == unit),
+            //     not (not c.product_id and c.product_uom_id == product.uom_id),
+            // ))[:1]
+            // if capacity and capacity.product_id in [product, self.env['product.product']] and capacity.product_uom_id in [product.uom_id, unit]:
+            //     if float_is_zero(capacity.capacity, 0):
+            //         return (default_capacity, capacity.time_start, capacity.time_stop)
+            //     return (capacity.product_uom_id._compute_quantity(capacity.capacity, unit), capacity.time_start, capacity.time_stop)
+            // return (default_capacity, self.time_start, self.time_stop)
             */
             return default;
         }
@@ -290,20 +310,23 @@ namespace Bamboo.Core.Application.Services
             // :rtype: tuple
             // """
             // self.ensure_one()
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // max_planning_iterations = max(int(ICP.get_param('mrp.workcenter_max_planning_iterations', '50')), 1)
             // resource = self.resource_id
-            // start_datetime, revert = make_aware(start_datetime)
+            // revert = to_timezone(start_datetime.tzinfo)
+            // start_datetime = localized(start_datetime)
             // get_available_intervals = partial(self.resource_calendar_id._work_intervals_batch, resources=resource, tz=timezone(self.resource_calendar_id.tz))
             // workorder_intervals_leaves_domain = [('time_type', '=', 'other')]
             // if leaves_to_ignore:
             //     workorder_intervals_leaves_domain.append(('id', 'not in', leaves_to_ignore.ids))
             // get_workorder_intervals = partial(self.resource_calendar_id._leave_intervals_batch, domain=workorder_intervals_leaves_domain, resources=resource, tz=timezone(self.resource_calendar_id.tz))
-            // extra_leaves_slots_intervals = Intervals([(make_aware(start)[0], make_aware(stop)[0], self.env['resource.calendar.attendance']) for start, stop in extra_leaves_slots])
+            // extra_leaves_slots_intervals = Intervals([(localized(start), localized(stop), self.env['resource.calendar.attendance']) for start, stop in extra_leaves_slots])
             // 
-            // remaining = duration
-            // now = make_aware(datetime.now())[0]
+            // remaining = duration = max(duration, 1 / 60)
+            // now = localized(datetime.now())
             // delta = timedelta(days=14)
             // start_interval, stop_interval = None, None
-            // for n in range(50):  # 50 * 14 = 700 days in advance (hardcoded)
+            // for n in range(max_planning_iterations):  # 50 * 14 = 700 days in advance
             //     if forward:
             //         date_start = start_datetime + delta * n
             //         date_stop = date_start + delta

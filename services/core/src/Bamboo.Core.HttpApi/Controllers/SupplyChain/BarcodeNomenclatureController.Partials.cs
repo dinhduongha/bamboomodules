@@ -19,10 +19,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/gs1-decompose-extanded")]
-        public async Task<IActionResult> Gs1DecomposeExtandedAsync(Guid id, [FromBody] BarcodeNomenclatureGs1DecomposeExtandedRequestDto input)
+        [Route("{id}/gs1-decompose-extended")]
+        public async Task<IActionResult> Gs1DecomposeExtendedAsync(Guid id, [FromBody] BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
         {
-            var result = await _appService.Gs1DecomposeExtandedAsync(id, input);
+            var result = await _appService.Gs1DecomposeExtendedAsync(id, input);
             return Ok(result);
         }
         

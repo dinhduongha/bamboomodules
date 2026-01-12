@@ -58,21 +58,21 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<AccountCashRounding> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<AccountCashRounding> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('id', '=', data['pos.config']['data'][0]['rounding_method'])]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', '=', config.rounding_method.id)]
             */
             return default;
         }
 
-        protected async Task<AccountCashRounding> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<AccountCashRounding> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'rounding', 'rounding_method', 'strategy']
             */
             return default;

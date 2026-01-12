@@ -35,10 +35,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-assign-serial")]
-        public async Task<IActionResult> ActionAssignSerialAsync(Guid id)
+        [Route("{id}/action-add-packages")]
+        public async Task<IActionResult> ActionAddPackagesAsync(Guid id)
         {
-            var result = await _appService.AssignSerialAsync(id);
+            var result = await _appService.AddPackagesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-adjust-valuation")]
+        public async Task<IActionResult> ActionAdjustValuationAsync(Guid id)
+        {
+            var result = await _appService.AdjustValuationAsync(id);
             return Ok(result);
         }
         
@@ -55,14 +63,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionGenerateLotLineValsAsync(Guid id, [FromBody] StockMoveGenerateLotLineValsRequestDto input)
         {
             var result = await _appService.GenerateLotLineValsAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-get-account-moves")]
-        public async Task<IActionResult> ActionGetAccountMovesAsync(Guid id)
-        {
-            var result = await _appService.GetAccountMovesAsync(id);
             return Ok(result);
         }
         
@@ -92,9 +92,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-show-subcontract-details")]
-        public async Task<IActionResult> ActionShowSubcontractDetailsAsync(Guid id)
+        public async Task<IActionResult> ActionShowSubcontractDetailsAsync(Guid id, [FromBody] StockMoveShowSubcontractDetailsRequestDto input)
         {
-            var result = await _appService.ShowSubcontractDetailsAsync(id);
+            var result = await _appService.ShowSubcontractDetailsAsync(id, input);
             return Ok(result);
         }
         
@@ -107,18 +107,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/search-remaining-qty")]
+        public async Task<IActionResult> SearchRemainingQtyAsync(Guid id, [FromBody] StockMoveSearchRemainingQtyRequestDto input)
         {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/product-price-update-before-done")]
-        public async Task<IActionResult> ProductPriceUpdateBeforeDoneAsync(Guid id, [FromBody] StockMoveProductPriceUpdateBeforeDoneRequestDto input)
-        {
-            var result = await _appService.ProductPriceUpdateBeforeDoneAsync(id, input);
+            var result = await _appService.SearchRemainingQtyAsync(id, input);
             return Ok(result);
         }
         

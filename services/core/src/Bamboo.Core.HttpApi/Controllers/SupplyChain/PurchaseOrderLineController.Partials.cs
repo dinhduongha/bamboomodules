@@ -51,10 +51,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-purchase-history")]
-        public async Task<IActionResult> ActionPurchaseHistoryAsync(Guid id)
+        [Route("{id}/get-parent-section-line")]
+        public async Task<IActionResult> GetParentSectionLineAsync(Guid id)
         {
-            var result = await _appService.PurchaseHistoryAsync(id);
+            var result = await _appService.GetParentSectionLineAsync(id);
             return Ok(result);
         }
         
@@ -63,14 +63,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OnchangeProductIdAsync(Guid id)
         {
             var result = await _appService.OnchangeProductIdAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/onchange-product-id-warning")]
-        public async Task<IActionResult> OnchangeProductIdWarningAsync(Guid id)
-        {
-            var result = await _appService.OnchangeProductIdWarningAsync(id);
             return Ok(result);
         }
     }

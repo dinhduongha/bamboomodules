@@ -8,14 +8,14 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden/Tools, Module: sms
+    // Category: Human Resources/Employees, Module: hr_skills
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
-    [Route("api/v1/sms/SmsSms")]
-    public partial class SmsSmsController : AbpController
+    [Route("api/v1/human-resources/HrEmployeeSkill")]
+    public partial class HrEmployeeSkillController : AbpController
     {
-        private readonly ISmsSmsAppService _appService;
-        public SmsSmsController(ISmsSmsAppService appService) { _appService = appService; }
+        private readonly IHrEmployeeSkillAppService _appService;
+        public HrEmployeeSkillController(IHrEmployeeSkillAppService appService) { _appService = appService; }
     }
 }

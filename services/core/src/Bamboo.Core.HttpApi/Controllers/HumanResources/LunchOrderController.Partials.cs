@@ -75,14 +75,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/update-quantity")]
         public async Task<IActionResult> UpdateQuantityAsync(Guid id, [FromBody] LunchOrderUpdateQuantityRequestDto input)
         {

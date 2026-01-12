@@ -48,8 +48,11 @@ namespace Bamboo.Core.Application.Services
             // def action_add_to_po(self):
             // if not self or not self.aml_id:
             //     raise UserError(_("Select Vendor Bill lines to add to a Purchase Order"))
+            // partner = self.mapped("partner_id.commercial_partner_id")
+            // if len(partner) > 1:
+            //     raise UserError(_("Please select bill lines with the same vendor."))
             // context = {
-            //     'default_partner_id': self.partner_id.id,
+            //     'default_partner_id': partner.id,
             //     'dialog_size': 'medium',
             //     'has_products': bool(self.aml_id.product_id),
             // }
@@ -166,14 +169,11 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You must select at least one Purchase Order line to match or create bill."))
             // if not self.aml_id:  # select POL(s) without AML -> create a draft bill with the POL(s)
             //     return self._action_create_bill_from_po_lines(self.partner_id, self.pol_id)
-            // if len(self.aml_id.move_id) > 1:  # for purchase matching, disallow matching multiple bills at the same time
-            //     raise UserError(_("You can't select lines from multiple Vendor Bill to do the matching."))
             // 
             // pol_by_product = self.pol_id.grouped('product_id')
             // aml_by_product = self.aml_id.grouped('product_id')
             // residual_purchase_order_lines = self.pol_id
             // residual_account_move_lines = self.aml_id
-            // residual_bill = self.aml_id.move_id
             // 
             // # Match all matchable POL-AML lines and remove them from the residual group
             // for product, po_line in pol_by_product.items():
@@ -184,12 +184,13 @@ namespace Bamboo.Core.Application.Services
             //         residual_purchase_order_lines -= po_line
             //         residual_account_move_lines -= matching_bill_lines
             // 
-            // # Delete all unmatched selected AML
-            // if residual_account_move_lines:
-            //     residual_account_move_lines.unlink()
+            // if len(residual_bill := self.aml_id.move_id) == 1:
+            //     # Delete all unmatched selected AML
+            //     if residual_account_move_lines:
+            //         residual_account_move_lines.unlink()
             // 
-            // # Add all remaining POL to the residual bill
-            // residual_bill._add_purchase_order_lines(residual_purchase_order_lines)
+            //     # Add all remaining POL to the residual bill
+            //     residual_bill._add_purchase_order_lines(residual_purchase_order_lines)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -220,11 +221,12 @@ namespace Bamboo.Core.Application.Services
             //            NULL as pol_id,
             //            aml.id as aml_id,
             //            aml.company_id as company_id,
-            //            aml.partner_id as partner_id,
+            //            am.partner_id as partner_id,
             //            aml.product_id as product_id,
             //            aml.quantity as line_qty,
             //            aml.product_uom_id as line_uom_id,
             //            NULL as qty_invoiced,
+            //            NULL as qty_to_invoice,
             //            NULL as purchase_order_id,
             //            am.id as account_move_id,
             //            aml.amount_currency as line_amount_untaxed,
@@ -254,17 +256,18 @@ namespace Bamboo.Core.Application.Services
             //            pol.partner_id as partner_id,
             //            pol.product_id as product_id,
             //            pol.product_qty as line_qty,
-            //            pol.product_uom as line_uom_id,
+            //            pol.product_uom_id as line_uom_id,
             //            pol.qty_invoiced as qty_invoiced,
+            //            pol.qty_to_invoice as qty_to_invoice,
             //            po.id as purchase_order_id,
             //            NULL as account_move_id,
             //            pol.price_subtotal as line_amount_untaxed,
-            //            pol.currency_id as currency_id,
+            //            po.currency_id as currency_id,
             //            po.state as state
             //       FROM purchase_order_line pol
             //  LEFT JOIN purchase_order po ON pol.order_id = po.id
-            //      WHERE pol.state in ('purchase', 'done')
-            //        AND pol.product_qty > pol.qty_invoiced
+            //      WHERE po.state = 'purchase'
+            //        AND (pol.product_qty > pol.qty_invoiced OR pol.qty_to_invoice != 0)
             //         OR ((pol.display_type = '' OR pol.display_type IS NULL) AND pol.is_downpayment AND pol.qty_invoiced > 0)
             // """)
             */

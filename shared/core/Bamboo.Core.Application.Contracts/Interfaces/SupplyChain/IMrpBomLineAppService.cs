@@ -12,7 +12,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     {
         Task<MrpBomLine> AddFromCatalogAsync(Guid id);
         Task<MrpBomLine> OnchangeProductIdAsync(Guid id);
-        Task<MrpBomLine> OnchangeProductUomIdAsync(Guid id);
         Task<MrpBomLine> SeeAttachmentsAsync(Guid id);
     }
 }

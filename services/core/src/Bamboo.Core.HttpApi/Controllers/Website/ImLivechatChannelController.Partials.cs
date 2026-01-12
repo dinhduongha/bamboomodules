@@ -49,5 +49,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.GetLivechatInfoAsync(id, input);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/web-read")]
+        public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] ImLivechatChannelWebReadRequestDto input)
+        {
+            var result = await _appService.WebReadAsync(id, input);
+            return Ok(result);
+        }
     }
 }

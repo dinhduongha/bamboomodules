@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        {
+            var result = await _appService.ArchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-channel-enroll")]
         public async Task<IActionResult> ActionChannelEnrollAsync(Guid id)
         {
@@ -107,6 +115,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-ratings")]
         public async Task<IActionResult> ActionViewRatingsAsync(Guid id)
         {
@@ -151,22 +167,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> MessagePostAsync(Guid id)
         {
             var result = await _appService.MessagePostAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/open-website-url")]
-        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
-        {
-            var result = await _appService.OpenWebsiteUrlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

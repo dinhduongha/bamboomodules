@@ -11,5 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IHrRecruitmentSourceAppService : IGenericApplicationService<HrRecruitmentSource>
     {
         Task<HrRecruitmentSource> CreateAliasAsync(Guid id);
+        Task<HrRecruitmentSource> CreateAndGetAliasAsync(Guid id);
     }
 }

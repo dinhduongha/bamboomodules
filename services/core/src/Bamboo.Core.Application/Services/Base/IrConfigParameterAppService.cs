@@ -31,20 +31,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: ir_config_parameter.py) ---
             // def create(self, vals_list):
-            // records = super(IrConfigParameter, self).create(vals_list)
+            // records = super().create(vals_list)
             // if any(record.key == "crm.pls_fields" for record in records):
             //     self.env.flush_all()
-            //     self.env.registry.setup_models(self.env.cr)
+            //     self.env.registry._setup_models__(self.env.cr, ['crm.lead'])
             // return records
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_config_parameter.py) ---
             // def create(self, vals_list):
             // configs = super().create(vals_list)
-            // configs._sale_sync_cron()
+            // configs._sale_sync_linked_crons()
             // return configs
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
             // def create(self, vals_list):
-            // self.env.registry.clear_cache()
-            // return super(IrConfigParameter, self).create(vals_list)
+            // self.env.registry.clear_cache('stable')
+            // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
         }
@@ -67,6 +67,21 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<IrConfigParameter> GetParamCronMappingInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_config_parameter.py) ---
+            // def _get_param_cron_mapping(self):
+            // """Return a mapping of config parameters to linked crons' XMLIDs.
+            // 
+            // :return: The config-cron mapping.
+            // :rtype: dict
+            // """
+            // return const.PARAM_CRON_MAPPING
+            */
+            return default;
+        }
+
         protected async Task<IrConfigParameter> GetParamInternalAsync(object key)
         {
             /*
@@ -87,9 +102,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: ir_config_parameter.py) ---
             // def init(self, force=False):
-            // super(IrConfigParameter, self).init(force=force)
+            // super().init(force=force)
             // if force:
-            //     oauth_oe = self.env.ref('auth_oauth.provider_openerp')
+            //     oauth_oe = self.env.ref('auth_oauth.provider_openerp', raise_if_not_found=False)
             //     if not oauth_oe:
             //         return
             //     dbuuid = self.sudo().get_param('database.uuid')
@@ -112,17 +127,21 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrConfigParameter> SaleSyncCronInternalAsync(object unlink)
+        protected async Task<IrConfigParameter> SaleSyncLinkedCronsInternalAsync(object unlink)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_config_parameter.py) ---
-            // def _sale_sync_cron(self, unlink=False):
-            // for config in self:
-            //     if (
-            //         config.key == 'sale.automatic_invoice'
-            //         and (send_invoice_cron := self.env.ref('sale.send_invoice_cron', raise_if_not_found=False))
-            //     ):
-            //         send_invoice_cron.active = False if unlink else str2bool(config.value)
+            // def _sale_sync_linked_crons(self, unlink=False):
+            // """Synchronize Sales-related crons' `active` field based on linked configuration parameters.
+            // 
+            // :param bool unlink: Whether this sync is triggered by parameter deletion.
+            // :return: None
+            // """
+            // param_cron_mapping = self._get_param_cron_mapping()
+            // for config in self.filtered(lambda c: c.key in param_cron_mapping):
+            //     linked_cron_xmlid = param_cron_mapping[config.key]
+            //     if linked_cron := self.env.ref(linked_cron_xmlid, raise_if_not_found=False):
+            //         linked_cron.active = False if unlink else str2bool(config.value)
             */
             return default;
         }
@@ -137,7 +156,7 @@ namespace Bamboo.Core.Application.Services
             //     group_mail_template_editor = self.env.ref('mail.group_mail_template_editor')
             // 
             //     if not value and group_mail_template_editor not in group_user.implied_ids:
-            //         group_user.implied_ids |= group_mail_template_editor
+            //         group_user._apply_group(group_mail_template_editor)
             // 
             //     elif value and group_mail_template_editor in group_user.implied_ids:
             //         # remove existing users, including inactive template user
@@ -181,19 +200,19 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: ir_config_parameter.py) ---
             // def unlink(self):
             // pls_emptied = any(record.key == "crm.pls_fields" for record in self)
-            // result = super(IrConfigParameter, self).unlink()
-            // if pls_emptied and not self._context.get(MODULE_UNINSTALL_FLAG):
+            // result = super().unlink()
+            // if pls_emptied and not self.env.context.get(MODULE_UNINSTALL_FLAG):
             //     self.env.flush_all()
-            //     self.env.registry.setup_models(self.env.cr)
+            //     self.env.registry._setup_models__(self.env.cr, ['crm.lead'])
             // return result
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_config_parameter.py) ---
             // def unlink(self):
-            // self._sale_sync_cron(unlink=True)
+            // self._sale_sync_linked_crons(unlink=True)
             // return super().unlink()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
             // def unlink(self):
-            // self.env.registry.clear_cache()
-            // return super(IrConfigParameter, self).unlink()
+            // self.env.registry.clear_cache('stable')
+            // return super().unlink()
             */
             return await base.UnlinkAsync(ids);
         }
@@ -204,7 +223,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
             // def unlink_default_parameters(self):
             // for record in self.filtered(lambda p: p.key in _default_parameters.keys()):
-            //     raise ValidationError(_("You cannot delete the %s record.", record.key))
+            //     raise ValidationError(self.env._("You cannot delete the %s record.", record.key))
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -212,26 +231,45 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, IrConfigParameter entity, List<string> fields)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: ir_config_parameter.py) ---
+            // def write(self, vals):
+            // ''' When this paramater is changed, dynamic fields needs to be recomputed '''
+            // param = self.filtered(lambda x: x.key == 'analytic.project_plan')
+            // if not param:
+            //     return super().write(vals)
+            // old_plan_id = param.value
+            // new_plan_id = vals.get('value')
+            // if not (
+            //     new_plan_id
+            //     and str(new_plan_id).isnumeric()
+            //     and (plan := self.env['account.analytic.plan'].browse(int(new_plan_id)))
+            //     and (plan_field := plan._find_plan_column())
+            // ):
+            //     raise UserError(_('The value for %s must be the ID to a valid analytic plan that is not a subplan', param.key))
+            // res = super().write(vals)
+            // self.env['account.analytic.plan'].browse(int(old_plan_id))._sync_all_plan_column()
+            // plan_field.unlink()
+            // return res
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: ir_config_parameter.py) ---
             // def write(self, vals):
-            // result = super(IrConfigParameter, self).write(vals)
+            // result = super().write(vals)
             // if any(record.key == "crm.pls_fields" for record in self):
             //     self.env.flush_all()
-            //     self.env.registry.setup_models(self.env.cr)
+            //     self.env.registry._setup_models__(self.env.cr, ['crm.lead'])
             // return result
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_config_parameter.py) ---
             // def write(self, vals):
             // res = super().write(vals)
-            // self._sale_sync_cron()
+            // self._sale_sync_linked_crons()
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
             // def write(self, vals):
             // if 'key' in vals:
             //     illegal = _default_parameters.keys() & self.mapped('key')
             //     if illegal:
-            //         raise ValidationError(_("You cannot rename config parameters with keys %s", ', '.join(illegal)))
-            // self.env.registry.clear_cache()
-            // return super(IrConfigParameter, self).write(vals)
+            //         raise ValidationError(self.env._("You cannot rename config parameters with keys %s", ', '.join(illegal)))
+            // self.env.registry.clear_cache('stable')
+            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

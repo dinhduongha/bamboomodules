@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> FromHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object element) where TEntity : IEntity<Guid>, IIrQwebFieldSelectionable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb_fields.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_qweb_fields.py) ---
             // def from_html(self, model, field, element):
             // value = element.text_content().strip()
             // selection = field.get_description(self.env)['selection']
@@ -35,7 +35,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if value == v:
             //         return k
             // 
-            // raise ValueError(u"No value found for label %s in selection %s" % (
+            // raise ValueError("No value found for label %s in selection %s" % (
             //                  value, selection))
             */
             return default;
@@ -46,7 +46,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_qweb_fields.py) ---
             // def get_available_options(self):
-            // options = super(SelectionConverter, self).get_available_options()
+            // options = super().get_available_options()
             // options.update(
             //     selection=dict(type='selection', string=_('Selection'), description=_('By default the widget uses the field information'), required=True)
             // )
@@ -65,7 +65,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def record_to_html(self, record, field_name, options):
             // if 'selection' not in options:
             //     options = dict(options, selection=dict(record._fields[field_name].get_description(self.env)['selection']))
-            // return super(SelectionConverter, self).record_to_html(record, field_name, options)
+            // return super().record_to_html(record, field_name, options)
             */
             return default;
         }

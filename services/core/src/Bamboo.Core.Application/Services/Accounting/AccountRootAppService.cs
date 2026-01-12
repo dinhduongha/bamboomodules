@@ -25,6 +25,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiPrivate]
         public async Task<AccountRoot> BrowseAsync(Guid id, AccountRootBrowseRequestDto input)
         {
             /*
@@ -63,8 +64,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None) -> Query:
-            // match domain:
+            // def _search(self, domain, offset=0, limit=None, order=None, **kw) -> Query:
+            // match list(domain):
             //     case [('id', 'in', ids)]:
             //         return self.browse(sorted(ids))._as_query()
             //     case [('id', 'parent_of', ids)]:

@@ -26,73 +26,952 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        protected async Task<PaymentTransaction> AdyenCreateChildTxFromNotificationDataInternalAsync(object source_tx, object notification_data, object is_refund)
+        protected async Task<PaymentTransaction> AdyenCreateChildTxInternalAsync(object source_tx, object payment_data, object is_refund)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _adyen_create_child_tx_from_notification_data(
-            //     self, source_tx, notification_data, is_refund=False
-            // ):
-            //     """ Create a child transaction based on Adyen data.
+            // def _adyen_create_child_tx(self, source_tx, payment_data, is_refund=False):
+            // """Create a child transaction based on Adyen data.
             // 
-            //     :param payment.transaction source_tx: The source transaction for which a new operation is
-            //                                           initiated.
-            //     :param dict notification_data: The notification data sent by the provider
-            //     :return: The newly created child transaction.
-            //     :rtype: payment.transaction
-            //     :raise ValidationError: If inconsistent data were received.
-            //     """
-            //     provider_reference = notification_data.get('pspReference')
-            //     amount = notification_data.get('amount', {}).get('value')
-            //     if not provider_reference or amount is None:  # amount == 0 if success == False
-            //         raise ValidationError(
-            //             "Adyen: " + _("Received data for child transaction with missing transaction values")
-            //         )
+            // :param payment.transaction source_tx: The source transaction for which a new operation is
+            //                                       initiated.
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: The newly created child transaction.
+            // :rtype: payment.transaction
+            // """
+            // provider_reference = payment_data.get('pspReference')
+            // amount = payment_data.get('amount', {}).get('value')
+            // if not provider_reference or amount is None:  # amount == 0 if success == False
+            //     _logger.warning("Received data for child transaction with missing transaction values.")
+            //     return self.env['payment.transaction']
             // 
-            //     converted_amount = payment_utils.to_major_currency_units(amount, source_tx.currency_id)
-            //     return source_tx._create_child_transaction(
-            //         converted_amount, is_refund=is_refund, provider_reference=provider_reference
-            //     )
+            // converted_amount = payment_utils.to_major_currency_units(
+            //     amount,
+            //     source_tx.currency_id,
+            //     arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
+            // )
+            // return source_tx._create_child_transaction(
+            //     converted_amount, is_refund=is_refund, provider_reference=provider_reference
+            // )
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> AdyenTokenizeFromNotificationDataInternalAsync(object notification_data)
+        protected async Task<PaymentTransaction> ApplyUpdatesInternalAsync(object payment_data)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Update the transaction based on the payment data received from the provider.
+            // 
+            // The updates typically include the payment's state, the provider reference, and the selected
+            // payment method.
+            // 
+            // This method should not be called directly; payment data should go through :meth:`_process`.
+            // 
+            // This method must be overridden by providers to update the transaction based on the payment
+            // data.
+            // 
+            // Note: `self.ensure_one()` from :meth:`_process`
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: None
+            // """
+            // return
             --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _adyen_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
+            // def _apply_updates(self, payment_data):
+            // """Override of payment to update the transaction based on the payment data."""
+            // if self.provider_code != 'adyen':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Extract or assume the event code. If none is provided, the feedback data originate from a
+            // # direct payment request whose feedback data share the same payload as an 'AUTHORISATION'
+            // # webhook notification.
+            // event_code = payment_data.get('eventCode', 'AUTHORISATION')
+            // 
+            // # Update the provider reference. If the event code is 'CAPTURE' or 'CANCELLATION', we
+            // # discard the pspReference as it is different from the original pspReference of the tx.
+            // if 'pspReference' in payment_data and event_code in ['AUTHORISATION', 'REFUND']:
+            //     self.provider_reference = payment_data.get('pspReference')
+            // 
+            // # Update the payment method.
+            // payment_method_data = payment_data.get('paymentMethod', '')
+            // if isinstance(payment_method_data, dict):  # Not from webhook: the data contain the PM code.
+            //     payment_method_type = payment_method_data['type']
+            //     if payment_method_type == 'scheme':  # card
+            //         payment_method_code = payment_method_data['brand']
+            //     else:
+            //         payment_method_code = payment_method_type
+            // else:  # Sent from the webhook: the PM code is directly received as a string.
+            //     payment_method_code = payment_method_data
+            // 
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_state = payment_data.get('resultCode')
+            // refusal_reason = payment_data.get('refusalReason') or payment_data.get('reason')
+            // if not payment_state:
+            //     self._set_error(_("Received data with missing payment state."))
+            // elif payment_state in const.RESULT_CODES_MAPPING['pending']:
+            //     self._set_pending()
+            // elif payment_state in const.RESULT_CODES_MAPPING['done']:
+            //     if not self.provider_id.capture_manually:
+            //         self._set_done()
+            //     else:  # The payment was configured for manual capture.
+            //         # Differentiate the state based on the event code.
+            //         if event_code == 'AUTHORISATION':
+            //             self._set_authorized()
+            //         else:  # 'CAPTURE'
+            //             self._set_done()
+            // 
+            //     # Immediately post-process the transaction if it is a refund, as the post-processing
+            //     # will not be triggered by a customer browsing the transaction from the portal.
+            //     if self.operation == 'refund':
+            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // elif payment_state in const.RESULT_CODES_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif payment_state in const.RESULT_CODES_MAPPING['error']:
+            //     if event_code in ['AUTHORISATION', 'REFUND']:
+            //         _logger.warning(
+            //             "The transaction %s underwent an error. reason: %s.",
+            //             self.reference, refusal_reason,
+            //         )
+            //         self._set_error(
+            //             _("An error occurred during the processing of your payment. Please try again.")
+            //         )
+            //     elif event_code == 'CANCELLATION':
+            //         _logger.warning(
+            //             "The void of the transaction %s failed. reason: %s.",
+            //             self.reference, refusal_reason,
+            //         )
+            //         if self.source_transaction_id:  # child tx => The event can't be retried.
+            //             self._set_error(_("The void of the transaction %s failed.", self.reference))
+            //         else:  # source tx with failed void stays in its state, could be voided again
+            //             self._log_message_on_linked_documents(
+            //                 _("The void of the transaction %s failed.", self.reference)
+            //             )
+            //     else:  # 'CAPTURE', 'CAPTURE_FAILED'
+            //         _logger.warning(
+            //             "The capture of the transaction %s failed. reason: %s.",
+            //             self.reference, refusal_reason,
+            //         )
+            //         if self.source_transaction_id:  # child_tx => The event can't be retried.
+            //             self._set_error(_(
+            //                 "The capture of the transaction %s failed.", self.reference
+            //             ))
+            //         else:  # source tx with failed capture stays in its state, could be captured again
+            //             self._log_message_on_linked_documents(_(
+            //                 "The capture of the transaction %s failed.", self.reference
+            //             ))
+            // elif payment_state in const.RESULT_CODES_MAPPING['refused']:
+            //     _logger.warning(
+            //         "the transaction %s was refused. reason: %s",
+            //         self.reference, refusal_reason
+            //     )
+            //     self._set_error(_("Your payment was refused. Please try again."))
+            // else:  # Classify unsupported payment state as `error` tx state
+            //     _logger.warning(
+            //         "received data for transaction %s with invalid payment state: %s",
+            //         self.reference, payment_state
+            //     )
+            //     self._set_error(
+            //         "Adyen: " + _("Received data with invalid payment state: %s", payment_state)
+            //     )
+            --- ODOO METHOD SOURCE (MODULE: payment_aps, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment' to update the transaction based on the payment data."""
+            // if self.provider_code != 'aps':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('fort_id')
+            // 
+            // # Update the payment method.
+            // payment_option = payment_data.get('payment_option', '')
+            // payment_method = self.env['payment.method']._get_from_code(payment_option.lower())
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status = payment_data.get('status')
+            // if not status:
+            //     self._set_error(_("Received data with missing payment state."))
+            // elif status in PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status in PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // else:  # Classify unsupported payment state as `error` tx state.
+            //     status_description = payment_data.get('response_message')
+            //     _logger.info(
+            //         "Received data with invalid payment status (%(status)s) and reason '%(reason)s' "
+            //         "for transaction %(ref)s.",
+            //         {'status': status, 'reason': status_description, 'ref': self.reference},
+            //     )
+            //     self._set_error(_(
+            //         "Received invalid transaction status %(status)s and reason '%(reason)s'.",
+            //         status=status, reason=status_description
+            //     ))
+            --- ODOO METHOD SOURCE (MODULE: payment_asiapay, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment' to update the transaction based on the payment data."""
+            // if self.provider_code != 'asiapay':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('PayRef')
+            // 
+            // # Update the payment method.
+            // payment_method_code = payment_data.get('payMethod')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // success_code = payment_data.get('successcode')
+            // primary_response_code = payment_data.get('prc')
+            // if not success_code:
+            //     raise ValidationError(_("Received data with missing success code."))
+            // if success_code in const.SUCCESS_CODE_MAPPING['done']:
+            //     self._set_done()
+            // elif success_code in const.SUCCESS_CODE_MAPPING['error']:
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (success code %(success_code)s; primary "
+            //         "response code %(response_code)s). Please try again.", success_code=success_code, response_code=primary_response_code,
+            //     ))
+            // else:
+            //     _logger.warning(
+            //         "Received data with invalid success code (%s) for transaction with primary response"
+            //         " code %s and reference %s.", success_code, primary_response_code, self.reference
+            //     )
+            //     self._set_error(_("Unknown success code: %s", success_code))
+            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'authorize':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // response_content = payment_data.get('response')
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = response_content.get('x_trans_id')
+            // 
+            // # Update the payment method.
+            // payment_method_code = response_content.get('payment_method_code', '').lower()
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status_code = response_content.get('x_response_code', '3')
+            // if status_code == '1':  # Approved
+            //     status_type = response_content.get('x_type').lower()
+            //     if status_type in ('auth_capture', 'prior_auth_capture'):
+            //         self._set_done()
+            //     elif status_type == 'auth_only':
+            //         self._set_authorized()
+            //         if self.operation == 'validation':
+            //             self._void()  # In last step because it processes the response.
+            //     elif status_type == 'void':
+            //         if self.operation == 'validation':  # Validation txs are authorized and then voided
+            //             self._set_done()  # If the refund went through, the validation tx is confirmed
+            //         else:
+            //             self._set_canceled(extra_allowed_states=('done',))
+            //     elif status_type == 'refund' and self.operation == 'refund':
+            //         self._set_done()
+            //         # Immediately post-process the transaction as the post-processing will not be
+            //         # triggered by a customer browsing the transaction from the portal.
+            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // elif status_code == '2':  # Declined
+            //     self._set_canceled(state_message=response_content.get('x_response_reason_text'))
+            // elif status_code == '4':  # Held for Review
+            //     self._set_pending()
+            // else:  # Error / Unknown code
+            //     error_code = response_content.get('x_response_reason_text')
+            //     _logger.info(
+            //         "Received data with invalid status (%(status)s) and error code (%(err)s) for "
+            //         "transaction %(ref)s.",
+            //         {
+            //             'status': status_code,
+            //             'err': error_code,
+            //             'ref': self.reference,
+            //         },
+            //     )
+            //     self._set_error(_(
+            //         "Received data with status code \"%(status)s\" and error code \"%(error)s\".",
+            //         status=status_code, error=error_code
+            //     ))
+            --- ODOO METHOD SOURCE (MODULE: payment_buckaroo, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'buckaroo':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // transaction_keys = payment_data.get('brq_transactions')
+            // if not transaction_keys:
+            //     self._set_error(_("Received data with missing transaction keys"))
+            //     return
+            // # BRQ_TRANSACTIONS can hold multiple, comma-separated, tx keys. In practice, it holds only
+            // # one reference. So we split for semantic correctness and keep the first transaction key.
+            // self.provider_reference = transaction_keys.split(',')[0]
+            // 
+            // # Update the payment method.
+            // payment_method_code = payment_data.get('brq_payment_method')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status_code = int(payment_data.get('brq_statuscode') or 0)
+            // if status_code in const.STATUS_CODES_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status_code in const.STATUS_CODES_MAPPING['done']:
+            //     self._set_done()
+            // elif status_code in const.STATUS_CODES_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif status_code in const.STATUS_CODES_MAPPING['refused']:
+            //     self._set_error(_("Your payment was refused (code %s). Please try again.", status_code))
+            // elif status_code in const.STATUS_CODES_MAPPING['error']:
+            //     self._set_error(_(
+            //         "An error occurred during processing of your payment (code %s). Please try again.",
+            //         status_code,
+            //     ))
+            // else:
+            //     _logger.warning(
+            //         "Received data with invalid payment status (%s) for transaction %s.",
+            //         status_code, self.reference
+            //     )
+            //     self._set_error(_("Unknown status code: %s.", status_code))
+            --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'custom':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // _logger.info(
+            //     "Validated custom payment for transaction %s: set as pending.", self.reference
+            // )
+            // self._set_pending()
+            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'demo':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = f'demo-{self.reference}'
+            // 
+            // # Create the token.
+            // if self.tokenize:
+            //     # The reasons why we immediately tokenize the transaction instead of in `payment` are:
+            //     # - To save the simulated state and payment details on the token while we have them.
+            //     # - To allow customers to create tokens whose transactions will always end up in the
+            //     #   said simulated state.
+            //     self._tokenize(payment_data)
+            // 
+            // # Update the payment state.
+            // state = payment_data['simulated_state']
+            // if state == 'pending':
+            //     self._set_pending()
+            // elif state == 'done':
+            //     if self.capture_manually and not payment_data.get('manual_capture'):
+            //         self._set_authorized()
+            //     else:
+            //         self._set_done()
+            //         # Immediately post-process the transaction if it is a refund, as the post-processing
+            //         # will not be triggered by a customer browsing the transaction from the portal.
+            //         if self.operation == 'refund':
+            //             self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // elif state == 'cancel':
+            //     self._set_canceled()
+            // else:  # Simulate an error state.
+            //     self._set_error(_("You selected the following demo payment status: %s", state))
+            --- ODOO METHOD SOURCE (MODULE: payment_dpo, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'dpo':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('TransID')
+            // 
+            // # Update the payment state.
+            // status_code = payment_data.get('Result')
+            // if status_code in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status_code in (
+            //     const.PAYMENT_STATUS_MAPPING['authorized'] + const.PAYMENT_STATUS_MAPPING['done']
+            // ):
+            //     self._set_done()
+            // elif status_code in const.PAYMENT_STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif status_code in const.PAYMENT_STATUS_MAPPING['error']:
+            //     self._set_error(_(
+            //         "An error occurred during processing of your payment (code %(code)s:"
+            //         " %(explanation)s). Please try again.",
+            //         code=status_code, explanation=payment_data.get('ResultExplanation'),
+            //     ))
+            // else:
+            //     _logger.warning(
+            //         "Received data with invalid payment status (%s) for transaction %s.",
+            //         status_code, self.reference
+            //     )
+            //     self._set_error(_("Unknown status code: %s", status_code))
+            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'flutterwave':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data['id']
+            // 
+            // # Update payment method.
+            // payment_method_type = payment_data.get('payment_type', '')
+            // if payment_method_type == 'card':
+            //     payment_method_type = payment_data.get('card', {}).get('type').lower()
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_status = payment_data['status'].lower()
+            // if payment_status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     auth_url = payment_data.get('meta', {}).get('authorization', {}).get('redirect')
+            //     if auth_url:
+            //         # will be set back to the actual value after moving away from pending
+            //         self.provider_reference = auth_url
+            //     self._set_pending()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['error']:
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (status %s). Please try "
+            //         "again.", payment_status
+            //     ))
+            // else:
+            //     _logger.warning(
+            //         "Received data with invalid payment status (%s) for transaction %s.",
+            //         payment_status, self.reference
+            //     )
+            //     self._set_error(_("Unknown payment status: %s", payment_status))
+            --- ODOO METHOD SOURCE (MODULE: payment_iyzico, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of payment to update the transaction based on the payment data."""
+            // if self.provider_code != 'iyzico':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('paymentId')
+            // 
+            // # Update the payment method.
+            // if bool(payment_data.get('cardType')):
+            //     payment_method_code = payment_data.get('cardAssociation', '')
+            //     payment_method = self.env['payment.method']._get_from_code(
+            //         payment_method_code.lower(), mapping=const.PAYMENT_METHODS_MAPPING
+            //     )
+            // elif bool(payment_data.get('bankName')):
+            //     payment_method = self.env.ref('payment.payment_method_bank_transfer')
+            // else:
+            //     payment_method = self.env.ref('payment.payment_method_unknown')
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status = payment_data.get('paymentStatus')
+            // if status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif status in const.PAYMENT_STATUS_MAPPING['error']:
+            //     self._set_error(self.env._(
+            //         "An error occurred during processing of your payment (code %(code)s:"
+            //         " %(explanation)s). Please try again.",
+            //         code=status, explanation=payment_data.get('errorMessage'),
+            //     ))
+            // else:
+            //     _logger.warning(
+            //         "Received data with invalid payment status (%s) for transaction with reference %s",
+            //         status, self.reference
+            //     )
+            //     self._set_error(self.env._("Unknown status code: %s", status))
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'mercado_pago':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // payment_id = payment_data.get('id')
+            // if not payment_id:
+            //     self._set_error(_("Received data with missing payment id."))
+            //     return
+            // self.provider_reference = payment_id
+            // 
+            // # Update the payment method.
+            // payment_method_type = payment_data.get('payment_type_id', '')
+            // for odoo_code, mp_codes in const.PAYMENT_METHODS_MAPPING.items():
+            //     if any(payment_method_type == mp_code for mp_code in mp_codes.split(',')):
+            //         payment_method_type = odoo_code
+            //         break
+            // if payment_method_type == 'card':
+            //     payment_method_code = payment_data.get('payment_method_id')
+            // else:
+            //     payment_method_code = payment_method_type
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // # Fall back to "unknown" if the payment method is not found (and if "unknown" is found), as
+            // # the user might have picked a different payment method than on Odoo's payment form.
+            // if not payment_method:
+            //     payment_method = self.env['payment.method'].search([('code', '=', 'unknown')], limit=1)
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_status = payment_data.get('status')
+            // if not payment_status:
+            //     self._set_error(_("Received data with missing status."))
+            //     return
+            // 
+            // if payment_status in const.TRANSACTION_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['canceled']:
+            //     self._set_canceled()
+            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['error']:
+            //     status_detail = payment_data.get('status_detail')
+            //     _logger.warning(
+            //         "Received data for transaction %s with status %s and error code: %s.",
+            //         self.reference, payment_status, status_detail
+            //     )
+            //     error_message = self._mercado_pago_get_error_msg(status_detail)
+            //     self._set_error(error_message)
+            // else:  # Classify unsupported payment status as the `error` tx state.
+            //     _logger.warning(
+            //         "Received data for transaction %s with invalid payment status: %s.",
+            //         self.reference, payment_status
+            //     )
+            //     self._set_error(_("Received data with invalid status: %s.", payment_status))
+            --- ODOO METHOD SOURCE (MODULE: payment_mollie, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'mollie':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the payment method.
+            // payment_method_type = payment_data.get('method', '')
+            // if payment_method_type == 'creditcard':
+            //     payment_method_type = payment_data.get('details', {}).get('cardLabel', '').lower()
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_status = payment_data.get('status')
+            // if payment_status in ('pending', 'open'):
+            //     self._set_pending()
+            // elif payment_status == 'authorized':
+            //     self._set_authorized()
+            // elif payment_status == 'paid':
+            //     self._set_done()
+            // elif payment_status in ['expired', 'canceled', 'failed']:
+            //     self._set_canceled(_("Cancelled payment with status: %s", payment_status))
+            // else:
+            //     _logger.info(
+            //         "Received data with invalid payment status (%s) for transaction %s.",
+            //         payment_status, self.reference
+            //     )
+            //     self._set_error(_("Received data with invalid payment status: %s.", payment_status))
+            --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'nuvei':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // if not payment_data:
+            //     self._set_canceled(state_message=_("The customer left the payment page."))
+            //     return
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('TransactionID')
+            // 
+            // # Update the payment method.
+            // payment_option = payment_data.get('payment_method', '')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_option, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status = payment_data.get('Status') or payment_data.get('ppp_status')
+            // if not status:
+            //     self._set_error(_("Received data with missing payment state."))
+            //     return
+            // status = status.lower()
+            // if status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif status in const.PAYMENT_STATUS_MAPPING['error']:
+            //     failure_reason = payment_data.get('Reason') or payment_data.get('message')
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (%(reason)s). Please try"
+            //         " again.", reason=failure_reason,
+            //     ))
+            // else:  # Classify unsupported payment states as the `error` tx state.
+            //     status_description = payment_data.get('Reason')
+            //     _logger.info(
+            //         "Received data with invalid payment status (%(status)s) and reason '%(reason)s' "
+            //         "for transaction %(ref)s.",
+            //         {'status': status, 'reason': status_description, 'ref': self.reference},
+            //     )
+            //     self._set_error(_(
+            //         "Received invalid transaction status %(status)s and reason '%(reason)s'.",
+            //         status=status, reason=status_description
+            //     ))
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'paymob':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the payment state.
+            // if payment_data.get('pending') == 'true':
+            //     self._set_pending()
+            // elif payment_data.get('success') == 'true':
+            //     self._set_done()
+            // else:
+            //     _logger.info(
+            //         "Received data with unsuccessful payment status for transaction %s.",
+            //         self.reference
+            //     )
+            //     message = payment_data.get('data.message')
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (%(msg)s). Please try"
+            //         " again.", msg=message
+            //     ))
+            --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'paypal':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // if not payment_data:
+            //     self._set_canceled(state_message=_("The customer left the payment page."))
+            //     return
+            // 
+            // # Update the provider reference.
+            // txn_id = payment_data.get('id')
+            // txn_type = payment_data.get('txn_type')
+            // if not all((txn_id, txn_type)):
+            //     self._set_error(_(
+            //         "Missing value for txn_id (%(txn_id)s) or txn_type (%(txn_type)s).",
+            //         txn_id=txn_id, txn_type=txn_type
+            //     ))
+            //     return
+            // self.provider_reference = txn_id
+            // self.paypal_type = txn_type
+            // 
+            // # Force PayPal as the payment method if it exists.
+            // self.payment_method_id = self.env['payment.method'].search(
+            //     [('code', '=', 'paypal')], limit=1
+            // ) or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_status = payment_data.get('status')
+            // 
+            // if payment_status in PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending(state_message=payment_data.get('pending_reason'))
+            // elif payment_status in PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif payment_status in PAYMENT_STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // else:
+            //     _logger.info(
+            //         "Received data with invalid payment status (%s) for transaction %s.",
+            //         payment_status, self.reference
+            //     )
+            //     self._set_error(_("Received data with invalid payment status: %s", payment_status))
+            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'razorpay':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // if 'id' in payment_data:  # We have the full entity data (S2S request or webhook).
+            //     entity_data = payment_data
+            // else:  # The payment data are not complete (Payments made by a token).
+            //     # Fetch the full payment data.
+            //     try:
+            //         entity_data = self._send_api_request(
+            //             'GET', f'payments/{payment_data["razorpay_payment_id"]}'
+            //         )
+            //     except ValidationError as e:
+            //         self._set_error(str(e))
+            //         return
+            // 
+            // # Update the provider reference.
+            // entity_id = entity_data.get('id')
+            // if not entity_id:
+            //     self._set_error(_("Received data with missing entity id."))
+            //     return
+            // 
+            // # One reference can have multiple entity ids as Razorpay allows retry on payment failure.
+            // # Making sure the last entity id is the one we have in the provider reference.
+            // allowed_to_modify = self.state not in ('done', 'authorized')
+            // if allowed_to_modify:
+            //     self.provider_reference = entity_id
+            // 
+            // # Update the payment method.
+            // payment_method_type = entity_data.get('method', '')
+            // if payment_method_type == 'card':
+            //     payment_method_type = entity_data.get('card', {}).get('network', '').lower()
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // if allowed_to_modify and payment_method:
+            //     self.payment_method_id = payment_method
+            // 
+            // # Update the payment state.
+            // entity_status = entity_data.get('status')
+            // if not entity_status:
+            //     self._set_error(_("Received data with missing status."))
+            // 
+            // if entity_status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif entity_status in const.PAYMENT_STATUS_MAPPING['authorized']:
+            //     if self.provider_id.capture_manually:
+            //         self._set_authorized()
+            // elif entity_status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     if (
+            //         not self.token_id
+            //         and entity_data.get('token_id')
+            //         and self.provider_id.allow_tokenization
+            //     ):
+            //         # In case the tokenization was requested on provider side not from odoo form.
+            //         self.tokenize = True
+            //     self._set_done()
+            // 
+            //     # Immediately post-process the transaction if it is a refund, as the post-processing
+            //     # will not be triggered by a customer browsing the transaction from the portal.
+            //     if self.operation == 'refund':
+            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // elif entity_status in const.PAYMENT_STATUS_MAPPING['error']:
+            //     _logger.warning(
+            //         "The transaction %s underwent an error. Reason: %s",
+            //         self.reference, entity_data.get('error_description')
+            //     )
+            //     self._set_error(
+            //         _("An error occurred during the processing of your payment. Please try again.")
+            //     )
+            // else:  # Classify unsupported payment status as the `error` tx state.
+            //     _logger.warning(
+            //         "Received data for transaction %s with invalid payment status: %s.",
+            //         self.reference, entity_status
+            //     )
+            //     self._set_error(
+            //         "Razorpay: " + _("Received data with invalid status: %s", entity_status)
+            //     )
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment' to update the transaction based on the payment data."""
+            // if self.provider_code != 'redsys':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the payment method.
+            // card_brand = payment_data.get('Ds_Card_Brand')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     card_brand, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status_code = payment_data['Ds_Response']
+            // if status_code in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif status_code in const.PAYMENT_STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif status_code in const.PAYMENT_STATUS_MAPPING['error']:
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (%s). Please try again.",
+            //         payment_data.get('Ds_ErrorCode'),
+            //     ))
+            // else:
+            //     _logger.warning("Received invalid payment status (%s).", status_code)
+            //     self._set_error(_("Unknown status code: %s", status_code))
+            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'stripe':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the payment method.
+            // payment_method = payment_data.get('payment_method')
+            // if isinstance(payment_method, dict):  # capture/void/refund requests receive a string.
+            //     payment_method_type = payment_method.get('type')
+            //     if self.payment_method_id.code == payment_method_type == 'card':
+            //         payment_method_type = payment_data['payment_method']['card']['brand']
+            //     payment_method = self.env['payment.method']._get_from_code(
+            //         payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
+            //     )
+            //     self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the provider reference and the payment state.
+            // if self.operation == 'validation':
+            //     self.provider_reference = payment_data['setup_intent']['id']
+            //     status = payment_data['setup_intent']['status']
+            // elif self.operation == 'refund':
+            //     self.provider_reference = payment_data['refund']['id']
+            //     status = payment_data['refund']['status']
+            // else:  # 'online_direct', 'online_token', 'offline'
+            //     self.provider_reference = payment_data['payment_intent']['id']
+            //     status = payment_data['payment_intent']['status']
+            // if not status:
+            //     self._set_error(_("Received data with missing intent status."))
+            // elif status in const.STATUS_MAPPING['draft']:
+            //     pass
+            // elif status in const.STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif status in const.STATUS_MAPPING['authorized']:
+            //     self._set_authorized()
+            // elif status in const.STATUS_MAPPING['done']:
+            //     self._set_done()
+            // 
+            //     # Immediately post-process the transaction if it is a refund, as the post-processing
+            //     # will not be triggered by a customer browsing the transaction from the portal.
+            //     if self.operation == 'refund':
+            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // elif status in const.STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif status in const.STATUS_MAPPING['error']:
+            //     if self.operation != 'refund':
+            //         last_payment_error = payment_data.get('payment_intent', {}).get(
+            //             'last_payment_error'
+            //         )
+            //         if last_payment_error:
+            //             message = last_payment_error.get('message', {})
+            //         else:
+            //             message = _("The customer left the payment page.")
+            //         self._set_error(message)
+            //     else:
+            //         self._set_error(_(
+            //             "The refund did not go through. Please log into your Stripe Dashboard to get "
+            //             "more information on that matter, and address any accounting discrepancies."
+            //         ), extra_allowed_states=('done',))
+            // else:  # Classify unknown intent statuses as `error` tx state
+            //     _logger.warning(
+            //         "Received invalid payment status (%s) for transaction %s.",
+            //         status, self.reference
+            //     )
+            //     self._set_error(_("Received data with invalid intent status: %s.", status))
+            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """ Override of `payment' to process the transaction based on Worldline data.
             // 
             // Note: self.ensure_one()
             // 
-            // :param dict notification_data: The notification data sent by the provider
+            // :param dict payment_data: The payment data sent by the provider.
             // :return: None
             // """
-            // self.ensure_one()
+            // if self.provider_code != 'worldline':
+            //     return super()._apply_updates(payment_data)
             // 
-            // additional_data = notification_data['additionalData']
-            // token = self.env['payment.token'].create({
-            //     'provider_id': self.provider_id.id,
-            //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': additional_data.get('cardSummary'),
-            //     'partner_id': self.partner_id.id,
-            //     'provider_ref': additional_data['recurring.recurringDetailReference'],
-            //     'adyen_shopper_reference': additional_data['recurring.shopperReference'],
-            // })
-            // self.write({
-            //     'token_id': token,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "Created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {
-            //         'token_id': token.id,
-            //         'partner_id': self.partner_id.id,
-            //         'ref': self.reference,
-            //     },
+            // # In case of failed payment, paymentResult could be given as a separate key
+            // payment_result = payment_data.get('paymentResult', payment_data)
+            // payment_data = payment_result.get('payment', {})
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('id', '').rsplit('_', 1)[0]
+            // 
+            // # Update the payment method.
+            // payment_method_data = self._worldline_extract_payment_method_data(payment_data)
+            // payment_method_code = payment_method_data.get('paymentProductId', '')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
             // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // status = payment_data.get('status')
+            // has_token_data = 'token' in payment_method_data
+            // if not status:
+            //     self._set_error(_("Received data with missing payment state."))
+            // elif status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     if status == 'AUTHORIZATION_REQUESTED' and self.operation in ('online_token', 'offline'):
+            //         self._set_error(status)
+            //     elif self.operation == 'validation' \
+            //          and status in {'PENDING_CAPTURE', 'CAPTURE_REQUESTED'} \
+            //          and has_token_data:
+            //             self._set_done()
+            //     else:
+            //         self._set_pending()
+            // elif status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // else:
+            //     error_code = None
+            //     if errors := payment_data.get('statusOutput', {}).get('errors'):
+            //         error_code = errors[0].get('errorCode')
+            //     if status in const.PAYMENT_STATUS_MAPPING['cancel']:
+            //         self._set_canceled(_(
+            //             "Transaction cancelled with error code %(error_code)s.",
+            //             error_code=error_code,
+            //         ))
+            //     elif status in const.PAYMENT_STATUS_MAPPING['declined']:
+            //         self._set_error(_(
+            //             "Transaction declined with error code %(error_code)s.",
+            //             error_code=error_code,
+            //         ))
+            //     else:  # Classify unsupported payment status as the `error` tx state.
+            //         _logger.info(
+            //             "Received data with invalid payment status (%(status)s) for transaction with "
+            //             "reference %(ref)s.",
+            //             {'status': status, 'ref': self.reference},
+            //         )
+            //         self._set_error(_(
+            //             "Received invalid transaction status %(status)s with error code "
+            //             "%(error_code)s.",
+            //             status=status,
+            //             error_code=error_code,
+            //         ))
+            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
+            // def _apply_updates(self, payment_data):
+            // """Override of `payment` to update the transaction based on the payment data."""
+            // if self.provider_code != 'xendit':
+            //     return super()._apply_updates(payment_data)
+            // 
+            // # Update the provider reference.
+            // self.provider_reference = payment_data.get('id')
+            // 
+            // # Update payment method.
+            // payment_method_code = payment_data.get('payment_method', '')
+            // payment_method = self.env['payment.method']._get_from_code(
+            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
+            // )
+            // self.payment_method_id = payment_method or self.payment_method_id
+            // 
+            // # Update the payment state.
+            // payment_status = payment_data.get('status')
+            // if payment_status in const.PAYMENT_STATUS_MAPPING['pending']:
+            //     self._set_pending()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['done']:
+            //     self._set_done()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['cancel']:
+            //     self._set_canceled()
+            // elif payment_status in const.PAYMENT_STATUS_MAPPING['error']:
+            //     failure_reason = payment_data.get('failure_reason')
+            //     self._set_error(_(
+            //         "An error occurred during the processing of your payment (%s). Please try again.",
+            //         failure_reason,
+            //     ))
             */
             return default;
         }
@@ -120,49 +999,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> AuthorizeTokenizeInternalAsync()
+        protected async Task<PaymentTransaction> BuildActionFeedbackNotificationInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _authorize_tokenize(self):
-            // """ Create a token for the current transaction.
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _build_action_feedback_notification(self):
+            // """Build a client notification to display the result of an action.
             // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
+            // :return: The client notification.
+            // :rtype: dict
             // """
-            // self.ensure_one()
-            // 
-            // authorize_API = AuthorizeAPI(self.provider_id)
-            // cust_profile = authorize_API.create_customer_profile(
-            //     self.partner_id, self.provider_reference
-            // )
-            // _logger.info(
-            //     "create_customer_profile request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(cust_profile)
-            // )
-            // if cust_profile:
-            //     token = self.env['payment.token'].create({
-            //         'provider_id': self.provider_id.id,
-            //         'payment_method_id': self.payment_method_id.id,
-            //         'payment_details': cust_profile.get('payment_details'),
-            //         'partner_id': self.partner_id.id,
-            //         'provider_ref': cust_profile.get('payment_profile_id'),
-            //         'authorize_profile': cust_profile.get('profile_id'),
-            //     })
-            //     self.write({
-            //         'token_id': token.id,
-            //         'tokenize': False,
-            //     })
-            //     _logger.info(
-            //         "created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //         "transaction with reference %(ref)s",
-            //         {
-            //             'token_id': token.id,
-            //             'partner_id': self.partner_id.id,
-            //             'ref': self.reference,
-            //         },
+            // if not (failed_txs := self.filtered(lambda tx: tx.state == 'error')):
+            //     notification_type = 'success'
+            //     msg = self.env._("Your payment operation has been successfully submitted.")
+            // else:
+            //     notification_type = 'danger'
+            //     msg = self.env._(
+            //         "Your payment operation could not be completed for following transactions:"
+            //         " %(tx_refs)s", tx_refs=', '.join(failed_txs.mapped('reference'))
             //     )
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': notification_type,
+            //         'message': msg,
+            //         'next': {'type': 'ir.actions.act_window_close'},  # Close any open wizard.
+            //     },
+            // }
             */
             return default;
         }
@@ -172,7 +1036,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def action_capture(self):
-            // """ Open the partial capture wizard if it is supported by the related providers, otherwise
+            // """Open the partial capture wizard if it is supported by the related providers, otherwise
             // capture the transactions immediately.
             // 
             // :return: The action to open the partial capture wizard, if supported.
@@ -191,14 +1055,66 @@ namespace Bamboo.Core.Application.Services
             //             'active_model': 'payment.transaction',
             //             # Consider also confirmed transactions to calculate the total authorized amount.
             //             'active_ids': self.filtered(lambda tx: tx.state in ['authorized', 'done']).ids,
+            //             'payment_backend_action': True,
             //         },
             //     }
             // else:
+            //     captured_txs_sudo = self.env['payment.transaction'].sudo()
             //     for tx in self.filtered(lambda tx: tx.state == 'authorized'):
-            //         # In sudo mode because we need to be able to read on provider fields.
-            //         tx.sudo()._send_capture_request()
+            //         # In sudo mode to read on provider fields.
+            //         captured_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._capture()
+            //     return captured_txs_sudo._build_action_feedback_notification()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PaymentTransaction> CaptureInternalAsync(object amount_to_capture)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _capture(self, amount_to_capture=None):
+            // """Capture the authorized amount.
+            // 
+            // Note: `self.ensure_one()`
+            // 
+            // :param float amount_to_capture: The amount to capture.
+            // :return: The capture transaction created to process the capture request.
+            // :rtype: payment.transaction
+            // """
+            // self.ensure_one()
+            // self._ensure_provider_is_not_disabled()
+            // 
+            // capture_tx = self._create_child_transaction(amount_to_capture or self.amount)
+            // capture_tx._log_sent_message()
+            // try:
+            //     capture_tx._send_capture_request()
+            // except ValidationError as e:
+            //     capture_tx._set_error(str(e))
+            // return capture_tx
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> ChargeWithTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _charge_with_token(self):
+            // """Pay the transaction with the given token.
+            // 
+            // Note: `self.ensure_one()`
+            // 
+            // :return: None
+            // """
+            // self.ensure_one()
+            // self._ensure_provider_is_not_disabled()
+            // self._log_sent_message()
+            // try:
+            //     self._send_payment_request()
+            // except ValidationError as e:
+            //     self._set_error(str(e))
+            */
+            return default;
         }
 
         protected async Task<PaymentTransaction> CheckAmountAndConfirmOrderInternalAsync()
@@ -282,6 +1198,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PaymentTransaction> ComputePrimaryPaymentMethodIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _compute_primary_payment_method_id(self):
+            // for pm, txs in self.grouped('payment_method_id').items():
+            //     txs.primary_payment_method_id = pm.primary_payment_method_id or pm
+            */
+            return default;
+        }
+
         protected async Task<PaymentTransaction> ComputeReferenceInternalAsync(object provider_code, object prefix, object separator)
         {
             /*
@@ -328,7 +1255,7 @@ namespace Bamboo.Core.Application.Services
             //     # Replace special characters by their ASCII alternative (é -> e ; ä -> a ; ...)
             //     prefix = unicodedata.normalize('NFKD', prefix).encode('ascii', 'ignore').decode('utf-8')
             // if not prefix:  # Prefix not provided or voided above, compute it based on the kwargs.
-            //     prefix = self.sudo()._compute_reference_prefix(provider_code, separator, **kwargs)
+            //     prefix = self.sudo()._compute_reference_prefix(separator, **kwargs)
             // if not prefix:  # Prefix not computed from the kwargs, fallback on time-based value
             //     prefix = payment_utils.singularize_reference_prefix()
             // 
@@ -411,9 +1338,84 @@ namespace Bamboo.Core.Application.Services
             //     # We call it manually here because singularizing the prefix would generate a default
             //     # value if it was empty, hence preventing the method from ever being called and the
             //     # transaction from received a reference named after the related document.
-            //     prefix = self.sudo()._compute_reference_prefix(provider_code, separator, **kwargs) or None
+            //     prefix = self.sudo()._compute_reference_prefix(separator, **kwargs) or None
             // prefix = payment_utils.singularize_reference_prefix(prefix=prefix, max_length=35)
             // return super()._compute_reference(provider_code, prefix=prefix, **kwargs)
+            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
+            // def _compute_reference(self, provider_code, prefix=None, separator='-', **kwargs):
+            // """Override of `payment` to satisfy Flutterwave requirements for references.
+            // 
+            // Flutterwave requirements for references are as follows:
+            // - References must be unique at provider level for a given merchant account. This is
+            //   satisfied by singularizing the prefix with the current datetime. If two transactions are
+            //   created simultaneously, `_compute_reference` ensures the uniqueness of references by
+            //   suffixing a sequence number.
+            // 
+            // :param str provider_code: The code of the provider handling the transaction
+            // :param str prefix: The custom prefix used to compute the full reference
+            // :param str separator: The custom separator used to separate the prefix from the suffix
+            // :return: The unique reference for the transaction
+            // :rtype: str
+            // """
+            // if provider_code == 'flutterwave':
+            //     if not prefix:
+            //         # If no prefix is provided, it could mean that a module has passed a kwarg intended
+            //         # for the `_compute_reference_prefix` method, as it is only called if the prefix is
+            //         # empty. We call it manually here because singularizing the prefix would generate a
+            //         # default value if it was empty, hence preventing the method from ever being called
+            //         # and the transaction from received a reference named after the related document.
+            //         prefix = self.sudo()._compute_reference_prefix(separator, **kwargs) or None
+            //     prefix = payment_utils.singularize_reference_prefix(prefix=prefix, separator=separator)
+            // return super()._compute_reference(
+            //     provider_code, prefix=prefix, separator=separator, **kwargs
+            // )
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _compute_reference(self, provider_code, prefix=None, separator='-', **kwargs):
+            // """ Override of `payment` to ensure that Paymob references are unique.
+            // 
+            // :param str provider_code: The code of the provider handling the transaction.
+            // :param str prefix: The custom prefix used to compute the full reference.
+            // :param str separator: The custom separator used to separate the prefix from the suffix.
+            // :return: The unique reference for the transaction.
+            // :rtype: str
+            // """
+            // if provider_code == 'paymob':
+            //     if not prefix:
+            //         # If no prefix is provided, it could mean that a module has passed a kwarg intended
+            //         # for the `_compute_reference_prefix` method, as it is only called if the prefix is
+            //         # empty. We call it manually here because singularizing the prefix would generate a
+            //         # default value if it was empty, hence preventing the method from ever being called
+            //         # and the transaction from receiving a reference named after the related document.
+            //         prefix = self.sudo()._compute_reference_prefix(separator, **kwargs) or None
+            //     prefix = payment_utils.singularize_reference_prefix(prefix=prefix, separator=separator)
+            // 
+            // return super()._compute_reference(
+            //     provider_code, prefix=prefix, separator=separator, **kwargs
+            // )
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _compute_reference(self, provider_code, prefix=None, separator='-', **kwargs):
+            // """Override of `payment` to ensure that Redsys' requirements for references are satisfied.
+            // 
+            // Redsys' requirements for transaction are as follows:
+            // - References can only be made of alphanumeric characters.
+            // - References must be minimum 9 characters and at most 12 characters long.
+            // 
+            // :param str provider_code: The code of the provider handling the transaction.
+            // :param str prefix: The custom prefix used to compute the full reference.
+            // :param str separator: The custom separator used to separate the prefix from the suffix.
+            // :return: The unique reference for the transaction.
+            // :rtype: str
+            // """
+            // if provider_code != 'redsys':
+            //     return super()._compute_reference(
+            //         provider_code, prefix=prefix, separator=separator, **kwargs
+            //     )
+            // 
+            // # Generate the prefix as the timestamp of the current time (10 chars).
+            // # This leaves just enough room for the separator and the suffix in case of collisions.
+            // prefix = str(int(fields.Datetime.now().timestamp()))[-10:]
+            // 
+            // return super()._compute_reference(provider_code, prefix=prefix, separator='S', **kwargs)
             --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
             // def _compute_reference(self, provider_code, prefix=None, separator='-', **kwargs):
             // """ Override of `payment` to ensure that Worldline requirement for references is satisfied.
@@ -443,11 +1445,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> ComputeReferencePrefixInternalAsync(object provider_code, object separator)
+        protected async Task<PaymentTransaction> ComputeReferencePrefixInternalAsync(object separator)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: payment_transaction.py) ---
-            // def _compute_reference_prefix(self, provider_code, separator, **values):
+            // def _compute_reference_prefix(self, separator, **values):
             // """ Compute the reference prefix from the transaction values.
             // 
             // If the `values` parameter has an entry with 'invoice_ids' as key and a list of (4, id, O) or
@@ -456,7 +1458,6 @@ namespace Bamboo.Core.Application.Services
             // 
             // Note: This method should be called in sudo mode to give access to documents (INV, SO, ...).
             // 
-            // :param str provider_code: The code of the provider handling the transaction
             // :param str separator: The custom separator used to separate data references
             // :param dict values: The transaction values used to compute the reference prefix. It should
             //                     have the structure {'invoice_ids': [(X2M command), ...], ...}.
@@ -473,15 +1474,14 @@ namespace Bamboo.Core.Application.Services
             //         if name := values.get('name_next_installment'):
             //             prefix = name
             //         return prefix
-            // return super()._compute_reference_prefix(provider_code, separator, **values)
+            // return super()._compute_reference_prefix(separator, **values)
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _compute_reference_prefix(self, provider_code, separator, **values):
+            // def _compute_reference_prefix(self, separator, **values):
             // """ Compute the reference prefix from the transaction values.
             // 
             // Note: This method should be called in sudo mode to give access to the documents (invoices,
             // sales orders) referenced in the transaction values.
             // 
-            // :param str provider_code: The code of the provider handling the transaction.
             // :param str separator: The custom separator used to separate parts of the computed
             //                       reference prefix.
             // :param dict values: The transaction values used to compute the reference prefix.
@@ -490,7 +1490,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // return ''
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: payment_transaction.py) ---
-            // def _compute_reference_prefix(self, provider_code, separator, **values):
+            // def _compute_reference_prefix(self, separator, **values):
             // """ Override of payment to compute the reference prefix based on POS-specific values.
             // 
             // :return: The computed reference prefix if POS order id is found, the one of `super` otherwise
@@ -501,16 +1501,15 @@ namespace Bamboo.Core.Application.Services
             //     pos_order = self.env['pos.order'].sudo().browse(pos_order_id).exists()
             //     if pos_order:
             //         return pos_order.pos_reference
-            // return super()._compute_reference_prefix(provider_code, separator, **values)
+            // return super()._compute_reference_prefix(separator, **values)
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: payment_transaction.py) ---
-            // def _compute_reference_prefix(self, provider_code, separator, **values):
+            // def _compute_reference_prefix(self, separator, **values):
             // """ Override of payment to compute the reference prefix based on Sales-specific values.
             // 
             // If the `values` parameter has an entry with 'sale_order_ids' as key and a list of (4, id, O)
             // or (6, 0, ids) X2M command as value, the prefix is computed based on the sales order name(s)
             // Otherwise, the computation is delegated to the super method.
             // 
-            // :param str provider_code: The code of the provider handling the transaction
             // :param str separator: The custom separator used to separate data references
             // :param dict values: The transaction values used to compute the reference prefix. It should
             //                     have the structure {'sale_order_ids': [(X2M command), ...], ...}.
@@ -524,7 +1523,7 @@ namespace Bamboo.Core.Application.Services
             //     orders = self.env['sale.order'].browse(order_ids).exists()
             //     if len(orders) == len(order_ids):  # All ids are valid
             //         return separator.join(orders.mapped('name'))
-            // return super()._compute_reference_prefix(provider_code, separator, **values)
+            // return super()._compute_reference_prefix(separator, **values)
             */
             return default;
         }
@@ -579,6 +1578,64 @@ namespace Bamboo.Core.Application.Services
             // return order_reference
             */
             return default;
+        }
+
+        public override async Task<PaymentTransaction> CreateAsync(PaymentTransaction entity, List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def create(self, vals_list):
+            // for values in vals_list:
+            //     provider = self.env['payment.provider'].browse(values['provider_id'])
+            // 
+            //     if not values.get('reference'):
+            //         values['reference'] = self._compute_reference(provider.code, **values)
+            // 
+            //     values['is_live'] = provider.state == 'enabled'
+            // 
+            //     # Duplicate partner values.
+            //     partner = self.env['res.partner'].browse(values['partner_id'])
+            //     partner_emails = email_normalize_all(partner.email)
+            //     values.update({
+            //         # Use the parent partner as fallback if the invoicing address has no name.
+            //         'partner_name': partner.name or partner.parent_id.name,
+            //         'partner_lang': partner.lang,
+            //         'partner_email': partner_emails[0] if partner_emails else None,
+            //         'partner_address': payment_utils.format_partner_address(
+            //             partner.street, partner.street2
+            //         ),
+            //         'partner_zip': partner.zip,
+            //         'partner_city': partner.city,
+            //         'partner_state_id': partner.state_id.id,
+            //         'partner_country_id': partner.country_id.id,
+            //         'partner_phone': partner.phone,
+            //     })
+            // 
+            //     # Include provider-specific create values
+            //     values.update(self._get_specific_create_values(provider.code, values))
+            // 
+            // txs = super().create(vals_list)
+            // 
+            // # Monetary fields are rounded with the currency at creation time by the ORM. Sometimes, this
+            // # can lead to inconsistent string representation of the amounts sent to the providers.
+            // # E.g., tx.create(amount=1111.11) -> tx.amount == 1111.1100000000001
+            // # To ensure a proper string representation, we invalidate this request's cache values of the
+            // # `amount` field for the created transactions. This forces the ORM to read the values from
+            // # the DB where there were stored using `float_repr`, which produces a result consistent with
+            // # the format expected by providers.
+            // # E.g., tx.create(amount=1111.11) ; tx.invalidate_recordset() -> tx.amount == 1111.11
+            // txs.invalidate_recordset(['amount'])
+            // 
+            // return txs
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def create(self, vals_list):
+            // """Override of `payment` to set the Redsys-specific `provider_reference`."""
+            // transactions = super().create(vals_list)
+            // for tx in transactions.filtered(lambda t: t.provider_code == 'redsys'):
+            //     tx.provider_reference = tx.reference
+            // return transactions
+            */
+            return await base.CreateAsync(entity, fields);
         }
 
         protected async Task<PaymentTransaction> CreateChildTransactionInternalAsync(object amount, object is_refund)
@@ -642,10 +1699,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // self.ensure_one()
             // 
-            // reference = (f'{self.reference} - '
-            //              f'{self.partner_id.display_name or ""} - '
-            //              f'{self.provider_reference or ""}'
-            //             )
+            // reference = f'{self.reference} - {self.provider_reference or ""}'
             // 
             // payment_method_line = self.provider_id.journal_id.inbound_payment_method_line_ids\
             //     .filtered(lambda l: l.payment_provider_id == self.provider_id)
@@ -742,7 +1796,7 @@ namespace Bamboo.Core.Application.Services
             //         self.env.cr.rollback()  # Rollback and try later.
             //     except Exception as e:
             //         _logger.exception(
-            //             "encountered an error while post-processing transaction with reference %s:\n%s",
+            //             "An error occurred while post-processing transaction %s:\n%s",
             //             tx.reference, e
             //         )
             //         self.env.cr.rollback()
@@ -793,8 +1847,8 @@ namespace Bamboo.Core.Application.Services
             // if self.provider_code != 'demo':
             //     return
             // 
-            // notification_data = {'reference': self.reference, 'simulated_state': 'cancel'}
-            // self._handle_notification_data('demo', notification_data)
+            // payment_data = {'reference': self.reference, 'simulated_state': 'cancel'}
+            // self._process('demo', payment_data)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -814,8 +1868,8 @@ namespace Bamboo.Core.Application.Services
             // if self.provider_code != 'demo':
             //     return
             // 
-            // notification_data = {'reference': self.reference, 'simulated_state': 'done'}
-            // self._handle_notification_data('demo', notification_data)
+            // payment_data = {'reference': self.reference, 'simulated_state': 'done'}
+            // self._process('demo', payment_data)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -835,42 +1889,63 @@ namespace Bamboo.Core.Application.Services
             // if self.provider_code != 'demo':
             //     return
             // 
-            // notification_data = {'reference': self.reference, 'simulated_state': 'error'}
-            // self._handle_notification_data('demo', notification_data)
+            // payment_data = {'reference': self.reference, 'simulated_state': 'error'}
+            // self._process('demo', payment_data)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PaymentTransaction> DemoTokenizeFromNotificationDataInternalAsync(object notification_data)
+        protected async Task<PaymentTransaction> DpoCreateTokenInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _demo_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
+            --- ODOO METHOD SOURCE (MODULE: payment_dpo, FILE: payment_transaction.py) ---
+            // def _dpo_create_token(self):
+            // """ Create a transaction token and return the response data.
             // 
-            // Note: self.ensure_one()
+            // The token is used to redirect the customer to the payment page.
             // 
-            // :param dict notification_data: The fake notification data to tokenize from.
-            // :return: None
+            // :return: The transaction token data.
+            // :rtype: dict
             // """
             // self.ensure_one()
             // 
-            // state = notification_data['simulated_state']
-            // token = self.env['payment.token'].create({
-            //     'provider_id': self.provider_id.id,
-            //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': notification_data['payment_details'],
-            //     'partner_id': self.partner_id.id,
-            //     'provider_ref': 'fake provider reference',
-            //     'demo_simulated_state': state,
-            // })
-            // self.write({
-            //     'token_id': token,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "Created token with id %s for partner with id %s.", token.id, self.partner_id.id
+            // return_url = urls.urljoin(self.provider_id.get_base_url(), DPOController._return_url)
+            // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
+            // create_date = self.create_date.strftime('%Y/%m/%d %H:%M')
+            // payload = (
+            //     f'<?xml version="1.0" encoding="utf-8"?>'
+            //     f'<API3G>'
+            //         f'<CompanyToken>{self.provider_id.dpo_company_token}</CompanyToken>'
+            //         f'<Request>createToken</Request>'
+            //         f'<Transaction>'
+            //             f'<PaymentAmount>{self.amount}</PaymentAmount>'
+            //             f'<PaymentCurrency>{self.currency_id.name}</PaymentCurrency>'
+            //             f'<CompanyRef>{self.reference}</CompanyRef>'
+            //             f'<RedirectURL>{return_url}</RedirectURL>'
+            //             f'<BackURL>{return_url}</BackURL>'
+            //             f'<customerEmail>{self.partner_email}</customerEmail>'
+            //             f'<customerFirstName>{first_name}</customerFirstName>'
+            //             f'<customerLastName>{last_name}</customerLastName>'
+            //             f'<customerCity>{self.partner_city or ""}</customerCity>'
+            //             f'<customerCountry>{self.partner_country_id.code or ""}</customerCountry>'
+            //             f'<customerZip>{self.partner_zip or ""}</customerZip>'
+            //         f'</Transaction>'
+            //         f'<Services>'
+            //             f'<Service>'
+            //                 f'<ServiceType>{self.provider_id.dpo_service_ref}</ServiceType>'
+            //                 f'<ServiceDescription>{self.reference}</ServiceDescription>'
+            //                 f'<ServiceDate>{create_date}</ServiceDate>'
+            //             f'</Service>'
+            //         f'</Services>'
+            //     f'</API3G>'
             // )
+            // 
+            // try:
+            //     transaction_data = self._send_api_request('POST', '', data=payload)
+            // except ValidationError as e:
+            //     self._set_error(str(e))
+            //     return None
+            // return transaction_data.get('TransToken')
             */
             return default;
         }
@@ -894,56 +1969,677 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PaymentTransaction> ExtractAmountDataInternalAsync(object payment_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Extract the amount, currency and rounding precision from the payment data.
+            // 
+            // This method must be overridden by providers to parse the amount data from the payment data.
+            // If the provider returns `None`, the amount validation is skipped.
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: The amount data, in the {amount: float, currency_code: str, precision_digits: int}
+            //          format.
+            // :rtype: dict|None
+            // """
+            // return {}
+            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'adyen':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // # Redirection payments and 3DS challenges don't have the amount or currency in their
+            // # payment_data, but processing them results in a pending transaction anyway, neither
+            // # does payment refusal response which will result in an error transaction.
+            // if (
+            //     payment_data.get('action', {}).get('type') in ['redirect', 'threeDS2']
+            //     or payment_data.get('resultCode') in const.RESULT_CODES_MAPPING['refused']
+            // ):
+            //     return None  # Skip the validation
+            // 
+            // amount_data = payment_data.get('amount', {})
+            // amount = payment_utils.to_major_currency_units(
+            //     amount_data.get('value', 0),
+            //     self.currency_id,
+            //     arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
+            // )
+            // currency_code = amount_data.get('currency')
+            // return {
+            //     'amount': amount,
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_aps, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'aps':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_utils.to_major_currency_units(
+            //     float(payment_data.get('amount', 0)), self.currency_id
+            // )
+            // return {
+            //     'amount': amount,
+            //     'currency_code': payment_data.get('currency'),
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_asiapay, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'asiapay':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_data.get('Amt')
+            // # AsiaPay supports only one currency per account.
+            // currency = self.provider_id.available_currency_ids  # The currency has not been removed from the provider.
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency.name,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'authorize':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // tx_details = AuthorizeAPI(self.provider_id).get_transaction_details(
+            //     payment_data.get('response', {}).get('x_trans_id')
+            // )
+            // if 'err_code' in tx_details:  # Transaction details are missing when an API error occurs.
+            //     return None  # Skip the validation
+            // 
+            // amount = tx_details.get('transaction', {}).get('authAmount')
+            // # Authorize supports only one currency per account.
+            // currency = self.provider_id.available_currency_ids  # The currency has not been removed from the provider.
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency.name,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_buckaroo, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'buckaroo':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_data.get('brq_amount')
+            // currency_code = payment_data.get('brq_currency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to skip the amount validation for custom flows."""
+            // if self.provider_code != 'custom':
+            //     return super()._extract_amount_data(payment_data)
+            // return None
+            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to skip the amount validation for demo flows."""
+            // if self.provider_code != 'demo':
+            //     return super()._extract_amount_data(payment_data)
+            // return None
+            --- ODOO METHOD SOURCE (MODULE: payment_dpo, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'dpo':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_data.get('TransactionAmount')
+            // currency_code = payment_data.get('TransactionCurrency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'flutterwave':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_data.get('amount')
+            // currency_code = payment_data.get('currency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_iyzico, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'iyzico':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // return {
+            //     'amount': payment_data.get('price'),
+            //     'currency_code': payment_data.get('currency'),
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'mercado_pago':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // if self.operation in ('online_redirect', 'online_direct'):
+            //     amount = payment_data.get('additional_info', {}).get('items', [{}])[0].get('unit_price')
+            // else:  # 'online_token', 'offline'
+            //     amount = payment_data.get('transaction_amount')
+            // currency_code = payment_data.get('currency_id')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            //     'precision_digits': const.CURRENCY_DECIMALS.get(currency_code),
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_mollie, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'mollie':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount_data = payment_data.get('amount', {})
+            // amount = amount_data.get('value')
+            // currency_code = amount_data.get('currency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'nuvei':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // # When a user declines to pay and leaves the payment page, no information
+            // # is sent back to odoo via the endpoint. As such there is no currency or
+            // # amount set so we return early. This only occurs in the leaving flow so
+            // # no issue should arise leaving early.
+            // if not payment_data:
+            //     return
+            // 
+            // is_mandatory_integer_pm = self.payment_method_code in const.INTEGER_METHODS
+            // rounding = 0 if is_mandatory_integer_pm else self.currency_id.decimal_places
+            // 
+            // amount = payment_data.get('totalAmount')
+            // currency_code = payment_data.get('currency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            //     'precision_digits': rounding,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'paymob':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount_cents = float(payment_data.get('amount_cents'))
+            // amount = payment_utils.to_major_currency_units(amount_cents, self.currency_id)
+            // currency_code = payment_data.get('currency')
+            // return {
+            //     'amount': amount,
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'paypal':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount_data = payment_data.get('amount', {})
+            // amount = amount_data.get('value')
+            // currency_code = amount_data.get('currency_code')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'razorpay':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // # Amount and currency are not sent in the payment data when redirecting to the return route.
+            // if 'amount' not in payment_data or 'currency' not in payment_data:
+            //     return
+            // 
+            // amount = payment_utils.to_major_currency_units(
+            //     payment_data['amount'], self.currency_id
+            // )
+            // return {
+            //     'amount': amount,
+            //     'currency_code': payment_data['currency'],
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of `payment` to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'redsys':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_utils.to_major_currency_units(
+            //     float(payment_data.get('Ds_Amount', 0)), self.currency_id
+            // )
+            // currency = self.env['res.currency'].search([
+            //     ('iso_numeric', '=', payment_data.get('Ds_Currency'))
+            // ], limit=1).name
+            // return {
+            //     'amount': amount,
+            //     'currency_code': currency,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'stripe':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // if self.operation == 'refund':
+            //     payment_data = payment_data['refund']
+            // else:  # 'online_direct', 'online_token', 'offline'
+            //     payment_data = payment_data['payment_intent']
+            // amount = payment_utils.to_major_currency_units(
+            //     payment_data.get('amount', 0),
+            //     self.currency_id,
+            //     arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
+            // )
+            // currency_code = payment_data.get('currency', '').upper()
+            // return {
+            //     'amount': amount,
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'worldline':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // # In case of failed payment, paymentResult could be given as a separate key
+            // payment_result = payment_data.get('paymentResult', payment_data)
+            // amount_of_money = payment_result.get('payment', {}).get('paymentOutput', {}).get(
+            //     'amountOfMoney', {}
+            // )
+            // amount = payment_utils.to_major_currency_units(
+            //     amount_of_money.get('amount', 0), self.currency_id
+            // )
+            // currency_code = amount_of_money.get('currencyCode')
+            // return {
+            //     'amount': amount,
+            //     'currency_code': currency_code,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
+            // def _extract_amount_data(self, payment_data):
+            // """Override of payment to extract the amount and currency from the payment data."""
+            // if self.provider_code != 'xendit':
+            //     return super()._extract_amount_data(payment_data)
+            // 
+            // amount = payment_data.get('amount') or payment_data.get('authorized_amount')
+            // currency_code = payment_data.get('currency')
+            // return {
+            //     'amount': float(amount),
+            //     'currency_code': currency_code,
+            //     'precision_digits': const.CURRENCY_DECIMALS.get(currency_code),
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> ExtractReferenceInternalAsync(object provider_code, object payment_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Extract the transaction reference from the payment data.
+            // 
+            // This method must be overridden by providers to extract the reference from the payment data.
+            // 
+            // :param str provider_code: The code of the provider handling the transaction.
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: The transaction reference.
+            // :rtype: str
+            // """
+            // return payment_data.get('reference')
+            --- ODOO METHOD SOURCE (MODULE: payment_aps, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the APS data."""
+            // if provider_code != 'aps':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('merchant_reference')
+            --- ODOO METHOD SOURCE (MODULE: payment_asiapay, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'asiapay':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('Ref')
+            --- ODOO METHOD SOURCE (MODULE: payment_buckaroo, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'buckaroo':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('brq_invoicenumber')
+            --- ODOO METHOD SOURCE (MODULE: payment_dpo, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'dpo':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('CompanyRef')
+            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'flutterwave':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('tx_ref') or payment_data.get('txRef')
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'mercado_pago':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('external_reference')
+            --- ODOO METHOD SOURCE (MODULE: payment_mollie, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'mollie':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('ref')
+            --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'nuvei':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('invoice_id')
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'paymob':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('merchant_order_id')
+            --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'paypal':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('reference_id')
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'redsys':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('Ds_Order')
+            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'worldline':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // 
+            // # In case of failed payment, paymentResult could be given as a separate key
+            // payment_result = payment_data.get('paymentResult', payment_data)
+            // payment_output = payment_result.get('payment', {}).get('paymentOutput', {})
+            // return payment_output.get('references', {}).get('merchantReference', '')
+            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
+            // def _extract_reference(self, provider_code, payment_data):
+            // """Override of `payment` to extract the reference from the payment data."""
+            // if provider_code != 'xendit':
+            //     return super()._extract_reference(provider_code, payment_data)
+            // return payment_data.get('external_id')
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> ExtractTokenValuesInternalAsync(object payment_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Extract the create values of a token from the payment data.
+            // 
+            // Providers can override this to supply their own token data based on the payment data.
+            // 
+            // Note: self.ensure_one() from :meth: `_tokenize`
+            // 
+            // :param dict payment_data: Data sent by the provider.
+            // :return: Data to create a payment token.
+            // :rtype: dict
+            // """
+            // return dict()
+            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to extract the token values from the payment data."""
+            // if self.provider_code != 'adyen':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // additional_data = payment_data['additionalData']
+            // 
+            // if 'recurring.recurringDetailReference' not in additional_data:
+            //     return {}
+            // 
+            // return {
+            //     'provider_ref': additional_data['recurring.recurringDetailReference'],
+            //     'payment_details': additional_data.get('cardSummary'),
+            //     'adyen_shopper_reference': additional_data['recurring.shopperReference'],
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to extract the token values from the payment data."""
+            // if self.provider_code != 'authorize':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // if self.token_id:
+            //     return {}
+            // 
+            // authorize_API = AuthorizeAPI(self.provider_id)
+            // cust_profile = authorize_API.create_customer_profile(
+            //     self.partner_id, self.provider_reference
+            // )
+            // _logger.info(
+            //     "create_customer_profile request response for transaction %s:\n%s",
+            //     self.reference, pprint.pformat(cust_profile)
+            // )
+            // if not cust_profile or 'payment_profile_id' not in cust_profile:  # Failed to fetch data.
+            //     return {}
+            // 
+            // return {
+            //     'payment_details': cust_profile.get('payment_details'),
+            //     'provider_ref': cust_profile['payment_profile_id'],
+            //     'authorize_profile': cust_profile.get('profile_id'),
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to extract the token values from the payment data."""
+            // if self.provider_code != 'demo':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // # Do not tokenize the transaction twice as `_update_from_payment_data` already does.
+            // if self.state in ('done', 'authorized'):
+            //     return {}
+            // 
+            // state = payment_data['simulated_state']
+            // return {
+            //     'payment_details': payment_data['payment_details'],
+            //     'provider_ref': 'fake provider reference',
+            //     'demo_simulated_state': state,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to extract the token values from the payment data."""
+            // if self.provider_code != 'flutterwave':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // if 'token' not in payment_data.get('card', {}):
+            //     return {}
+            // 
+            // return {
+            //     'payment_details': payment_data['card']['last_4digits'],
+            //     'provider_ref': payment_data['card']['token'],
+            //     'flutterwave_customer_email': payment_data['customer']['email'],
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to return token data based on payment data."""
+            // if self.provider_code != 'mercado_pago':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // # Fetch the customer id or create a new one.
+            // email_data = {'email': payment_data['payer']['email']}
+            // response_content = self._send_api_request('GET', '/v1/customers/search', params=email_data)
+            // if customers_data := response_content['results']:
+            //     customer_id = customers_data[0]['id']
+            // else:  # No customer found.
+            //     # Create a new customer.
+            //     response_content = self._send_api_request('POST', '/v1/customers', json=email_data)
+            //     customer_id = response_content['id']
+            // 
+            // # Fetch the card data.
+            // payload = {
+            //     'token': payment_data['token'],
+            //     'issuer_id': int(payment_data['issuer_id']),
+            //     'payment_method_id': payment_data['payment_method_id']
+            // }
+            // response_content = self._send_api_request(
+            //     'POST', f'/v1/customers/{customer_id}/cards', json=payload
+            // )
+            // card_id = response_content['id']
+            // last_four_digits = response_content['last_four_digits']
+            // 
+            // return {
+            //     'mercado_pago_customer_id': customer_id,
+            //     'payment_details': last_four_digits,
+            //     'provider_ref': card_id,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to return token data based on Razorpay data.
+            // 
+            // Note: self.ensure_one() from :meth: `_tokenize`
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: Data to create a token.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'razorpay':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // has_token_data = payment_data.get('token_id')
+            // if self.token_id or not self.provider_id.allow_tokenization or not has_token_data:
+            //     return {}
+            // 
+            // pm_code = (self.payment_method_id.primary_payment_method_id or self.payment_method_id).code
+            // if pm_code == 'card':
+            //     details = payment_data.get('card', {}).get('last4')
+            // elif pm_code == 'upi':
+            //     temp_vpa = payment_data.get('vpa')
+            //     details = temp_vpa[temp_vpa.find('@') - 1:]
+            // else:
+            //     details = pm_code
+            // return {
+            //     'payment_details': details,
+            //     # Razorpay requires both the customer ID and the token ID which are extracted from here.
+            //     'provider_ref': f'{payment_data["customer_id"]},{payment_data["token_id"]}',
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to return token data based on Stripe data.
+            // 
+            // Note: self.ensure_one() from :meth: `_tokenize`
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: Data to create a token.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'stripe':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // payment_method = payment_data.get('payment_method')
+            // if not payment_method:
+            //     _logger.warning("requested tokenization from payment data with missing payment method")
+            //     return {}
+            // 
+            // mandate = None
+            // # Extract the Stripe objects from the payment data.
+            // if self.operation == 'online_direct':
+            //     customer_id = payment_data['payment_intent']['customer']
+            //     charges_data = payment_data['payment_intent']['charges']
+            //     payment_method_details = charges_data['data'][0].get('payment_method_details')
+            //     if payment_method_details:
+            //         mandate = payment_method_details[payment_method_details['type']].get("mandate")
+            // else:  # 'validation'
+            //     customer_id = payment_data['setup_intent']['customer']
+            // # Another payment method (e.g., SEPA) might have been generated.
+            // if not payment_method[payment_method['type']]:
+            //     try:
+            //         payment_methods = self._send_api_request(
+            //             'GET', f'customers/{customer_id}/payment_methods'
+            //         )
+            //     except ValidationError as e:
+            //         self._set_error(str(e))
+            //         return {}
+            //     payment_method = payment_methods['data'][0]
+            // 
+            // return {
+            //     'payment_details': payment_method[payment_method['type']].get('last4'),
+            //     'provider_ref': customer_id,
+            //     'stripe_payment_method': payment_method['id'],
+            //     'stripe_mandate': mandate,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to return token data based on Worldline data.
+            // 
+            // Note: self.ensure_one() from :meth: `_tokenize`
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: Data to create a token.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'worldline':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // payment_data = payment_data.get('payment', {})
+            // payment_method_data = self._worldline_extract_payment_method_data(payment_data)
+            // if 'token' not in payment_method_data:
+            //     return {}
+            // 
+            // # Padded with *
+            // payment_details = payment_method_data.get('card', {}).get('cardNumber', '')[-4:]
+            // return {
+            //     'payment_details': payment_details,
+            //     'provider_ref': payment_method_data['token'],
+            // }
+            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
+            // def _extract_token_values(self, payment_data):
+            // """Override of `payment` to return token data based on Xendit data.
+            // 
+            // Note: self.ensure_one() from :meth: `_tokenize`
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: Data to create a token.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'xendit':
+            //     return super()._extract_token_values(payment_data)
+            // 
+            // card_info = payment_data['masked_card_number'][-4:]  # Xendit pads details with X's.
+            // 
+            // return {
+            //     'payment_details': card_info,
+            //     'provider_ref': payment_data['credit_card_token_id'],
+            // }
+            */
+            return default;
+        }
+
         protected async Task<PaymentTransaction> FlutterwaveIsAuthorizationPendingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
             // def _flutterwave_is_authorization_pending(self):
+            // """ Filter Flutterwave token transactions that are awaiting external authorization.
+            // 
+            // :return: Pending transactions awaiting authorization.
+            // :rtype: recordset of `payment.transaction`
+            // """
             // return self.filtered_domain([
             //     ('provider_code', '=', 'flutterwave'),
             //     ('operation', '=', 'online_token'),
             //     ('state', '=', 'pending'),
             //     ('provider_reference', 'ilike', 'https'),
             // ])
-            */
-            return default;
-        }
-
-        protected async Task<PaymentTransaction> FlutterwaveTokenizeFromNotificationDataInternalAsync(object notification_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
-            // def _flutterwave_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // """
-            // self.ensure_one()
-            // 
-            // token = self.env['payment.token'].create({
-            //     'provider_id': self.provider_id.id,
-            //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': notification_data['card']['last_4digits'],
-            //     'partner_id': self.partner_id.id,
-            //     'provider_ref': notification_data['card']['token'],
-            //     'flutterwave_customer_email': notification_data['customer']['email'],
-            // })
-            // self.write({
-            //     'token_id': token,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {
-            //         'token_id': token.id,
-            //         'partner_id': self.partner_id.id,
-            //         'ref': self.reference,
-            //     },
-            // )
             */
             return default;
         }
@@ -1057,28 +2753,25 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Complete generic processing values with provider-specific values.
             // processing_values.update(self._get_specific_processing_values(processing_values))
-            // secret_keys = self._get_specific_secret_keys()
-            // logged_values = {k: v for k, v in processing_values.items() if k not in secret_keys}
-            // _logger.info(
-            //     "generic and provider-specific processing values for transaction with reference "
-            //     "%(ref)s:\n%(values)s",
-            //     {'ref': self.reference, 'values': pprint.pformat(logged_values)},
-            // )
             // 
-            // # Render the html form for the redirect flow if available.
+            // # Render the HTML form for the redirect flow if available.
             // if self.operation in ('online_redirect', 'validation'):
             //     redirect_form_view = self.provider_id._get_redirect_form_view(
             //         is_validation=self.operation == 'validation'
             //     )
-            //     if redirect_form_view:  # Some provider don't need a redirect form.
+            //     if redirect_form_view:  # Some providers don't need a redirect form.
             //         rendering_values = self._get_specific_rendering_values(processing_values)
-            //         _logger.info(
-            //             "provider-specific rendering values for transaction with reference "
-            //             "%(ref)s:\n%(values)s",
-            //             {'ref': self.reference, 'values': pprint.pformat(rendering_values)},
+            //         redirect_form_html = self.env['ir.qweb']._render(
+            //             redirect_form_view.id, rendering_values
             //         )
-            //         redirect_form_html = self.env['ir.qweb']._render(redirect_form_view.id, rendering_values)
             //         processing_values.update(redirect_form_html=redirect_form_html)
+            // 
+            // # Include the state and state message only after they might have been updated by calling the
+            // # `_get_specific_rendering/processing_values` methods (due to possible external requests).
+            // processing_values.update({
+            //     'state': self.state,
+            //     'state_message': self.state_message,
+            // })
             // 
             // return processing_values
             */
@@ -1090,55 +2783,71 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _get_received_message(self):
-            // """ Return the message stating that the transaction has been received by the provider.
+            // """Return the message to log to state that the transaction has been processed.
             // 
             // Note: `self.ensure_one()`
             // 
-            // :return: The 'transaction received' message.
+            // :return: The message to log.
             // :rtype: str
             // """
             // self.ensure_one()
             // 
-            // formatted_amount = format_amount(self.env, self.amount, self.currency_id)
-            // if self.state == 'pending':
-            //     message = _(
-            //         ("The transaction with reference %(ref)s for %(amount)s "
-            //         "is pending (%(provider_name)s)."),
-            //         ref=self.reference,
-            //         amount=formatted_amount,
-            //         provider_name=self.provider_id.name
-            //     )
-            // elif self.state == 'authorized':
-            //     message = _(
-            //         "The transaction with reference %(ref)s for %(amount)s has been authorized "
-            //         "(%(provider_name)s).", ref=self.reference, amount=formatted_amount,
-            //         provider_name=self.provider_id.name
-            //     )
-            // elif self.state == 'done':
-            //     message = _(
-            //         "The transaction with reference %(ref)s for %(amount)s has been confirmed "
-            //         "(%(provider_name)s).", ref=self.reference, amount=formatted_amount,
-            //         provider_name=self.provider_id.name
-            //     )
-            // elif self.state == 'error':
-            //     message = _(
-            //         "The transaction with reference %(ref)s for %(amount)s encountered an error"
-            //         " (%(provider_name)s).",
-            //         ref=self.reference, amount=formatted_amount, provider_name=self.provider_id.name
-            //     )
-            //     if self.state_message:
-            //         message += Markup("<br/>") + _("Error: %s", self.state_message)
-            // else:
-            //     message = _(
-            //         ("The transaction with reference %(ref)s for %(amount)s is canceled "
-            //         "(%(provider_name)s)."),
-            //         ref=self.reference,
-            //         amount=formatted_amount,
-            //         provider_name=self.provider_id.name
-            //     )
-            //     if self.state_message:
-            //         message += Markup("<br/>") + _("Reason: %s", self.state_message)
-            // return message
+            // if self.operation == 'validation':
+            //     return None  # Don't log anything as the token is not yet created.
+            // 
+            // # Choose the message based on the transaction's state.
+            // msg_values = {
+            //     'tx_label': 'refund' if self.operation == 'refund' else 'transaction',
+            //     'ref': self._get_html_link(),
+            //     'formatted_amount': self.currency_id.format(self.amount),
+            // }
+            // match self.state:
+            //     case 'pending':
+            //         received_message = _(
+            //             "The %(tx_label)s %(ref)s of %(formatted_amount)s is pending.",
+            //             **msg_values,
+            //         )
+            //     case 'authorized':
+            //         received_message = _(
+            //             "The %(tx_label)s %(ref)s of %(formatted_amount)s has been authorized.",
+            //             **msg_values,
+            //         )
+            //     case 'done':
+            //         received_message = _(
+            //             "The %(tx_label)s %(ref)s of %(formatted_amount)s has been confirmed.",
+            //             **msg_values,
+            //         )
+            //     case 'cancel':
+            //         received_message = _(
+            //             "The %(tx_label)s %(ref)s of %(formatted_amount)s has been canceled.",
+            //             **msg_values,
+            //         )
+            //     case 'error':
+            //         received_message = _(
+            //             "The %(tx_label)s %(ref)s of %(formatted_amount)s encountered an error.",
+            //             **msg_values,
+            //         )
+            //     case _:
+            //         received_message = None
+            // 
+            // # Append any state_message for cancel or error.
+            // if self.state in {'cancel', 'error'} and self.state_message:
+            //     received_message += Markup("<br/>") + self.state_message
+            // 
+            // return received_message
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> GetRoundedAmountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
+            // def _get_rounded_amount(self):
+            // decimal_places = const.CURRENCY_DECIMALS.get(
+            //     self.currency_id.name, self.currency_id.decimal_places
+            // )
+            // return float_round(self.amount, decimal_places, rounding_method='DOWN')
             */
             return default;
         }
@@ -1148,44 +2857,29 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _get_sent_message(self):
-            // """ Return the message stating that the transaction has been requested.
+            // """Return the message to log to state that the transaction has been created.
             // 
             // Note: `self.ensure_one()`
             // 
-            // :return: The 'transaction sent' message.
+            // :return: The message to log.
             // :rtype: str
             // """
             // self.ensure_one()
             // 
             // # Choose the message based on the payment flow.
-            // if self.operation in ('online_redirect', 'online_direct'):
-            //     message = _(
-            //         "A transaction with reference %(ref)s has been initiated (%(provider_name)s).",
-            //         ref=self.reference, provider_name=self.provider_id.name
+            // if self.operation in {'online_redirect', 'online_direct', 'online_token', 'offline'}:
+            //     sent_message = _(
+            //         "The transaction %(ref)s of %(formatted_amount)s has been initiated.",
+            //         ref=self._get_html_link(), formatted_amount=self.currency_id.format(self.amount)
             //     )
             // elif self.operation == 'refund':
-            //     formatted_amount = format_amount(self.env, -self.amount, self.currency_id)
-            //     message = _(
-            //         "A refund request of %(amount)s has been sent. The payment will be created soon. "
-            //         "Refund transaction reference: %(ref)s (%(provider_name)s).",
-            //         amount=formatted_amount, ref=self.reference, provider_name=self.provider_id.name
-            //     )
-            // elif self.operation in ('online_token', 'offline'):
-            //     message = _(
-            //         "A transaction with reference %(ref)s has been initiated using the payment method "
-            //         "%(token)s (%(provider_name)s).",
-            //         ref=self.reference,
-            //         token=self.token_id._build_display_name(),
-            //         provider_name=self.provider_id.name
+            //     sent_message = _(
+            //         "The refund %(ref)s of %(formatted_amount)s has been initiated.",
+            //         ref=self._get_html_link(), formatted_amount=self.currency_id.format(-self.amount)
             //     )
             // else:  # 'validation'
-            //     message = _(
-            //         "A transaction with reference %(ref)s has been initiated to save a new payment "
-            //         "method (%(provider_name)s)",
-            //         ref=self.reference,
-            //         provider_name=self.provider_id.name,
-            //     )
-            // return message
+            //     sent_message = None  # No message to log for initiating validation transactions.
+            // return sent_message
             --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
             // def _get_sent_message(self):
             // """ Override of payment to return a different message.
@@ -1252,9 +2946,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'adyen':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
             // converted_amount = payment_utils.to_minor_currency_units(
             //     self.amount, self.currency_id, const.CURRENCY_DECIMALS.get(self.currency_id.name)
@@ -1278,9 +2971,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'authorize':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
             // return {
             //     'access_token': payment_utils.generate_access_token(
@@ -1296,13 +2988,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // Note: `self.ensure_one()`
             // """
-            // res = super()._get_specific_processing_values(processing_values)
-            // if self._flutterwave_is_authorization_pending():
-            //     res['redirect_form_html'] = self.env['ir.qweb']._render(
-            //         self.provider_id.redirect_form_view_id.id,
-            //         {'api_url': self.provider_reference},
-            //     )
-            // return res
+            // if not self._flutterwave_is_authorization_pending():
+            //     return super()._get_specific_processing_values(processing_values)
+            // 
+            // return {'redirect_form_html': self.env['ir.qweb']._render(
+            //     self.provider_id.redirect_form_view_id.id,
+            //     {'auth_url': self.provider_reference},
+            // )}
             --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
             // def _get_specific_processing_values(self, processing_values):
             // """ Override of `payment` to return the Paypal-specific processing values.
@@ -1314,26 +3006,22 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'paypal':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
             // payload = self._paypal_prepare_order_payload()
             // 
-            // _logger.info(
-            //     "Sending '/checkout/orders' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
             // idempotency_key = payment_utils.generate_idempotency_key(
             //     self, scope='payment_request_order'
             // )
-            // order_data = self.provider_id._paypal_make_request(
-            //     '/v2/checkout/orders', json_payload=payload, idempotency_key=idempotency_key
-            // )
-            // _logger.info(
-            //     "Response of '/checkout/orders' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(order_data)
-            // )
+            // try:
+            //     order_data = self._send_api_request(
+            //         'POST', '/v2/checkout/orders', json=payload, idempotency_key=idempotency_key
+            //     )
+            // except ValidationError as e:
+            //     self._set_error(str(e))
+            //     return {}
+            // 
             // return {'order_id': order_data['id']}
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
             // def _get_specific_processing_values(self, processing_values):
@@ -1346,21 +3034,26 @@ namespace Bamboo.Core.Application.Services
             // :return: The provider-specific processing values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'razorpay':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
             // if self.operation in ('online_token', 'offline'):
             //     return {}
             // 
-            // customer_id = self._razorpay_create_customer()['id']
-            // order_id = self._razorpay_create_order(customer_id)['id']
+            // customer_id = self._razorpay_create_customer().get('id')
+            // order_id = self._razorpay_create_order(customer_id).get('id')
+            // 
             // return {
             //     'razorpay_key_id': self.provider_id.razorpay_key_id,
-            //     'razorpay_public_token': self.provider_id._razorpay_get_public_token(),
+            //     'razorpay_public_token': self.provider_id.razorpay_public_token,
             //     'razorpay_customer_id': customer_id,
             //     'is_tokenize_request': self.tokenize,
             //     'razorpay_order_id': order_id,
+            //     'callback_url': url_join(
+            //         self.provider_id.get_base_url(),
+            //         f'{RazorpayController._return_url}?{url_encode({"reference": self.reference})}'
+            //     ),
+            //     'redirect': self.payment_method_id.code in const.REDIRECT_PAYMENT_METHOD_CODES,
             // }
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
             // def _get_specific_processing_values(self, processing_values):
@@ -1372,14 +3065,13 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'stripe' or self.operation == 'online_token':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
             // intent = self._stripe_create_intent()
             // base_url = self.provider_id.get_base_url()
             // return {
-            //     'client_secret': intent['client_secret'],
+            //     'client_secret': intent['client_secret'] if intent else '',
             //     'return_url': url_join(
             //         base_url,
             //         f'{StripeController._return_url}?{url_encode({"reference": self.reference})}',
@@ -1398,7 +3090,6 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if (
             //     self.provider_code == 'worldline'
             //     and self.operation == 'online_token'
@@ -1411,8 +3102,8 @@ namespace Bamboo.Core.Application.Services
             //         'state': 'draft',
             //         'operation': 'online_redirect',
             //     })
-            //     res['force_flow'] = 'redirect'
-            // return res
+            //     return {'force_flow': 'redirect'}
+            // return super()._get_specific_processing_values(processing_values)
             --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
             // def _get_specific_processing_values(self, processing_values):
             // """ Override of payment to return Xendit-specific processing values.
@@ -1423,17 +3114,11 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_processing_values(processing_values)
             // if self.provider_code != 'xendit':
-            //     return res
+            //     return super()._get_specific_processing_values(processing_values)
             // 
-            // if self.currency_id.name in const.CURRENCY_DECIMALS:
-            //     rounding = const.CURRENCY_DECIMALS.get(self.currency_id.name)
-            // else:
-            //     rounding = self.currency_id.decimal_places
-            // rounded_amount = float_round(self.amount, rounding, rounding_method='DOWN')
             // return {
-            //     'rounded_amount': rounded_amount
+            //     'rounded_amount': self._get_rounded_amount(),
             // }
             */
             return default;
@@ -1465,9 +3150,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'aps':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // converted_amount = payment_utils.to_minor_currency_units(self.amount, self.currency_id)
             // base_url = self.provider_id.get_base_url()
@@ -1481,7 +3165,7 @@ namespace Bamboo.Core.Application.Services
             //     'currency': self.currency_id.name,
             //     'language': self.partner_lang[:2],
             //     'customer_email': self.partner_id.email_normalized,
-            //     'return_url': urls.url_join(base_url, APSController._return_url),
+            //     'return_url': urls.urljoin(base_url, APSController._return_url),
             // }
             // if payment_option:  # Not included if the payment method is 'card'.
             //     rendering_values['payment_option'] = payment_option
@@ -1521,21 +3205,20 @@ namespace Bamboo.Core.Application.Services
             //         language_code_ = const.LANGUAGE_CODES_MAPPING['en']
             //     return language_code_
             // 
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'asiapay':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // base_url = self.provider_id.get_base_url()
             // # The lang is taken from the context rather than from the partner because it is not required
             // # to be logged in to make a payment, and because the lang is not always set on the partner.
-            // lang = self._context.get('lang') or 'en_US'
+            // lang = self.env.context.get('lang') or 'en_US'
             // rendering_values = {
             //     'merchant_id': self.provider_id.asiapay_merchant_id,
             //     'amount': self.amount,
             //     'reference': self.reference,
             //     'currency_code': const.CURRENCY_MAPPING[self.provider_id.available_currency_ids[0].name],
             //     'mps_mode': 'SCP',
-            //     'return_url': urls.url_join(base_url, AsiaPayController._return_url),
+            //     'return_url': urls.urljoin(base_url, AsiaPayController._return_url),
             //     'payment_type': 'N',
             //     'language': get_language_code(lang),
             //     'payment_method': const.PAYMENT_METHODS_MAPPING.get(self.payment_method_id.code, 'ALL'),
@@ -1557,11 +3240,10 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'buckaroo':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
-            // return_url = urls.url_join(self.provider_id.get_base_url(), BuckarooController._return_url)
+            // return_url = urls.urljoin(self.provider_id.get_base_url(), BuckarooController._return_url)
             // rendering_values = {
             //     'api_url': self.provider_id._buckaroo_get_api_url(),
             //     'Brq_websitekey': self.provider_id.buckaroo_website_key,
@@ -1590,14 +3272,30 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'custom':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // return {
             //     'api_url': CustomController._process_url,
             //     'reference': self.reference,
             // }
+            --- ODOO METHOD SOURCE (MODULE: payment_dpo, FILE: payment_transaction.py) ---
+            // def _get_specific_rendering_values(self, processing_values):
+            // """ Override of `payment` to return DPO-specific processing values.
+            // 
+            // Note: self.ensure_one() from `_get_processing_values`.
+            // 
+            // :param dict processing_values: The generic processing values of the transaction.
+            // :return: The dict of provider-specific processing values.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'dpo':
+            //     return super()._get_specific_rendering_values(processing_values)
+            // 
+            // transaction_token = self._dpo_create_token()
+            // api_url = f'https://secure.3gdirectpay.com/payv2.php?ID={transaction_token}'
+            // 
+            // return {'api_url': api_url}
             --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
             // def _get_specific_rendering_values(self, processing_values):
             // """ Override of payment to return Flutterwave-specific rendering values.
@@ -1618,7 +3316,7 @@ namespace Bamboo.Core.Application.Services
             //     'tx_ref': self.reference,
             //     'amount': self.amount,
             //     'currency': self.currency_id.name,
-            //     'redirect_url': urls.url_join(base_url, FlutterwaveController._return_url),
+            //     'redirect_url': urls.urljoin(base_url, FlutterwaveController._return_url),
             //     'customer': {
             //         'email': self.partner_email,
             //         'name': self.partner_name,
@@ -1626,19 +3324,53 @@ namespace Bamboo.Core.Application.Services
             //     },
             //     'customizations': {
             //         'title': self.company_id.name,
-            //         'logo': urls.url_join(base_url, f'web/image/res.company/{self.company_id.id}/logo'),
+            //         'logo': urls.urljoin(base_url, f'web/image/res.company/{self.company_id.id}/logo'),
             //     },
             //     'payment_options': const.PAYMENT_METHODS_MAPPING.get(
             //         self.payment_method_code, self.payment_method_code
             //     ),
             // }
-            // payment_link_data = self.provider_id._flutterwave_make_request('payments', payload=payload)
+            // try:
+            //     payment_link_data = self._send_api_request('POST', 'payments', json=payload)
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
             // 
             // # Extract the payment link URL and embed it in the redirect form.
-            // rendering_values = {
-            //     'api_url': payment_link_data['data']['link'],
+            // return {'api_url': payment_link_data['link']}
+            --- ODOO METHOD SOURCE (MODULE: payment_iyzico, FILE: payment_transaction.py) ---
+            // def _get_specific_rendering_values(self, *args):
+            // """Override of `payment` to return Iyzico specific rendering values.
+            // 
+            //  Note: `self.ensure_one()` from :meth:`_get_processing_values`
+            // 
+            // :return: The provider-specific processing values.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'iyzico':
+            //     return super()._get_specific_rendering_values(*args)
+            // 
+            // # Initiate the payment and retrieve the payment link data.
+            // payload = self._iyzico_prepare_cf_initialize_payload()
+            // try:
+            //     payment_link_data = self._send_api_request(
+            //         'POST',
+            //         'payment/iyzipos/checkoutform/initialize/auth/ecom',
+            //         json=payload,
+            //     )
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
+            // 
+            // # Extract the payment link URL and params and embed them in the redirect form.
+            // api_url = payment_link_data['paymentPageUrl']
+            // parsed_url = urls.url_parse(api_url)
+            // url_params = urls.url_decode(parsed_url.query)
+            // 
+            // return {
+            //     'api_url': api_url,
+            //     'url_params': url_params,  # Encore the params as inputs to preserve them.
             // }
-            // return rendering_values
             --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
             // def _get_specific_rendering_values(self, processing_values):
             // """ Override of `payment` to return Mercado Pago-specific rendering values.
@@ -1649,23 +3381,24 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'mercado_pago':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // # Initiate the payment and retrieve the payment link data.
             // payload = self._mercado_pago_prepare_preference_request_payload()
-            // _logger.info(
-            //     "Sending '/checkout/preferences' request for link creation:\n%s",
-            //     pprint.pformat(payload),
-            // )
-            // api_url = self.provider_id._mercado_pago_make_request(
-            //     '/checkout/preferences', payload=payload
-            // )['init_point' if self.provider_id.state == 'enabled' else 'sandbox_init_point']
+            // try:
+            //     response_content = self._send_api_request('POST', '/checkout/preferences', json=payload)
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
+            // 
+            // api_url = response_content[
+            //     'init_point' if self.provider_id.state == 'enabled' else 'sandbox_init_point'
+            // ]
             // 
             // # Extract the payment link URL and params and embed them in the redirect form.
-            // parsed_url = urls.url_parse(api_url)
-            // url_params = urls.url_decode(parsed_url.query)
+            // parsed_url = url_parse(api_url)
+            // url_params = url_decode(parsed_url.query)
             // rendering_values = {
             //     'api_url': api_url,
             //     'url_params': url_params,  # Encore the params as inputs to preserve them.
@@ -1681,13 +3414,15 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific rendering values
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'mollie':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // payload = self._mollie_prepare_payment_request_payload()
-            // _logger.info("sending '/payments' request for link creation:\n%s", pprint.pformat(payload))
-            // payment_data = self.provider_id._mollie_make_request('/payments', data=payload)
+            // try:
+            //     payment_data = self._send_api_request('POST', '/payments', json=payload)
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
             // 
             // # The provider reference is set now to allow fetching the payment status after redirection
             // self.provider_reference = payment_data.get('id')
@@ -1697,8 +3432,8 @@ namespace Bamboo.Core.Application.Services
             // # from being stripped off when redirecting the user to the checkout URL, which can happen
             // # when only one payment method is enabled on Mollie and query parameters are provided.
             // checkout_url = payment_data['_links']['checkout']['href']
-            // parsed_url = urls.url_parse(checkout_url)
-            // url_params = urls.url_decode(parsed_url.query)
+            // parsed_url = url_parse(checkout_url)
+            // url_params = url_decode(parsed_url.query)
             // return {'api_url': checkout_url, 'url_params': url_params}
             --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
             // def _get_specific_rendering_values(self, processing_values):
@@ -1711,9 +3446,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific rendering values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'nuvei':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
             // if self.payment_method_code in const.FULL_NAME_METHODS and not (first_name and last_name):
@@ -1752,12 +3486,12 @@ namespace Bamboo.Core.Application.Services
             //     'currency': self.currency_id.name,
             //     'email': self.partner_email or '',
             //     'encoding': 'UTF-8',
-            //     'first_name': first_name,
+            //     'first_name': first_name[:30],
             //     'item_amount_1': rounded_amount,
             //     'item_name_1': self.reference,
             //     'item_quantity_1': 1,
             //     'invoice_id': self.reference,
-            //     'last_name': last_name,
+            //     'last_name': last_name[:40],
             //     'merchantLocale': self.partner_lang,
             //     'merchant_id': self.provider_id.nuvei_merchant_identifier,
             //     'merchant_site_id': self.provider_id.nuvei_site_identifier,
@@ -1786,6 +3520,66 @@ namespace Bamboo.Core.Application.Services
             //     'url_params': url_params,
             // }
             // return rendering_values
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _get_specific_rendering_values(self, processing_values):
+            // """ Override of `payment` to return Paymob-specific rendering values.
+            // 
+            // Note: self.ensure_one() from `_get_processing_values`
+            // 
+            // :param dict processing_values: The generic and specific processing values of the
+            //                                transaction.
+            // :return: The dict of provider-specific rendering values.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'paymob':
+            //     return super()._get_specific_rendering_values(processing_values)
+            // 
+            // payload = self._paymob_prepare_payment_request_payload()
+            // try:
+            //     payment_data = self._send_api_request(
+            //         'POST', '/v1/intention/', json=payload, is_client_request=True
+            //     )
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
+            // 
+            // # The provider reference is set to allow fetching the payment status after redirection.
+            // self.provider_reference = payment_data.get('id')
+            // paymob_client_secret = payment_data.get('client_secret')
+            // 
+            // paymob_url = self.provider_id._paymob_get_api_url()
+            // api_url = f'{paymob_url}/unifiedcheckout/'
+            // url_params = {
+            //     'publicKey': self.provider_id.paymob_public_key,
+            //     'clientSecret': paymob_client_secret,
+            // }
+            // return {'api_url': api_url, 'url_params': url_params}
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _get_specific_rendering_values(self, processing_values):
+            // """Override of `payment` to return Redsys-specific rendering values.
+            // 
+            // Note: self.ensure_one() from `_get_processing_values`.
+            // 
+            // :param dict processing_values: The generic processing values of the transaction.
+            // :return: The dict of provider-specific rendering values.
+            // :rtype: dict
+            // """
+            // if self.provider_code != 'redsys':
+            //     return super()._get_specific_rendering_values(processing_values)
+            // 
+            // merchant_parameters = self._redsys_prepare_merchant_parameters()
+            // encoded_merchant_parameters = base64.b64encode(
+            //     json.dumps(merchant_parameters).encode()
+            // ).decode()
+            // signature = self.provider_id._redsys_calculate_signature(
+            //     encoded_merchant_parameters, self.reference, self.provider_id.redsys_secret_key
+            // )
+            // return {
+            //     'api_url': self.provider_id._redsys_get_api_url(),
+            //     'merchant_parameters': encoded_merchant_parameters,
+            //     'signature': signature,
+            //     'signature_version': 'HMAC_SHA256_V1',
+            // }
             --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
             // def _get_specific_rendering_values(self, processing_values):
             // """ Override of `payment` to return Worldline-specific processing values.
@@ -1796,9 +3590,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The dict of provider-specific processing values.
             // :rtype: dict
             // """
-            // res = super()._get_specific_rendering_values(processing_values)
             // if self.provider_code != 'worldline':
-            //     return res
+            //     return super()._get_specific_rendering_values(processing_values)
             // 
             // checkout_session_data = self._worldline_create_checkout_session()
             // return {'api_url': checkout_session_data['redirectUrl']}
@@ -1818,568 +3611,17 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Initiate the payment and retrieve the invoice data.
             // payload = self._xendit_prepare_invoice_request_payload()
-            // _logger.info("Sending invoice request for link creation:\n%s", pprint.pformat(payload))
-            // invoice_data = self.provider_id._xendit_make_request('v2/invoices', payload=payload)
-            // _logger.info("Received invoice request response:\n%s", pprint.pformat(invoice_data))
+            // try:
+            //     invoice_data = self._send_api_request('POST', 'v2/invoices', json=payload)
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     return {}
             // 
             // # Extract the payment link URL and embed it in the redirect form.
             // rendering_values = {
             //     'api_url': invoice_data.get('invoice_url')
             // }
             // return rendering_values
-            */
-            return default;
-        }
-
-        protected async Task<PaymentTransaction> GetSpecificSecretKeysInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _get_specific_secret_keys(self):
-            // """ Return dict keys of provider-specific values that should be hidden when logged.
-            // 
-            // :return: The provider-specific secret keys
-            // :rtype: dict_keys
-            // """
-            // return dict().keys()
-            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _get_specific_secret_keys(self):
-            // """ Override of payment to return Stripe-specific secret keys.
-            // 
-            // Note: self.ensure_one() from `_get_processing_values`
-            // 
-            // :return: The provider-specific secret keys
-            // :rtype: dict_keys
-            // """
-            // if self.provider_code == 'stripe':
-            //     return {'client_secret': None}.keys()
-            // return super()._get_specific_secret_keys()
-            */
-            return default;
-        }
-
-        protected async Task<PaymentTransaction> GetTxFromNotificationDataInternalAsync(object provider_code, object notification_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Find the transaction based on the notification data.
-            // 
-            // For a provider to handle transaction processing, it must overwrite this method and return
-            // the transaction matching the notification data.
-            // 
-            // :param str provider_code: The code of the provider handling the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction, if found.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // return self
-            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on Adyen data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if inconsistent data were received
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'adyen' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('merchantReference')
-            // if not reference:
-            //     raise ValidationError("Adyen: " + _("Received data with missing merchant reference"))
-            // 
-            // event_code = notification_data.get('eventCode', 'AUTHORISATION')  # Fallback on auth if S2S.
-            // provider_reference = notification_data.get('pspReference')
-            // source_reference = notification_data.get('originalReference')
-            // if event_code == 'AUTHORISATION':
-            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'adyen')])
-            // elif event_code in ['CANCELLATION', 'CAPTURE', 'CAPTURE_FAILED']:
-            //     # The capture/void may be initiated from Adyen, so we can't trust the reference.
-            //     # We find the transaction based on the original provider reference since Adyen will have
-            //     # two different references: one for the original transaction and one for the capture or
-            //     # void. We keep the second one only for child transactions. For full capture/void, no
-            //     # child transaction are created. Thus, we first look for the source transaction before
-            //     # checking if we need to find/create a child transaction.
-            //     source_tx = self.search(
-            //         [('provider_reference', '=', source_reference), ('provider_code', '=', 'adyen')]
-            //     )
-            //     if source_tx:
-            //         notification_data_amount = notification_data.get('amount', {}).get('value')
-            //         converted_notification_amount = payment_utils.to_major_currency_units(
-            //             notification_data_amount, source_tx.currency_id
-            //         )
-            //         if source_tx.amount == converted_notification_amount:  # Full capture/void.
-            //             tx = source_tx
-            //         else:  # Partial capture/void; we search for the child transaction instead.
-            //             tx = self.search([
-            //                 ('provider_reference', '=', provider_reference),
-            //                 ('provider_code', '=', 'adyen'),
-            //             ])
-            //             if tx and tx.amount != converted_notification_amount:
-            //                 # If the void was requested expecting a certain amount but, in the meantime,
-            //                 # others captures that Odoo was unaware of were done, the amount voided will
-            //                 # be different from the amount of the existing transaction.
-            //                 tx._set_error(_(
-            //                     "The amount processed by Adyen for the transaction %s is different than"
-            //                     " the one requested. Another transaction is created with the correct"
-            //                     " amount.", tx.reference
-            //                 ))
-            //                 tx = self.env['payment.transaction']
-            //             if not tx:  # Partial capture/void initiated from Adyen or with a wrong amount.
-            //                 # Manually create a child transaction with a new reference. The reference of
-            //                 # the child transaction was personalized from Adyen and could be identical
-            //                 # to that of an existing transaction.
-            //                 tx = self._adyen_create_child_tx_from_notification_data(
-            //                     source_tx, notification_data
-            //                 )
-            //     else:  # The capture/void was initiated for an unknown source transaction
-            //         pass  # Don't do anything with the capture/void notification
-            // else:  # 'REFUND'
-            //     # The refund may be initiated from Adyen, so we can't trust the reference, which could
-            //     # be identical to another existing transaction. We find the transaction based on the
-            //     # provider reference.
-            //     tx = self.search(
-            //         [('provider_reference', '=', provider_reference), ('provider_code', '=', 'adyen')]
-            //     )
-            //     if not tx:  # The refund was initiated from Adyen
-            //         # Find the source transaction based on the original reference
-            //         source_tx = self.search(
-            //             [('provider_reference', '=', source_reference), ('provider_code', '=', 'adyen')]
-            //         )
-            //         if source_tx:
-            //             # Manually create a refund transaction with a new reference. The reference of
-            //             # the refund transaction was personalized from Adyen and could be identical to
-            //             # that of an existing transaction.
-            //             tx = self._adyen_create_child_tx_from_notification_data(
-            //                 source_tx, notification_data, is_refund=True
-            //             )
-            //         else:  # The refund was initiated for an unknown source transaction
-            //             pass  # Don't do anything with the refund notification
-            // 
-            // if not tx:
-            //     raise ValidationError(
-            //         "Adyen: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_aps, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on APS data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: recordset of `payment.transaction`
-            // :raise ValidationError: If inconsistent data are received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'aps' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('merchant_reference')
-            // if not reference:
-            //     raise ValidationError(
-            //         "APS: " + _("Received data with missing reference %(ref)s.", ref=reference)
-            //     )
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'aps')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "APS: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_asiapay, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on AsiaPay data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: recordset of `payment.transaction`
-            // :raise ValidationError: If inconsistent data are received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'asiapay' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('Ref')
-            // if not reference:
-            //     raise ValidationError(
-            //         "AsiaPay: " + _("Received data with missing reference %(ref)s.", ref=reference)
-            //     )
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'asiapay')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "AsiaPay: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Find the transaction based on Authorize.net data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'authorize' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('reference')
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'authorize')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Authorize.Net: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_buckaroo, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on Buckaroo data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The normalized notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'buckaroo' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('brq_invoicenumber')
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'buckaroo')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Buckaroo: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on custom data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The notification feedback data
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'custom' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('reference')
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'custom')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Wire Transfer: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on dummy data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The dummy notification data
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'demo' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('reference')
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'demo')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Demo: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on Flutterwave data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: recordset of `payment.transaction`
-            // :raise ValidationError: If inconsistent data were received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'flutterwave' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('tx_ref') or notification_data.get('txRef')
-            // if not reference:
-            //     raise ValidationError("Flutterwave: " + _("Received data with missing reference."))
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'flutterwave')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Flutterwave: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on Mercado Pago data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: recordset of `payment.transaction`
-            // :raise ValidationError: If inconsistent data were received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'mercado_pago' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('external_reference')
-            // if not reference:
-            //     raise ValidationError("Mercado Pago: " + _("Received data with missing reference."))
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'mercado_pago')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Mercado Pago: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_mollie, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on Mollie data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'mollie' or len(tx) == 1:
-            //     return tx
-            // 
-            // tx = self.search(
-            //     [('reference', '=', notification_data.get('ref')), ('provider_code', '=', 'mollie')]
-            // )
-            // if not tx:
-            //     raise ValidationError("Mollie: " + _(
-            //         "No transaction found matching reference %s.", notification_data.get('ref')
-            //     ))
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on Nuvei data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: payment.transaction
-            // :raise ValidationError: If inconsistent data are received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'nuvei' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('invoice_id')
-            // if not reference:
-            //     raise ValidationError(
-            //         "Nuvei: " + _("Received data with missing reference.")
-            //     )
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'nuvei')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Nuvei: " + _("No transaction found matching reference %(ref)s.", ref=reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on Paypal data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: payment.transaction
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'paypal' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('reference_id')
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'paypal')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "PayPal: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on razorpay data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The normalized notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'razorpay' or len(tx) == 1:
-            //     return tx
-            // 
-            // entity_type = notification_data.get('entity_type', 'payment')
-            // if entity_type == 'payment':
-            //     reference = notification_data.get('description')
-            //     if not reference:
-            //         raise ValidationError("Razorpay: " + _("Received data with missing reference."))
-            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'razorpay')])
-            // else:  # 'refund'
-            //     notes = notification_data.get('notes')
-            //     reference = isinstance(notes, dict) and notes.get('reference')
-            //     if reference:  # The refund was initiated from Odoo.
-            //         tx = self.search([('reference', '=', reference), ('provider_code', '=', 'razorpay')])
-            //     else:  # The refund was initiated from Razorpay.
-            //         # Find the source transaction based on its provider reference.
-            //         source_tx = self.search([
-            //             ('provider_reference', '=', notification_data['payment_id']),
-            //             ('provider_code', '=', 'razorpay'),
-            //         ])
-            //         if source_tx:
-            //             # Manually create a refund transaction with a new reference.
-            //             tx = self._razorpay_create_refund_tx_from_notification_data(
-            //                 source_tx, notification_data
-            //             )
-            //         else:  # The refund was initiated for an unknown source transaction.
-            //             pass  # Don't do anything with the refund notification.
-            // if not tx:
-            //     raise ValidationError(
-            //         "Razorpay: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of payment to find the transaction based on Stripe data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: The transaction if found
-            // :rtype: recordset of `payment.transaction`
-            // :raise: ValidationError if inconsistent data were received
-            // :raise: ValidationError if the data match no transaction
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'stripe' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('reference')
-            // if reference:
-            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'stripe')])
-            // elif notification_data.get('event_type') == 'charge.refund.updated':
-            //     # The webhook notifications sent for `charge.refund.updated` events only contain a
-            //     # refund object that has no 'description' (the merchant reference) field. We thus search
-            //     # the transaction by its provider reference which is the refund id for refund txs.
-            //     refund_id = notification_data['object_id']  # The object is a refund.
-            //     tx = self.search(
-            //         [('provider_reference', '=', refund_id), ('provider_code', '=', 'stripe')]
-            //     )
-            // else:
-            //     raise ValidationError("Stripe: " + _("Received data with missing merchant reference"))
-            // 
-            // if not tx:
-            //     raise ValidationError(
-            //         "Stripe: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on Worldline data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: payment.transaction
-            // :raise ValidationError: If inconsistent data are received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'worldline' or len(tx) == 1:
-            //     return tx
-            // 
-            // # In case of failed payment, paymentResult could be given as a seperate key
-            // payment_result = notification_data.get('paymentResult', notification_data)
-            // payment_output = payment_result.get('payment', {}).get('paymentOutput', {})
-            // reference = payment_output.get('references', {}).get('merchantReference', '')
-            // if not reference:
-            //     raise ValidationError(
-            //         "Worldline: " + _("Received data with missing reference %(ref)s.", ref=reference)
-            //     )
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'worldline')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Worldline: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // 
-            // return tx
-            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
-            // def _get_tx_from_notification_data(self, provider_code, notification_data):
-            // """ Override of `payment` to find the transaction based on the notification data.
-            // 
-            // :param str provider_code: The code of the provider that handled the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction if found.
-            // :rtype: payment.transaction
-            // :raise ValidationError: If inconsistent data were received.
-            // :raise ValidationError: If the data match no transaction.
-            // """
-            // tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-            // if provider_code != 'xendit' or len(tx) == 1:
-            //     return tx
-            // 
-            // reference = notification_data.get('external_id')
-            // if not reference:
-            //     raise ValidationError("Xendit: " + _("Received data with missing reference."))
-            // 
-            // tx = self.search([('reference', '=', reference), ('provider_code', '=', 'xendit')])
-            // if not tx:
-            //     raise ValidationError(
-            //         "Xendit: " + _("No transaction found matching reference %s.", reference)
-            //     )
-            // return tx
-            */
-            return default;
-        }
-
-        protected async Task<PaymentTransaction> HandleNotificationDataInternalAsync(object provider_code, object notification_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _handle_notification_data(self, provider_code, notification_data):
-            // """ Match the transaction with the notification data, update its state and return it.
-            // 
-            // :param str provider_code: The code of the provider handling the transaction.
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: The transaction.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // tx = self._get_tx_from_notification_data(provider_code, notification_data)
-            // tx._process_notification_data(notification_data)
-            // return tx
             */
             return default;
         }
@@ -2418,6 +3660,73 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PaymentTransaction> IsSelfOrderPaymentConfirmedInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: payment_transaction.py) ---
+            // def _is_self_order_payment_confirmed(self):
+            // self.ensure_one()
+            // return (
+            //     self.pos_order_id
+            //     and self.state in ('authorized', 'done')
+            //     and self.pos_order_id.source in ('mobile', 'kiosk')
+            // )
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> IyzicoPrepareCfInitializePayloadInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_iyzico, FILE: payment_transaction.py) ---
+            // def _iyzico_prepare_cf_initialize_payload(self):
+            // """Create the payload for the CF-initialize request based on the transaction values.
+            // 
+            // :return: The request payload.
+            // :rtype: dict
+            // """
+            // base_url = self.provider_id.get_base_url()
+            // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
+            // query_string_params = urls.url_encode({'tx_ref': self.reference})
+            // return_url = f'{urljoin(base_url, const.PAYMENT_RETURN_ROUTE)}?{query_string_params}'
+            // return {
+            //     # Dummy basket item as it is required in Iyzico.
+            //     'basketItems': [{
+            //         'id': self.id,
+            //         'price': self.amount,
+            //         'name': 'Odoo purchase',
+            //         'category1': 'Service',
+            //         'itemType': 'VIRTUAL',
+            //     }],
+            //     'billingAddress': {
+            //         'address': self.partner_address,
+            //         'contactName': self.partner_name,
+            //         'city': self.partner_city,
+            //         'country': self.partner_country_id.name,
+            //     },
+            //     'buyer': {
+            //         'id': self.partner_id.id,
+            //         'name': first_name,
+            //         'surname': last_name,
+            //         'identityNumber': str(self.partner_id.id).zfill(5),
+            //         'email': self.partner_email,
+            //         'registrationAddress': self.partner_address,
+            //         'city': self.partner_city,
+            //         'country': self.partner_country_id.name,
+            //         'ip': '0',
+            //     },
+            //     'callbackUrl': return_url,
+            //     'conversationId': self.reference,
+            //     'currency': self.currency_id.name,
+            //     'locale': 'tr' if self.env.lang == 'tr_TR' else 'en',
+            //     'paidPrice': self.amount,
+            //     'paymentSource': 'ODOO',
+            //     'price': self.amount,
+            // }
+            */
+            return default;
+        }
+
         protected async Task<PaymentTransaction> LangGetInternalAsync()
         {
             /*
@@ -2444,7 +3753,10 @@ namespace Bamboo.Core.Application.Services
             // :return: None
             // """
             // self.ensure_one()
-            // author = self.env.user.partner_id if self.env.uid == SUPERUSER_ID else self.partner_id
+            // if self.env.uid == SUPERUSER_ID or self.env.context.get('payment_backend_action'):
+            //     author = self.env.user.partner_id
+            // else:
+            //     author = self.partner_id
             // if self.source_transaction_id:
             //     for invoice in self.source_transaction_id.invoice_ids:
             //         invoice.message_post(body=message, author_id=author.id)
@@ -2476,7 +3788,10 @@ namespace Bamboo.Core.Application.Services
             // :return: None
             // """
             // super()._log_message_on_linked_documents(message)
-            // author = self.env.user.partner_id if self.env.uid == SUPERUSER_ID else self.partner_id
+            // if self.env.uid == SUPERUSER_ID or self.env.context.get('payment_backend_action'):
+            //     author = self.env.user.partner_id
+            // else:
+            //     author = self.partner_id
             // for order in self.sale_order_ids or self.source_transaction_id.sale_order_ids:
             //     order.message_post(body=message, author_id=author.id)
             */
@@ -2488,16 +3803,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _log_received_message(self):
-            // """ Log that the transactions have been received in the chatter of relevant documents.
-            // 
-            // A transaction is 'received' when a payment status is received from the provider handling the
-            // transaction.
+            // """Log that the transactions have been processed in the chatter of relevant documents.
             // 
             // :return: None
             // """
             // for tx in self:
-            //     message = tx._get_received_message()
-            //     tx._log_message_on_linked_documents(message)
+            //     if message := tx._get_received_message():
+            //         tx._log_message_on_linked_documents(message)
             --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
             // def _log_received_message(self):
             // """ Override of `payment` to remove custom providers from the recordset.
@@ -2515,13 +3827,36 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _log_sent_message(self):
-            // """ Log that the transactions have been initiated in the chatter of relevant documents.
+            // """Log that the transactions have been created in the chatter of relevant documents.
             // 
             // :return: None
             // """
             // for tx in self:
-            //     message = tx._get_sent_message()
-            //     tx._log_message_on_linked_documents(message)
+            //     if message := tx._get_sent_message():
+            //         tx._log_message_on_linked_documents(message)
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> MercadoPagoConvertAmountInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _mercado_pago_convert_amount(self):
+            // """Convert the transaction amount according to Mercado Pago's currency requirements.
+            // 
+            // Mercado Pago requires certain currencies (COP, HNL, NIO) to be expressed as integers rather
+            // than following the standard ISO 4217 decimal places. This method rounds down the amount to
+            // the appropriate decimal places to ensure API compatibility.
+            // 
+            // :return: The transaction amount rounded to Mercado Pago's required decimal precision.
+            // :rtype: float
+            // """
+            // unit_price = self.amount
+            // decimal_places = const.CURRENCY_DECIMALS.get(self.currency_id.name)
+            // if decimal_places is not None:
+            //     unit_price = float_round(unit_price, decimal_places, rounding_method='DOWN')
+            // return unit_price
             */
             return default;
         }
@@ -2537,9 +3872,62 @@ namespace Bamboo.Core.Application.Services
             // :return: The error message.
             // :rtype: str
             // """
-            // return "Mercado Pago: " + const.ERROR_MESSAGE_MAPPING.get(
+            // return const.ERROR_MESSAGE_MAPPING.get(
             //     status_detail, const.ERROR_MESSAGE_MAPPING['cc_rejected_other_reason']
             // )
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> MercadoPagoPrepareBaseRequestPayloadInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _mercado_pago_prepare_base_request_payload(self):
+            // """ Create the base payload for requests based on the transaction values.
+            // 
+            // :return: The base request payload.
+            // :rtype: dict
+            // """
+            // base_url = self.provider_id.get_base_url()
+            // sanitized_reference = url_quote(self.reference)
+            // # Append the reference to identify the transaction from the webhook payment data.
+            // webhook_url = urljoin(base_url, f'{const.WEBHOOK_ROUTE}/{sanitized_reference}')
+            // return {
+            //     'external_reference': self.reference,
+            //     'notification_url': webhook_url,
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> MercadoPagoPreparePaymentRequestPayloadInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
+            // def _mercado_pago_prepare_payment_request_payload(self):
+            // """Create the payload for the direct payment request based on the transaction values.
+            // 
+            // :return: The payment request payload.
+            // :rtype: dict
+            // """
+            // payload = self._mercado_pago_prepare_base_request_payload()
+            // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
+            // payload.update({
+            //     'additional_info': {
+            //         'items': [{
+            //             'title': self.reference,
+            //             'quantity': 1,
+            //             'unit_price': self._mercado_pago_convert_amount(),
+            //         }],
+            //     },
+            //     'payer': {
+            //         'first_name': first_name,
+            //         'last_name': last_name,
+            //         'email': self.partner_email,
+            //     },
+            // })
+            // return payload
             */
             return default;
         }
@@ -2549,38 +3937,28 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
             // def _mercado_pago_prepare_preference_request_payload(self):
-            // """ Create the payload for the preference request based on the transaction values.
+            // """Create the payload for the preference request based on the transaction values.
             // 
-            // :return: The request payload.
+            // :return: The preference request payload.
             // :rtype: dict
             // """
+            // payload = self._mercado_pago_prepare_base_request_payload()
+            // 
             // base_url = self.provider_id.get_base_url()
-            // return_url = urls.url_join(base_url, MercadoPagoController._return_url)
-            // sanitized_reference = url_quote(self.reference)
-            // webhook_url = urls.url_join(
-            //     base_url, f'{MercadoPagoController._webhook_url}/{sanitized_reference}'
-            // )  # Append the reference to identify the transaction from the webhook notification data.
-            // 
-            // unit_price = self.amount
-            // decimal_places = const.CURRENCY_DECIMALS.get(self.currency_id.name)
-            // if decimal_places is not None:
-            //     unit_price = float_round(unit_price, decimal_places, rounding_method='DOWN')
-            // 
-            // return {
+            // return_url = urljoin(base_url, const.PAYMENT_RETURN_ROUTE)
+            // payload.update({
             //     'auto_return': 'all',
             //     'back_urls': {
             //         'success': return_url,
             //         'pending': return_url,
             //         'failure': return_url,
             //     },
-            //     'external_reference': self.reference,
             //     'items': [{
             //         'title': self.reference,
             //         'quantity': 1,
             //         'currency_id': self.currency_id.name,
-            //         'unit_price': unit_price,
+            //         'unit_price': self._mercado_pago_convert_amount(),
             //     }],
-            //     'notification_url': webhook_url,
             //     'payer': {
             //         'name': self.partner_name,
             //         'email': self.partner_email,
@@ -2592,10 +3970,8 @@ namespace Bamboo.Core.Application.Services
             //             'street_name': self.partner_address,
             //         },
             //     },
-            //     'payment_methods': {
-            //         'installments': 1,  # Prevent MP from proposing several installments for a payment.
-            //     },
-            // }
+            // })
+            // return payload
             */
             return default;
         }
@@ -2612,8 +3988,8 @@ namespace Bamboo.Core.Application.Services
             // """
             // user_lang = self.env.context.get('lang')
             // base_url = self.provider_id.get_base_url()
-            // redirect_url = urls.url_join(base_url, MollieController._return_url)
-            // webhook_url = urls.url_join(base_url, MollieController._webhook_url)
+            // redirect_url = urls.urljoin(base_url, MollieController._return_url)
+            // webhook_url = urls.urljoin(base_url, MollieController._webhook_url)
             // decimal_places = CURRENCY_MINOR_UNITS.get(
             //     self.currency_id.name, self.currency_id.decimal_places
             // )
@@ -2632,6 +4008,56 @@ namespace Bamboo.Core.Application.Services
             //     # redirection, we include it in the redirect URL to be able to match the transaction.
             //     'redirectUrl': f'{redirect_url}?ref={self.reference}',
             //     'webhookUrl': f'{webhook_url}?ref={self.reference}',
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> PaymobPreparePaymentRequestPayloadInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_transaction.py) ---
+            // def _paymob_prepare_payment_request_payload(self):
+            // """ Create the payload for the payment request based on the transaction values.
+            // 
+            // :return: The request payload.
+            // :rtype: dict
+            // """
+            // partner_first_name, partner_last_name = payment_utils.split_partner_name(self.partner_name)
+            // payment_method_codes = [self.payment_method_code]
+            // 
+            // # If the user selects the Oman Net Payment Method to pay, Integration ID for both Card and
+            // # Oman Net Integrations should be passed in the Intention API. The transaction will fail if
+            // # you only pass Oman Net Integration ID.
+            // if self.payment_method_code == 'omannet':
+            //     payment_method_codes.append('card')
+            // 
+            // # Suffix to all payment methods with the environment.
+            // environment = 'live' if self.provider_id.state == 'enabled' else 'test'
+            // payment_method_codes = [
+            //     f'{code.replace("_", "")}{environment}' for code in payment_method_codes
+            // ]
+            // 
+            // base_url = self.get_base_url()
+            // redirect_url = urls.urljoin(base_url, PaymobController._return_url)
+            // webhook_url = urls.urljoin(base_url, PaymobController._webhook_url)
+            // 
+            // return {
+            //     'special_reference': self.reference,
+            //     'amount': payment_utils.to_minor_currency_units(self.amount, self.currency_id),
+            //     'currency': self.currency_id.name,
+            //     'payment_methods': payment_method_codes,
+            //     'notification_url': webhook_url,
+            //     'redirection_url': redirect_url,
+            //     'billing_data': {
+            //         'first_name': partner_first_name or partner_last_name or '',
+            //         'last_name': partner_last_name or '',
+            //         'email': self.partner_email or '',
+            //         'street': self.partner_address or '',
+            //         'state': self.partner_state_id.name or '',
+            //         'phone_number': (self.partner_phone or '').replace(' ', ''),
+            //         'country': self.partner_country_id.code or '',
+            //     },
             // }
             */
             return default;
@@ -2671,7 +4097,7 @@ namespace Bamboo.Core.Application.Services
             //                 'display_data': {
             //                     'brand_name': self.provider_id.company_id.name,
             //                 },
-            //                 'email_address': paypal_utils.get_normalized_email_account(self.provider_id)
+            //                 'email_address': self.provider_id.paypal_email_account,
             //             },
             //             **shipping_address_vals,
             //         },
@@ -2697,6 +4123,25 @@ namespace Bamboo.Core.Application.Services
             // return payload
             */
             return default;
+        }
+
+        public async Task<PaymentTransaction> PostProcessAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def action_post_process(self):
+            // """Trigger the post-processing of the transactions.
+            // 
+            // :return: A client action to soft-reload the view.
+            // :rtype: dict
+            // """
+            // self._post_process()
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'soft_reload',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PaymentTransaction> PostProcessInternalAsync()
@@ -2730,14 +4175,24 @@ namespace Bamboo.Core.Application.Services
             // 
             //     if tx.payment_id:
             //         message = _(
-            //             "The payment related to the transaction with reference %(ref)s has been"
-            //             " posted: %(link)s",
-            //             ref=tx.reference,
+            //             "The payment related to transaction %(ref)s has been posted: %(link)s",
+            //             ref=tx._get_html_link(),
             //             link=tx.payment_id._get_html_link(),
             //         )
             //         tx._log_message_on_linked_documents(message)
             // for tx in self.filtered(lambda t: t.state == 'cancel'):
             //     tx.payment_id.action_cancel()
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: payment_transaction.py) ---
+            // def _post_process(self):
+            // """ Override of `payment` to confirm orders with the cash_on_delivery payment method and
+            // trigger a picking creation. """
+            // cod_pending_txs = self.filtered(
+            //     lambda tx: tx.provider_id.custom_mode == 'cash_on_delivery' and tx.state == 'pending'
+            // )
+            // cod_pending_txs.sale_order_ids.filtered(
+            //     lambda so: so.state == 'draft'
+            // ).with_context(send_email=True).action_confirm()
+            // super()._post_process()
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _post_process(self):
             // """ Post-process the transactions.
@@ -2803,10 +4258,9 @@ namespace Bamboo.Core.Application.Services
             // )._post_process()
             // 
             // for done_tx in self.filtered(lambda tx: tx.state == 'done'):
-            //     confirmed_orders = done_tx._check_amount_and_confirm_order()
-            //     if done_tx.operation == 'validation':
-            //         continue
-            //     (done_tx.sale_order_ids - confirmed_orders)._send_payment_succeeded_for_order_mail()
+            //     if done_tx.operation != 'validation':
+            //         confirmed_orders = done_tx._check_amount_and_confirm_order()
+            //         (done_tx.sale_order_ids - confirmed_orders)._send_payment_succeeded_for_order_mail()
             // 
             //     auto_invoice = str2bool(
             //         self.env['ir.config_parameter'].sudo().get_param('sale.automatic_invoice')
@@ -2816,7 +4270,7 @@ namespace Bamboo.Core.Application.Services
             //         # orders to create the invoice even if only a partial payment was made.
             //         done_tx._invoice_sale_orders()
             //     super(PaymentTransaction, done_tx)._post_process()  # Post the invoices.
-            //     if auto_invoice:
+            //     if auto_invoice and not self.env.context.get('skip_sale_auto_invoice_send'):
             //         if (
             //             str2bool(self.env['ir.config_parameter'].sudo().get_param('sale.async_emails'))
             //             and (send_invoice_cron := self.env.ref('sale.send_invoice_cron', raise_if_not_found=False))
@@ -2853,979 +4307,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> ProcessNotificationDataInternalAsync(object notification_data)
+        protected async Task<PaymentTransaction> ProcessInternalAsync(object provider_code, object payment_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Update the transaction state and the provider reference based on the notification data.
+            // def _process(self, provider_code, payment_data):
+            // """Process the payment data received from the provider and update the transaction.
             // 
-            // This method should usually not be called directly. The correct method to call upon receiving
-            // notification data is :meth:`_handle_notification_data`.
-            // 
-            // For a provider to handle transaction processing, it must overwrite this method and process
-            // the notification data.
-            // 
-            // Note: `self.ensure_one()`
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
+            // :param str provider_code: The code of the provider handling the transaction.
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: The updated transaction.
+            // :rtype: payment.transaction
             // """
-            // self.ensure_one()
-            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on Adyen data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: None
-            // :raise: ValidationError if inconsistent data were received
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'adyen':
-            //     return
-            // 
-            // # Extract or assume the event code. If none is provided, the feedback data originate from a
-            // # direct payment request whose feedback data share the same payload as an 'AUTHORISATION'
-            // # webhook notification.
-            // event_code = notification_data.get('eventCode', 'AUTHORISATION')
-            // 
-            // # Update the provider reference. If the event code is 'CAPTURE' or 'CANCELLATION', we
-            // # discard the pspReference as it is different from the original pspReference of the tx.
-            // if 'pspReference' in notification_data and event_code in ['AUTHORISATION', 'REFUND']:
-            //     self.provider_reference = notification_data.get('pspReference')
-            // 
-            // # Update the payment method.
-            // payment_method_data = notification_data.get('paymentMethod', '')
-            // if isinstance(payment_method_data, dict):  # Not from webhook: the data contain the PM code.
-            //     payment_method_type = payment_method_data['type']
-            //     if payment_method_type == 'scheme':  # card
-            //         payment_method_code = payment_method_data['brand']
-            //     else:
-            //         payment_method_code = payment_method_type
-            // else:  # Sent from the webhook: the PM code is directly received as a string.
-            //     payment_method_code = payment_method_data
-            // 
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_state = notification_data.get('resultCode')
-            // refusal_reason = notification_data.get('refusalReason') or notification_data.get('reason')
-            // if not payment_state:
-            //     raise ValidationError("Adyen: " + _("Received data with missing payment state."))
-            // if payment_state in const.RESULT_CODES_MAPPING['pending']:
-            //     self._set_pending()
-            // elif payment_state in const.RESULT_CODES_MAPPING['done']:
-            //     additional_data = notification_data.get('additionalData', {})
-            //     has_token_data = 'recurring.recurringDetailReference' in additional_data
-            //     if self.tokenize and has_token_data:
-            //         self._adyen_tokenize_from_notification_data(notification_data)
-            // 
-            //     if not self.provider_id.capture_manually:
-            //         self._set_done()
-            //     else:  # The payment was configured for manual capture.
-            //         # Differentiate the state based on the event code.
-            //         if event_code == 'AUTHORISATION':
-            //             self._set_authorized()
-            //         else:  # 'CAPTURE'
-            //             self._set_done()
-            // 
-            //     # Immediately post-process the transaction if it is a refund, as the post-processing
-            //     # will not be triggered by a customer browsing the transaction from the portal.
-            //     if self.operation == 'refund':
-            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif payment_state in const.RESULT_CODES_MAPPING['cancel']:
-            //     self._set_canceled()
-            // elif payment_state in const.RESULT_CODES_MAPPING['error']:
-            //     if event_code in ['AUTHORISATION', 'REFUND']:
-            //         _logger.warning(
-            //             "the transaction with reference %s underwent an error. reason: %s",
-            //             self.reference, refusal_reason,
-            //         )
-            //         self._set_error(
-            //             _("An error occurred during the processing of your payment. Please try again.")
-            //         )
-            //     elif event_code == 'CANCELLATION':
-            //         _logger.warning(
-            //             "The void of the transaction with reference %s failed. reason: %s",
-            //             self.reference, refusal_reason,
-            //         )
-            //         if self.source_transaction_id:  # child tx => The event can't be retried.
-            //             self._set_error(
-            //                 _("The void of the transaction with reference %s failed.", self.reference)
-            //             )
-            //         else:  # source tx with failed void stays in its state, could be voided again
-            //             self._log_message_on_linked_documents(
-            //                 _("The void of the transaction with reference %s failed.", self.reference)
-            //             )
-            //     else:  # 'CAPTURE', 'CAPTURE_FAILED'
-            //         _logger.warning(
-            //             "The capture of the transaction with reference %s failed. reason: %s",
-            //             self.reference, refusal_reason,
-            //         )
-            //         if self.source_transaction_id:  # child_tx => The event can't be retried.
-            //             self._set_error(_(
-            //                 "The capture of the transaction with reference %s failed.", self.reference
-            //             ))
-            //         else:  # source tx with failed capture stays in its state, could be captured again
-            //             self._log_message_on_linked_documents(_(
-            //                 "The capture of the transaction with reference %s failed.", self.reference
-            //             ))
-            // elif payment_state in const.RESULT_CODES_MAPPING['refused']:
-            //     _logger.warning(
-            //         "the transaction with reference %s was refused. reason: %s",
-            //         self.reference, refusal_reason
-            //     )
-            //     self._set_error(_("Your payment was refused. Please try again."))
-            // else:  # Classify unsupported payment state as `error` tx state
-            //     _logger.warning(
-            //         "received data for transaction with reference %s with invalid payment state: %s",
-            //         self.reference, payment_state
-            //     )
-            //     self._set_error(
-            //         "Adyen: " + _("Received data with invalid payment state: %s", payment_state)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_aps, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment' to process the transaction based on APS data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data are received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'aps':
-            //     return
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = notification_data.get('fort_id')
-            // 
-            // # Update the payment method.
-            // payment_option = notification_data.get('payment_option', '')
-            // payment_method = self.env['payment.method']._get_from_code(payment_option.lower())
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // status = notification_data.get('status')
-            // if not status:
-            //     raise ValidationError("APS: " + _("Received data with missing payment state."))
-            // if status in PAYMENT_STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif status in PAYMENT_STATUS_MAPPING['done']:
-            //     self._set_done()
-            // else:  # Classify unsupported payment state as `error` tx state.
-            //     status_description = notification_data.get('response_message')
-            //     _logger.info(
-            //         "Received data with invalid payment status (%(status)s) and reason '%(reason)s' "
-            //         "for transaction with reference %(ref)s",
-            //         {'status': status, 'reason': status_description, 'ref': self.reference},
-            //     )
-            //     self._set_error("APS: " + _(
-            //         "Received invalid transaction status %(status)s and reason '%(reason)s'.",
-            //         status=status, reason=status_description
-            //     ))
-            --- ODOO METHOD SOURCE (MODULE: payment_asiapay, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment' to process the transaction based on AsiaPay data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data are received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'asiapay':
-            //     return
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = notification_data.get('PayRef')
-            // 
-            // # Update the payment method.
-            // payment_method_code = notification_data.get('payMethod')
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // success_code = notification_data.get('successcode')
-            // primary_response_code = notification_data.get('prc')
-            // if not success_code:
-            //     raise ValidationError("AsiaPay: " + _("Received data with missing success code."))
-            // if success_code in const.SUCCESS_CODE_MAPPING['done']:
-            //     self._set_done()
-            // elif success_code in const.SUCCESS_CODE_MAPPING['error']:
-            //     self._set_error(_(
-            //         "An error occurred during the processing of your payment (success code %(success_code)s; primary "
-            //         "response code %(response_code)s). Please try again.", success_code=success_code, response_code=primary_response_code,
-            //     ))
-            // else:
-            //     _logger.warning(
-            //         "Received data with invalid success code (%s) for transaction with primary response "
-            //         "code %s and reference %s.", success_code, primary_response_code, self.reference
-            //     )
-            //     self._set_error("AsiaPay: " + _("Unknown success code: %s", success_code))
-            --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on Authorize data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: None
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'authorize':
-            //     return
-            // 
-            // response_content = notification_data.get('response')
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = response_content.get('x_trans_id')
-            // 
-            // # Update the payment method.
-            // payment_method_code = response_content.get('payment_method_code', '').lower()
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // status_code = response_content.get('x_response_code', '3')
-            // if status_code == '1':  # Approved
-            //     status_type = response_content.get('x_type').lower()
-            //     if status_type in ('auth_capture', 'prior_auth_capture'):
-            //         self._set_done()
-            //         if self.tokenize and not self.token_id:
-            //             self._authorize_tokenize()
-            //     elif status_type == 'auth_only':
-            //         self._set_authorized()
-            //         if self.tokenize and not self.token_id:
-            //             self._authorize_tokenize()
-            //         if self.operation == 'validation':
-            //             self._send_void_request()  # In last step because it processes the response.
-            //     elif status_type == 'void':
-            //         if self.operation == 'validation':  # Validation txs are authorized and then voided
-            //             self._set_done()  # If the refund went through, the validation tx is confirmed
-            //         else:
-            //             self._set_canceled(extra_allowed_states=('done',))
-            //     elif status_type == 'refund' and self.operation == 'refund':
-            //         self._set_done()
-            //         # Immediately post-process the transaction as the post-processing will not be
-            //         # triggered by a customer browsing the transaction from the portal.
-            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif status_code == '2':  # Declined
-            //     self._set_canceled(state_message=response_content.get('x_response_reason_text'))
-            // elif status_code == '4':  # Held for Review
-            //     self._set_pending()
-            // else:  # Error / Unknown code
-            //     error_code = response_content.get('x_response_reason_text')
-            //     _logger.info(
-            //         "received data with invalid status (%(status)s) and error code (%(err)s) for "
-            //         "transaction with reference %(ref)s",
-            //         {
-            //             'status': status_code,
-            //             'err': error_code,
-            //             'ref': self.reference,
-            //         },
-            //     )
-            //     self._set_error(
-            //         "Authorize.Net: " + _(
-            //             "Received data with status code \"%(status)s\" and error code \"%(error)s\"",
-            //             status=status_code, error=error_code
-            //         )
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_buckaroo, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on Buckaroo data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The normalized notification data sent by the provider
-            // :return: None
-            // :raise: ValidationError if inconsistent data were received
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'buckaroo':
-            //     return
-            // 
-            // # Update the provider reference.
-            // transaction_keys = notification_data.get('brq_transactions')
-            // if not transaction_keys:
-            //     raise ValidationError("Buckaroo: " + _("Received data with missing transaction keys"))
-            // # BRQ_TRANSACTIONS can hold multiple, comma-separated, tx keys. In practice, it holds only
-            // # one reference. So we split for semantic correctness and keep the first transaction key.
-            // self.provider_reference = transaction_keys.split(',')[0]
-            // 
-            // # Update the payment method.
-            // payment_method_code = notification_data.get('brq_payment_method')
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // status_code = int(notification_data.get('brq_statuscode') or 0)
-            // if status_code in const.STATUS_CODES_MAPPING['pending']:
-            //     self._set_pending()
-            // elif status_code in const.STATUS_CODES_MAPPING['done']:
-            //     self._set_done()
-            // elif status_code in const.STATUS_CODES_MAPPING['cancel']:
-            //     self._set_canceled()
-            // elif status_code in const.STATUS_CODES_MAPPING['refused']:
-            //     self._set_error(_("Your payment was refused (code %s). Please try again.", status_code))
-            // elif status_code in const.STATUS_CODES_MAPPING['error']:
-            //     self._set_error(_(
-            //         "An error occurred during processing of your payment (code %s). Please try again.",
-            //         status_code,
-            //     ))
-            // else:
-            //     _logger.warning(
-            //         "received data with invalid payment status (%s) for transaction with reference %s",
-            //         status_code, self.reference
-            //     )
-            //     self._set_error("Buckaroo: " + _("Unknown status code: %s", status_code))
-            --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on custom data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The custom data
-            // :return: None
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'custom':
-            //     return
-            // 
-            // _logger.info(
-            //     "validated custom payment for transaction with reference %s: set as pending",
-            //     self.reference
-            // )
-            // self._set_pending()
-            --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on dummy data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The dummy notification data
-            // :return: None
-            // :raise: ValidationError if inconsistent data were received
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'demo':
-            //     return
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = f'demo-{self.reference}'
-            // 
-            // # Create the token.
-            // if self.tokenize:
-            //     # The reasons why we immediately tokenize the transaction regardless of the state rather
-            //     # than waiting for the payment method to be validated ('authorized' or 'done') like the
-            //     # other payment providers do are:
-            //     # - To save the simulated state and payment details on the token while we have them.
-            //     # - To allow customers to create tokens whose transactions will always end up in the
-            //     #   said simulated state.
-            //     self._demo_tokenize_from_notification_data(notification_data)
-            // 
-            // # Update the payment state.
-            // state = notification_data['simulated_state']
-            // if state == 'pending':
-            //     self._set_pending()
-            // elif state == 'done':
-            //     if self.capture_manually and not notification_data.get('manual_capture'):
-            //         self._set_authorized()
-            //     else:
-            //         self._set_done()
-            //         # Immediately post-process the transaction if it is a refund, as the post-processing
-            //         # will not be triggered by a customer browsing the transaction from the portal.
-            //         if self.operation == 'refund':
-            //             self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif state == 'cancel':
-            //     self._set_canceled()
-            // else:  # Simulate an error state.
-            //     self._set_error(_("You selected the following demo payment status: %s", state))
-            --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on Flutterwave data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data were received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'flutterwave':
-            //     return
-            // 
-            // # Verify the notification data.
-            // verification_response_content = self.provider_id._flutterwave_make_request(
-            //     'transactions/verify_by_reference', payload={'tx_ref': self.reference}, method='GET'
-            // )
-            // verified_data = verification_response_content['data']
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = verified_data['id']
-            // 
-            // # Update payment method.
-            // payment_method_type = verified_data.get('payment_type', '')
-            // if payment_method_type == 'card':
-            //     payment_method_type = verified_data.get('card', {}).get('type').lower()
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_status = verified_data['status'].lower()
-            // if payment_status in const.PAYMENT_STATUS_MAPPING['pending']:
-            //     auth_url = notification_data.get('meta', {}).get('authorization', {}).get('redirect')
-            //     if auth_url:
-            //         # will be set back to the actual value after moving away from pending
-            //         self.provider_reference = auth_url
-            //     self._set_pending()
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['done']:
-            //     self._set_done()
-            //     has_token_data = 'token' in verified_data.get('card', {})
-            //     if self.tokenize and has_token_data:
-            //         self._flutterwave_tokenize_from_notification_data(verified_data)
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['cancel']:
-            //     self._set_canceled()
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['error']:
-            //     self._set_error(_(
-            //         "An error occurred during the processing of your payment (status %s). Please try "
-            //         "again.", payment_status
-            //     ))
-            // else:
-            //     _logger.warning(
-            //         "Received data with invalid payment status (%s) for transaction with reference %s.",
-            //         payment_status, self.reference
-            //     )
-            //     self._set_error("Flutterwave: " + _("Unknown payment status: %s", payment_status))
-            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Mercado Pago data.
-            // 
-            // Note: self.ensure_one() from `_process_notification_data`
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data were received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'mercado_pago':
-            //     return
-            // 
-            // # Update the provider reference.
-            // payment_id = notification_data.get('payment_id')
-            // if not payment_id:
-            //     raise ValidationError("Mercado Pago: " + _("Received data with missing payment id."))
-            // self.provider_reference = payment_id
-            // 
-            // # Verify the notification data.
-            // verified_payment_data = self.provider_id._mercado_pago_make_request(
-            //     f'/v1/payments/{self.provider_reference}', method='GET'
-            // )
-            // 
-            // # Update the payment method.
-            // payment_method_type = verified_payment_data.get('payment_type_id', '')
-            // for odoo_code, mp_codes in const.PAYMENT_METHODS_MAPPING.items():
-            //     if any(payment_method_type == mp_code for mp_code in mp_codes.split(',')):
-            //         payment_method_type = odoo_code
-            //         break
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // # Fall back to "unknown" if the payment method is not found (and if "unknown" is found), as
-            // # the user might have picked a different payment method than on Odoo's payment form.
-            // if not payment_method:
-            //     payment_method = self.env['payment.method'].search([('code', '=', 'unknown')], limit=1)
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_status = verified_payment_data.get('status')
-            // if not payment_status:
-            //     raise ValidationError("Mercado Pago: " + _("Received data with missing status."))
-            // 
-            // if payment_status in const.TRANSACTION_STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['done']:
-            //     self._set_done()
-            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['canceled']:
-            //     self._set_canceled()
-            // elif payment_status in const.TRANSACTION_STATUS_MAPPING['error']:
-            //     status_detail = verified_payment_data.get('status_detail')
-            //     _logger.warning(
-            //         "Received data for transaction with reference %s with status %s and error code: %s",
-            //         self.reference, payment_status, status_detail
-            //     )
-            //     error_message = self._mercado_pago_get_error_msg(status_detail)
-            //     self._set_error(error_message)
-            // else:  # Classify unsupported payment status as the `error` tx state.
-            //     _logger.warning(
-            //         "Received data for transaction with reference %s with invalid payment status: %s",
-            //         self.reference, payment_status
-            //     )
-            //     self._set_error(
-            //         "Mercado Pago: " + _("Received data with invalid status: %s", payment_status)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_mollie, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of payment to process the transaction based on Mollie data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: None
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'mollie':
-            //     return
-            // 
-            // payment_data = self.provider_id._mollie_make_request(
-            //     f'/payments/{self.provider_reference}', method="GET"
-            // )
-            // 
-            // # Update the payment method.
-            // payment_method_type = payment_data.get('method', '')
-            // if payment_method_type == 'creditcard':
-            //     payment_method_type = payment_data.get('details', {}).get('cardLabel', '').lower()
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_status = payment_data.get('status')
-            // if payment_status == 'pending':
-            //     self._set_pending()
-            // elif payment_status == 'authorized':
-            //     self._set_authorized()
-            // elif payment_status == 'paid':
-            //     self._set_done()
-            // elif payment_status in ['expired', 'canceled', 'failed']:
-            //     self._set_canceled("Mollie: " + _("Cancelled payment with status: %s", payment_status))
-            // else:
-            //     _logger.info(
-            //         "received data with invalid payment status (%s) for transaction with reference %s",
-            //         payment_status, self.reference
-            //     )
-            //     self._set_error(
-            //         "Mollie: " + _("Received data with invalid payment status: %s", payment_status)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_nuvei, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Nuvei data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data are received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'nuvei':
-            //     return
-            // 
-            // if not notification_data:
-            //     self._set_canceled(state_message=_("The customer left the payment page."))
-            //     return
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = notification_data.get('TransactionID')
-            // 
-            // # Update the payment method.
-            // payment_option = notification_data.get('payment_method', '')
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_option.lower(), mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // status = notification_data.get('Status') or notification_data.get('ppp_status')
-            // if not status:
-            //     raise ValidationError("Nuvei: " + _("Received data with missing payment state."))
-            // status = status.lower()
-            // if status in const.PAYMENT_STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif status in const.PAYMENT_STATUS_MAPPING['done']:
-            //     self._set_done()
-            // elif status in const.PAYMENT_STATUS_MAPPING['error']:
-            //     failure_reason = notification_data.get('Reason') or notification_data.get('message')
-            //     self._set_error(_(
-            //         "An error occurred during the processing of your payment (%(reason)s). Please try"
-            //         " again.", reason=failure_reason,
-            //     ))
-            // else:  # Classify unsupported payment states as the `error` tx state.
-            //     status_description = notification_data.get('Reason')
-            //     _logger.info(
-            //         "Received data with invalid payment status (%(status)s) and reason '%(reason)s' "
-            //         "for transaction with reference %(ref)s",
-            //         {'status': status, 'reason': status_description, 'ref': self.reference},
-            //     )
-            //     self._set_error("Nuvei: " + _(
-            //         "Received invalid transaction status %(status)s and reason '%(reason)s'.",
-            //         status=status, reason=status_description
-            //     ))
-            --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Paypal data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data were received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'paypal':
-            //     return
-            // 
-            // if not notification_data:
-            //     self._set_canceled(state_message=_("The customer left the payment page."))
-            //     return
-            // 
-            // amount = notification_data.get('amount').get('value')
-            // currency_code = notification_data.get('amount').get('currency_code')
-            // assert amount and currency_code, "PayPal: missing amount or currency"
-            // assert self.currency_id.compare_amounts(float(amount), self.amount) == 0, \
-            //     "PayPal: mismatching amounts"
-            // assert currency_code == self.currency_id.name, "PayPal: mismatching currency codes"
-            // 
-            // # Update the provider reference.
-            // txn_id = notification_data.get('id')
-            // txn_type = notification_data.get('txn_type')
-            // if not all((txn_id, txn_type)):
-            //     raise ValidationError(
-            //         "PayPal: " + _(
-            //             "Missing value for txn_id (%(txn_id)s) or txn_type (%(txn_type)s).",
-            //             txn_id=txn_id, txn_type=txn_type
-            //         )
-            //     )
-            // self.provider_reference = txn_id
-            // self.paypal_type = txn_type
-            // 
-            // # Force PayPal as the payment method if it exists.
-            // self.payment_method_id = self.env['payment.method'].search(
-            //     [('code', '=', 'paypal')], limit=1
-            // ) or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_status = notification_data.get('status')
-            // 
-            // if payment_status in PAYMENT_STATUS_MAPPING['pending']:
-            //     self._set_pending(state_message=notification_data.get('pending_reason'))
-            // elif payment_status in PAYMENT_STATUS_MAPPING['done']:
-            //     self._set_done()
-            // elif payment_status in PAYMENT_STATUS_MAPPING['cancel']:
-            //     self._set_canceled()
-            // else:
-            //     _logger.info(
-            //         "received data with invalid payment status (%s) for transaction with reference %s",
-            //         payment_status, self.reference
-            //     )
-            //     self._set_error(
-            //         "PayPal: " + _("Received data with invalid payment status: %s", payment_status)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Razorpay data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider
-            // :return: None
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'razorpay':
-            //     return
-            // 
-            // if 'id' in notification_data:  # We have the full entity data (S2S request or webhook).
-            //     entity_data = notification_data
-            // else:  # The payment data are not complete (Payments made by a token).
-            //     # Fetch the full payment data.
-            //     entity_data = self.provider_id._razorpay_make_request(
-            //         f'payments/{notification_data["razorpay_payment_id"]}', method='GET'
-            //     )
-            //     _logger.info(
-            //         "Response of '/payments' request for transaction with reference %s:\n%s",
-            //         self.reference, pprint.pformat(entity_data)
-            //     )
-            // 
-            // # Update the provider reference.
-            // entity_id = entity_data.get('id')
-            // if not entity_id:
-            //     raise ValidationError("Razorpay: " + _("Received data with missing entity id."))
-            // # One reference can have multiple entity ids as Razorpay allows retry on payment failure.
-            // # Making sure the last entity id is the one we have in the provider reference.
-            // allowed_to_modify = self.state not in ('done', 'authorized')
-            // if allowed_to_modify:
-            //     self.provider_reference = entity_id
-            // 
-            // # Update the payment method.
-            // payment_method_type = entity_data.get('method', '')
-            // if payment_method_type == 'card':
-            //     payment_method_type = entity_data.get('card', {}).get('network', '').lower()
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // if allowed_to_modify and payment_method:
-            //     self.payment_method_id = payment_method
-            // 
-            // # Update the payment state.
-            // entity_status = entity_data.get('status')
-            // if not entity_status:
-            //     raise ValidationError("Razorpay: " + _("Received data with missing status."))
-            // 
-            // if entity_status in const.PAYMENT_STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif entity_status in const.PAYMENT_STATUS_MAPPING['authorized']:
-            //     if self.provider_id.capture_manually:
-            //         self._set_authorized()
-            // elif entity_status in const.PAYMENT_STATUS_MAPPING['done']:
-            //     if (
-            //         not self.token_id
-            //         and entity_data.get('token_id')
-            //         and self.provider_id.allow_tokenization
-            //     ):
-            //         self._razorpay_tokenize_from_notification_data(entity_data)
-            //     self._set_done()
-            // 
-            //     # Immediately post-process the transaction if it is a refund, as the post-processing
-            //     # will not be triggered by a customer browsing the transaction from the portal.
-            //     if self.operation == 'refund':
-            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif entity_status in const.PAYMENT_STATUS_MAPPING['error']:
-            //     _logger.warning(
-            //         "The transaction with reference %s underwent an error. Reason: %s",
-            //         self.reference, entity_data.get('error_description')
-            //     )
-            //     self._set_error(
-            //         _("An error occurred during the processing of your payment. Please try again.")
-            //     )
-            // else:  # Classify unsupported payment status as the `error` tx state.
-            //     _logger.warning(
-            //         "Received data for transaction with reference %s with invalid payment status: %s",
-            //         self.reference, entity_status
-            //     )
-            //     self._set_error(
-            //         "Razorpay: " + _("Received data with invalid status: %s", entity_status)
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Stripe data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data build from information passed to the
-            //                                return route. Depending on the operation of the transaction,
-            //                                the entries with the keys 'payment_intent', 'setup_intent'
-            //                                and 'payment_method' can be populated with their
-            //                                corresponding Stripe API objects.
-            // :return: None
-            // :raise: ValidationError if inconsistent data were received
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'stripe':
-            //     return
-            // 
-            // # Update the payment method.
-            // payment_method = notification_data.get('payment_method')
-            // if isinstance(payment_method, dict):  # capture/void/refund requests receive a string.
-            //     payment_method_type = payment_method.get('type')
-            //     if self.payment_method_id.code == payment_method_type == 'card':
-            //         payment_method_type = notification_data['payment_method']['card']['brand']
-            //     payment_method = self.env['payment.method']._get_from_code(
-            //         payment_method_type, mapping=const.PAYMENT_METHODS_MAPPING
-            //     )
-            //     self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the provider reference and the payment state.
-            // if self.operation == 'validation':
-            //     self.provider_reference = notification_data['setup_intent']['id']
-            //     status = notification_data['setup_intent']['status']
-            // elif self.operation == 'refund':
-            //     self.provider_reference = notification_data['refund']['id']
-            //     status = notification_data['refund']['status']
-            // else:  # 'online_direct', 'online_token', 'offline'
-            //     self.provider_reference = notification_data['payment_intent']['id']
-            //     status = notification_data['payment_intent']['status']
-            // if not status:
-            //     raise ValidationError(
-            //         "Stripe: " + _("Received data with missing intent status.")
-            //     )
-            // if status in const.STATUS_MAPPING['draft']:
-            //     pass
-            // elif status in const.STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif status in const.STATUS_MAPPING['authorized']:
-            //     if self.tokenize:
-            //         self._stripe_tokenize_from_notification_data(notification_data)
-            //     self._set_authorized()
-            // elif status in const.STATUS_MAPPING['done']:
-            //     if self.tokenize:
-            //         self._stripe_tokenize_from_notification_data(notification_data)
-            // 
-            //     self._set_done()
-            // 
-            //     # Immediately post-process the transaction if it is a refund, as the post-processing
-            //     # will not be triggered by a customer browsing the transaction from the portal.
-            //     if self.operation == 'refund':
-            //         self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif status in const.STATUS_MAPPING['cancel']:
-            //     self._set_canceled()
-            // elif status in const.STATUS_MAPPING['error']:
-            //     if self.operation != 'refund':
-            //         last_payment_error = notification_data.get('payment_intent', {}).get(
-            //             'last_payment_error'
-            //         )
-            //         if last_payment_error:
-            //             message = last_payment_error.get('message', {})
-            //         else:
-            //             message = _("The customer left the payment page.")
-            //         self._set_error(message)
-            //     else:
-            //         self._set_error(_(
-            //             "The refund did not go through. Please log into your Stripe Dashboard to get "
-            //             "more information on that matter, and address any accounting discrepancies."
-            //         ), extra_allowed_states=('done',))
-            // else:  # Classify unknown intent statuses as `error` tx state
-            //     _logger.warning(
-            //         "received invalid payment status (%s) for transaction with reference %s",
-            //         status, self.reference
-            //     )
-            //     self._set_error(_("Received data with invalid intent status: %s", status))
-            --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment' to process the transaction based on Worldline data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data are received.
-            // """
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'worldline':
-            //     return
-            // 
-            // # In case of failed payment, paymentResult could be given as a seperate key
-            // payment_result = notification_data.get('paymentResult', notification_data)
-            // payment_data = payment_result.get('payment', {})
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = payment_data.get('id', '').rsplit('_', 1)[0]
-            // 
-            // # Update the payment method.
-            // payment_output = payment_data.get('paymentOutput', {})
-            // if 'cardPaymentMethodSpecificOutput' in payment_output:
-            //     payment_method_data = payment_output['cardPaymentMethodSpecificOutput']
-            // else:
-            //     payment_method_data = payment_output.get('redirectPaymentMethodSpecificOutput', {})
-            // payment_method_code = payment_method_data.get('paymentProductId', '')
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // status = payment_data.get('status')
-            // has_token_data = 'token' in payment_method_data
-            // if not status:
-            //     raise ValidationError("Worldline: " + _("Received data with missing payment state."))
-            // 
-            // if status in const.PAYMENT_STATUS_MAPPING['pending']:
-            //     if status == 'AUTHORIZATION_REQUESTED':
-            //         self._set_error("Worldline: " + status)
-            //     elif self.operation == 'validation' \
-            //          and status in {'PENDING_CAPTURE', 'CAPTURE_REQUESTED'} \
-            //          and has_token_data:
-            //             self._worldline_tokenize_from_notification_data(payment_method_data)
-            //             self._set_done()
-            //     else:
-            //         self._set_pending()
-            // elif status in const.PAYMENT_STATUS_MAPPING['done']:
-            //     if self.tokenize and has_token_data:
-            //         self._worldline_tokenize_from_notification_data(payment_method_data)
-            //     self._set_done()
-            // else:
-            //     error_code = None
-            //     if errors := payment_data.get('statusOutput', {}).get('errors'):
-            //         error_code = errors[0].get('errorCode')
-            //     if status in const.PAYMENT_STATUS_MAPPING['cancel']:
-            //         self._set_canceled("Worldline: " + _(
-            //             "Transaction cancelled with error code %(error_code)s.",
-            //             error_code=error_code,
-            //         ))
-            //     elif status in const.PAYMENT_STATUS_MAPPING['declined']:
-            //         self._set_error("Worldline: " + _(
-            //             "Transaction declined with error code %(error_code)s.",
-            //             error_code=error_code,
-            //         ))
-            //     else:  # Classify unsupported payment status as the `error` tx state.
-            //         _logger.info(
-            //             "Received data with invalid payment status (%(status)s) for transaction with "
-            //             "reference %(ref)s.",
-            //             {'status': status, 'ref': self.reference},
-            //         )
-            //         self._set_error("Worldline: " + _(
-            //             "Received invalid transaction status %(status)s with error code "
-            //             "%(error_code)s.",
-            //             status=status,
-            //             error_code=error_code,
-            //         ))
-            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
-            // def _process_notification_data(self, notification_data):
-            // """ Override of `payment` to process the transaction based on Xendit data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict notification_data: The notification data sent by the provider.
-            // :return: None
-            // :raise ValidationError: If inconsistent data were received.
-            // """
-            // self.ensure_one()
-            // 
-            // super()._process_notification_data(notification_data)
-            // if self.provider_code != 'xendit':
-            //     return
-            // 
-            // # Update the provider reference.
-            // self.provider_reference = notification_data.get('id')
-            // 
-            // # Update payment method.
-            // payment_method_code = notification_data.get('payment_method', '')
-            // payment_method = self.env['payment.method']._get_from_code(
-            //     payment_method_code, mapping=const.PAYMENT_METHODS_MAPPING
-            // )
-            // self.payment_method_id = payment_method or self.payment_method_id
-            // 
-            // # Update the payment state.
-            // payment_status = notification_data.get('status')
-            // if payment_status in const.PAYMENT_STATUS_MAPPING['pending']:
-            //     self._set_pending()
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['done']:
-            //     if self.tokenize:
-            //         self._xendit_tokenize_from_notification_data(notification_data)
-            //     self._set_done()
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['cancel']:
-            //     self._set_canceled()
-            // elif payment_status in const.PAYMENT_STATUS_MAPPING['error']:
-            //     failure_reason = notification_data.get('failure_reason')
-            //     self._set_error(_(
-            //         "An error occurred during the processing of your payment (%s). Please try again.",
-            //         failure_reason,
-            //     ))
+            // tx = self or self._search_by_reference(provider_code, payment_data)
+            // if tx:
+            //     tx.ensure_one()
+            //     previous_state = tx.state
+            //     tx._validate_amount(payment_data)
+            //     if tx.state == 'error' and tx.state != previous_state:
+            //         return tx
+            //     tx._apply_updates(payment_data)
+            //     if tx.tokenize and tx.state in {'authorized', 'done'}:
+            //         tx._tokenize(payment_data)
+            // return tx
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: payment_transaction.py) ---
+            // def _process(self, provider_code, payment_data):
+            // tx = super()._process(provider_code, payment_data)
+            // if tx._is_self_order_payment_confirmed():
+            //     self.env.ref('payment.cron_post_process_payment_tx')._trigger()
+            // return tx
             */
             return default;
         }
@@ -3872,6 +4382,12 @@ namespace Bamboo.Core.Application.Services
             //         # notification to invite the local browser to do a safe RPC to
             //         # the server to check the new state of the order.
             //         pos_order.config_id._notify('ONLINE_PAYMENTS_NOTIFICATION', {'id': pos_order.id})
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: payment_transaction.py) ---
+            // def _process_pos_online_payment(self):
+            // super()._process_pos_online_payment()
+            // for tx in self:
+            //     if tx and tx.pos_order_id and tx.state in ('authorized', 'done'):
+            //         tx.pos_order_id._send_notification_online_payment_status('success')
             */
             return default;
         }
@@ -3912,15 +4428,12 @@ namespace Bamboo.Core.Application.Services
             //     'contact': self.partner_phone and self._validate_phone_number(self.partner_phone) or '',
             //     'fail_existing': '0',  # Don't throw an error if the customer already exists.
             // }
-            // _logger.info(
-            //     "Sending '/customers' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
-            // customer_data = self.provider_id._razorpay_make_request('customers', payload=payload)
-            // _logger.info(
-            //     "Response of '/customers' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(customer_data)
-            // )
+            // customer_data = {}
+            // try:
+            //     customer_data = self._send_api_request('POST', 'customers', json=payload)
+            // except ValidationError as e:
+            //     self._set_error(str(e))
+            // 
             // return customer_data
             */
             return default;
@@ -3939,38 +4452,34 @@ namespace Bamboo.Core.Application.Services
             // :rtype: dict
             // """
             // payload = self._razorpay_prepare_order_payload(customer_id=customer_id)
-            // _logger.info(
-            //     "Sending '/orders' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
-            // order_data = self.provider_id._razorpay_make_request('orders', payload=payload)
-            // _logger.info(
-            //     "Response of '/orders' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(order_data)
-            // )
+            // order_data = {}
+            // try:
+            //     order_data = self._send_api_request('POST', 'orders', json=payload)
+            // except ValidationError as e:
+            //     self._set_error(str(e))
             // return order_data
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> RazorpayCreateRefundTxFromNotificationDataInternalAsync(object source_tx, object notification_data)
+        protected async Task<PaymentTransaction> RazorpayCreateRefundTxFromPaymentDataInternalAsync(object source_tx, object payment_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _razorpay_create_refund_tx_from_notification_data(self, source_tx, notification_data):
+            // def _razorpay_create_refund_tx_from_payment_data(self, source_tx, payment_data):
             // """ Create a refund transaction based on Razorpay data.
             // 
             // :param recordset source_tx: The source transaction for which a refund is initiated, as a
             //                             `payment.transaction` recordset.
-            // :param dict notification_data: The notification data sent by the provider.
+            // :param dict payment_data: The payment data sent by the provider.
             // :return: The newly created refund transaction.
-            // :rtype: recordset of `payment.transaction`
+            // :rtype: payment.transaction
             // :raise ValidationError: If inconsistent data were received.
             // """
-            // refund_provider_reference = notification_data.get('id')
-            // amount_to_refund = notification_data.get('amount')
+            // refund_provider_reference = payment_data.get('id')
+            // amount_to_refund = payment_data.get('amount')
             // if not refund_provider_reference or not amount_to_refund:
-            //     raise ValidationError("Razorpay: " + _("Received incomplete refund data."))
+            //     raise ValidationError(_("Received incomplete refund data."))
             // 
             // converted_amount = payment_utils.to_major_currency_units(
             //     amount_to_refund, source_tx.currency_id
@@ -4058,47 +4567,44 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> RazorpayTokenizeFromNotificationDataInternalAsync(object notification_data)
+        protected async Task<PaymentTransaction> RedsysPrepareMerchantParametersInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _razorpay_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
+            --- ODOO METHOD SOURCE (MODULE: payment_redsys, FILE: payment_transaction.py) ---
+            // def _redsys_prepare_merchant_parameters(self):
+            // """Create the merchant parameters payload based on the transaction values.
             // 
-            // :param dict notification_data: The notification data built with Razorpay objects.
-            //                                See `_process_notification_data`.
-            // :return: None
+            // :return: The merchant parameters.
+            // :rtype: str
             // """
-            // pm_code = (self.payment_method_id.primary_payment_method_id or self.payment_method_id).code
-            // if pm_code == 'card':
-            //     details = notification_data.get('card', {}).get('last4')
-            // elif pm_code == 'upi':
-            //     temp_vpa = notification_data.get('vpa')
-            //     details = temp_vpa[temp_vpa.find('@') - 1:]
-            // else:
-            //     details = pm_code
-            // 
-            // token = self.env['payment.token'].create({
-            //     'provider_id': self.provider_id.id,
-            //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': details,
-            //     'partner_id': self.partner_id.id,
-            //     # Razorpay requires both the customer ID and the token ID which are extracted from here.
-            //     'provider_ref': f'{notification_data["customer_id"]},{notification_data["token_id"]}',
-            // })
-            // self.write({
-            //     'token_id': token,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "Created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {
-            //         'token_id': token.id,
-            //         'partner_id': self.partner_id.id,
-            //         'ref': self.reference,
-            //     },
-            // )
+            // converted_amount = payment_utils.to_minor_currency_units(self.amount, self.currency_id)
+            // base_url = self.provider_id.get_base_url()
+            // return_url = urljoin(base_url, RedsysController._return_url)
+            // webhook_url = urljoin(base_url, RedsysController._webhook_url)
+            // merchant_parameters = {
+            //     'DS_MERCHANT_AMOUNT': str(converted_amount),
+            //     'DS_MERCHANT_CURRENCY': self.currency_id.iso_numeric,
+            //     'DS_MERCHANT_MERCHANTCODE': self.provider_id.redsys_merchant_code,
+            //     'DS_MERCHANT_TERMINAL': self.provider_id.redsys_merchant_terminal,
+            //     'DS_MERCHANT_ORDER': self.reference,
+            //     'DS_MERCHANT_MERCHANTURL': webhook_url,
+            //     'DS_MERCHANT_TRANSACTIONTYPE': '0',  # Authorization
+            //     'DS_MERCHANT_URLOK': return_url,
+            //     'DS_MERCHANT_URLKO': return_url,
+            //     'DS_MERCHANT_PAYMETHODS': const.PAYMENT_METHODS_MAPPING.get(
+            //         self.payment_method_id.code, 'C'
+            //     ),
+            //     'DS_MERCHANT_EMV3DS': {
+            //         'billAddrCity': self.partner_city,
+            //         'billAddrCountry': COUNTRY_NUMERIC_CODES.get(self.partner_country_id.code, ''),
+            //         'billAddrLine1': self.partner_address,
+            //         'billAddrPostCode': self.partner_zip,
+            //         'billAddrState': self.partner_state_id.code,
+            //         'cardholderName': self.partner_name,
+            //         'email': self.partner_email,
+            //     }
+            // }
+            // return merchant_parameters
             */
             return default;
         }
@@ -4108,56 +4614,297 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def action_refund(self, amount_to_refund=None):
-            // """ Check the state of the transactions and request their refund.
+            // """Check the state of the transactions and request their refund.
             // 
             // :param float amount_to_refund: The amount to be refunded.
             // :return: None
             // """
+            // payment_utils.check_rights_on_recordset(self)
+            // 
             // if any(tx.state != 'done' for tx in self):
             //     raise ValidationError(_("Only confirmed transactions can be refunded."))
             // 
-            // payment_utils.check_rights_on_recordset(self)
+            // refunded_txs_sudo = self.env['payment.transaction'].sudo()
             // for tx in self:
-            //     # In sudo mode because we need to be able to read on provider fields.
-            //     tx.sudo()._send_refund_request(amount_to_refund=amount_to_refund)
+            //     # In sudo mode to read on provider fields.
+            //     refunded_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._refund(amount_to_refund=amount_to_refund)
+            // return refunded_txs_sudo._build_action_feedback_notification()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PaymentTransaction> SendCaptureRequestInternalAsync(object amount_to_capture)
+        protected async Task<PaymentTransaction> RefundInternalAsync(object amount_to_refund)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Request the provider handling the transaction to capture the payment.
-            // 
-            // For partial captures, create a child transaction linked to the source transaction.
-            // 
-            // For a provider to support authorization, it must override this method and make an API
-            // request to capture the payment.
+            // def _refund(self, amount_to_refund=None):
+            // """Refund the transaction.
             // 
             // Note: `self.ensure_one()`
             // 
-            // :param float amount_to_capture: The amount to capture.
-            // :return: The created capture child transaction, if any.
-            // :rtype: `payment.transaction`
+            // :param float amount_to_refund: The amount to be refunded.
+            // :return: The refund transaction created to process the refund request.
+            // :rtype: payment.transaction
             // """
             // self.ensure_one()
             // self._ensure_provider_is_not_disabled()
             // 
-            // if amount_to_capture and amount_to_capture != self.amount:
-            //     return self._create_child_transaction(amount_to_capture)
-            // return self.env['payment.transaction']
-            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Override of `payment` to send a capture request to Adyen. """
-            // capture_child_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
-            // if self.provider_code != 'adyen':
-            //     return capture_child_tx
+            // refund_tx = self._create_child_transaction(amount_to_refund or self.amount, is_refund=True)
+            // refund_tx._log_sent_message()
+            // try:
+            //     refund_tx._send_refund_request()
+            // except ValidationError as e:
+            //     refund_tx._set_error(str(e))
+            // return refund_tx
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> SearchByReferenceInternalAsync(object provider_code, object payment_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _search_by_reference(self, provider_code, payment_data):
+            // """Search the transaction based on the payment data.
             // 
-            // amount_to_capture = amount_to_capture or self.amount
+            // :param str provider_code: The code of the provider handling the transaction.
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: The transaction, if found.
+            // :rtype: payment.transaction
+            // """
+            // reference = self._extract_reference(provider_code, payment_data)
+            // if not reference:
+            //     _logger.warning(
+            //         "Received payment data from provider %s with missing reference", provider_code
+            //     )
+            //     return self
+            // 
+            // tx = self.search(
+            //     Domain('reference', '=', reference) & Domain('provider_code', '=', provider_code)
+            // )
+            // if not tx:
+            //     _logger.warning("No transaction found matching reference %s.", reference)
+            // return tx
+            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
+            // def _search_by_reference(self, provider_code, payment_data):
+            // """Override of `payment` to search the transaction  with a specific logic for Adyen."""
+            // if provider_code != 'adyen':
+            //     return super()._search_by_reference(provider_code, payment_data)
+            // 
+            // tx = self
+            // reference = payment_data.get('merchantReference')
+            // if not reference:
+            //     _logger.warning("Received data with missing reference.")
+            //     return tx
+            // 
+            // event_code = payment_data.get('eventCode', 'AUTHORISATION')  # Fallback on auth if S2S.
+            // provider_reference = payment_data.get('pspReference')
+            // source_reference = payment_data.get('originalReference')
+            // if event_code == 'AUTHORISATION':
+            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'adyen')])
+            // elif event_code in ['CANCELLATION', 'CAPTURE', 'CAPTURE_FAILED']:
+            //     # The capture/void may be initiated from Adyen, so we can't trust the reference.
+            //     # We find the transaction based on the original provider reference since Adyen will have
+            //     # two different references: one for the original transaction and one for the capture or
+            //     # void. We keep the second one only for child transactions. For full capture/void, no
+            //     # child transaction are created. Thus, we first look for the source transaction before
+            //     # checking if we need to find/create a child transaction.
+            //     source_tx = self.search(
+            //         [('provider_reference', '=', source_reference), ('provider_code', '=', 'adyen')]
+            //     )
+            //     if source_tx:
+            //         payment_data_amount = payment_data.get('amount', {}).get('value')
+            //         converted_notification_amount = payment_utils.to_major_currency_units(
+            //             payment_data_amount,
+            //             source_tx.currency_id,
+            //             arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
+            //         )
+            //         if source_tx.amount == converted_notification_amount:  # Full capture/void.
+            //             tx = source_tx
+            //         else:  # Partial capture/void; we search for the child transaction instead.
+            //             tx = self.search([
+            //                 ('provider_reference', '=', provider_reference),
+            //                 ('provider_code', '=', 'adyen'),
+            //             ])
+            //             if tx and tx.amount != converted_notification_amount:
+            //                 # If the void was requested expecting a certain amount but, in the meantime,
+            //                 # others captures that Odoo was unaware of were done, the amount voided will
+            //                 # be different from the amount of the existing transaction.
+            //                 tx._set_error(_(
+            //                     "The amount processed by Adyen for the transaction %s is different than"
+            //                     " the one requested. Another transaction is created with the correct"
+            //                     " amount.", tx.reference
+            //                 ))
+            //                 tx = self.env['payment.transaction']
+            //             if not tx:  # Partial capture/void initiated from Adyen or with a wrong amount.
+            //                 # Manually create a child transaction with a new reference. The reference of
+            //                 # the child transaction was personalized from Adyen and could be identical
+            //                 # to that of an existing transaction.
+            //                 tx = self._adyen_create_child_tx(source_tx, payment_data)
+            //     else:  # The capture/void was initiated for an unknown source transaction
+            //         pass  # Don't do anything with the capture/void notification
+            // else:  # 'REFUND'
+            //     # The refund may be initiated from Adyen, so we can't trust the reference, which could
+            //     # be identical to another existing transaction. We find the transaction based on the
+            //     # provider reference.
+            //     tx = self.search(
+            //         [('provider_reference', '=', provider_reference), ('provider_code', '=', 'adyen')]
+            //     )
+            //     if not tx:  # The refund was initiated from Adyen
+            //         # Find the source transaction based on the original reference
+            //         source_tx = self.search(
+            //             [('provider_reference', '=', source_reference), ('provider_code', '=', 'adyen')]
+            //         )
+            //         if source_tx:
+            //             # Manually create a refund transaction with a new reference. The reference of
+            //             # the refund transaction was personalized from Adyen and could be identical to
+            //             # that of an existing transaction.
+            //             tx = self._adyen_create_child_tx(source_tx, payment_data, is_refund=True)
+            //         else:  # The refund was initiated for an unknown source transaction
+            //             pass  # Don't do anything with the refund notification
+            // if not tx:
+            //     _logger.warning("No transaction found matching reference %s.", reference)
+            // return tx
+            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // def _search_by_reference(self, provider_code, payment_data):
+            // """ Override of `payment` to find the transaction based on razorpay data.
+            // 
+            // :param str provider_code: The code of the provider that handled the transaction
+            // :param dict payment_data: The normalized payment data sent by the provider
+            // :return: The transaction if found
+            // :rtype: payment.transaction
+            // :raise: ValidationError if the data match no transaction
+            // """
+            // if provider_code != 'razorpay':
+            //     return super()._search_by_reference(provider_code, payment_data)
+            // 
+            // entity_type = payment_data.get('entity_type', 'payment')
+            // tx = self
+            // if entity_type == 'payment':
+            //     reference = payment_data.get('description')
+            //     if not reference:
+            //         _logger.warning("Received data with missing reference.")
+            //         return tx
+            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'razorpay')])
+            // else:  # 'refund'
+            //     notes = payment_data.get('notes')
+            //     reference = isinstance(notes, dict) and notes.get('reference')
+            //     if reference:  # The refund was initiated from Odoo.
+            //         tx = self.search([('reference', '=', reference), ('provider_code', '=', 'razorpay')])
+            //     else:  # The refund was initiated from Razorpay.
+            //         # Find the source transaction based on its provider reference.
+            //         source_tx = self.search([
+            //             ('provider_reference', '=', payment_data['payment_id']),
+            //             ('provider_code', '=', 'razorpay'),
+            //         ])
+            //         if source_tx:
+            //             # Manually create a refund transaction with a new reference.
+            //             tx = self._razorpay_create_refund_tx_from_payment_data(
+            //                 source_tx, payment_data
+            //             )
+            //         else:  # The refund was initiated for an unknown source transaction.
+            //             pass  # Don't do anything with the refund notification.
+            // return tx
+            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
+            // def _search_by_reference(self, provider_code, payment_data):
+            // """ Override of payment to find the transaction based on Stripe data.
+            // 
+            // :param str provider_code: The code of the provider that handled the transaction
+            // :param dict payment_data: The payment data sent by the provider
+            // :return: The transaction if found
+            // :rtype: payment.transaction
+            // """
+            // if provider_code != 'stripe':
+            //     return super()._search_by_reference(provider_code, payment_data)
+            // 
+            // reference = payment_data.get('reference')
+            // if reference:
+            //     tx = self.search([('reference', '=', reference), ('provider_code', '=', 'stripe')])
+            // elif payment_data.get('event_type') == 'charge.refund.updated':
+            //     # The webhook notifications sent for `charge.refund.updated` events only contain a
+            //     # refund object that has no 'description' (the merchant reference) field. We thus search
+            //     # the transaction by its provider reference which is the refund id for refund txs.
+            //     refund_id = payment_data['object_id']  # The object is a refund.
+            //     tx = self.search(
+            //         [('provider_reference', '=', refund_id), ('provider_code', '=', 'stripe')]
+            //     )
+            // else:
+            //     _logger.warning("Received data with missing merchant reference")
+            //     tx = self
+            // 
+            // if not tx:
+            //     _logger.warning("No transaction found matching reference %s.", reference)
+            // 
+            // return tx
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> SendApiRequestInternalAsync(object method, object endpoint)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _send_api_request(self, method, endpoint, *, params=None, data=None, json=None, **kwargs):
+            // """Send a request to the API.
+            // 
+            // This method serves as a helper to:
+            // 
+            // 1. Pass the transaction reference to the provider's
+            //    :meth:`~odoo.addons.payment.models.payment_provider.PaymentProvider._send_api_request`
+            //    method.
+            // 2. Set the transaction's state to `error` if the request fails, with the exception's message
+            //    as the `state_message`.
+            // 
+            // Note: `self.ensure_one()`
+            // 
+            // :param str method: The HTTP method of the request.
+            // :param str endpoint: The endpoint of the API to reach with the request.
+            // :param dict params: The query string parameters of the request.
+            // :param dict|str data: The body of the request.
+            // :param dict json: The JSON-formatted body of the request.
+            // :param dict kwargs: Provider-specific data forwarded to the specialized helper methods.
+            // :return: The formatted content of the response.
+            // :rtype: dict|str
+            // :raise ValidationError: If an HTTP error occurs.
+            // """
+            // self.ensure_one()
+            // return self.provider_id._send_api_request(
+            //     method,
+            //     endpoint,
+            //     params=params,
+            //     data=data,
+            //     json=json,
+            //     reference=self.reference,
+            //     **kwargs,
+            // )
+            */
+            return default;
+        }
+
+        protected async Task<PaymentTransaction> SendCaptureRequestInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _send_capture_request(self):
+            // """Request the provider handling the transaction to send a capture request.
+            // 
+            // For a provider to support authorization, it must override this method and send an API
+            // request to capture the payment.
+            // 
+            // Note: `self.ensure_one()` from :meth:`_capture`
+            // 
+            // :return: None
+            // """
+            // return
+            --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
+            // def _send_capture_request(self):
+            // """Override of `payment` to send a capture request to Adyen."""
+            // if self.provider_code != 'adyen':
+            //     return super()._send_capture_request()
+            // 
+            // # Send the capture request to Adyen.
             // converted_amount = payment_utils.to_minor_currency_units(
-            //     amount_to_capture, self.currency_id, const.CURRENCY_DECIMALS.get(self.currency_id.name)
+            //     self.amount, self.currency_id, const.CURRENCY_DECIMALS.get(self.currency_id.name)
             // )
             // data = {
             //     'merchantAccount': self.provider_id.adyen_merchant_account,
@@ -4167,112 +4914,85 @@ namespace Bamboo.Core.Application.Services
             //     },
             //     'reference': self.reference,
             // }
-            // response_content = self.provider_id._adyen_make_request(
-            //     endpoint='/payments/{}/captures',
-            //     endpoint_param=self.provider_reference,
-            //     payload=data,
-            //     method='POST',
-            // )
-            // _logger.info("capture request response:\n%s", pprint.pformat(response_content))
             // 
-            // # Handle the capture request response
+            // response_content = self._send_api_request(
+            //     'POST',
+            //     '/payments/{}/captures',
+            //     json=data,
+            //     endpoint_param=self.provider_reference,
+            // )
+            // 
+            // # Process the capture request response.
             // status = response_content.get('status')
-            // formatted_amount = format_amount(self.env, amount_to_capture, self.currency_id)
+            // formatted_amount = format_amount(self.env, self.amount, self.currency_id)
             // if status == 'received':
             //     self._log_message_on_linked_documents(_(
-            //         "The capture request of %(amount)s for the transaction with reference %(ref)s has "
-            //         "been requested (%(provider_name)s).",
-            //         amount=formatted_amount, ref=self.reference, provider_name=self.provider_id.name
+            //         "The capture request of %(amount)s for transaction %(ref)s has been sent.",
+            //         amount=formatted_amount, ref=self.reference
             //     ))
             // 
-            // if capture_child_tx:
-            //     # The PSP reference associated with this capture request is different from the PSP
-            //     # reference associated with the original payment request.
-            //     capture_child_tx.provider_reference = response_content.get('pspReference')
-            // 
-            // return capture_child_tx
+            // # The PSP reference associated with this capture request is different from the PSP
+            // # reference associated with the original payment request.
+            // self.provider_reference = response_content.get('pspReference')
             --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Override of `payment` to send a capture request to Authorize. """
-            // child_capture_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
+            // def _send_capture_request(self):
+            // """Override of `payment` to send a capture request to Authorize."""
             // if self.provider_code != 'authorize':
-            //     return child_capture_tx
+            //     return super()._send_capture_request()
             // 
             // authorize_API = AuthorizeAPI(self.provider_id)
             // rounded_amount = round(self.amount, self.currency_id.decimal_places)
-            // res_content = authorize_API.capture(self.provider_reference, rounded_amount)
+            // res_content = authorize_API.capture(
+            //     self.source_transaction_id.provider_reference, rounded_amount
+            // )
             // _logger.info(
-            //     "capture request response for transaction with reference %s:\n%s",
+            //     "capture request response for transaction %s:\n%s",
             //     self.reference, pprint.pformat(res_content)
             // )
-            // self._handle_notification_data('authorize', {'response': res_content})
-            // 
-            // return child_capture_tx
+            // self._process('authorize', {'response': res_content})
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Override of `payment` to simulate a capture request. """
-            // child_capture_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
+            // def _send_capture_request(self):
+            // """Override of `payment` to simulate a capture request."""
             // if self.provider_code != 'demo':
-            //     return child_capture_tx
+            //     return super()._send_capture_request()
             // 
-            // tx = child_capture_tx or self
-            // notification_data = {
-            //     'reference': tx.reference,
+            // payment_data = {
+            //     'reference': self.reference,
             //     'simulated_state': 'done',
             //     'manual_capture': True,  # Distinguish manual captures from regular one-step captures.
             // }
-            // tx._handle_notification_data('demo', notification_data)
-            // 
-            // return child_capture_tx
+            // self._process('demo', payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Override of `payment` to send a capture request to Razorpay. """
-            // child_capture_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
+            // def _send_capture_request(self):
+            // """Override of `payment` to send a capture request to Razorpay."""
             // if self.provider_code != 'razorpay':
-            //     return child_capture_tx
+            //     return super()._send_capture_request()
             // 
             // converted_amount = payment_utils.to_minor_currency_units(self.amount, self.currency_id)
             // payload = {'amount': converted_amount, 'currency': self.currency_id.name}
-            // _logger.info(
-            //     "Payload of '/payments/<id>/capture' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
-            // response_content = self.provider_id._razorpay_make_request(
-            //     f'payments/{self.provider_reference}/capture', payload=payload
-            // )
-            // _logger.info(
-            //     "Response of '/payments/<id>/capture' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
+            // response_content = self._send_api_request(
+            //     'POST', f'payments/{self.provider_reference}/capture', json=payload
             // )
             // 
-            // # Handle the capture request response.
-            // self._handle_notification_data('razorpay', response_content)
-            // 
-            // return child_capture_tx
+            // # Process the capture request response.
+            // self._process('razorpay', response_content)
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _send_capture_request(self, amount_to_capture=None):
-            // """ Override of `payment` to send a capture request to Stripe. """
-            // child_capture_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
+            // def _send_capture_request(self):
+            // """Override of `payment` to send a capture request to Stripe."""
             // if self.provider_code != 'stripe':
-            //     return child_capture_tx
+            //     return super()._send_capture_request()
             // 
             // # Make the capture request to Stripe
-            // payment_intent = self.provider_id._stripe_make_request(
-            //     f'payment_intents/{self.provider_reference}/capture'
-            // )
-            // _logger.info(
-            //     "capture request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payment_intent)
+            // payment_intent = self._send_api_request(
+            //     'POST', f'payment_intents/{self.source_transaction_id.provider_reference}/capture'
             // )
             // 
-            // # Handle the capture request response
-            // notification_data = {'reference': self.reference}
-            // StripeController._include_payment_intent_in_notification_data(
-            //     payment_intent, notification_data
+            // # Process the capture request response.
+            // payment_data = {'reference': self.reference}
+            // StripeController._include_payment_intent_in_payment_data(
+            //     payment_intent, payment_data
             // )
-            // self._handle_notification_data('stripe', notification_data)
-            // 
-            // return child_capture_tx
+            // self._process('stripe', payment_data)
             */
             return default;
         }
@@ -4285,23 +5005,23 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // if is_internal_notification or self.state == 'done':
             //     subject = _('A donation has been made on your website') if is_internal_notification else _('Donation confirmation')
-            //     body = self.env['ir.qweb']._render('website_payment.donation_mail_body', {
+            //     body = self.env['ir.qweb'].with_context(lang=self.partner_id.lang)._render('website_payment.donation_mail_body', {
             //         'is_internal_notification': is_internal_notification,
             //         'tx': self,
             //         'comment': comment,
             //     }, minimal_qcontext=True)
-            //     self.env.ref('website_payment.mail_template_donation').send_mail(
-            //         self.id,
-            //         email_layout_xmlid="mail.mail_notification_light",
-            //         email_values={
-            //             'email_to': recipient_email if is_internal_notification else self.partner_email,
-            //             'email_from': self.company_id.email_formatted,
-            //             'author_id': self.partner_id.id,
-            //             'subject': subject,
-            //             'body_html': body,
-            //         },
-            //         force_send=True,
+            //     body = self.env['mail.render.mixin'].with_context(lang=self.partner_id.lang)._render_encapsulate(
+            //         'mail.mail_notification_light',
+            //         body,
+            //         context_record=self,
             //     )
+            //     self.env['mail.mail'].sudo().create({
+            //         'author_id': self.partner_id.id,
+            //         'body_html': body,
+            //         'email_from': self.company_id.email_formatted,
+            //         'email_to': recipient_email if is_internal_notification else self.partner_email,
+            //         'subject': subject,
+            //     }).send()
             */
             return default;
         }
@@ -4334,7 +5054,7 @@ namespace Bamboo.Core.Application.Services
             //         if mail_template.exists():
             //             send_context['mail_template'] = mail_template
             // 
-            //     self.env['account.move.send']._generate_and_send_invoices(
+            //     tx.env['account.move.send']._generate_and_send_invoices(
             //         invoice_to_send,
             //         **send_context,
             //     )
@@ -4347,40 +5067,31 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Request the provider handling the transaction to make the payment.
+            // """Request the provider handling the transaction to send a token payment request.
             // 
             // This method is exclusively used to make payments by token, which correspond to both the
             // `online_token` and the `offline` transaction's `operation` field.
             // 
-            // For a provider to support tokenization, it must override this method and make an API request
+            // For a provider to support tokenization, it must override this method and send an API request
             // to make a payment.
             // 
-            // Note: `self.ensure_one()`
+            // Note: `self.ensure_one()` from :meth:`_charge_with_token`
             // 
             // :return: None
             // """
-            // self.ensure_one()
-            // self._ensure_provider_is_not_disabled()
-            // self._log_sent_message()
+            // return
             --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of payment to send a payment request to Adyen.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise: UserError if the transaction is not linked to a token
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Adyen."""
             // if self.provider_code != 'adyen':
-            //     return
+            //     return super()._send_payment_request()
             // 
-            // # Prepare the payment request to Adyen
-            // if not self.token_id:
-            //     raise UserError("Adyen: " + _("The transaction is not linked to a token."))
-            // 
+            // # Prepare the payment request to Adyen.
             // converted_amount = payment_utils.to_minor_currency_units(
             //     self.amount, self.currency_id, const.CURRENCY_DECIMALS.get(self.currency_id.name)
+            // )
+            // partner_country_code = (
+            //     self.partner_country_id.code or self.provider_id.company_id.country_id.code or 'NL'
             // )
             // data = {
             //     'merchantAccount': self.provider_id.adyen_merchant_account,
@@ -4388,6 +5099,14 @@ namespace Bamboo.Core.Application.Services
             //         'value': converted_amount,
             //         'currency': self.currency_id.name,
             //     },
+            //     'applicationInfo': {
+            //         'externalPlatform': {
+            //             'name': 'Odoo',
+            //             'version': release.version,
+            //             'integrator': 'Odoo SA',
+            //         }
+            //     },
+            //     'countryCode': partner_country_code,
             //     'reference': self.reference,
             //     'paymentMethod': {
             //         'storedPaymentMethodId': self.token_id.provider_ref,
@@ -4400,6 +5119,11 @@ namespace Bamboo.Core.Application.Services
             //     'shopperName': adyen_utils.format_partner_name(self.partner_name),
             //     'telephoneNumber': self.partner_phone,
             //     **adyen_utils.include_partner_addresses(self),
+            //     'lineItems': [{
+            //         'amountIncludingTax': converted_amount,
+            //         'quantity': '1',
+            //         'description': self.reference,
+            //     }],
             // }
             // 
             // # Force the capture delay on Adyen side if the provider is not configured for capturing
@@ -4412,93 +5136,50 @@ namespace Bamboo.Core.Application.Services
             // if not self.provider_id.capture_manually:
             //     data.update(captureDelayHours=0)
             // 
-            // # Make the payment request to Adyen
-            // try:
-            //     response_content = self.provider_id._adyen_make_request(
-            //         endpoint='/payments',
-            //         payload=data,
-            //         method='POST',
-            //         idempotency_key=payment_utils.generate_idempotency_key(
-            //             self, scope='payment_request_token'
-            //         )
+            // # Send the payment request to Adyen.
+            // response_content = self._send_api_request(
+            //     'POST',
+            //     '/payments',
+            //     json=data,
+            //     idempotency_key=payment_utils.generate_idempotency_key(
+            //         self, scope='payment_request_token'
             //     )
-            // except ValidationError as e:
-            //     if self.operation == 'offline':
-            //         self._set_error(str(e))  # Log the error message on linked documents' chatter.
-            //         return  # There is nothing to process.
-            //     else:
-            //         raise e
-            // 
-            // # Handle the payment request response
-            // _logger.info(
-            //     "payment request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
             // )
-            // self._handle_notification_data('adyen', response_content)
+            // self._process('adyen', response_content)
             --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of payment to send a payment request to Authorize.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise: UserError if the transaction is not linked to a token
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Authorize."""
             // if self.provider_code != 'authorize':
-            //     return
-            // 
-            // if not self.token_id.authorize_profile:
-            //     raise UserError("Authorize.Net: " + _("The transaction is not linked to a token."))
+            //     return super()._send_payment_request()
             // 
             // authorize_API = AuthorizeAPI(self.provider_id)
             // if self.provider_id.capture_manually:
             //     res_content = authorize_API.authorize(self, token=self.token_id)
             //     _logger.info(
-            //         "authorize request response for transaction with reference %s:\n%s",
+            //         "authorize request response for transaction %s:\n%s",
             //         self.reference, pprint.pformat(res_content)
             //     )
             // else:
             //     res_content = authorize_API.auth_and_capture(self, token=self.token_id)
             //     _logger.info(
-            //         "auth_and_capture request response for transaction with reference %s:\n%s",
+            //         "auth_and_capture request response for transaction %s:\n%s",
             //         self.reference, pprint.pformat(res_content)
             //     )
-            // self._handle_notification_data('authorize', {'response': res_content})
+            // self._process('authorize', {'response': res_content})
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of payment to simulate a payment request.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to simulate a payment request."""
             // if self.provider_code != 'demo':
-            //     return
-            // 
-            // if not self.token_id:
-            //     raise UserError("Demo: " + _("The transaction is not linked to a token."))
+            //     return super()._send_payment_request()
             // 
             // simulated_state = self.token_id.demo_simulated_state
-            // notification_data = {'reference': self.reference, 'simulated_state': simulated_state}
-            // self._handle_notification_data('demo', notification_data)
+            // payment_data = {'reference': self.reference, 'simulated_state': simulated_state}
+            // self._process('demo', payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_flutterwave, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of payment to send a payment request to Flutterwave.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise UserError: If the transaction is not linked to a token.
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Flutterwave."""
             // if self.provider_code != 'flutterwave':
-            //     return
-            // 
-            // # Prepare the payment request to Flutterwave.
-            // if not self.token_id:
-            //     raise UserError("Flutterwave: " + _("The transaction is not linked to a token."))
+            //     return super()._send_payment_request()
             // 
             // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
             // base_url = self.provider_id.get_base_url()
@@ -4512,35 +5193,56 @@ namespace Bamboo.Core.Application.Services
             //     'first_name': first_name,
             //     'last_name': last_name,
             //     'ip': payment_utils.get_customer_ip_address(),
-            //     'redirect_url': urls.url_join(base_url, FlutterwaveController._auth_return_url),
+            //     'redirect_url': urls.urljoin(base_url, FlutterwaveController._auth_return_url),
             // }
             // 
-            // # Make the payment request to Flutterwave.
-            // response_content = self.provider_id._flutterwave_make_request(
-            //     'tokenized-charges', payload=data
-            // )
-            // 
-            // # Handle the payment request response.
-            // _logger.info(
-            //     "payment request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
-            // )
-            // self._handle_notification_data('flutterwave', response_content['data'])
-            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // try:
+            //     response_content = self._send_api_request('POST', 'tokenized-charges', json=data)
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            // else:
+            //     self._process('flutterwave', response_content)
+            --- ODOO METHOD SOURCE (MODULE: payment_mercado_pago, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of `payment` to send a payment request to Razorpay.
+            // """Override of `payment` to send a payment request to Mercado Pago.
             // 
-            // Note: self.ensure_one()
+            // Note: `self.ensure_one()` from :meth:`_charge_with_token`
             // 
-            // :return: None
-            // :raise UserError: If the transaction is not linked to a token.
+            // :rtype: None
             // """
-            // super()._send_payment_request()
-            // if self.provider_code != 'razorpay':
+            // if self.provider_code != 'mercado_pago':
+            //     super()._send_payment_request()
             //     return
             // 
-            // if not self.token_id:
-            //     raise UserError("Razorpay: " + _("The transaction is not linked to a token."))
+            // # A new token has to be generated based on 'card_id' for every payment.
+            // response_content = self._send_api_request(
+            //     'POST', '/v1/card_tokens', data={'card_id': self.token_id.provider_ref}
+            // )
+            // 
+            // # Send the payment request to Mercado Pago.
+            // data = {
+            //     'transaction_amount': self._mercado_pago_convert_amount(),
+            //     'token': response_content['id'],
+            //     'installments': 1,
+            //     'payer': {
+            //         'type': 'customer',
+            //         'id': self.token_id.mercado_pago_customer_id,
+            //     },
+            // }
+            // response_content = self._send_api_request(
+            //     'POST',
+            //     endpoint='/v1/payments',
+            //     json=data,
+            //     idempotency_key=payment_utils.generate_idempotency_key(
+            //         self, scope='token_payment'
+            //     ),
+            // )
+            // self._process('mercado_pago', response_content)
+            --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
+            // def _send_payment_request(self):
+            // """Override of `payment` to send a payment request to Razorpay."""
+            // if self.provider_code != 'razorpay':
+            //     return super()._send_payment_request()
             // 
             // # Prevent multiple token payments for the same document within 36 hours. Another transaction
             // # with the same token could be pending processing due to Razorpay waiting 24 hours.
@@ -4557,13 +5259,11 @@ namespace Bamboo.Core.Application.Services
             //     ('id', '!=', self.id),
             // ], limit=1)
             // if earlier_pending_tx:
-            //     raise UserError(
-            //         "Razorpay: " + _(
-            //             "Your last payment with reference %s will soon be processed. Please wait up to"
-            //             " 24 hours before trying again, or use another payment method.",
-            //             earlier_pending_tx.reference
-            //         )
-            //     )
+            //     self._set_error(_(
+            //         "Your last payment %s will soon be processed. Please wait up to 24 hours before"
+            //         " trying again, or use another payment method.", earlier_pending_tx.reference
+            //     ))
+            //     return
             // 
             // try:
             //     order_data = self._razorpay_create_order()
@@ -4580,71 +5280,38 @@ namespace Bamboo.Core.Application.Services
             //         'description': self.reference,
             //         'recurring': '1',
             //     }
-            //     _logger.info(
-            //         "Sending '/payments/create/recurring' request for transaction with reference %s:\n%s",
-            //         self.reference, pprint.pformat(payload)
+            //     recurring_payment_data = self._send_api_request(
+            //         'POST', 'payments/create/recurring', json=payload
             //     )
-            //     recurring_payment_data = self.provider_id._razorpay_make_request(
-            //         'payments/create/recurring', payload=payload
-            //     )
-            //     _logger.info(
-            //         "Response of '/payments/create/recurring' request for transaction with reference "
-            //         "%s:\n%s", self.reference, pprint.pformat(recurring_payment_data)
-            //     )
-            //     self._handle_notification_data('razorpay', recurring_payment_data)
             // except ValidationError as e:
-            //     if self.operation == 'offline':
-            //         self._set_error(str(e))
-            //     else:
-            //         raise
+            //     self._set_error(str(e))
+            // else:
+            //     self._process('razorpay', recurring_payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of payment to send a payment request to Stripe with a confirmed PaymentIntent.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise: UserError if the transaction is not linked to a token
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Stripe."""
             // if self.provider_code != 'stripe':
-            //     return
+            //     return super()._send_payment_request()
             // 
-            // if not self.token_id:
-            //     raise UserError("Stripe: " + _("The transaction is not linked to a token."))
-            // 
-            // # Make the payment request to Stripe
+            // # Send the payment request to Stripe.
             // payment_intent = self._stripe_create_intent()
-            // _logger.info(
-            //     "payment request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payment_intent)
-            // )
+            // 
             // if not payment_intent:  # The PI might be missing if Stripe failed to create it.
             //     return  # There is nothing to process; the transaction is in error at this point.
             // 
             // # Handle the payment request response
-            // notification_data = {'reference': self.reference}
-            // StripeController._include_payment_intent_in_notification_data(
-            //     payment_intent, notification_data
+            // payment_data = {'reference': self.reference}
+            // StripeController._include_payment_intent_in_payment_data(
+            //     payment_intent, payment_data
             // )
-            // self._handle_notification_data('stripe', notification_data)
+            // self._process('stripe', payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of `payment` to send a payment request to Worldline.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise UserError: If the transaction is not linked to a token.
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Worldline."""
             // if self.provider_code != 'worldline':
-            //     return
+            //     return super()._send_payment_request()
             // 
             // # Prepare the payment request to Worldline.
-            // if not self.token_id:
-            //     raise UserError("Worldline: " + _("The transaction is not linked to a token."))
-            // 
             // payload = {
             //     'cardPaymentMethodSpecificInput': {
             //         'authorizationMode': 'SALE',  # Force the capture.
@@ -4663,397 +5330,285 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             // 
-            // # Make the payment request to Worldline.
-            // response_content = self.provider_id._worldline_make_request(
-            //     'payments',
-            //     payload=payload,
-            //     idempotency_key=payment_utils.generate_idempotency_key(
-            //         self, scope='payment_request_token'
+            // try:
+            //     # Send the payment request to Worldline.
+            //     response_content = self._send_api_request(
+            //         'POST',
+            //         'payments',
+            //         json=payload,
+            //         idempotency_key=payment_utils.generate_idempotency_key(
+            //             self, scope='payment_request_token'
+            //         )
             //     )
-            // )
-            // 
-            // # Handle the payment request response.
-            // _logger.info(
-            //     "Response of /payment request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
-            // )
-            // self._handle_notification_data('worldline', response_content)
+            // except ValidationError as e:
+            //     self._set_error(str(e))
+            // else:
+            //     self._process('worldline', response_content)
             --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
             // def _send_payment_request(self):
-            // """ Override of `payment` to send a payment request to Xendit.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: None
-            // :raise UserError: If the transaction is not linked to a token.
-            // """
-            // super()._send_payment_request()
+            // """Override of `payment` to send a payment request to Xendit."""
             // if self.provider_code != 'xendit':
-            //     return
-            // 
-            // if not self.token_id:
-            //     raise ValidationError("Xendit: " + _("The transaction is not linked to a token."))
+            //     return super()._send_payment_request()
             // 
             // self._xendit_create_charge(self.token_id.provider_ref)
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> SendRefundRequestInternalAsync(object amount_to_refund)
+        protected async Task<PaymentTransaction> SendRefundRequestInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, amount_to_refund=None):
-            // """ Request the provider handling the transaction to refund it.
+            // def _send_refund_request(self):
+            // """Request the provider handling the transaction to send a refund request.
             // 
-            // For a provider to support refunds, it must override this method and make an API request to
+            // For a provider to support refunds, it must override this method and send an API request to
             // make a refund.
             // 
-            // Note: `self.ensure_one()`
+            // Note: `self.ensure_one()` from :meth:`_refund`
             // 
-            // :param float amount_to_refund: The amount to be refunded.
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
+            // :return: None
             // """
-            // self.ensure_one()
-            // self._ensure_provider_is_not_disabled()
-            // 
-            // refund_tx = self._create_child_transaction(amount_to_refund or self.amount, is_refund=True)
-            // refund_tx._log_sent_message()
-            // return refund_tx
+            // return
             --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, amount_to_refund=None):
-            // """ Override of payment to send a refund request to Adyen.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param float amount_to_refund: The amount to refund
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // refund_tx = super()._send_refund_request(amount_to_refund=amount_to_refund)
+            // def _send_refund_request(self):
+            // """Override of `payment` to send a refund request to Adyen."""
             // if self.provider_code != 'adyen':
-            //     return refund_tx
+            //     return super()._send_refund_request()
             // 
-            // # Make the refund request to Adyen
+            // # Send the refund request to Adyen.
             // converted_amount = payment_utils.to_minor_currency_units(
-            //     -refund_tx.amount,  # The amount is negative for refund transactions
-            //     refund_tx.currency_id,
-            //     arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(refund_tx.currency_id.name)
+            //     -self.amount,  # The amount is negative for refund transactions
+            //     self.currency_id,
+            //     arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name)
             // )
             // data = {
             //     'merchantAccount': self.provider_id.adyen_merchant_account,
             //     'amount': {
             //         'value': converted_amount,
-            //         'currency': refund_tx.currency_id.name,
+            //         'currency': self.currency_id.name,
             //     },
-            //     'reference': refund_tx.reference,
+            //     'reference': self.reference,
             // }
-            // response_content = refund_tx.provider_id._adyen_make_request(
-            //     endpoint='/payments/{}/refunds',
-            //     endpoint_param=self.provider_reference,
-            //     payload=data,
-            //     method='POST'
-            // )
-            // _logger.info(
-            //     "refund request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
+            // response_content = self._send_api_request(
+            //     'POST',
+            //     '/payments/{}/refunds',
+            //     json=data,
+            //     endpoint_param=self.source_transaction_id.provider_reference,
             // )
             // 
-            // # Handle the refund request response
+            // # Process the refund request response.
             // psp_reference = response_content.get('pspReference')
             // status = response_content.get('status')
             // if psp_reference and status == 'received':
             //     # The PSP reference associated with this /refunds request is different from the psp
             //     # reference associated with the original payment request.
-            //     refund_tx.provider_reference = psp_reference
-            // 
-            // return refund_tx
+            //     self.provider_reference = psp_reference
             --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, amount_to_refund=None):
-            // """ Override of payment to send a refund request to Authorize.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param float amount_to_refund: The amount to refund
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // self.ensure_one()
-            // 
+            // def _send_refund_request(self):
+            // """Override of `payment` to send a refund request to Authorize."""
             // if self.provider_code != 'authorize':
-            //     return super()._send_refund_request(amount_to_refund=amount_to_refund)
+            //     return super()._send_refund_request()
             // 
             // authorize_api = AuthorizeAPI(self.provider_id)
-            // tx_details = authorize_api.get_transaction_details(self.provider_reference)
+            // tx_details = authorize_api.get_transaction_details(
+            //     self.source_transaction_id.provider_reference
+            // )
             // if 'err_code' in tx_details:  # Could not retrieve the transaction details.
-            //     raise ValidationError("Authorize.Net: " + _(
+            //     self._set_error(_(
             //         "Could not retrieve the transaction details. (error code: %(error_code)s; error_details: %(error_message)s)",
             //         error_code=tx_details['err_code'], error_message=tx_details.get('err_msg'),
             //     ))
+            //     return
             // 
-            // refund_tx = self.env['payment.transaction']
             // tx_status = tx_details.get('transaction', {}).get('transactionStatus')
-            // if tx_status in TRANSACTION_STATUS_MAPPING['voided']:
+            // if tx_status in const.TRANSACTION_STATUS_MAPPING['voided']:
             //     # The payment has been voided from Authorize.net side before we could refund it.
             //     self._set_canceled(extra_allowed_states=('done',))
-            // elif tx_status in TRANSACTION_STATUS_MAPPING['refunded']:
+            // elif tx_status in const.TRANSACTION_STATUS_MAPPING['refunded']:
             //     # The payment has been refunded from Authorize.net side before we could refund it. We
             //     # create a refund tx on Odoo to reflect the move of the funds.
-            //     refund_tx = super()._send_refund_request(amount_to_refund=amount_to_refund)
-            //     refund_tx._set_done()
+            //     self._set_done()
             //     # Immediately post-process the transaction as the post-processing will not be
             //     # triggered by a customer browsing the transaction from the portal.
             //     self.env.ref('payment.cron_post_process_payment_tx')._trigger()
-            // elif any(tx_status in TRANSACTION_STATUS_MAPPING[k] for k in ('authorized', 'captured')):
-            //     if tx_status in TRANSACTION_STATUS_MAPPING['authorized']:
+            // elif any(tx_status in const.TRANSACTION_STATUS_MAPPING[k] for k in ('authorized', 'captured')):
+            //     if tx_status in const.TRANSACTION_STATUS_MAPPING['authorized']:
             //         # The payment has not been settled on Authorize.net yet. It must be voided rather
             //         # than refunded. Since the funds have not moved yet, we don't create a refund tx.
-            //         res_content = authorize_api.void(self.provider_reference)
-            //         tx_to_process = self
+            //         res_content = authorize_api.void(self.source_transaction_id.provider_reference)
             //     else:
             //         # The payment has been settled on Authorize.net side. We can refund it.
-            //         refund_tx = super()._send_refund_request(amount_to_refund=amount_to_refund)
-            //         rounded_amount = round(amount_to_refund, self.currency_id.decimal_places)
+            //         rounded_amount = round(self.amount, self.currency_id.decimal_places)
             //         res_content = authorize_api.refund(
             //             self.provider_reference, rounded_amount, tx_details
             //         )
-            //         tx_to_process = refund_tx
             //     _logger.info(
-            //         "refund request response for transaction with reference %s:\n%s",
+            //         "refund request response for transaction %s:\n%s",
             //         self.reference, pprint.pformat(res_content)
             //     )
-            //     data = {'reference': tx_to_process.reference, 'response': res_content}
-            //     tx_to_process._handle_notification_data('authorize', data)
+            //     data = {'reference': self.reference, 'response': res_content}
+            //     self._process('authorize', data)
             // else:
-            //     raise ValidationError("Authorize.net: " + _(
-            //         "The transaction is not in a status to be refunded. (status: %(status)s, details: %(message)s)",
+            //     err_msg = _(
+            //         "The transaction is not in a status to be refunded."
+            //         " (status: %(status)s, details: %(message)s)",
             //         status=tx_status, message=tx_details.get('messages', {}).get('message'),
-            //     ))
-            // return refund_tx
+            //     )
+            //     _logger.warning(err_msg)
+            //     self._set_error(err_msg)
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, **kwargs):
-            // """ Override of payment to simulate a refund.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict kwargs: The keyword arguments.
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // refund_tx = super()._send_refund_request(**kwargs)
+            // def _send_refund_request(self):
+            // """Override of `payment` to simulate a refund."""
             // if self.provider_code != 'demo':
-            //     return refund_tx
+            //     return super()._send_refund_request()
             // 
-            // notification_data = {'reference': refund_tx.reference, 'simulated_state': 'done'}
-            // refund_tx._handle_notification_data('demo', notification_data)
-            // 
-            // return refund_tx
+            // payment_data = {'reference': self.reference, 'simulated_state': 'done'}
+            // self._process('demo', payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, amount_to_refund=None):
-            // """ Override of `payment` to send a refund request to Razorpay.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param float amount_to_refund: The amount to refund.
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // refund_tx = super()._send_refund_request(amount_to_refund=amount_to_refund)
+            // def _send_refund_request(self):
+            // """Override of `payment` to send a refund request to Razorpay."""
             // if self.provider_code != 'razorpay':
-            //     return refund_tx
+            //     return super()._send_refund_request()
             // 
-            // # Make the refund request to Razorpay.
+            // # Send the refund request to Razorpay.
             // converted_amount = payment_utils.to_minor_currency_units(
-            //     -refund_tx.amount, refund_tx.currency_id
+            //     -self.amount, self.currency_id
             // )  # The amount is negative for refund transactions.
             // payload = {
             //     'amount': converted_amount,
             //     'notes': {
-            //         'reference': refund_tx.reference,  # Allow retrieving the ref. from webhook data.
+            //         'reference': self.reference,  # Allow retrieving the ref. from webhook data.
             //     },
             // }
-            // _logger.info(
-            //     "Payload of '/payments/<id>/refund' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
-            // response_content = refund_tx.provider_id._razorpay_make_request(
-            //     f'payments/{self.provider_reference}/refund', payload=payload
-            // )
-            // _logger.info(
-            //     "Response of '/payments/<id>/refund' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(response_content)
+            // response_content = self._send_api_request(
+            //     'POST', f'payments/{self.provider_reference}/refund', json=payload
             // )
             // response_content.update(entity_type='refund')
-            // refund_tx._handle_notification_data('razorpay', response_content)
-            // 
-            // return refund_tx
+            // self._process('razorpay', response_content)
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _send_refund_request(self, amount_to_refund=None):
-            // """ Override of payment to send a refund request to Stripe.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param float amount_to_refund: The amount to refund.
-            // :return: The refund transaction created to process the refund request.
-            // :rtype: recordset of `payment.transaction`
-            // """
-            // refund_tx = super()._send_refund_request(amount_to_refund=amount_to_refund)
+            // def _send_refund_request(self):
+            // """Override of `payment` to send a refund request to Stripe."""
             // if self.provider_code != 'stripe':
-            //     return refund_tx
+            //     return super()._send_refund_request()
             // 
-            // # Make the refund request to stripe.
-            // data = self.provider_id._stripe_make_request(
-            //     'refunds', payload={
-            //         'payment_intent': self.provider_reference,
+            // # Send the refund request to Stripe.
+            // data = self._send_api_request(
+            //     'POST', 'refunds', data={
+            //         'payment_intent': self.source_transaction_id.provider_reference,
             //         'amount': payment_utils.to_minor_currency_units(
-            //             -refund_tx.amount,  # Refund transactions' amount is negative, inverse it.
-            //             refund_tx.currency_id,
+            //             -self.amount,  # Refund transactions' amount is negative, inverse it.
+            //             self.currency_id,
+            //             arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
             //         ),
             //     }
             // )
-            // _logger.info(
-            //     "Refund request response for transaction wih reference %s:\n%s",
-            //     self.reference, pprint.pformat(data)
-            // )
-            // # Handle the refund request response.
-            // notification_data = {}
-            // StripeController._include_refund_in_notification_data(data, notification_data)
-            // refund_tx._handle_notification_data('stripe', notification_data)
             // 
-            // return refund_tx
+            // # Process the refund request response.
+            // payment_data = {}
+            // StripeController._include_refund_in_payment_data(data, payment_data)
+            // self._process('stripe', payment_data)
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> SendVoidRequestInternalAsync(object amount_to_void)
+        protected async Task<PaymentTransaction> SendVoidRequestInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Request the provider handling the transaction to void the payment.
+            // def _send_void_request(self):
+            // """Request the provider handling the transaction to send a void request.
             // 
-            // For partial voids, create a child transaction linked to the source transaction.
-            // 
-            // For a provider to support authorization, it must override this method and make an API
+            // For a provider to support authorization, it must override this method and send an API
             // request to void the payment.
             // 
-            // Note: `self.ensure_one()`
+            // Note: `self.ensure_one()` from :meth:`_void`
             // 
-            // :param float amount_to_void: The amount to be voided.
-            // :return: The created void child transaction, if any.
-            // :rtype: payment.transaction
+            // :return: None
             // """
-            // self.ensure_one()
-            // self._ensure_provider_is_not_disabled()
-            // 
-            // if amount_to_void and amount_to_void != self.amount:
-            //     return self._create_child_transaction(amount_to_void)
-            // 
-            // return self.env['payment.transaction']
+            // return
             --- ODOO METHOD SOURCE (MODULE: payment_adyen, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Override of `payment` to send a void request to Adyen. """
-            // child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
+            // def _send_void_request(self):
+            // """Override of `payment` to send a void request to Adyen."""
             // if self.provider_code != 'adyen':
-            //     return child_void_tx
+            //     return super()._send_void_request()
             // 
             // data = {
             //     'merchantAccount': self.provider_id.adyen_merchant_account,
             //     'reference': self.reference,
             // }
-            // response_content = self.provider_id._adyen_make_request(
-            //     endpoint='/payments/{}/cancels',
+            // response_content = self._send_api_request(
+            //     'POST',
+            //     '/payments/{}/cancels',
+            //     json=data,
             //     endpoint_param=self.provider_reference,
-            //     payload=data,
-            //     method='POST',
             // )
-            // _logger.info("void request response:\n%s", pprint.pformat(response_content))
             // 
-            // # Handle the void request response
+            // # Process the void request response.
             // status = response_content.get('status')
             // if status == 'received':
             //     self._log_message_on_linked_documents(_(
-            //         "A request was sent to void the transaction with reference %(reference)s (%(provider)s).",
-            //         reference=self.reference, provider=self.provider_id.name,
+            //         "A request was sent to void the transaction %(reference)s.",
+            //         reference=self.reference
             //     ))
             // 
-            // if child_void_tx:
-            //     # The PSP reference associated with this void request is different from the PSP
-            //     # reference associated with the original payment request.
-            //     child_void_tx.provider_reference = response_content.get('pspReference')
-            // 
-            // return child_void_tx
+            // # The PSP reference associated with this void request is different from the PSP
+            // # reference associated with the original payment request.
+            // self.provider_reference = response_content.get('pspReference')
             --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Override of payment to send a void request to Authorize. """
-            // child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
+            // def _send_void_request(self):
+            // """Override of `payment` to send a void request to Authorize."""
             // if self.provider_code != 'authorize':
-            //     return child_void_tx
+            //     return super()._send_void_request()
             // 
             // authorize_API = AuthorizeAPI(self.provider_id)
             // res_content = authorize_API.void(self.provider_reference)
             // _logger.info(
-            //     "void request response for transaction with reference %s:\n%s",
+            //     "void request response for transaction %s:\n%s",
             //     self.reference, pprint.pformat(res_content)
             // )
-            // self._handle_notification_data('authorize', {'response': res_content})
-            // 
-            // return child_void_tx
+            // self._process('authorize', {'response': res_content})
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Override of `payment` to simulate a void request. """
-            // child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
+            // def _send_void_request(self):
+            // """Override of `payment` to simulate a void request."""
             // if self.provider_code != 'demo':
-            //     return child_void_tx
+            //     return super()._send_void_request()
             // 
-            // tx = child_void_tx or self
-            // notification_data = {'reference': tx.reference, 'simulated_state': 'cancel'}
-            // tx._handle_notification_data('demo', notification_data)
-            // 
-            // return child_void_tx
+            // payment_data = {'reference': self.reference, 'simulated_state': 'cancel'}
+            // self._process('demo', payment_data)
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Override of `payment` to explain that it is impossible to void a Razorpay transaction.
-            // """
-            // child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
+            // def _send_void_request(self):
+            // """Override of `payment` to explain that it is impossible to void a Razorpay transaction."""
             // if self.provider_code != 'razorpay':
-            //     return child_void_tx
+            //     return super()._send_void_request()
             // 
             // raise UserError(_("Transactions processed by Razorpay can't be manually voided from Odoo."))
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _send_void_request(self, amount_to_void=None):
-            // """ Override of `payment` to send a void request to Stripe. """
-            // child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
+            // def _send_void_request(self):
+            // """Override of `payment` to send a void request to Stripe."""
             // if self.provider_code != 'stripe':
-            //     return child_void_tx
+            //     return super()._send_void_request()
             // 
             // # Make the void request to Stripe
-            // payment_intent = self.provider_id._stripe_make_request(
-            //     f'payment_intents/{self.provider_reference}/cancel'
-            // )
-            // _logger.info(
-            //     "void request response for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payment_intent)
+            // payment_intent = self._send_api_request(
+            //     'POST', f'payment_intents/{self.source_transaction_id.provider_reference}/cancel'
             // )
             // 
-            // # Handle the void request response
-            // notification_data = {'reference': self.reference}
-            // StripeController._include_payment_intent_in_notification_data(
-            //     payment_intent, notification_data
+            // # Process the void request response.
+            // payment_data = {'reference': self.reference}
+            // StripeController._include_payment_intent_in_payment_data(
+            //     payment_intent, payment_data
             // )
-            // self._handle_notification_data('stripe', notification_data)
-            // 
-            // return child_void_tx
+            // self._process('stripe', payment_data)
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> SetAuthorizedInternalAsync(object state_message, object extra_allowed_states)
+        protected async Task<PaymentTransaction> SetAuthorizedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _set_authorized(self, state_message=None, extra_allowed_states=()):
+            // def _set_authorized(self, *, state_message=None, extra_allowed_states=()):
             // """ Update the transactions' state to `authorized`.
             // 
             // :param str state_message: The reason for setting the transactions in the state `authorized`.
@@ -5091,18 +5646,18 @@ namespace Bamboo.Core.Application.Services
             // txs_to_process = self._update_state(
             //     allowed_states + extra_allowed_states, target_state, state_message
             // )
-            // txs_to_process._update_source_transaction_state()
             // txs_to_process._log_received_message()
+            // txs_to_process._update_source_transaction_state()
             // return txs_to_process
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> SetDoneInternalAsync(object state_message, object extra_allowed_states)
+        protected async Task<PaymentTransaction> SetDoneInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _set_done(self, state_message=None, extra_allowed_states=()):
+            // def _set_done(self, *, state_message=None, extra_allowed_states=()):
             // """ Update the transactions' state to `done`.
             // 
             // :param str state_message: The reason for setting the transactions in the state `done`.
@@ -5116,8 +5671,8 @@ namespace Bamboo.Core.Application.Services
             // txs_to_process = self._update_state(
             //     allowed_states + extra_allowed_states, target_state, state_message
             // )
-            // txs_to_process._update_source_transaction_state()
             // txs_to_process._log_received_message()
+            // txs_to_process._update_source_transaction_state()
             // return txs_to_process
             */
             return default;
@@ -5147,11 +5702,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> SetPendingInternalAsync(object state_message, object extra_allowed_states)
+        protected async Task<PaymentTransaction> SetPendingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
-            // def _set_pending(self, state_message=None, extra_allowed_states=()):
+            // def _set_pending(self, *, state_message=None, extra_allowed_states=()):
             // """ Update the transactions' state to `pending`.
             // 
             // :param str state_message: The reason for setting the transactions in the state `pending`.
@@ -5181,8 +5736,8 @@ namespace Bamboo.Core.Application.Services
             // :return: The Customer
             // :rtype: dict
             // """
-            // customer = self.provider_id._stripe_make_request(
-            //     'customers', payload={
+            // customer = self._send_api_request(
+            //     'POST', 'customers', data={
             //         'address[city]': self.partner_city or None,
             //         'address[country]': self.partner_country_id.code or None,
             //         'address[line1]': self.partner_address or None,
@@ -5206,41 +5761,29 @@ namespace Bamboo.Core.Application.Services
             // def _stripe_create_intent(self):
             // """ Create and return a PaymentIntent or a SetupIntent object, depending on the operation.
             // 
-            // :return: The created PaymentIntent or SetupIntent object.
-            // :rtype: dict
+            // :return: The created PaymentIntent or SetupIntent object or None if creation failed.
+            // :rtype: dict|None
             // """
-            // if self.operation == 'validation':
-            //     response = self.provider_id._stripe_make_request(
-            //         'setup_intents', payload=self._stripe_prepare_setup_intent_payload()
-            //     )
-            // else:  # 'online_direct', 'online_token', 'offline'.
-            //     response = self.provider_id._stripe_make_request(
-            //         'payment_intents',
-            //         payload=self._stripe_prepare_payment_intent_payload(),
-            //         offline=self.operation == 'offline',
-            //         # Prevent multiple offline payments by token (e.g., due to a cursor rollback).
-            //         idempotency_key=payment_utils.generate_idempotency_key(
-            //             self, scope='payment_intents_token'
-            //         ) if self.operation == 'offline' else None,
-            //     )
-            // 
-            // if 'error' not in response:
+            // try:
+            //     if self.operation == 'validation':
+            //         response = self._send_api_request(
+            //             'POST', 'setup_intents', data=self._stripe_prepare_setup_intent_payload(),
+            //         )
+            //     else:  # 'online_direct', 'online_token', 'offline'.
+            //         response = self._send_api_request(
+            //             'POST',
+            //             'payment_intents',
+            //             data=self._stripe_prepare_payment_intent_payload(),
+            //             offline=self.operation == 'offline',
+            //             idempotency_key=payment_utils.generate_idempotency_key(
+            //                 self, scope='payment_intents'
+            //             ),
+            //         )
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            //     intent = None
+            // else:
             //     intent = response
-            // else:  # A processing error was returned in place of the intent.
-            //     # The request failed and no error was raised because we are in an offline payment flow.
-            //     # Extract the error from the response, log it, and set the transaction in error to let
-            //     # the calling module handle the issue without rolling back the cursor.
-            //     error_msg = response['error'].get('message')
-            //     _logger.warning(
-            //         "The creation of the intent failed.\n"
-            //         "Stripe gave us the following info about the problem:\n'%s'", error_msg
-            //     )
-            //     self._set_error("Stripe: " + _(
-            //         "The communication with the API failed.\n"
-            //         "Stripe gave us the following info about the problem:\n'%s'", error_msg
-            //     ))  # Flag transaction as in error now, as the intent status might have a valid value.
-            //     intent = response['error'].get('payment_intent') \
-            //              or response['error'].get('setup_intent')  # Get the intent from the error.
             // 
             // return intent
             */
@@ -5264,7 +5807,9 @@ namespace Bamboo.Core.Application.Services
             //     f'{OPTION_PATH_PREFIX}[reference]': self.reference,
             //     f'{OPTION_PATH_PREFIX}[amount_type]': 'maximum',
             //     f'{OPTION_PATH_PREFIX}[amount]': payment_utils.to_minor_currency_units(
-            //         mandate_values.get('amount', 15000), self.currency_id
+            //         mandate_values.get('amount', 15000),
+            //         self.currency_id,
+            //         arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
             //     ),  # Use the specified amount, if any, or define the maximum amount of 15.000 INR.
             //     f'{OPTION_PATH_PREFIX}[start_date]': int(round(
             //         (mandate_values.get('start_datetime') or fields.Datetime.now()).timestamp()
@@ -5307,7 +5852,11 @@ namespace Bamboo.Core.Application.Services
             // ppm_code = self.payment_method_id.primary_payment_method_id.code
             // payment_method_type = ppm_code or self.payment_method_code
             // payment_intent_payload = {
-            //     'amount': payment_utils.to_minor_currency_units(self.amount, self.currency_id),
+            //     'amount': payment_utils.to_minor_currency_units(
+            //         self.amount,
+            //         self.currency_id,
+            //         arbitrary_decimal_number=const.CURRENCY_DECIMALS.get(self.currency_id.name),
+            //     ),
             //     'currency': self.currency_id.name.lower(),
             //     'description': self.reference,
             //     'capture_method': 'manual' if self.provider_id.capture_manually else 'automatic',
@@ -5367,64 +5916,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PaymentTransaction> StripeTokenizeFromNotificationDataInternalAsync(object notification_data)
+        protected async Task<PaymentTransaction> TokenizeInternalAsync(object payment_data)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_transaction.py) ---
-            // def _stripe_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _tokenize(self, payment_data):
+            // """Create a new token based on the payment data.
             // 
-            // :param dict notification_data: The notification data built with Stripe objects.
-            //                                See `_process_notification_data`.
+            // :param dict payment_data: The payment data sent by the provider.
             // :return: None
             // """
-            // payment_method = notification_data.get('payment_method')
-            // if not payment_method:
-            //     _logger.warning(
-            //         "requested tokenization from notification data with missing payment method"
-            //     )
+            // self.ensure_one()
+            // 
+            // if not (token_values := self._extract_token_values(payment_data)):
             //     return
             // 
-            // mandate = None
-            // # Extract the Stripe objects from the notification data.
-            // if self.operation == 'online_direct':
-            //     customer_id = notification_data['payment_intent']['customer']
-            //     charges_data = notification_data['payment_intent']['charges']
-            //     payment_method_details = charges_data['data'][0].get('payment_method_details')
-            //     if payment_method_details:
-            //         mandate = payment_method_details[payment_method_details['type']].get("mandate")
-            // else:  # 'validation'
-            //     customer_id = notification_data['setup_intent']['customer']
-            // # Another payment method (e.g., SEPA) might have been generated.
-            // if not payment_method[payment_method['type']]:
-            //     payment_methods = self.provider_id._stripe_make_request(
-            //         f'customers/{customer_id}/payment_methods', method='GET'
-            //     )
-            //     _logger.info("Received payment_methods response:\n%s", pprint.pformat(payment_methods))
-            //     payment_method = payment_methods['data'][0]
-            // 
-            // # Create the token.
             // token = self.env['payment.token'].create({
             //     'provider_id': self.provider_id.id,
             //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': payment_method[payment_method['type']].get('last4'),
             //     'partner_id': self.partner_id.id,
-            //     'provider_ref': customer_id,
-            //     'stripe_payment_method': payment_method['id'],
-            //     'stripe_mandate': mandate,
+            //     **token_values,
             // })
             // self.write({
             //     'token_id': token,
             //     'tokenize': False,
             // })
             // _logger.info(
-            //     "created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {
-            //         'token_id': token.id,
-            //         'partner_id': self.partner_id.id,
-            //         'ref': self.reference,
-            //     },
+            //     "Token %(token_id)s created for partner %(partner_id)s from transaction %(ref)s.",
+            //     {'token_id': token.id, 'partner_id': self.partner_id.id, 'ref': self.reference},
             // )
             */
             return default;
@@ -5448,13 +5967,11 @@ namespace Bamboo.Core.Application.Services
             //         sum(tx.amount for tx in sibling_txs), child_tx.currency_id.decimal_places
             //     )
             //     if child_tx.source_transaction_id.amount == processed_amount:
-            //         state_message = _(
-            //             "This transaction has been confirmed following the processing of its partial "
-            //             "capture and partial void transactions (%(provider)s).",
-            //             provider=child_tx.provider_id.name,
-            //         )
+            //         fully_voided = all(tx.state == 'cancel' for tx in sibling_txs)
+            //         target_state = 'cancel' if fully_voided else 'done'
             //         # Call `_update_state` directly instead of `_set_authorized` to avoid looping.
-            //         child_tx.source_transaction_id._update_state(('authorized',), 'done', state_message)
+            //         child_tx.source_transaction_id._update_state(('authorized',), target_state, '')
+            //         child_tx.source_transaction_id._log_received_message()
             */
             return default;
         }
@@ -5499,15 +6016,13 @@ namespace Bamboo.Core.Application.Services
             // txs_to_process, txs_already_processed, txs_wrong_state = classify_by_state(self)
             // for tx in txs_already_processed:
             //     _logger.info(
-            //         "tried to write on transaction with reference %s with the same value for the "
-            //         "state: %s",
-            //         tx.reference, tx.state,
+            //         "Skipped the update of transaction %(ref)s as it is already in state %(state)s.",
+            //         {'ref': tx.reference, 'state': tx.state},
             //     )
             // for tx in txs_wrong_state:
             //     _logger.warning(
-            //         "tried to write on transaction with reference %(ref)s with illegal value for the "
-            //         "state (previous state: %(tx_state)s, target state: %(target_state)s, expected "
-            //         "previous state to be in: %(allowed_states)s)",
+            //         "Refused to update transaction %(ref)s from state %(tx_state)s to state"
+            //         " %(target_state)s; allowed source states are: %(allowed_states)s.",
             //         {
             //             'ref': tx.reference,
             //             'tx_state': tx.state,
@@ -5526,6 +6041,60 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PaymentTransaction> ValidateAmountInternalAsync(object payment_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _validate_amount(self, payment_data):
+            // """Ensure that the transaction's amount and currency match the ones from the payment data.
+            // 
+            // Validation transactions and transactions for which providers opt out of the amount check are
+            // skipped.
+            // 
+            // :param dict payment_data: The payment data sent by the provider.
+            // :return: None
+            // """
+            // self.ensure_one()
+            // 
+            // if self.operation == 'validation':
+            //     return  # Skip validation for $0-auth transactions.
+            // 
+            // amount_data = self._extract_amount_data(payment_data)
+            // if amount_data is None:
+            //     return  # Skip validation for transactions where the provider opts out of amount check.
+            // 
+            // amount = amount_data['amount']
+            // currency_code = amount_data['currency_code']
+            // precision_digits = amount_data.get('precision_digits')
+            // 
+            // if not amount or not currency_code:
+            //     error_message = _("The amount or currency is missing from the payment data.")
+            //     self._set_error(error_message)
+            //     return
+            // 
+            // # Negate the amount for refunds, as refunds have a negative amount in Odoo, but all
+            // # providers send a positive one.
+            // if self.operation == 'refund':
+            //     amount = -amount
+            // tx_amount = self.amount if precision_digits is None else float_round(
+            //     self.amount, precision_digits=precision_digits, rounding_method='DOWN'
+            // )
+            // if self.currency_id.compare_amounts(amount, tx_amount) != 0:
+            //     error_message = _(
+            //         "The amount from the payment data doesn't match the one from the transaction."
+            //     )
+            //     self._set_error(error_message)
+            //     return
+            // 
+            // if currency_code != self.currency_id.name:
+            //     error_message = _(
+            //         "The currency from the payment data doesn't match the one from the transaction."
+            //     )
+            //     self._set_error(error_message)
+            */
+            return default;
+        }
+
         protected async Task<PaymentTransaction> ValidatePhoneNumberInternalAsync(object phone)
         {
             /*
@@ -5534,18 +6103,19 @@ namespace Bamboo.Core.Application.Services
             // """ Validate and format the phone number.
             // 
             // :param str phone: The phone number to validate.
-            // :return str: The formatted phone number.
+            // :returns: The formatted phone number.
+            // :rtype: str
             // :raise ValidationError: If the phone number is missing or incorrect.
             // """
             // if not phone and self.tokenize:
-            //     raise ValidationError("Razorpay: " + _("The phone number is missing."))
+            //     raise ValidationError(_("The phone number is missing."))
             // 
             // try:
             //     phone = self._phone_format(
             //         number=phone, country=self.partner_country_id, raise_exception=self.tokenize
             //     )
             // except Exception:
-            //     raise ValidationError("Razorpay: " + _("The phone number is invalid."))
+            //     raise ValidationError(_("The phone number is invalid."))
             // return phone
             */
             return default;
@@ -5668,21 +6238,50 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
             // def action_void(self):
-            // """ Check the state of the transaction and request to have them voided. """
+            // """Check the state of the transaction and request to have them voided."""
             // payment_utils.check_rights_on_recordset(self)
             // 
             // if any(tx.state != 'authorized' for tx in self):
             //     raise ValidationError(_("Only authorized transactions can be voided."))
             // 
+            // voided_txs_sudo = self.env['payment.transaction'].sudo()
             // for tx in self:
             //     # Consider all the confirmed partial capture (same operation as parent) child txs.
             //     captured_amount = sum(child_tx.amount for child_tx in tx.child_transaction_ids.filtered(
             //         lambda t: t.state == 'done' and t.operation == tx.operation
             //     ))
-            //     # In sudo mode because we need to be able to read on provider fields.
-            //     tx.sudo()._send_void_request(amount_to_void=tx.amount - captured_amount)
+            //     # In sudo mode to read on provider fields.
+            //     voided_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._void(amount_to_void=tx.amount - captured_amount)
+            // return voided_txs_sudo._build_action_feedback_notification()
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PaymentTransaction> VoidInternalAsync(object amount_to_void)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
+            // def _void(self, amount_to_void=None):
+            // """Void the authorized amount.
+            // 
+            // Note: `self.ensure_one()`
+            // 
+            // :param float amount_to_void: The amount to be voided.
+            // :return: The void transaction created to process the void request.
+            // :rtype: payment.transaction
+            // """
+            // self.ensure_one()
+            // self._ensure_provider_is_not_disabled()
+            // 
+            // void_tx = self._create_child_transaction(amount_to_void or self.amount)
+            // void_tx._log_sent_message()
+            // try:
+            //     void_tx._send_void_request()
+            // except ValidationError as e:
+            //     void_tx._set_error(str(e))
+            // return void_tx
+            */
+            return default;
         }
 
         protected async Task<PaymentTransaction> WorldlineCreateCheckoutSessionInternalAsync()
@@ -5699,8 +6298,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // base_url = self.provider_id.get_base_url()
             // return_route = WorldlineController._return_url
-            // return_url_params = urls.url_encode({'provider_id': str(self.provider_id.id)})
-            // return_url = f'{urls.url_join(base_url, return_route)}?{return_url_params}'
+            // return_url_params = url_encode({'provider_id': str(self.provider_id.id)})
+            // return_url = f'{urls.urljoin(base_url, return_route)}?{return_url_params}'
             // first_name, last_name = payment_utils.split_partner_name(self.partner_name)
             // payload = {
             //     'hostedCheckoutSpecificInput': {
@@ -5755,95 +6354,65 @@ namespace Bamboo.Core.Application.Services
             //         worldline_code = const.PAYMENT_METHODS_MAPPING.get(self.payment_method_id.code, 0)
             //         payload['cardPaymentMethodSpecificInput']['paymentProductId'] = worldline_code
             //     else:
-            //         pm_codes = self.env['payment.method'].search([
-            //             ('active', 'in', [True, False]),
-            //             ('primary_payment_method_id', '=', self.payment_method_id.id),
-            //         ]).mapped('code')
-            //         worldline_codes = [
-            //             const.PAYMENT_METHODS_MAPPING[code] for code in pm_codes
-            //             if code in const.PAYMENT_METHODS_MAPPING
-            //         ]
             //         payload['hostedCheckoutSpecificInput']['paymentProductFilters'] = {
             //             'restrictTo': {
-            //                 'products': worldline_codes,
+            //                 'groups': ['cards'],
             //             },
             //         }
             // 
-            // _logger.info(
-            //     "Sending '/hostedcheckouts' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(payload)
-            // )
-            // checkout_session_data = self.provider_id._worldline_make_request(
-            //     'hostedcheckouts', payload=payload
-            // )
-            // _logger.info(
-            //     "Response of '/hostedcheckouts' request for transaction with reference %s:\n%s",
-            //     self.reference, pprint.pformat(checkout_session_data)
-            // )
+            // checkout_session_data = self._send_api_request('POST', 'hostedcheckouts', json=payload)
+            // 
             // return checkout_session_data
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> WorldlineTokenizeFromNotificationDataInternalAsync(object pm_data)
+        protected async Task<PaymentTransaction> WorldlineExtractPaymentMethodDataInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_worldline, FILE: payment_transaction.py) ---
-            // def _worldline_tokenize_from_notification_data(self, pm_data):
-            // """ Create a new token based on the notification data.
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :param dict pm_data: The payment method data sent by the provider
-            // :return: None
-            // """
-            // self.ensure_one()
-            // 
-            // token = self.env['payment.token'].create({
-            //     'provider_id': self.provider_id.id,
-            //     'payment_method_id': self.payment_method_id.id,
-            //     'payment_details': pm_data.get('card', {}).get('cardNumber', '')[-4:],  # Padded with *
-            //     'partner_id': self.partner_id.id,
-            //     'provider_ref': pm_data['token'],
-            // })
-            // self.write({
-            //     'token_id': token,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "Created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {'token_id': token.id, 'partner_id': self.partner_id.id, 'ref': self.reference},
-            // )
+            // def _worldline_extract_payment_method_data(payment_data):
+            // payment_output = payment_data.get('paymentOutput', {})
+            // if 'cardPaymentMethodSpecificOutput' in payment_output:
+            //     payment_method_data = payment_output['cardPaymentMethodSpecificOutput']
+            // else:
+            //     payment_method_data = payment_output.get('redirectPaymentMethodSpecificOutput', {})
+            // return payment_method_data
             */
             return default;
         }
 
-        protected async Task<PaymentTransaction> XenditCreateChargeInternalAsync(object token_ref)
+        protected async Task<PaymentTransaction> XenditCreateChargeInternalAsync(object token_ref, Guid auth_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
-            // def _xendit_create_charge(self, token_ref):
+            // def _xendit_create_charge(self, token_ref, auth_id=None):
             // """ Create a charge on Xendit using the `credit_card_charges` endpoint.
             // 
             // :param str token_ref: The reference of the Xendit token to use to make the payment.
+            // :param str auth_id: The authentication id to use to make the payment.
             // :return: None
             // """
-            // if self.currency_id.name in const.CURRENCY_DECIMALS:
-            //     rounding = const.CURRENCY_DECIMALS.get(self.currency_id.name)
-            // else:
-            //     rounding = self.currency_id.decimal_places
-            // rounded_amount = float_round(self.amount, rounding, rounding_method='DOWN')
             // payload = {
             //     'token_id': token_ref,
             //     'external_id': self.reference,
-            //     'amount': rounded_amount,
+            //     'amount': self._get_rounded_amount(),
             //     'currency': self.currency_id.name,
             // }
-            // charge_notification_data = self.provider_id._xendit_make_request(
-            //     'credit_card_charges', payload=payload
-            // )
-            // self._handle_notification_data('xendit', charge_notification_data)
+            // if auth_id:  # The payment goes through an authentication.
+            //     payload['authentication_id'] = auth_id
+            // 
+            // if self.token_id or self.tokenize:  # The tx uses a token or is tokenized.
+            //     payload['is_recurring'] = True  # Ensure that next payments will not require 3DS.
+            // 
+            // try:
+            //     charge_payment_data = self._send_api_request(
+            //         'POST', 'credit_card_charges', json=payload
+            //     )
+            // except ValidationError as error:
+            //     self._set_error(str(error))
+            // else:
+            //     self._process('xendit', charge_payment_data)
             */
             return default;
         }
@@ -5859,7 +6428,7 @@ namespace Bamboo.Core.Application.Services
             // :rtype: dict
             // """
             // base_url = self.provider_id.get_base_url()
-            // redirect_url = urls.url_join(base_url, XenditController._return_url)
+            // redirect_url = urljoin(base_url, XenditController._return_url)
             // access_token = payment_utils.generate_access_token(self.reference, self.amount)
             // success_url_params = urls.url_encode({
             //     'tx_ref': self.reference,
@@ -5868,7 +6437,7 @@ namespace Bamboo.Core.Application.Services
             // })
             // payload = {
             //     'external_id': self.reference,
-            //     'amount': self.amount,
+            //     'amount': self._get_rounded_amount(),
             //     'description': self.reference,
             //     'customer': {
             //         'given_names': self.partner_name,
@@ -5883,7 +6452,7 @@ namespace Bamboo.Core.Application.Services
             // # Extra payload values that must not be included if empty.
             // if self.partner_email:
             //     payload['customer']['email'] = self.partner_email
-            // if phone := self.partner_id.mobile or self.partner_id.phone:
+            // if phone := self.partner_id.phone:
             //     payload['customer']['mobile_number'] = phone
             // address_details = {}
             // if self.partner_city:
@@ -5900,42 +6469,6 @@ namespace Bamboo.Core.Application.Services
             //     payload['customer']['addresses'] = [address_details]
             // 
             // return payload
-            */
-            return default;
-        }
-
-        protected async Task<PaymentTransaction> XenditTokenizeFromNotificationDataInternalAsync(object notification_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment_xendit, FILE: payment_transaction.py) ---
-            // def _xendit_tokenize_from_notification_data(self, notification_data):
-            // """ Create a new token based on the notification data.
-            // 
-            // :param dict notification_data: Xendit's response to a charge API request.
-            // :return: None
-            // """
-            // card_info = notification_data['masked_card_number'][-4:]  # Xendit pads details with X's.
-            // token_id = notification_data['credit_card_token_id']
-            // token = self.env['payment.token'].create({
-            //     "provider_id": self.provider_id.id,
-            //     "payment_method_id": self.payment_method_id.id,
-            //     "payment_details": card_info,
-            //     "partner_id": self.partner_id.id,
-            //     "provider_ref": token_id,
-            // })
-            // self.write({
-            //     'token_id': token.id,
-            //     'tokenize': False,
-            // })
-            // _logger.info(
-            //     "created token with id %(token_id)s for partner with id %(partner_id)s from "
-            //     "transaction with reference %(ref)s",
-            //     {
-            //         'token_id': token.id,
-            //         'partner_id': self.partner_id.id,
-            //         'ref': self.reference,
-            //     },
-            // )
             */
             return default;
         }

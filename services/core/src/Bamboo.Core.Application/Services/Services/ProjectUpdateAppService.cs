@@ -77,7 +77,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_update.py) ---
             // def _compute_name_cropped(self):
             // for update in self:
-            //     update.name_cropped = (update.name[:57] + '...') if len(update.name) > 60 else update.name
+            //     update.name_cropped = (update.name[:57] + '...') if update.name and len(update.name) > 60 else update.name
             */
             return default;
         }
@@ -111,14 +111,14 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // updates = super().create(vals_list)
             // encode_uom = self.env.company.timesheet_encode_uom_id
-            // ratio = self.env.ref("uom.product_uom_hour").ratio / encode_uom.ratio
+            // ratio = self.env.ref("uom.product_uom_hour").factor / encode_uom.factor
             // for update in updates:
             //     project = update.project_id
             //     project.sudo().last_update_id = update
             //     update.write({
             //         "uom_id": encode_uom,
-            //         "allocated_time": round(project.allocated_hours / ratio),
-            //         "timesheet_time": round(project.total_timesheet_time / ratio),
+            //         "allocated_time": round(project.allocated_hours * ratio),
+            //         "timesheet_time": round(project.sudo().total_timesheet_time),
             //     })
             // return updates
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_update.py) ---
@@ -203,9 +203,9 @@ namespace Bamboo.Core.Application.Services
             //     [('project_id', '=', project.id),
             //      '|', ('deadline', '<', fields.Date.context_today(self) + relativedelta(years=1)), ('deadline', '=', False)])._get_data_list()
             // updated_milestones = self._get_last_updated_milestone(project)
-            // domain = [('project_id', '=', project.id)]
+            // domain = Domain('project_id', '=', project.id)
             // if project.last_update_id.create_date:
-            //     domain = expression.AND([domain, [('create_date', '>', project.last_update_id.create_date)]])
+            //     domain &= Domain('create_date', '>', project.last_update_id.create_date)
             // created_milestones = Milestone.search(domain)._get_data_list()
             // return {
             //     'show_section': (list_milestones or updated_milestones or created_milestones) and True or False,
@@ -218,77 +218,42 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProjectUpdate> GetProfitabilityValuesInternalAsync(object project)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_update.py) ---
-            // def _get_profitability_values(self, project):
-            // costs_revenues = project.account_id and project.allow_billable
-            // if not (self.env.user.has_group('project.group_project_manager') and costs_revenues):
-            //     return {}
-            // profitability_items = project._get_profitability_items(False)
-            // if project._get_profitability_sequence_per_invoice_type() and profitability_items and 'revenues' in profitability_items and 'costs' in profitability_items:  # sort the data values
-            //     profitability_items['revenues']['data'] = sorted(profitability_items['revenues']['data'], key=lambda k: k['sequence'])
-            //     profitability_items['costs']['data'] = sorted(profitability_items['costs']['data'], key=lambda k: k['sequence'])
-            // costs = sum(profitability_items['costs']['total'].values())
-            // revenues = sum(profitability_items['revenues']['total'].values())
-            // margin = revenues + costs
-            // to_bill_to_invoice = profitability_items['costs']['total']['to_bill'] + profitability_items['revenues']['total']['to_invoice']
-            // billed_invoiced = profitability_items['costs']['total']['billed'] + profitability_items['revenues']['total']['invoiced']
-            // expected_percentage, to_bill_to_invoice_percentage, billed_invoiced_percentage = 0, 0, 0
-            // if revenues:
-            //     expected_percentage = formatLang(self.env, (margin / revenues) * 100, digits=0)
-            // if profitability_items['revenues']['total']['to_invoice']:
-            //     to_bill_to_invoice_percentage = formatLang(self.env, (to_bill_to_invoice / profitability_items['revenues']['total']['to_invoice']) * 100, digits=0)
-            // if profitability_items['revenues']['total']['invoiced']:
-            //     billed_invoiced_percentage = formatLang(self.env, (billed_invoiced / profitability_items['revenues']['total']['invoiced']) * 100, digits=0)
-            // return {
-            //     'account_id': project.account_id,
-            //     'costs': profitability_items['costs'],
-            //     'revenues': profitability_items['revenues'],
-            //     'expected_percentage': expected_percentage,
-            //     'to_bill_to_invoice_percentage': to_bill_to_invoice_percentage,
-            //     'billed_invoiced_percentage': billed_invoiced_percentage,
-            //     'total': {
-            //         'costs': costs,
-            //         'revenues': revenues,
-            //         'margin': margin,
-            //         'margin_percentage': formatLang(self.env,
-            //                                         not float_utils.float_is_zero(costs, precision_digits=2) and (margin / -costs) * 100 or 0.0,
-            //                                         digits=0),
-            //     },
-            //     'labels': project._get_profitability_labels(),
-            // }
-            */
-            return default;
-        }
-
         protected async Task<ProjectUpdate> GetTemplateValuesInternalAsync(object project)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_update.py) ---
             // def _get_template_values(self, project):
             // milestones = self._get_milestone_values(project)
+            // profitability_values, show_profitability = project._get_profitability_values()
             // return {
             //     'user': self.env.user,
             //     'project': project,
+            //     'profitability': profitability_values,
+            //     'show_profitability': show_profitability,
             //     'show_activities': milestones['show_section'],
             //     'milestones': milestones,
             //     'format_lang': lambda value, digits: formatLang(self.env, value, digits=digits),
-            //     'format_monetary': lambda value: format_amount(self.env, value, project.currency_id),
+            //     'format_monetary': lambda value: format_amount(self.env, value, project.currency_id, trailing_zeroes=False),
             // }
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: project_update.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_update.py) ---
             // def _get_template_values(self, project):
-            // template_values = super(ProjectUpdate, self)._get_template_values(project)
-            // profitability_values = self._get_profitability_values(project)
-            // show_profitability = bool(profitability_values and profitability_values.get('account_id') and (profitability_values.get('costs') or profitability_values.get('revenues')))
-            // return {
-            //     **template_values,
-            //     'show_profitability': show_profitability,
-            //     'show_activities': template_values['show_activities'] or show_profitability,
-            //     'profitability': profitability_values,
-            //     'format_value': lambda value, is_hour: str(round(value, 2)) if not is_hour else format_duration(value),
-            // }
+            // template_values = super()._get_template_values(project)
+            // profitability_values = template_values.get('profitability')
+            // if profitability_values and 'revenues' in profitability_values and 'data' in profitability_values['revenues']:
+            //     for section in profitability_values['revenues']['data']:
+            //         all_sols = self.env['sale.order.line'].sudo().search(
+            //             project._get_domain_from_section_id(section["id"]),
+            //         )
+            //         sols = all_sols.with_context(with_price_unit=True)._read_format([
+            //             'name', 'product_uom_qty', 'qty_delivered', 'qty_invoiced', 'product_uom_id', 'product_id'
+            //         ])
+            //         for sol in sols:
+            //             if sol['product_uom_id'][1] == 'Hours':
+            //                 sol['product_uom_qty'] = format_duration(sol['product_uom_qty'])
+            //                 sol['qty_delivered'] = format_duration(sol['qty_delivered'])
+            //                 sol['qty_invoiced'] = format_duration(sol['qty_invoiced'])
+            //         section["sol"] = sols
+            // return template_values
             */
             return default;
         }

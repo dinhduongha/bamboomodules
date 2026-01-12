@@ -11,7 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IIrFiltersAppService : IGenericApplicationService<IrFilters>
     {
         Task<IrFilters> CopyDataAsync(Guid id, IrFiltersCopyDataRequestDto input);
-        Task<IrFilters> CreateOrReplaceAsync(Guid id, IrFiltersCreateOrReplaceRequestDto input);
+        Task<IrFilters> CreateFilterAsync(Guid id, IrFiltersCreateFilterRequestDto input);
         Task<IrFilters> GetFiltersAsync(Guid id, IrFiltersGetFiltersRequestDto input);
     }
 }

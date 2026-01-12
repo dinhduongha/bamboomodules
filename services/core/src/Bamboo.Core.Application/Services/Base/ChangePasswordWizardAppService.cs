@@ -44,7 +44,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _default_user_ids(self):
-            // user_ids = self._context.get('active_model') == 'res.users' and self._context.get('active_ids') or []
+            // user_ids = self.env.context.get('active_model') == 'res.users' and self.env.context.get('active_ids') or []
             // return [
             //     Command.create({'user_id': user.id, 'user_login': user.login})
             //     for user in self.env['res.users'].browse(user_ids)

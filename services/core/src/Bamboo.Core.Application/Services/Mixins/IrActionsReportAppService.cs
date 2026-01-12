@@ -131,9 +131,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // kwargs = {k: validator(kwargs.get(k, v)) for k, (v, validator) in defaults.items()}
             // kwargs['humanReadable'] = kwargs.pop('humanreadable')
             // if kwargs['humanReadable']:
-            //     kwargs['fontName'] = _DEFAULT_BARCODE_FONT
+            //     kwargs['fontName'] = get_barcode_font()
             // 
-            // if kwargs['width'] * kwargs['height'] > 400000 or max(kwargs['width'], kwargs['height']) > 10000:
+            // if kwargs['width'] * kwargs['height'] > 1200000 or max(kwargs['width'], kwargs['height']) > 10000:
             //     raise ValueError("Barcode too large")
             // 
             // if barcode_type == 'UPCA' and len(value) in (11, 12, 13):
@@ -146,7 +146,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif barcode_type == 'QR':
             //     # for `QR` type, `quiet` is not supported. And is simply ignored.
             //     # But we can use `barBorder` to get a similar behaviour.
-            //     if kwargs['quiet']:
+            //     # quiet=True & barBorder=4 by default cf above, remove border only if quiet=False
+            //     if not kwargs['quiet']:
             //         kwargs['barBorder'] = 0
             // 
             // if barcode_type in ('EAN8', 'EAN13') and not check_barcode_encoding(value, barcode_type):
@@ -217,7 +218,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         command_args.extend(['--page-width', str(paperformat_id.page_width) + 'mm'])
             //         command_args.extend(['--page-height', str(paperformat_id.page_height) + 'mm'])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-margin-top'):
+            //     if specific_paperformat_args and 'data-report-margin-top' in specific_paperformat_args:
             //         command_args.extend(['--margin-top', str(specific_paperformat_args['data-report-margin-top'])])
             //     else:
             //         command_args.extend(['--margin-top', str(paperformat_id.margin_top)])
@@ -233,17 +234,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             dpi = paperformat_id.dpi
             //     if dpi:
             //         command_args.extend(['--dpi', str(dpi)])
-            //         if wkhtmltopdf_dpi_zoom_ratio:
+            //         if _wkhtml().dpi_zoom_ratio:
             //             command_args.extend(['--zoom', str(96.0 / dpi)])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-header-spacing'):
+            //     if specific_paperformat_args and 'data-report-header-spacing' in specific_paperformat_args:
             //         command_args.extend(['--header-spacing', str(specific_paperformat_args['data-report-header-spacing'])])
             //     elif paperformat_id.header_spacing:
             //         command_args.extend(['--header-spacing', str(paperformat_id.header_spacing)])
             // 
             //     command_args.extend(['--margin-left', str(paperformat_id.margin_left)])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-margin-bottom'):
+            //     if specific_paperformat_args and 'data-report-margin-bottom' in specific_paperformat_args:
             //         command_args.extend(['--margin-bottom', str(specific_paperformat_args['data-report-margin-bottom'])])
             //     else:
             //         command_args.extend(['--margin-bottom', str(paperformat_id.margin_bottom)])
@@ -299,10 +300,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def get_available_barcode_masks(self):
             // """ Hook for extension.
+            // 
             // This function returns the available QR-code masks, in the form of a
             // list of (code, mask_function) elements, where code is a string identifying
             // the mask uniquely, and mask_function is a function returning a reportlab
             // Drawing object with the result of the mask, and taking as parameters:
+            // 
             //     - width of the QR-code, in pixels
             //     - height of the QR-code, in pixels
             //     - reportlab Drawing object containing the barcode to apply the mask on
@@ -328,14 +331,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return: value that need to be shown in the final pdf.
             // :rtype: str
             // """
-            // existing_mapping = json.loads(order.customizable_pdf_form_fields)
+            // existing_mapping = json.loads(order.customizable_pdf_form_fields or '{}')
             // if order_line:
             //     base_values = existing_mapping.get('line', {}).get(str(order_line.id), {})
             // elif document.document_type == 'header':
             //     base_values = existing_mapping.get('header', {})
             // else:
             //     base_values = existing_mapping.get('footer', {})
-            // custom_form_fields = base_values.get(str(document.id), {}).get('custom_form_fields')
+            // custom_form_fields = base_values.get(str(document.id), {}).get('custom_form_fields', {})
             // return custom_form_fields.get(form_field_name, "")
             */
             return default;
@@ -357,7 +360,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: ir_actions_report.py) ---
             // def get_paperformat(self):
             // # force the right format (euro/A4) when sending letters, only if we are not using the l10n_DE layout
-            // res = super(IrActionsReport, self).get_paperformat()
+            // res = super().get_paperformat()
             // if self.env.context.get('snailmail_layout') and res != self.env.ref('l10n_de.paperformat_euro_din', False):
             //     paperformat_id = self.env.ref('base.paperformat_euro')
             //     return paperformat_id
@@ -475,7 +478,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def _get_report(self, report_ref):
             // """Get the report (with sudo) from a reference
-            // report_ref: can be one of
+            // 
+            // :param report_ref: can be one of
+            // 
             //     - ir.actions.report id
             //     - ir.actions.report record
             //     - ir.model.data reference to ir.actions.report
@@ -588,7 +593,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             formatted_value_ = format_amount(
             //                 self.env, value_, currency_id_ or order.currency_id
             //             )
-            //         elif not value_:
+            //         elif not value_ and field_type_ not in {'integer', 'float'}:
             //             formatted_value_ = ''
             //         elif field_type_ == 'date':
             //             formatted_value_ = format_date(self.env, value_)
@@ -622,7 +627,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :return: wkhtmltopdf_state
             // '''
-            // return wkhtmltopdf_state
+            // return _wkhtml().state
             */
             return default;
         }
@@ -661,6 +666,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> IsSaleOrderReportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref) where TEntity : IEntity<Guid>, IIrActionsReportable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_actions_report.py) ---
+            // def _is_sale_order_report(self, report_ref):
+            // return self._get_report(report_ref).report_name in (
+            //     'sale.report_saleorder_document',
+            //     'sale.report_saleorder',
+            //     'sale.report_saleorder_raw',
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> MergePdfsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object streams, object handle_error) where TEntity : IEntity<Guid>, IIrActionsReportable
         {
             /*
@@ -675,7 +694,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         handle_error(error=e, error_stream=stream)
             // result_stream = io.BytesIO()
             // streams.append(result_stream)
-            // writer.write(result_stream)
+            // try:
+            //     writer.write(result_stream)
+            // except PdfReadError:
+            //     raise UserError(_("Odoo is unable to merge the generated PDFs."))
             // return result_stream
             */
             return default;
@@ -706,7 +728,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // data.setdefault('report_type', 'pdf')
             // # In case of test environment without enough workers to perform calls to wkhtmltopdf,
             // # fallback to render_html.
-            // if (tools.config['test_enable'] or tools.config['test_file']) and not self.env.context.get('force_report_rendering'):
+            // if (modules.module.current_test or tools.config['test_enable']) and not self.env.context.get('force_report_rendering'):
             //     return self._render_qweb_html(report_ref, res_ids, data=data)
             // 
             // self = self.with_context(webp_as_jpg=True)
@@ -725,13 +747,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // The idea is to put all headers/footers together. Then, we will use a javascript trick
             // (see minimal_layout template) to set the right header/footer during the processing of wkhtmltopdf.
             // This allows the computation of multiple reports in a single call to wkhtmltopdf.
-            // 
-            // :param html: The html rendered by render_qweb_html.
-            // :type: bodies: list of string representing each one a html body.
-            // :type header: string representing the html header.
-            // :type footer: string representing the html footer.
-            // :type specific_paperformat_args: dictionary of prioritized paperformat values.
-            // :return: bodies, header, footer, specific_paperformat_args
             // '''
             // 
             // # Return empty dictionary if 'web.minimal_layout' not found.
@@ -807,6 +822,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             // })
             // 
             // return bodies, res_ids, header, footer, specific_paperformat_args
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareLocalAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IIrActionsReportable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
+            // def _prepare_local_attachments(self, attachments):
+            // for attachment in attachments:
+            //     if attachment._is_remote_source():
+            //         try:
+            //             attachment._migrate_remote_to_local()
+            //         except (ValidationError, requests.exceptions.RequestException) as e:
+            //             _logger.error("Failed to migrate attachment %s to local: %s", attachment.id, e)
+            // return attachments.filtered(lambda a: not a._is_remote_source())
             */
             return default;
         }
@@ -907,7 +938,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // report_sudo = self._get_report(report_ref)
             // 
             // # Generate the ir.attachment if needed.
-            // if not has_duplicated_ids and report_sudo.attachment and not self._context.get("report_pdf_no_attachment"):
+            // if not has_duplicated_ids and report_sudo.attachment and not self.env.context.get("report_pdf_no_attachment"):
             //     attachment_vals_list = self._prepare_pdf_report_attachment_vals_list(report_sudo, collected_streams)
             //     if attachment_vals_list:
             //         attachment_names = ', '.join(x['name'] for x in attachment_vals_list)
@@ -979,14 +1010,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // collected_streams = OrderedDict()
             // for invoice in invoices:
-            //     attachment = invoice.message_main_attachment_id
+            //     attachment = self._prepare_local_attachments(invoice.message_main_attachment_id)
             //     if attachment:
             //         stream = pdf.to_pdf_stream(attachment)
             //         if stream:
             //             record = self.env[attachment.res_model].browse(attachment.res_id)
             //             try:
             //                 stream = pdf.add_banner(stream, record.name or '', logo=True)
-            //             except (ValueError, PdfReadError, TypeError, zlib_error, NotImplementedError, DependencyError, ArithmeticError):
+            //             except (ValueError, pdf.PdfReadError, TypeError, zlib_error, NotImplementedError, pdf.DependencyError, ArithmeticError):
             //                 record._message_log(body=_(
             //                     "There was an error when trying to add the banner to the original PDF.\n"
             //                     "Please make sure the source file is valid."
@@ -1063,34 +1094,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not res_ids:
             //     return res
             // report = self._get_report(report_ref)
-            // if report.report_name == 'hr_expense.report_expense_sheet':
-            //     expense_sheets = self.env['hr.expense.sheet'].browse(res_ids)
-            //     for expense_sheet in expense_sheets:
-            //         # Will contains the expense report
+            // if report.report_name == 'hr_expense.report_expense':
+            //     for expense in self.env['hr.expense'].browse(res_ids):
+            //         # Will contains the expense
             //         stream_list = []
-            //         stream = res[expense_sheet.id]['stream']
+            //         stream = res[expense.id]['stream']
             //         stream_list.append(stream)
-            //         attachments = self.env['ir.attachment'].search([('res_id', 'in', expense_sheet.expense_line_ids.ids), ('res_model', '=', 'hr.expense')])
+            //         attachments = self.env['ir.attachment'].search([('res_id', 'in', expense.ids), ('res_model', '=', 'hr.expense')])
             //         expense_report = OdooPdfFileReader(stream, strict=False)
             //         output_pdf = OdooPdfFileWriter()
             //         output_pdf.appendPagesFromReader(expense_report)
-            //         for attachment in attachments:
+            //         for attachment in self._prepare_local_attachments(attachments):
             //             if attachment.mimetype == 'application/pdf':
             //                 attachment_stream = pdf.to_pdf_stream(attachment)
             //             else:
-            //                 # In case the attachment is not a pdf we will create a new PDF from the template "report_expense_sheet_img"
+            //                 # In case the attachment is not a pdf we will create a new PDF from the template "report_expense_img"
             //                 # And then append to the stream. By doing so, the attachment is put on a new page with the name of the expense
             //                 # associated to the attachment
             //                 data['attachment'] = attachment
-            //                 attachment_prep_stream = self._render_qweb_pdf_prepare_streams('hr_expense.report_expense_sheet_img', data, res_ids=res_ids)
-            //                 attachment_stream = attachment_prep_stream[expense_sheet.id]['stream']
+            //                 attachment_prep_stream = self._render_qweb_pdf_prepare_streams('hr_expense.report_expense_img', data, res_ids=res_ids)
+            //                 attachment_stream = attachment_prep_stream[expense.id]['stream']
             //             attachment_reader = OdooPdfFileReader(attachment_stream, strict=False)
             //             output_pdf.appendPagesFromReader(attachment_reader)
             //             stream_list.append(attachment_stream)
             // 
             //         new_pdf_stream = io.BytesIO()
             //         output_pdf.write(new_pdf_stream)
-            //         res[expense_sheet.id]['stream'] = new_pdf_stream
+            //         res[expense.id]['stream'] = new_pdf_stream
             // 
             //         for stream in stream_list:
             //             stream.close()
@@ -1100,10 +1130,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # EXTENDS base
             // collected_streams = super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids=res_ids)
             // 
-            // if collected_streams \
-            //         and res_ids \
-            //         and len(res_ids) == 1 \
-            //         and self._is_purchase_order_report(report_ref):
+            // if (
+            //     collected_streams
+            //     and res_ids
+            //     and len(res_ids) == 1
+            //     and self._is_purchase_order_report(report_ref)
+            // ):
             //     purchase_order = self.env['purchase.order'].browse(res_ids)
             //     builders = purchase_order._get_edi_builders()
             // 
@@ -1117,12 +1149,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     reader = OdooPdfFileReader(reader_buffer, strict=False)
             //     writer = OdooPdfFileWriter()
             //     writer.cloneReaderDocumentRoot(reader)
+            // 
+            //     # Generate and attach EDI documents from each builder
             //     for builder in builders:
             //         xml_content = builder._export_order(purchase_order)
             // 
-            //         # Post-process and embed the edi document.
             //         writer.addAttachment(
-            //             builder._export_purchase_order_filename(purchase_order),
+            //             builder._export_invoice_filename(purchase_order),  # works even if it's a SO or PO
             //             xml_content,
             //             subtype='text/xml'
             //         )
@@ -1134,6 +1167,47 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     collected_streams[purchase_order.id]['stream'] = new_pdf_stream
             // 
             // return collected_streams
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: ir_actions_report.py) ---
+            // def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):
+            // # EXTENDS base
+            // collected_streams = super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids=res_ids)
+            // 
+            // if (
+            //     collected_streams
+            //     and res_ids
+            //     and len(res_ids) == 1
+            //     and self._is_sale_order_report(report_ref)
+            // ):
+            //     sale_order = self.env['sale.order'].browse(res_ids)
+            //     builders = sale_order._get_edi_builders()
+            //     if len(builders) == 0:
+            //         return collected_streams
+            // 
+            //     # Read pdf content.
+            //     pdf_stream = collected_streams[sale_order.id]['stream']
+            //     pdf_content = pdf_stream.getvalue()
+            //     reader_buffer = io.BytesIO(pdf_content)
+            //     reader = OdooPdfFileReader(reader_buffer, strict=False)
+            //     writer = OdooPdfFileWriter()
+            //     writer.cloneReaderDocumentRoot(reader)
+            // 
+            //     # Generate and attach EDI documents from each builder
+            //     for builder in builders:
+            //         xml_content = builder._export_order(sale_order)
+            // 
+            //         writer.addAttachment(
+            //             builder._export_invoice_filename(sale_order),  # works even if it's a SO or PO
+            //             xml_content,
+            //             subtype='text/xml'
+            //         )
+            // 
+            //     # Replace the current content.
+            //     pdf_stream.close()
+            //     new_pdf_stream = io.BytesIO()
+            //     writer.write(new_pdf_stream)
+            //     collected_streams[sale_order.id]['stream'] = new_pdf_stream
+            // 
+            // return collected_streams
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: ir_actions_report.py) ---
             // def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):
             // """Override to add and fill headers, footers and product documents to the sale quotation."""
@@ -1141,11 +1215,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self._get_report(report_ref).report_name != 'sale.report_saleorder':
             //     return result
             // 
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // always_include = str2bool(ICP.get_param('sale.always_include_selected_documents'))
             // orders = self.env['sale.order'].browse(res_ids)
             // 
             // for order in orders:
-            //     initial_stream = result[order.id]['stream']
-            //     if initial_stream:
+            //     if (
+            //         (order.state != 'sale' or always_include)
+            //         and (initial_stream := result.get(order.id, {}).get('stream'))
+            //     ):
             //         quotation_documents = order.quotation_document_ids
             //         headers = quotation_documents.filtered(lambda doc: doc.document_type == 'header')
             //         footers = quotation_documents - headers
@@ -1213,7 +1291,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //         stream = None
             //         attachment = None
-            //         if not has_duplicated_ids and report_sudo.attachment and not self._context.get("report_pdf_no_attachment"):
+            //         if not has_duplicated_ids and report_sudo.attachment and not self.env.context.get("report_pdf_no_attachment"):
             //             attachment = report_sudo.retrieve_attachment(record)
             // 
             //             # Extract the stream from the attachment.
@@ -1273,9 +1351,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         report_ref=report_ref,
             //         header=header,
             //         footer=footer,
-            //         landscape=self._context.get('landscape'),
+            //         landscape=self.env.context.get('landscape'),
             //         specific_paperformat_args=specific_paperformat_args,
-            //         set_viewport_size=self._context.get('set_viewport_size'),
+            //         set_viewport_size=self.env.context.get('set_viewport_size'),
             //     )
             //     pdf_content_stream = io.BytesIO(pdf_content)
             // 
@@ -1349,9 +1427,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 stream = io.BytesIO()
             //                 attachment_writer.write(stream)
             //                 collected_streams[res_ids_wo_stream[i]]['stream'] = stream
-            // 
             //             return collected_streams
-            // 
+            //         else:
+            //             for res_id in res_ids_wo_stream:
+            //                 individual_collected_stream = self._render_qweb_pdf_prepare_streams(report_ref=report_ref, data=data, res_ids=[res_id])
+            //                 collected_streams[res_id]['stream'] = individual_collected_stream[res_id]['stream']
             //     collected_streams[False] = {'stream': pdf_content_stream, 'attachment': None}
             // 
             // return collected_streams
@@ -1453,7 +1533,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # using snailmail
             // if self.env.context.get('snailmail_layout'):
             //     return False
-            // return super(IrActionsReport, self).retrieve_attachment(record)
+            // return super().retrieve_attachment(record)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def retrieve_attachment(self, record):
             // '''Retrieve an attachment for a specific record.
@@ -1473,20 +1553,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsReportable
+        public async Task<List<object>> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsReportable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
-            // def _run_wkhtmltoimage(self, bodies, width, height, image_format="jpg"):
+            // def _run_wkhtmltoimage(self, bodies, width, height, image_format="jpg") -> list[bytes | None]:
             // """
-            // :bodies str: valid html documents as strings
-            // :param width int: width in pixels
-            // :param height int: height in pixels
-            // :param image_format union['jpg', 'png']: format of the image
-            // :return list[bytes|None]:
+            // :param str bodies: valid html documents as strings
+            // :param int width: width in pixels
+            // :param int height: height in pixels
+            // :param image_format: format of the image
+            // :type image_format: typing.Literal['jpg', 'png']
             // """
-            // if (tools.config['test_enable'] or tools.config['test_file']) and not self.env.context.get('force_image_rendering'):
+            // if modules.module.current_test:
             //     return [None] * len(bodies)
+            // wkhtmltoimage_version = _wkhtml().wkhtmltoimage_version
             // if not wkhtmltoimage_version or wkhtmltoimage_version < parse_version('0.12.0'):
             //     raise UserError(_('wkhtmltoimage 0.12.0^ is required in order to render images from html'))
             // command_args = [
@@ -1498,17 +1579,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // with ExitStack() as stack:
             //     files = []
             //     for body in bodies:
-            //         input_file = stack.enter_context(tempfile.NamedTemporaryFile(suffix='.html', prefix='report_image_html_input.tmp.'))
-            //         output_file = stack.enter_context(tempfile.NamedTemporaryFile(suffix=f'.{image_format}', prefix='report_image_output.tmp.'))
-            //         input_file.write(body.encode())
-            //         files.append((input_file, output_file))
+            //         (input_fd, input_path) = tempfile.mkstemp(suffix='.html', prefix='report_image_html_input.tmp.')
+            //         (output_fd, output_path) = tempfile.mkstemp(suffix=f'.{image_format}', prefix='report_image_output.tmp.')
+            //         stack.callback(os.remove, input_path)
+            //         stack.callback(os.remove, output_path)
+            //         os.close(output_fd)
+            //         with closing(os.fdopen(input_fd, 'wb')) as input_file:
+            //             input_file.write(body.encode())
+            //         files.append((input_path, output_path))
             //     output_images = []
-            //     for input_file, output_file in files:
-            //         # smaller bodies may be held in a python buffer until close, force flush
-            //         input_file.flush()
-            //         wkhtmltoimage = [_get_wkhtmltoimage_bin()] + command_args + [input_file.name, output_file.name]
+            //     for (input_path, output_path) in files:
+            //         wkhtmltoimage = [_wkhtml().wkhtmltoimage_bin, *command_args, input_path, output_path]
             //         # start and block, no need for parallelism for now
-            //         completed_process = subprocess.run(wkhtmltoimage, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=False)
+            //         completed_process = subprocess.run(wkhtmltoimage, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=False, encoding='utf-8')
             //         if completed_process.returncode:
             //             message = _(
             //                 'Wkhtmltoimage failed (error code: %(error_code)s). Message: %(error_message_end)s',
@@ -1518,7 +1601,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             _logger.warning(message)
             //             output_images.append(None)
             //         else:
-            //             output_images.append(output_file.read())
+            //             with open(output_path, 'rb') as output_file:
+            //                 output_images.append(output_file.read())
             // return output_images
             */
             return default;
@@ -1540,7 +1624,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // '''Execute wkhtmltopdf as a subprocess in order to convert html given in input into a pdf
             // document.
             // 
-            // :param list[str] bodies: The html bodies of the report, one per page.
+            // :param Iterable[str] bodies: The html bodies of the report, one per page.
             // :param report_ref: report reference that is needed to get report paperformat.
             // :param str header: The html header of the report containing all headers.
             // :param str footer: The html footer of the report containing all footers.
@@ -1560,107 +1644,106 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     set_viewport_size=set_viewport_size)
             // 
             // files_command_args = []
-            // temporary_files = []
-            // temp_session = None
             // 
-            // # Passing the cookie to wkhtmltopdf in order to resolve internal links.
-            // if request and request.db:
-            //     # Create a temporary session which will not create device logs
-            //     temp_session = root.session_store.new()
-            //     temp_session.update({
-            //         **request.session,
-            //         'debug': '',
-            //         '_trace_disable': True,
-            //     })
-            //     if temp_session.uid:
-            //         temp_session.session_token = security.compute_session_token(temp_session, self.env)
-            //     root.session_store.save(temp_session)
+            // def delete_file(file_path):
+            //     try:
+            //         os.unlink(file_path)
+            //     except OSError:
+            //         _logger.error('Error when trying to remove file %s', file_path)
             // 
-            //     base_url = self._get_report_url()
-            //     domain = urlparse(base_url).hostname
-            //     cookie = f'session_id={temp_session.sid}; HttpOnly; domain={domain}; path=/;'
-            //     cookie_jar_file_fd, cookie_jar_file_path = tempfile.mkstemp(suffix='.txt', prefix='report.cookie_jar.tmp.')
-            //     temporary_files.append(cookie_jar_file_path)
-            //     with closing(os.fdopen(cookie_jar_file_fd, 'wb')) as cookie_jar_file:
-            //         cookie_jar_file.write(cookie.encode())
-            //     command_args.extend(['--cookie-jar', cookie_jar_file_path])
+            // with ExitStack() as stack:
             // 
-            // if header:
-            //     head_file_fd, head_file_path = tempfile.mkstemp(suffix='.html', prefix='report.header.tmp.')
-            //     with closing(os.fdopen(head_file_fd, 'wb')) as head_file:
-            //         head_file.write(header.encode())
-            //     temporary_files.append(head_file_path)
-            //     files_command_args.extend(['--header-html', head_file_path])
-            // if footer:
-            //     foot_file_fd, foot_file_path = tempfile.mkstemp(suffix='.html', prefix='report.footer.tmp.')
-            //     with closing(os.fdopen(foot_file_fd, 'wb')) as foot_file:
-            //         foot_file.write(footer.encode())
-            //     temporary_files.append(foot_file_path)
-            //     files_command_args.extend(['--footer-html', foot_file_path])
+            //     # Passing the cookie to wkhtmltopdf in order to resolve internal links.
+            //     if request and request.db:
+            //         # Create a temporary session which will not create device logs
+            //         temp_session = root.session_store.new()
+            //         temp_session.update({
+            //             **request.session,
+            //             'debug': '',
+            //             '_trace_disable': True,
+            //         })
+            //         if temp_session.uid:
+            //             temp_session.session_token = security.compute_session_token(temp_session, self.env)
+            //         root.session_store.save(temp_session)
+            //         stack.callback(root.session_store.delete, temp_session)
             // 
-            // paths = []
-            // for i, body in enumerate(bodies):
-            //     prefix = '%s%d.' % ('report.body.tmp.', i)
-            //     body_file_fd, body_file_path = tempfile.mkstemp(suffix='.html', prefix=prefix)
-            //     with closing(os.fdopen(body_file_fd, 'wb')) as body_file:
-            //         # HACK: wkhtmltopdf doesn't like big table at all and the
-            //         #       processing time become exponential with the number
-            //         #       of rows (like 1H for 250k rows).
-            //         #
-            //         #       So we split the table into multiple tables containing
-            //         #       500 rows each. This reduce the processing time to 1min
-            //         #       for 250k rows. The number 500 was taken from opw-1689673
-            //         if len(body) < 4 * 1024 * 1024: # 4Mib
-            //             body_file.write(body.encode())
-            //         else:
-            //             tree = lxml.html.fromstring(body)
-            //             _split_table(tree, 500)
-            //             body_file.write(lxml.html.tostring(tree))
-            //     paths.append(body_file_path)
-            //     temporary_files.append(body_file_path)
+            //         base_url = self._get_report_url()
+            //         domain = urlparse(base_url).hostname
+            //         cookie = f'session_id={temp_session.sid}; HttpOnly; domain={domain}; path=/;'
+            //         cookie_jar_file_fd, cookie_jar_file_path = tempfile.mkstemp(suffix='.txt', prefix='report.cookie_jar.tmp.')
+            //         stack.callback(delete_file, cookie_jar_file_path)
+            //         with closing(os.fdopen(cookie_jar_file_fd, 'wb')) as cookie_jar_file:
+            //             cookie_jar_file.write(cookie.encode())
+            //         command_args.extend(['--cookie-jar', cookie_jar_file_path])
             // 
-            // pdf_report_fd, pdf_report_path = tempfile.mkstemp(suffix='.pdf', prefix='report.tmp.')
-            // os.close(pdf_report_fd)
-            // temporary_files.append(pdf_report_path)
+            //     if header:
+            //         head_file_fd, head_file_path = tempfile.mkstemp(suffix='.html', prefix='report.header.tmp.')
+            //         with closing(os.fdopen(head_file_fd, 'wb')) as head_file:
+            //             head_file.write(header.encode())
+            //         stack.callback(delete_file, head_file_path)
+            //         files_command_args.extend(['--header-html', head_file_path])
+            //     if footer:
+            //         foot_file_fd, foot_file_path = tempfile.mkstemp(suffix='.html', prefix='report.footer.tmp.')
+            //         with closing(os.fdopen(foot_file_fd, 'wb')) as foot_file:
+            //             foot_file.write(footer.encode())
+            //         stack.callback(delete_file, foot_file_path)
+            //         files_command_args.extend(['--footer-html', foot_file_path])
             // 
-            // try:
-            //     wkhtmltopdf = [_get_wkhtmltopdf_bin()] + command_args + files_command_args + paths + [pdf_report_path]
-            //     process = subprocess.Popen(wkhtmltopdf, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
-            //     _out, err = process.communicate()
+            //     paths = []
+            //     body_idx = 0
+            //     for body_idx, body in enumerate(bodies):
+            //         prefix = f'report.body.tmp.{body_idx}.'
+            //         body_file_fd, body_file_path = tempfile.mkstemp(suffix='.html', prefix=prefix)
+            //         with closing(os.fdopen(body_file_fd, 'wb')) as body_file:
+            //             # HACK: wkhtmltopdf doesn't like big table at all and the
+            //             #       processing time become exponential with the number
+            //             #       of rows (like 1H for 250k rows).
+            //             #
+            //             #       So we split the table into multiple tables containing
+            //             #       500 rows each. This reduce the processing time to 1min
+            //             #       for 250k rows. The number 500 was taken from opw-1689673
+            //             if len(body) < 4 * 1024 * 1024:  # 4Mib
+            //                 body_file.write(body.encode())
+            //             else:
+            //                 tree = lxml.html.fromstring(body)
+            //                 _split_table(tree, 500)
+            //                 body_file.write(lxml.html.tostring(tree))
+            //         paths.append(body_file_path)
+            //         stack.callback(delete_file, body_file_path)
             // 
-            //     if process.returncode not in [0, 1]:
-            //         if process.returncode == -11:
+            //     pdf_report_fd, pdf_report_path = tempfile.mkstemp(suffix='.pdf', prefix='report.tmp.')
+            //     os.close(pdf_report_fd)
+            //     stack.callback(delete_file, pdf_report_path)
+            // 
+            //     process = _run_wkhtmltopdf(command_args + files_command_args + paths + [pdf_report_path])
+            //     err = process.stderr
+            // 
+            //     match process.returncode:
+            //         case 0:
+            //             pass
+            //         case 1:
+            //             if body_idx:
+            //                 if not _wkhtml().is_patched_qt:
+            //                     if modules.module.current_test:
+            //                         raise unittest.SkipTest("Unable to convert multiple documents via wkhtmltopdf using unpatched QT")
+            //                     raise UserError(_("Tried to convert multiple documents in wkhtmltopdf using unpatched QT"))
+            // 
+            //             _logger.warning("wkhtmltopdf: %s", err)
+            //         case c:
             //             message = _(
             //                 'Wkhtmltopdf failed (error code: %(error_code)s). Memory limit too low or maximum file number of subprocess reached. Message : %(message)s',
-            //                 error_code=process.returncode,
+            //                 error_code=c,
             //                 message=err[-1000:],
-            //             )
-            //         else:
-            //             message = _(
+            //             ) if c == -11 else _(
             //                 'Wkhtmltopdf failed (error code: %(error_code)s). Message: %(message)s',
-            //                 error_code=process.returncode,
+            //                 error_code=c,
             //                 message=err[-1000:],
             //             )
-            //         _logger.warning(message)
-            //         raise UserError(message)
-            //     else:
-            //         if err:
-            //             _logger.warning('wkhtmltopdf: %s' % err)
-            // except:
-            //     raise
-            // finally:
-            //     if temp_session:
-            //         root.session_store.delete(temp_session)
+            //             _logger.warning(message)
+            //             raise UserError(message)
             // 
-            // with open(pdf_report_path, 'rb') as pdf_document:
-            //     pdf_content = pdf_document.read()
-            // 
-            // # Manual cleanup of the temporary files
-            // for temporary_file in temporary_files:
-            //     try:
-            //         os.unlink(temporary_file)
-            //     except (OSError, IOError):
-            //         _logger.error('Error when trying to remove file %s' % temporary_file)
+            //     with open(pdf_report_path, 'rb') as pdf_document:
+            //         pdf_content = pdf_document.read()
             // 
             // return pdf_content
             */
@@ -1672,28 +1755,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def _search_model_id(self, operator, value):
-            // ir_model_ids = None
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // models = self.env['ir.model']
             // if isinstance(value, str):
-            //     names = self.env['ir.model'].name_search(value, operator=operator)
-            //     ir_model_ids = [n[0] for n in names]
-            // 
-            // elif operator in ('any', 'not any'):
-            //     ir_model_ids = self.env['ir.model']._search(value)
-            // 
-            // elif isinstance(value, Iterable):
-            //     ir_model_ids = value
-            // 
-            // elif isinstance(value, int) and not isinstance(value, bool):
-            //     ir_model_ids = [value]
-            // 
-            // if ir_model_ids:
-            //     operator = 'not in' if operator in NEGATIVE_TERM_OPERATORS else 'in'
-            //     ir_model = self.env['ir.model'].browse(ir_model_ids)
-            //     return [('model', operator, ir_model.mapped('model'))]
-            // elif isinstance(value, bool) or value is None:
-            //     return [('model', operator, value)]
-            // else:
-            //     return FALSE_DOMAIN
+            //     models = models.search(Domain('display_name', operator, value))
+            // elif isinstance(value, Domain):
+            //     models = models.search(value)
+            // elif operator == 'any!':
+            //     models = models.sudo().search(Domain('id', operator, value))
+            // elif operator == 'any' or isinstance(value, int):
+            //     models = models.search(Domain('id', operator, value))
+            // elif operator == 'in':
+            //     models = models.search(Domain.OR(
+            //         Domain('id' if isinstance(v, int) else 'display_name', operator, v)
+            //         for v in value
+            //         if v
+            //     ))
+            // return Domain('model', 'in', models.mapped('model'))
             */
             return default;
         }
@@ -1756,7 +1835,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                        order lines.
             //     :param recordset order: the sale order from where to take the values
             //     :param recordset order_line: the sale order line from where to take the values (optional)
-            //     return: None
+            //     :return: None
             //     """
             //     document.ensure_one()
             //     order.ensure_one()

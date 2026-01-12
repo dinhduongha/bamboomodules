@@ -17,5 +17,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.BrandModelAsync(id);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/action-open-brand-form")]
+        public async Task<IActionResult> ActionOpenBrandFormAsync(Guid id)
+        {
+            var result = await _appService.OpenBrandFormAsync(id);
+            return Ok(result);
+        }
     }
 }

@@ -43,6 +43,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-post-process")]
+        public async Task<IActionResult> ActionPostProcessAsync(Guid id)
+        {
+            var result = await _appService.PostProcessAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-refund")]
         public async Task<IActionResult> ActionRefundAsync(Guid id, [FromBody] PaymentTransactionRefundRequestDto input)
         {

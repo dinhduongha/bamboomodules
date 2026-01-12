@@ -25,56 +25,77 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<BaseImportImport> BuildImportErrorMsgInternalAsync(object message, object record, object row_index, object field)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
+            // def _build_import_error_msg(self, message, record, row_index, field=None):
+            // return {
+            //     'type': 'error',
+            //     'message': message,
+            //     'record': record if record else False,
+            //     'field': field,
+            //     'rows': {'from': row_index + 1, 'to': row_index + 1},
+            // }
+            */
+            return default;
+        }
+
         protected async Task<BaseImportImport> ConvertImportDataInternalAsync(object fields, object options)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
-            // def _convert_import_data(self, fields, options):
-            // """ Extracts the input BaseModel and fields list (with
-            //     ``False``-y placeholders for fields to *not* import) into a
-            //     format Model.import_data can use: a fields list without holes
-            //     and the precisely matching data matrix
+            // def _convert_import_data(
+            //     self,
+            //     fields: Sequence[str | bool],
+            //     options,
+            // ) -> tuple[
+            //     list[list[str]],  # data
+            //     list[str],        # fields, without the bool items
+            // ]:
+            //     """ Extracts the input BaseModel and fields list (with
+            //         ``False``-y placeholders for fields to *not* import) into a
+            //         format Model.import_data can use: a fields list without holes
+            //         and the precisely matching data matrix
             // 
-            //     :param list(str|bool): fields
-            //     :returns: (data, fields)
-            //     :rtype: (list(list(str)), list(str))
-            //     :raises ValueError: in case the import data could not be converted
-            // """
-            // # Get indices for non-empty fields
-            // indices = [index for index, field in enumerate(fields) if field]
-            // if not indices:
-            //     raise ImportValidationError(_("You must configure at least one field to import"))
-            // # If only one index, itemgetter will return an atom rather
-            // # than a 1-tuple
-            // if len(indices) == 1:
-            //     mapper = lambda row: [row[indices[0]]]
-            // else:
-            //     mapper = operator.itemgetter(*indices)
-            // # Get only list of actually imported fields
-            // import_fields = [f for f in fields if f]
+            //         :returns: (data, fields)
+            //         :raises ValueError: in case the import data could not be converted
+            //     """
+            //     # Get indices for non-empty fields
+            //     indices = [index for index, field in enumerate(fields) if field]
+            //     if not indices:
+            //         raise ImportValidationError(_("You must configure at least one field to import"))
+            //     # If only one index, itemgetter will return an atom rather
+            //     # than a 1-tuple
+            //     if len(indices) == 1:
+            //         mapper = lambda row: [row[indices[0]]]
+            //     else:
+            //         mapper = operator.itemgetter(*indices)
+            //     # Get only list of actually imported fields
+            //     import_fields = [f for f in fields if f]
             // 
-            // _file_length, rows_to_import = self._read_file(options)
-            // if len(rows_to_import[0]) != len(fields):
-            //     raise ImportValidationError(
-            //         _(
-            //             "Error while importing records: all rows should be of the same size, but the title row has %(title_row_entries)d entries while the first row has %(first_row_entries)d. You may need to change the separator character.",
-            //             title_row_entries=len(fields),
-            //             first_row_entries=len(rows_to_import[0]),
-            //         ),
-            //     )
+            //     _file_length, rows_to_import = self._read_file(options)
+            //     if len(rows_to_import[0]) != len(fields):
+            //         raise ImportValidationError(
+            //             _(
+            //                 "Error while importing records: all rows should be of the same size, but the title row has %(title_row_entries)d entries while the first row has %(first_row_entries)d. You may need to change the separator character.",
+            //                 title_row_entries=len(fields),
+            //                 first_row_entries=len(rows_to_import[0]),
+            //             ),
+            //         )
             // 
-            // if options.get('has_headers'):
-            //     rows_to_import = rows_to_import[1:]
-            // data = [
-            //     list(row) for row in map(mapper, rows_to_import)
-            //     # don't try inserting completely empty rows (e.g. from
-            //     # filtering out o2m fields)
-            //     if any(row)
-            // ]
+            //     if options.get('has_headers'):
+            //         rows_to_import = rows_to_import[1:]
+            //     data = [
+            //         list(row) for row in map(mapper, rows_to_import)
+            //         # don't try inserting completely empty rows (e.g. from
+            //         # filtering out o2m fields)
+            //         if any(row)
+            //     ]
             // 
-            // # slicing needs to happen after filtering out empty rows as the
-            // # data offsets from load are post-filtering
-            // return data[options.get('skip'):], import_fields
+            //     # slicing needs to happen after filtering out empty rows as the
+            //     # data offsets from load are post-filtering
+            //     return data[options.get('skip'):], import_fields
             */
             return default;
         }
@@ -152,7 +173,7 @@ namespace Bamboo.Core.Application.Services
             // :rtype: dict(ids: list(int), messages: list({type, message, record}))
             // """
             // self.ensure_one()
-            // sp = self.env.cr.savepoint(flush=False)
+            // import_savepoint = self.env.cr.savepoint(flush=False)
             // 
             // try:
             //     input_file_data, import_fields = self._convert_import_data(fields, options)
@@ -165,7 +186,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // binary_filenames = self._extract_binary_filenames(import_fields, input_file_data)
             // 
-            // import_fields, merged_data = self._handle_multi_mapping(import_fields, input_file_data)
+            // import_fields, merged_data = self.with_context(import_options=options)._handle_multi_mapping(import_fields, input_file_data)
             // 
             // if options.get('fallback_values'):
             //     merged_data = self._handle_fallback_values(import_fields, merged_data, options['fallback_values'])
@@ -184,7 +205,7 @@ namespace Bamboo.Core.Application.Services
             // # If transaction aborted, RELEASE SAVEPOINT is going to raise
             // # an InternalError (ROLLBACK should work, maybe). Ignore that.
             // with contextlib.suppress(psycopg2.InternalError):
-            //     sp.close(rollback=dryrun)
+            //     import_savepoint.close(rollback=dryrun)
             // if dryrun:
             //     # cancel all changes done to the registry/ormcache
             //     # we need to clear the cache in case any created id was added to an ormcache and would be missing afterward
@@ -215,7 +236,7 @@ namespace Bamboo.Core.Application.Services
             //     # pad front as data doesn't contain anythig for skipped lines
             //     r = import_result['name'] = [''] * skipped
             //     # only add names for the window being imported
-            //     r.extend(x[index_of_name] for x in input_file_data[:import_limit])
+            //     r.extend(self._stringify_date_like_objects(x[index_of_name], options) for x in input_file_data[:import_limit])
             //     # pad back (though that's probably not useful)
             //     r.extend([''] * (len(input_file_data) - (import_limit or 0)))
             // else:
@@ -245,13 +266,13 @@ namespace Bamboo.Core.Application.Services
             //     if any(name + '/' in import_field and name == import_field.split('/')[prefix.count('/')] for import_field in import_fields):
             //         # Recursive call with the relational as new model and add the field name to the prefix
             //         binary_filenames = self._extract_binary_filenames(import_fields, data, field.comodel_name, name + '/', binary_filenames)
-            //     elif field.type == 'binary' and field.attachment and any(f in name for f in IMAGE_FIELDS) and name in import_fields:
+            //     elif field.type == 'binary' and field.attachment and name in import_fields:
             //         index = import_fields.index(name)
             //         for line in data:
             //             filename = None
             //             value = line[index]
             //             if isinstance(value, str):
-            //                 if re.match(config.get("import_image_regex", DEFAULT_IMAGE_REGEX), value):
+            //                 if re.match(config.get("import_url_regex"), value):
             //                     pass
             //                 elif '.' in value:
             //                     # Detect if it's a filename
@@ -290,66 +311,68 @@ namespace Bamboo.Core.Application.Services
             //                        see :meth:`parse_preview` for more details.
             // :param options: parsing options
             // """
-            // values = set(preview_values)
-            // # If all values are empty in preview than can be any field
-            // if values == {''}:
-            //     return ['all']
+            // if all(isinstance(v, str) for v in preview_values):
+            //     preview_values = [v.strip() for v in preview_values]
+            //     values = set(preview_values)
+            //     # If all values are empty in preview than can be any field
+            //     if values == {''}:
+            //         return ['all']
             // 
-            // # If all values starts with __export__ this is probably an id
-            // if all(v.startswith('__export__') for v in values):
-            //     return ['id', 'many2many', 'many2one', 'one2many']
+            //     # If all values starts with __export__ this is probably an id
+            //     if all(v.startswith('__export__') for v in values):
+            //         return ['id', 'many2many', 'many2one', 'one2many']
             // 
-            // # If all values can be cast to int type is either id, float or monetary
-            // # Exception: if we only have 1 and 0, it can also be a boolean
-            // if all(v.isdigit() for v in values if v):
-            //     field_type = ['integer', 'float', 'monetary']
-            //     if {'0', '1', ''}.issuperset(values):
-            //         field_type.append('boolean')
-            //     return field_type
+            //     # If all values can be cast to int type is either id, float or monetary
+            //     # Exception: if we only have 1 and 0, it can also be a boolean
+            //     if all(v.isdigit() for v in values if v):
+            //         field_type = ['integer', 'float', 'monetary']
+            //         if {'0', '1', ''}.issuperset(values):
+            //             field_type.append('boolean')
+            //         return field_type
             // 
-            // # If all values are either True or False, type is boolean
-            // if all(val.lower() in ('true', 'false', 't', 'f', '') for val in preview_values):
-            //     return ['boolean']
+            //     # If all values are either True or False, type is boolean
+            //     if all(val.lower() in ('true', 'false', 't', 'f', '') for val in preview_values):
+            //         return ['boolean']
             // 
-            // # If all values can be cast to float, type is either float or monetary
-            // try:
-            //     thousand_separator = decimal_separator = False
-            //     for val in preview_values:
-            //         val = val.strip()
-            //         if not val:
-            //             continue
-            //         # value might have the currency symbol left or right from the value
-            //         val = self._remove_currency_symbol(val)
-            //         if val:
-            //             if options.get('float_thousand_separator') and options.get('float_decimal_separator'):
-            //                 if options['float_decimal_separator'] == '.' and val.count('.') > 1:
-            //                     # This is not a float so exit this try
-            //                     float('a')
-            //                 val = val.replace(options['float_thousand_separator'], '').replace(options['float_decimal_separator'], '.')
-            //             # We are now sure that this is a float, but we still need to find the
-            //             # thousand and decimal separator
+            //     # If all values can be cast to float, type is either float or monetary
+            //     try:
+            //         thousand_separator = decimal_separator = False
+            //         for val in preview_values:
+            //             val = val.strip()
+            //             if not val:
+            //                 continue
+            //             # value might have the currency symbol left or right from the value
+            //             val = self._remove_currency_symbol(val)
+            //             if val:
+            //                 if options.get('float_thousand_separator') and options.get('float_decimal_separator'):
+            //                     if options['float_decimal_separator'] == '.' and val.count('.') > 1:
+            //                         # This is not a float so exit this try
+            //                         float('a')
+            //                     val = val.replace(options['float_thousand_separator'], '').replace(options['float_decimal_separator'], '.')
+            //                 # We are now sure that this is a float, but we still need to find the
+            //                 # thousand and decimal separator
+            //                 else:
+            //                     if val.count('.') > 1:
+            //                         options['float_thousand_separator'] = '.'
+            //                         options['float_decimal_separator'] = ','
+            //                     elif val.count(',') > 1:
+            //                         options['float_thousand_separator'] = ','
+            //                         options['float_decimal_separator'] = '.'
+            //                     elif val.find('.') > val.find(','):
+            //                         thousand_separator = ','
+            //                         decimal_separator = '.'
+            //                     elif val.find(',') > val.find('.'):
+            //                         thousand_separator = '.'
+            //                         decimal_separator = ','
             //             else:
-            //                 if val.count('.') > 1:
-            //                     options['float_thousand_separator'] = '.'
-            //                     options['float_decimal_separator'] = ','
-            //                 elif val.count(',') > 1:
-            //                     options['float_thousand_separator'] = ','
-            //                     options['float_decimal_separator'] = '.'
-            //                 elif val.find('.') > val.find(','):
-            //                     thousand_separator = ','
-            //                     decimal_separator = '.'
-            //                 elif val.find(',') > val.find('.'):
-            //                     thousand_separator = '.'
-            //                     decimal_separator = ','
-            //         else:
-            //             # This is not a float so exit this try
-            //             float('a')
-            //     if thousand_separator and not options.get('float_decimal_separator'):
-            //         options['float_thousand_separator'] = thousand_separator
-            //         options['float_decimal_separator'] = decimal_separator
-            //     return ['float', 'monetary']  # Allow float to be mapped on a text field.
-            // except ValueError:
-            //     pass
+            //                 # This is not a float so exit this try
+            //                 float('a')
+            //         if thousand_separator and not options.get('float_decimal_separator'):
+            //             options['float_thousand_separator'] = thousand_separator
+            //             options['float_decimal_separator'] = decimal_separator
+            //         return ['float', 'monetary']  # Allow float to be mapped on a text field.
+            //     except ValueError:
+            //         pass
             // 
             // results = self._try_match_date_time(preview_values, options)
             // if results:
@@ -387,7 +410,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // headers_types = {}
             // for column_index, header_name in enumerate(headers):
-            //     preview_values = [record[column_index].strip() for record in preview]
+            //     preview_values = [record[column_index] for record in preview]
             //     type_field = self._extract_header_types(preview_values, options)
             //     headers_types[(column_index, header_name)] = type_field
             // return headers_types
@@ -401,12 +424,12 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
             // def _filter_fields_by_types(self, model_fields_tree, header_types):
             // """ Remove from model_fields_tree param all the fields and subfields
-            // that do not match the types in header_types
+            // that do not match the types in ``header_types``.
             // 
-            // :param: list[dict] model_fields_tree: Contains recursively all the importable fields of the target model.
-            //                                       Generated in "get_fields_tree" method.
-            // :param: list header_types: Contains the extracted fields types of the current header.
-            //                            Generated in :meth:`_extract_header_types`.
+            // :param list[dict] model_fields_tree: Contains recursively all the importable fields of
+            //     the target model. Generated in :meth:`get_fields_tree`.
+            // :param list header_types: Contains the extracted fields types of the current header.
+            //     Generated in :meth:`_extract_header_types`.
             // """
             // most_likely_fields_tree = []
             // for field in model_fields_tree:
@@ -533,8 +556,13 @@ namespace Bamboo.Core.Application.Services
             //     definition_record_field = field['definition_record_field']
             // 
             //     target_model = Model.env[Model._fields[definition_record].comodel_name]
-            //     if not target_model.has_access('read'):  # ignore if you cannot read target_model at all
+            // 
+            //     # ignore if you cannot access to the target model or the field definition
+            //     if not target_model.has_access('read'):
             //         continue
+            //     if not target_model._has_field_access(target_model._fields[definition_record_field], 'read'):
+            //         continue
+            // 
             //     # Do not take into account the definition of archived parents,
             //     # we do not import archived records most of the time.
             //     definition_records = target_model.search_fetch(
@@ -838,9 +866,10 @@ namespace Bamboo.Core.Application.Services
             //     there was already a conflict during first import run and user had to
             //     select a fallback value for the field.
             // 
-            // :param: list import_field: ordered list of field that have been matched to import data
-            // :param: list input_file_data: ordered list of values (list) that need to be imported in the given import_fields
-            // :param: dict fallback_values:
+            // :param list import_field: ordered list of field that have been matched to import data
+            // :param list input_file_data: ordered list of values (list) that need to be imported in
+            //     the given import_fields
+            // :param dict fallback_values:
             // 
             //     contains all the fields that have been tagged by the user to use a
             //     specific fallback value in case the value to import does not match
@@ -940,6 +969,7 @@ namespace Bamboo.Core.Application.Services
             // for idx, field in enumerate(field for field in import_fields if field):
             //     mapped_field_indexes.setdefault(field, list()).append(idx)
             // import_fields = list(mapped_field_indexes.keys())
+            // import_options = self.env.context.get('import_options', {})
             // 
             // # recreate data and merge duplicates (applies only on text or char fields)
             // # Also handles multi-mapping on "field of relation fields".
@@ -959,16 +989,26 @@ namespace Bamboo.Core.Application.Services
             //             if field != target_field and field in self.env[target_model]:
             //                 target_model = self.env[target_model][field]._name
             // 
-            //         field = self.env[target_model]._fields.get(target_field)
+            //         field = self.env[target_model]._fields.get(target_field.split('.')[0])
             //         field_type = field.type if field else ''
             // 
             //         # merge data if necessary
-            //         if field_type == 'char':
-            //             new_record.append(' '.join(record[idx] for idx in indexes if record[idx]))
-            //         elif field_type == 'text':
-            //             new_record.append('\n'.join(record[idx] for idx in indexes if record[idx]))
-            //         elif field_type == 'many2many':
-            //             new_record.append(','.join(record[idx] for idx in indexes if record[idx]))
+            //         if field_type in CONCAT_SEPARATOR_IMPORT:
+            //             separator = CONCAT_SEPARATOR_IMPORT[field_type]
+            //             if field_type != 'many2many':
+            //                 # Trim trailing whitespaces before joining
+            //                 trim = field_type == 'char' and field.trim
+            //                 new_record.append(
+            //                     separator.join(
+            //                         self._stringify_date_like_objects(record[idx], import_options, trim)
+            //                         for idx in indexes if record[idx]
+            //                     )
+            //                 )
+            //             else:
+            //                 new_record.append(separator.join(record[idx] for idx in indexes if record[idx]))
+            //         elif field_type == 'properties':
+            //             # for property fields date and datetime objects are not suitable for JSON values
+            //             new_record.append(self._stringify_date_like_objects(record[indexes[0]], import_options))
             //         else:
             //             new_record.append(record[indexes[0]])
             // 
@@ -979,12 +1019,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<BaseImportImport> ImportImageByUrlInternalAsync(object url, object session, object field, object line_number)
+        protected async Task<BaseImportImport> ImportFileByUrlInternalAsync(object url, object session, object field, object line_number)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
-            // def _import_image_by_url(self, url, session, field, line_number):
-            // """ Imports an image by URL
+            // def _import_file_by_url(self, url, session, field, line_number):
+            // """ Imports a file by URL
             // 
             // :param str url: the original field value
             // :param requests.Session session:
@@ -993,10 +1033,11 @@ namespace Bamboo.Core.Application.Services
             // :return: the replacement value
             // :rtype: bytes
             // """
-            // maxsize = int(config.get("import_image_maxbytes", DEFAULT_IMAGE_MAXBYTES))
-            // _logger.debug("Trying to import image from URL: %s into field %s, at line %s" % (url, field, line_number))
+            // assert re.match(config.get("import_url_regex"), url)
+            // maxsize = config.get("import_file_maxbytes")
+            // _logger.debug("Trying to import file from URL: %s into field %s, at line %s", url, field, line_number)
             // try:
-            //     response = session.get(url, timeout=int(config.get("import_image_timeout", DEFAULT_IMAGE_TIMEOUT)))
+            //     response = session.get(url, timeout=config.get("import_file_timeout"))
             //     response.raise_for_status()
             // 
             //     if response.headers.get('Content-Length') and int(response.headers['Content-Length']) > maxsize:
@@ -1006,13 +1047,16 @@ namespace Bamboo.Core.Application.Services
             //         )
             // 
             //     content = bytearray()
-            //     for chunk in response.iter_content(DEFAULT_IMAGE_CHUNK_SIZE):
+            //     for chunk in response.iter_content(DEFAULT_CHUNK_SIZE):
             //         content += chunk
             //         if len(content) > maxsize:
             //             raise ImportValidationError(
             //                 _("File size exceeds configured maximum (%s bytes)", maxsize),
             //                 field=field
             //             )
+            // 
+            //     if not guess_mimetype(content).startswith('image/'):
+            //         return base64.b64encode(content)
             // 
             //     image = Image.open(io.BytesIO(content))
             //     w, h = image.size
@@ -1081,7 +1125,7 @@ namespace Bamboo.Core.Application.Services
             // d_fmt = options.get('date_format') or DEFAULT_SERVER_DATE_FORMAT
             // dt_fmt = options.get('datetime_format') or DEFAULT_SERVER_DATETIME_FORMAT
             // for num, line in enumerate(data):
-            //     if not line[index]:
+            //     if not line[index] or isinstance(line[index], datetime.date):
             //         continue
             // 
             //     v = line[index].strip()
@@ -1106,6 +1150,32 @@ namespace Bamboo.Core.Application.Services
             //             _("Error Parsing Date [%(field)s:L%(line)d]: %(error)s", field=name, line=num + 1, error=e),
             //             field=name, field_type=field_type
             //         )
+            */
+            return default;
+        }
+
+        protected async Task<BaseImportImport> ParseDatetimeDataInternalAsync(object import_fields, object input_file_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
+            // def _parse_datetime_data(self, import_fields, input_file_data):
+            // errors = []
+            // field_types = self.env[self.res_model].fields_get(import_fields, ['type'])
+            // allowed_date_fields = {
+            //     name for name, info in field_types.items() if info.get('type') in ('date', 'datetime')
+            // }
+            // 
+            // for row_index, row in enumerate(input_file_data):
+            //     for field_name, value in zip(import_fields, row):
+            //         if not isinstance(value, (datetime.date, datetime.datetime)):
+            //             continue
+            // 
+            //         if field_name not in allowed_date_fields:
+            //             message = self.env._("Field '%(field)s' does not accept date/time values.", field=field_name)
+            //             errors.append(
+            //                 self._build_import_error_msg(message, row, row_index, field=field_name)
+            //             )
+            // return errors
             */
             return default;
         }
@@ -1175,21 +1245,21 @@ namespace Bamboo.Core.Application.Services
             //         # We should be able to manage both case
             //         index = import_fields.index(name)
             //         self._parse_float_from_data(data, index, name, options)
-            //     elif field['type'] == 'binary' and field.get('attachment') and any(f in name for f in IMAGE_FIELDS) and name in import_fields:
+            //     elif field['type'] == 'binary' and field.get('attachment') and name in import_fields:
             //         index = import_fields.index(name)
             // 
+            //         import requests  # noqa: PLC0415
             //         with requests.Session() as session:
             //             session.stream = True
             // 
             //             for num, line in enumerate(data):
-            //                 if re.match(config.get("import_image_regex", DEFAULT_IMAGE_REGEX), line[index]):
+            //                 if re.match(config.get("import_url_regex"), line[index]):
             //                     if not self.env.user._can_import_remote_urls():
             //                         raise ImportValidationError(
-            //                             _("You can not import images via URL, check with your administrator or support for the reason."),
+            //                             _("You can not import file via URL, check with your administrator or support for the reason."),
             //                             field=name, field_type=field['type']
             //                         )
-            // 
-            //                     line[index] = self._import_image_by_url(line[index], session, name, num)
+            //                     line[index] = self._import_file_by_url(line[index], session, name, num)
             //                 elif '.' in line[index]:
             //                     # Detect if it's a filename
             //                     pass
@@ -1229,11 +1299,11 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // fields_tree = self.get_fields_tree(self.res_model)
             // try:
-            //     file_length, rows = self._read_file(options)
+            //     file_length, data_rows = self._read_file(options)
             //     if file_length <= 0:
             //         raise ImportValidationError(_("Import file has no content or is corrupt"))
             // 
-            //     preview = rows[:count]
+            //     preview = data_rows[:count]
             // 
             //     # Get file headers
             //     if options.get('has_headers') and preview:
@@ -1279,8 +1349,13 @@ namespace Bamboo.Core.Application.Services
             //     for column_index, _unused in enumerate(preview[0]):
             //         vals = []
             //         for record in preview:
-            //             if record[column_index]:
+            //             val = record[column_index]
+            //             if val and isinstance(val, str):
             //                 vals.append("%s%s" % (record[column_index][:50], "..." if len(record[column_index]) > 50 else ""))
+            //             elif isinstance(val, datetime.datetime):
+            //                 vals.append(val.strftime(options.get('datetime_format') or DEFAULT_SERVER_DATETIME_FORMAT))
+            //             elif isinstance(val, datetime.date):
+            //                 vals.append(val.strftime(options.get('date_format') or DEFAULT_SERVER_DATE_FORMAT))
             //             if len(vals) == 5:
             //                 break
             //         column_example.append(
@@ -1296,7 +1371,7 @@ namespace Bamboo.Core.Application.Services
             //             batch = len(preview) > batch_cutoff
             //         else:
             //             batch = bool(next(
-            //                 itertools.islice(rows, batch_cutoff - count, None),
+            //                 itertools.islice(data_rows, batch_cutoff - count, None),
             //                 None
             //             ))
             // 
@@ -1310,7 +1385,7 @@ namespace Bamboo.Core.Application.Services
             //         'advanced_mode': advanced_mode,
             //         'debug': self.env.user.has_group('base.group_no_one'),
             //         'batch': batch,
-            //         'file_length': len(rows),
+            //         'num_rows': len(data_rows),
             //     }
             // except Exception as error:
             //     # Due to lazy generators, UnicodeDecodeError (for
@@ -1346,7 +1421,9 @@ namespace Bamboo.Core.Application.Services
             //     return ()
             // 
             // encoding = options.get('encoding')
+            // encoding_guessed = False
             // if not encoding:
+            //     encoding_guessed = True
             //     encoding = options['encoding'] = chardet.detect(csv_data)['encoding'].lower()
             //     # some versions of chardet (e.g. 2.3.0 but not 3.x) will return
             //     # utf-(16|32)(le|be), which for python means "ignore / don't strip
@@ -1356,7 +1433,14 @@ namespace Bamboo.Core.Application.Services
             //     if bom and csv_data.startswith(bom):
             //         encoding = options['encoding'] = encoding[:-2]
             // 
-            // csv_text = csv_data.decode(encoding)
+            // try:
+            //     csv_text = csv_data.decode(encoding)
+            // except UnicodeDecodeError as exc:
+            //     if encoding_guessed:
+            //         msg = _("There was an issue decoding the file using encoding “%s”.\nThis encoding was automatically detected.", encoding)
+            //     else:
+            //         msg = _("There was an issue decoding the file using encoding “%s”.\nThis encoding was manually selected.", encoding)
+            //     raise ImportValidationError(msg) from exc
             // 
             // separator = options.get('separator')
             // if not separator:
@@ -1407,46 +1491,47 @@ namespace Bamboo.Core.Application.Services
             // :param dict options: reading options (quoting, separator, ...)
             // """
             // self.ensure_one()
-            // e = None
+            // 
             // # guess mimetype from file content
             // mimetype = guess_mimetype(self.file or b'')
-            // (file_extension, handler, req) = FILE_TYPE_DICT.get(mimetype, (None, None, None))
-            // if handler:
-            //     try:
-            //         return getattr(self, '_read_' + file_extension)(options)
-            //     except (ImportValidationError, ValueError):
-            //         raise
-            //     except Exception as exc:  # noqa: BLE001
-            //         e = read_file_failed(exc, f"Unable to read file {self.file_name or '<unknown>'!r} as {file_extension!r} (guessed using mimetype {mimetype!r}).")
-            // 
-            // # try reading with user-provided mimetype
-            // (file_extension, handler2, req2) = FILE_TYPE_DICT.get(self.file_type, (None, None, None))
-            // if handler2 and handler2 != handler:
-            //     try:
-            //         return getattr(self, '_read_' + file_extension)(options)
-            //     except (ImportValidationError, ValueError):
-            //         raise
-            //     except Exception as exc:  # noqa: BLE001
-            //         e = read_file_failed(exc, f"Unable to read file {self.file_name or '<unknown>'!r} as {file_extension!r} (decided from user-provided mimetype {self.file_type!r}).")
-            // 
+            // extensions_to_try = [
+            //     (MIMETYPE_TO_READER.get(mimetype), f"guessed using mimetype {mimetype!r}"),
+            //     (MIMETYPE_TO_READER.get(self.file_type), f"decided from user-provided mimetype {self.file_type!r}"),
+            // ]
             // # fallback on file extensions as mime types can be unreliable (e.g.
             // # software setting incorrect mime types, or non-installed software
             // # leading to browser not sending mime types)
             // if self.file_name:
             //     _stem, ext = os.path.splitext(self.file_name)
-            //     if (h := EXTENSIONS.get(ext)) and h != handler and h != handler2:
-            //         try:
-            //             return getattr(self, '_read_' + ext[1:])(options)
-            //         except (ImportValidationError, ValueError):
-            //             raise
-            //         except Exception as exc:  # noqa: BLE001
-            //             e = read_file_failed(exc, f"Unable to read file {self.file_name!r} as {file_extension!r} (decided from file extension {ext!r}).")
+            //     extensions_to_try.append((ext.removeprefix('.'), f"decided from file extension {ext!r}"))
+            // 
+            // e = None
+            // requires = None
+            // tried_extensions = set()
+            // for file_extension, guess_message in extensions_to_try:
+            //     if not file_extension or file_extension in tried_extensions:
+            //         continue
+            //     tried_extensions.add(file_extension)
+            //     try:
+            //         handler = getattr(self, '_read_' + file_extension, None)
+            //         if callable(handler):
+            //             return handler(options)
+            //     except ImportError as exc:
+            //         # exc.name_from attribute is present as of python 3.12
+            //         requires = str(getattr(exc, 'name_from', None) or exc.name)
+            //         if file_extension == 'xlsx':
+            //             # if xlrd 2.x then xlrd.xlsx is not available
+            //             requires = 'openpyxl or xlrd >= 1.0.0 < 2.0'
+            //     except (ImportValidationError, ValueError):
+            //         raise
+            //     except Exception as exc:  # noqa: BLE001
+            //         e = read_file_failed(exc, f"Unable to read file {self.file_name or '<unknown>'!r} as {file_extension!r} ({guess_message}).")
             // 
             // if e is not None:
             //     raise e
             // 
-            // if req2 or req:
-            //     raise UserError(_("Unable to load \"{extension}\" file: requires Python module \"{modname}\"").format(extension=file_extension, modname=req2 or req))
+            // if requires:
+            //     raise UserError(_("Unable to load \"{extension}\" file: requires Python module \"{modname}\"").format(extension=file_extension, modname=requires))
             // raise UserError(_("Unsupported file format \"{}\", import only supports CSV, ODS, XLS and XLSX").format(self.file_type))
             */
             return default;
@@ -1457,6 +1542,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
             // def _read_ods(self, options):
+            // from . import odf_ods_reader  # noqa: PLC0415
             // doc = odf_ods_reader.ODSReader(file=io.BytesIO(self.file or b''))
             // sheets = options['sheets'] = list(doc.SHEETS.keys())
             // sheet = options['sheet'] = options.get('sheet') or sheets[0]
@@ -1478,6 +1564,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
             // def _read_xls_book(self, book, sheet_name):
+            // import xlrd  # noqa: PLC0415
             // sheet = book.sheet_by_name(sheet_name)
             // rows = []
             // # emulate Sheet.get_rows for pre-0.9.4
@@ -1496,9 +1583,9 @@ namespace Bamboo.Core.Application.Services
             //             # emulate xldate_as_datetime for pre-0.9.3
             //             dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(cell.value, book.datemode))
             //             values.append(
-            //                 dt.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            //                 dt
             //                 if is_datetime
-            //                 else dt.strftime(DEFAULT_SERVER_DATE_FORMAT)
+            //                 else dt.date()
             //             )
             //         elif cell.ctype is xlrd.XL_CELL_BOOLEAN:
             //             values.append(u'True' if cell.value else u'False')
@@ -1512,7 +1599,7 @@ namespace Bamboo.Core.Application.Services
             //             )
             //         else:
             //             values.append(cell.value)
-            //     if any(x for x in values if x.strip()):
+            //     if any(x and (not isinstance(x, str) or x.strip()) for x in values):
             //         rows.append(values)
             // 
             // # return the file length as first value
@@ -1526,6 +1613,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
             // def _read_xls(self, options):
+            // import xlrd  # noqa: PLC0415
             // book = xlrd.open_workbook(file_contents=self.file or b'')
             // sheets = options['sheets'] = book.sheet_names()
             // sheet = options['sheet'] = options.get('sheet') or sheets[0]
@@ -1539,12 +1627,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
             // def _read_xlsx(self, options):
-            // if xlsx:
-            //     return self._read_xls(options)
+            // try:
+            //     from xlrd import xlsx  # noqa: F401, PLC0415
+            //     if xlsx:
+            //         return self._read_xls(options)
+            // except ImportError:
+            //     pass
             // 
-            // import openpyxl.cell.cell as types
+            // import openpyxl  # noqa: PLC0415
+            // import openpyxl.cell.cell as types  # noqa: PLC0415
             // import openpyxl.styles.numbers as styles  # noqa: PLC0415
-            // book = load_workbook(io.BytesIO(self.file or b''), data_only=True)
+            // book = openpyxl.load_workbook(io.BytesIO(self.file or b''), data_only=True)
             // sheets = options['sheets'] = book.sheetnames
             // sheet_name = options['sheet'] = options.get('sheet') or sheets[0]
             // sheet = book[sheet_name]
@@ -1552,7 +1645,7 @@ namespace Bamboo.Core.Application.Services
             // for rowx, row in enumerate(sheet.rows, 1):
             //     values = []
             //     for colx, cell in enumerate(row, 1):
-            //         if cell.data_type is types.TYPE_ERROR:
+            //         if cell.data_type == types.TYPE_ERROR:
             //             raise ValueError(
             //                 _("Invalid cell value at row %(row)s, column %(col)s: %(cell_value)s", row=rowx, col=colx, cell_value=cell.value)
             //             )
@@ -1567,9 +1660,9 @@ namespace Bamboo.Core.Application.Services
             //         elif cell.is_date:
             //             d_fmt = styles.is_datetime(cell.number_format)
             //             if d_fmt == "datetime":
-            //                 values.append(cell.value.strftime(DEFAULT_SERVER_DATETIME_FORMAT))
+            //                 values.append(cell.value)
             //             elif d_fmt == "date":
-            //                 values.append(cell.value.strftime(DEFAULT_SERVER_DATE_FORMAT))
+            //                 values.append(cell.value.date())
             //             else:
             //                 raise ValueError(
             //                 _("Invalid cell format at row %(row)s, column %(col)s: %(cell_value)s, with format: %(cell_format)s, as (%(format_type)s) formats are not supported.", row=rowx, col=colx, cell_value=cell.value, cell_format=cell.number_format, format_type=d_fmt)
@@ -1577,7 +1670,7 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             values.append(str(cell.value))
             // 
-            //     if any(x.strip() for x in values):
+            //     if any(x and (not isinstance(x, str) or x.strip()) for x in values):
             //         rows.append(values)
             // return sheet.max_row, rows
             */
@@ -1615,6 +1708,24 @@ namespace Bamboo.Core.Application.Services
             //         return split_value[(currency_index + 1) % 2] if not negative else '-' + split_value[(currency_index + 1) % 2]
             //     # Otherwise it is not a float with a currency symbol
             //     return False
+            */
+            return default;
+        }
+
+        protected async Task<BaseImportImport> StringifyDateLikeObjectsInternalAsync(object data, object options, object trim)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
+            // def _stringify_date_like_objects(self, data, options, trim=False):
+            // # As imported string like datas might be automatically interpreted and imported as date/datetime
+            // # object by the spreedsheet a reconversion might be needed
+            // if isinstance(data, datetime.datetime):
+            //     res = data.strftime(options.get('datetime_format') or DEFAULT_SERVER_DATETIME_FORMAT)
+            // elif isinstance(data, datetime.date):
+            //     res = data.strftime(options.get('date_format') or DEFAULT_SERVER_DATE_FORMAT)
+            // else:
+            //     res = data
+            // return res.strip() if trim else res
             */
             return default;
         }

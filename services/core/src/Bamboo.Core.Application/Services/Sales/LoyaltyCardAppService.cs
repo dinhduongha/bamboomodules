@@ -28,13 +28,27 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
+        public async Task<LoyaltyCard> ArchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: loyalty_card.py) ---
+            // def action_archive(self):
+            // self.env['sale.order.coupon.points'].search([
+            //     ('coupon_id', 'in', self.ids),
+            //     ('order_id.state', '=', 'draft'),
+            // ]).unlink()
+            // return super().action_archive()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<LoyaltyCard> ComputeDisplayNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_card.py) ---
             // def _compute_display_name(self):
             // for card in self:
-            //     card.display_name = f'{card.program_id.name}: {card.code}'
+            //     card.display_name = f"{card.program_id.name}: {card.code}"
             */
             return default;
         }
@@ -83,7 +97,7 @@ namespace Bamboo.Core.Application.Services
             // def _contrains_code(self):
             // # Prevent a coupon from having the same code a program
             // if self.env['loyalty.rule'].search_count([('mode', '=', 'with_code'), ('code', 'in', self.mapped('code'))]):
-            //     raise ValidationError(_('A trigger with the same code as one of your coupon already exists.'))
+            //     raise ValidationError(_("A trigger with the same code as one of your coupon already exists."))
             */
             return default;
         }
@@ -108,7 +122,7 @@ namespace Bamboo.Core.Application.Services
             //     force_email=True,
             // )
             // return {
-            //     'name': _('Compose Email'),
+            //     'name': _("Compose Email"),
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
             //     'res_model': 'mail.compose.message',
@@ -138,7 +152,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_card.py) ---
             // def _format_points(self, points):
             // self.ensure_one()
-            // if self.point_name == self.program_id.currency_id.symbol:
+            // if self.program_id.currency_id and self.point_name == self.program_id.currency_id.symbol:
             //     return format_amount(self.env, points, self.program_id.currency_id)
             // if points == int(points):
             //     return f"{int(points)} {self.point_name or ''}"
@@ -155,7 +169,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // Barcode identifiable codes.
             // """
-            // return '044' + str(uuid4())[7:-18]
+            // return "044" + str(uuid4())[7:-18]
             */
             return default;
         }
@@ -183,6 +197,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<LoyaltyCard> GetGiftCardStatusAsync(Guid id, LoyaltyCardGetGiftCardStatusRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
+            // def get_gift_card_status(self, gift_code, config_id):
+            // card = self.search([('code', '=', gift_code)], limit=1)
+            // is_valid = card.exists() and (not card.expiration_date or card.expiration_date > fields.Date.today()) and card.points > 0
+            // is_valid = is_valid and (card.program_id.program_type == 'gift_card') and not card.partner_id
+            // is_valid = is_valid and len([id for id in card.history_ids.mapped('order_id') if id != 0]) == 0
+            // card_fields = self._load_pos_data_fields(config_id)
+            // return {
+            //     'status': bool(is_valid) or not card.exists(),
+            //     'data': {
+            //         'loyalty.card': card.read(card_fields, load=False),
+            //     }
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<LoyaltyCard> GetLoyaltyCardPartnerByCodeAsync(Guid id, LoyaltyCardGetLoyaltyCardPartnerByCodeRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
+            // def get_loyalty_card_partner_by_code(self, code):
+            // return self.env['loyalty.card'].search([
+            //     ('code', '=', code),
+            //     ('program_type', '=', 'loyalty'),
+            // ], limit=1).partner_id or False
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<LoyaltyCard> GetMailAuthorInternalAsync()
         {
             /*
@@ -199,23 +246,6 @@ namespace Bamboo.Core.Application.Services
             //     return super()._get_mail_author()
             // self.ensure_one()
             // return (self.order_id.user_id or self.order_id.company_id).partner_id
-            */
-            return default;
-        }
-
-        protected async Task<LoyaltyCard> GetMailPartnerInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_card.py) ---
-            // def _get_mail_partner(self):
-            // self.ensure_one()
-            // return self.partner_id
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
-            // def _get_mail_partner(self):
-            // return super()._get_mail_partner() or self.sudo().source_pos_order_id.partner_id
-            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: loyalty_card.py) ---
-            // def _get_mail_partner(self):
-            // return super()._get_mail_partner() or self.order_id.partner_id
             */
             return default;
         }
@@ -254,21 +284,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyCard> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<LoyaltyCard> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('program_id', 'in', [program["id"] for program in data["loyalty.program"]['data']])]
+            // def _load_pos_data_domain(self, data, config):
+            // return False
             */
             return default;
         }
 
-        protected async Task<LoyaltyCard> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<LoyaltyCard> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['partner_id', 'code', 'points', 'program_id', 'expiration_date', 'write_date']
             */
             return default;
@@ -291,6 +321,19 @@ namespace Bamboo.Core.Application.Services
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<LoyaltyCard> MailGetPartnerFieldsInternalAsync(object introspect_fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
+            // def _mail_get_partner_fields(self, introspect_fields=False):
+            // return super()._mail_get_partner_fields(introspect_fields=introspect_fields) + ['source_pos_order_partner_id']
+            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: loyalty_card.py) ---
+            // def _mail_get_partner_fields(self, introspect_fields=False):
+            // return super()._mail_get_partner_fields(introspect_fields=introspect_fields) + ['order_id_partner_id']
+            */
+            return default;
         }
 
         protected async Task<LoyaltyCard> RestrictExpirationOnLoyaltyInternalAsync()
@@ -320,7 +363,7 @@ namespace Bamboo.Core.Application.Services
             // for program in self.program_id:
             //     create_comm_per_program[program] = program.communication_plan_ids.filtered(lambda c: c.trigger == 'create')
             // for coupon in self:
-            //     if not create_comm_per_program[coupon.program_id] or not coupon._get_mail_partner():
+            //     if not create_comm_per_program[coupon.program_id] or not coupon._mail_get_customer():
             //         continue
             //     for comm in create_comm_per_program[coupon.program_id]:
             //         mail_template = comm.mail_template_id
@@ -357,7 +400,7 @@ namespace Bamboo.Core.Application.Services
             //         .filtered(lambda c: c.trigger == 'points_reach')\
             //         .sorted('points', reverse=True)
             // for coupon in self:
-            //     if not coupon._get_mail_partner():
+            //     if not coupon._mail_get_customer():
             //         continue
             //     coupon_change = points_changes[coupon]
             //     # Do nothing if coupon lost points or did not change

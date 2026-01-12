@@ -14,7 +14,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<StockLandedCost> ButtonValidateAsync(Guid id);
         Task<StockLandedCost> ComputeLandedCostAsync(Guid id);
         Task<StockLandedCost> GetValuationLinesAsync(Guid id);
-        Task<StockLandedCost> ReconcileLandedCostAsync(Guid id);
-        Task<StockLandedCost> ViewStockValuationLayersAsync(Guid id);
     }
 }

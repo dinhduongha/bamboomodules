@@ -15,7 +15,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<HrLeaveAllocation> ApproveAsync(Guid id);
         Task<HrLeaveAllocation> MessageSubscribeAsync(Guid id, HrLeaveAllocationMessageSubscribeRequestDto input);
         Task<HrLeaveAllocation> RefuseAsync(Guid id);
-        Task<HrLeaveAllocation> SetToConfirmAsync(Guid id);
-        Task<HrLeaveAllocation> ValidateAsync(Guid id);
     }
 }

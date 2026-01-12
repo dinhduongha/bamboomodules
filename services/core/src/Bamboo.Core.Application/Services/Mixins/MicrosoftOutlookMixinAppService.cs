@@ -56,7 +56,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     details = _('(scheduled for %s)', format_date(self.env, mailing_id.schedule_date))
             //     return f'{base} {details}'
             // 
-            // usages_super = super(IrMailServer, self)._active_usages_compute()
+            // usages_super = super()._active_usages_compute()
             // default_mail_server_id = self.env['mailing.mailing']._get_default_mail_server_id()
             // for record in self:
             //     usages = []
@@ -79,11 +79,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> BuildEmailAsync<TEntity>(IEnumerable<TEntity> entities, object email_from, object email_to, object subject, object body, object email_cc, object email_bcc, object reply_to, object attachments, Guid message_id, object references, Guid object_id, object subtype, object headers, object body_alternative, object subtype_alternative) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        public async Task<TEntity> AlterMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object smtp_from, object smtp_to_list) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def build_email(self, email_from, email_to, subject, body, email_cc=None, email_bcc=None, reply_to=False,
+            // def _alter_message__(self, message, smtp_from, smtp_to_list):  # noqa: PLW3201
+            // # `To:` header forged, e.g. for posting on discuss.channels, to avoid confusion
+            // if x_forge_to := message['X-Forge-To']:
+            //     message.replace_header('To', x_forge_to)
+            // # `To:` header extended, e.g. for adding "virtual" recipients, aka fake recipients
+            // # that do not impact SMTP To
+            // elif x_msg_add_to := message['X-Msg-To-Add']:
+            //     to = message['To'] or ''
+            //     to_normalized = tools.mail.email_normalize_all(to)
+            //     message.replace_header(
+            //         'To', ', '.join([
+            //             to,
+            //             ', '.join(
+            //                 address for address in tools.mail.email_split_and_format(x_msg_add_to)
+            //                 if tools.mail.email_normalize(address, strict=False) not in to_normalized
+            //             ),
+            //         ]
+            //         ))
+            // 
+            // if message['From'] != smtp_from:
+            //     message.replace_header('From', smtp_from)
+            // 
+            // # cleanup unwanted headers
+            // del message['Bcc']                   # see odoo/odoo@2445f9e3c22db810d61996afde883e4ca608f15b
+            // del message['X-Forge-To']
+            // del message['X-Msg-To-Add']
+            // del message['X-Msg-To-Consolidate']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> BuildEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_from, object email_to, object subject, object body, object email_cc, object email_bcc, object reply_to, object attachments, Guid message_id, object references, Guid object_id, object subtype, object headers, object body_alternative, object subtype_alternative) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _build_email__(self, email_from, email_to, subject, body, email_cc=None, email_bcc=None, reply_to=False,  # noqa: PLW3201
             //             attachments=None, message_id=None, references=None, object_id=False, subtype='plain', headers=None,
             //             body_alternative=None, subtype_alternative='plain'):
             // """Constructs an RFC2822 email.message.Message object based on the keyword arguments passed, and returns it.
@@ -161,8 +196,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for (fname, fcontent, mime) in attachments:
             //         maintype, subtype = mime.split('/') if mime and '/' in mime else ('application', 'octet-stream')
             //         if maintype == 'message' and subtype == 'rfc822':
-            //             #  Use binary encoding for "message/rfc822" attachments (see RFC 2046 Section 5.2.1)
-            //             msg.add_attachment(fcontent, maintype, subtype, filename=fname, cte='binary')
+            //             msg.add_attachment(BytesParser().parsebytes(fcontent), filename=fname)
             //         else:
             //             msg.add_attachment(fcontent, maintype, subtype, filename=fname)
             // return msg
@@ -178,7 +212,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for server in self:
             //     connection = None
             //     try:
-            //         connection = server.connect(allow_archived=True)
+            //         connection = server._connect__(allow_archived=True)
             //         server.write({'state': 'done'})
             //     except UnicodeError as e:
             //         raise UserError(_("Invalid server name!\n %s", tools.exception_to_unicode(e)))
@@ -194,15 +228,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     finally:
             //         try:
             //             if connection:
-            //                 connection_type = server._get_connection_type()
-            //                 if connection_type == 'imap':
-            //                     connection.close()
-            //                 elif connection_type == 'pop':
-            //                     connection.quit()
+            //                 connection.disconnect()
             //         except Exception:
             //             # ignored, just a consequence of the previous exception
             //             pass
             // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckForcedMailServerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_server, object allow_archived, object smtp_from) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _check_forced_mail_server(self, mail_server, allow_archived, smtp_from):
+            // super()._check_forced_mail_server(mail_server, allow_archived, smtp_from)
+            // 
+            // if mail_server.owner_user_id:
+            //     if email_normalize(smtp_from) != mail_server.from_filter:
+            //         raise UserError(_('The server "%s" cannot be forced as it belongs to a user.', mail_server.display_name))
+            //     if not mail_server.active:
+            //         raise UserError(_('The server "%s" cannot be forced as it belongs to a user and is archived.', mail_server.display_name))
+            //     if mail_server.owner_user_id.outgoing_mail_server_id != mail_server:
+            //         raise UserError(_('The server "%s" cannot be forced as the owner does not use it anymore.', mail_server.display_name))
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _check_forced_mail_server(self, mail_server, allow_archived, smtp_from):
+            // if not allow_archived and not mail_server.active:
+            //     raise UserError(_('The server "%s" cannot be used because it is archived.', mail_server.display_name))
             */
             return default;
         }
@@ -225,24 +277,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckUseGoogleGmailServiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: ir_mail_server.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: fetchmail_server.py) ---
             // def _check_use_google_gmail_service(self):
-            // gmail_servers = self.filtered(lambda server: server.smtp_authentication == 'gmail')
-            // for server in gmail_servers:
-            //     if server.smtp_pass:
-            //         raise UserError(_(
-            //             'Please leave the password field empty for Gmail mail server “%s”. '
-            //             'The OAuth process does not require it', server.name))
-            // 
-            //     if server.smtp_encryption != 'starttls':
-            //         raise UserError(_(
-            //             'Incorrect Connection Security for Gmail mail server “%s”. '
-            //             'Please set it to "TLS (STARTTLS)".', server.name))
-            // 
-            //     if not server.smtp_user:
-            //         raise UserError(_(
-            //             'Please fill the "Username" field with your Gmail username (your email address). '
-            //             'This should be the same account as the one used for the Gmail OAuthentication Token.'))
+            // for server in self:
+            //     if server.server_type == 'gmail' and not server.is_ssl:
+            //         raise UserError(_('SSL is required for server “%s”.', server.name))
             */
             return default;
         }
@@ -277,29 +316,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeIsMicrosoftOutlookConfiguredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: fetchmail_server.py) ---
-            // def _compute_is_microsoft_outlook_configured(self):
-            // outlook_servers = self.filtered(lambda server: server.server_type == 'outlook')
-            // (self - outlook_servers).is_microsoft_outlook_configured = False
-            // super(FetchmailServer, outlook_servers)._compute_is_microsoft_outlook_configured()
-            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
-            // def _compute_is_microsoft_outlook_configured(self):
-            // outlook_servers = self.filtered(lambda server: server.smtp_authentication == 'outlook')
-            // (self - outlook_servers).is_microsoft_outlook_configured = False
-            // super(IrMailServer, outlook_servers)._compute_is_microsoft_outlook_configured()
-            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: microsoft_outlook_mixin.py) ---
-            // def _compute_is_microsoft_outlook_configured(self):
-            // Config = self.env['ir.config_parameter'].sudo()
-            // microsoft_outlook_client_id = Config.get_param('microsoft_outlook_client_id')
-            // microsoft_outlook_client_secret = Config.get_param('microsoft_outlook_client_secret')
-            // self.is_microsoft_outlook_configured = microsoft_outlook_client_id and microsoft_outlook_client_secret
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeOutlookUriInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
@@ -308,9 +324,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // Config = self.env['ir.config_parameter'].sudo()
             // base_url = self.get_base_url()
             // microsoft_outlook_client_id = Config.get_param('microsoft_outlook_client_id')
+            // microsoft_outlook_client_secret = Config.get_param('microsoft_outlook_client_secret')
+            // is_configured = microsoft_outlook_client_id and microsoft_outlook_client_secret
             // 
             // for record in self:
-            //     if not record.id or not record.is_microsoft_outlook_configured:
+            //     if not is_configured:
             //         record.microsoft_outlook_uri = False
             //         continue
             // 
@@ -320,12 +338,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'redirect_uri': url_join(base_url, '/microsoft_outlook/confirm'),
             //         'response_mode': 'query',
             //         # offline_access is needed to have the refresh_token
-            //         'scope': 'offline_access %s' % self._OUTLOOK_SCOPE,
+            //         'scope': f'openid email offline_access https://outlook.office.com/User.read {self._OUTLOOK_SCOPE}',
             //         'state': json.dumps({
             //             'model': record._name,
             //             'id': record.id,
             //             'csrf_token': record._get_outlook_csrf_token(),
-            //         })
+            //         }),
             //     }))
             */
             return default;
@@ -356,150 +374,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'Connect your Outlook account with the OAuth Authentication process.  \n'
             //     'By default, only a user with a matching email address will be able to use this server. '
             //     'To extend its use, you should set a "mail.default.from" system parameter.')
-            // super(IrMailServer, self - outlook_servers)._compute_smtp_authentication_info()
+            // super(IrMail_Server, self - outlook_servers)._compute_smtp_authentication_info()
             */
             return default;
         }
 
-        public async Task<TEntity> ConnectAsync<TEntity>(IEnumerable<TEntity> entities, object host, object port, object user, object password, object encryption, object smtp_from, object ssl_certificate, object ssl_private_key, object smtp_debug, Guid mail_server_id, object allow_archived) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        public async Task<TEntity> ConnectInternalAsync<TEntity>(IEnumerable<TEntity> entities, object allow_archived) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def connect(self, host=None, port=None, user=None, password=None, encryption=None,
-            //         smtp_from=None, ssl_certificate=None, ssl_private_key=None, smtp_debug=False, mail_server_id=None,
-            //         allow_archived=False):
-            // """Returns a new SMTP connection to the given SMTP server.
-            //    When running in test mode, this method does nothing and returns `None`.
-            // 
-            //    :param host: host or IP of SMTP server to connect to, if mail_server_id not passed
-            //    :param int port: SMTP port to connect to
-            //    :param user: optional username to authenticate with
-            //    :param password: optional password to authenticate with
-            //    :param string encryption: optional, ``'ssl'`` | ``'starttls'``
-            //    :param smtp_from: FROM SMTP envelop, used to find the best mail server
-            //    :param ssl_certificate: filename of the SSL certificate used for authentication
-            //        Used when no mail server is given and overwrite  the odoo-bin argument "smtp_ssl_certificate"
-            //    :param ssl_private_key: filename of the SSL private key used for authentication
-            //        Used when no mail server is given and overwrite  the odoo-bin argument "smtp_ssl_private_key"
-            //    :param bool smtp_debug: toggle debugging of SMTP sessions (all i/o
-            //                       will be output in logs)
-            //    :param mail_server_id: ID of specific mail server to use (overrides other parameters)
-            //    :param bool allow_archived: by default (False), an exception is raised when calling this method on an
-            //    archived record (using mail_server_id param). It can be set to True for testing so that the exception is no
-            //    longer raised.
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
+            // def _connect__(self, allow_archived=False):  # noqa: PLW3201
             // """
-            // # Do not actually connect while running in test mode
-            // if modules.module.current_test:
-            //     return
-            // mail_server = smtp_encryption = None
-            // if mail_server_id:
-            //     mail_server = self.sudo().browse(mail_server_id)
-            //     if not allow_archived and not mail_server.active:
-            //         raise UserError(_('The server "%s" cannot be used because it is archived.', mail_server.display_name))
-            // elif not host:
-            //     mail_server, smtp_from = self.sudo()._find_mail_server(smtp_from)
-            // 
-            // if not mail_server:
-            //     mail_server = self.env['ir.mail_server']
-            // ssl_context = None
-            // 
-            // if mail_server and mail_server.smtp_authentication != "cli":
-            //     smtp_server = mail_server.smtp_host
-            //     smtp_port = mail_server.smtp_port
-            //     if mail_server.smtp_authentication == "certificate":
-            //         smtp_user = None
-            //         smtp_password = None
-            //     else:
-            //         smtp_user = mail_server.smtp_user
-            //         smtp_password = mail_server.smtp_pass
-            //     smtp_encryption = mail_server.smtp_encryption
-            //     smtp_debug = smtp_debug or mail_server.smtp_debug
-            //     from_filter = mail_server.from_filter
-            //     if mail_server.smtp_authentication == "certificate":
-            //         try:
-            //             ssl_context = PyOpenSSLContext(ssl.PROTOCOL_TLS)
-            //             smtp_ssl_certificate = base64.b64decode(mail_server.smtp_ssl_certificate)
-            //             certificate = SSLCrypto.load_certificate(FILETYPE_PEM, smtp_ssl_certificate)
-            //             smtp_ssl_private_key = base64.b64decode(mail_server.smtp_ssl_private_key)
-            //             private_key = SSLCrypto.load_privatekey(FILETYPE_PEM, smtp_ssl_private_key)
-            //             ssl_context._ctx.use_certificate(certificate)
-            //             ssl_context._ctx.use_privatekey(private_key)
-            //             # Check that the private key match the certificate
-            //             ssl_context._ctx.check_privatekey()
-            //         except SSLCryptoError as e:
-            //             raise UserError(_('The private key or the certificate is not a valid file. \n%s', str(e)))
-            //         except SSLError as e:
-            //             raise UserError(_('Could not load your certificate / private key. \n%s', str(e)))
-            // 
-            // else:
-            //     # we were passed individual smtp parameters or nothing and there is no default server
-            //     smtp_server = host or tools.config.get('smtp_server')
-            //     smtp_port = tools.config.get('smtp_port', 25) if port is None else port
-            //     smtp_user = user or tools.config.get('smtp_user')
-            //     smtp_password = password or tools.config.get('smtp_password')
-            //     if mail_server:
-            //         from_filter = mail_server.from_filter
-            //     else:
-            //         from_filter = self.env['ir.mail_server']._get_default_from_filter()
-            // 
-            //     smtp_encryption = encryption
-            //     if smtp_encryption is None and tools.config.get('smtp_ssl'):
-            //         smtp_encryption = 'starttls' # smtp_ssl => STARTTLS as of v7
-            //     smtp_ssl_certificate_filename = ssl_certificate or tools.config.get('smtp_ssl_certificate_filename')
-            //     smtp_ssl_private_key_filename = ssl_private_key or tools.config.get('smtp_ssl_private_key_filename')
-            // 
-            //     if smtp_ssl_certificate_filename and smtp_ssl_private_key_filename:
-            //         try:
-            //             ssl_context = PyOpenSSLContext(ssl.PROTOCOL_TLS)
-            //             ssl_context.load_cert_chain(smtp_ssl_certificate_filename, keyfile=smtp_ssl_private_key_filename)
-            //             # Check that the private key match the certificate
-            //             ssl_context._ctx.check_privatekey()
-            //         except SSLCryptoError as e:
-            //             raise UserError(_('The private key or the certificate is not a valid file. \n%s', str(e)))
-            //         except SSLError as e:
-            //             raise UserError(_('Could not load your certificate / private key. \n%s', str(e)))
-            // 
-            // if not smtp_server:
-            //     raise UserError(_(
-            //         "Missing SMTP Server\n"
-            //         "Please define at least one SMTP server, "
-            //         "or provide the SMTP parameters explicitly.",
-            //     ))
-            // 
-            // if smtp_encryption == 'ssl':
-            //     if 'SMTP_SSL' not in smtplib.__all__:
-            //         raise UserError(
-            //             _("Your Odoo Server does not support SMTP-over-SSL. "
-            //               "You could use STARTTLS instead. "
-            //                "If SSL is needed, an upgrade to Python 2.6 on the server-side "
-            //                "should do the trick."))
-            // connection = SMTPConnection(smtp_server, smtp_port, smtp_encryption, context=ssl_context)
-            // connection.set_debuglevel(smtp_debug)
-            // if smtp_encryption == 'starttls':
-            //     # starttls() will perform ehlo() if needed first
-            //     # and will discard the previous list of services
-            //     # after successfully performing STARTTLS command,
-            //     # (as per RFC 3207) so for example any AUTH
-            //     # capability that appears only on encrypted channels
-            //     # will be correctly detected for next step
-            //     connection.starttls(context=ssl_context)
-            // 
-            // if smtp_user:
-            //     # Attempt authentication - will raise if AUTH service not supported
-            //     local, at, domain = smtp_user.rpartition('@')
-            //     if at:
-            //         smtp_user = local + at + idna.encode(domain).decode('ascii')
-            //     mail_server._smtp_login(connection, smtp_user, smtp_password or '')
-            // 
-            // # Some methods of SMTP don't check whether EHLO/HELO was sent.
-            // # Anyway, as it may have been sent by login(), all subsequent usages should consider this command as sent.
-            // connection.ehlo_or_helo_if_needed()
-            // 
-            // # Store the "from_filter" of the mail server / odoo-bin argument to  know if we
-            // # need to change the FROM headers or not when we will prepare the mail message
-            // connection.from_filter = from_filter
-            // connection.smtp_from = smtp_from
-            // 
+            // :param bool allow_archived: by default (False), an exception is raised when calling this method on an
+            //    archived record. It can be set to True for testing so that the exception is no longer raised.
+            // """
+            // self.ensure_one()
+            // if not allow_archived and not self.active:
+            //     raise UserError(_('The server "%s" cannot be used because it is archived.', self.display_name))
+            // connection_type = self._get_connection_type()
+            // if connection_type == 'imap':
+            //     server, port, is_ssl = self.server, int(self.port), self.is_ssl
+            //     connection = OdooIMAP4_SSL(server, port, timeout=MAIL_TIMEOUT) if is_ssl else OdooIMAP4(server, port, timeout=MAIL_TIMEOUT)
+            //     self._imap_login__(connection)
+            // elif connection_type == 'pop':
+            //     server, port, is_ssl = self.server, int(self.port), self.is_ssl
+            //     connection = OdooPOP3_SSL(server, port, timeout=MAIL_TIMEOUT) if is_ssl else OdooPOP3(server, port, timeout=MAIL_TIMEOUT)
+            //     #TODO: use this to remove only unread messages
+            //     #connection.user("recent:"+server.user)
+            //     connection.user(self.user)
+            //     connection.pass_(self.password)
             // return connection
             */
             return default;
@@ -510,98 +413,122 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
             // def create(self, vals_list):
-            // res = super(FetchmailServer, self).create(vals_list)
+            // res = super().create(vals_list)
             // self._update_cron()
             // return res
             */
             return default;
         }
 
-        public async Task<TEntity> FetchMailAsync<TEntity>(IEnumerable<TEntity> entities, object raise_exception) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        protected async Task<object> DisableSendInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _disable_send(cls):
+            // """Whether to disable sending e-mails"""
+            // # no e-mails during testing or when registry is initializing
+            // return modules.module.current_test or cls.pool._init
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FetchMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def fetch_mail(self, raise_exception=True):
-            // """ WARNING: meant for cron usage only - will commit() after each email! """
-            // additionnal_context = {
-            //     'fetchmail_cron_running': True
-            // }
-            // MailThread = self.env['mail.thread']
-            // for server in self:
-            //     _logger.info('start checking for new emails on %s server %s', server.server_type, server.name)
-            //     additionnal_context['default_fetchmail_server_id'] = server.id
+            // def fetch_mail(self):
+            // """ Action to fetch the mail from the current server. """
+            // self.ensure_one().check_access('write')
+            // exception = self.sudo()._fetch_mail()
+            // if exception is not None:
+            //     raise exception
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FetchMailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object batch_limit) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
+            // def _fetch_mail(self, batch_limit=50) -> Exception | None:
+            // """ Fetch e-mails from multiple servers.
+            // 
+            // Commit after each message.
+            // """
+            // result_exception = None
+            // servers = self.with_context(fetchmail_cron_running=True)
+            // total_remaining = len(servers)  # number of remaining messages + number of unchecked servers
+            // self.env['ir.cron']._commit_progress(remaining=total_remaining)
+            // 
+            // for server in servers:
+            //     total_remaining -= 1  # the server is checked
+            //     if not server.try_lock_for_update(allow_referencing=True).filtered_domain(MAIL_SERVER_DOMAIN):
+            //         _logger.info('Skip checking for new mails on mail server id %d (unavailable)', server.id)
+            //         continue
+            //     server_type_and_name = server.server_type, server.name  # avoid reading this after each commit
+            //     _logger.info('Start checking for new emails on %s server %s', *server_type_and_name)
             //     count, failed = 0, 0
-            //     imap_server = None
-            //     pop_server = None
-            //     connection_type = server._get_connection_type()
-            //     if connection_type == 'imap':
+            // 
+            //     # processing messages in a separate transaction to keep lock on the server
+            //     server_connection = None
+            //     message_cr = None
+            //     try:
+            //         server_connection = server._connect__()
+            //         message_cr = self.env.registry.cursor()
+            //         MailThread = server.env['mail.thread'].with_env(self.env(cr=message_cr)).with_context(default_fetchmail_server_id=server.id)
+            //         thread_process_message = functools.partial(
+            //             MailThread.message_process,
+            //             model=server.object_id.model,
+            //             save_original=server.original,
+            //             strip_attachments=(not server.attach),
+            //         )
+            //         unread_message_count = server_connection.check_unread_messages()
+            //         _logger.debug('%d unread messages on %s server %s.', unread_message_count, *server_type_and_name)
+            //         total_remaining += unread_message_count
+            //         for message_num, message in server_connection.retrieve_unread_messages():
+            //             _logger.debug('Fetched message %r on %s server %s.', message_num, *server_type_and_name)
+            //             count += 1
+            //             total_remaining -= 1
+            //             try:
+            //                 thread_process_message(message=message)
+            //                 remaining_time = MailThread.env['ir.cron']._commit_progress(1)
+            //             except Exception:  # noqa: BLE001
+            //                 MailThread.env.cr.rollback()
+            //                 failed += 1
+            //                 _logger.info('Failed to process mail from %s server %s.', *server_type_and_name, exc_info=True)
+            //                 remaining_time = MailThread.env['ir.cron']._commit_progress()
+            //             server_connection.handled_message(message_num)
+            //             if count >= batch_limit or not remaining_time:
+            //                 break
+            //         server.error_date = False
+            //         server.error_message = False
+            //     except Exception as e:  # noqa: BLE001
+            //         result_exception = e
+            //         _logger.info("General failure when trying to fetch mail from %s server %s.", *server_type_and_name, exc_info=True)
+            //         if not server.error_date:
+            //             server.error_date = fields.Datetime.now()
+            //             server.error_message = exception_to_unicode(e)
+            //         elif server.error_date < fields.Datetime.now() - MAIL_SERVER_DEACTIVATE_TIME:
+            //             message = "Deactivating fetchmail %s server %s (too many failures)" % server_type_and_name
+            //             server.set_draft()
+            //             server.env['ir.cron']._notify_admin(message)
+            //     finally:
+            //         if message_cr is not None:
+            //             message_cr.close()
             //         try:
-            //             imap_server = server.connect()
-            //             imap_server.select()
-            //             result, data = imap_server.search(None, '(UNSEEN)')
-            //             for num in data[0].split():
-            //                 res_id = None
-            //                 result, data = imap_server.fetch(num, '(RFC822)')
-            //                 imap_server.store(num, '-FLAGS', '\\Seen')
-            //                 try:
-            //                     res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, data[0][1], save_original=server.original, strip_attachments=(not server.attach))
-            //                 except Exception:
-            //                     _logger.info('Failed to process mail from %s server %s.', server.server_type, server.name, exc_info=True)
-            //                     failed += 1
-            //                 imap_server.store(num, '+FLAGS', '\\Seen')
-            //                 self._cr.commit()
-            //                 count += 1
-            //             _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", count, server.server_type, server.name, (count - failed), failed)
-            //         except Exception as e:
-            //             if raise_exception:
-            //                 raise ValidationError(_("Couldn't get your emails. Check out the error message below for more info:\n%s", e)) from e
-            //             else:
-            //                 _logger.info("General failure when trying to fetch mail from %s server %s.", server.server_type, server.name, exc_info=True)
-            //         finally:
-            //             if imap_server:
-            //                 try:
-            //                     imap_server.close()
-            //                     imap_server.logout()
-            //                 except (OSError, IMAP4.abort):
-            //                     _logger.warning('Failed to properly finish imap connection: %s.', server.name, exc_info=True)
-            //     elif connection_type == 'pop':
-            //         try:
-            //             while True:
-            //                 failed_in_loop = 0
-            //                 num = 0
-            //                 pop_server = server.connect()
-            //                 (num_messages, total_size) = pop_server.stat()
-            //                 pop_server.list()
-            //                 for num in range(1, min(MAX_POP_MESSAGES, num_messages) + 1):
-            //                     (header, messages, octets) = pop_server.retr(num)
-            //                     message = (b'\n').join(messages)
-            //                     res_id = None
-            //                     try:
-            //                         res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, message, save_original=server.original, strip_attachments=(not server.attach))
-            //                         pop_server.dele(num)
-            //                     except Exception:
-            //                         _logger.info('Failed to process mail from %s server %s.', server.server_type, server.name, exc_info=True)
-            //                         failed += 1
-            //                         failed_in_loop += 1
-            //                     self.env.cr.commit()
-            //                 _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", num, server.server_type, server.name, (num - failed_in_loop), failed_in_loop)
-            //                 # Stop if (1) no more message left or (2) all messages have failed
-            //                 if num_messages < MAX_POP_MESSAGES or failed_in_loop == num:
-            //                     break
-            //                 pop_server.quit()
-            //         except Exception as e:
-            //             if raise_exception:
-            //                 raise ValidationError(_("Couldn't get your emails. Check out the error message below for more info:\n%s", e)) from e
-            //             else:
-            //                 _logger.info("General failure when trying to fetch mail from %s server %s.", server.server_type, server.name, exc_info=True)
-            //         finally:
-            //             if pop_server:
-            //                 try:
-            //                     pop_server.quit()
-            //                 except OSError:
-            //                     _logger.warning('Failed to properly finish pop connection: %s.', server.name, exc_info=True)
+            //             if server_connection:
+            //                 server_connection.disconnect()
+            //         except (OSError, IMAP4.abort):
+            //             _logger.warning('Failed to properly finish %s connection: %s.', *server_type_and_name, exc_info=True)
+            //     _logger.info("Fetched %d email(s) on %s server %s; %d succeeded, %d failed.", count, *server_type_and_name, (count - failed), failed)
             //     server.write({'date': fields.Datetime.now()})
-            // return True
+            //     # Commit before updating the progress because progress may be
+            //     # updated for messages using another transaction. Without a commit
+            //     # before updating the progress, we would have a serialization error.
+            //     self.env.cr.commit()
+            //     if not self.env['ir.cron']._commit_progress(remaining=total_remaining):
+            //         break
+            // return result_exception
             */
             return default;
         }
@@ -610,9 +537,51 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
-            // def _fetch_mails(self):
+            // def _fetch_mails(self, **kw):
             // """ Method called by cron to fetch mails from servers """
-            // return self.search([('state', '=', 'done'), ('server_type', '!=', 'local')]).fetch_mail(raise_exception=False)
+            // assert self.env.context.get('cron_id') == self.env.ref('mail.ir_cron_mail_gateway_action').id, "Meant for cron usage only"
+            // self.search(MAIL_SERVER_DOMAIN)._fetch_mail(**kw)
+            // if not self.search_count(MAIL_SERVER_DOMAIN):
+            //     # no server is active anymore
+            //     self.env['ir.cron']._commit_progress(deactivate=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FetchOutlookAccessTokenIapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object refresh_token) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: microsoft_outlook_mixin.py) ---
+            // def _fetch_outlook_access_token_iap(self, refresh_token):
+            // """Fetch the access token using IAP.
+            // 
+            // Make a HTTP request to IAP, that will make a HTTP request
+            // to the Outlook API and give us the result.
+            // 
+            // :return:
+            //     access_token, access_token_expiration
+            // """
+            // outlook_iap_endpoint = self.env['ir.config_parameter'].sudo().get_param(
+            //     'mail.server.outlook.iap.endpoint',
+            //     self.env['microsoft.outlook.mixin']._DEFAULT_OUTLOOK_IAP_ENDPOINT,
+            // )
+            // db_uuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+            // 
+            // response = requests.get(
+            //     url_join(outlook_iap_endpoint, '/api/mail_oauth/1/outlook_access_token'),
+            //     params={'refresh_token': refresh_token, 'db_uuid': db_uuid},
+            //     timeout=OUTLOOK_TOKEN_REQUEST_TIMEOUT,
+            // )
+            // 
+            // if not response.ok:
+            //     _logger.error('Can not contact IAP: %s.', response.text)
+            //     raise UserError(_('Oops, we could not authenticate you. Please try again later.'))
+            // 
+            // response = response.json()
+            // if 'error' in response:
+            //     self._raise_iap_error(response['error'])
+            // 
+            // return response
             */
             return default;
         }
@@ -627,10 +596,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return:
             //     access_token, access_token_expiration
             // """
+            // Config = self.env['ir.config_parameter'].sudo()
+            // microsoft_outlook_client_id = Config.get_param('microsoft_outlook_client_id')
+            // microsoft_outlook_client_secret = Config.get_param('microsoft_outlook_client_secret')
+            // if not microsoft_outlook_client_id or not microsoft_outlook_client_secret:
+            //     return self._fetch_outlook_access_token_iap(refresh_token)
+            // 
             // response = self._fetch_outlook_token('refresh_token', refresh_token=refresh_token)
             // return (
             //     response['refresh_token'],
             //     response['access_token'],
+            //     response['id_token'],
             //     int(time.time()) + int(response['expires_in']),
             // )
             */
@@ -645,7 +621,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Request the refresh token and the initial access token from the authorization code.
             // 
             // :return:
-            //     refresh_token, access_token, access_token_expiration
+            //     refresh_token, access_token, id_token, access_token_expiration
             // """
             // response = self._fetch_outlook_token('authorization_code', code=authorization_code)
             // return (
@@ -679,12 +655,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     data={
             //         'client_id': microsoft_outlook_client_id,
             //         'client_secret': microsoft_outlook_client_secret,
-            //         'scope': 'offline_access %s' % self._OUTLOOK_SCOPE,
+            //         'scope': f'openid email offline_access https://outlook.office.com/User.read {self._OUTLOOK_SCOPE}',
             //         'redirect_uri': url_join(base_url, '/microsoft_outlook/confirm'),
             //         'grant_type': grant_type,
             //         **values,
             //     },
-            //     timeout=10,
+            //     timeout=OUTLOOK_TOKEN_REQUEST_TIMEOUT,
             // )
             // 
             // if not response.ok:
@@ -699,6 +675,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> FilterMailServersFallbackInternalAsync<TEntity>(IEnumerable<TEntity> entities, object servers) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _filter_mail_servers_fallback(self, servers):
+            // return servers.filtered(lambda s: not s.owner_user_id)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _filter_mail_servers_fallback(self, servers):
+            // """Filter the mail servers that can be used as fallback, or for default email from."""
+            // return servers
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FindMailServerAllowedDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_mail_server.py) ---
+            // def _find_mail_server_allowed_domain(self):
+            // """Restrict search to 'public' servers."""
+            // domain = super()._find_mail_server_allowed_domain()
+            // domain &= Domain('owner_user_id', '=', False)
+            // return domain
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _find_mail_server_allowed_domain(self):
+            // """Overridable domain getter for all mail servers that may be used as default."""
+            // return fields.Domain.TRUE
+            */
+            return default;
+        }
+
         public async Task<TEntity> FindMailServerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_from, object mail_servers) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
@@ -706,10 +713,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _find_mail_server(self, email_from, mail_servers=None):
             // """Find the appropriate mail server for the given email address.
             // 
-            // Returns: Record<ir.mail_server>, email_from
-            // - Mail server to use to send the email (None if we use the odoo-bin arguments)
-            // - Email FROM to use to send the email (in some case, it might be impossible
-            //   to use the given email address directly if no mail server is configured for)
+            // :rtype: tuple[IrMail_Server | None, str]
+            // :returns: A two-elements tuple: ``(Record<ir.mail_server>, email_from)``
+            // 
+            //   1. Mail server to use to send the email (``None`` if we use the odoo-bin arguments)
+            //   2. Email FROM to use to send the email (in some case, it might be impossible
+            //      to use the given email address directly if no mail server is configured for)
             // """
             // email_from_normalized = email_normalize(email_from)
             // email_from_domain = email_domain_extract(email_from_normalized)
@@ -717,7 +726,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // notifications_domain = email_domain_extract(notifications_email)
             // 
             // if mail_servers is None:
-            //     mail_servers = self.sudo().search([], order='sequence')
+            //     mail_servers = self.sudo().search(self._find_mail_server_allowed_domain(), order='sequence')
             // # 0. Archived mail server should never be used
             // mail_servers = mail_servers.filtered('active')
             // 
@@ -737,6 +746,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     if mail_server := first_match(email_from_domain, email_domain_normalize):
             //         return mail_server, email_from
+            // 
+            // mail_servers = self._filter_mail_servers_fallback(mail_servers)
             // 
             // # 2. Try to find a mail server for <notifications@domain.com>
             // if notifications_email:
@@ -785,19 +796,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _generate_outlook_oauth2_string(self, login):
             // """Generate a OAuth2 string which can be used for authentication.
             // 
-            // :param user: Email address of the Outlook account to authenticate
+            // :param login: Email address of the Outlook account to authenticate
             // :return: The SASL argument for the OAuth2 mechanism.
             // """
             // self.ensure_one()
             // now_timestamp = int(time.time())
             // if not self.microsoft_outlook_access_token \
             //    or not self.microsoft_outlook_access_token_expiration \
-            //    or self.microsoft_outlook_access_token_expiration < now_timestamp:
+            //    or self.microsoft_outlook_access_token_expiration - OUTLOOK_TOKEN_VALIDITY_THRESHOLD < now_timestamp:
             //     if not self.microsoft_outlook_refresh_token:
             //         raise UserError(_('Please connect with your Outlook account before using it.'))
             //     (
             //         self.microsoft_outlook_refresh_token,
             //         self.microsoft_outlook_access_token,
+            //         _id_token,
             //         self.microsoft_outlook_access_token_expiration,
             //     ) = self._fetch_outlook_access_token(self.microsoft_outlook_refresh_token)
             //     _logger.info(
@@ -842,7 +854,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Computes the default bounce address. It is used to set the envelop
             // address if no envelop address is provided in the message.
             // 
-            // :return str/None: defaults to the ``--email-from`` CLI/config parameter.
+            // :return: defaults to the ``--email-from`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return tools.config.get("email_from")
             */
@@ -864,7 +877,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Computes the default from address. It is used for the "header from"
             // address when no other has been received.
             // 
-            // :return str/None: defaults to the ``--email-from`` CLI/config parameter.
+            // :return: defaults to the ``--email-from`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return tools.config.get("email_from")
             */
@@ -880,8 +894,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ir.mail_server is used when sending emails, hence having no value for
             // from_filter.
             // 
-            // :return str/None: defaults to 'mail.default.from_filter', then
+            // :return: defaults to 'mail.default.from_filter', then
             //   ``--from-filter`` CLI/config parameter.
+            // :rtype: str | None
             // """
             // return self.env['ir.config_parameter'].sudo().get_param(
             //     'mail.default.from_filter', tools.config.get('from_filter')
@@ -935,6 +950,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetPersonalMailServersLimitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
+            // def _get_personal_mail_servers_limit(self):
+            // """Return the number of email we can send in 1 minutes for this outgoing server.
+            // 
+            // 0 fallbacks to 30 to avoid blocking servers.
+            // """
+            // if self.smtp_authentication == 'outlook':
+            //     # Outlook flag way faster email as spam, so we set a lower limit
+            //     return int(self.env['ir.config_parameter'].sudo()
+            //         .get_param('mail.server.personal.limit.minutes_outlook')) or 10
+            // return super()._get_personal_mail_servers_limit()
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetTestEmailFromInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
@@ -963,7 +996,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_test_email_from(self):
             // self.ensure_one()
             // email_from = False
-            // if from_filter_parts := [part.strip() for part in (self.from_filter or '').split(",") if part.strip()]:
+            // if from_filter_parts := self._parse_from_filter(self.from_filter):
             //     # find first found complete email in filter parts
             //     email_from = next((email for email in from_filter_parts if "@" in email), False)
             //     # no complete email -> consider noreply
@@ -994,7 +1027,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: fetchmail_server.py) ---
-            // def _imap_login(self, connection):
+            // def _imap_login__(self, connection):  # noqa: PLW3201
             // """Authenticate the IMAP connection.
             // 
             // If the mail server is Outlook, we use the OAuth2 authentication protocol.
@@ -1005,7 +1038,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     connection.authenticate('XOAUTH2', lambda x: auth_string)
             //     connection.select('INBOX')
             // else:
-            //     super()._imap_login(connection)
+            //     super()._imap_login__(connection)
             */
             return default;
         }
@@ -1026,7 +1059,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // normalized_mail_from = email_normalize(email_from)
             // normalized_domain = email_domain_extract(normalized_mail_from)
             // 
-            // for email_filter in [part.strip() for part in (from_filter or '').split(',') if part.strip()]:
+            // for email_filter in self._parse_from_filter(from_filter):
             //     if '@' in email_filter and email_normalize(email_filter) == normalized_mail_from:
             //         return True
             //     if '@' not in email_filter and email_domain_normalize(email_filter) == normalized_domain:
@@ -1088,7 +1121,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.microsoft_outlook_refresh_token = False
             //     self.microsoft_outlook_access_token = False
             //     self.microsoft_outlook_access_token_expiration = False
-            //     super(FetchmailServer, self).onchange_server_type()
+            //     super().onchange_server_type()
             */
             return default;
         }
@@ -1103,7 +1136,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.smtp_encryption = 'starttls'
             //     self.smtp_port = 587
             // else:
-            //     self.google_gmail_authorization_code = False
             //     self.google_gmail_refresh_token = False
             //     self.google_gmail_access_token = False
             //     self.google_gmail_access_token_expiration = False
@@ -1141,16 +1173,75 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // self.ensure_one()
             // 
-            // if not self.env.user.has_group('base.group_system'):
+            // if not self.env.is_admin():
             //     raise AccessError(_('Only the administrator can link an Outlook mail server.'))
             // 
-            // if not self.is_microsoft_outlook_configured:
+            // email_normalized = email_normalize(self[self._email_field])
+            // 
+            // if not email_normalized:
+            //     raise UserError(_('Please enter a valid email address.'))
+            // 
+            // Config = self.env['ir.config_parameter'].sudo()
+            // microsoft_outlook_client_id = Config.get_param('microsoft_outlook_client_id')
+            // microsoft_outlook_client_secret = Config.get_param('microsoft_outlook_client_secret')
+            // is_configured = microsoft_outlook_client_id and microsoft_outlook_client_secret
+            // 
+            // if not is_configured:  # use IAP (see '/microsoft_outlook/iap_confirm')
+            //     if release.version_info[-1] != 'e':
+            //         raise UserError(_('Please configure your Outlook credentials.'))
+            // 
+            //     outlook_iap_endpoint = self.env['ir.config_parameter'].sudo().get_param(
+            //         'mail.server.outlook.iap.endpoint',
+            //         self._DEFAULT_OUTLOOK_IAP_ENDPOINT,
+            //     )
+            //     db_uuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+            // 
+            //     # final callback URL that will receive the token from IAP
+            //     callback_params = url_encode({
+            //         'model': self._name,
+            //         'rec_id': self.id,
+            //         'csrf_token': self._get_outlook_csrf_token(),
+            //     })
+            //     callback_url = url_join(self.get_base_url(), f'/microsoft_outlook/iap_confirm?{callback_params}')
+            // 
+            //     try:
+            //         response = requests.get(
+            //             url_join(outlook_iap_endpoint, '/api/mail_oauth/1/outlook'),
+            //             params={'db_uuid': db_uuid, 'callback_url': callback_url},
+            //             timeout=OUTLOOK_TOKEN_REQUEST_TIMEOUT)
+            //         response.raise_for_status()
+            //     except requests.exceptions.RequestException as e:
+            //         _logger.error('Can not contact IAP: %s.', e)
+            //         raise UserError(_('Oops, we could not authenticate you. Please try again later.'))
+            // 
+            //     response = response.json()
+            //     if 'error' in response:
+            //         self._raise_iap_error(response['error'])
+            // 
+            //     # URL on IAP that will redirect to Outlook login page
+            //     microsoft_outlook_uri = response['url']
+            // 
+            // else:
+            //     microsoft_outlook_uri = self.microsoft_outlook_uri
+            // 
+            // if not microsoft_outlook_uri:
             //     raise UserError(_('Please configure your Outlook credentials.'))
             // 
             // return {
             //     'type': 'ir.actions.act_url',
-            //     'url': self.microsoft_outlook_uri,
+            //     'url': microsoft_outlook_uri,
+            //     'target': 'self',
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ParseFromFilterInternalAsync<TEntity>(IEnumerable<TEntity> entities, object from_filter) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _parse_from_filter(self, from_filter):
+            // return [part.strip() for part in (from_filter or '').split(',') if part.strip()]
             */
             return default;
         }
@@ -1159,12 +1250,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
-            // def _prepare_email_message(self, message, smtp_session):
+            // def _prepare_email_message__(self, message, smtp_session):  # noqa: PLW3201
             // """Prepare the SMTP information (from, to, message) before sending.
             // 
             // :param message: the email.message.Message to send, information like the
             //     Return-Path, the From, etc... will be used to find the smtp_from and to smtp_to
             // :param smtp_session: the opened SMTP session to use to authenticate the sender
+            // 
             // :return: smtp_from, smtp_to_list, message
             //     smtp_from: email to used during the authentication to the mail server
             //     smtp_to_list: list of email address which will receive the email
@@ -1179,33 +1271,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // smtp_from = message['From'] or bounce_address
             // assert smtp_from, self.NO_FOUND_SMTP_FROM
             // 
-            // email_to = message['To']
-            // email_cc = message['Cc']
-            // email_bcc = message['Bcc']
-            // del message['Bcc']
-            // 
-            // # All recipient addresses must only contain ASCII characters; support
-            // # optional pre-validated To list, used notably when formatted emails may
-            // # create fake emails using extract_rfc2822_addresses, e.g.
-            // # '"Bike@Home" <email@domain.com>' which can be considered as containing
-            // # 2 emails by extract_rfc2822_addresses
-            // validated_to = self.env.context.get('send_validated_to') or []
-            // smtp_to_list = [
-            //     address
-            //     for base in [email_to, email_cc, email_bcc]
-            //     # be sure a given address does not return duplicates (but duplicates
-            //     # in final smtp to list is still ok)
-            //     for address in tools.misc.unique(extract_rfc2822_addresses(base))
-            //     if address and (not validated_to or address in validated_to)
-            // ]
+            // smtp_to_list = self._prepare_smtp_to_list(message, smtp_session)
             // assert smtp_to_list, self.NO_VALID_RECIPIENT
-            // 
-            // x_forge_to = message['X-Forge-To']
-            // if x_forge_to:
-            //     # `To:` header forged, e.g. for posting on discuss.channels, to avoid confusion
-            //     del message['X-Forge-To']
-            //     del message['To']           # avoid multiple To: headers!
-            //     message['To'] = x_forge_to
             // 
             // # Try to not spoof the mail from headers; fetch session-based or contextualized
             // # values for encapsulation computation
@@ -1217,9 +1284,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if notifications_email and email_normalize(smtp_from) == notifications_email and email_normalize(message['From']) != notifications_email:
             //     smtp_from = encapsulate_email(message['From'], notifications_email)
             // 
-            // if message['From'] != smtp_from:
-            //     del message['From']
-            //     message['From'] = smtp_from
+            // # alter message
+            // self._alter_message__(message, smtp_from, smtp_to_list)
             // 
             // # Check if it's still possible to put the bounce address as smtp_from
             // if self._match_from_filter(bounce_address, from_filter):
@@ -1238,6 +1304,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             // smtp_from = smtp_from_rfc2822[-1]
             // 
             // return smtp_from, smtp_to_list, message
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareSmtpToListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object smtp_session) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            // def _prepare_smtp_to_list(self, message, smtp_session):
+            // """ Prepare SMTP To address list, based on To / Cc / Bcc.
+            // 
+            // Optional 'send_validated_to' context key filter restricts addresses to
+            // be part of that list.
+            // 
+            // Optional 'send_smtp_skip_to' context key holds a recipients block list
+            // """
+            // email_to = message['To']
+            // email_cc = message['Cc']
+            // email_bcc = message['Bcc']
+            // 
+            // # Support optional pre-validated To list, used notably when formatted
+            // # emails may create fake emails using extract_rfc2822_addresses, e.g.
+            // # '"Bike@Home" <email@domain.com>' which can be considered as containing
+            // # 2 emails by extract_rfc2822_addresses
+            // validated_to = self.env.context.get('send_validated_to') or []
+            // 
+            // # Support optional skip To list
+            // skip_to_lst = self.env.context.get('send_smtp_skip_to') or []
+            // 
+            // # All recipient addresses must only contain ASCII characters
+            // return [
+            //     address
+            //     for base in [email_to, email_cc, email_bcc]
+            //     # be sure a given address does not return duplicates (but duplicates
+            //     # in final smtp to list is still ok)
+            //     for address in tools.misc.unique(extract_rfc2822_addresses(base))
+            //     if (
+            //         address and (not validated_to or address in validated_to)
+            //         and email_normalize(address, strict=False) not in skip_to_lst
+            //     )
+            // ]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> RaiseIapErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: microsoft_outlook_mixin.py) ---
+            // def _raise_iap_error(self, error):
+            // raise UserError(get_iap_error_message(self.env, error))
             */
             return default;
         }
@@ -1271,7 +1388,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                      messages. The caller is in charge of disconnecting the session.
             // :param mail_server_id: optional id of ir.mail_server to use for sending. overrides other smtp_* arguments.
             // :param smtp_server: optional hostname of SMTP server to use
-            // :param smtp_encryption: optional TLS mode, one of 'none', 'starttls' or 'ssl' (see ir.mail_server fields for explanation)
+            // :param smtp_encryption: optional TLS mode, one of 'none', 'starttls', 'starttls_strict', 'ssl', or 'ssl_strict'.
+            //     The 'strict' variants verify the remote server's certificate against the operating system trust store.
             // :param smtp_port: optional SMTP port, if mail_server_id is not passed
             // :param smtp_user: optional SMTP user, if mail_server_id is not passed
             // :param smtp_password: optional SMTP password to use, if mail_server_id is not passed
@@ -1283,15 +1401,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // smtp = smtp_session
             // if not smtp:
-            //     smtp = self.connect(
+            //     smtp = self._connect__(
             //         smtp_server, smtp_port, smtp_user, smtp_password, smtp_encryption,
             //         smtp_from=message['From'], ssl_certificate=smtp_ssl_certificate, ssl_private_key=smtp_ssl_private_key,
             //         smtp_debug=smtp_debug, mail_server_id=mail_server_id,)
             // 
-            // smtp_from, smtp_to_list, message = self._prepare_email_message(message, smtp)
+            // smtp_from, smtp_to_list, message = self._prepare_email_message__(message, smtp)
             // 
             // # Do not actually send emails in testing mode!
-            // if modules.module.current_test:
+            // if self._disable_send():
             //     _test_logger.debug("skip sending email in test mode")
             //     return message['Message-Id']
             // 
@@ -1334,14 +1452,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_outlook, FILE: ir_mail_server.py) ---
-            // def _smtp_login(self, connection, smtp_user, smtp_password):
+            // def _smtp_login__(self, connection, smtp_user, smtp_password):  # noqa: PLW3201
             // if len(self) == 1 and self.smtp_authentication == 'outlook':
             //     auth_string = self._generate_outlook_oauth2_string(smtp_user)
             //     oauth_param = base64.b64encode(auth_string.encode()).decode()
             //     connection.ehlo()
             //     connection.docmd('AUTH', f'XOAUTH2 {oauth_param}')
             // else:
-            //     super()._smtp_login(connection, smtp_user, smtp_password)
+            //     super()._smtp_login__(connection, smtp_user, smtp_password)
             */
             return default;
         }
@@ -1354,19 +1472,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Test the connection and if autodetect_max_email_size, set auto-detected max email size.
             // 
             // :param bool autodetect_max_email_size: whether to autodetect the max email size
-            // :return (dict): client action to notify the user of the result of the operation (connection test or
-            // auto-detection successful depending on the autodetect_max_email_size parameter)
+            // :return: client action to notify the user of the result of the operation (connection test or
+            //     auto-detection successful depending on the ``autodetect_max_email_size`` parameter)
+            // :rtype: dict
             // 
-            // :raises UserError: if the connection fails and if autodetect_max_email_size and
+            // :raises UserError: if the connection fails and if ``autodetect_max_email_size`` and
             //     the server doesn't support the auto-detection of email max size
             // """
             // for server in self:
             //     smtp = False
             //     try:
-            //         smtp = self.connect(mail_server_id=server.id, allow_archived=True)
             //         # simulate sending an email from current user's address - without sending it!
             //         email_from = server._get_test_email_from()
             //         email_to = server._get_test_email_to()
+            //         smtp = self._connect__(mail_server_id=server.id, allow_archived=True, smtp_from=email_from)
             //         # Testing the MAIL FROM step should detect sender filter problems
             //         (code, repl) = smtp.mail(email_from)
             //         if code != 250:
@@ -1399,6 +1518,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         raise UserError(_("An option is not supported by the server:\n %s", e)) from e
             //     except smtplib.SMTPException as e:
             //         raise UserError(_("An SMTP exception occurred. Check port number and connection security type.\n %s", e)) from e
+            //     except CertificateError as e:
+            //         raise UserError(_("An SSL exception occurred. Check connection security type.\n CertificateError: %s", e)) from e
             //     except (ssl.SSLError, SSLError) as e:
             //         raise UserError(_("An SSL exception occurred. Check connection security type.\n %s", e)) from e
             //     except UserError:
@@ -1439,7 +1560,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
             // def unlink(self):
-            // res = super(FetchmailServer, self).unlink()
+            // res = super().unlink()
             // self._update_cron()
             // return res
             */
@@ -1456,7 +1577,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // try:
             //     # Enabled/Disable cron based on the number of 'done' server of type pop or imap
             //     cron = self.env.ref('mail.ir_cron_mail_gateway_action')
-            //     cron.toggle(model=self._name, domain=[('state', '=', 'done'), ('server_type', '!=', 'local')])
+            //     cron.toggle(model=self._name, domain=MAIL_SERVER_DOMAIN)
             // except ValueError:
             //     pass
             */
@@ -1466,41 +1587,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
             // def write(self, vals):
-            // """Ensure we cannot archive a server in-use"""
-            // usages_per_server = {}
-            // if not vals.get('active', True):
-            //     usages_per_server = self._active_usages_compute()
-            // 
-            // if not usages_per_server:
-            //     return super().write(vals)
-            // 
-            // # Write cannot be performed as some server are used, build detailed usage per server
-            // usage_details_per_server = {}
-            // is_multiple_server_usage = len(usages_per_server) > 1
-            // for server in self:
-            //     if server.id not in usages_per_server:
-            //         continue
-            //     usage_details = []
-            //     if is_multiple_server_usage:
-            //         usage_details.append(_('%s (Dedicated Outgoing Mail Server):', server.display_name))
-            //     usage_details.extend(map(lambda u: f'- {u}', usages_per_server[server.id]))
-            //     usage_details_per_server[server] = usage_details
-            // 
-            // # Raise the error with the ordered list of servers and concatenated detailed usages
-            // servers_ordered_by_name = sorted(usage_details_per_server.keys(), key=lambda r: r.display_name)
-            // error_server_usage = ', '.join(server.display_name for server in servers_ordered_by_name)
-            // error_usage_details = '\n'.join(line
-            //                                 for server in servers_ordered_by_name
-            //                                 for line in usage_details_per_server[server])
-            // if is_multiple_server_usage:
-            //     raise UserError(
-            //         _('You cannot archive these Outgoing Mail Servers (%(server_usage)s) because they are still used in the following case(s):\n%(usage_details)s',
-            //           server_usage=error_server_usage, usage_details=error_usage_details))
-            // raise UserError(
-            //     _('You cannot archive this Outgoing Mail Server (%(server_usage)s) because it is still used in the following case(s):\n%(usage_details)s',
-            //       server_usage=error_server_usage, usage_details=error_usage_details))
+            // res = super().write(vals)
+            // self._update_cron()
+            // return res
             */
             return default;
         }

@@ -35,18 +35,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("{id}/close-ui")]
+        public async Task<IActionResult> CloseUiAsync(Guid id)
         {
-            var result = await _appService.ExecuteAsync(id);
+            var result = await _appService.CloseUiAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-categories")]
-        public async Task<IActionResult> GetCategoriesAsync(Guid id, [FromBody] PosConfigGetCategoriesRequestDto input)
+        [Route("{id}/execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid id)
         {
-            var result = await _appService.GetCategoriesAsync(id, input);
+            var result = await _appService.ExecuteAsync(id);
             return Ok(result);
         }
         
@@ -60,9 +60,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/get-limited-partners-loading")]
-        public async Task<IActionResult> GetLimitedPartnersLoadingAsync(Guid id)
+        public async Task<IActionResult> GetLimitedPartnersLoadingAsync(Guid id, [FromBody] PosConfigGetLimitedPartnersLoadingRequestDto input)
         {
-            var result = await _appService.GetLimitedPartnersLoadingAsync(id);
+            var result = await _appService.GetLimitedPartnersLoadingAsync(id, input);
             return Ok(result);
         }
         
@@ -75,14 +75,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-limited-products-loading")]
-        public async Task<IActionResult> GetLimitedProductsLoadingAsync(Guid id, [FromBody] PosConfigGetLimitedProductsLoadingRequestDto input)
-        {
-            var result = await _appService.GetLimitedProductsLoadingAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/get-pos-kanban-view-state")]
         public async Task<IActionResult> GetPosKanbanViewStateAsync(Guid id)
         {
@@ -91,10 +83,34 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-records")]
-        public async Task<IActionResult> GetRecordsAsync(Guid id, [FromBody] PosConfigGetRecordsRequestDto input)
+        [Route("{id}/get-pos-qr-order-data")]
+        public async Task<IActionResult> GetPosQrOrderDataAsync(Guid id)
         {
-            var result = await _appService.GetRecordsAsync(id, input);
+            var result = await _appService.GetPosQrOrderDataAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-record-by-ref")]
+        public async Task<IActionResult> GetRecordByRefAsync(Guid id, [FromBody] PosConfigGetRecordByRefRequestDto input)
+        {
+            var result = await _appService.GetRecordByRefAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-statistics-for-session")]
+        public async Task<IActionResult> GetStatisticsForSessionAsync(Guid id, [FromBody] PosConfigGetStatisticsForSessionRequestDto input)
+        {
+            var result = await _appService.GetStatisticsForSessionAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/has-valid-self-payment-method")]
+        public async Task<IActionResult> HasValidSelfPaymentMethodAsync(Guid id)
+        {
+            var result = await _appService.HasValidSelfPaymentMethodAsync(id);
             return Ok(result);
         }
         
@@ -107,34 +123,50 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-bakery-scenario")]
-        public async Task<IActionResult> LoadOnboardingBakeryScenarioAsync(Guid id)
+        [Route("{id}/load-data-params")]
+        public async Task<IActionResult> LoadDataParamsAsync(Guid id)
         {
-            var result = await _appService.LoadOnboardingBakeryScenarioAsync(id);
+            var result = await _appService.LoadDataParamsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/load-demo-data")]
+        public async Task<IActionResult> LoadDemoDataAsync(Guid id)
+        {
+            var result = await _appService.LoadDemoDataAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/load-onboarding-bakery-scenario")]
+        public async Task<IActionResult> LoadOnboardingBakeryScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingBakeryScenarioRequestDto input)
+        {
+            var result = await _appService.LoadOnboardingBakeryScenarioAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
         [Route("{id}/load-onboarding-bar-scenario")]
-        public async Task<IActionResult> LoadOnboardingBarScenarioAsync(Guid id)
+        public async Task<IActionResult> LoadOnboardingBarScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingBarScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingBarScenarioAsync(id);
+            var result = await _appService.LoadOnboardingBarScenarioAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
         [Route("{id}/load-onboarding-clothes-scenario")]
-        public async Task<IActionResult> LoadOnboardingClothesScenarioAsync(Guid id)
+        public async Task<IActionResult> LoadOnboardingClothesScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingClothesScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingClothesScenarioAsync(id);
+            var result = await _appService.LoadOnboardingClothesScenarioAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
         [Route("{id}/load-onboarding-furniture-scenario")]
-        public async Task<IActionResult> LoadOnboardingFurnitureScenarioAsync(Guid id)
+        public async Task<IActionResult> LoadOnboardingFurnitureScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingFurnitureScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingFurnitureScenarioAsync(id);
+            var result = await _appService.LoadOnboardingFurnitureScenarioAsync(id, input);
             return Ok(result);
         }
         
@@ -148,9 +180,17 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/load-onboarding-restaurant-scenario")]
-        public async Task<IActionResult> LoadOnboardingRestaurantScenarioAsync(Guid id)
+        public async Task<IActionResult> LoadOnboardingRestaurantScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingRestaurantScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingRestaurantScenarioAsync(id);
+            var result = await _appService.LoadOnboardingRestaurantScenarioAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/load-onboarding-retail-scenario")]
+        public async Task<IActionResult> LoadOnboardingRetailScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingRetailScenarioRequestDto input)
+        {
+            var result = await _appService.LoadOnboardingRetailScenarioAsync(id, input);
             return Ok(result);
         }
         
@@ -207,6 +247,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ReadConfigOpenOrdersAsync(Guid id, [FromBody] PosConfigReadConfigOpenOrdersRequestDto input)
         {
             var result = await _appService.ReadConfigOpenOrdersAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/register-new-device-identifier")]
+        public async Task<IActionResult> RegisterNewDeviceIdentifierAsync(Guid id)
+        {
+            var result = await _appService.RegisterNewDeviceIdentifierAsync(id);
             return Ok(result);
         }
         

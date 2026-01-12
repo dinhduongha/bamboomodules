@@ -24,895 +24,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> AddDocumentAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> AddLogsImportInvoiceUblCiiInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object invoice_logs) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_allowance_charge_nodes(self, document_node, vals):
-            // """ Generic helper to fill the AllowanceCharge nodes for a document given a list of base_lines. """
-            // # AllowanceCharge doesn't exist in debit notes in UBL 2.0
-            // if vals['document_type'] != 'debit_note':
-            //     document_node['cac:AllowanceCharge'] = []
-            //     for base_line in vals['base_lines']:
-            //         if self._is_document_allowance_charge(base_line):
-            //             document_node['cac:AllowanceCharge'].append(
-            //                 self._get_document_allowance_charge_node({**vals, 'base_line': base_line})
-            //             )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentCurrencyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_currency_vals(self, vals):
-            // """ Add the 'currency_suffix', 'currency_dp' and 'currency_name'. """
-            // vals['currency_suffix'] = '' if vals['use_company_currency'] else '_currency'
-            // 
-            // currency = vals['company_currency_id'] if vals['use_company_currency'] else vals['currency_id']
-            // vals['currency_dp'] = self._get_currency_decimal_places(currency)
-            // vals['currency_name'] = currency.name
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_allowance_charge_nodes(self, line_node, vals):
-            // if vals['document_type'] not in {'credit_note', 'debit_note'}:
-            //     line_node['cac:AllowanceCharge'] = [self._get_line_discount_allowance_charge_node(vals)]
-            //     if vals['fixed_taxes_as_allowance_charges']:
-            //         line_node['cac:AllowanceCharge'].extend(self._get_line_fixed_tax_allowance_charge_nodes(vals))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineAmountNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_amount_nodes(self, line_node, vals):
-            // currency_suffix = vals['currency_suffix']
-            // base_line = vals['base_line']
-            // 
-            // quantity_tag = self._get_tags_for_document_type(vals)['line_quantity']
-            // 
-            // line_node.update({
-            //     quantity_tag: {
-            //         '_text': base_line['quantity'],
-            //         'unitCode': self._get_uom_unece_code(base_line['product_uom_id']),
-            //     },
-            //     'cbc:LineExtensionAmount': {
-            //         '_text': self.format_float(vals[f'total_excluded{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineGrossSubtotalAndDiscountValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_gross_subtotal_and_discount_vals(self, vals):
-            // base_line = vals['base_line']
-            // company_currency = vals['company_currency_id']
-            // 
-            // discount_factor = 1 - (base_line['discount'] / 100.0)
-            // 
-            // if discount_factor != 0.0:
-            //     gross_subtotal_currency = base_line['currency_id'].round(base_line['tax_details']['raw_total_excluded_currency'] / discount_factor)
-            //     gross_subtotal = company_currency.round(base_line['tax_details']['raw_total_excluded'] / discount_factor)
-            // else:
-            //     gross_subtotal_currency = base_line['currency_id'].round(base_line['price_unit'] * base_line['quantity'])
-            //     gross_subtotal = company_currency.round(gross_subtotal_currency / base_line['rate'])
-            // 
-            // if base_line['quantity'] == 0.0 or discount_factor == 0.0:
-            //     gross_price_unit_currency = base_line['price_unit']
-            //     gross_price_unit = company_currency.round(base_line['price_unit'] / base_line['rate'])
-            // else:
-            //     gross_price_unit_currency = gross_subtotal_currency / base_line['quantity']
-            //     gross_price_unit = gross_subtotal / base_line['quantity']
-            // 
-            // discount_amount_currency = gross_subtotal_currency - base_line['tax_details']['total_excluded_currency']
-            // discount_amount = gross_subtotal - base_line['tax_details']['total_excluded']
-            // 
-            // vals.update({
-            //     'discount_amount_currency': discount_amount_currency,
-            //     'discount_amount': discount_amount,
-            //     'gross_subtotal_currency': gross_subtotal_currency,
-            //     'gross_subtotal': gross_subtotal,
-            //     'gross_price_unit_currency': gross_price_unit_currency,
-            //     'gross_price_unit': gross_price_unit,
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineIdNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_id_nodes(self, line_node, vals):
-            // line_node['cbc:ID'] = {'_text': vals['line_idx']}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineItemNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_item_nodes(self, line_node, vals):
-            // product = vals['base_line']['product_id']
-            // 
-            // line_node['cac:Item'] = {
-            //     'cbc:Description': {'_text': product.description_sale},
-            //     'cbc:Name': {'_text': product.name},
-            //     'cac:StandardItemIdentification': {
-            //         'cbc:ID': {
-            //             '_text': product.barcode,
-            //             'schemeID': '0160',  # GTIN
-            //         },
-            //     },
-            //     'cac:AdditionalItemProperty': [
-            //         {
-            //             'cbc:Name': {'_text': value.attribute_id.name},
-            //             'cbc:Value': {'_text': value.name},
-            //         } for value in product.product_template_attribute_value_ids
-            //     ],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_nodes(self, document_node, vals):
-            // line_idx = 1
-            // 
-            // line_tag = self._get_tags_for_document_type(vals)['document_line']
-            // document_node[line_tag] = line_nodes = []
-            // for base_line in vals['base_lines']:
-            //     if not self._is_document_allowance_charge(base_line):
-            //         line_vals = {
-            //             **vals,
-            //             'line_idx': line_idx,
-            //             'base_line': base_line,
-            //         }
-            //         line_node = self._get_document_line_node(line_vals)
-            //         line_nodes.append(line_node)
-            //         line_idx += 1
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineNoteNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_note_nodes(self, line_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLinePeriodNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_period_nodes(self, line_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLinePriceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_price_nodes(self, line_node, vals):
-            // currency_suffix = vals['currency_suffix']
-            // product_price_dp = self.env['decimal.precision'].precision_get('Product Price')
-            // 
-            // line_node['cac:Price'] = {
-            //     'cbc:PriceAmount': {
-            //         '_text': float_round(
-            //             vals[f'gross_price_unit{currency_suffix}'],
-            //             precision_digits=product_price_dp,
-            //         ),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLinePricingReferenceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_pricing_reference_nodes(self, line_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineTaxCategoryNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_tax_category_nodes(self, line_node, vals):
-            // base_line = vals['base_line']
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_line_tax_details(base_line, vals['tax_grouping_function'])
-            // line_node.setdefault('cac:Item', {})['cac:ClassifiedTaxCategory'] = [
-            //     self._get_tax_category_node({**vals, 'grouping_key': grouping_key})
-            //     for grouping_key in aggregated_tax_details
-            //     if grouping_key
-            // ]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_tax_total_nodes(self, line_node, vals):
-            // base_line = vals['base_line']
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_line_tax_details(base_line, vals['tax_grouping_function'])
-            // line_node['cac:TaxTotal'] = self._get_tax_total_node({**vals, 'aggregated_tax_details': aggregated_tax_details, 'role': 'line'})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineTotalValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_total_vals(self, vals):
-            // base_line = vals['base_line']
-            // 
-            // def fixed_total_grouping_function(base_line, tax_data):
-            //     if vals['fixed_taxes_as_allowance_charges'] and tax_data and tax_data['tax'].amount_type == 'fixed':
-            //         return vals['total_grouping_function'](base_line, tax_data)
-            // 
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_line_tax_details(base_line, fixed_total_grouping_function)
-            // 
-            // for currency_suffix in ['', '_currency']:
-            //     vals[f'total_fixed_taxes{currency_suffix}'] = sum(
-            //         tax_details[f'tax_amount{currency_suffix}']
-            //         for grouping_key, tax_details in aggregated_tax_details.items()
-            //         if grouping_key
-            //     )
-            // 
-            //     vals[f'total_excluded{currency_suffix}'] = \
-            //         base_line['tax_details'][f'total_excluded{currency_suffix}'] \
-            //         + base_line['tax_details'][f'delta_total_excluded{currency_suffix}'] \
-            //         + vals[f'total_fixed_taxes{currency_suffix}']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentLineValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_line_vals(self, vals):
-            // """ Generic helper to calculate the amounts for a document line. """
-            // self._add_document_line_total_vals(vals)
-            // self._add_document_line_gross_subtotal_and_discount_vals(vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentMonetaryTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_monetary_total_nodes(self, document_node, vals):
-            // """ Generic helper to fill the MonetaryTotal node for a document given a list of base_lines. """
-            // monetary_total_tag = self._get_tags_for_document_type(vals)['monetary_total']
-            // currency_suffix = vals['currency_suffix']
-            // 
-            // document_node[monetary_total_tag] = {
-            //     'cbc:LineExtensionAmount': {
-            //         '_text': self.format_float(vals[f'total_lines{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            //     'cbc:TaxExclusiveAmount': {
-            //         '_text': self.format_float(vals[f'tax_exclusive_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            //     'cbc:TaxInclusiveAmount': {
-            //         '_text': self.format_float(vals[f'tax_inclusive_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            //     'cbc:AllowanceTotalAmount': {
-            //         '_text': self.format_float(vals[f'total_allowance{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     } if vals[f'total_allowance{currency_suffix}'] else None,
-            //     'cbc:ChargeTotalAmount': {
-            //         '_text': self.format_float(vals[f'total_charge{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     } if vals[f'total_charge{currency_suffix}'] else None,
-            //     'cbc:PrepaidAmount': {
-            //         '_text': self.format_float(0.0, vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            //     'cbc:PayableRoundingAmount': {
-            //         '_text': self.format_float(vals[f'cash_rounding_base_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     } if vals[f'cash_rounding_base_amount{currency_suffix}'] else None,
-            //     'cbc:PayableAmount': {
-            //         '_text': self.format_float(vals[f'tax_inclusive_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentMonetaryTotalValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_monetary_total_vals(self, vals):
-            // # Compute the monetary totals for the document
-            // def fixed_total_grouping_function(base_line, tax_data):
-            //     if vals['fixed_taxes_as_allowance_charges'] and tax_data and tax_data['tax'].amount_type == 'fixed':
-            //         return vals['total_grouping_function'](base_line, tax_data)
-            // 
-            // for currency_suffix in ['', '_currency']:
-            //     for key in ['total_allowance', 'total_charge', 'total_lines']:
-            //         vals[f'{key}{currency_suffix}'] = 0.0
-            // 
-            // for base_line in vals['base_lines']:
-            //     aggregated_tax_details = self.env['account.tax']._aggregate_base_line_tax_details(base_line, fixed_total_grouping_function)
-            // 
-            //     for currency_suffix in ['', '_currency']:
-            //         base_line_total_excluded = \
-            //             base_line['tax_details'][f'total_excluded{currency_suffix}'] \
-            //             + base_line['tax_details'][f'delta_total_excluded{currency_suffix}'] \
-            //             + sum(
-            //                 tax_details[f'tax_amount{currency_suffix}']
-            //                 for grouping_key, tax_details in aggregated_tax_details.items()
-            //                 if grouping_key
-            //             )
-            // 
-            //         if self._is_document_allowance_charge(base_line):
-            //             if base_line_total_excluded < 0.0:
-            //                 vals[f'total_allowance{currency_suffix}'] += -base_line_total_excluded
-            //             else:
-            //                 vals[f'total_charge{currency_suffix}'] += base_line_total_excluded
-            //         else:
-            //             vals[f'total_lines{currency_suffix}'] += base_line_total_excluded
-            // 
-            // for currency_suffix in ['', '_currency']:
-            //     vals[f'tax_exclusive_amount{currency_suffix}'] = vals[f'total_lines{currency_suffix}'] \
-            //         + vals[f'total_charge{currency_suffix}'] \
-            //         - vals[f'total_allowance{currency_suffix}']
-            // 
-            // def non_fixed_total_grouping_function(base_line, tax_data):
-            //     if vals['fixed_taxes_as_allowance_charges'] and tax_data and tax_data['tax'].amount_type == 'fixed':
-            //         return None
-            //     return vals['total_grouping_function'](base_line, tax_data)
-            // 
-            // base_lines_aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_tax_details(vals['base_lines'], non_fixed_total_grouping_function)
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_aggregated_values(base_lines_aggregated_tax_details)
-            // for currency_suffix in ['', '_currency']:
-            //     vals[f'tax_inclusive_amount{currency_suffix}'] = vals[f'tax_exclusive_amount{currency_suffix}'] \
-            //         + sum(
-            //             tax_details[f'tax_amount{currency_suffix}']
-            //             for grouping_key, tax_details in aggregated_tax_details.items()
-            //             if grouping_key
-            //         )
-            // 
-            // # Cash rounding for 'add_invoice_line' cash rounding strategy
-            // # (For the 'biggest_tax' strategy the amounts are directly included in the tax amounts.)
-            // for currency_suffix in ['', '_currency']:
-            //     vals[f'cash_rounding_base_amount{currency_suffix}'] = 0.0
-            //     for base_line in vals.setdefault('cash_rounding_base_lines', []):
-            //         tax_details = base_line['tax_details']
-            //         vals[f'cash_rounding_base_amount{currency_suffix}'] += tax_details[f'total_excluded{currency_suffix}']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentTaxGroupingFunctionValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_tax_grouping_function_vals(self, vals):
-            // # Add the grouping functions for the monetary totals and tax totals
-            // customer = vals['customer']
-            // supplier = vals['supplier']
-            // 
-            // # This function will be used when computing the monetary totals on the document level.
-            // # It should return True for all taxes which should be included in the total.
-            // def total_grouping_function(base_line, tax_data):
-            //     return True
-            // 
-            // # This function will be used when computing the tax totals on the document and line level.
-            // # It should group taxes together according to the tax catagory with which they will be reported.
-            // # Any taxes that should be included in the tax totals should be included.
-            // def tax_grouping_function(base_line, tax_data):
-            //     tax = tax_data and tax_data['tax']
-            //     # Exclude fixed taxes if 'fixed_taxes_as_allowance_charges' is True
-            //     if vals['fixed_taxes_as_allowance_charges'] and tax and tax.amount_type == 'fixed':
-            //         return None
-            //     return {
-            //         'tax_category_code': self._get_tax_category_code(customer.commercial_partner_id, supplier, tax),
-            //         **self._get_tax_exemption_reason(customer.commercial_partner_id, supplier, tax),
-            //         'amount': tax.amount if tax else 0.0,
-            //         'amount_type': tax.amount_type if tax else 'percent',
-            //     }
-            // 
-            // vals['total_grouping_function'] = total_grouping_function
-            // vals['tax_grouping_function'] = tax_grouping_function
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddDocumentTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_document_tax_total_nodes(self, document_node, vals):
-            // """ Generic helper to fill the TaxTotal and WithholdingTaxTotal nodes for a document. """
-            // base_lines_aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_tax_details(vals['base_lines'], vals['tax_grouping_function'])
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_aggregated_values(base_lines_aggregated_tax_details)
-            // document_node['cac:TaxTotal'] = self._get_tax_total_node({**vals, 'aggregated_tax_details': aggregated_tax_details, 'role': 'document'})
-            // document_node['cac:WithholdingTaxTotal'] = None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceAccountingCustomerPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_accounting_customer_party_nodes(self, document_node, vals):
-            // document_node['cac:AccountingCustomerParty'] = {
-            //     'cac:Party': self._get_party_node({**vals, 'partner': vals['customer'], 'role': 'customer'}),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceAccountingSupplierPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_accounting_supplier_party_nodes(self, document_node, vals):
-            // document_node['cac:AccountingSupplierParty'] = {
-            //     'cac:Party': self._get_party_node({**vals, 'partner': vals['supplier'], 'role': 'supplier'}),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_allowance_charge_nodes(self, document_node, vals):
-            // self._add_document_allowance_charge_nodes(document_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceBaseLinesValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_base_lines_vals(self, vals):
-            // invoice = vals['invoice']
-            // base_lines, _tax_lines = invoice._get_rounded_base_and_tax_lines()
-            // vals['base_lines'] = [base_line for base_line in base_lines if base_line['special_type'] != 'cash_rounding']
-            // vals['cash_rounding_base_lines'] = [base_line for base_line in base_lines if base_line['special_type'] == 'cash_rounding']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceConfigValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_config_vals(self, vals):
-            // invoice = vals['invoice']
-            // supplier = invoice.company_id.partner_id.commercial_partner_id
-            // customer = invoice.partner_id
-            // 
-            // vals.update({
-            //     'document_type': 'debit_note' if 'debit_origin_id' in self.env['account.move']._fields and invoice.debit_origin_id
-            //         else 'credit_note' if invoice.move_type == 'out_refund'
-            //         else 'invoice',
-            // 
-            //     'supplier': supplier,
-            //     'customer': customer,
-            //     'partner_shipping': invoice.partner_shipping_id or invoice.partner_id,
-            // 
-            //     'currency_id': invoice.currency_id,
-            //     'company_currency_id': invoice.company_id.currency_id,
-            // 
-            //     'use_company_currency': False,  # If true, use the company currency for the amounts instead of the invoice currency
-            //     'fixed_taxes_as_allowance_charges': True,  # If true, include fixed taxes as AllowanceCharges on lines instead of as taxes
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceCurrencyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_currency_vals(self, vals):
-            // self._add_document_currency_vals(vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceDeliveryNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_delivery_nodes(self, document_node, vals):
-            // invoice = vals['invoice']
-            // document_node['cac:Delivery'] = {
-            //     'cbc:ActualDeliveryDate': {'_text': invoice.delivery_date},
-            //     'cac:DeliveryLocation': {
-            //         'cac:Address': self._get_address_node({'partner': vals['partner_shipping']})
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceExchangeRateNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_exchange_rate_nodes(self, document_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceHeaderNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_header_nodes(self, document_node, vals):
-            // invoice = vals['invoice']
-            // document_node.update({
-            //     'cbc:UBLVersionID': {'_text': '2.0'},
-            //     'cbc:ID': {'_text': invoice.name},
-            //     'cbc:IssueDate': {'_text': invoice.invoice_date},
-            //     'cbc:InvoiceTypeCode': {'_text': 380} if vals['document_type'] == 'invoice' else None,
-            //     'cbc:Note': {'_text': html2plaintext(invoice.narration)} if invoice.narration else None,
-            //     'cbc:DocumentCurrencyCode': {'_text': invoice.currency_id.name},
-            //     'cac:OrderReference': {
-            //         # OrderReference/ID (order_reference) is mandatory inside the OrderReference node
-            //         'cbc:ID': {'_text': invoice.ref or invoice.name},
-            //         # OrderReference/SalesOrderID (sales_order_id) is optional
-            //         'cbc:SalesOrderID': {
-            //             '_text': ",".join(invoice.invoice_line_ids.sale_line_ids.order_id.mapped('name'))
-            //         } if 'sale_line_ids' in invoice.invoice_line_ids._fields else None,
-            //     }
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_allowance_charge_nodes(self, line_node, vals):
-            // self._add_document_line_allowance_charge_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineAmountNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_amount_nodes(self, line_node, vals):
-            // self._add_document_line_amount_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineIdNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_id_nodes(self, line_node, vals):
-            // self._add_document_line_id_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineItemNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_item_nodes(self, line_node, vals):
-            // self._add_document_line_item_nodes(line_node, vals)
-            // 
-            // line = vals['base_line']['record']
-            // if line_name := line.name and line.name.replace('\n', ' '):
-            //     line_node['cac:Item']['cbc:Description']['_text'] = line_name
-            //     if not line_node['cac:Item']['cbc:Name']['_text']:
-            //         line_node['cac:Item']['cbc:Name']['_text'] = line_name
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_nodes(self, document_node, vals):
-            // line_idx = 1
-            // 
-            // line_tag = self._get_tags_for_document_type(vals)['document_line']
-            // document_node[line_tag] = line_nodes = []
-            // for base_line in vals['base_lines']:
-            //     # Only use product lines to generate the UBL InvoiceLines.
-            //     # Other lines should be represented as AllowanceCharges.
-            //     if not self._is_document_allowance_charge(base_line):
-            //         line_vals = {
-            //             **vals,
-            //             'line_idx': line_idx,
-            //             'base_line': base_line,
-            //         }
-            //         line_node = self._get_invoice_line_node(line_vals)
-            //         line_nodes.append(line_node)
-            //         line_idx += 1
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineNoteNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_note_nodes(self, line_node, vals):
-            // self._add_document_line_note_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLinePeriodNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_period_nodes(self, line_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLinePriceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_price_nodes(self, line_node, vals):
-            // self._add_document_line_price_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLinePricingReferenceNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_pricing_reference_nodes(self, line_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineTaxCategoryNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_tax_category_nodes(self, line_node, vals):
-            // self._add_document_line_tax_category_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_tax_total_nodes(self, line_node, vals):
-            // self._add_document_line_tax_total_nodes(line_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceLineValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_line_vals(self, vals):
-            // self._add_document_line_vals(vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceMonetaryTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_monetary_total_nodes(self, document_node, vals):
-            // self._add_document_monetary_total_nodes(document_node, vals)
-            // monetary_total_tag = self._get_tags_for_document_type(vals)['monetary_total']
-            // invoice = vals['invoice']
-            // document_node[monetary_total_tag].update({
-            //     'cbc:PrepaidAmount': {
-            //         '_text': self.format_float(invoice.amount_total - invoice.amount_residual, vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            //     'cbc:PayableRoundingAmount': {
-            //         '_text': self.format_float(vals['cash_rounding_base_amount_currency'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     } if vals['cash_rounding_base_amount_currency'] else None,
-            //     'cbc:PayableAmount': {
-            //         '_text': self.format_float(invoice.amount_residual, vals['currency_dp']),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceMonetaryTotalsValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_monetary_totals_vals(self, vals):
-            // self._add_document_monetary_total_vals(vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoicePaymentMeansNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_payment_means_nodes(self, document_node, vals):
-            // invoice = vals['invoice']
-            // if invoice.move_type == 'out_invoice':
-            //     if invoice.partner_bank_id:
-            //         payment_means_code, payment_means_name = 30, 'credit transfer'
-            //     else:
-            //         payment_means_code, payment_means_name = 'ZZZ', 'mutually defined'
-            // else:
-            //     payment_means_code, payment_means_name = 57, 'standing agreement'
-            // 
-            // # in Denmark payment code 30 is not allowed. we hardcode it to 1 ("unknown") for now
-            // # as we cannot deduce this information from the invoice
-            // if invoice.partner_id.country_code == 'DK':
-            //     payment_means_code, payment_means_name = 1, 'unknown'
-            // 
-            // document_node['cac:PaymentMeans'] = {
-            //     'cbc:PaymentMeansCode': {
-            //         '_text': payment_means_code,
-            //         'name': payment_means_name,
-            //     },
-            //     'cbc:PaymentDueDate': {'_text': invoice.invoice_date_due or invoice.invoice_date},
-            //     'cbc:InstructionID': {'_text': invoice.payment_reference},
-            //     'cbc:PaymentID': {'_text': invoice.payment_reference or invoice.name},
-            //     'cac:PayeeFinancialAccount': self._get_financial_account_node({
-            //         **vals, 'partner_bank': invoice.partner_bank_id
-            //     }) if invoice.partner_bank_id else None
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoicePaymentTermsNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_payment_terms_nodes(self, document_node, vals):
-            // invoice = vals['invoice']
-            // payment_term = invoice.invoice_payment_term_id
-            // if payment_term:
-            //     document_node['cac:PaymentTerms'] = {
-            //         # The payment term's note is automatically embedded in a <p> tag in Odoo
-            //         'cbc:Note': {'_text': html2plaintext(payment_term.note)}
-            //     }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceSellerSupplierPartyNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_seller_supplier_party_nodes(self, document_node, vals):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceTaxGroupingFunctionValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_tax_grouping_function_vals(self, vals):
-            // self._add_document_tax_grouping_function_vals(vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddInvoiceTaxTotalNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_invoice_tax_total_nodes(self, document_node, vals):
-            // self._add_document_tax_total_nodes(document_node, vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddTaxTotalNodeInCompanyCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_node, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _add_tax_total_node_in_company_currency(self, document_node, vals):
-            // """ Generic helper to add a TaxTotal section in the company currency. """
-            // company_currency = vals['invoice'].company_id.currency_id
-            // base_lines_aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_tax_details(vals['base_lines'], vals['tax_grouping_function'])
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_lines_aggregated_values(base_lines_aggregated_tax_details)
-            // tax_total_node_in_company_currency = self._get_tax_total_node({
-            //     **vals,
-            //     'aggregated_tax_details': aggregated_tax_details,
-            //     'currency_suffix': '',
-            //     'currency_dp': self._get_currency_decimal_places(company_currency),
-            //     'currency_name': company_currency.name,
-            //     'role': 'document'
-            // })
-            // document_node['cac:TaxTotal'].append(tax_total_node_in_company_currency)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ApplyInvoiceLineFilterInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_line) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _apply_invoice_line_filter(self, invoice_line):
-            // """
-            //     To be overridden to apply a specific invoice line filter
-            // """
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ApplyInvoiceTaxFilterInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _apply_invoice_tax_filter(self, base_line, tax_values):
-            // """
-            //     To be overridden to apply a specific tax filter
-            // """
-            // return True
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
+            // def _add_logs_import_invoice_ubl_cii(self, invoice, invoice_logs=None):
+            // invoice.ensure_one()
+            // if invoice_logs is None:
+            //     invoice_logs = []
+            // format_log = self.env._("Format: %s", self.env['ir.model']._get(self._name).name)
+            // return [format_log] + invoice_logs
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_edi_common.py) ---
+            // def _add_logs_import_invoice_ubl_cii(self, invoice, invoice_logs=None):
+            // # EXTENDS 'account_edi_ubl_cii'
+            // logs = super()._add_logs_import_invoice_ubl_cii(invoice, invoice_logs=invoice_logs)
+            // if uuid := invoice.peppol_message_uuid:
+            //     logs = [self.env._("Peppol document UUID: %s", uuid)] + logs
+            // return logs
             */
             return default;
         }
@@ -945,7 +73,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // :return: an Error message or None
             // """
             // if not record:
-            //     return custom_warning_message or _("The element %(record)s is required on %(field_list)s.", record=record, field_list=format_list(self.env, field_names))
+            //     return custom_warning_message or _("The element %(record)s is required on %(field_list)s.", record=record, field_list=field_names)
             // 
             // if not isinstance(field_names, (list, tuple)):
             //     field_names = (field_names,)
@@ -960,7 +88,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return custom_warning_message or _(
             //         "The element %(record)s is required on %(field_list)s.",
             //         record=record,
-            //         field_list=format_list(self.env, field_names),
+            //         field_list=field_names,
             //     )
             // 
             // display_field_names = record.fields_get(field_names)
@@ -968,7 +96,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     display_field = f"'{display_field_names[field_names[0]]['string']}'"
             //     return _("The field %(field)s is required on %(record)s.", field=display_field, record=record.display_name)
             // else:
-            //     display_fields = format_list(self.env, [f"'{display_field_names[x]['string']}'" for x in display_field_names])
+            //     display_fields = [f"'{display_field_names[x]['string']}'" for x in display_field_names]
             //     return _("At least one of the following fields %(field_list)s is required on %(record)s.", field_list=display_fields, record=record.display_name)
             */
             return default;
@@ -994,36 +122,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _correct_invoice_tax_amount(self, tree, invoice):
             // pass
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _correct_invoice_tax_amount(self, tree, invoice):
-            // """ The tax total may have been modified for rounding purpose, if so we should use the imported tax and not
-            //  the computed one """
-            // currency = invoice.currency_id
-            // # For each tax in our tax total, get the amount as well as the total in the xml.
-            // # Negative tax amounts may appear in invoices; they have to be inverted (since they are credit notes).
-            // document_amount_sign = self._get_import_document_amount_sign(tree)[1] or 1
-            // # We only search for `TaxTotal/TaxSubtotal` in the "root" element (i.e. not in `InvoiceLine` elements).
-            // for elem in tree.findall('./{*}TaxTotal/{*}TaxSubtotal'):
-            //     percentage = elem.find('.//{*}TaxCategory/{*}Percent')
-            //     if percentage is None:
-            //         percentage = elem.find('.//{*}Percent')
-            //     amount = elem.find('.//{*}TaxAmount')
-            //     if (percentage is not None and percentage.text is not None) and (amount is not None and amount.text is not None):
-            //         tax_percent = float(percentage.text)
-            //         # Compare the result with our tax total on the invoice, and apply correction if needed.
-            //         # First look for taxes matching the percentage in the xml.
-            //         taxes = invoice.line_ids.tax_line_id.filtered(lambda tax: tax.amount == tax_percent)
-            //         # If we found taxes with the correct amount, look for a tax line using it, and correct it as needed.
-            //         if taxes:
-            //             tax_total = document_amount_sign * float(amount.text)
-            //             # Sometimes we have multiple lines for the same tax.
-            //             tax_lines = invoice.line_ids.filtered(lambda line: line.tax_line_id in taxes)
-            //             if tax_lines:
-            //                 sign = -1 if invoice.is_inbound(include_receipts=True) else 1
-            //                 tax_lines_total = currency.round(sign * sum(tax_lines.mapped('amount_currency')))
-            //                 difference = currency.round(tax_total - tax_lines_total)
-            //                 if not currency.is_zero(difference):
-            //                     tax_lines[0].amount_currency += sign * difference
             */
             return default;
         }
@@ -1059,7 +157,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ),
             //     # [BR-DE-6] The element "Seller contact telephone number" (BT-42) must be transmitted.
             //     'seller_phone': self._check_required_fields(
-            //         vals['record']['company_id']['partner_id']['commercial_partner_id'], ['phone', 'mobile'],
+            //         vals['record']['company_id']['partner_id']['commercial_partner_id'], ['phone'],
             //     ),
             //     # [BR-DE-7] The element "Seller contact email address" (BT-43) must be transmitted.
             //     'seller_email': self._check_required_fields(
@@ -1080,16 +178,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             and vals['record']['partner_id']['zip'][:2] in ['35', '38'] else None,
             // })
             // return constraints
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // constraints = self._invoice_constraints_common(invoice)
-            // constraints.update({
-            //     'ubl20_supplier_name_required': self._check_required_fields(vals['supplier'], 'name'),
-            //     'ubl20_customer_name_required': self._check_required_fields(vals['customer'].commercial_partner_id, 'name'),
-            //     'ubl20_invoice_name_required': self._check_required_fields(invoice, 'name'),
-            //     'ubl20_invoice_date_required': self._check_required_fields(invoice, 'invoice_date'),
-            // })
-            // return constraints
             */
             return default;
         }
@@ -1103,12 +191,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'invoice': 'de.xrechnung:cii:2.2.0',
             //     'credit_note': 'de.xrechnung:cii:2.2.0',
             // }
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice_ecosio_schematrons(self):
-            // return {
-            //     'invoice': 'org.oasis-open:invoice:2.0',
-            //     'credit_note': 'org.oasis-open:creditnote:2.0',
-            // }
             */
             return default;
         }
@@ -1119,14 +201,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
             // def _export_invoice_filename(self, invoice):
             // return f"{invoice.name.replace('/', '_')}_factur_x.xml"
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // return f"{invoice.name.replace('/', '_')}_ubl_20.xml"
             */
             return default;
         }
 
-        public async Task<TEntity> ExportInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object convert_fixed_taxes) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> ExportInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
@@ -1135,46 +214,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // errors = [constraint for constraint in self._export_invoice_constraints(invoice, vals).values() if constraint]
             // xml_content = self.env['ir.qweb']._render('account_edi_ubl_cii.account_invoice_facturx_export_22', vals)
             // return etree.tostring(cleanup_xml_node(xml_content), xml_declaration=True, encoding='UTF-8'), set(errors)
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice(self, invoice, convert_fixed_taxes=True):
-            // """ Generates an UBL 2.0 xml for a given invoice.
-            // :param convert_fixed_taxes: whether the fixed taxes are converted into AllowanceCharges on the InvoiceLines
-            // """
-            // vals = self \
-            //     .with_context(convert_fixed_taxes=convert_fixed_taxes) \
-            //     ._export_invoice_vals(invoice.with_context(lang=invoice.partner_id.lang))
-            // errors = [constraint for constraint in self._export_invoice_constraints(invoice, vals).values() if constraint]
-            // xml_content = self.env['ir.qweb']._render(vals['main_template'], vals)
-            // return etree.tostring(cleanup_xml_node(xml_content), xml_declaration=True, encoding='UTF-8'), set(errors)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ExportInvoiceNewInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice_new(self, invoice):
-            // """ Generates an UBL 2.0 xml for a given invoice, using the new dict_to_xml helpers. """
-            // # 1. Validate the structure of the taxes
-            // self._validate_taxes(invoice.invoice_line_ids.tax_ids)
-            // 
-            // # 2. Instantiate the XML builder
-            // vals = {'invoice': invoice.with_context(lang=invoice.partner_id.lang)}
-            // document_node = self._get_invoice_node(vals)
-            // 
-            // # 3. Run constraints
-            // vals['document_node'] = document_node
-            // errors = [constraint for constraint in self._export_invoice_constraints_new(invoice, vals).values() if constraint]
-            // 
-            // template = self._get_document_template(vals)
-            // nsmap = self._get_document_nsmap(vals)
-            // 
-            // # 4. Render the XML
-            // xml_content = dict_to_xml(document_node, nsmap=nsmap, template=template)
-            // 
-            // # 5. Format the XML
-            // return etree.tostring(xml_content, xml_declaration=True, encoding='UTF-8'), set(errors)
             */
             return default;
         }
@@ -1184,6 +223,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
             // def _export_invoice_vals(self, invoice):
+            // customer = invoice.partner_id
+            // supplier = invoice.company_id.partner_id.commercial_partner_id
             // 
             // def format_date(dt):
             //     # Format the date in the Factur-x standard.
@@ -1196,10 +237,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // def grouping_key_generator(base_line, tax_data):
             //     tax = tax_data['tax']
-            //     customer = invoice.commercial_partner_id
-            //     supplier = invoice.company_id.partner_id.commercial_partner_id
             //     grouping_key = {
-            //         **self._get_tax_unece_codes(customer, supplier, tax),
+            //         'tax_category_code': self._get_tax_category_code(customer.commercial_partner_id, supplier, tax),
+            //         **self._get_tax_exemption_reason(customer.commercial_partner_id, supplier, tax),
             //         'amount': tax.amount,
             //         'amount_type': tax.amount_type,
             //     }
@@ -1227,14 +267,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tax_details['base_amount_currency'] += fixed_tax_details['tax_amount_currency']
             //     tax_details['base_amount'] += fixed_tax_details['tax_amount']
             // 
-            // if 'siret' in invoice.company_id._fields and invoice.company_id.siret:
-            //     seller_siret = invoice.company_id.siret
-            // else:
-            //     seller_siret = invoice.company_id.company_registry
-            // 
-            // buyer_siret = invoice.commercial_partner_id.company_registry
-            // if 'siret' in invoice.commercial_partner_id._fields and invoice.commercial_partner_id.siret:
-            //     buyer_siret = invoice.commercial_partner_id.siret
             // template_values = {
             //     **invoice._prepare_edi_vals_to_export(),
             //     'tax_details': tax_details,
@@ -1244,8 +276,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'scheduled_delivery_time': self._get_scheduled_delivery_time(invoice),
             //     'intracom_delivery': False,
             //     'ExchangedDocument_vals': self._get_exchanged_document_vals(invoice),
-            //     'seller_specified_legal_organization': seller_siret,
-            //     'buyer_specified_legal_organization': buyer_siret,
+            //     'seller_specified_legal_organization': invoice.company_id.company_registry,
+            //     'buyer_specified_legal_organization': invoice.commercial_partner_id.company_registry,
             //     'ship_to_trade_party': invoice.partner_shipping_id if 'partner_shipping_id' in invoice._fields and invoice.partner_shipping_id
             //         else invoice.commercial_partner_id,
             //     # Chorus Pro fields
@@ -1314,150 +346,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // template_values['tax_basis_total_amount'] = tax_details['base_amount_currency']
             // template_values['tax_total_amount'] = tax_details['tax_amount_currency']
             // 
-            // if self.env['account.payment']._fields.get('sdd_mandate_id') and invoice.matched_payment_ids.sdd_mandate_id:
+            // if self.env['account.payment']._fields.get('sdd_mandate_id') and invoice.reconciled_payment_ids.sdd_mandate_id:
             //     template_values['payment_means_code'] = PAYMENT_MEAN_CODES['SEPA direct debit']
             // else:
             //     template_values['payment_means_code'] = PAYMENT_MEAN_CODES['Payment to bank account']
             // 
             // return template_values
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # Validate the structure of the taxes
-            // self._validate_taxes(invoice.invoice_line_ids.tax_ids)
-            // 
-            // # Compute the tax details for the whole invoice and each invoice line separately.
-            // taxes_vals = invoice._prepare_invoice_aggregated_taxes(
-            //     grouping_key_generator=self._get_tax_grouping_key,
-            //     filter_tax_values_to_apply=self._apply_invoice_tax_filter,
-            //     filter_invl_to_apply=self._apply_invoice_line_filter,
-            //     round_from_tax_lines=True,
-            // )
-            // 
-            // # Fixed Taxes: filter them on the document level, and adapt the totals
-            // # Fixed taxes are not supposed to be taxes in real live. However, this is the way in Odoo to manage recupel
-            // # taxes in Belgium. Since only one tax is allowed, the fixed tax is removed from totals of lines but added
-            // # as an extra charge/allowance.
-            // if self._context.get('convert_fixed_taxes'):
-            //     fixed_taxes_keys = [k for k in taxes_vals['tax_details'] if k['tax_amount_type'] == 'fixed']
-            //     for key in fixed_taxes_keys:
-            //         fixed_tax_details = taxes_vals['tax_details'].pop(key)
-            //         taxes_vals['tax_amount_currency'] -= fixed_tax_details['tax_amount_currency']
-            //         taxes_vals['tax_amount'] -= fixed_tax_details['tax_amount']
-            //         taxes_vals['base_amount_currency'] += fixed_tax_details['tax_amount_currency']
-            //         taxes_vals['base_amount'] += fixed_tax_details['tax_amount']
-            // 
-            // # Compute values for invoice lines.
-            // line_extension_amount = 0.0
-            // 
-            // invoice_lines = invoice.invoice_line_ids.filtered(lambda line: line.display_type not in ('line_note', 'line_section') and line._check_edi_line_tax_required())
-            // document_allowance_charge_vals_list = self._get_document_allowance_charge_vals_list(invoice, taxes_vals)
-            // invoice_line_vals_list = []
-            // for line_id, line in enumerate(invoice_lines):
-            //     line_taxes_vals = taxes_vals['tax_details_per_record'][line]
-            //     line_vals = self._get_invoice_line_vals(line, line_id, {**line_taxes_vals, 'invoice_line': line})
-            //     invoice_line_vals_list.append(line_vals)
-            // 
-            //     line_extension_amount += line_vals['line_extension_amount']
-            // 
-            // # Compute the total allowance/charge amounts.
-            // allowance_total_amount = 0.0
-            // charge_total_amount = 0.0
-            // for allowance_charge_vals in document_allowance_charge_vals_list:
-            //     if allowance_charge_vals['charge_indicator'] == 'false':
-            //         allowance_total_amount += allowance_charge_vals['amount']
-            //     else:
-            //         charge_total_amount += allowance_charge_vals['amount']
-            // 
-            // supplier = invoice.company_id.partner_id.commercial_partner_id
-            // customer = invoice.partner_id
-            // 
-            // # OrderReference/SalesOrderID (sales_order_id) is optional
-            // sales_order_id = 'sale_line_ids' in invoice.invoice_line_ids._fields \
-            //                  and ",".join(invoice.invoice_line_ids.sale_line_ids.order_id.mapped('name'))
-            // # OrderReference/ID (order_reference) is mandatory inside the OrderReference node !
-            // order_reference = invoice.ref or invoice.name
-            // 
-            // vals = {
-            //     'builder': self,
-            //     'invoice': invoice,
-            //     'supplier': supplier,
-            //     'customer': customer,
-            // 
-            //     'taxes_vals': taxes_vals,
-            // 
-            //     'format_float': self.format_float,
-            //     'AddressType_template': 'account_edi_ubl_cii.ubl_20_AddressType',
-            //     'ContactType_template': 'account_edi_ubl_cii.ubl_20_ContactType',
-            //     'PartyType_template': 'account_edi_ubl_cii.ubl_20_PartyType',
-            //     'PaymentMeansType_template': 'account_edi_ubl_cii.ubl_20_PaymentMeansType',
-            //     'PaymentTermsType_template': 'account_edi_ubl_cii.ubl_20_PaymentTermsType',
-            //     'TaxCategoryType_template': 'account_edi_ubl_cii.ubl_20_TaxCategoryType',
-            //     'TaxTotalType_template': 'account_edi_ubl_cii.ubl_20_TaxTotalType',
-            //     'AllowanceChargeType_template': 'account_edi_ubl_cii.ubl_20_AllowanceChargeType',
-            //     'SignatureType_template': 'account_edi_ubl_cii.ubl_20_SignatureType',
-            //     'ResponseType_template': 'account_edi_ubl_cii.ubl_20_ResponseType',
-            //     'DeliveryType_template': 'account_edi_ubl_cii.ubl_20_DeliveryType',
-            //     'InvoicePeriodType_template': 'account_edi_ubl_cii.ubl_20_InvoicePeriodType',
-            //     'MonetaryTotalType_template': 'account_edi_ubl_cii.ubl_20_MonetaryTotalType',
-            //     'InvoiceLineType_template': 'account_edi_ubl_cii.ubl_20_InvoiceLineType',
-            //     'CreditNoteLineType_template': 'account_edi_ubl_cii.ubl_20_CreditNoteLineType',
-            //     'DebitNoteLineType_template': 'account_edi_ubl_cii.ubl_20_DebitNoteLineType',
-            //     'InvoiceType_template': 'account_edi_ubl_cii.ubl_20_InvoiceType',
-            //     'CreditNoteType_template': 'account_edi_ubl_cii.ubl_20_CreditNoteType',
-            //     'DebitNoteType_template': 'account_edi_ubl_cii.ubl_20_DebitNoteType',
-            //     'ExchangeRateType_template': 'account_edi_ubl_cii.ubl_20_ExchangeRateType',
-            // 
-            //     'vals': {
-            //         'ubl_version_id': 2.0,
-            //         'id': invoice.name,
-            //         'issue_date': invoice.invoice_date,
-            //         'due_date': invoice.invoice_date_due,
-            //         'note_vals': self._get_note_vals_list(invoice),
-            //         'document_currency_code': invoice.currency_id.name,
-            //         'order_reference': order_reference,
-            //         'sales_order_id': sales_order_id,
-            //         'accounting_supplier_party_vals': {
-            //             'party_vals': self._get_partner_party_vals(supplier, role='supplier'),
-            //         },
-            //         'accounting_customer_party_vals': {
-            //             'party_vals': self._get_partner_party_vals(customer, role='customer'),
-            //         },
-            //         'invoice_period_vals_list': self._get_invoice_period_vals_list(invoice),
-            //         'additional_document_reference_list': self._get_additional_document_reference_list(invoice),
-            //         'delivery_vals_list': self._get_delivery_vals_list(invoice),
-            //         'payment_means_vals_list': self._get_invoice_payment_means_vals_list(invoice),
-            //         'payment_terms_vals': self._get_invoice_payment_terms_vals_list(invoice),
-            //         # allowances at the document level, the allowances on invoices (eg. discount) are on line_vals
-            //         'allowance_charge_vals': document_allowance_charge_vals_list,
-            //         'tax_total_vals': self._get_invoice_tax_totals_vals_list(invoice, taxes_vals),
-            //         'monetary_total_vals': self._get_invoice_monetary_total_vals(
-            //             invoice,
-            //             taxes_vals,
-            //             line_extension_amount,
-            //             allowance_total_amount,
-            //             charge_total_amount,
-            //         ),
-            //         'line_vals': invoice_line_vals_list,
-            //         'currency_dp': self._get_currency_decimal_places(invoice.currency_id),  # currency decimal places
-            //         'pricing_exchange_rate_vals_list': self._get_pricing_exchange_rate_vals_list(invoice),
-            //     },
-            // }
-            // 
-            // # Document type specific settings
-            // if 'debit_origin_id' in self.env['account.move']._fields and invoice.debit_origin_id:
-            //     vals['document_type'] = 'debit_note'
-            //     vals['main_template'] = 'account_edi_ubl_cii.ubl_20_DebitNote'
-            //     vals['vals']['document_type_code'] = 383
-            // elif invoice.move_type == 'out_refund':
-            //     vals['document_type'] = 'credit_note'
-            //     vals['main_template'] = 'account_edi_ubl_cii.ubl_20_CreditNote'
-            //     vals['vals']['document_type_code'] = 381
-            // else: # invoice.move_type == 'out_invoice'
-            //     vals['document_type'] = 'invoice'
-            //     vals['main_template'] = 'account_edi_ubl_cii.ubl_20_Invoice'
-            //     vals['vals']['document_type_code'] = 380
-            // 
-            // return vals
             */
             return default;
         }
@@ -1480,10 +374,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _find_value(self, xpath, tree, nsmap=False):
             // # EXTENDS account.edi.common
             // return super()._find_value(xpath, tree, CII_NAMESPACES)
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _find_value(self, xpath, tree, nsmap=False):
-            // # EXTENDS account.edi.common
-            // return super()._find_value(xpath, tree, UBL_NAMESPACES)
             */
             return default;
         }
@@ -1500,88 +390,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetAdditionalDocumentReferenceListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_additional_document_reference_list(self, invoice):
-            // """
-            // This is optional and meant to be overridden when required under the form:
-            // {
-            //     'id': str,
-            //     'issue_date': str,
-            //     'document_type_code': str,
-            //     'document_type': str,
-            //     'document_description': str,
-            // }.
-            // Should return a list.
-            // """
-            // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetAddressNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_address_node(self, vals):
-            // """ Generic helper to generate the Address node for a res.partner or res.bank. """
-            // partner = vals['partner']
-            // country_key = 'country' if partner._name == 'res.bank' else 'country_id'
-            // state_key = 'state' if partner._name == 'res.bank' else 'state_id'
-            // country = partner[country_key]
-            // state = partner[state_key]
-            // 
-            // return {
-            //     'cbc:StreetName': {'_text': partner.street},
-            //     'cbc:AdditionalStreetName': {'_text': partner.street2},
-            //     'cbc:CityName': {'_text': partner.city},
-            //     'cbc:PostalZone': {'_text': partner.zip},
-            //     'cbc:CountrySubentity': {'_text': state.name},
-            //     'cbc:CountrySubentityCode': {'_text': state.code},
-            //     'cac:Country': {
-            //         'cbc:IdentificationCode': {'_text': country.code},
-            //         'cbc:Name': {'_text': country.name},
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetBankAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bank) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_bank_address_vals(self, bank):
-            // return {
-            //     'street_name': bank.street,
-            //     'additional_street_name': bank.street2,
-            //     'city_name': bank.city,
-            //     'postal_zone': bank.zip,
-            //     'country_subentity': bank.state.name,
-            //     'country_subentity_code': bank.state.code,
-            //     'country_vals': self._get_country_vals(bank.country),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetCountryValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_country_vals(self, country):
-            // return {
-            //     'country': country,
-            // 
-            //     'identification_code': country.code,
-            //     'name': country.name,
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetCurrencyDecimalPlacesInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid currency_id) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
@@ -1589,101 +397,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_currency_decimal_places(self, currency_id):
             // # Allows other documents to easily override in case there is a flat max precision number
             // return currency_id.decimal_places
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDeliveryValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_delivery_vals_list(self, invoice):
-            // # the data is optional, except for ubl bis3 (see the override, where we need to set a default delivery address)
-            // return [{
-            //     'actual_delivery_date': invoice.delivery_date,
-            //     'delivery_location_vals': {
-            //         'delivery_address_vals': self._get_partner_address_vals(invoice.partner_shipping_id),
-            //     },
-            //     'delivery_party_vals': self._get_partner_party_vals(invoice.partner_shipping_id, 'delivery') if invoice.partner_shipping_id else {},
-            // }]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentAllowanceChargeNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_allowance_charge_node(self, vals):
-            // """ Generic helper to generate a document-level AllowanceCharge node given a base_line. """
-            // base_line = vals['base_line']
-            // currency_suffix = vals['currency_suffix']
-            // aggregated_tax_details = self.env['account.tax']._aggregate_base_line_tax_details(base_line, vals['tax_grouping_function'])
-            // base_amount = base_line['tax_details'][f'total_excluded{currency_suffix}']
-            // return {
-            //     'cbc:ChargeIndicator': {'_text': 'false' if base_amount < 0.0 else 'true'},
-            //     'cbc:AllowanceChargeReasonCode': {'_text': '66' if base_amount < 0.0 else 'ZZZ'},
-            //     'cbc:AllowanceChargeReason': {'_text': _("Conditional cash/payment discount")},
-            //     'cbc:Amount': {
-            //         '_text': self.format_float(abs(base_amount), vals['currency_dp']),
-            //         'currencyID': vals['currency_name']
-            //     },
-            //     'cac:TaxCategory': [
-            //         self._get_tax_category_node({**vals, 'grouping_key': grouping_key})
-            //         for grouping_key in aggregated_tax_details
-            //         if grouping_key
-            //     ]
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentAllowanceChargeValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_allowance_charge_vals_list(self, invoice, taxes_vals=None):
-            // """
-            // https://docs.peppol.eu/poacc/billing/3.0/bis/#_document_level_allowance_or_charge
-            // Usage for early payment discounts:
-            // * Add one document level Allowance per tax rate (VAT included)
-            // * Add one document level Charge (VAT excluded) with amount = the total sum of the early payment discount
-            // The difference between these is the cash discount in case of early payment.
-            // """
-            // vals_list = []
-            // # Early Payment Discount
-            // epd_tax_to_discount = self._get_early_payment_discount_grouped_by_tax_rate(invoice)
-            // if epd_tax_to_discount:
-            //     # One Allowance per tax rate (VAT included)
-            //     for tax_amount, discount_amount in epd_tax_to_discount.items():
-            //         vals_list.append({
-            //             'charge_indicator': 'false',
-            //             'allowance_charge_reason_code': '66',
-            //             'allowance_charge_reason': _("Conditional cash/payment discount"),
-            //             'amount': discount_amount,
-            //             'currency_dp': 2,
-            //             'currency_name': invoice.currency_id.name,
-            //             'tax_category_vals': [{
-            //                 'id': 'S',
-            //                 'percent': tax_amount,
-            //                 'tax_scheme_vals': {'id': 'VAT'},
-            //             }],
-            //         })
-            //     # One global Charge (VAT exempted)
-            //     vals_list.append({
-            //         'charge_indicator': 'true',
-            //         'allowance_charge_reason_code': 'ZZZ',
-            //         'allowance_charge_reason': _("Conditional cash/payment discount"),
-            //         'amount': sum(epd_tax_to_discount.values()),
-            //         'currency_dp': 2,
-            //         'currency_name': invoice.currency_id.name,
-            //         'tax_category_vals': [{
-            //             'id': 'E',
-            //             'percent': 0.0,
-            //             'tax_scheme_vals': {'id': 'VAT'},
-            //         }],
-            //     })
-            // return vals_list
             */
             return default;
         }
@@ -1706,106 +419,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'percentage': './{*}CalculationPercent',
             //     'tax_percentage': './{*}CategoryTradeTax/{*}RateApplicablePercent',
             // }
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_allowance_charge_xpaths(self):
-            // return {
-            //     'root': './{*}AllowanceCharge',
-            //     'charge_indicator': './{*}ChargeIndicator',
-            //     'base_amount': './{*}BaseAmount',
-            //     'amount': './{*}Amount',
-            //     'reason': './{*}AllowanceChargeReason',
-            //     'percentage': './{*}MultiplierFactorNumeric',
-            //     'tax_percentage': './{*}TaxCategory/{*}Percent',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentLineNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_line_node(self, vals):
-            // self._add_document_line_vals(vals)
-            // 
-            // line_node = {}
-            // self._add_document_line_id_nodes(line_node, vals)
-            // self._add_document_line_note_nodes(line_node, vals)
-            // self._add_document_line_amount_nodes(line_node, vals)
-            // self._add_document_line_period_nodes(line_node, vals)
-            // self._add_document_line_allowance_charge_nodes(line_node, vals)
-            // self._add_document_line_tax_total_nodes(line_node, vals)
-            // self._add_document_line_item_nodes(line_node, vals)
-            // self._add_document_line_tax_category_nodes(line_node, vals)
-            // self._add_document_line_price_nodes(line_node, vals)
-            // self._add_document_line_pricing_reference_nodes(line_node, vals)
-            // return line_node
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentNsmapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_nsmap(self, vals):
-            // return {
-            //     None: {
-            //         'invoice': "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
-            //         'credit_note': "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2",
-            //         'debit_note': "urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2",
-            //         'order': "urn:oasis:names:specification:ubl:schema:xsd:Order-2",
-            //     }[vals['document_type']],
-            //     'cac': "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
-            //     'cbc': "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
-            //     'ext': "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2",
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_template(self, vals):
-            // return {
-            //     'invoice': Invoice,
-            //     'credit_note': CreditNote,
-            //     'debit_note': DebitNote,
-            // }[vals['document_type']]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentTypeCodeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object invoice_data) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_document_type_code_vals(self, invoice, invoice_data):
-            // """Returns the values used for the `DocumentTypeCode` node"""
-            // # To be overriden by custom format if required
-            // return {'attrs': {}, 'value': None}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetEarlyPaymentDiscountGroupedByTaxRateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_early_payment_discount_grouped_by_tax_rate(self, invoice):
-            // """
-            // Get the early payment discounts grouped by the tax rate of the product it is linked to
-            // :returns {float: float}: mapping tax amounts to early payment discount amounts
-            // """
-            // if invoice.invoice_payment_term_id.early_pay_discount_computation != 'mixed':
-            //     return {}
-            // tax_to_discount = defaultdict(lambda: 0)
-            // for line in invoice.line_ids.filtered(lambda l: l.display_type == 'epd'):
-            //     for tax in line.tax_ids:
-            //         tax_to_discount[tax.amount] += line.amount_currency
-            // return tax_to_discount
             */
             return default;
         }
@@ -1820,87 +433,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'type_code': '380' if invoice.move_type == 'out_invoice' else '381',
             //     'issue_date_time': invoice.invoice_date,
             //     'included_note': html2plaintext(invoice.narration) if invoice.narration else "",
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFinancialAccountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_financial_account_node(self, vals):
-            // """ Generic helper to generate the FinancialAccount node for a res.partner.bank """
-            // partner_bank = vals['partner_bank']
-            // bank = partner_bank.bank_id
-            // financial_institution_branch = None
-            // if bank:
-            //     financial_institution_branch = {
-            //         'cbc:ID': {
-            //             '_text': bank.bic,
-            //             'schemeID': 'BIC'
-            //         },
-            //         'cac:FinancialInstitution': {
-            //             'cbc:ID': {
-            //                 '_text': bank.bic,
-            //                 'schemeID': 'BIC'
-            //             },
-            //             'cbc:Name': {'_text': bank.name},
-            //             'cac:Address': self._get_address_node({**vals, 'partner': bank})
-            //         }
-            //     }
-            // return {
-            //     'cbc:ID': {'_text': partner_bank.acc_number.replace(' ', '')},
-            //     'cac:FinancialInstitutionBranch': financial_institution_branch
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFinancialAccountValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner_bank) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_financial_account_vals(self, partner_bank):
-            // vals = {
-            //     'bank_account': partner_bank,
-            //     'id': partner_bank.acc_number.replace(' ', ''),
-            // }
-            // 
-            // if partner_bank.bank_id:
-            //     vals['financial_institution_branch_vals'] = self._get_financial_institution_branch_vals(partner_bank.bank_id)
-            // 
-            // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFinancialInstitutionBranchValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bank) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_financial_institution_branch_vals(self, bank):
-            // return {
-            //     'bank': bank,
-            //     'id': bank.bic,
-            //     'id_attrs': {'schemeID': 'BIC'},
-            //     'financial_institution_vals': self._get_financial_institution_vals(bank),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFinancialInstitutionValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bank) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_financial_institution_vals(self, bank):
-            // return {
-            //     'bank': bank,
-            //     'id': bank.bic,
-            //     'id_attrs': {'schemeID': 'BIC'},
-            //     'name': bank.name,
-            //     'address_vals': self._get_bank_address_vals(bank),
             // }
             */
             return default;
@@ -1927,232 +459,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return 'refund', -1
             //     return 'invoice', 1
             // return None, None
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_import_document_amount_sign(self, tree):
-            // """
-            // In UBL, an invoice has tag 'Invoice' and a credit note has tag 'CreditNote'. However, a credit note can be
-            // expressed as an invoice with negative amounts. For this case, we need a factor to take the opposite
-            // of each quantity in the invoice.
-            // """
-            // if tree.tag == '{urn:oasis:names:specification:ubl:schema:xsd:Invoice-2}Invoice':
-            //     amount_node = tree.find('.//{*}LegalMonetaryTotal/{*}TaxExclusiveAmount')
-            //     if amount_node is not None and float(amount_node.text) < 0:
-            //         return 'refund', -1
-            //     return 'invoice', 1
-            // if tree.tag == '{urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2}CreditNote':
-            //     return 'refund', 1
-            // return None, None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineAllowanceValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object tax_values_list) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_allowance_vals_list(self, line, tax_values_list=None):
-            // """ Method used to fill the cac:{Invoice,CreditNote,DebitNote}Line>cac:AllowanceCharge node.
-            // 
-            // Allowances are distinguished from charges using the ChargeIndicator node with 'false' as value.
-            // 
-            // Note that allowance charges do not exist for credit notes in UBL 2.0, so if we apply discount in Odoo
-            // the net price will not be consistent with the unit price, but we cannot do anything about it
-            // 
-            // :param line:    An invoice line.
-            // :return:        A list of python dictionaries.
-            // """
-            // fixed_tax_charge_vals_list = []
-            // if self._context.get('convert_fixed_taxes'):
-            //     for grouping_key, tax_details in tax_values_list['tax_details'].items():
-            //         if grouping_key['tax_amount_type'] == 'fixed':
-            //             fixed_tax_charge_vals_list.append({
-            //                 'currency_name': line.currency_id.name,
-            //                 'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            //                 'charge_indicator': 'true',
-            //                 'allowance_charge_reason_code': 'AEO',
-            //                 'allowance_charge_reason': grouping_key['tax_name'],
-            //                 'amount': tax_details['tax_amount_currency'],
-            //             })
-            // 
-            //     if not line.discount:
-            //         return fixed_tax_charge_vals_list
-            // 
-            // # Price subtotal with discount subtracted:
-            // net_price_subtotal = line.price_subtotal
-            // # Price subtotal without discount subtracted:
-            // if line.discount == 100.0:
-            //     gross_price_subtotal = 0.0
-            // else:
-            //     gross_price_subtotal = line.currency_id.round(net_price_subtotal / (1.0 - (line.discount or 0.0) / 100.0))
-            // 
-            // allowance_vals = {
-            //     'currency_name': line.currency_id.name,
-            //     'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            // 
-            //     # Must be 'false' since this method is for allowances.
-            //     'charge_indicator': 'false',
-            // 
-            //     # A reason should be provided. In Odoo, we only manage discounts.
-            //     # Full code list is available here:
-            //     # https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL5189/
-            //     'allowance_charge_reason_code': 95,
-            // 
-            //     # The discount should be provided as an amount.
-            //     'amount': gross_price_subtotal - net_price_subtotal,
-            // }
-            // 
-            // return [allowance_vals] + fixed_tax_charge_vals_list
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineItemValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_item_vals(self, line, taxes_vals):
-            // """ Method used to fill the cac:InvoiceLine/cac:Item node.
-            // It provides information about what the product you are selling.
-            // 
-            // :param line:        An invoice line.
-            // :param taxes_vals:  The tax details for the current invoice line.
-            // :return:            A python dictionary.
-            // """
-            // product = line.product_id
-            // taxes = line.tax_ids.flatten_taxes_hierarchy()
-            // if self._context.get('convert_fixed_taxes'):
-            //     taxes = taxes.filtered(lambda t: t.amount_type != 'fixed')
-            // customer = line.move_id.commercial_partner_id
-            // supplier = line.move_id.company_id.partner_id.commercial_partner_id
-            // tax_category_vals_list = self._get_tax_category_list(customer, supplier, taxes)
-            // description = line.name and line.name.replace('\n', ' ')
-            // return {
-            //     'description': description,
-            //     'name': product.name or description,
-            //     'sellers_item_identification_vals': {'id': product.code},
-            //     'classified_tax_category_vals': tax_category_vals_list,
-            //     'standard_item_identification_vals': {
-            //         'id': product.barcode,
-            //         'id_attrs': {'schemeID': '0160'},  # GTIN
-            //     } if product.barcode else {},
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_node(self, vals):
-            // self._add_invoice_line_vals(vals)
-            // 
-            // line_node = {}
-            // self._add_invoice_line_id_nodes(line_node, vals)
-            // self._add_invoice_line_note_nodes(line_node, vals)
-            // self._add_invoice_line_amount_nodes(line_node, vals)
-            // self._add_invoice_line_period_nodes(line_node, vals)
-            // self._add_invoice_line_allowance_charge_nodes(line_node, vals)
-            // self._add_invoice_line_tax_total_nodes(line_node, vals)
-            // self._add_invoice_line_item_nodes(line_node, vals)
-            // self._add_invoice_line_tax_category_nodes(line_node, vals)
-            // self._add_invoice_line_price_nodes(line_node, vals)
-            // self._add_invoice_line_pricing_reference_nodes(line_node, vals)
-            // return line_node
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLinePriceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_price_vals(self, line):
-            // """ Method used to fill the cac:InvoiceLine/cac:Price node.
-            // It provides information about the price applied for the goods and services invoiced.
-            // 
-            // :param line:    An invoice line.
-            // :return:        A python dictionary.
-            // """
-            // # Price subtotal without discount:
-            // net_price_subtotal = line.price_subtotal
-            // # Price subtotal with discount:
-            // if line.discount == 100.0:
-            //     gross_price_subtotal = 0.0
-            // else:
-            //     gross_price_subtotal = net_price_subtotal / (1.0 - (line.discount or 0.0) / 100.0)
-            // # Price subtotal with discount / quantity:
-            // gross_price_unit = gross_price_subtotal / line.quantity if line.quantity else 0.0
-            // 
-            // uom = self._get_uom_unece_code(line.product_uom_id)
-            // 
-            // return {
-            //     'currency': line.currency_id,
-            //     'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            // 
-            //     # The price of an item, exclusive of VAT, after subtracting item price discount.
-            //     'price_amount': round(gross_price_unit, 10),
-            //     'product_price_dp': self.env['decimal.precision'].precision_get('Product Price'),
-            // 
-            //     # The number of item units to which the price applies.
-            //     # setting to None -> the xml will not comprise the BaseQuantity (it's not mandatory)
-            //     'base_quantity': None,
-            //     'base_quantity_attrs': {'unitCode': uom},
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineTaxTotalsValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_tax_totals_vals_list(self, line, taxes_vals):
-            // """ Method used to fill the cac:TaxTotal node on a line level.
-            // Uses the same method as the invoice TaxTotal, but can be overridden in other formats.
-            // """
-            // return self._get_invoice_tax_totals_vals_list(line.move_id, taxes_vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceLineValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, Guid line_id, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_vals(self, line, line_id, taxes_vals):
-            // """ Method used to fill the cac:{Invoice,CreditNote,DebitNote}Line node.
-            // It provides information about the document line.
-            // 
-            // :param line:    A document line.
-            // :return:        A python dictionary.
-            // """
-            // allowance_charge_vals_list = self._get_invoice_line_allowance_vals_list(line, tax_values_list=taxes_vals)
-            // 
-            // uom = self._get_uom_unece_code(line.product_uom_id)
-            // total_fixed_tax_amount = sum(
-            //     vals['amount']
-            //     for vals in allowance_charge_vals_list
-            //     if vals.get('charge_indicator') == 'true'
-            // )
-            // period_vals = {}
-            // # deferred_start_date & deferred_end_date are enterprise-only fields
-            // if line._fields.get('deferred_start_date') and (line.deferred_start_date or line.deferred_end_date):
-            //     period_vals.update({'start_date': line.deferred_start_date})
-            //     period_vals.update({'end_date': line.deferred_end_date})
-            // return {
-            //     'currency': line.currency_id,
-            //     'currency_dp': self._get_currency_decimal_places(line.currency_id),
-            //     'id': line_id + 1,
-            //     'line_quantity': line.quantity,
-            //     'line_quantity_attrs': {'unitCode': uom},
-            //     'line_extension_amount': line.price_subtotal + total_fixed_tax_amount,
-            //     'allowance_charge_vals': allowance_charge_vals_list,
-            //     'tax_total_vals': self._get_invoice_line_tax_totals_vals_list(line, taxes_vals),
-            //     'item_vals': self._get_invoice_line_item_vals(line, taxes_vals),
-            //     'price_vals': self._get_invoice_line_price_vals(line),
-            //     'invoice_period_vals_list': [period_vals] if period_vals else []
-            // }
             */
             return default;
         }
@@ -2171,208 +477,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'deferred_end_date': './{*}SpecifiedLineTradeSettlement/{*}BillingSpecifiedPeriod/{*}EndDateTime/{*}DateTimeString',
             //     'date_format': DEFAULT_FACTURX_DATE_FORMAT,
             // }
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_line_xpaths(self, document_type=False, qty_factor=1):
-            // return {
-            //     'deferred_start_date': './{*}InvoicePeriod/{*}StartDate',
-            //     'deferred_end_date': './{*}InvoicePeriod/{*}EndDate',
-            //     'date_format': '%Y-%m-%d',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceMonetaryTotalValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object taxes_vals, object line_extension_amount, object allowance_total_amount, object charge_total_amount) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_monetary_total_vals(self, invoice, taxes_vals, line_extension_amount, allowance_total_amount, charge_total_amount):
-            // """ Method used to fill the cac:{Legal,Requested}MonetaryTotal node"""
-            // # We only handle rounding amounts that do not belong to any tax ('add_invoice_line' cash rounding strategy).
-            // # Rounding amounts belonging to a tax ('biggest_tax' strategy) are included already in the tax amounts.
-            // rounding_amls = invoice.line_ids.filtered(lambda line: line.display_type == 'rounding' and not line.tax_line_id)
-            // payable_rounding_amount = invoice.direction_sign * sum(rounding_amls.mapped('amount_currency'))
-            // return {
-            //     'currency': invoice.currency_id,
-            //     'currency_dp': self._get_currency_decimal_places(invoice.currency_id),
-            //     'line_extension_amount': line_extension_amount,
-            //     'tax_exclusive_amount': taxes_vals['base_amount_currency'],
-            //     'tax_inclusive_amount': invoice.amount_total - payable_rounding_amount,
-            //     'allowance_total_amount': allowance_total_amount or None,
-            //     'charge_total_amount': charge_total_amount or None,
-            //     'prepaid_amount': invoice.amount_total - invoice.amount_residual,
-            //     'payable_rounding_amount': payable_rounding_amount or None,
-            //     'payable_amount': invoice.amount_residual,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_node(self, vals):
-            // self._add_invoice_config_vals(vals)
-            // self._add_invoice_base_lines_vals(vals)
-            // self._add_invoice_currency_vals(vals)
-            // self._add_invoice_tax_grouping_function_vals(vals)
-            // self._add_invoice_monetary_totals_vals(vals)
-            // 
-            // document_node = {}
-            // self._add_invoice_header_nodes(document_node, vals)
-            // self._add_invoice_accounting_supplier_party_nodes(document_node, vals)
-            // self._add_invoice_accounting_customer_party_nodes(document_node, vals)
-            // self._add_invoice_seller_supplier_party_nodes(document_node, vals)
-            // 
-            // if vals['document_type'] == 'invoice':
-            //     self._add_invoice_delivery_nodes(document_node, vals)
-            //     self._add_invoice_payment_means_nodes(document_node, vals)
-            //     self._add_invoice_payment_terms_nodes(document_node, vals)
-            // 
-            // self._add_invoice_allowance_charge_nodes(document_node, vals)
-            // self._add_invoice_exchange_rate_nodes(document_node, vals)
-            // self._add_invoice_tax_total_nodes(document_node, vals)
-            // self._add_invoice_monetary_total_nodes(document_node, vals)
-            // self._add_invoice_line_nodes(document_node, vals)
-            // return document_node
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoicePaymentMeansValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_payment_means_vals_list(self, invoice):
-            // if invoice.move_type == 'out_invoice':
-            //     if invoice.partner_bank_id:
-            //         payment_means_code, payment_means_name = (30, 'credit transfer')
-            //     else:
-            //         payment_means_code, payment_means_name = ('ZZZ', 'mutually defined')
-            // else:
-            //     payment_means_code, payment_means_name = (57, 'standing agreement')
-            // 
-            // # in Denmark payment code 30 is not allowed. we hardcode it to 1 ("unknown") for now
-            // # as we cannot deduce this information from the invoice
-            // if invoice.partner_id.country_code == 'DK':
-            //     payment_means_code, payment_means_name = 1, 'unknown'
-            // 
-            // vals = {
-            //     'payment_means_code': payment_means_code,
-            //     'payment_means_code_attrs': {'name': payment_means_name},
-            //     'payment_due_date': invoice.invoice_date_due or invoice.invoice_date,
-            //     'instruction_id': invoice.payment_reference,
-            //     'payment_id_vals': [invoice.payment_reference or invoice.name],
-            // }
-            // 
-            // if invoice.partner_bank_id:
-            //     vals['payee_financial_account_vals'] = self._get_financial_account_vals(invoice.partner_bank_id)
-            // 
-            // return [vals]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoicePaymentTermsValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_payment_terms_vals_list(self, invoice):
-            // payment_term = invoice.invoice_payment_term_id
-            // if payment_term:
-            //     # The payment term's note is automatically embedded in a <p> tag in Odoo
-            //     return [{'note_vals': [{'note': html2plaintext(payment_term.note)}]}]
-            // else:
-            //     return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoicePeriodValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_period_vals_list(self, invoice):
-            // """
-            // For now, we cannot fill this data from an invoice
-            // This corresponds to the 'delivery or invoice period'. For UBL Bis 3, in the case of intra-community supply,
-            // the Actual delivery date (BT-72) or the Invoicing period (BG-14) should be present under the form:
-            // {
-            //     'start_date': str,
-            //     'end_date': str,
-            // }.
-            // """
-            // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceTaxTotalsValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // tax_totals_vals = {
-            //     'currency': invoice.currency_id,
-            //     'currency_dp': self._get_currency_decimal_places(invoice.currency_id),
-            //     'tax_amount': taxes_vals['tax_amount_currency'],
-            //     'tax_subtotal_vals': [],
-            // }
-            // 
-            // # If it's not on the whole invoice, don't manage the EPD.
-            // epd_tax_to_discount = {}
-            // if not taxes_vals.get('invoice_line'):
-            //     epd_tax_to_discount = self._get_early_payment_discount_grouped_by_tax_rate(invoice)
-            //     epd_base_tax_amounts = defaultdict(lambda: {
-            //         'base_amount_currency': 0.0,
-            //         'tax_amount_currency': 0.0,
-            //     })
-            //     if epd_tax_to_discount:
-            //         for percentage, base_amount_currency in epd_tax_to_discount.items():
-            //             epd_base_tax_amounts[percentage]['base_amount_currency'] += base_amount_currency
-            //         epd_accounted_tax_amount = 0.0
-            //         for percentage, amounts in epd_base_tax_amounts.items():
-            //             amounts['tax_amount_currency'] = invoice.currency_id.round(
-            //                 amounts['base_amount_currency'] * percentage / 100.0)
-            //             epd_accounted_tax_amount += amounts['tax_amount_currency']
-            // 
-            // for grouping_key, vals in taxes_vals['tax_details'].items():
-            //     if grouping_key['tax_amount_type'] != 'fixed' or not self._context.get('convert_fixed_taxes'):
-            //         subtotal = {
-            //             'currency': invoice.currency_id,
-            //             'currency_dp': self._get_currency_decimal_places(invoice.currency_id),
-            //             'taxable_amount': vals['base_amount_currency'],
-            //             'tax_amount': vals['tax_amount_currency'],
-            //             'percent': vals['tax_category_percent'],
-            //             'tax_category_vals': vals['_tax_category_vals_'],
-            //         }
-            //         if epd_tax_to_discount:
-            //             # early payment discounts: need to recompute the tax/taxable amounts
-            //             epd_base_amount = epd_base_tax_amounts.get(subtotal['percent'], {}).get('base_amount_currency', 0.0)
-            //             taxable_amount_after_epd = subtotal['taxable_amount'] - epd_base_amount
-            //             subtotal.update({
-            //                 'taxable_amount': taxable_amount_after_epd,
-            //             })
-            //         tax_totals_vals['tax_subtotal_vals'].append(subtotal)
-            // 
-            // if epd_tax_to_discount:
-            //     # early payment discounts: hence, need to add a subtotal section
-            //     tax_totals_vals['tax_subtotal_vals'].append({
-            //         'currency': invoice.currency_id,
-            //         'currency_dp': invoice.currency_id.decimal_places,
-            //         'taxable_amount': sum(epd_tax_to_discount.values()),
-            //         'tax_amount': 0.0,
-            //         'tax_category_vals': {
-            //             'id': 'E',
-            //             'percent': 0.0,
-            //             'tax_scheme_vals': {
-            //                 'id': "VAT",
-            //             },
-            //             'tax_exemption_reason': "Exempt from tax",
-            //         },
-            //     })
-            // return [tax_totals_vals]
             */
             return default;
         }
@@ -2385,76 +489,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # get the Invoicing period (BG-14): a list of dates covered by the invoice
             // # don't create a bridge to get the date range from the timesheet_ids
             // return [invoice.invoice_date]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetLineDiscountAllowanceChargeNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_line_discount_allowance_charge_node(self, vals):
-            // currency_suffix = vals['currency_suffix']
-            // if float_is_zero(vals[f'discount_amount{currency_suffix}'], precision_digits=vals['currency_dp']):
-            //     return None
-            // 
-            // return {
-            //     'cbc:ChargeIndicator': {'_text': 'false' if vals[f'discount_amount{currency_suffix}'] > 0 else 'true'},
-            //     'cbc:AllowanceChargeReasonCode': {'_text': '95'},
-            //     'cbc:Amount': {
-            //         '_text': self.format_float(
-            //             abs(vals[f'discount_amount{currency_suffix}']),
-            //             vals['currency_dp'],
-            //         ),
-            //         'currencyID': vals['currency_name'],
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetLineFixedTaxAggregatedTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_line_fixed_tax_aggregated_tax_details(self, vals):
-            // base_line = vals['base_line']
-            // 
-            // def fixed_tax_grouping_function(base_line, tax_data):
-            //     tax = tax_data and tax_data['tax']
-            //     if not tax or tax.amount_type != 'fixed':
-            //         return None
-            //     return tax.name
-            // 
-            // return self.env['account.tax']._aggregate_base_line_tax_details(base_line, fixed_tax_grouping_function)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetLineFixedTaxAllowanceChargeNodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_line_fixed_tax_allowance_charge_nodes(self, vals):
-            // fixed_tax_aggregated_tax_details = self._get_line_fixed_tax_aggregated_tax_details(vals)
-            // currency_suffix = vals['currency_suffix']
-            // 
-            // allowance_charge_nodes = []
-            // for grouping_key, tax_details in fixed_tax_aggregated_tax_details.items():
-            //     if grouping_key:
-            //         allowance_charge_nodes.append({
-            //             'cbc:ChargeIndicator': {'_text': 'true' if tax_details[f'tax_amount{currency_suffix}'] > 0 else 'false'},
-            //             'cbc:AllowanceChargeReasonCode': {'_text': 'AEO'},
-            //             'cbc:AllowanceChargeReason': {'_text': grouping_key},
-            //             'cbc:Amount': {
-            //                 '_text': self.format_float(
-            //                     abs(tax_details[f'tax_amount{currency_suffix}']),
-            //                     vals['currency_dp'],
-            //                 ),
-            //                 'currencyID': vals['currency_name'],
-            //             },
-            //         })
-            // return allowance_charge_nodes
             */
             return default;
         }
@@ -2488,250 +522,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'barcode': './ram:SpecifiedTradeProduct/ram:GlobalID',
             //     },
             // }
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_line_xpaths(self, document_type=False, qty_factor=1):
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetPostalAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object role) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
+            // def _get_postal_address(self, tree, role):
             // return {
-            //     'basis_qty': './cac:Price/cbc:BaseQuantity',
-            //     'gross_price_unit': './{*}Price/{*}AllowanceCharge/{*}BaseAmount',
-            //     'rebate': './{*}Price/{*}AllowanceCharge/{*}Amount',
-            //     'net_price_unit': './{*}Price/{*}PriceAmount',
-            //     'delivered_qty': (
-            //         './{*}InvoicedQuantity'
-            //         if document_type and document_type in ('in_invoice', 'out_invoice') or qty_factor == -1
-            //         else './{*}CreditedQuantity'
-            //     ),
-            //     'allowance_charge': './/{*}AllowanceCharge',
-            //     'allowance_charge_indicator': './{*}ChargeIndicator',
-            //     'allowance_charge_amount': './{*}Amount',
-            //     'allowance_charge_reason': './{*}AllowanceChargeReason',
-            //     'allowance_charge_reason_code': './{*}AllowanceChargeReasonCode',
-            //     'line_total_amount': './{*}LineExtensionAmount',
-            //     'name': [
-            //         './cac:Item/cbc:Description',
-            //         './cac:Item/cbc:Name',
-            //     ],
-            //     'product': {
-            //         'default_code': './cac:Item/cac:SellersItemIdentification/cbc:ID',
-            //         'name': './cac:Item/cbc:Name',
-            //         'barcode': './cac:Item/cac:StandardItemIdentification/cbc:ID[@schemeID="0160"]',
-            //     },
+            //     'country_code': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CountryID', tree),
+            //     'street': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:LineOne', tree),
+            //     'additional_street': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:LineTwo', tree),
+            //     'city': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CityName', tree),
+            //     'zip': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:PostcodeCode', tree),
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetNoteValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_note_vals_list(self, invoice):
-            // return [{'note': html2plaintext(invoice.narration)}] if invoice.narration else []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_address_vals(self, partner):
-            // return {
-            //     'street_name': partner.street,
-            //     'additional_street_name': partner.street2,
-            //     'city_name': partner.city,
-            //     'postal_zone': partner.zip,
-            //     'country_subentity': partner.state_id.name,
-            //     'country_subentity_code': partner.state_id.code,
-            //     'country_vals': self._get_country_vals(partner.country_id),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerContactValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_contact_vals(self, partner):
-            // return {
-            //     'id': partner.id,
-            //     'name': partner.name,
-            //     'telephone': partner.phone or partner.mobile,
-            //     'electronic_mail': partner.email,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerDetailStrInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name, object phone, object email, object vat) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _get_partner_detail_str(self, name, phone=False, email=False, vat=False):
-            // """ Return partner details string to help user find or create proper contact with details.
-            // """
-            // partner_details = _("Name: %(name)s, Vat: %(vat)s", name=name, vat=vat)
-            // if phone:
-            //     partner_details += _(", Phone: %(phone)s", phone=phone)
-            // if email:
-            //     partner_details += _(", Email: %(email)s", email=email)
-            // 
-            // return partner_details
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerPartyIdentificationValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_party_identification_vals_list(self, partner):
-            // if partner.ref:
-            //     return [{'id': partner.ref}]
-            // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerPartyLegalEntityValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_party_legal_entity_vals_list(self, partner):
-            // return [{
-            //     'commercial_partner': partner,
-            //     'registration_name': partner.name,
-            //     'company_id': partner.vat,
-            //     'registration_address_vals': self._get_partner_address_vals(partner),
-            // }]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerPartyTaxSchemeValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_party_tax_scheme_vals_list(self, partner, role):
-            // # [BR-CO-09] if the PartyTaxScheme/TaxScheme/ID == 'VAT', CompanyID must start with a country code prefix.
-            // # In some countries however, the CompanyID can be with or without country code prefix and still be perfectly
-            // # valid (RO, HU, non-EU countries).
-            // # We have to handle their cases by changing the TaxScheme/ID to 'something other than VAT',
-            // # preventing the trigger of the rule.
-            // tax_scheme_id = 'VAT'
-            // if (
-            //     partner.country_id
-            //     and partner.vat and not partner.vat[:2].isalpha()
-            // ):
-            //     tax_scheme_id = 'NOT_EU_VAT'
-            // return [{
-            //     'registration_name': partner.name,
-            //     'company_id': partner.vat,
-            //     'registration_address_vals': self._get_partner_address_vals(partner),
-            //     'tax_scheme_vals': {'id': tax_scheme_id},
-            // }]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerPartyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object role) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_party_vals(self, partner, role):
-            // return {
-            //     'partner': partner,
-            //     'party_identification_vals': self._get_partner_party_identification_vals_list(partner.commercial_partner_id),
-            //     'party_name_vals': [{'name': partner.display_name}],
-            //     'postal_address_vals': self._get_partner_address_vals(partner),
-            //     'party_tax_scheme_vals': self._get_partner_party_tax_scheme_vals_list(partner.commercial_partner_id, role),
-            //     'party_legal_entity_vals': self._get_partner_party_legal_entity_vals_list(partner.commercial_partner_id),
-            //     'contact_vals': self._get_partner_contact_vals(partner),
-            //     'person_vals': self._get_partner_person_vals(partner),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerPersonValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_partner_person_vals(self, partner):
-            // """
-            // This is optional and meant to be overridden when required under the form:
-            // {
-            //     'first_name': str,
-            //     'family_name': str,
-            // }.
-            // Should return a dict.
-            // """
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartyNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_party_node(self, vals):
-            // """ Generic helper to generate the Party node for a res.partner. """
-            // partner = vals['partner']
-            // commercial_partner = partner.commercial_partner_id
-            // return {
-            //     'cac:PartyIdentification': {
-            //         'cbc:ID': {'_text': commercial_partner.ref},
-            //     },
-            //     'cac:PartyName': {
-            //         'cbc:Name': {'_text': partner.display_name},
-            //     },
-            //     'cac:PostalAddress': self._get_address_node(vals),
-            //     'cac:PartyTaxScheme': {
-            //         'cbc:RegistrationName': {'_text': commercial_partner.name},
-            //         'cbc:CompanyID': {'_text': commercial_partner.vat},
-            //         'cac:RegistrationAddress': self._get_address_node({**vals, 'partner': commercial_partner}),
-            //         'cac:TaxScheme': {
-            //             'cbc:ID': {
-            //                 '_text': ('NOT_EU_VAT' if commercial_partner.country_id and
-            //                         commercial_partner.vat and
-            //                         not commercial_partner.vat[:2].isalpha() else 'VAT')
-            //             }
-            //         },
-            //     },
-            //     'cac:PartyLegalEntity': {
-            //         'cbc:RegistrationName': {'_text': commercial_partner.name},
-            //         'cbc:CompanyID': {'_text': commercial_partner.vat},
-            //         'cac:RegistrationAddress': self._get_address_node({**vals, 'partner': commercial_partner}),
-            //     },
-            //     'cac:Contact': {
-            //         'cbc:ID': {'_text': partner.id},
-            //         'cbc:Name': {'_text': partner.name},
-            //         'cbc:Telephone': {'_text': partner.phone},
-            //         'cbc:ElectronicMail': {'_text': partner.email},
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPricingExchangeRateValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_pricing_exchange_rate_vals_list(self, invoice):
-            // """ To be overridden if needed to fill the PricingExchangeRate node.
-            // 
-            // This is used when the currency of the 'Exchange' (e.g.: an invoice) is not the same as the Document currency.
-            // 
-            // If used, it should return a list of dict, following this format: [{
-            //     'source_currency_code': str,  (required)
-            //     'target_currency_code': str,  (required)
-            //     'calculation_rate': float,
-            //     'date': date,
-            // }]
-            // """
-            // return []
             */
             return default;
         }
@@ -2748,96 +554,69 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetTagsForDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tags_for_document_type(self, vals):
-            // return {
-            //     'document_type_code': {
-            //         'invoice': 'cbc:InvoiceTypeCode',
-            //         'credit_note': 'cbc:CreditNoteTypeCode',
-            //         'debit_note': None,
-            //         'order': 'cbc:OrderTypeCode',
-            //     }[vals['document_type']],
-            //     'monetary_total': {
-            //         'invoice': 'cac:LegalMonetaryTotal',
-            //         'credit_note': 'cac:LegalMonetaryTotal',
-            //         'debit_note': 'cac:RequestedMonetaryTotal',
-            //         'order': 'cac:AnticipatedMonetaryTotal',
-            //     }[vals['document_type']],
-            //     'document_line': {
-            //         'invoice': 'cac:InvoiceLine',
-            //         'credit_note': 'cac:CreditNoteLine',
-            //         'debit_note': 'cac:DebitNoteLine',
-            //         'order': 'cac:OrderLine',
-            //     }[vals['document_type']],
-            //     'line_quantity': {
-            //         'invoice': 'cbc:InvoicedQuantity',
-            //         'credit_note': 'cbc:CreditedQuantity',
-            //         'debit_note': 'cbc:DebitedQuantity',
-            //         'order': 'cbc:Quantity',
-            //     }[vals['document_type']]
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetTaxCategoryCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object tax) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _get_tax_category_code(self, customer, supplier, tax):
+            // """
+            // Predicts the tax category code for a tax applied to a given base line.
+            // If the tax has a defined category code, it is returned.
+            // Otherwise, a reasonable default is provided, though it may not always be accurate.
+            // 
+            // Source: doc of Peppol (but the CEF norm is also used by factur-x, yet not detailed)
+            // https://docs.peppol.eu/poacc/billing/3.0/syntax/ubl-invoice/cac-TaxTotal/cac-TaxSubtotal/cac-TaxCategory/cbc-TaxExemptionReasonCode/
+            // https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+            // https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL5305/
+            // """
+            // # add Norway, Iceland, Liechtenstein
+            // european_economic_area = self.env.ref('base.europe').country_ids.mapped('code') + ['NO', 'IS', 'LI']
+            // 
             // if not tax:
             //     return 'E'
-            // return self._get_tax_unece_codes(customer, supplier, tax).get('tax_category_code')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxCategoryListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object taxes) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _get_tax_category_list(self, customer, supplier, taxes):
-            // """ Full list: https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred5305.htm
-            // Subset: https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL5305/
             // 
-            // :param taxes:   account.tax records.
-            // :return:        A list of values to fill the TaxCategory foreach template.
-            // """
-            // res = []
-            // for tax in taxes:
-            //     tax_unece_codes = self._get_tax_unece_codes(customer, supplier, tax)
-            //     res.append({
-            //         'id': tax_unece_codes.get('tax_category_code'),
-            //         'percent': tax.amount if tax.amount_type == 'percent' else False,
-            //         'name': tax_unece_codes.get('tax_exemption_reason'),
-            //         'tax_scheme_vals': {'id': 'VAT'},
-            //         **tax_unece_codes,
-            //     })
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxCategoryNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tax_category_node(self, vals):
-            // """ Generic helper to generate a TaxCategory node given a tax grouping key dict. """
-            // grouping_key = vals['grouping_key']
-            // return {
-            //     'cbc:ID': {'_text': grouping_key['tax_category_code']},
-            //     'cbc:Name': {'_text': grouping_key.get('name')},
-            //     'cbc:Percent': {'_text': grouping_key['amount']} if grouping_key['amount_type'] == 'percent' else None,
-            //     'cbc:TaxExemptionReasonCode': {'_text': grouping_key.get('tax_exemption_reason_code')},
-            //     'cbc:TaxExemptionReason': {'_text': grouping_key.get('tax_exemption_reason')},
-            //     'cac:TaxScheme': {
-            //         'cbc:ID': {'_text': 'VAT'},
-            //     }
-            // }
+            // if tax.ubl_cii_tax_category_code:
+            //     return tax.ubl_cii_tax_category_code
+            // 
+            // if customer.country_id.code == 'ES' and customer.zip:
+            //     if customer.zip[:2] in ('35', '38'):  # Canary
+            //         # [BR-IG-10]-A VAT breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT
+            //         # exemption reason code (BT-121) or VAT exemption reason text (BT-120).
+            //         return 'L'
+            //     if customer.zip[:2] in ('51', '52'):
+            //         return 'M'  # Ceuta & Mellila
+            // 
+            // if supplier.country_id == customer.country_id:
+            //     if not tax or tax.amount == 0:
+            //         # in theory, you should indicate the precise law article
+            //         return 'E'
+            //     elif tax.has_negative_factor:
+            //         # Special case: Purchase reverse-charge taxes for self-billed invoices.
+            //         # From the buyer's perspective, this is a standard tax with a non-zero percentage but
+            //         # two tax repartition lines that cancel each other out.
+            //         # But from the seller's perspective, this is a zero-percent tax (VAT liability is deferred
+            //         # to the buyer).
+            //         # For a self-billed invoice we, the buyer, create the invoice on behalf of the seller.
+            //         # So in the XML we put the zero-percent tax with code 'AE' that the seller would have used.
+            //         return 'AE'
+            //     else:
+            //         return 'S'  # standard VAT
+            // 
+            // if supplier.country_id.code in european_economic_area and supplier.vat:
+            //     if tax.amount != 0 and not tax.has_negative_factor:
+            //         # Special case: Purchase reverse-charge taxes for self-billed invoices.
+            //         # See explanation above.
+            //         # In the XML we put the zero-percent tax with code 'G' or 'K' that the buyer would have used.
+            //         return 'S'
+            //     if customer.country_id.code not in european_economic_area:
+            //         return 'G'
+            //     if customer.country_id.code in european_economic_area:
+            //         return 'K'
+            // 
+            // if tax.amount != 0:
+            //     return 'S'
+            // else:
+            //     return 'E'
             */
             return default;
         }
@@ -2847,40 +626,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _get_tax_exemption_reason(self, customer, supplier, tax):
-            // if not tax:
+            // """ Returns the reason and code from the tax if available.
+            //     If not, it falls back to the default tax exemption reason defined for the respective tax category code.
+            // 
+            //     Note: In Peppol, taxes should be grouped by tax category code but *not* by
+            //     exemption reason, see https://docs.peppol.eu/poacc/billing/3.0/bis/#_calculation_of_vat
+            // """
+            // 
+            // if tax and (code := tax.ubl_cii_tax_exemption_reason_code):
             //     return {
-            //         'tax_exemption_reason': _("Exempt from tax"),
-            //         'tax_exemption_reason_code': None,
+            //         'tax_exemption_reason_code': code,
+            //         'tax_exemption_reason': TAX_EXEMPTION_MAPPING.get(code, _("Exempt from tax") if tax.ubl_cii_requires_exemption_reason else None),
             //     }
-            // res = self._get_tax_unece_codes(customer, supplier, tax)
+            // 
+            // tax_category_code = self._get_tax_category_code(customer, supplier, tax)
+            // tax_exemption_reason = tax_exemption_reason_code = None
+            // 
+            // if not tax:
+            //     tax_exemption_reason = _("Exempt from tax")
+            // elif tax_category_code == 'E':
+            //     tax_exemption_reason = _('Articles 226 items 11 to 15 Directive 2006/112/EN')
+            // elif tax_category_code == 'G':
+            //     tax_exemption_reason = _('Export outside the EU')
+            //     tax_exemption_reason_code = 'VATEX-EU-G'
+            // elif tax_category_code == 'K':
+            //     tax_exemption_reason = _('Intra-Community supply')
+            //     tax_exemption_reason_code = 'VATEX-EU-IC'
+            // 
             // return {
-            //     'tax_exemption_reason': res.get('tax_exemption_reason'),
-            //     'tax_exemption_reason_code': res.get('tax_exemption_reason_code'),
+            //     'tax_exemption_reason': tax_exemption_reason,
+            //     'tax_exemption_reason_code': tax_exemption_reason_code,
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tax_grouping_key(self, base_line, tax_data):
-            // tax = tax_data['tax']
-            // customer = base_line['record'].move_id.commercial_partner_id
-            // supplier = base_line['record'].move_id.company_id.partner_id.commercial_partner_id
-            // tax_category_vals = self._get_tax_category_list(customer, supplier, tax)[0]
-            // grouping_key = {
-            //     'tax_category_id': tax_category_vals['id'],
-            //     'tax_category_percent': tax_category_vals['percent'],
-            //     '_tax_category_vals_': tax_category_vals,
-            //     'tax_amount_type': tax.amount_type,
-            // }
-            // # If the tax is fixed, we want to have one group per tax
-            // # s.t. when the invoice is imported, we can try to guess the fixed taxes
-            // if tax.amount_type == 'fixed':
-            //     grouping_key['tax_name'] = tax.name
-            // return grouping_key
             */
             return default;
         }
@@ -2891,154 +667,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_cii_facturx.py) ---
             // def _get_tax_nodes(self, tree):
             // return tree.findall('.//{*}ApplicableTradeTax/{*}RateApplicablePercent')
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tax_nodes(self, tree):
-            // tax_nodes = tree.findall('.//{*}Item/{*}ClassifiedTaxCategory/{*}Percent')
-            // if not tax_nodes:
-            //     for elem in tree.findall('.//{*}TaxTotal'):
-            //         percentage_nodes = elem.findall('.//{*}TaxSubtotal/{*}TaxCategory/{*}Percent')
-            //         if not percentage_nodes:
-            //             percentage_nodes = elem.findall('.//{*}TaxSubtotal/{*}Percent')
-            //         tax_nodes += percentage_nodes
-            // return tax_nodes
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxSubtotalNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tax_subtotal_node(self, vals):
-            // """ Generic helper to generate a TaxSubtotal node given a tax grouping key dict and associated tax values. """
-            // tax_details = vals['tax_details']
-            // grouping_key = vals['grouping_key']
-            // sign = vals.get('sign', 1)
-            // currency_suffix = vals['currency_suffix']
-            // return {
-            //     'cbc:TaxableAmount': {
-            //         '_text': self.format_float(tax_details[f'base_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name']
-            //     },
-            //     'cbc:TaxAmount': {
-            //         '_text': self.format_float(sign * tax_details[f'tax_amount{currency_suffix}'], vals['currency_dp']),
-            //         'currencyID': vals['currency_name']
-            //     },
-            //     'cbc:Percent': {'_text': grouping_key['amount']} if grouping_key['amount_type'] == 'percent' else None,
-            //     'cac:TaxCategory': self._get_tax_category_node({**vals, 'grouping_key': grouping_key})
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxTotalNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _get_tax_total_node(self, vals):
-            // """ Generic helper to generate a TaxTotal node given a dict of aggregated tax details. """
-            // aggregated_tax_details = vals['aggregated_tax_details']
-            // currency_suffix = vals['currency_suffix']
-            // sign = vals.get('sign', 1)
-            // total_tax_amount = sum(
-            //     values[f'tax_amount{currency_suffix}']
-            //     for grouping_key, values in aggregated_tax_details.items()
-            //     if grouping_key
-            // )
-            // return {
-            //     'cbc:TaxAmount': {
-            //         '_text': self.format_float(sign * total_tax_amount, vals['currency_dp']),
-            //         'currencyID': vals['currency_name']
-            //     },
-            //     'cac:TaxSubtotal': [
-            //         self._get_tax_subtotal_node({
-            //             **vals,
-            //             'tax_details': tax_details,
-            //             'grouping_key': grouping_key,
-            //         })
-            //         for grouping_key, tax_details in aggregated_tax_details.items()
-            //         if grouping_key
-            //     ]
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxUneceCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object tax) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _get_tax_unece_codes(self, customer, supplier, tax):
-            // """
-            // Source: doc of Peppol (but the CEF norm is also used by factur-x, yet not detailed)
-            // https://docs.peppol.eu/poacc/billing/3.0/syntax/ubl-invoice/cac-TaxTotal/cac-TaxSubtotal/cac-TaxCategory/cbc-TaxExemptionReasonCode/
-            // https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
-            // https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL5305/
-            // :returns: {
-            //     tax_category_code: str,
-            //     tax_exemption_reason_code: str,
-            //     tax_exemption_reason: str,
-            // }
-            // """
-            // 
-            // def create_dict(tax_category_code=None, tax_exemption_reason_code=None, tax_exemption_reason=None):
-            //     return {
-            //         'tax_category_code': tax_category_code,
-            //         'tax_exemption_reason_code': tax_exemption_reason_code,
-            //         'tax_exemption_reason': tax_exemption_reason,
-            //     }
-            // 
-            // # add Norway, Iceland, Liechtenstein
-            // european_economic_area = self.env.ref('base.europe').country_ids.mapped('code') + ['NO', 'IS', 'LI']
-            // 
-            // if customer.country_id.code == 'ES' and customer.zip:
-            //     if customer.zip[:2] in ('35', '38'):  # Canary
-            //         # [BR-IG-10]-A VAT breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT
-            //         # exemption reason code (BT-121) or VAT exemption reason text (BT-120).
-            //         return create_dict(tax_category_code='L')
-            //     if customer.zip[:2] in ('51', '52'):
-            //         return create_dict(tax_category_code='M')  # Ceuta & Mellila
-            // 
-            // if supplier.country_id == customer.country_id:
-            //     if not tax or tax.amount == 0:
-            //         # in theory, you should indicate the precise law article
-            //         return create_dict(tax_category_code='E', tax_exemption_reason=_('Articles 226 items 11 to 15 Directive 2006/112/EN'))
-            //     else:
-            //         return create_dict(tax_category_code='S')  # standard VAT
-            // 
-            // if supplier.country_id.code in european_economic_area and supplier.vat:
-            //     if tax.amount != 0:
-            //         # otherwise, the validator will complain because G and K code should be used with 0% tax
-            //         return create_dict(tax_category_code='S')
-            //     if customer.country_id.code not in european_economic_area:
-            //         return create_dict(
-            //             tax_category_code='G',
-            //             tax_exemption_reason_code='VATEX-EU-G',
-            //             tax_exemption_reason=_('Export outside the EU'),
-            //         )
-            //     if customer.country_id.code in european_economic_area:
-            //         return create_dict(
-            //             tax_category_code='K',
-            //             tax_exemption_reason_code='VATEX-EU-IC',
-            //             tax_exemption_reason=_('Intra-Community supply'),
-            //         )
-            // 
-            // if tax.amount != 0:
-            //     return create_dict(tax_category_code='S')
-            // else:
-            //     return create_dict(tax_category_code='E', tax_exemption_reason=_('Articles 226 items 11 to 15 Directive 2006/112/EN'))
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii_tax_extension, FILE: account_edi_common.py) ---
-            // def _get_tax_unece_codes(self, customer, supplier, tax):
-            // if tax.ubl_cii_tax_category_code:
-            //     reason_code = tax.ubl_cii_tax_exemption_reason_code
-            //     reason_code = FIX_WRONG_CODES_MAPPING.get(reason_code, reason_code)
-            //     tax_exemption_reason = TAX_EXEMPTION_MAPPING.get(reason_code)
-            //     return {
-            //         'tax_category_code': tax.ubl_cii_tax_category_code,
-            //         'tax_exemption_reason_code': reason_code,
-            //         'tax_exemption_reason': tax_exemption_reason,
-            //     }
-            // return super()._get_tax_unece_codes(customer, supplier, tax)
             */
             return default;
         }
@@ -3065,33 +693,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _import_attachments(self, invoice, tree):
-            // # Import the embedded PDF in the xml if some are found
+            // # Import the embedded documents in the xml if some are found
             // attachments = self.env['ir.attachment']
             // additional_docs = tree.findall('./{*}AdditionalDocumentReference')
             // for document in additional_docs:
             //     attachment_name = document.find('{*}ID')
             //     attachment_data = document.find('{*}Attachment/{*}EmbeddedDocumentBinaryObject')
-            //     if attachment_name is not None \
-            //             and attachment_data is not None \
-            //             and attachment_data.attrib.get('mimeCode') == 'application/pdf':
+            //     if attachment_name is not None and attachment_data is not None:
+            //         mimetype = attachment_data.attrib.get('mimeCode')
+            //         if not (extension := SUPPORTED_FILE_TYPES.get(mimetype)):
+            //             continue
             //         text = attachment_data.text
             //         # Normalize the name of the file : some e-fff emitters put the full path of the file
             //         # (Windows or Linux style) and/or the name of the xml instead of the pdf.
-            //         # Get only the filename with a pdf extension.
-            //         name = (attachment_name.text or 'invoice').split('\\')[-1].split('/')[-1].split('.')[0] + '.pdf'
+            //         # Get only the filename with the right extension.
+            //         name = (attachment_name.text or 'invoice').split('\\')[-1].split('/')[-1].split('.')[0] + extension
             //         attachment = self.env['ir.attachment'].create({
             //             'name': name,
             //             'res_id': invoice.id,
             //             'res_model': 'account.move',
             //             'datas': text + '=' * (len(text) % 3),  # Fix incorrect padding
             //             'type': 'binary',
-            //             'mimetype': 'application/pdf',
+            //             'mimetype': mimetype,
             //         })
             //         # Upon receiving an email (containing an xml) with a configured alias to create invoice, the xml is
             //         # set as the main_attachment. To be rendered in the form view, the pdf should be the main_attachment.
             //         if invoice.message_main_attachment_id and \
             //                 invoice.message_main_attachment_id.name.endswith('.xml') and \
-            //                 'pdf' not in invoice.message_main_attachment_id.mimetype:
+            //                 'pdf' not in invoice.message_main_attachment_id.mimetype and \
+            //                 mimetype == 'application/pdf':
             //             invoice._message_set_main_attachment_id(attachment, force=True, filter_xml=False)
             //         attachments |= attachment
             // 
@@ -3119,25 +749,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         logs.append(_("Could not retrieve currency: %s. Did you enable the multicurrency option "
             //                       "and activate the currency?", currency_name))
             // return currency.id, logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportDeliveryPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object name, object phone, object email) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _import_delivery_partner(self, order, name, phone, email):
-            // """ Import delivery address from details if not found then log details."""
-            // logs = []
-            // dest_partner = self.env['res.partner'].with_company(
-            //     order.company_id
-            // )._retrieve_partner(name=name, phone=phone, email=email)
-            // if not dest_partner:
-            //     partner_detaits_str = self._get_partner_detail_str(name, phone, email)
-            //     logs.append(_("Could not retrieve Delivery Address with Details: { %s }", partner_detaits_str))
-            // 
-            // return dest_partner, logs
             */
             return default;
         }
@@ -3258,7 +869,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tree, invoice, invoice.journal_id.type, qty_factor,
             // )
             // logs += self._import_prepaid_amount(invoice, tree, './/{*}ApplicableHeaderTradeSettlement/{*}SpecifiedTradeSettlementHeaderMonetarySummation/{*}TotalPrepaidAmount', qty_factor)
-            // invoice_line_vals, line_logs = self._import_invoice_lines(invoice, tree, './{*}SupplyChainTradeTransaction/{*}IncludedSupplyChainTradeLineItem', qty_factor)
+            // invoice_line_vals, line_logs = self._import_lines(invoice, tree, './{*}SupplyChainTradeTransaction/{*}IncludedSupplyChainTradeLineItem',
+            //                                                   document_type=invoice.move_type, tax_type=invoice.journal_id.type, qty_factor=qty_factor)
             // line_vals = allowance_charges_line_vals + invoice_line_vals
             // 
             // invoice_values = {
@@ -3268,87 +880,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // invoice.write(invoice_values)
             // logs += partner_logs + currency_logs + line_logs + allowance_charges_logs
             // return logs
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _import_fill_invoice(self, invoice, tree, qty_factor):
-            // logs = []
-            // invoice_values = {}
-            // if qty_factor == -1:
-            //     logs.append(_("The invoice has been converted into a credit note and the quantities have been reverted."))
-            // role = "AccountingCustomer" if invoice.journal_id.type == 'sale' else "AccountingSupplier"
-            // partner, partner_logs = self._import_partner(invoice.company_id, **self._import_retrieve_partner_vals(tree, role))
-            // # Need to set partner before to compute bank and lines properly
-            // invoice.partner_id = partner.id
-            // invoice_values['currency_id'], currency_logs = self._import_currency(tree, './/{*}DocumentCurrencyCode')
-            // invoice_values['invoice_date'] = tree.findtext('./{*}IssueDate')
-            // invoice_values['invoice_date_due'] = self._find_value(('./cbc:DueDate', './/cbc:PaymentDueDate'), tree)
-            // # ==== partner_bank_id ====
-            // bank_detail_nodes = tree.findall('.//{*}PaymentMeans')
-            // bank_details = [bank_detail_node.findtext('{*}PayeeFinancialAccount/{*}ID') for bank_detail_node in bank_detail_nodes]
-            // if bank_details:
-            //     self._import_partner_bank(invoice, bank_details)
-            // 
-            // # ==== ref, invoice_origin, narration, payment_reference ====
-            // ref = tree.findtext('./{*}ID')
-            // if ref and invoice.is_sale_document(include_receipts=True) and invoice.quick_edit_mode:
-            //     invoice_values['name'] = ref
-            // elif ref:
-            //     invoice_values['ref'] = ref
-            // invoice_values['invoice_origin'] = tree.findtext('./{*}OrderReference/{*}ID')
-            // invoice_values['narration'] = self._import_description(tree, xpaths=['./{*}Note', './{*}PaymentTerms/{*}Note'])
-            // invoice_values['payment_reference'] = tree.findtext('./{*}PaymentMeans/{*}PaymentID')
-            // 
-            // # ==== Delivery ====
-            // delivery_date = tree.find('.//{*}Delivery/{*}ActualDeliveryDate')
-            // invoice.delivery_date = delivery_date is not None and delivery_date.text
-            // 
-            // # ==== invoice_incoterm_id ====
-            // incoterm_code = tree.findtext('./{*}TransportExecutionTerms/{*}DeliveryTerms/{*}ID')
-            // if incoterm_code:
-            //     incoterm = self.env['account.incoterms'].search([('code', '=', incoterm_code)], limit=1)
-            //     if incoterm:
-            //         invoice_values['invoice_incoterm_id'] = incoterm.id
-            // 
-            // # ==== Document level AllowanceCharge, Prepaid Amounts, Invoice Lines, Payable Rounding Amount ====
-            // allowance_charges_line_vals, allowance_charges_logs = self._import_document_allowance_charges(tree, invoice, invoice.journal_id.type, qty_factor)
-            // logs += self._import_prepaid_amount(invoice, tree, './{*}LegalMonetaryTotal/{*}PrepaidAmount', qty_factor)
-            // line_tag = (
-            //     'InvoiceLine'
-            //     if invoice.move_type in ('in_invoice', 'out_invoice') or qty_factor == -1
-            //     else 'CreditNoteLine'
-            // )
-            // invoice_line_vals, line_logs = self._import_invoice_lines(invoice, tree, './{*}' + line_tag, qty_factor)
-            // rounding_line_vals, rounding_logs = self._import_rounding_amount(invoice, tree, './{*}LegalMonetaryTotal/{*}PayableRoundingAmount', qty_factor)
-            // line_vals = allowance_charges_line_vals + invoice_line_vals + rounding_line_vals
-            // 
-            // invoice_values = {
-            //     **invoice_values,
-            //     'invoice_line_ids': [Command.create(line_value) for line_value in line_vals],
-            // }
-            // invoice.write(invoice_values)
-            // logs += partner_logs + currency_logs + line_logs + allowance_charges_logs + rounding_logs
-            // return logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportInvoiceLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object tree, object xpath, object qty_factor) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _import_invoice_lines(self, invoice, tree, xpath, qty_factor):
-            // logs = []
-            // lines_values = []
-            // for line_tree in tree.iterfind(xpath):
-            //     line_values = self.with_company(invoice.company_id)._retrieve_invoice_line_vals(line_tree, invoice.move_type, qty_factor)
-            //     line_values['tax_ids'], tax_logs = self._retrieve_taxes(
-            //         invoice, line_values, invoice.journal_id.type,
-            //     )
-            //     logs += tax_logs
-            //     if not line_values['product_uom_id']:
-            //         line_values.pop('product_uom_id')  # if no uom, pop it so it's inferred from the product_id
-            //     lines_values.append(line_values)
-            //     lines_values += self._retrieve_line_charges(invoice, line_values, line_values['tax_ids'])
-            // return lines_values, logs
             */
             return default;
         }
@@ -3358,6 +889,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _import_invoice_ubl_cii(self, invoice, file_data, new=False):
+            // invoice.ensure_one()
+            // if invoice.invoice_line_ids:
+            //     return invoice._reason_cannot_decode_has_invoice_lines()
+            // 
             // tree = file_data['xml_tree']
             // 
             // # Not able to decode the move_type from the xml.
@@ -3386,18 +921,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Update the invoice.
             // invoice.move_type = move_type
             // with invoice._get_edi_creation() as invoice:
-            //     logs = self._import_fill_invoice(invoice, tree, qty_factor)
-            // 
-            // if invoice:
-            //     body = Markup("<strong>%s</strong>") % \
-            //         _("Format used to import the invoice: %s",
-            //           self.env['ir.model']._get(self._name).name)
-            // 
-            //     if logs:
-            //         body += Markup("<ul>%s</ul>") % \
-            //             Markup().join(Markup("<li>%s</li>") % l for l in logs)
-            // 
-            //     invoice.message_post(body=body)
+            //     fill_invoice_logs = self._import_fill_invoice(invoice, tree, qty_factor)
             // 
             // # For UBL, we should override the computed tax amount if it is less than 0.05 different of the one in the xml.
             // # In order to support use case where the tax total is adapted for rounding purpose.
@@ -3405,89 +929,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             // with invoice._get_edi_creation() as invoice:
             //     self._correct_invoice_tax_amount(tree, invoice)
             // 
-            // attachments = self._import_attachments(invoice, tree)
-            // if attachments:
-            //     invoice.with_context(no_new_invoice=True).message_post(attachment_ids=attachments.ids)
+            // source_attachment = file_data['attachment'] or self.env['ir.attachment']
+            // attachments = source_attachment + self._import_attachments(invoice, tree)
             // 
-            // return True
+            // self._log_import_invoice_ubl_cii(invoice, invoice_logs=fill_invoice_logs, attachments=attachments)
             */
             return default;
         }
 
-        public async Task<TEntity> ImportOrderLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object tree, object xpath) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> ImportLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object tree, object xpath, object document_type, object tax_type, object qty_factor) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _import_order_lines(self, order, tree, xpath):
-            // """ Import order lines from xml tree.
-            // 
-            // :param order: Order to set order line on.
-            // :param tree: Xml tree to extract OrderLine from.
-            // :param xpath: Xpath for order line items.
-            // :return: Logging information related orderlines details.
-            // :rtype: List
-            // """
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
+            // def _import_lines(self, record, tree, xpath, document_type=False, tax_type=False, qty_factor=1):
             // logs = []
             // lines_values = []
             // for line_tree in tree.iterfind(xpath):
-            //     line_values = self._retrieve_line_vals(line_tree)
-            //     line_values = {
-            //         **line_values,
-            //         'product_uom_qty': line_values['quantity'],
-            //         'product_uom': line_values['product_uom_id'],
-            //     }
-            //     del line_values['quantity']
-            //     # To do: rename product_uom field to `product_uom_id` of sale.order.line
-            //     del line_values['product_uom_id']
-            //     if not line_values['product_id']:
-            //         logs += [_("Could not retrieve product for line '%s'", line_values['name'])]
-            //     # To do: rename tax_id field to `tax_ids` of sale.order.line
-            //     line_values['tax_id'], tax_logs = self._retrieve_taxes(
-            //         order, line_values, 'sale',
-            //     )
+            //     line_values = self.with_company(record.company_id)._retrieve_invoice_line_vals(line_tree, document_type, qty_factor)
+            //     line_values['tax_ids'], tax_logs = self._retrieve_taxes(record, line_values, tax_type)
             //     logs += tax_logs
-            //     lines_values += self._retrieve_line_charges(order, line_values, line_values['tax_id'])
-            //     if not line_values['product_uom']:
-            //         line_values.pop('product_uom')  # if no uom, pop it so it's inferred from the product_id
+            //     if not line_values['product_uom_id']:
+            //         line_values.pop('product_uom_id')  # if no uom, pop it so it's inferred from the product_id
             //     lines_values.append(line_values)
-            // 
+            //     lines_values += self._retrieve_line_charges(record, line_values, line_values['tax_ids'])
             // return lines_values, logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportOrderUblInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object file_data) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _import_order_ubl(self, order, file_data):
-            // """ Common importing method to extract order data from file_data.
-            // 
-            // :param order: Order to fill details from file_data.
-            // :param file_data: File data to extract order related data from.
-            // :return: True if there no exception while extraction.
-            // :rtype: Boolean
-            // """
-            // tree = file_data['xml_tree']
-            // 
-            // # Update the order.
-            // logs = self._import_fill_order(order, tree)
-            // if order:
-            //     body = Markup("<strong>%s</strong>") % \
-            //         _("Format used to import the invoice: %s",
-            //           self.env['ir.model']._get(self._name).name)
-            //     if logs:
-            //         order._create_activity_set_details()
-            //         body += Markup("<ul>%s</ul>") % \
-            //             Markup().join(Markup("<li>%s</li>") % l for l in logs)
-            //     order.message_post(body=body)
-            // 
-            // lines_with_products = order.order_line.filtered('product_id')
-            // # Recompute product price and discount according to sale price
-            // lines_with_products._compute_price_unit()
-            // lines_with_products._compute_discount()
-            // 
-            // return True
             */
             return default;
         }
@@ -3500,18 +965,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Retrieve the bank account, if no matching bank account is found, create it """
             // # clear the context, because creation of partner when importing should not depend on the context default values
             // ResPartnerBank = self.env['res.partner.bank'].with_env(self.env(context=clean_context(self.env.context)))
-            // bank_details = list(map(sanitize_account_number, bank_details))
+            // bank_details = list(set(map(sanitize_account_number, bank_details)))
             // partner = self.env.company.partner_id if invoice.is_inbound() else invoice.partner_id
             // banks_to_create = []
             // acc_number_partner_bank_dict = {
             //     bank.sanitized_acc_number: bank
-            //     for bank in ResPartnerBank.search(
+            //     for bank in ResPartnerBank.with_context(active_test=False).search(
             //         [('company_id', 'in', [False, invoice.company_id.id]), ('acc_number', 'in', bank_details)]
             //     )
             // }
             // for account_number in bank_details:
             //     partner_bank = acc_number_partner_bank_dict.get(account_number, ResPartnerBank)
             //     if partner_bank.partner_id == partner:
+            //         if not partner_bank.active:
+            //             partner_bank.active = True
             //         invoice.partner_bank_id = partner_bank
             //         return
             //     elif not partner_bank and account_number:
@@ -3529,7 +996,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _import_partner(self, company_id, name, phone, email, vat, country_code=False, peppol_eas=False, peppol_endpoint=False, street=False, street2=False, city=False, zip_code=False):
+            // def _import_partner(self, company_id, name, phone, email, vat, *, peppol_eas=False, peppol_endpoint=False, postal_address={}, **kwargs):
             // """ Retrieve the partner, if no matching partner is found, create it (only if he has a vat and a name) """
             // logs = []
             // if peppol_eas and peppol_endpoint:
@@ -3539,49 +1006,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             // partner = self.env['res.partner'] \
             //     .with_company(company_id) \
             //     ._retrieve_partner(name=name, phone=phone, email=email, vat=vat, domain=domain)
+            // country_code = postal_address.get('country_code')
+            // country = self.env['res.country'].search([('code', '=', country_code.upper())]) if country_code else self.env['res.country']
+            // state_code = postal_address.get('state_code')
+            // state = self.env['res.country.state'].search(
+            //     [('country_id', '=', country.id), ('code', '=', state_code)],
+            //     limit=1,
+            // ) if state_code and country else self.env['res.country.state']
             // if not partner and name and vat:
-            //     partner_vals = {'name': name, 'email': email, 'phone': phone, 'street': street, 'street2': street2, 'zip': zip_code, 'city': city}
+            //     partner_vals = {'name': name, 'email': email, 'phone': phone, 'is_company': True}
             //     if peppol_eas and peppol_endpoint:
             //         partner_vals.update({'peppol_eas': peppol_eas, 'peppol_endpoint': peppol_endpoint})
-            //     country = self.env.ref(f'base.{country_code.lower()}', raise_if_not_found=False) if country_code else False
-            //     if country:
-            //         partner_vals['country_id'] = country.id
             //     partner = self.env['res.partner'].create(partner_vals)
-            //     if vat and self.env['res.partner']._run_vat_test(vat, country, partner.is_company):
-            //         partner.vat = vat
+            //     if vat:
+            //         partner.vat, _country_code = self.env['res.partner']._run_vat_checks(country, vat, validation='setnull')
             //     logs.append(_("Could not retrieve a partner corresponding to '%s'. A new partner was created.", name))
+            // elif not partner and not logs:
+            //     logs.append(_("Could not retrieve partner with details: Name: %(name)s, Vat: %(vat)s, Phone: %(phone)s, Email: %(email)s",
+            //           name=name, vat=vat, phone=phone, email=email))
+            // if not partner.country_id and not partner.street and not partner.street2 and not partner.city and not partner.zip and not partner.state_id:
+            //     partner.write({
+            //         'country_id': country.id,
+            //         'street': postal_address.get('street'),
+            //         'street2': postal_address.get('additional_street'),
+            //         'city': postal_address.get('city'),
+            //         'zip': postal_address.get('zip'),
+            //         'state_id': state.id,
+            //     })
             // return partner, logs
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _import_partner(self, company_id, name, phone, email, vat, **kwargs):
-            // """ Override of edi.mixin to set current user partner if there is no matching partner
-            // found and log details related to partner."""
-            // partner, logs = super()._import_partner(company_id, name, phone, email, vat, **kwargs)
-            // if not partner:
-            //     partner_detaits_str = self._get_partner_detail_str(name, phone, email, vat)
-            //     if not vat:
-            //         logs.append(_("Insufficient details to extract Customer: { %s }", partner_detaits_str))
-            //     else:
-            //         logs.append(_("Could not retrive Customer with Details: { %s }", partner_detaits_str))
-            // 
-            // return partner, logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportPaymentTermIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object tree, object xapth) where TEntity : IEntity<Guid>, IAccountEdiCommonable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_edi_common.py) ---
-            // def _import_payment_term_id(self, order, tree, xapth):
-            // """ Return payment term from given tree. """
-            // payment_term_note = self._find_value(xapth, tree)
-            // if not payment_term_note:
-            //     return False
-            // 
-            // return self.env['account.payment.term'].search([
-            //     *self.env['account.payment.term']._check_company_domain(order.company_id),
-            //     ('name', '=', payment_term_note)
-            // ], limit=1)
             */
             return default;
         }
@@ -3622,49 +1074,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'name': self._find_value(f".//ram:{role}/ram:Name", tree),
             //     'phone': self._find_value(f".//ram:{role}/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:CompleteNumber", tree),
             //     'email': self._find_value(f".//ram:{role}//ram:EmailURIUniversalCommunication/ram:URIID", tree),
-            //     'country_code': self._find_value(f'.//ram:{role}/ram:PostalTradeAddress//ram:CountryID', tree),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _import_retrieve_partner_vals(self, tree, role):
-            // """ Returns a dict of values that will be used to retrieve the partner """
-            // return {
-            //     'vat': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:CompanyID[string-length(text()) > 5]', tree),
-            //     'phone': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:Telephone', tree),
-            //     'email': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:ElectronicMail', tree),
-            //     'name': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:Name', tree) or
-            //             self._find_value(f'.//cac:{role}Party/cac:Party//cbc:RegistrationName', tree),
-            //     'country_code': self._find_value(f'.//cac:{role}Party/cac:Party//cac:Country//cbc:IdentificationCode', tree),
-            //     'street': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:StreetName', tree),
-            //     'street2': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:AdditionalStreetName', tree),
-            //     'city': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:CityName', tree),
-            //     'zip_code': self._find_value(f'.//cac:{role}Party/cac:Party//cbc:PostalZone', tree),
+            //     'postal_address': self._get_postal_address(tree, role),
             // }
             */
             return default;
         }
 
-        public async Task<TEntity> ImportRoundingAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object tree, object xpath, object qty_factor) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> ImportRoundingAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object tree, object xpath, object document_type, object qty_factor) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _import_rounding_amount(self, invoice, tree, xpath, qty_factor):
+            // def _import_rounding_amount(self, invoice, tree, xpath, document_type=False, qty_factor=1):
             // """
             // Add an invoice line representing the rounding amount given in the document.
             // - The amount is assumed to be in document currency
             // """
             // logs = []
-            // line_vals = []
+            // lines_values = []
             // 
             // currency = invoice.currency_id
             // rounding_amount_currency = currency.round(qty_factor * float(tree.findtext(xpath) or 0))
             // 
             // if invoice.currency_id.is_zero(rounding_amount_currency):
-            //     return line_vals, logs
+            //     return lines_values, logs
             // 
             // inverse_rate = abs(invoice.amount_total_signed) / invoice.amount_total if invoice.amount_total else 0
             // rounding_amount = invoice.company_id.currency_id.round(rounding_amount_currency * inverse_rate)
             // 
-            // line_vals.append({
+            // lines_values.append({
             //     'display_type': 'product',
             //     'name': _('Rounding'),
             //     'quantity': 1,
@@ -3680,7 +1117,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // formatted_amount = formatLang(self.env, rounding_amount_currency, currency_obj=currency)
             // logs.append(_("A rounding amount of %s was detected.", formatted_amount))
             // 
-            // return line_vals, logs
+            // return lines_values, logs
             */
             return default;
         }
@@ -3691,7 +1128,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
             // def _invoice_constraints_common(self, invoice):
             // # check that there is a tax on each line
-            // for line in invoice.invoice_line_ids.filtered(lambda x: x.display_type not in ('line_note', 'line_section') and x._check_edi_line_tax_required()):
+            // for line in invoice.invoice_line_ids.filtered(lambda x: x.display_type not in ('line_section', 'line_subsection', 'line_note') and x._check_edi_line_tax_required()):
             //     if not line.tax_ids:
             //         return {'tax_on_line': _("Each invoice line should have at least one tax.")}
             // return {}
@@ -3699,13 +1136,49 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsDocumentAllowanceChargeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> LogImportInvoiceUblCiiInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object title_logs, object invoice_logs, object attachments) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_20.py) ---
-            // def _is_document_allowance_charge(self, base_line):
-            // """ Whether the base line should be treated as a document-level AllowanceCharge. """
-            // return base_line['special_type'] == 'early_payment'
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
+            // def _log_import_invoice_ubl_cii(self, invoice, title_logs=None, invoice_logs=None, attachments=None):
+            // invoice.ensure_one()
+            // body = Markup("<strong>%s</strong>") % (title_logs or self.env._("Invoice imported"))
+            // if invoice_logs := self._add_logs_import_invoice_ubl_cii(invoice, invoice_logs=invoice_logs):
+            //     body += Markup("<ul>%s</ul>") % \
+            //             Markup().join(Markup("<li>%s</li>") % l for l in invoice_logs)
+            // invoice.message_post(body=body, attachment_ids=attachments.ids if attachments else None)
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_edi_common.py) ---
+            // def _log_import_invoice_ubl_cii(self, invoice, title_logs=None, invoice_logs=None, attachments=None):
+            // # EXTENDS 'account_edi_ubl_cii'
+            // if invoice.peppol_message_uuid:
+            //     title_logs = self.env._("Peppol invoice received")
+            // super()._log_import_invoice_ubl_cii(invoice, title_logs=title_logs, invoice_logs=invoice_logs, attachments=attachments)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> RetrieveChargeAllowanceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object xpath_dict, object quantity) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
+            // def _retrieve_charge_allowance_vals(self, tree, xpath_dict, quantity):
+            // charges = []
+            // discount_amount = 0
+            // for allowance_charge_node in tree.iterfind(xpath_dict['allowance_charge']):
+            //     charge_indicator = allowance_charge_node.findtext(xpath_dict['allowance_charge_indicator'])
+            //     amount = float(allowance_charge_node.findtext(xpath_dict['allowance_charge_amount'], default='0'))
+            //     reason_code = allowance_charge_node.findtext(xpath_dict['allowance_charge_reason_code'], default='')
+            //     reason = allowance_charge_node.findtext(xpath_dict['allowance_charge_reason'], default='')
+            //     if charge_indicator.lower() == 'true':
+            //         charges.append({
+            //             'amount': amount,
+            //             'line_quantity': quantity,
+            //             'reason': reason,
+            //             'reason_code': reason_code,
+            //         })
+            //     else:
+            //         discount_amount += amount
+            // return discount_amount, charges
             */
             return default;
         }
@@ -3847,7 +1320,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // xpath_dict = self._get_line_xpaths(document_type, qty_factor)
             // # basis_qty (optional)
-            // basis_qty = float(self._find_value(xpath_dict['basis_qty'], tree) or 1)
+            // basis_qty = float(self._find_value(xpath_dict['basis_qty'], tree) or 1) or 1.0
             // 
             // # gross_price_unit (optional)
             // gross_price_unit = None
@@ -3855,19 +1328,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if gross_price_unit_node is not None:
             //     gross_price_unit = float(gross_price_unit_node.text)
             // 
-            // # rebate (optional)
-            // # Discount. /!\ as no percent discount can be set on a line, need to infer the percentage
-            // # from the amount of the actual amount of the discount (the allowance charge)
-            // rebate = 0
-            // rebate_node = tree.find(xpath_dict['rebate'])
-            // net_price_unit_node = tree.find(xpath_dict['net_price_unit'])
-            // if rebate_node is not None:
-            //     rebate = float(rebate_node.text)
-            // elif net_price_unit_node is not None and gross_price_unit_node is not None:
-            //     rebate = float(gross_price_unit_node.text) - float(net_price_unit_node.text)
-            // 
             // # net_price_unit (mandatory)
             // net_price_unit = None
+            // net_price_unit_node = tree.find(xpath_dict['net_price_unit'])
             // if net_price_unit_node is not None:
             //     net_price_unit = float(net_price_unit_node.text)
             // 
@@ -3886,7 +1349,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ]
             //         if uom_infered_xmlid:
             //             product_uom = self.env.ref(uom_infered_xmlid[0], raise_if_not_found=False) or self.env['uom.uom']
-            // if product and product_uom and product_uom.category_id != product.product_tmpl_id.uom_id.category_id:
+            // if product and product_uom and not product_uom._has_common_reference(product.product_tmpl_id.uom_id):
             //     # uom incompatibility
             //     product_uom = self.env['uom.uom']
             // 
@@ -3899,23 +1362,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # quantity
             // quantity = delivered_qty * qty_factor
             // 
+            // # rebate (optional)
+            // rebate = self._retrieve_rebate_val(tree, xpath_dict, quantity)
+            // 
             // # Charges are collected (they are used to create new lines), Allowances are transformed into discounts
-            // charges = []
-            // discount_amount = 0
-            // for allowance_charge_node in tree.iterfind(xpath_dict['allowance_charge']):
-            //     charge_indicator = allowance_charge_node.findtext(xpath_dict['allowance_charge_indicator'])
-            //     amount = float(allowance_charge_node.findtext(xpath_dict['allowance_charge_amount'], default='0'))
-            //     reason_code = allowance_charge_node.findtext(xpath_dict['allowance_charge_reason_code'], default='')
-            //     reason = allowance_charge_node.findtext(xpath_dict['allowance_charge_reason'], default='')
-            //     if charge_indicator.lower() == 'true':
-            //         charges.append({
-            //             'amount': amount,
-            //             'line_quantity': quantity,
-            //             'reason': reason,
-            //             'reason_code': reason_code,
-            //         })
-            //     else:
-            //         discount_amount += amount
+            // discount_amount, charges = self._retrieve_charge_allowance_vals(tree, xpath_dict, quantity)
             // 
             // # price_unit
             // charge_amount = sum(d['amount'] for d in charges)
@@ -3931,8 +1382,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # discount
             // discount = 0
-            // if delivered_qty * price_unit != 0 and price_subtotal is not None:
-            //     currency = self.env.company.currency_id
+            // currency = self.env.company.currency_id
+            // if not float_is_zero(delivered_qty * price_unit, currency.decimal_places) and price_subtotal is not None:
             //     inferred_discount = 100 * (1 - (price_subtotal - charge_amount) / currency.round(delivered_qty * price_unit))
             //     discount = inferred_discount if not float_is_zero(inferred_discount, currency.decimal_places) else 0.0
             // 
@@ -3966,11 +1417,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RetrieveTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object line_values, object tax_type) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        public async Task<TEntity> RetrieveRebateValInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object xpath_dict, object quantity) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
-            // def _retrieve_taxes(self, record, line_values, tax_type):
+            // def _retrieve_rebate_val(self, tree, xpath_dict, quantity):
+            // # Discount. /!\ as no percent discount can be set on a line, need to infer the percentage
+            // # from the amount of the actual amount of the discount (the allowance charge)
+            // rebate = 0
+            // rebate_node = tree.find(xpath_dict['rebate'])
+            // net_price_unit_node = tree.find(xpath_dict['net_price_unit'])
+            // gross_price_unit_node = tree.find(xpath_dict['gross_price_unit'])
+            // if rebate_node is not None:
+            //     rebate = float(rebate_node.text)
+            // elif net_price_unit_node is not None and gross_price_unit_node is not None:
+            //     rebate = float(gross_price_unit_node.text) - float(net_price_unit_node.text)
+            // return rebate
+            */
+            return default;
+        }
+
+        public async Task<TEntity> RetrieveTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object line_values, object tax_type, object tax_exigibility) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_common.py) ---
+            // def _retrieve_taxes(self, record, line_values, tax_type, tax_exigibility=False):
             // """
             // Retrieve the taxes on the document line at import.
             // 
@@ -3992,6 +1463,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tax = self.env['account.tax']
             //     if hasattr(record, '_get_specific_tax'):
             //         tax = record._get_specific_tax(line_values['name'], 'percent', amount, tax_type)
+            //     if tax_exigibility:
+            //         if not tax and tax_exigibility:
+            //             tax = self.env['account.tax'].search(domain + [('price_include', '=', False), ('tax_exigibility', '=', tax_exigibility)], limit=1)
+            //         if not tax and tax_exigibility:
+            //             tax = self.env['account.tax'].search(domain + [('price_include', '=', True), ('tax_exigibility', '=', tax_exigibility)], limit=1)
+            //         if not tax:
+            //             logs.append(
+            //                 _("Tax with matching exigibility could not be retrieved: '%(exigibility)s' for line '%(line)s'.",
+            //                 exigibility=tax_exigibility,
+            //                 line=line_values['name']),
+            //             )
             //     if not tax:
             //         tax = self.env['account.tax'].search(domain + [('price_include', '=', False)], limit=1)
             //     if not tax:
@@ -4008,6 +1490,1082 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if tax.price_include:
             //             line_values['price_unit'] *= (1 + tax.amount / 100)
             // return taxes, logs
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesAllowanceChargesDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_allowance_charges_discount(self, vals):
+            // """ Extract the amount implies by a discount. This amount will be turned into an allowances/charge
+            // into 'base_line' -> '_ubl_values' -> 'allowance_charge_discount'.
+            // 
+            // From a 'base_line' having
+            //     price_unit = 100
+            //     quantity = 5
+            //     discount = 20
+            //     total_excluded_currency = (5 * 100) * 0.8 = 400
+            // ... compute an 'allowance_charge_discount' or (5 * 100) - 400 = 100:
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // for base_line in base_lines:
+            //     ubl_values = base_line['_ubl_values']
+            //     tax_details = base_line['tax_details']
+            //     raw_discount_amount_currency = tax_details['raw_discount_amount_currency']
+            //     raw_discount_amount = tax_details['raw_discount_amount']
+            // 
+            //     if (
+            //         base_line['currency_id'].is_zero(raw_discount_amount_currency)
+            //         and company.currency_id.is_zero(raw_discount_amount)
+            //     ):
+            //         ubl_values['allowance_charge_discount'] = None
+            //         ubl_values['allowance_charge_discount_currency'] = None
+            //     else:
+            //         ubl_values['allowance_charge_discount'] = {
+            //             'currency': company_currency,
+            //             'percent': base_line['discount'],
+            //             'amount': raw_discount_amount,
+            //             'base_amount': tax_details['raw_gross_total_excluded'],
+            //         }
+            //         ubl_values['allowance_charge_discount_currency'] = {
+            //             'currency': currency,
+            //             'percent': base_line['discount'],
+            //             'amount': raw_discount_amount_currency,
+            //             'base_amount': tax_details['raw_gross_total_excluded_currency'],
+            //         }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesAllowanceChargesExciseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_allowance_charges_excise(self, vals):
+            // """ Extract excise taxes from the current base lines.
+            // Instead, add them under 'base_line' -> '_ubl_values' -> 'allowance_charges_excise'
+            // to be reported as allowances/charges.
+            // 
+            // From a 'base_line' having
+            //     price_unit = 99
+            //     tax_ids = EXCISE of 1 + 21% tax
+            //     total_excluded_currency = 99
+            //     total_included_currency = 121
+            //     taxes_data = [1, 21]
+            //     recycling_contribution_data = []
+            // ... turn it to:
+            //     price_unit = 99
+            //     tax_ids = 21% tax
+            //     total_excluded_currency = 99
+            //     total_included_currency = 121
+            //     taxes_data = [21]
+            //     recycling_contribution_data = [1]
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // for base_line in base_lines:
+            //     ubl_values = base_line['_ubl_values']
+            //     tax_details = base_line['tax_details']
+            //     taxes_data = tax_details['taxes_data']
+            // 
+            //     allowance_charges_excise = ubl_values['allowance_charges_excise'] = []
+            //     allowance_charges_excise_currency = ubl_values['allowance_charges_excise_currency'] = []
+            //     for tax_data in taxes_data:
+            //         if self._ubl_is_excise_tax(tax_data):
+            //             allowance_charges_excise.append({
+            //                 'tax': tax_data['tax'],
+            //                 'amount': tax_data['tax_amount'],
+            //                 'currency': company_currency,
+            //             })
+            //             allowance_charges_excise_currency.append({
+            //                 'tax': tax_data['tax'],
+            //                 'amount': tax_data['tax_amount_currency'],
+            //                 'currency': currency,
+            //             })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesAllowanceChargesRecyclingContributionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_allowance_charges_recycling_contribution(self, vals):
+            // """ Extract recycling contribution taxes such as RECUPEL, AUVIBEL, etc from the current base lines.
+            // Instead, add them under 'base_line' -> '_ubl_values' -> 'allowance_charges_recycling_contribution'
+            // to be reported as allowances/charges.
+            // 
+            // From a 'base_line' having
+            //     price_unit = 99
+            //     tax_ids = RECUPEL of 1 + 21% tax
+            //     total_excluded_currency = 99
+            //     total_included_currency = 121
+            //     taxes_data = [1, 21]
+            //     recycling_contribution_data = []
+            // ... turn it to:
+            //     price_unit = 99
+            //     tax_ids = 21% tax
+            //     total_excluded_currency = 99
+            //     total_included_currency = 121
+            //     taxes_data = [21]
+            //     recycling_contribution_data = [1]
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // for base_line in base_lines:
+            //     ubl_values = base_line['_ubl_values']
+            //     tax_details = base_line['tax_details']
+            //     taxes_data = tax_details['taxes_data']
+            // 
+            //     allowance_charges_recycling_contribution = ubl_values['allowance_charges_recycling_contribution'] = []
+            //     allowance_charges_recycling_contribution_currency = ubl_values['allowance_charges_recycling_contribution_currency'] = []
+            //     for tax_data in taxes_data:
+            //         if self._ubl_is_recycling_contribution_tax(tax_data):
+            //             allowance_charges_recycling_contribution.append({
+            //                 'tax': tax_data['tax'],
+            //                 'amount': tax_data['tax_amount'],
+            //                 'currency': company_currency,
+            //             })
+            //             allowance_charges_recycling_contribution_currency.append({
+            //                 'tax': tax_data['tax'],
+            //                 'amount': tax_data['tax_amount_currency'],
+            //                 'currency': currency,
+            //             })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesItemInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_item(self, vals):
+            // """ Add 'base_line' -> '_ubl_values' -> 'item'.
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // AccountTax = self.env['account.tax']
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // for sub_currency, suffix in ((currency, '_currency'), (company_currency, '')):
+            //     base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(
+            //         base_lines=base_lines,
+            //         grouping_function=lambda base_line, tax_data: self._ubl_default_tax_category_grouping_key(
+            //             base_line,
+            //             tax_data,
+            //             vals,
+            //             sub_currency,
+            //         ),
+            //     )
+            //     for base_line, aggregated_values in base_lines_aggregated_values:
+            //         item = base_line['_ubl_values'][f'item{suffix}'] = {
+            //             'currency': sub_currency,
+            //             'base_line': base_line,
+            //             'classified_tax_categories': {},
+            //         }
+            //         for grouping_key, values in aggregated_values.items():
+            //             if grouping_key:
+            //                 item['classified_tax_categories'][grouping_key] = {
+            //                     **grouping_key,
+            //                     'base_amount': values[f'base_amount{suffix}'],
+            //                     'tax_amount': values[f'tax_amount{suffix}'],
+            //                 }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesLineExtensionAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object use_company_currency) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_line_extension_amount(self, vals, use_company_currency=False):
+            // """ Add 'base_line' -> '_ubl_values' -> 'line_extension_amount[_currency]'.
+            // 
+            // 'line_extension_amount' is the subtotal of the line but without tax plus charges.
+            // 
+            // :param vals:                    Some custom data.
+            // :param use_company_currency:    Express the amount in company currency.
+            // """
+            // base_lines = vals['base_lines']
+            // suffix = '' if use_company_currency else '_currency'
+            // 
+            // for base_line in base_lines:
+            //     tax_details = base_line['tax_details']
+            //     ubl_values = base_line['_ubl_values']
+            //     amount = (
+            //         tax_details[f'total_excluded{suffix}']
+            //         + tax_details[f'delta_total_excluded{suffix}']
+            //         + sum(
+            //             allowance_charges_recycling_contribution['amount']
+            //             for allowance_charges_recycling_contribution in ubl_values[f'allowance_charges_recycling_contribution{suffix}']
+            //         )
+            //         + sum(
+            //             allowance_charges_excise['amount']
+            //             for allowance_charges_excise in ubl_values[f'allowance_charges_excise{suffix}']
+            //         )
+            //         + (
+            //             ubl_values[f'allowance_charge_discount{suffix}']['amount']
+            //             if (
+            //                 ubl_values[f'allowance_charge_discount{suffix}']
+            //                 and ubl_values[f'allowance_charge_discount{suffix}']['amount'] < 0.0
+            //             )
+            //             else 0.0
+            //         )
+            //     )
+            //     ubl_values['line_extension_amount'] = amount
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddBaseLineUblValuesPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_base_line_ubl_values_price(self, vals):
+            // """ Add 'price_amount' under 'base_line' -> '_ubl_values' -> 'price_amount[_currency]'.
+            // 
+            // 'price_amount' is price unit of a single unit of the product.
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // base_lines = vals['base_lines']
+            // 
+            // for base_line in base_lines:
+            //     tax_details = base_line['tax_details']
+            //     ubl_values = base_line['_ubl_values']
+            //     for currency_suffix in ('_currency', ''):
+            //         ubl_values[f'price_amount{currency_suffix}'] = tax_details[f'raw_gross_price_unit{currency_suffix}']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesAllowanceChargeEarlyPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_allowance_charge_early_payment(self, vals):
+            // """ Add 'vals' -> '_ubl_values' -> 'allowance_charges_early_payment' representing the allowance/charges
+            // corresponding to a 'mixed' early payment.
+            // 
+            // Suppose an invoice with a base amount of 100 and a 21% tax.
+            // The total of your invoice is 121.
+            // With a 'mixed' early payment of 5%, 2 additional lines are added to the invoice:
+            // One line having a negative amount of -5 with 21% tax.
+            // Another line having a positive amount of 5 with no tax.
+            // It means the 21% tax line will now be based on 95 instead of 100 leading to
+            // - an untaxed amount of 95.0
+            // - a tax amount of 95 * 0.21 = 19.95
+            // - a total amount of 114.95
+            // 
+            // In the UBL, an allowance is added with an amount of 5 and 21% tax applied on it plus a charge with an amount of 5.
+            // Basically, it's like you had a discount on the full amount but we put back the discount you get on the base as a charge
+            // to only get the discount regarding the tax amount.
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // AccountTax = self.env['account.tax']
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // ubl_values = vals['_ubl_values']
+            // 
+            // def grouping_function(base_line, tax_data, sub_currency):
+            //     if self._ubl_is_early_payment_base_line(base_line):
+            //         return self._ubl_default_tax_category_grouping_key(base_line, tax_data, vals, sub_currency)
+            // 
+            // for sub_currency, suffix in ((currency, '_currency'), (company_currency, '')):
+            //     base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(
+            //         base_lines=base_lines,
+            //         grouping_function=lambda base_line, tax_data: grouping_function(base_line, tax_data, sub_currency),
+            //     )
+            //     values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
+            // 
+            //     allowance_charges_early_payment = ubl_values[f'allowance_charges_early_payment{suffix}'] = []
+            //     for grouping_key, values in values_per_grouping_key.items():
+            //         if not grouping_key:
+            //             continue
+            // 
+            //         allowance_charges_early_payment.append({
+            //             'currency': sub_currency,
+            //             'amount': values[f'total_excluded{suffix}'],
+            //             'tax_categories': {
+            //                 grouping_key: {
+            //                     **grouping_key,
+            //                     'base_amount': values[f'base_amount{suffix}'],
+            //                     'tax_amount': values[f'tax_amount{suffix}'],
+            //                 },
+            //             },
+            //         })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesPayableRoundingAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_payable_rounding_amount(self, vals):
+            // """ Add
+            //     'vals' -> '_ubl_values' -> 'payable_rounding_amount[_currency]'.
+            //     'vals' -> '_ubl_values' -> 'payable_rounding_base_lines'.
+            // 
+            // 'payable_rounding_amount' is rounding amount to be added to the total in case of a cash rounding.
+            // 'payable_rounding_base_lines' are the rounding base lines.
+            // 
+            // :param vals:        Some custom data.
+            // """
+            // AccountTax = self.env['account.tax']
+            // base_lines = vals['base_lines']
+            // 
+            // def grouping_function(base_line, tax_data):
+            //     return base_line['special_type'] == 'cash_rounding'
+            // 
+            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, grouping_function)
+            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
+            // ubl_values = vals['_ubl_values']
+            // ubl_values['payable_rounding_amount'] = 0.0
+            // ubl_values['payable_rounding_amount_currency'] = 0.0
+            // ubl_values['payable_rounding_base_lines'] = []
+            // for grouping_key, values in values_per_grouping_key.items():
+            //     if not grouping_key:
+            //         continue
+            // 
+            //     ubl_values['payable_rounding_amount_currency'] += values['total_excluded_currency']
+            //     ubl_values['payable_rounding_amount'] += values['total_excluded']
+            //     for base_line, _taxes_data in values['base_line_x_taxes_data']:
+            //         ubl_values['payable_rounding_base_lines'].append(base_line)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeCompanyCurrencyIfForeignCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_tax_currency_code_company_currency_if_foreign_currency(self, vals):
+            // """ Add 'vals' -> '_ubl_values' -> 'tax_currency_code'
+            // 
+            // The value is set only at the company currency when there is a foreign currency.
+            // 
+            // :param vals:    Some custom data.
+            // """
+            // company = vals['company']
+            // currency = vals['currency_id']
+            // vals['tax_currency_code'] = None if currency == company.currency_id else company.currency_id.name
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeCompanyCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_tax_currency_code_company_currency(self, vals):
+            // """ Add 'vals' -> '_ubl_values' -> 'tax_currency_code'
+            // 
+            // The company currency will always be set on it.
+            // 
+            // :param vals:    Some custom data.
+            // """
+            // vals['tax_currency_code'] = vals['company'].currency_id.name
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeEmptyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_tax_currency_code_empty(self, vals):
+            // """ Add 'vals' -> '_ubl_values' -> 'tax_currency_code'
+            // 
+            // The value is empty.
+            // 
+            // :param vals:    Some custom data.
+            // """
+            // vals['tax_currency_code'] = None
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxCurrencyCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_tax_currency_code(self, vals):
+            // """ Add 'vals' -> '_ubl_values' -> 'tax_currency_code'
+            // 
+            // :param vals:    Some custom data.
+            // """
+            // self._ubl_add_values_tax_currency_code_company_currency_if_foreign_currency(vals)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblAddValuesTaxTotalsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_add_values_tax_totals(self, vals):
+            // """ Add
+            //     'vals' -> '_ubl_values' -> 'tax_totals'
+            //     'vals' -> '_ubl_values' -> 'withholding_tax_totals'
+            // 
+            // 'tax_totals' will contain the total and subtotals for not-withholding taxes.
+            // 'withholding_tax_totals' will contain the total and subtotals for withholding taxes.
+            // 
+            // :param vals:                        Some custom data.
+            // """
+            // AccountTax = self.env['account.tax']
+            // base_lines = vals['base_lines']
+            // company = vals['company']
+            // company_currency = company.currency_id
+            // currency = vals['currency_id']
+            // 
+            // ubl_values = vals['_ubl_values']
+            // ubl_values['tax_totals'] = {}
+            // ubl_values['tax_totals_currency'] = {}
+            // ubl_values['withholding_tax_totals'] = {}
+            // ubl_values['withholding_tax_totals_currency'] = {}
+            // 
+            // def tax_category_grouping_function(base_line, tax_data, sub_currency):
+            //     tax_grouping_key = self._ubl_default_tax_category_grouping_key(base_line, tax_data, vals, sub_currency)
+            //     if not tax_grouping_key:
+            //         return
+            //     return self._ubl_default_tax_subtotal_tax_category_grouping_key(tax_grouping_key, vals)
+            // 
+            // def tax_subtotal_grouping_function(base_line, tax_data, sub_currency):
+            //     tax_category_grouping_key = tax_category_grouping_function(base_line, tax_data, sub_currency)
+            //     if not tax_category_grouping_key:
+            //         return
+            //     return self._ubl_default_tax_subtotal_grouping_key(tax_category_grouping_key, vals)
+            // 
+            // def tax_totals_grouping_function(base_line, tax_data, sub_currency):
+            //     tax_subtotal_grouping_key = tax_subtotal_grouping_function(base_line, tax_data, sub_currency)
+            //     if not tax_subtotal_grouping_key:
+            //         return
+            //     return self._ubl_default_tax_total_grouping_key(tax_subtotal_grouping_key, vals)
+            // 
+            // for sub_currency, suffix in ((currency, '_currency'), (company_currency, '')):
+            // 
+            //     # tax_totals / withholding_tax_totals
+            // 
+            //     base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(
+            //         base_lines=base_lines,
+            //         grouping_function=lambda base_line, tax_data: tax_totals_grouping_function(base_line, tax_data, sub_currency),
+            //     )
+            //     values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
+            //     for grouping_key, values in values_per_grouping_key.items():
+            //         if not grouping_key:
+            //             continue
+            // 
+            //         if grouping_key['is_withholding']:
+            //             target_key = f'withholding_tax_totals{suffix}'
+            //             sign = -1
+            //         else:
+            //             target_key = f'tax_totals{suffix}'
+            //             sign = 1
+            // 
+            //         ubl_values[target_key][frozendict(grouping_key)] = {
+            //             **grouping_key,
+            //             'amount': sign * values[f'tax_amount{suffix}'],
+            //             'subtotals': {},
+            //         }
+            // 
+            //     # tax_subtotals
+            // 
+            //     base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(
+            //         base_lines=base_lines,
+            //         grouping_function=lambda base_line, tax_data: tax_subtotal_grouping_function(base_line, tax_data, sub_currency),
+            //     )
+            //     values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
+            //     for grouping_key, values in values_per_grouping_key.items():
+            //         if not grouping_key:
+            //             continue
+            // 
+            //         if grouping_key['is_withholding']:
+            //             target_key = f'withholding_tax_totals{suffix}'
+            //             sign = -1
+            //         else:
+            //             target_key = f'tax_totals{suffix}'
+            //             sign = 1
+            // 
+            //         tax_total_grouping_key = self._ubl_default_tax_total_grouping_key(grouping_key, vals)
+            //         if not tax_total_grouping_key:
+            //             continue
+            // 
+            //         tax_total_values = ubl_values[target_key][frozendict(tax_total_grouping_key)]
+            //         tax_total_values['subtotals'][frozendict(grouping_key)] = {
+            //             **grouping_key,
+            //             'base_amount': values[f'base_amount{suffix}'],
+            //             'tax_amount': sign * values[f'tax_amount{suffix}'],
+            //             'tax_categories': {},
+            //         }
+            // 
+            //     # tax_categories
+            // 
+            //     base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(
+            //         base_lines=base_lines,
+            //         grouping_function=lambda base_line, tax_data: tax_category_grouping_function(base_line, tax_data, sub_currency),
+            //     )
+            //     values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
+            //     for grouping_key, values in values_per_grouping_key.items():
+            //         if not grouping_key:
+            //             continue
+            // 
+            //         if grouping_key['is_withholding']:
+            //             target_key = f'withholding_tax_totals{suffix}'
+            //             sign = -1
+            //         else:
+            //             target_key = f'tax_totals{suffix}'
+            //             sign = 1
+            // 
+            //         tax_subtotal_grouping_key = self._ubl_default_tax_subtotal_grouping_key(grouping_key, vals)
+            //         if not tax_subtotal_grouping_key:
+            //             continue
+            // 
+            //         tax_total_grouping_key = self._ubl_default_tax_total_grouping_key(tax_subtotal_grouping_key, vals)
+            //         if not tax_total_grouping_key:
+            //             continue
+            // 
+            //         tax_total_values = ubl_values[target_key][frozendict(tax_total_grouping_key)]
+            //         tax_total_values['subtotals'][frozendict(tax_subtotal_grouping_key)]['tax_categories'][frozendict(grouping_key)] = {
+            //             **grouping_key,
+            //             'base_amount': values[f'base_amount{suffix}'],
+            //             'tax_amount': sign * values[f'tax_amount{suffix}'],
+            //         }
+            // 
+            //     for key in (f'withholding_tax_totals{suffix}', f'tax_totals{suffix}'):
+            //         if not ubl_values[key]:
+            //             ubl_values[key][None] = {
+            //                 'currency': sub_currency,
+            //                 'amount': 0.0,
+            //                 'subtotals': {},
+            //             }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblDefaultTaxCategoryGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data, object vals, object currency) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_default_tax_category_grouping_key(self, base_line, tax_data, vals, currency):
+            // """ Give the values about the tax category for a given tax.
+            // 
+            // :param base_line:   A base line (see '_prepare_base_line_for_taxes_computation').
+            // :param tax_data:    One of the tax data in base_line['tax_details']['taxes_data'].
+            // :param vals:        Some custom data.
+            // :param currency:    The currency for which the grouping key is expressed.
+            // :return:            A dictionary that could be used as a grouping key for the taxes helpers.
+            // """
+            // customer = vals['customer']
+            // supplier = vals['supplier']
+            // if tax_data and (
+            //     tax_data['tax'].amount_type != 'percent'
+            //     or self._ubl_is_recycling_contribution_tax(tax_data)
+            //     or self._ubl_is_excise_tax(tax_data)
+            // ):
+            //     return
+            // elif tax_data:
+            //     tax = tax_data['tax']
+            //     return {
+            //         'tax_category_code': self._get_tax_category_code(customer.commercial_partner_id, supplier, tax),
+            //         **self._get_tax_exemption_reason(customer.commercial_partner_id, supplier, tax),
+            //         'percent': tax.amount,
+            //         'scheme_id': 'VAT',
+            //         'is_withholding': tax.amount < 0.0,
+            //         'currency': currency,
+            //     }
+            // else:
+            //     return {
+            //         'tax_category_code': self._get_tax_category_code(customer.commercial_partner_id, supplier, self.env['account.tax']),
+            //         **self._get_tax_exemption_reason(customer.commercial_partner_id, supplier, self.env['account.tax']),
+            //         'percent': 0.0,
+            //         'scheme_id': 'VAT',
+            //         'is_withholding': False,
+            //         'currency': currency,
+            //     }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblDefaultTaxSubtotalGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_category_grouping_key, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_default_tax_subtotal_grouping_key(self, tax_category_grouping_key, vals):
+            // """ Give the values about how taxes are grouped together in TaxTotal -> TaxSubtotal
+            // (or WithholdingTaxTotal depending on 'is_withholding').
+            // 
+            // :param tax_category_grouping_key:   The grouping key returned by '_ubl_default_tax_subtotal_tax_category_grouping_key'.
+            // :param vals:                        Some custom data.
+            // :return:                            A dictionary that could be used as a grouping key for the taxes helpers.
+            // """
+            // return dict(tax_category_grouping_key)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblDefaultTaxSubtotalTaxCategoryGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_grouping_key, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_default_tax_subtotal_tax_category_grouping_key(self, tax_grouping_key, vals):
+            // """ Give the values about how taxes are grouped together in TaxTotal -> TaxSubtotal -> TaxCategory
+            // (or WithholdingTaxTotal depending on 'is_withholding').
+            // 
+            // :param tax_grouping_key:            The grouping key returned by '_ubl_default_tax_category_grouping_key'.
+            // :param vals:                        Some custom data.
+            // :return:                            A dictionary that could be used as a grouping key for the taxes helpers.
+            // """
+            // return dict(tax_grouping_key)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblDefaultTaxTotalGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_subtotal_grouping_key, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_default_tax_total_grouping_key(self, tax_subtotal_grouping_key, vals):
+            // """ Give the values about how taxes are grouped together in TaxTotal
+            // (or WithholdingTaxTotal depending on 'is_withholding').
+            // 
+            // :param tax_subtotal_grouping_key:   The grouping key returned by '_ubl_default_tax_subtotal_grouping_key'.
+            // :param vals:                        Some custom data.
+            // :return:                            A dictionary that could be used as a grouping key for the taxes helpers.
+            // """
+            // return {
+            //     'is_withholding': tax_subtotal_grouping_key['is_withholding'],
+            //     'currency': tax_subtotal_grouping_key['currency'],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetAllowanceChargeEarlyPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object early_payment_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_allowance_charge_early_payment(self, vals, early_payment_values):
+            // currency = early_payment_values['currency']
+            // amount = early_payment_values['amount']
+            // is_charge = amount > 0.0
+            // return {
+            //     '_currency': currency,
+            //     'cbc:ChargeIndicator': {'_text': 'true' if is_charge else 'false'},
+            //     'cbc:AllowanceChargeReasonCode': {'_text': 'ZZZ' if is_charge else '66'},
+            //     'cbc:AllowanceChargeReason': {'_text': _("Conditional cash/payment discount")},
+            //     'cbc:Amount': {
+            //         '_text': currency.round(abs(amount)),
+            //         'currencyID': currency.name,
+            //     },
+            //     'cac:TaxCategory': [
+            //         self._ubl_get_allowance_charge_early_payment_tax_category_node(vals, tax_category)
+            //         for tax_category in early_payment_values['tax_categories'].values()
+            //     ],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetAllowanceChargeEarlyPaymentTaxCategoryNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_category) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_allowance_charge_early_payment_tax_category_node(self, vals, tax_category):
+            // return {
+            //     'cbc:ID': {'_text': tax_category['tax_category_code']},
+            //     'cbc:Percent': {'_text': tax_category['percent']},
+            //     'cac:TaxScheme': {
+            //         'cbc:ID': {'_text': tax_category['scheme_id']},
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineAllowanceChargeDiscountNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object discount_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_line_allowance_charge_discount_node(self, vals, discount_values):
+            // currency = discount_values['currency']
+            // amount = discount_values['amount']
+            // base_amount = discount_values['base_amount']
+            // percent = discount_values['percent']
+            // return {
+            //     '_currency': currency,
+            //     'cbc:ChargeIndicator': {'_text': 'true' if amount < 0.0 else 'false'},
+            //     'cbc:MultiplierFactorNumeric': {'_text': abs(percent)},
+            //     'cbc:AllowanceChargeReasonCode': {'_text': '95'},
+            //     'cbc:AllowanceChargeReason': {'_text': _("Discount")},
+            //     'cbc:Amount': {
+            //         '_text': FloatFmt(abs(amount), max_dp=currency.decimal_places),
+            //         'currencyID': currency.name,
+            //     },
+            //     'cbc:BaseAmount': {
+            //         '_text': FloatFmt(abs(base_amount), max_dp=currency.decimal_places),
+            //         'currencyID': currency.name,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineAllowanceChargeExciseNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object excise_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_line_allowance_charge_excise_node(self, vals, excise_values):
+            // currency = excise_values['currency']
+            // amount = excise_values['amount']
+            // tax = excise_values['tax']
+            // return {
+            //     '_currency': currency,
+            //     'cbc:ChargeIndicator': {'_text': 'true' if amount > 0.0 else 'false'},
+            //     'cbc:AllowanceChargeReason': {'_text': tax.name},
+            //     'cbc:Amount': {
+            //         '_text': FloatFmt(abs(amount), max_dp=currency.decimal_places),
+            //         'currencyID': currency.name,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineAllowanceChargeRecyclingContributionNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object recycling_contribution_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_line_allowance_charge_recycling_contribution_node(self, vals, recycling_contribution_values):
+            // currency = recycling_contribution_values['currency']
+            // amount = recycling_contribution_values['amount']
+            // tax = recycling_contribution_values['tax']
+            // return {
+            //     '_currency': currency,
+            //     'cbc:ChargeIndicator': {'_text': 'true' if amount > 0.0 else 'false'},
+            //     'cbc:AllowanceChargeReasonCode': {'_text': 'AEO'},
+            //     'cbc:AllowanceChargeReason': {'_text': tax.name},
+            //     'cbc:Amount': {
+            //         '_text': FloatFmt(abs(amount), max_dp=currency.decimal_places),
+            //         'currencyID': currency.name,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineItemNodeClassifiedTaxCategoryNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_category) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_line_item_node_classified_tax_category_node(self, vals, tax_category):
+            // """ Generate the node 'cac:ClassifiedTaxCategory' in 'cac:Item'.
+            // 
+            // :param vals:            Some custom data.
+            // :param tax_category:    An entry of vals['_ubl_values']['item_classified_tax_categories']
+            //                         containing all the necessary data to build the node.
+            // :return:                A new node in 'cac:Item' -> 'cac:ClassifiedTaxCategory'.
+            // """
+            // return {
+            //     'cbc:ID': {'_text': tax_category['tax_category_code']},
+            //     'cbc:Percent': {'_text': tax_category['percent']},
+            //     'cac:TaxScheme': {
+            //         'cbc:ID': {'_text': tax_category['scheme_id']},
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetLineItemNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object item_values) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_line_item_node(self, vals, item_values):
+            // item_node = {}
+            // base_line = item_values['base_line']
+            // product = base_line['product_id']
+            // 
+            // if product.default_code:
+            //     item_node['cac:SellersItemIdentification'] = {
+            //         'cbc:ID': {'_text': product.default_code},
+            //     }
+            // else:
+            //     item_node['cac:SellersItemIdentification'] = None
+            // if product.barcode:
+            //     item_node['cac:StandardItemIdentification'] = {
+            //         'cbc:ID': {
+            //             '_text': product.barcode,
+            //             'schemeID': '0160',  # GTIN
+            //         },
+            //     }
+            // else:
+            //     item_node['cac:StandardItemIdentification'] = None
+            // item_node['cac:AdditionalItemProperty'] = [
+            //     {
+            //         'cbc:Name': {'_text': value.attribute_id.name},
+            //         'cbc:Value': {'_text': value.name},
+            //     }
+            //     for value in product.product_template_attribute_value_ids
+            // ]
+            // 
+            // if base_line.get('_removed_tax_data'):
+            //     # Emptying tax extra line.
+            //     name = description = base_line['_removed_tax_data']['tax'].name
+            // else:
+            //     name = product.name or ''
+            //     if line_name := base_line.get('name'):
+            //         # Regular business line.
+            //         description = line_name
+            //         if not name:
+            //             name = line_name
+            //     else:
+            //         # Undefined line.
+            //         description = product.description_sale or ''
+            // 
+            // if description:
+            //     item_node['cbc:Description'] = {'_text': description}
+            // else:
+            //     item_node['cbc:Description'] = None
+            // 
+            // if name:
+            //     item_node['cbc:Name'] = {'_text': name}
+            // else:
+            //     item_node['cbc:Name'] = None
+            // 
+            // item_node['cac:ClassifiedTaxCategory'] = [
+            //     self._ubl_get_line_item_node_classified_tax_category_node(vals, tax_category)
+            //     for tax_category in item_values['classified_tax_categories'].values()
+            // ]
+            // return item_node
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetTaxCategoryNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_category) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_tax_category_node(self, vals, tax_category):
+            // """ Generate the node 'cac:TaxCategory' in 'cac:SubTotal'.
+            // 
+            // :param vals:            Some custom data.
+            // :param tax_category:    An entry of vals['_ubl_values'](['tax_totals']|['withholding_tax_totals'])['tax_subtotals']
+            //                         containing all the necessary data to build the node.
+            // :return:                A new node in 'cac:TaxTotal'.
+            // """
+            // return {
+            //     'cbc:ID': {'_text': tax_category['tax_category_code']},
+            //     'cbc:Percent': {'_text': tax_category['percent']},
+            //     'cbc:TaxExemptionReasonCode': {'_text': tax_category.get('tax_exemption_reason_code')},
+            //     'cbc:TaxExemptionReason': {'_text': tax_category.get('tax_exemption_reason')},
+            //     'cac:TaxScheme': {
+            //         'cbc:ID': {'_text': tax_category['scheme_id']},
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetTaxSubtotalNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_subtotal) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_tax_subtotal_node(self, vals, tax_subtotal):
+            // """ Generate the node 'cac:SubTotal' in 'cac:TaxTotal'/'cac:WithholdingTaxTotal'.
+            // 
+            // Note: 'cac:TaxCategory' is managed by '_ubl_get_tax_category_node'.
+            // 
+            // :param vals:            Some custom data.
+            // :param tax_subtotal:    An entry of vals['_ubl_values'](['tax_totals']|['withholding_tax_totals'])['tax_subtotals']
+            //                         containing all the necessary data to build the node.
+            // :return:                A new node in 'cac:TaxTotal'.
+            // """
+            // currency = tax_subtotal['currency']
+            // return {
+            //     'cbc:TaxableAmount': {
+            //         '_text': FloatFmt(tax_subtotal['base_amount'], min_dp=currency.decimal_places),
+            //         'currencyID': currency.name
+            //     },
+            //     'cbc:TaxAmount': {
+            //         '_text': FloatFmt(tax_subtotal['tax_amount'], min_dp=currency.decimal_places),
+            //         'currencyID': currency.name
+            //     },
+            //     'cac:TaxCategory': [
+            //         self._ubl_get_tax_category_node(vals, tax_category)
+            //         for tax_category in tax_subtotal['tax_categories'].values()
+            //     ],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetTaxTotalNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_total) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_tax_total_node(self, vals, tax_total):
+            // """ Generate the node 'cac:TaxTotal'.
+            // 
+            // Note: 'cac:Subtotal' is managed by '_ubl_get_tax_subtotal_node'.
+            // 
+            // :param vals:            Some custom data.
+            // :param tax_total:       An entry of vals['_ubl_values']['tax_totals'] containing all the necessary data to build the node.
+            // :return:                A new node in 'cac:TaxTotal'.
+            // """
+            // currency = tax_total['currency']
+            // return {
+            //     '_currency': currency,
+            //     'cbc:TaxAmount': {
+            //         '_text': FloatFmt(tax_total['amount'], min_dp=currency.decimal_places),
+            //         'currencyID': currency.name
+            //     },
+            //     'cac:TaxSubtotal': [
+            //         self._ubl_get_tax_subtotal_node(vals, subtotal)
+            //         for subtotal in tax_total['subtotals'].values()
+            //     ],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblGetWithholdingTaxTotalNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object tax_total) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_get_withholding_tax_total_node(self, vals, tax_total):
+            // """ Generate the node 'cac:WithholdingTaxTotal'.
+            // 
+            // Note: 'cac:Subtotal' is managed by '_ubl_get_tax_subtotal_node'.
+            // 
+            // :param vals:            Some custom data.
+            // :param tax_total:       An entry of vals['_ubl_values']['withholding_tax_totals'] containing all the necessary data to build the node.
+            // :return:                A new node in 'cac:WithholdingTaxTotal'.
+            // """
+            // return self._ubl_get_tax_total_node(vals, tax_total)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblIsEarlyPaymentBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_is_early_payment_base_line(self, base_line):
+            // """ Indicate if the 'base_line' passed as parameter has been generated by an 'mixed' early payment.
+            // 
+            // :param base_line: A base line (see '_prepare_base_line_for_taxes_computation').
+            // :return: True if the 'base_line' is a 'mixed' early payment line, False otherwise.
+            // """
+            // return base_line['special_type'] == 'early_payment'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblIsExciseTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_data) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_is_excise_tax(self, tax_data):
+            // """ Indicate if the 'tax_data' passed as parameter is an excise tax.
+            // 
+            // :param tax_data:    One of the tax data in base_line['tax_details']['taxes_data'].
+            // :return:            True if tax_data['tax'] is an excise tax, False otherwise.
+            // """
+            // if not tax_data:
+            //     return False
+            // 
+            // tax = tax_data['tax']
+            // return tax.amount_type == 'code' and tax.include_base_amount
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblIsRecyclingContributionTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_data) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_is_recycling_contribution_tax(self, tax_data):
+            // """ Indicate if the 'tax_data' passed as parameter is a recycling contribution tax.
+            // 
+            // :param tax_data:    One of the tax data in base_line['tax_details']['taxes_data'].
+            // :return:            True if tax_data['tax'] is a recycling contribution tax, False otherwise.
+            // """
+            // if not tax_data:
+            //     return False
+            // 
+            // tax = tax_data['tax']
+            // return tax.amount_type == 'fixed' and tax.include_base_amount
+            */
+            return default;
+        }
+
+        public async Task<TEntity> UblTurnEmptyingTaxesAsNewBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object vals) where TEntity : IEntity<Guid>, IAccountEdiCommonable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_ubl.py) ---
+            // def _ubl_turn_emptying_taxes_as_new_base_lines(self, base_lines, company, vals):
+            // """ Extract emptying taxes such as "Vidanges" on bottles from the current base lines and turn them into
+            // additional base lines.
+            // 
+            // :param base_lines:  The original 'base_lines' of the document.
+            // :param company:     The company owning the 'base_lines'.
+            // :param vals:        Some custom data.
+            // """
+            // AccountTax = self.env['account.tax']
+            // 
+            // def exclude_function(base_line, tax_data):
+            //     if not tax_data:
+            //         return
+            // 
+            //     tax = tax_data['tax']
+            //     return tax.amount_type in ('fixed', 'code') and not tax.include_base_amount
+            // 
+            // new_base_lines = AccountTax._dispatch_taxes_into_new_base_lines(base_lines, company, exclude_function)
+            // 
+            // def aggregate_function(target_base_line, base_line):
+            //     target_base_line.setdefault('_aggregated_quantity', 0.0)
+            //     target_base_line['_aggregated_quantity'] += base_line['quantity']
+            // 
+            // extra_base_lines = AccountTax._turn_removed_taxes_into_new_base_lines(
+            //     base_lines=new_base_lines,
+            //     company=company,
+            //     aggregate_function=aggregate_function,
+            // )
+            // 
+            // # Restore back the values per quantity.
+            // for base_line in extra_base_lines:
+            //     base_line['quantity'] = base_line['_aggregated_quantity']
+            //     base_line['price_unit'] /= base_line['_aggregated_quantity']
+            //     base_line['product_id'] = self.env['product.product']
+            // 
+            // return new_base_lines + extra_base_lines
             */
             return default;
         }

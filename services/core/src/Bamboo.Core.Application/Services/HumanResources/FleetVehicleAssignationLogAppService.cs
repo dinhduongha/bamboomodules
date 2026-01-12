@@ -57,11 +57,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle_assignation_log.py) ---
             // def _compute_driver_employee_id(self):
-            // employees = self.env['hr.employee'].search([('work_contact_id', 'in', self.driver_id.ids)])
-            // 
+            // employees_by_partner_id_and_company_id = self.env['hr.employee']._read_group(
+            //     domain=[('work_contact_id', 'in', self.driver_id.ids)],
+            //     groupby=['work_contact_id', 'company_id'],
+            //     aggregates=['id:recordset']
+            // )
+            // employees_by_partner_id_and_company_id = {
+            //     (partner, company): employee for partner, company, employee in employees_by_partner_id_and_company_id
+            // }
             // for log in self:
-            //     employee = employees.filtered(lambda e: e.work_contact_id.id == log.driver_id.id)
-            //     log.driver_employee_id = employee and employee[0] or False
+            //     employees = employees_by_partner_id_and_company_id.get((log.driver_id, log.vehicle_id.company_id))
+            //     log.driver_employee_id = employees[0] if employees else False
             */
             return default;
         }

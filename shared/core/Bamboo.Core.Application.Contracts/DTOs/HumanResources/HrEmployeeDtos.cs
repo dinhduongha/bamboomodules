@@ -4,6 +4,21 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class HrEmployeeCheckNoExistingContractRequestDto
+    {
+        public object Date { get; set; }
+    }
+    
+    public class HrEmployeeCreateContractRequestDto
+    {
+        public object Date { get; set; }
+    }
+    
+    public class HrEmployeeCreateVersionRequestDto
+    {
+        public object Values { get; set; }
+    }
+    
     public class HrEmployeeFetchRequestDto
     {
         public object FieldNames { get; set; }
@@ -16,6 +31,16 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Force { get; set; }
     }
     
+    public class HrEmployeeGetAvatarCardDataRequestDto
+    {
+        public object Fields { get; set; }
+    }
+    
+    public class HrEmployeeGetBankAccountSalaryAllocationRequestDto
+    {
+        public Guid AccountId { get; set; }
+    }
+    
     public class HrEmployeeGetFormviewActionRequestDto
     {
         public object AccessUid { get; set; }
@@ -24,6 +49,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class HrEmployeeGetFormviewIdRequestDto
     {
         public object AccessUid { get; set; }
+    }
+    
+    public class HrEmployeeGetInternalResumeLinesRequestDto
+    {
+        public Guid ResId { get; set; }
+        public object ResModel { get; set; }
     }
     
     public class HrEmployeeGetMandatoryDaysRequestDto
@@ -38,6 +69,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object DateEnd { get; set; }
     }
     
+    public class HrEmployeeGetOvertimeDataRequestDto
+    {
+        public object Domain { get; set; }
+        public Guid EmployeeId { get; set; }
+    }
+    
     public class HrEmployeeGetPublicHolidaysDataRequestDto
     {
         public object DateStart { get; set; }
@@ -50,6 +87,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object DateEnd { get; set; }
     }
     
+    public class HrEmployeeGetTimeOffDashboardDataRequestDto
+    {
+        public object TargetDate { get; set; }
+    }
+    
     public class HrEmployeeGetViewRequestDto
     {
         public Guid ViewId { get; set; }
@@ -60,6 +102,13 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Views { get; set; }
         public object Options { get; set; }
+    }
+    
+    public class HrEmployeeNewRequestDto
+    {
+        public object Values { get; set; }
+        public object Origin { get; set; }
+        public object Ref { get; set; }
     }
     
     public class HrEmployeeOpenWorkEntriesRequestDto

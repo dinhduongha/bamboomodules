@@ -27,10 +27,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-overview")]
-        public async Task<IActionResult> ActionRepairOverviewAsync(Guid id)
+        [Route("{id}/action-wave")]
+        public async Task<IActionResult> ActionWaveAsync(Guid id)
         {
-            var result = await _appService.RepairOverviewAsync(id);
+            var result = await _appService.WaveAsync(id);
             return Ok(result);
         }
         

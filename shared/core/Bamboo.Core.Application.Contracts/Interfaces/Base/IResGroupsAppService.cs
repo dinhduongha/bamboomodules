@@ -12,6 +12,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     {
         Task<ResGroups> CopyDataAsync(Guid id, ResGroupsCopyDataRequestDto input);
         Task<ResGroups> GetApplicationGroupsAsync(Guid id, ResGroupsGetApplicationGroupsRequestDto input);
-        Task<ResGroups> GetGroupsByApplicationAsync(Guid id);
+        Task<ResGroups> ShowAllUsersAsync(Guid id);
     }
 }

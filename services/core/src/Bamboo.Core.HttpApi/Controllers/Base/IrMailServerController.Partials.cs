@@ -19,22 +19,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/build-email")]
-        public async Task<IActionResult> BuildEmailAsync(Guid id, [FromBody] IrMailServerBuildEmailRequestDto input)
-        {
-            var result = await _appService.BuildEmailAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/connect")]
-        public async Task<IActionResult> ConnectAsync(Guid id, [FromBody] IrMailServerConnectRequestDto input)
-        {
-            var result = await _appService.ConnectAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/send-email")]
         public async Task<IActionResult> SendEmailAsync(Guid id, [FromBody] IrMailServerSendEmailRequestDto input)
         {

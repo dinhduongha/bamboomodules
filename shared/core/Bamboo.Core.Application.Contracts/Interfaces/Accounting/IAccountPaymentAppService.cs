@@ -19,10 +19,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<AccountPayment> CopyDataAsync(Guid id, AccountPaymentCopyDataRequestDto input);
         Task<AccountPayment> DoPrintChecksAsync(Guid id);
         Task<AccountPayment> DraftAsync(Guid id);
-        Task<AccountPayment> InitAsync(Guid id);
         Task<AccountPayment> MarkAsSentAsync(Guid id);
         Task<AccountPayment> OpenBusinessDocAsync(Guid id);
-        Task<AccountPayment> OpenExpenseReportAsync(Guid id);
+        Task<AccountPayment> OpenExpenseAsync(Guid id);
         Task<AccountPayment> PostAsync(Guid id);
         Task<AccountPayment> PrintChecksAsync(Guid id);
         Task<AccountPayment> RefundWizardAsync(Guid id);

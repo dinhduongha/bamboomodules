@@ -26,6 +26,17 @@ namespace Bamboo.Core.Application.Services
             _imageMixinAppService = imageMixinAppService;
         }
 
+        public async Task<LunchProductCategory> ArchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
+            // def action_archive(self):
+            // super().action_archive()
+            // self._sync_active_products()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<LunchProductCategory> ComputeProductCountInternalAsync()
         {
             /*
@@ -44,22 +55,32 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
             // def _default_image(self):
-            // return base64.b64encode(file_open('lunch/static/img/lunch.png', 'rb').read())
+            // with file_open('lunch/static/img/lunch.png', 'rb') as f:
+            //     return base64.b64encode(f.read())
             */
             return default;
         }
 
-        public async Task<LunchProductCategory> ToggleActiveAsync(Guid id)
+        protected async Task<LunchProductCategory> SyncActiveProductsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
-            // def toggle_active(self):
+            // def _sync_active_products(self):
             // """ Archiving related lunch product """
-            // res = super().toggle_active()
             // Product = self.env['lunch.product'].with_context(active_test=False)
             // all_products = Product.search([('category_id', 'in', self.ids)])
             // all_products._sync_active_from_related()
-            // return res
+            */
+            return default;
+        }
+
+        public async Task<LunchProductCategory> UnarchiveAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
+            // def action_unarchive(self):
+            // super().action_unarchive()
+            // self._sync_active_products()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

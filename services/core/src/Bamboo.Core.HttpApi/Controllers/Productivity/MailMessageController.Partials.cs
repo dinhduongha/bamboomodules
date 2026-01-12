@@ -43,22 +43,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/is-thread-message")]
-        public async Task<IActionResult> IsThreadMessageAsync(Guid id, [FromBody] MailMessageIsThreadMessageRequestDto input)
-        {
-            var result = await _appService.IsThreadMessageAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/mark-all-as-read")]
         public async Task<IActionResult> MarkAllAsReadAsync(Guid id, [FromBody] MailMessageMarkAllAsReadRequestDto input)
         {

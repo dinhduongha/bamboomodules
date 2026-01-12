@@ -9,6 +9,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Default { get; set; }
     }
     
+    public class MrpProductionGenerateSerialRequestDto
+    {
+        public object Workorder { get; set; }
+    }
+    
     public class MrpProductionGetEmptyListHelpRequestDto
     {
         public object HelpMessage { get; set; }

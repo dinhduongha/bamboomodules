@@ -11,10 +11,18 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/set-custom-notifications")]
-        public async Task<IActionResult> SetCustomNotificationsAsync(Guid id, [FromBody] ResUsersSettingsSetCustomNotificationsRequestDto input)
+        [Route("{id}/get-embedded-actions-settings")]
+        public async Task<IActionResult> GetEmbeddedActionsSettingsAsync(Guid id)
         {
-            var result = await _appService.SetCustomNotificationsAsync(id, input);
+            var result = await _appService.GetEmbeddedActionsSettingsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/set-embedded-actions-setting")]
+        public async Task<IActionResult> SetEmbeddedActionsSettingAsync(Guid id, [FromBody] ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
+        {
+            var result = await _appService.SetEmbeddedActionsSettingAsync(id, input);
             return Ok(result);
         }
         

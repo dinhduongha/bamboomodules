@@ -40,8 +40,8 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_tag.py) ---
-            // def default_get(self, fields_list):
-            // result = super().default_get(fields_list)
+            // def default_get(self, fields):
+            // result = super().default_get(fields)
             // if self.env.context.get('default_website_id'):
             //     result['website_id'] = self.env.context.get('default_website_id')
             // return result

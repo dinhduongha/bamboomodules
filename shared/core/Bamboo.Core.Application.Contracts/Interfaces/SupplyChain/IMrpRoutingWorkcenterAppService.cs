@@ -13,6 +13,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<MrpRoutingWorkcenter> ArchiveAsync(Guid id);
         Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid id);
         Task<MrpRoutingWorkcenter> CopyToBomAsync(Guid id);
+        Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid id);
         Task<MrpRoutingWorkcenter> UnarchiveAsync(Guid id);
     }
 }

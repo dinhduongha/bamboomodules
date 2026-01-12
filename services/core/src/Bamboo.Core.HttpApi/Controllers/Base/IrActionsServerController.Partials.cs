@@ -11,6 +11,30 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-open-automation")]
+        public async Task<IActionResult> ActionOpenAutomationAsync(Guid id)
+        {
+            var result = await _appService.OpenAutomationAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-parent-action")]
+        public async Task<IActionResult> ActionOpenParentActionAsync(Guid id)
+        {
+            var result = await _appService.OpenParentActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-scheduled-action")]
+        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid id)
+        {
+            var result = await _appService.OpenScheduledActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrActionsServerCopyDataRequestDto input)
         {
@@ -23,6 +47,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CreateActionAsync(Guid id)
         {
             var result = await _appService.CreateActionAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/history-wizard-action")]
+        public async Task<IActionResult> HistoryWizardActionAsync(Guid id)
+        {
+            var result = await _appService.HistoryWizardActionAsync(id);
             return Ok(result);
         }
         

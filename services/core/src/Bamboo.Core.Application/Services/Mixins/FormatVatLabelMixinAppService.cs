@@ -42,7 +42,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // return {
             //     'type': 'ir.actions.act_window',
-            //     'name': _('Branches'),
+            //     'name': self.env._('Branches'),
             //     'res_model': 'res.company',
             //     'domain': [('parent_id', '=', self.id)],
             //     'context': {
@@ -137,7 +137,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.type == 'delivery':
             //     return "base/static/img/truck.png"
             // if self.type == 'invoice':
-            //     return "base/static/img/money.png"
+            //     return "base/static/img/bill.png"
+            // if self.type == 'other':
+            //     return "base/static/img/puzzle.png"
             // return super()._avatar_get_placeholder_path()
             */
             return default;
@@ -170,7 +172,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ])
             //         if company_active_users:
             //             # You cannot disable companies with active users
-            //             raise ValidationError(_(
+            //             raise ValidationError(self.env._(
             //                 'The company %(company_name)s cannot be archived because it is still used '
             //                 'as the default company of %(active_users)s users.',
             //                 company_name=company.name,
@@ -258,7 +260,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         for fname in company._get_company_root_delegated_field_names():
             //             if company[fname] != company.parent_id[fname]:
             //                 description = self.env['ir.model.fields']._get("res.company", fname).field_description
-            //                 raise ValidationError(_("The %s of a subsidiary must be the same as it's root company.", description))
+            //                 raise ValidationError(self.env._("The %s of a subsidiary must be the same as it's root company.", description))
             */
             return default;
         }
@@ -273,12 +275,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # 2a. Commercial Fields: sync if commercial entity
             // if self.commercial_partner_id == self:
             //     fields_to_sync = values.keys() & self._commercial_fields()
-            //     self.sudo()._commercial_sync_to_children(fields_to_sync)
+            //     self.sudo()._commercial_sync_to_descendants(fields_to_sync)
             // # 2b. Address fields: sync if address changed
             // address_fields = self._address_fields()
             // if any(field in values for field in address_fields):
             //     contacts = self.child_ids.filtered(lambda c: c.type == 'contact')
-            //     contacts.update_address(values)
+            //     contacts._update_address(values)
             */
             return default;
         }
@@ -305,10 +307,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _commercial_fields(self):
             // """ Returns the list of fields that are managed by the commercial entity
             // to which a partner belongs. These fields are meant to be hidden on
-            // partners that aren't `commercial entities` themselves, and will be
+            // partners that aren't `commercial entities` themselves, or synchronized
+            // at update (if present in _synced_commercial_fields), and will be
             // delegated to the parent `commercial entity`. The list is meant to be
             // extended by inheriting classes. """
-            // return ['vat', 'company_registry', 'industry_id']
+            // return self._synced_commercial_fields() + ['company_registry', 'industry_id']
             */
             return default;
         }
@@ -322,43 +325,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // as if they were related fields """
             // commercial_partner = self.commercial_partner_id
             // if commercial_partner != self:
-            //     sync_vals = commercial_partner._update_fields_values(self._commercial_fields())
-            //     self.write(sync_vals)
+            //     sync_vals = commercial_partner._get_commercial_values()
+            //     if sync_vals:
+            //         self.write(sync_vals)
+            //         self._commercial_sync_to_descendants()
             //     self._company_dependent_commercial_sync()
-            //     self._commercial_sync_to_children()
             */
             return default;
         }
 
-        public async Task<TEntity> CommercialSyncToChildrenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        public async Task<TEntity> CommercialSyncToDescendantsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _commercial_sync_to_children(self, fields_to_sync=None):
+            // def _commercial_sync_to_descendants(self, fields_to_sync=None):
             // """ Handle sync of commercial fields to descendants """
             // commercial_partner = self.commercial_partner_id
             // if fields_to_sync is None:
             //     fields_to_sync = self._commercial_fields()
-            // sync_vals = commercial_partner._update_fields_values(fields_to_sync)
+            // sync_vals = commercial_partner._convert_fields_to_values(fields_to_sync)
             // sync_children = self.child_ids.filtered(lambda c: not c.is_company)
             // for child in sync_children:
-            //     child._commercial_sync_to_children(fields_to_sync)
-            // res = sync_children.write(sync_vals)
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CompanyDefaultGetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @object, object field) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def _company_default_get(self, object=False, field=False):
-            // """ Returns the user's company
-            //     - Deprecated
-            // """
-            // _logger.warning("The method '_company_default_get' on res.company is deprecated and shouldn't be used anymore")
-            // return self.env.company
+            //     child._commercial_sync_to_descendants(fields_to_sync)
+            // sync_children.write(sync_vals)
             */
             return default;
         }
@@ -381,6 +370,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _company_dependent_commercial_sync(self):
+            // """ Propagate sync of company dependant commercial fields to other
+            // commpanies. """
             // if not (fields_to_sync := self._company_dependent_commercial_fields()):
             //     return
             // 
@@ -389,7 +380,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         continue  # already handled by _commercial_sync_from_company
             //     self_in_company = self.with_company(company_sudo)
             //     self_in_company.write(
-            //         self_in_company.commercial_partner_id._update_fields_values(fields_to_sync)
+            //         self_in_company.commercial_partner_id._convert_fields_to_values(fields_to_sync)
             //     )
             */
             return default;
@@ -417,6 +408,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if address_data['contact']:
             //         partner = company.partner_id.browse(address_data['contact']).sudo()
             //         company.update(company._get_company_address_update(partner))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeApplicationStatisticsHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // """ Hook for override, as overriding compute method does not update
+            // cache accordingly. All overrides receive False instead of previously
+            // assigned value. """
+            // return defaultdict(list)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeApplicationStatisticsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics(self):
+            // result = self._compute_application_statistics_hook()
+            // for p in self:
+            //     p.application_statistics = result.get(p.id, [])
             */
             return default;
         }
@@ -476,8 +492,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_avatar(self, avatar_field, image_field):
-            // partners_with_internal_user = self.filtered(lambda partner: partner.user_ids - partner.user_ids.filtered('share'))
-            // super(Partner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
+            // partners_with_internal_user = self.filtered(
+            //     lambda partner: partner.user_ids - partner.user_ids.filtered('share') or partner.type == 'contact')
+            // super(ResPartner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
             // partners_without_image = (self - partners_with_internal_user).filtered(lambda p: not p[image_field])
             // for _, group in tools.groupby(partners_without_image, key=lambda p: p._avatar_get_placeholder_path()):
             //     group_partners = self.env['res.partner'].concat(*group)
@@ -551,6 +568,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeCompanyRegistryPlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_company_registry_placeholder(self):
+            // self.company_registry_placeholder = False
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeCompanyTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
@@ -589,21 +616,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_display_name(self):
+            // type_description = dict(self._fields['type']._description_selection(self.env))
             // for partner in self:
-            //     name = partner.with_context(lang=self.env.lang)._get_complete_name()
-            //     if partner._context.get('show_address'):
-            //         name = name + "\n" + partner._display_address(without_company=True)
-            //     name = re.sub(r'\s+\n', '\n', name)
-            //     if partner._context.get('partner_show_db_id'):
-            //         name = f"{name} ({partner.id})"
-            //     if partner._context.get('address_inline'):
-            //         splitted_names = name.split("\n")
-            //         name = ", ".join([n for n in splitted_names if n.strip()])
-            //     if partner._context.get('show_email') and partner.email:
-            //         name = f"{name} <{partner.email}>"
-            //     if partner._context.get('show_vat') and partner.vat:
-            //         name = f"{name} ‒ {partner.vat}"
+            //     if partner.env.context.get("formatted_display_name"):
+            //         name = partner.name or ''
+            //         if partner.parent_id or partner.company_name:
+            //             name = (f"{partner.company_name or partner.parent_id.name} \t "
+            //                     f"--{partner.name or type_description.get(partner.type, '')}--")
             // 
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} \t --{partner.email}--"
+            //         elif partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} \t --{partner.id}--"
+            // 
+            //     else:
+            //         name = partner.with_context(lang=self.env.lang)._get_complete_name()
+            //         if partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} ({partner.id})"
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} <{partner.email}>"
+            //         if partner.env.context.get('show_address'):
+            //             name = name + "\n" + partner._display_address(without_company=True)
+            // 
+            //         if partner.env.context.get('show_vat') and partner.vat:
+            //             if partner.env.context.get('show_address'):
+            //                 name = f"{name} \n {partner.vat}"
+            //             else:
+            //                 name = f"{name} - {partner.vat}"
+            // 
+            //     # Remove extra empty lines
+            //     name = re.sub(r'\s+\n', '\n', name)
             //     partner.display_name = name.strip()
             */
             return default;
@@ -684,6 +726,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_lang(self):
+            // """ While creating / updating child contact, take the parent lang by
+            // default if any. 0therwise, fallback to default context / DB lang """
+            // for partner in self.filtered('parent_id'):
+            //     partner.lang = partner.parent_id.lang or self.default_get(['lang']).get('lang') or self.env.lang
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeLogoWebInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
@@ -691,7 +746,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_logo_web(self):
             // for company in self:
             //     img = company.partner_id.image_1920
-            //     company.logo_web = img and base64.b64encode(tools.image_process(base64.b64decode(img), size=(180, 0)))
+            //     company.logo_web = img and base64.b64encode(image_process(base64.b64decode(img), size=(180, 0)))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeMainUserIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_main_user_id(self):
+            // for partner in self:
+            //     if self.env.user.partner_id == partner:
+            //         partner.main_user_id = self.env.user
+            //         continue
+            //     users = partner.user_ids.filtered(lambda u: u.active).with_prefetch(self.user_ids.ids)
+            //     # Special case for OdooBot as its user might be archived.
+            //     if not users and partner.id == self.env["ir.model.data"]._xmlid_to_res_id("base.partner_root"):
+            //         partner.main_user_id = self.env["ir.model.data"]._xmlid_to_res_id("base.user_root")
+            //         continue
+            //     partner.main_user_id = users.sorted(
+            //         lambda u: (not u.share, -u.id), reverse=True,
+            //     )[:1]
             */
             return default;
         }
@@ -713,7 +789,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_partner_share(self):
-            // super_partner = self.env['res.users'].browse(SUPERUSER_ID).partner_id
+            // super_partner = self.env['res.users'].browse(api.SUPERUSER_ID).partner_id
             // if super_partner in self:
             //     super_partner.partner_share = False
             // for partner in self - super_partner:
@@ -730,18 +806,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for partner in self:
             //     # use _origin to deal with onchange()
             //     partner_id = partner._origin.id
-            //     #active_test = False because if a partner has been deactivated you still want to raise the error,
-            //     #so that you can reactivate it instead of creating a new one, which would loose its history.
+            //     # active_test = False because if a partner has been deactivated you still want to raise the error,
+            //     # so that you can reactivate it instead of creating a new one, which would lose its history.
             //     Partner = self.with_context(active_test=False).sudo()
+            //     vats = [partner.vat]
+            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
+            //     if should_check_vat and partner.country_id and 'EU_PREFIX' in partner.country_id.country_group_codes:
+            //         if partner.vat[:2].isalpha():
+            //             vats.append(partner.vat[2:])
+            //         else:
+            //             vats.append(partner.country_id.code + partner.vat)
+            //             if new_code := EU_EXTRA_VAT_CODES.get(partner.country_id.code):
+            //                 vats.append(new_code + partner.vat)
             //     domain = [
-            //         ('vat', '=', partner.vat),
+            //         ('vat', 'in', vats),
             //     ]
+            //     if partner.country_id:
+            //         domain += [('country_id', 'in', [partner.country_id.id, False])]
             //     if partner.company_id:
             //         domain += [('company_id', 'in', [False, partner.company_id.id])]
             //     if partner_id:
             //         domain += [('id', '!=', partner_id), '!', ('id', 'child_of', partner_id)]
             //     # For VAT number being only one character, we will skip the check just like the regular check_vat
-            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
             //     partner.same_vat_partner_id = should_check_vat and not partner.parent_id and Partner.search(domain, limit=1)
             //     # check company_registry
             //     domain = [
@@ -751,6 +839,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if partner_id:
             //         domain += [('id', '!=', partner_id), '!', ('id', 'child_of', partner_id)]
             //     partner.same_company_registry_partner_id = bool(partner.company_registry) and not partner.parent_id and Partner.search(domain, limit=1)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTypeAddressLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_type_address_label(self):
+            // for partner in self:
+            //     if partner.type == 'invoice':
+            //         partner.type_address_label = _('Invoice Address')
+            //     elif partner.type == 'delivery':
+            //         partner.type_address_label = _('Delivery Address')
+            //     elif partner.type == 'contact' and partner.parent_id:
+            //         partner.type_address_label = _('Company Address')
+            //     else:
+            //         partner.type_address_label = _('Address')
             */
             return default;
         }
@@ -843,12 +949,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ConvertFieldsToValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _convert_fields_to_values(self, field_names):
+            // """ Returns dict of write() values for synchronizing ``field_names`` """
+            // if any(self._fields[fname].type == 'one2many' for fname in field_names):
+            //     raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
+            // return self._convert_to_write({fname: self[fname] for fname in field_names})
+            */
+            return default;
+        }
+
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def copy(self, default=None):
-            // raise UserError(_('Duplicating a company is not allowed. Please create a new company instead.'))
+            // raise UserError(self.env._('Duplicating a company is not allowed. Please create a new company instead.'))
             */
             return default;
         }
@@ -931,16 +1050,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if vals.get('parent_id'):
             //         vals['company_name'] = False
             // partners = super().create(vals_list)
+            // # due to ir.default, compute is not called as there is a default value
+            // # hence calling the compute manually
+            // for partner, values in zip(partners, vals_list):
+            //     if 'lang' not in values and partner.parent_id:
+            //         partner._compute_lang()
             // 
             // if self.env.context.get('_partners_skip_fields_sync'):
             //     return partners
             // 
             // for partner, vals in zip(partners, vals_list):
             //     partner._fields_sync(vals)
-            //     # Lang: propagate from parent if no value was given
-            //     if 'lang' not in vals and partner.parent_id:
-            //         partner._onchange_parent_id_for_lang()
-            //     partner._handle_first_contact_creation()
             // return partners
             */
             return default;
@@ -952,11 +1072,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def create_company(self):
             // self.ensure_one()
-            // if self.company_name:
-            //     # Create parent company
-            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
-            //     values.update(self._update_fields_values(self._address_fields()))
-            //     new_company = self.create(values)
+            // if (new_company := self._create_contact_parent_company()):
             //     # Set new company as my parent
             //     self.write({
             //         'parent_id': new_company.id,
@@ -967,12 +1083,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CreateContactParentCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _create_contact_parent_company(self):
+            // self.ensure_one()
+            // if self.company_name:
+            //     # Create parent company
+            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
+            //     values.update(self._convert_fields_to_values(self._address_fields()))
+            //     return self.create(values)
+            // return self.browse()
+            */
+            return default;
+        }
+
         public async Task<TEntity> DefaultCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _default_category(self):
-            // return self.env['res.partner.category'].browse(self._context.get('category_id'))
+            // return self.env['res.partner.category'].browse(self.env.context.get('category_id'))
             */
             return default;
         }
@@ -987,22 +1119,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object default_fields) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def default_get(self, default_fields):
-            // """Add the company of the parent as default if we are creating a child partner.
-            // Also take the parent lang by default if any, otherwise, fallback to default DB lang."""
-            // values = super().default_get(default_fields)
-            // parent = self.env["res.partner"]
-            // if 'parent_id' in default_fields and values.get('parent_id'):
+            // def default_get(self, fields):
+            // """Add the company of the parent as default if we are creating a child partner. """
+            // values = super().default_get(fields)
+            // if 'parent_id' in fields and values.get('parent_id'):
             //     parent = self.browse(values.get('parent_id'))
             //     values['company_id'] = parent.company_id.id
-            // if 'lang' in default_fields:
-            //     values['lang'] = values.get('lang') or parent.lang or self.env.lang
             // # protection for `default_type` values leaking from menu action context (e.g. for crm's email)
-            // if 'type' in default_fields and values.get('type'):
+            // if 'type' in fields and values.get('type'):
             //     if values['type'] not in self._fields['type'].get_values(self.env):
             //         values['type'] = None
             // return values
@@ -1048,8 +1176,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _fields_sync(self, values):
-            // """ Sync commercial fields and address fields from company and to children after create/update,
-            // just as if those were all modeled as fields.related to the parent """
+            // """ Sync commercial fields and address fields from company and to children.
+            // Also synchronize address to parent. This somehow mimics related fields
+            // to the parent, with more control. This method should be called after
+            // updating values in cache e.g. self should contain new values.
+            // 
+            // :param dict values: updated values, triggering sync
+            // """
             // # 1. From UPSTREAM: sync from parent
             // if values.get('parent_id') or values.get('type') == 'contact':
             //     # 1a. Commercial fields: sync if parent changed
@@ -1057,10 +1190,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.sudo()._commercial_sync_from_company()
             //     # 1b. Address fields: sync if parent or use_parent changed *and* both are now set
             //     if self.parent_id and self.type == 'contact':
-            //         onchange_vals = self.onchange_parent_id().get('value', {})
-            //         self.update_address(onchange_vals)
+            //         if address_values := self.parent_id._get_address_values():
+            //             self._update_address(address_values)
             // 
-            // # 2. To DOWNSTREAM: sync children
+            // # 2. To UPSTREAM: sync parent address, as well as editable synchronized commercial fields
+            // address_to_upstream = (
+            //     # parent is set, potential address update as contact address = parent address
+            //     bool(self.parent_id) and bool(self.type == 'contact') and
+            //     # address updated, or parent updated
+            //     (any(field in values for field in self._address_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._address_fields())
+            // )
+            // if address_to_upstream:
+            //     new_address = self._get_address_values()
+            //     self.parent_id.write(new_address)  # is going to trigger _fields_sync again
+            // commercial_to_upstream = (
+            //     # has a parent and is not a commercial entity itself
+            //     bool(self.parent_id) and (self.commercial_partner_id != self) and
+            //     # actually updated, or parent updated
+            //     (any(field in values for field in self._synced_commercial_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._synced_commercial_fields())
+            // )
+            // if commercial_to_upstream:
+            //     new_synced_commercials = self._get_synced_commercial_values()
+            //     self.parent_id.write(new_synced_commercials)
+            // 
+            // # 3. To DOWNSTREAM: sync children
             // self._children_sync(values)
             */
             return default;
@@ -1071,12 +1228,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def find_or_create(self, email, assert_valid_email=False):
-            // """ Find a partner with the given ``email`` or use :py:method:`~.name_create`
+            // """ Find a partner with the given ``email`` or use :meth:`name_create`
             // to create a new one.
             // 
             // :param str email: email-like string, which should contain at least one email,
             //     e.g. ``"Raoul Grosbedon <r.g@grosbedon.fr>"``
-            // :param boolean assert_valid_email: raise if no valid email is found
+            // :param bool assert_valid_email: raise if no valid email is found
             // :return: newly created record
             // """
             // if not email:
@@ -1120,6 +1277,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAddressValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_address_values(self):
+            // """ Get address values from record if at least one value is set. Otherwise
+            // it is considered empty and nothing is returned. """
+            // address_fields = self._address_fields()
+            // if any(self[key] for key in address_fields):
+            //     return self._convert_fields_to_values(address_fields)
+            // return {}
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAllAddrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
@@ -1133,6 +1305,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'city': self.city,
             //     'country': self.country_id.code,
             // }]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCommercialValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_commercial_values(self):
+            // """ Get commercial values from record. Return only set values, as they
+            // are considered individually, and only set values should be taken into
+            // account. """
+            // set_commercial_fields = [fname for fname in self._commercial_fields() if self[fname]]
+            // if set_commercial_fields:
+            //     return self._convert_fields_to_values(set_commercial_fields)
+            // return {}
             */
             return default;
         }
@@ -1201,7 +1389,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.company_name or self.parent_id:
             //     if not name and self.type in displayed_types:
             //         name = type_description[self.type]
-            //     if not self.is_company:
+            //     if not self.is_company and not self.env.context.get('partner_display_name_hide_company'):
             //         name = f"{self.commercial_company_name or self.sudo().parent_id.name}, {name}"
             // return name.strip()
             */
@@ -1228,34 +1416,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetGravatarImageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _get_gravatar_image(self, email):
-            // email_hash = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
-            // url = "https://www.gravatar.com/avatar/" + email_hash
-            // try:
-            //     res = requests.get(url, params={'d': '404', 's': '128'}, timeout=5)
-            //     if res.status_code != requests.codes.ok:
-            //         return False
-            // except requests.exceptions.ConnectionError as e:
-            //     return False
-            // except requests.exceptions.Timeout as e:
-            //     return False
-            // return base64.b64encode(res.content)
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Customers'),
-            //     'template': '/base/static/xls/res_partner.xlsx'
+            //     'label': _('Import Template for Contacts'),
+            //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
             */
             return default;
@@ -1294,7 +1462,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_public_user(self):
             // self.ensure_one()
             // # We need sudo to be able to see public users from others companies too
-            // public_users = self.env.ref('base.group_public').sudo().with_context(active_test=False).users
+            // public_users = self.env.ref('base.group_public').sudo().with_context(active_test=False).all_user_ids
             // public_users_for_company = public_users.filtered(lambda user: user.company_id == self)
             // 
             // if public_users_for_company:
@@ -1317,6 +1485,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_street_split(self):
             // self.ensure_one()
             // return tools.street_split(self.street or '')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSyncedCommercialValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_synced_commercial_values(self):
+            // """ Get synchronized commercial values from ercord. Return only set values
+            // as for other commercial values. """
+            // set_synced_fields = [fname for fname in self._synced_commercial_fields() if self[fname]]
+            // if set_synced_fields:
+            //     return self._convert_fields_to_values(set_synced_fields)
+            // return {}
             */
             return default;
         }
@@ -1361,8 +1544,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     and not any(parent[f] for f in address_fields)
             //     and len(parent.child_ids) == 1
             // ):
-            //     addr_vals = self._update_fields_values(address_fields)
-            //     parent.update_address(addr_vals)
+            //     addr_vals = self._convert_fields_to_values(address_fields)
+            //     parent._update_address(addr_vals)
             */
             return default;
         }
@@ -1376,7 +1559,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     paperformat_euro = self.env.ref('base.paperformat_euro', False)
             //     if paperformat_euro:
             //         company.write({'paperformat_id': paperformat_euro.id})
-            // sup = super(Company, self)
+            // sup = super()
             // if hasattr(sup, 'init'):
             //     sup.init()
             */
@@ -1392,7 +1575,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // is_ready_and_not_test = (
             //     not tools.config['test_enable']
             //     and (self.env.registry.ready or not self.env.registry._init)
-            //     and not getattr(threading.current_thread(), 'testing', False)
+            //     and not modules.module.current_test
+            //     and not self.env.context.get('install_mode')  # due to savepoint when importing the file
             // )
             // if uninstalled_modules and is_ready_and_not_test:
             //     return uninstalled_modules.button_immediate_install()
@@ -1483,7 +1667,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _load_records_create(self, vals_list):
-            // partners = super(Partner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
+            // partners = super(ResPartner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
             // 
             // # batch up first part of _fields_sync
             // # group partners by commercial_partner_id (if not self) and parent_id (if type == contact)
@@ -1503,7 +1687,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     to_write = {}
             //     # commercial fields from commercial partner
             //     if cp_id:
-            //         to_write = self.browse(cp_id)._update_fields_values(self._commercial_fields())
+            //         to_write = self.browse(cp_id)._convert_fields_to_values(self._commercial_fields())
             //     # address fields from parent
             //     if add_id:
             //         parent = self.browse(add_id)
@@ -1534,13 +1718,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     If only an email address is received and that the regex cannot find
             //     a name, the name will have the email value.
             //     If 'force_email' key in context: must find the email address. """
-            // default_type = self._context.get('default_type')
+            // default_type = self.env.context.get('default_type')
             // if default_type and default_type not in self._fields['type'].get_values(self.env):
-            //     context = dict(self._context)
+            //     context = dict(self.env.context)
             //     context.pop('default_type')
             //     self = self.with_context(context)
             // name, email_normalized = tools.parse_contact_from_email(name)
-            // if self._context.get('force_email') and not email_normalized:
+            // if self.env.context.get('force_email') and not email_normalized:
             //     raise ValidationError(_("Couldn't create contact without email address!"))
             // 
             // create_values = {self._rec_name: name or email_normalized}
@@ -1588,17 +1772,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OnchangeEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def onchange_email(self):
-            // if not self.image_1920 and self._context.get('gravatar_image') and self.email:
-            //     self.image_1920 = self._get_gravatar_image(self.email)
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangeParentIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
@@ -1609,36 +1782,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // result = {}
             // partner = self._origin
-            // if partner.parent_id and partner.parent_id != self.parent_id:
-            //     result['warning'] = {
-            //         'title': _('Warning'),
-            //         'message': _('Changing the company of a contact should only be done if it '
-            //                      'was never correctly set. If an existing contact starts working for a new '
-            //                      'company then a new contact should be created under that new '
-            //                      'company. You can use the "Discard" button to abandon this change.')}
-            // if partner.type == 'contact' or self.type == 'contact':
+            // if (partner.type or self.type) == 'contact':
             //     # for contacts: copy the parent address, if set (aka, at least one
             //     # value is set in the address: otherwise, keep the one from the
             //     # contact)
-            //     address_fields = self._address_fields()
-            //     if any(self.parent_id[key] for key in address_fields):
-            //         def convert(value):
-            //             return value.id if isinstance(value, models.BaseModel) else value
-            //         result['value'] = {key: convert(self.parent_id[key]) for key in address_fields}
+            //     if address_values := self.parent_id._get_address_values():
+            //         result['value'] = address_values
             // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeParentIdForLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _onchange_parent_id_for_lang(self):
-            // # While creating / updating child contact, take the parent lang by default if any
-            // # otherwise, fallback to default context / DB lang
-            // if self.parent_id:
-            //     self.lang = self.parent_id.lang or self.env.context.get('default_lang') or self.env.lang
             */
             return default;
         }
@@ -1721,18 +1871,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _search_display_name(self, operator, value):
             // context = dict(self.env.context)
             // newself = self
-            // constraint = []
+            // constraint = Domain.TRUE
             // if context.pop('user_preference', None):
             //     # We browse as superuser. Otherwise, the user would be able to
             //     # select only the currently visible companies (according to rules,
             //     # which are probably to allow to see the child companies) even if
             //     # she belongs to some other companies.
             //     companies = self.env.user.company_ids
-            //     constraint = [('id', 'in', companies.ids)]
+            //     constraint = Domain('id', 'in', companies.ids)
             //     newself = newself.sudo()
             // newself = newself.with_context(context)
-            // domain = super(Company, newself)._search_display_name(operator, value)
-            // return expression.AND([domain, constraint])
+            // domain = super(ResCompany, newself)._search_display_name(operator, value)
+            // return domain & constraint
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SyncedCommercialFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _synced_commercial_fields(self):
+            // """ Returns the list of fields that are managed by the commercial entity
+            // to which a partner belongs. When modified on a children, update is
+            // propagated until the commercial entity. """
+            // return ['vat']
             */
             return default;
         }
@@ -1775,36 +1938,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdateAddressAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        public async Task<TEntity> UpdateAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def update_address(self, vals):
+            // def _update_address(self, vals):
+            // """ Filter values from vals that are liked to address definition, and
+            // update recordset using super().write to avoid loops and side effects
+            // due to synchronization of address fields through partner hierarchy. """
             // addr_vals = {key: vals[key] for key in self._address_fields() if key in vals}
             // if addr_vals:
-            //     return super().write(addr_vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateFieldsValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _update_fields_values(self, fields):
-            // """ Returns dict of write() values for synchronizing ``fields`` """
-            // values = {}
-            // for fname in fields:
-            //     field = self._fields[fname]
-            //     if field.type == 'many2one':
-            //         values[fname] = self[fname].id
-            //     elif field.type == 'one2many':
-            //         raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
-            //     elif field.type == 'many2many':
-            //         values[fname] = [Command.set(self[fname].ids)]
-            //     else:
-            //         values[fname] = self[fname]
-            // return values
+            //     super().write(addr_vals)
             */
             return default;
         }
@@ -1828,40 +1972,38 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // if 'parent_id' in vals:
+            //     raise UserError(self.env._("The company hierarchy cannot be changed."))
+            // 
+            // if vals.get('currency_id'):
+            //     currency = self.env['res.currency'].browse(vals['currency_id'])
+            //     if not currency.active:
+            //         currency.write({'active': True})
+            // 
+            // res = super().write(vals)
             // invalidation_fields = self.cache_invalidation_fields()
             // asset_invalidation_fields = {'font', 'primary_color', 'secondary_color', 'external_report_layout_id'}
             // 
             // companies_needs_l10n = (
-            //     values.get('country_id')
+            //     vals.get('country_id')
             //     and self.filtered(lambda company: not company.country_id)
-            //     or self.browse()
-            // )
-            // if not invalidation_fields.isdisjoint(values):
+            // ) or self.browse()
+            // if not invalidation_fields.isdisjoint(vals):
             //     self.env.registry.clear_cache()
             // 
-            // if not asset_invalidation_fields.isdisjoint(values):
+            // if not asset_invalidation_fields.isdisjoint(vals):
             //     # this is used in the content of an asset (see asset_styles_company_report)
             //     # and thus needs to invalidate the assets cache when this is changed
             //     self.env.registry.clear_cache('assets')  # not 100% it is useful a test is missing if it is the case
             // 
-            // if 'parent_id' in values:
-            //     raise UserError(_("The company hierarchy cannot be changed."))
-            // 
-            // if values.get('currency_id'):
-            //     currency = self.env['res.currency'].browse(values['currency_id'])
-            //     if not currency.active:
-            //         currency.write({'active': True})
-            // 
-            // res = super(Company, self).write(values)
-            // 
             // # Archiving a company should also archive all of its branches
-            // if values.get('active') is False:
+            // if vals.get('active') is False:
             //     self.child_ids.active = False
             // 
             // for company in self:
             //     # Copy modified delegated fields from root to branches
-            //     if (changed := set(values) & set(self._get_company_root_delegated_field_names())) and not company.parent_id:
+            //     if (changed := set(vals) & set(self._get_company_root_delegated_field_names())) and not company.parent_id:
             //         branches = self.sudo().search([
             //             ('id', 'child_of', company.id),
             //             ('id', '!=', company.id),
@@ -1874,7 +2016,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // # invalidate company cache to recompute address based on updated partner
             // company_address_fields = self._get_company_address_field_names()
-            // company_address_fields_upd = set(company_address_fields) & set(values.keys())
+            // company_address_fields_upd = set(company_address_fields) & set(vals.keys())
             // if company_address_fields_upd:
             //     self.invalidate_model(company_address_fields)
             // return res
@@ -1902,15 +2044,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             raise ValidationError(_('You cannot archive contacts linked to an active user.\n'
             //                                     'Ask an administrator to archive their associated user first.\n\n'
             //                                     'Linked active users :\n%(names)s', names=", ".join([u.display_name for u in users])))
+            // if vals.get('website'):
+            //     vals['website'] = self._clean_website(vals['website'])
+            // if vals.get('parent_id'):
+            //     vals['company_name'] = False
+            // if vals.get('name'):
+            //     for partner in self:
+            //         for bank in partner.bank_ids:
+            //             if bank.acc_holder_name == partner.name:
+            //                 bank.acc_holder_name = vals['name']
+            // 
+            // # filter to keep only really updated values -> field synchronize goes through
+            // # partner tree and we should avoid infinite loops in case same value is
+            // # updated due to cycles. Use case: updating a property field, which updated
+            // # a computed field, which has an inverse writing the same value on property
+            // # field. Yay.
+            // pre_values_list = [{fname: partner[fname] for fname in vals} for partner in self]
+            // 
             // # res.partner must only allow to set the company_id of a partner if it
             // # is the same as the company of all users that inherit from this partner
             // # (this is to allow the code from res_users to write to the partner!) or
             // # if setting the company_id to False (this is compatible with any user
             // # company)
-            // if vals.get('website'):
-            //     vals['website'] = self._clean_website(vals['website'])
-            // if vals.get('parent_id'):
-            //     vals['company_name'] = False
             // if 'company_id' in vals:
             //     company_id = vals['company_id']
             //     for partner in self:
@@ -1919,19 +2074,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             companies = set(user.company_id for user in partner.user_ids)
             //             if len(companies) > 1 or company not in companies:
             //                 raise UserError(
-            //                     ("The selected company is not compatible with the companies of the related user(s)"))
+            //                     self.env._("The selected company is not compatible with the companies of the related user(s)"))
             //         if partner.child_ids:
             //             partner.child_ids.write({'company_id': company_id})
             // result = True
             // # To write in SUPERUSER on field is_company and avoid access rights problems.
             // if 'is_company' in vals and not self.env.su and self.env.user.has_group('base.group_partner_manager'):
-            //     result = super(Partner, self.sudo()).write({'is_company': vals.get('is_company')})
+            //     result = super(ResPartner, self.sudo()).write({'is_company': vals.get('is_company')})
             //     del vals['is_company']
             // result = result and super().write(vals)
-            // for partner in self:
-            //     if any(u._is_internal() for u in partner.user_ids if u != self.env.user):
-            //         self.env['res.users'].check_access('write')
-            //     partner._fields_sync(vals)
+            // for partner, pre_values in zip(self, pre_values_list, strict=True):
+            //     if internal_users := partner.user_ids.filtered(lambda u: u._is_internal() and u != self.env.user):
+            //         internal_users.check_access('write')
+            //     updated = {fname: fvalue for fname, fvalue in vals.items() if partner[fname] != pre_values[fname]}
+            //     if updated:
+            //         partner._fields_sync(updated)
             // return result
             */
             return default;

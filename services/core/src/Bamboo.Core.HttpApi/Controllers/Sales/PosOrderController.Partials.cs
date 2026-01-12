@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-create-invoices")]
+        public async Task<IActionResult> ActionCreateInvoicesAsync(Guid id)
+        {
+            var result = await _appService.CreateInvoicesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-pos-order-cancel")]
         public async Task<IActionResult> ActionPosOrderCancelAsync(Guid id)
         {
@@ -47,6 +55,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionSendReceiptAsync(Guid id, [FromBody] PosOrderSendReceiptRequestDto input)
         {
             var result = await _appService.SendReceiptAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-send-self-order-receipt")]
+        public async Task<IActionResult> ActionSendSelfOrderReceiptAsync(Guid id, [FromBody] PosOrderSendSelfOrderReceiptRequestDto input)
+        {
+            var result = await _appService.SendSelfOrderReceiptAsync(id, input);
             return Ok(result);
         }
         
@@ -147,6 +163,30 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-order-to-print")]
+        public async Task<IActionResult> GetOrderToPrintAsync(Guid id)
+        {
+            var result = await _appService.GetOrderToPrintAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-preparation-change")]
+        public async Task<IActionResult> GetPreparationChangeAsync(Guid id)
+        {
+            var result = await _appService.GetPreparationChangeAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-reference-last-part")]
+        public async Task<IActionResult> GetReferenceLastPartAsync(Guid id)
+        {
+            var result = await _appService.GetReferenceLastPartAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/print-event-badges")]
         public async Task<IActionResult> PrintEventBadgesAsync(Guid id)
         {
@@ -171,6 +211,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/read-pos-data-uuid")]
+        public async Task<IActionResult> ReadPosDataUuidAsync(Guid id, [FromBody] PosOrderReadPosDataUuidRequestDto input)
+        {
+            var result = await _appService.ReadPosDataUuidAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/read-pos-orders")]
+        public async Task<IActionResult> ReadPosOrdersAsync(Guid id, [FromBody] PosOrderReadPosOrdersRequestDto input)
+        {
+            var result = await _appService.ReadPosOrdersAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/refund")]
         public async Task<IActionResult> RefundAsync(Guid id)
         {
@@ -191,14 +247,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SearchPaidOrderIdsAsync(Guid id, [FromBody] PosOrderSearchPaidOrderIdsRequestDto input)
         {
             var result = await _appService.SearchPaidOrderIdsAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/send-table-count-notification")]
-        public async Task<IActionResult> SendTableCountNotificationAsync(Guid id, [FromBody] PosOrderSendTableCountNotificationRequestDto input)
-        {
-            var result = await _appService.SendTableCountNotificationAsync(id, input);
             return Ok(result);
         }
         

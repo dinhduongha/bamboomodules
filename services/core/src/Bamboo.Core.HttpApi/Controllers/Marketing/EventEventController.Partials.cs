@@ -12,9 +12,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-generate-leads")]
-        public async Task<IActionResult> ActionGenerateLeadsAsync(Guid id)
+        public async Task<IActionResult> ActionGenerateLeadsAsync(Guid id, [FromBody] EventEventGenerateLeadsRequestDto input)
         {
-            var result = await _appService.GenerateLeadsAsync(id);
+            var result = await _appService.GenerateLeadsAsync(id, input);
             return Ok(result);
         }
         
@@ -43,6 +43,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-slot-calendar")]
+        public async Task<IActionResult> ActionOpenSlotCalendarAsync(Guid id)
+        {
+            var result = await _appService.OpenSlotCalendarAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-set-done")]
         public async Task<IActionResult> ActionSetDoneAsync(Guid id)
         {
@@ -67,6 +75,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/copy-event-menus")]
+        public async Task<IActionResult> CopyEventMenusAsync(Guid id, [FromBody] EventEventCopyEventMenusRequestDto input)
+        {
+            var result = await _appService.CopyEventMenusAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-backend-menu-id")]
         public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
         {
@@ -83,18 +99,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/google-map-link")]
-        public async Task<IActionResult> GoogleMapLinkAsync(Guid id, [FromBody] EventEventGoogleMapLinkRequestDto input)
+        [Route("{id}/get-slot-tickets-availability-pos")]
+        public async Task<IActionResult> GetSlotTicketsAvailabilityPosAsync(Guid id, [FromBody] EventEventGetSlotTicketsAvailabilityPosRequestDto input)
         {
-            var result = await _appService.GoogleMapLinkAsync(id, input);
+            var result = await _appService.GetSlotTicketsAvailabilityPosAsync(id, input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mail-attendees")]
-        public async Task<IActionResult> MailAttendeesAsync(Guid id, [FromBody] EventEventMailAttendeesRequestDto input)
+        [Route("{id}/google-map-link")]
+        public async Task<IActionResult> GoogleMapLinkAsync(Guid id, [FromBody] EventEventGoogleMapLinkRequestDto input)
         {
-            var result = await _appService.MailAttendeesAsync(id, input);
+            var result = await _appService.GoogleMapLinkAsync(id, input);
             return Ok(result);
         }
         

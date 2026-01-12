@@ -11,6 +11,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IHrLeaveAccrualPlanAppService : IGenericApplicationService<HrLeaveAccrualPlan>
     {
         Task<HrLeaveAccrualPlan> CopyDataAsync(Guid id, HrLeaveAccrualPlanCopyDataRequestDto input);
+        Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid id);
         Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid id);
+        Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(Guid id, HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input);
     }
 }

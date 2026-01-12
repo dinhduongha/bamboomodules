@@ -81,7 +81,34 @@ namespace Bamboo.Core.Application.Services
             // def _check_repeat_interval(self):
             // for record in self:
             //     if record.repeat_interval < 1:
-            //         raise ValidationError("Repeat Interval cannot be less than 1.")
+            //         raise ValidationError(self.env._("The repeat interval cannot be less than 1."))
+            */
+            return default;
+        }
+
+        protected async Task<MaintenanceRequest> CheckScheduleEndInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            // def _check_schedule_end(self):
+            // for request in self:
+            //     if request.schedule_date and request.schedule_end and request.schedule_date > request.schedule_end:
+            //         raise ValidationError(self.env._("End date cannot be earlier than start date."))
+            */
+            return default;
+        }
+
+        protected async Task<MaintenanceRequest> ComputeDurationInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            // def _compute_duration(self):
+            // for request in self:
+            //     if request.schedule_date and request.schedule_end:
+            //         duration = (request.schedule_end - request.schedule_date).total_seconds() / 3600
+            //         request.duration = round(duration, 2)
+            //     else:
+            //         request.duration = 0
             */
             return default;
         }
@@ -126,6 +153,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<MaintenanceRequest> ComputeScheduleEndInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            // def _compute_schedule_end(self):
+            // for request in self:
+            //     request.schedule_end = request.schedule_date and request.schedule_date + relativedelta(hours=1)
+            */
+            return default;
+        }
+
         protected async Task<MaintenanceRequest> ComputeUserIdInternalAsync()
         {
             /*
@@ -147,6 +185,7 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // requests = super().create(vals_list)
             // for request in requests:
+            //     # TDE FIXME: check default recipients (master)
             //     if request.employee_id.user_id:
             //         request.message_subscribe(partner_ids=[request.employee_id.user_id.partner_id.id])
             // return requests
@@ -158,7 +197,7 @@ namespace Bamboo.Core.Application.Services
             //     if request.owner_user_id or request.user_id:
             //         request._add_followers()
             //     if request.equipment_id and not request.maintenance_team_id:
-            //         request.maintenance_team_id = request.equipment_id.maintenance_team_id
+            //         request.maintenance_team_id = request.maintenance_team_id
             //     if request.close_date and not request.stage_id.done:
             //         request.close_date = False
             //     if not request.close_date and request.stage_id.done:
@@ -230,20 +269,17 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
-            // def message_new(self, msg, custom_values=None):
-            // """ Overrides mail_thread message_new that is called by the mailgateway
-            //     through message_process.
-            //     This override updates the document according to the email.
-            // """
+            // def message_new(self, msg_dict, custom_values=None):
             // if custom_values is None:
             //     custom_values = {}
-            // email = tools.email_split(msg.get('from')) and tools.email_split(msg.get('from'))[0] or False
-            // user = self.env['res.users'].search([('login', '=', email)], limit=1)
+            // # TDE FIXME: check author_id, should be set (master-)
+            // email = tools.email_normalize(msg_dict.get('from'), strict=False)
+            // user = self.env['res.users'].search([('login', '=', email)], limit=1) if email else self.env['res.users']
             // if user:
             //     employee = self.env.user.employee_id
             //     if employee:
             //         custom_values['employee_id'] = employee and employee[0].id
-            // return super(MaintenanceRequest, self).message_new(msg, custom_values=custom_values)
+            // return super().message_new(msg_dict, custom_values=custom_values)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -321,8 +357,13 @@ namespace Bamboo.Core.Application.Services
             //             continue
             //         schedule_date = request.schedule_date or now
             //         schedule_date += relativedelta(**{f"{request.repeat_unit}s": request.repeat_interval})
+            //         schedule_end = schedule_date + relativedelta(hours=request.duration or 1)
             //         if request.repeat_type == 'forever' or schedule_date.date() <= request.repeat_until:
-            //             request.copy({'schedule_date': schedule_date, 'stage_id': request._default_stage().id})
+            //             request.copy({
+            //                 'schedule_date': schedule_date,
+            //                 'schedule_end': schedule_end,
+            //                 'stage_id': request._default_stage().id,
+            //             })
             // res = super(MaintenanceRequest, self).write(vals)
             // if vals.get('owner_user_id') or vals.get('user_id'):
             //     self._add_followers()

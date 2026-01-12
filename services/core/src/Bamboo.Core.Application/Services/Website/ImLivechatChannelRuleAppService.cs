@@ -25,6 +25,16 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        protected async Task<ImLivechatChannelRule> IsBotConfiguredInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def _is_bot_configured(self):
+            // return bool(self.chatbot_script_id)
+            */
+            return default;
+        }
+
         public async Task<ImLivechatChannelRule> MatchRuleAsync(Guid id, ImLivechatChannelRuleMatchRuleRequestDto input)
         {
             /*
@@ -47,10 +57,15 @@ namespace Bamboo.Core.Application.Services
             //             not rule.chatbot_script_id.active or not rule.chatbot_script_id.script_step_ids
             //         ):
             //             continue
-            //         if rule.chatbot_only_if_no_operator and rule.channel_id.available_operator_ids:
+            //         if (
+            //             rule.chatbot_enabled_condition == "only_if_operator"
+            //             and not rule.channel_id.available_operator_ids
+            //             or rule.chatbot_enabled_condition == "only_if_no_operator"
+            //             and rule.channel_id.available_operator_ids
+            //         ):
             //             continue
             //         return rule
-            //     return False
+            //     return self.env["im_livechat.channel.rule"]
             // # first, search the country specific rules (the first match is returned)
             // if country_id: # don't include the country in the research if geoIP is not installed
             //     domain = [('country_ids', 'in', [country_id]), ('channel_id', '=', channel_id)]
@@ -62,6 +77,20 @@ namespace Bamboo.Core.Application.Services
             // return _match(self.search(domain))
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ImLivechatChannelRule> ToStoreDefaultsInternalAsync(object target)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def _to_store_defaults(self, target):
+            // return [
+            //     "action",
+            //     "auto_popup_timer",
+            //     Store.One("chatbot_script_id"),
+            // ]
+            */
+            return default;
         }
     }
 }

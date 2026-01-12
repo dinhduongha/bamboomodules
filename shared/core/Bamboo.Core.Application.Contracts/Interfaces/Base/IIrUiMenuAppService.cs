@@ -14,7 +14,5 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<IrUiMenu> LoadMenusAsync(Guid id, IrUiMenuLoadMenusRequestDto input);
         Task<IrUiMenu> LoadMenusRootAsync(Guid id);
         Task<IrUiMenu> LoadWebMenusAsync(Guid id, IrUiMenuLoadWebMenusRequestDto input);
-        Task<IrUiMenu> SearchCountAsync(Guid id, IrUiMenuSearchCountRequestDto input);
-        Task<IrUiMenu> SearchFetchAsync(Guid id, IrUiMenuSearchFetchRequestDto input);
     }
 }

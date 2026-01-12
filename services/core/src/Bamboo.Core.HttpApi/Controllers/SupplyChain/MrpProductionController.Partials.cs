@@ -27,6 +27,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-clear-lot-producing-ids")]
+        public async Task<IActionResult> ActionClearLotProducingIdsAsync(Guid id)
+        {
+            var result = await _appService.ClearLotProducingIdsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-confirm")]
         public async Task<IActionResult> ActionConfirmAsync(Guid id)
         {
@@ -44,17 +52,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-generate-serial")]
-        public async Task<IActionResult> ActionGenerateSerialAsync(Guid id)
+        public async Task<IActionResult> ActionGenerateSerialAsync(Guid id, [FromBody] MrpProductionGenerateSerialRequestDto input)
         {
-            var result = await _appService.GenerateSerialAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-mass-produce")]
-        public async Task<IActionResult> ActionMassProduceAsync(Guid id)
-        {
-            var result = await _appService.MassProduceAsync(id);
+            var result = await _appService.GenerateSerialAsync(id, input);
             return Ok(result);
         }
         
@@ -115,6 +115,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-split-subcontracting")]
+        public async Task<IActionResult> ActionSplitSubcontractingAsync(Guid id)
+        {
+            var result = await _appService.SplitSubcontractingAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-start")]
         public async Task<IActionResult> ActionStartAsync(Guid id)
         {
@@ -151,6 +159,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionViewMoDeliveryAsync(Guid id)
         {
             var result = await _appService.ViewMoDeliveryAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-view-move-wip")]
+        public async Task<IActionResult> ActionViewMoveWipAsync(Guid id)
+        {
+            var result = await _appService.ViewMoveWipAsync(id);
             return Ok(result);
         }
         
@@ -219,10 +235,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-view-stock-valuation-layers")]
-        public async Task<IActionResult> ActionViewStockValuationLayersAsync(Guid id)
+        [Route("{id}/action-view-serial-numbers")]
+        public async Task<IActionResult> ActionViewSerialNumbersAsync(Guid id)
         {
-            var result = await _appService.ViewStockValuationLayersAsync(id);
+            var result = await _appService.ViewSerialNumbersAsync(id);
             return Ok(result);
         }
         
@@ -291,14 +307,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-linked-sale-orders")]
-        public async Task<IActionResult> GetLinkedSaleOrdersAsync(Guid id)
-        {
-            var result = await _appService.GetLinkedSaleOrdersAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/pre-button-mark-done")]
         public async Task<IActionResult> PreButtonMarkDoneAsync(Guid id)
         {
@@ -311,14 +319,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SetQtyProducingAsync(Guid id)
         {
             var result = await _appService.SetQtyProducingAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/subcontracting-record-component")]
-        public async Task<IActionResult> SubcontractingRecordComponentAsync(Guid id)
-        {
-            var result = await _appService.SubcontractingRecordComponentAsync(id);
             return Ok(result);
         }
     }

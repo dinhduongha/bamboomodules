@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-view-delivery-methods")]
+        public async Task<IActionResult> ActionViewDeliveryMethodsAsync(Guid id)
+        {
+            var result = await _appService.ViewDeliveryMethodsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/button-choose-theme")]
         public async Task<IActionResult> ButtonChooseThemeAsync(Guid id)
         {
@@ -67,14 +75,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-install-cancel")]
-        public async Task<IActionResult> ButtonInstallCancelAsync(Guid id)
-        {
-            var result = await _appService.ButtonInstallCancelAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-refresh-theme")]
         public async Task<IActionResult> ButtonRefreshThemeAsync(Guid id)
         {
@@ -91,18 +91,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-uninstall")]
-        public async Task<IActionResult> ButtonUninstallAsync(Guid id)
+        [Route("{id}/button-reset-state")]
+        public async Task<IActionResult> ButtonResetStateAsync(Guid id)
         {
-            var result = await _appService.ButtonUninstallAsync(id);
+            var result = await _appService.ButtonResetStateAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-uninstall-cancel")]
-        public async Task<IActionResult> ButtonUninstallCancelAsync(Guid id)
+        [Route("{id}/button-uninstall")]
+        public async Task<IActionResult> ButtonUninstallAsync(Guid id)
         {
-            var result = await _appService.ButtonUninstallCancelAsync(id);
+            var result = await _appService.ButtonUninstallAsync(id);
             return Ok(result);
         }
         
@@ -123,18 +123,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/button-upgrade-cancel")]
-        public async Task<IActionResult> ButtonUpgradeCancelAsync(Guid id)
-        {
-            var result = await _appService.ButtonUpgradeCancelAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/check-external-dependencies")]
         public async Task<IActionResult> CheckExternalDependenciesAsync(Guid id, [FromBody] IrModuleModuleCheckExternalDependenciesRequestDto input)
         {
             var result = await _appService.CheckExternalDependenciesAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/check-module-update")]
+        public async Task<IActionResult> CheckModuleUpdateAsync(Guid id)
+        {
+            var result = await _appService.CheckModuleUpdateAsync(id);
             return Ok(result);
         }
         

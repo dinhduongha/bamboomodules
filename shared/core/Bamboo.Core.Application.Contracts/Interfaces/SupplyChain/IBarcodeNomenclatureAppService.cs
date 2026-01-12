@@ -11,7 +11,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IBarcodeNomenclatureAppService : IGenericApplicationService<BarcodeNomenclature>
     {
         Task<BarcodeNomenclature> Gs1DateToDateAsync(Guid id, BarcodeNomenclatureGs1DateToDateRequestDto input);
-        Task<BarcodeNomenclature> Gs1DecomposeExtandedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtandedRequestDto input);
+        Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtendedRequestDto input);
         Task<BarcodeNomenclature> MatchPatternAsync(Guid id, BarcodeNomenclatureMatchPatternRequestDto input);
         Task<BarcodeNomenclature> ParseBarcodeAsync(Guid id, BarcodeNomenclatureParseBarcodeRequestDto input);
         Task<BarcodeNomenclature> ParseGs1RulePatternAsync(Guid id, BarcodeNomenclatureParseGs1RulePatternRequestDto input);

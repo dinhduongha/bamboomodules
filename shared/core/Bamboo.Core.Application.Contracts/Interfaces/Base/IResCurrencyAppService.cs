@@ -13,6 +13,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResCurrency> AmountToTextAsync(Guid id, ResCurrencyAmountToTextRequestDto input);
         Task<ResCurrency> CompareAmountsAsync(Guid id, ResCurrencyCompareAmountsRequestDto input);
         Task<ResCurrency> FormatAsync(Guid id, ResCurrencyFormatRequestDto input);
+        Task<ResCurrency> GetAllCurrenciesAsync(Guid id);
         Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input);
         Task<ResCurrency> IsZeroAsync(Guid id, ResCurrencyIsZeroRequestDto input);
         Task<ResCurrency> RoundAsync(Guid id, ResCurrencyRoundRequestDto input);

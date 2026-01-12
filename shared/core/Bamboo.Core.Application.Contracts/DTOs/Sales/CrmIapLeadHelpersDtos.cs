@@ -13,11 +13,4 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object CompanyData { get; set; }
         public object PeopleData { get; set; }
     }
-    
-    public class CrmIapLeadHelpersNotifyNoMoreCreditRequestDto
-    {
-        public object ServiceName { get; set; }
-        public object ModelName { get; set; }
-        public object NotificationParameter { get; set; }
-    }
 }

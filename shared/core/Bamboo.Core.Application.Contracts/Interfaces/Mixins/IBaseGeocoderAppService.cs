@@ -12,10 +12,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
     {
         Task<TEntity> CallGooglemapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> CallOpenstreetmapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable;
+        Task<TEntity> CallOpenstreetmapReverseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lat, object lon) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> GeoFindAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> GeoQueryAddressAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> GeoQueryAddressDefaultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> GeoQueryAddressGooglemapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable;
+        Task<TEntity> GetLocalisationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object latitude, object longitude) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> GetProviderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseGeocoderable;
         Task<TEntity> RaiseQueryErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error) where TEntity : IEntity<Guid>, IBaseGeocoderable;
     }

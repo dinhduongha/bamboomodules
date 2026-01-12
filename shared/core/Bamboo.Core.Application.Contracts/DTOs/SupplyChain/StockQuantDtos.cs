@@ -4,11 +4,17 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class StockQuantApplyInventoryRequestDto
+    {
+        public object Date { get; set; }
+    }
+    
     public class StockQuantMoveQuantsRequestDto
     {
         public Guid LocationDestId { get; set; }
         public Guid PackageDestId { get; set; }
         public object Message { get; set; }
         public object Unpack { get; set; }
+        public object UpToParentPackages { get; set; }
     }
 }

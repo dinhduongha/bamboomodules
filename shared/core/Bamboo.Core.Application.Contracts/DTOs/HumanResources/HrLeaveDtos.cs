@@ -30,14 +30,4 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public List<Guid> PartnerIds { get; set; }
         public List<Guid> SubtypeIds { get; set; }
     }
-    
-    public class HrLeaveOpenRecordsRequestDto
-    {
-        public List<Guid> LeaveIds { get; set; }
-    }
-    
-    public class HrLeaveValidateRequestDto
-    {
-        public object CheckState { get; set; }
-    }
 }

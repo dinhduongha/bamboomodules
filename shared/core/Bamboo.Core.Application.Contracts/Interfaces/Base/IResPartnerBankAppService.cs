@@ -17,6 +17,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResPartnerBank> GetAvailableQrMethodsInSequenceAsync(Guid id);
         Task<ResPartnerBank> GetBbanAsync(Guid id);
         Task<ResPartnerBank> GetSupportedAccountTypesAsync(Guid id);
+        Task<ResPartnerBank> OpenAllocationWizardAsync(Guid id);
         Task<ResPartnerBank> RetrieveAccTypeAsync(Guid id, ResPartnerBankRetrieveAccTypeRequestDto input);
     }
 }

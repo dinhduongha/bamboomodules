@@ -35,9 +35,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> HandleMergePdfsErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error, object error_stream) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> IsInvoiceReportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> IsPurchaseOrderReportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref) where TEntity : IEntity<Guid>, IIrActionsReportable;
+        Task<TEntity> IsSaleOrderReportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> MergePdfsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object streams, object handle_error) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> PreRenderQwebPdfInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, List<Guid> res_ids, object data) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> PrepareHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object html, object report_model) where TEntity : IEntity<Guid>, IIrActionsReportable;
+        Task<TEntity> PrepareLocalAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> PreparePdfReportAttachmentValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report, object streams) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> RenderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, List<Guid> res_ids, object data) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> RenderQwebHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, object docids, object data) where TEntity : IEntity<Guid>, IIrActionsReportable;
@@ -47,7 +49,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> RenderTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template, object values) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> ReportActionAsync<TEntity>(IEnumerable<TEntity> entities, object docids, object data, object config) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> RetrieveAttachmentAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IIrActionsReportable;
-        Task<TEntity> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsReportable;
+        Task<List<object>> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> RunWkhtmltopdfInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object report_ref, object header, object footer, object landscape, object specific_paperformat_args, object set_viewport_size) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> SearchModelIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IIrActionsReportable;
         Task<TEntity> UnlinkActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsReportable;

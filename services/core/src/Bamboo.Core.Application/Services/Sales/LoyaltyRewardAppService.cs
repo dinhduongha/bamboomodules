@@ -66,38 +66,38 @@ namespace Bamboo.Core.Application.Services
             //     elif reward.reward_type == 'product':
             //         products = reward.reward_product_ids
             //         if len(products) == 0:
-            //             reward_string = _('Free Product')
+            //             reward_string = _("Free Product")
             //         elif len(products) == 1:
-            //             reward_string = _('Free Product - %s', reward.reward_product_id.with_context(display_default_code=False).display_name)
+            //             reward_string = _("Free Product - %s", reward.reward_product_id.with_context(display_default_code=False).display_name)
             //         else:
-            //             reward_string = _('Free Product - [%s]', ', '.join(products.with_context(display_default_code=False).mapped('display_name')))
+            //             reward_string = _("Free Product - [%s]", ', '.join(products.with_context(display_default_code=False).mapped('display_name')))
             //     elif reward.reward_type == 'discount':
-            //         format_string = '%(amount)g %(symbol)s'
+            //         format_string = "%(amount)g %(symbol)s"
             //         if reward.currency_id.position == 'before':
-            //             format_string = '%(symbol)s %(amount)g'
+            //             format_string = "%(symbol)s %(amount)g"
             //         formatted_amount = format_string % {'amount': reward.discount, 'symbol': reward.currency_id.symbol}
             //         if reward.discount_mode == 'percent':
-            //             reward_string = _('%g%% on ', reward.discount)
+            //             reward_string = _("%g%% on ", reward.discount)
             //         elif reward.discount_mode == 'per_point':
-            //             reward_string = _('%s per point on ', formatted_amount)
+            //             reward_string = _("%s per point on ", formatted_amount)
             //         elif reward.discount_mode == 'per_order':
-            //             reward_string = _('%s on ', formatted_amount)
+            //             reward_string = _("%s on ", formatted_amount)
             //         if reward.discount_applicability == 'order':
-            //             reward_string += _('your order')
+            //             reward_string += _("your order")
             //         elif reward.discount_applicability == 'cheapest':
-            //             reward_string += _('the cheapest product')
+            //             reward_string += _("the cheapest product")
             //         elif reward.discount_applicability == 'specific':
             //             product_available = self.env['product.product'].search(reward._get_discount_product_domain(), limit=2)
             //             if len(product_available) == 1:
             //                 reward_string += product_available.with_context(display_default_code=False).display_name
             //             else:
-            //                 reward_string += _('specific products')
+            //                 reward_string += _("specific products")
             //         if reward.discount_max_amount:
-            //             format_string = '%(amount)g %(symbol)s'
+            //             format_string = "%(amount)g %(symbol)s"
             //             if reward.currency_id.position == 'before':
-            //                 format_string = '%(symbol)s %(amount)g'
+            //                 format_string = "%(symbol)s %(amount)g"
             //             formatted_amount = format_string % {'amount': reward.discount_max_amount, 'symbol': reward.currency_id.symbol}
-            //             reward_string += _(' (Max %s)', formatted_amount)
+            //             reward_string += _(" (Max %s)", formatted_amount)
             //     reward.description = reward_string
             --- ODOO METHOD SOURCE (MODULE: sale_loyalty_delivery, FILE: loyalty_reward.py) ---
             // def _compute_description(self):
@@ -121,7 +121,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_reward.py) ---
             // def _compute_display_name(self):
             // for reward in self:
-            //     reward.display_name = f'{reward.program_id.name} - {reward.description}'
+            //     reward.display_name = f"{reward.program_id.name} - {reward.description}"
             */
             return default;
         }
@@ -166,7 +166,7 @@ namespace Bamboo.Core.Application.Services
             //     if compute_all_discount_product == 'enabled':
             //         reward.reward_product_domain = "null"
             //     else:
-            //         reward.reward_product_domain = json.dumps(reward._get_discount_product_domain())
+            //         reward.reward_product_domain = json.dumps(list(reward._get_discount_product_domain()))
             */
             return default;
         }
@@ -251,9 +251,9 @@ namespace Bamboo.Core.Application.Services
             // #  and makes sure to display the currency related to the program instead of the company's.
             // symbol = self.env.context.get('currency_symbol', self.env.company.currency_id.symbol)
             // return [
-            //     ('percent', '%'),
+            //     ('percent', "%"),
             //     ('per_order', symbol),
-            //     ('per_point', _('%s per point', symbol)),
+            //     ('per_point', _("%s per point", symbol)),
             // ]
             */
             return default;
@@ -274,9 +274,9 @@ namespace Bamboo.Core.Application.Services
             //     constrains.append([('categ_id', 'in', product_category_ids)])
             // if self.discount_product_tag_id:
             //     constrains.append([('all_product_tag_ids', 'in', self.discount_product_tag_id.id)])
-            // domain = expression.OR(constrains) if constrains else []
+            // domain = Domain.OR(constrains) if constrains else Domain.TRUE
             // if self.discount_product_domain and self.discount_product_domain != '[]':
-            //     domain = expression.AND([domain, ast.literal_eval(self.discount_product_domain)])
+            //     domain &= Domain(ast.literal_eval(self.discount_product_domain))
             // return domain
             */
             return default;
@@ -314,13 +314,12 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyReward> GetRewardProductDomainFieldsInternalAsync(Guid config_id)
+        protected async Task<LoyaltyReward> GetRewardProductDomainFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_reward.py) ---
-            // def _get_reward_product_domain_fields(self, config_id):
+            // def _get_reward_product_domain_fields(self, config):
             // fields = set()
-            // config = self.env['pos.config'].browse(config_id)
             // search_domain = [('program_id', 'in', config._get_program_ids().ids)]
             // domains = self.search_read(search_domain, fields=['reward_product_domain'], load=False)
             // for domain in filter(lambda d: d['reward_product_domain'] != "null", domains):
@@ -333,22 +332,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyReward> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<LoyaltyReward> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_reward.py) ---
-            // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // return [('program_id', 'in', config_id._get_program_ids().ids)]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('program_id', 'in', config._get_program_ids().ids)]
             */
             return default;
         }
 
-        protected async Task<LoyaltyReward> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<LoyaltyReward> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_reward.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['description', 'program_id', 'reward_type', 'required_points', 'clear_wallet', 'currency_id',
             //         'discount', 'discount_mode', 'discount_applicability', 'all_discount_product_ids', 'is_global_discount',
             //         'discount_max_amount', 'discount_line_product_id', 'reward_product_id',
@@ -357,20 +355,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<LoyaltyReward> LoadPosDataInternalAsync(object data)
+        protected async Task<LoyaltyReward> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_reward.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(data['pos.config']['data'][0]['id'])
-            // rewards = self.search_read(domain, fields, load=False)
-            // for reward in rewards:
+            // def _load_pos_data_read(self, records, config):
+            // read_records = super()._load_pos_data_read(records, config)
+            // for reward in read_records:
             //     reward['reward_product_domain'] = self._replace_ilike_with_in(reward['reward_product_domain'])
-            // return {
-            //     'data': rewards,
-            //     'fields': fields,
-            // }
+            // return read_records
             */
             return default;
         }
@@ -406,7 +399,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //     if field and field.type == 'many2one' and operator in ('ilike', 'not ilike'):
             //         comodel = self.env[field.comodel_name]
-            //         matching_ids = list(comodel._search([('display_name', operator, value)]))
+            //         matching_ids = list(comodel._search([('display_name', 'ilike', value)]))
             // 
             //         new_operator = 'in' if operator == 'ilike' else 'not in'
             //         domain[index] = [field_name, new_operator, matching_ids]
@@ -421,8 +414,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_reward.py) ---
             // def _search_reward_product_ids(self, operator, value):
-            // if operator not in ('=', '!=', 'in'):
-            //     raise NotImplementedError(self.env._("Unsupported search operator"))
+            // if operator != 'in':
+            //     return NotImplemented
             // return [
             //     '&', ('reward_type', '=', 'product'),
             //     '|', ('reward_product_id', operator, value),

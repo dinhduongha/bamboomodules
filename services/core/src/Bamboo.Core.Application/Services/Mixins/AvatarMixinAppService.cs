@@ -53,15 +53,54 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # Find all the vehicles of the same type for which the driver is the future_driver_id
             // # remove their driver_id and close their history using current date
             // vehicles = self.search([('driver_id', 'in', self.mapped('future_driver_id').ids), ('vehicle_type', '=', self.vehicle_type)])
-            // vehicles.write({'driver_id': False})
+            // vehicles.write({
+            //     'driver_id': False,
+            //     'plan_to_change_car': False,
+            //     'plan_to_change_bike': False,
+            // })
             // 
             // for vehicle in self:
-            //     if vehicle.vehicle_type == 'bike':
-            //         vehicle.future_driver_id.sudo().write({'plan_to_change_bike': False})
-            //     if vehicle.vehicle_type == 'car':
-            //         vehicle.future_driver_id.sudo().write({'plan_to_change_car': False})
+            //     vehicle.plan_to_change_bike = False
+            //     vehicle.plan_to_change_car = False
             //     vehicle.driver_id = vehicle.future_driver_id
             //     vehicle.future_driver_id = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_archive(self):
+            // archived_employees = self.filtered('active')
+            // res = super().action_archive()
+            // if archived_employees:
+            //     # Empty links to this employees (example: manager, coach, time off responsible, ...)
+            //     employee_fields_to_empty = self._get_employee_m2o_to_empty_on_archived_employees()
+            //     user_fields_to_empty = self._get_user_m2o_to_empty_on_archived_employees()
+            //     employee_domain = Domain.OR(Domain(field, 'in', archived_employees.ids) for field in employee_fields_to_empty)
+            //     user_domain = Domain.OR(Domain(field, 'in', archived_employees.user_id.ids) for field in user_fields_to_empty)
+            //     employees = self.env['hr.employee'].search(employee_domain | user_domain)
+            //     for employee in employees:
+            //         for field in employee_fields_to_empty:
+            //             if employee[field] in archived_employees:
+            //                 employee[field] = False
+            //         for field in user_fields_to_empty:
+            //             if employee[field] in archived_employees.user_id:
+            //                 employee[field] = False
+            // 
+            //     if len(archived_employees) == 1 and not self.env.context.get('no_wizard', False):
+            //         return {
+            //             'type': 'ir.actions.act_window',
+            //             'name': _('Register Departure'),
+            //             'res_model': 'hr.departure.wizard',
+            //             'view_mode': 'form',
+            //             'target': 'new',
+            //             'context': {'active_id': self.id},
+            //             'views': [[False, 'form']]
+            //         }
+            // return res
             */
             return default;
         }
@@ -81,15 +120,119 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_mode': 'form',
             //     'view_id': self.env.ref('hr.view_users_simple_form').id,
             //     'target': 'new',
-            //     'context': dict(self._context, **{
+            //     'context': {
+            //         **self.env.context,
             //         'default_create_employee_id': self.id,
             //         'default_name': self.name,
             //         'default_phone': self.work_phone,
             //         'default_mobile': self.mobile_phone,
             //         'default_login': self.work_email,
             //         'default_partner_id': self.work_contact_id.id,
-            //     })
+            //     },
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateUsersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_users(self):
+            // def _get_user_creation_notification_action(message, message_type, next_action):
+            //     return {
+            //             'type': 'ir.actions.client',
+            //             'tag': 'display_notification',
+            //             'params': {
+            //                 'title': self.env._("User Creation Notification"),
+            //                 'type': message_type,
+            //                 'message': message,
+            //                 'next': next_action
+            //             }
+            //         }
+            // 
+            // employee_emails = [
+            //     normalized_email
+            //     for employee in self
+            //     for normalized_email in tools.mail.email_normalize_all(employee.work_email)
+            // ]
+            // conflicting_users = self.env['res.users']
+            // if employee_emails:
+            //     conflicting_users = self.env['res.users'].search([
+            //         '|', ('email_normalized', 'in', employee_emails),
+            //         ('login', 'in', employee_emails),
+            //     ])
+            // old_users = []
+            // new_users = []
+            // users_without_emails = []
+            // users_with_invalid_emails = []
+            // users_with_existing_email = []
+            // for employee in self:
+            //     if employee.user_id:
+            //         old_users.append(employee.name)
+            //         continue
+            //     if not employee.work_email:
+            //         users_without_emails.append(employee.name)
+            //         continue
+            //     if not tools.email_normalize(employee.work_email):
+            //         users_with_invalid_emails.append(employee.name)
+            //         continue
+            //     if email_normalize(employee.work_email) in conflicting_users.mapped('email_normalized'):
+            //         users_with_existing_email.append(employee.name)
+            //         continue
+            //     new_users.append({
+            //         'create_employee_id': employee.id,
+            //         'name': employee.name,
+            //         'phone': employee.work_phone,
+            //         'login': tools.email_normalize(employee.work_email),
+            //         'partner_id': employee.work_contact_id.id,
+            //     })
+            // 
+            // next_action = {'type': 'ir.actions.act_window_close'}
+            // if new_users:
+            //     self.env['res.users'].create(new_users)
+            //     message = _('Users %s creation successful', ', '.join([user['name'] for user in new_users]))
+            //     next_action = _get_user_creation_notification_action(message, 'success', {
+            //         "type": "ir.actions.client",
+            //         "tag": "soft_reload",
+            //         "params": {"next": next_action},
+            //     })
+            // 
+            // if old_users:
+            //     message = _('User already exists for Those Employees %s', ', '.join(old_users))
+            //     next_action = _get_user_creation_notification_action(message, 'warning', next_action)
+            // 
+            // if users_without_emails:
+            //     message = _("You need to set the work email address for %s", ', '.join(users_without_emails))
+            //     next_action = _get_user_creation_notification_action(message, 'danger', next_action)
+            // 
+            // if users_with_invalid_emails:
+            //     message = _("You need to set a valid work email address for %s", ', '.join(users_with_invalid_emails))
+            //     next_action = _get_user_creation_notification_action(message, 'danger', next_action)
+            // 
+            // if users_with_existing_email:
+            //     message = _('User already exists with the same email for Employees %s', ', '.join(users_with_existing_email))
+            //     next_action = _get_user_creation_notification_action(message, 'warning', next_action)
+            // 
+            // return next_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateUsersConfirmationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_users_confirmation(self):
+            // raise RedirectWarning(
+            //         message=_("You're about to invite new users. %s users will be created with the default user template's rights. "
+            //         "Adding new users may increase your subscription cost. Do you wish to continue?", len(self.ids)),
+            //         action=self.env.ref('hr.action_hr_employee_create_users').id,
+            //         button_text=_('Confirm'),
+            //         additional_context={
+            //             'selected_ids': self.ids,
+            //         },
+            //     )
             */
             return default;
         }
@@ -117,6 +260,63 @@ namespace Bamboo.Core.Application.Services.Mixins
             // }
             // 
             // return view
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAllocationWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_open_allocation_wizard(self):
+            // self.ensure_one()
+            // wizard = self.env['hr.bank.account.allocation.wizard'].create({
+            //     'employee_id': self.id,
+            // })
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': self.env._('Bank Account Allocation'),
+            //     'res_model': 'hr.bank.account.allocation.wizard',
+            //     'res_id': wizard.id,
+            //     'view_mode': 'form',
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenOdometerReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def action_open_odometer_report(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id('fleet.fleet_vehicle_odometer_reporting_action')
+            // action.update({
+            //     'domain': [('vehicle_id', '=', self.id)],
+            //     'context': {'search_default_groupby_date': True},
+            // })
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenVersionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_open_versions(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': self.employee_id.name + self.env._(' Records'),
+            //     'path': 'versions',
+            //     'res_model': 'hr.version',
+            //     'view_mode': 'list,graph,pivot',
+            //     'views': [(self.env.ref('hr.hr_version_list_view').id, 'list'), (False, 'graph'), (False, 'pivot')],
+            //     'domain': [('employee_id', '=', self.employee_id.id)],
+            //     'search_view_id': self.env.ref('hr.hr_version_search_view').id
+            // }
             */
             return default;
         }
@@ -159,6 +359,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'default_vehicle_ids': self.ids,
             //     }
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionTogglePrimaryBankAccountTrustAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_toggle_primary_bank_account_trust(self):
+            // self.ensure_one()
+            // current_val = self.primary_bank_account_id.allow_out_payment
+            // self.primary_bank_account_id.allow_out_payment = not current_val
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnarchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_unarchive(self):
+            // res = super().action_unarchive()
+            // self.write({
+            //     'departure_reason_id': False,
+            //     'departure_description': False,
+            //     'departure_date': False
+            // })
+            // return res
             */
             return default;
         }
@@ -242,7 +470,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: avatar_mixin.py) ---
             // def _avatar_get_placeholder(self):
-            // return file_open(self._avatar_get_placeholder_path(), 'rb').read()
+            // with file_open(self._avatar_get_placeholder_path(), 'rb') as f:
+            //     return f.read()
             */
             return default;
         }
@@ -260,8 +489,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.type == 'delivery':
             //     return "base/static/img/truck.png"
             // if self.type == 'invoice':
-            //     return "base/static/img/money.png"
+            //     return "base/static/img/bill.png"
+            // if self.type == 'other':
+            //     return "base/static/img/puzzle.png"
             // return super()._avatar_get_placeholder_path()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object operation) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _check_access(self, operation):
+            // # This method override provides read access to 'hr.employee' in some
+            // # situations, like setting a many2many field to comodel 'hr.employee'.
+            // # Since Odoo 19, one must have read access to the comodel to modify the
+            // # relation.
+            // if operation == 'read' and self.env.context.get('_allow_read_hr_employee') is _ALLOW_READ_HR_EMPLOYEE:
+            //     return None
+            // 
+            // return super()._check_access(operation)
             */
             return default;
         }
@@ -321,6 +569,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> CheckNoExistingContractAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def check_no_existing_contract(self, date):
+            // if isinstance(date, str):
+            //     date = fields.Date.from_string(date)
+            // if self._is_in_contract(date):
+            //     raise ValidationError(self.env._("The employee is already in contract on %s. "
+            //                                      "Please select a date outside existing contracts",
+            //                                      format_date_abbr(self.env, date)))
+            */
+            return default;
+        }
+
         public async Task<TEntity> CheckParentIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -365,14 +628,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckSsnidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> CheckSalaryDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _check_ssnid(self):
-            // # By default, an Social Security Number is always valid, but each localization
-            // # may want to add its own constraints
-            // pass
+            // def _check_salary_distribution(self):
+            // for employee in self:
+            //     dist = employee.salary_distribution
+            //     if not dist:
+            //         continue
+            // 
+            //     total = 0
+            //     check_total = False
+            //     for ba_values in dist.values():
+            //         amount = ba_values.get('amount')
+            //         is_percentage = ba_values.get('amount_is_percentage', True)
+            //         if is_percentage and (not isinstance(amount, (float, int)) or not (0 <= amount <= 100)):
+            //             raise ValidationError(self.env._("Each amount percentage must be a number between 0 and 100."))
+            //         if is_percentage:
+            //             check_total = True
+            //             total += amount
+            // 
+            //     if check_total and not float_is_zero(total - 100.0, precision_digits=4):
+            //         raise ValidationError(self.env._("Total salary distribution on bank accounts must be exactly 100%."))
             */
             return default;
         }
@@ -387,32 +665,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # 2a. Commercial Fields: sync if commercial entity
             // if self.commercial_partner_id == self:
             //     fields_to_sync = values.keys() & self._commercial_fields()
-            //     self.sudo()._commercial_sync_to_children(fields_to_sync)
+            //     self.sudo()._commercial_sync_to_descendants(fields_to_sync)
             // # 2b. Address fields: sync if address changed
             // address_fields = self._address_fields()
             // if any(field in values for field in address_fields):
             //     contacts = self.child_ids.filtered(lambda c: c.type == 'contact')
-            //     contacts.update_address(values)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CleanValsInternalUserInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def _clean_vals_internal_user(self, vals):
-            // # Fleet administrator may not have rights to write on partner
-            // # related fields when the driver_id is a res.user.
-            // # This trick is used to prevent access right error.
-            // su_vals = {}
-            // if self.env.su:
-            //     return su_vals
-            // if 'plan_to_change_car' in vals:
-            //     su_vals['plan_to_change_car'] = vals.pop('plan_to_change_car')
-            // if 'plan_to_change_bike' in vals:
-            //     su_vals['plan_to_change_bike'] = vals.pop('plan_to_change_bike')
-            // return su_vals
+            //     contacts._update_address(values)
             */
             return default;
         }
@@ -439,10 +697,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _commercial_fields(self):
             // """ Returns the list of fields that are managed by the commercial entity
             // to which a partner belongs. These fields are meant to be hidden on
-            // partners that aren't `commercial entities` themselves, and will be
+            // partners that aren't `commercial entities` themselves, or synchronized
+            // at update (if present in _synced_commercial_fields), and will be
             // delegated to the parent `commercial entity`. The list is meant to be
             // extended by inheriting classes. """
-            // return ['vat', 'company_registry', 'industry_id']
+            // return self._synced_commercial_fields() + ['company_registry', 'industry_id']
             */
             return default;
         }
@@ -456,29 +715,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             // as if they were related fields """
             // commercial_partner = self.commercial_partner_id
             // if commercial_partner != self:
-            //     sync_vals = commercial_partner._update_fields_values(self._commercial_fields())
-            //     self.write(sync_vals)
+            //     sync_vals = commercial_partner._get_commercial_values()
+            //     if sync_vals:
+            //         self.write(sync_vals)
+            //         self._commercial_sync_to_descendants()
             //     self._company_dependent_commercial_sync()
-            //     self._commercial_sync_to_children()
             */
             return default;
         }
 
-        public async Task<TEntity> CommercialSyncToChildrenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> CommercialSyncToDescendantsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _commercial_sync_to_children(self, fields_to_sync=None):
+            // def _commercial_sync_to_descendants(self, fields_to_sync=None):
             // """ Handle sync of commercial fields to descendants """
             // commercial_partner = self.commercial_partner_id
             // if fields_to_sync is None:
             //     fields_to_sync = self._commercial_fields()
-            // sync_vals = commercial_partner._update_fields_values(fields_to_sync)
+            // sync_vals = commercial_partner._convert_fields_to_values(fields_to_sync)
             // sync_children = self.child_ids.filtered(lambda c: not c.is_company)
             // for child in sync_children:
-            //     child._commercial_sync_to_children(fields_to_sync)
-            // res = sync_children.write(sync_vals)
-            // return res
+            //     child._commercial_sync_to_descendants(fields_to_sync)
+            // sync_children.write(sync_vals)
             */
             return default;
         }
@@ -501,6 +760,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _company_dependent_commercial_sync(self):
+            // """ Propagate sync of company dependant commercial fields to other
+            // commpanies. """
             // if not (fields_to_sync := self._company_dependent_commercial_fields()):
             //     return
             // 
@@ -509,7 +770,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         continue  # already handled by _commercial_sync_from_company
             //     self_in_company = self.with_company(company_sudo)
             //     self_in_company.write(
-            //         self_in_company.commercial_partner_id._update_fields_values(fields_to_sync)
+            //         self_in_company.commercial_partner_id._convert_fields_to_values(fields_to_sync)
             //     )
             */
             return default;
@@ -523,6 +784,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             // lang_count = len(self.env['res.lang'].get_installed())
             // for partner in self:
             //     partner.active_lang_count = lang_count
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeApplicationStatisticsHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics_hook(self):
+            // """ Hook for override, as overriding compute method does not update
+            // cache accordingly. All overrides receive False instead of previously
+            // assigned value. """
+            // return defaultdict(list)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeApplicationStatisticsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_application_statistics(self):
+            // result = self._compute_application_statistics_hook()
+            // for p in self:
+            //     p.application_statistics = result.get(p.id, [])
             */
             return default;
         }
@@ -621,7 +907,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if not avatar and employee.user_id:
             //         avatar = employee.user_id.sudo()[avatar_field]
             //     employee[avatar_field] = avatar
-            // super(HrEmployeePrivate, employee_wo_user_and_image)._compute_avatar(avatar_field, image_field)
+            // super(HrEmployee, employee_wo_user_and_image)._compute_avatar(avatar_field, image_field)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: avatar_mixin.py) ---
             // def _compute_avatar(self, avatar_field, image_field):
             // for record in self:
@@ -634,8 +920,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     record[avatar_field] = avatar
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_avatar(self, avatar_field, image_field):
-            // partners_with_internal_user = self.filtered(lambda partner: partner.user_ids - partner.user_ids.filtered('share'))
-            // super(Partner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
+            // partners_with_internal_user = self.filtered(
+            //     lambda partner: partner.user_ids - partner.user_ids.filtered('share') or partner.type == 'contact')
+            // super(ResPartner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
             // partners_without_image = (self - partners_with_internal_user).filtered(lambda p: not p[image_field])
             // for _, group in tools.groupby(partners_without_image, key=lambda p: p._avatar_get_placeholder_path()):
             //     group_partners = self.env['res.partner'].concat(*group)
@@ -643,6 +930,97 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // for partner in self - partners_with_internal_user - partners_without_image:
             //     partner[avatar_field] = partner[image_field]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeBirthdayPublicDisplayStringInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_birthday_public_display_string(self):
+            // for employee in self:
+            //     if employee.birthday and employee.birthday_public_display:
+            //         employee.birthday_public_display_string = datetime.strftime(employee.birthday, "%d %B")
+            //     else:
+            //         employee.birthday_public_display_string = "hidden"
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_category(self):
+            // self._load_fields_from_model(['category_id'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCo2EmissionUnitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2_emission_unit(self):
+            // for record in self:
+            //     if record.range_unit == 'km':
+            //         record.co2_emission_unit = 'g/km'
+            //     else:
+            //         record.co2_emission_unit = 'g/mi'
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
+            // def _compute_co2_emission_unit(self):
+            // for record in self:
+            //     if record.range_unit == 'km':
+            //         record.co2_emission_unit = 'g/km'
+            //     else:
+            //         record.co2_emission_unit = 'g/mi'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCo2InternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2(self):
+            // self._load_fields_from_model(['co2'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCo2StandardInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_co2_standard(self):
+            // self._load_fields_from_model(['co2_standard'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCoachInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_coach(self):
+            // for version in self:
+            //     manager = version.parent_id
+            //     previous_manager = version._origin.parent_id
+            //     if manager and (version.coach_id == previous_manager or not version.coach_id):
+            //         version.coach_id = manager
+            //     elif not version.coach_id:
+            //         version.coach_id = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeColorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_color(self):
+            // self._load_fields_from_model(['color'])
             */
             return default;
         }
@@ -694,6 +1072,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for company in self:
             //     country_code = company.country_id.code
             //     company.company_registry_label = label_by_country.get(country_code, _("Company ID"))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeCompanyRegistryPlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_company_registry_placeholder(self):
+            // self.company_registry_placeholder = False
             */
             return default;
         }
@@ -808,6 +1196,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeCurrentVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_current_version_id(self):
+            // for employee in self:
+            //     version = self.env['hr.version'].search(
+            //         [('employee_id', 'in', employee.ids), ('date_version', '<=', fields.Date.today())],
+            //         order='date_version desc',
+            //         limit=1,
+            //     )
+            //     new_current_version = False
+            //     if version:
+            //         new_current_version = version
+            //     elif employee.version_ids:
+            //         new_current_version = employee.version_ids[0]
+            //     # To not trigger computed properties if still the same version
+            //     if employee.current_version_id != new_current_version:
+            //         employee.current_version_id = new_current_version
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -826,22 +1237,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     employee_private.display_name = employee_public.display_name
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_display_name(self):
+            // type_description = dict(self._fields['type']._description_selection(self.env))
             // for partner in self:
-            //     name = partner.with_context(lang=self.env.lang)._get_complete_name()
-            //     if partner._context.get('show_address'):
-            //         name = name + "\n" + partner._display_address(without_company=True)
-            //     name = re.sub(r'\s+\n', '\n', name)
-            //     if partner._context.get('partner_show_db_id'):
-            //         name = f"{name} ({partner.id})"
-            //     if partner._context.get('address_inline'):
-            //         splitted_names = name.split("\n")
-            //         name = ", ".join([n for n in splitted_names if n.strip()])
-            //     if partner._context.get('show_email') and partner.email:
-            //         name = f"{name} <{partner.email}>"
-            //     if partner._context.get('show_vat') and partner.vat:
-            //         name = f"{name} ‒ {partner.vat}"
+            //     if partner.env.context.get("formatted_display_name"):
+            //         name = partner.name or ''
+            //         if partner.parent_id or partner.company_name:
+            //             name = (f"{partner.company_name or partner.parent_id.name} \t "
+            //                     f"--{partner.name or type_description.get(partner.type, '')}--")
             // 
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} \t --{partner.email}--"
+            //         elif partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} \t --{partner.id}--"
+            // 
+            //     else:
+            //         name = partner.with_context(lang=self.env.lang)._get_complete_name()
+            //         if partner.env.context.get('partner_show_db_id'):
+            //             name = f"{name} ({partner.id})"
+            //         if partner.env.context.get('show_email') and partner.email:
+            //             name = f"{name} <{partner.email}>"
+            //         if partner.env.context.get('show_address'):
+            //             name = name + "\n" + partner._display_address(without_company=True)
+            // 
+            //         if partner.env.context.get('show_vat') and partner.vat:
+            //             if partner.env.context.get('show_address'):
+            //                 name = f"{name} \n {partner.vat}"
+            //             else:
+            //                 name = f"{name} - {partner.vat}"
+            // 
+            //     # Remove extra empty lines
+            //     name = re.sub(r'\s+\n', '\n', name)
             //     partner.display_name = name.strip()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeDoorsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_doors(self):
+            // self._load_fields_from_model(['doors'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeElectricAssistanceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_electric_assistance(self):
+            // self._load_fields_from_model(['electric_assistance'])
             */
             return default;
         }
@@ -885,6 +1331,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeFuelTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_fuel_type(self):
+            // self._load_fields_from_model(['fuel_type'])
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeGetIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -896,16 +1352,52 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeHasMultipleBankAccountsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_has_multiple_bank_accounts(self):
+            // for employee in self:
+            //     if employee.bank_account_ids and len(employee.bank_account_ids) > 1:
+            //         employee.has_multiple_bank_accounts = True
+            //     else:
+            //         employee.has_multiple_bank_accounts = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHorsepowerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_horsepower(self):
+            // self._load_fields_from_model(['horsepower'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeHorsepowerTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_horsepower_tax(self):
+            // self._load_fields_from_model(['horsepower_tax'])
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeImStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
             // def _compute_im_status(self):
-            // # sudo - bus.presence: guests can access other guest's presences
-            // presences = self.env["bus.presence"].sudo().search([("guest_id", "in", self.ids)])
-            // im_status_by_guest = {presence.guest_id: presence.status for presence in presences}
             // for guest in self:
-            //     guest.im_status = im_status_by_guest.get(guest, "offline")
+            //     guest.im_status = guest.presence_ids.status or "offline"
+            //     guest.offline_since = (
+            //         guest.presence_ids.last_poll
+            //         if guest.im_status == "offline"
+            //         else None
+            //     )
             */
             return default;
         }
@@ -922,35 +1414,109 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeKmHomeWorkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ComputeIsTrustedBankAccountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _compute_km_home_work(self):
+            // def _compute_is_trusted_bank_account(self):
             // for employee in self:
-            //     employee.km_home_work = employee.distance_home_work * 1.609 if employee.distance_home_work_unit == "miles" else employee.distance_home_work
+            //     employee.is_trusted_bank_account = employee.primary_bank_account_id.allow_out_payment
             */
             return default;
         }
 
-        public async Task<TEntity> ComputeModelFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ComputeLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_lang(self):
+            // """ While creating / updating child contact, take the parent lang by
+            // default if any. 0therwise, fallback to default context / DB lang """
+            // for partner in self.filtered('parent_id'):
+            //     partner.lang = partner.parent_id.lang or self.default_get(['lang']).get('lang') or self.env.lang
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeLastActivityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_last_activity(self):
+            // for employee in self:
+            //     tz = employee.tz
+            //     # sudo: res.users - can access presence of accessible user
+            //     if last_presence := employee.user_id.sudo().presence_ids.last_presence:
+            //         last_activity_datetime = last_presence.replace(tzinfo=UTC).astimezone(timezone(tz)).replace(tzinfo=None)
+            //         employee.last_activity = last_activity_datetime.date()
+            //         if employee.last_activity == fields.Date.today():
+            //             employee.last_activity_time = format_time(self.env, last_presence, time_format='short')
+            //         else:
+            //             employee.last_activity_time = False
+            //     else:
+            //         employee.last_activity = False
+            //         employee.last_activity_time = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeLegalNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_legal_name(self):
+            // for employee in self:
+            //     if not employee.legal_name:
+            //         employee.legal_name = employee.name
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeMainUserIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_main_user_id(self):
+            // for partner in self:
+            //     if self.env.user.partner_id == partner:
+            //         partner.main_user_id = self.env.user
+            //         continue
+            //     users = partner.user_ids.filtered(lambda u: u.active).with_prefetch(self.user_ids.ids)
+            //     # Special case for OdooBot as its user might be archived.
+            //     if not users and partner.id == self.env["ir.model.data"]._xmlid_to_res_id("base.partner_root"):
+            //         partner.main_user_id = self.env["ir.model.data"]._xmlid_to_res_id("base.user_root")
+            //         continue
+            //     partner.main_user_id = users.sorted(
+            //         lambda u: (not u.share, -u.id), reverse=True,
+            //     )[:1]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeModelYearInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def _compute_model_fields(self):
-            // '''
-            // Copies all the related fields from the model to the vehicle
-            // '''
-            // model_values = dict()
-            // for vehicle in self.filtered('model_id'):
-            //     if vehicle.model_id.id in model_values:
-            //         write_vals = model_values[vehicle.model_id.id]
+            // def _compute_model_year(self):
+            // self._load_fields_from_model(['model_year'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeNewlyHiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_newly_hired(self):
+            // new_hire_field = self._get_new_hire_field()
+            // new_hire_date = fields.Datetime.now() - timedelta(days=90)
+            // for employee in self:
+            //     if not employee[new_hire_field]:
+            //         employee.newly_hired = False
+            //     elif not isinstance(employee[new_hire_field], datetime):
+            //         employee.newly_hired = employee[new_hire_field] > new_hire_date.date()
             //     else:
-            //         # copy if value is truthy
-            //         write_vals = {MODEL_FIELDS_TO_VEHICLE[key]: vehicle.model_id[key] for key in MODEL_FIELDS_TO_VEHICLE\
-            //             if vehicle.model_id[key]}
-            //         model_values[vehicle.model_id.id] = write_vals
-            //     vehicle.update(write_vals)
+            //         employee.newly_hired = employee[new_hire_field] > new_hire_date
             */
             return default;
         }
@@ -960,11 +1526,95 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_partner_share(self):
-            // super_partner = self.env['res.users'].browse(SUPERUSER_ID).partner_id
+            // super_partner = self.env['res.users'].browse(api.SUPERUSER_ID).partner_id
             // if super_partner in self:
             //     super_partner.partner_share = False
             // for partner in self - super_partner:
             //     partner.partner_share = not partner.user_ids or not any(not user.share for user in partner.user_ids)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePowerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_power(self):
+            // self._load_fields_from_model(['power'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePresenceIconInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_presence_icon(self):
+            // """
+            // This method compute the state defining the display icon in the kanban view.
+            // It can be overriden to add other possibilities, like time off or attendances recordings.
+            // """
+            // for employee in self:
+            //     employee.hr_icon_display = 'presence_' + employee.hr_presence_state
+            //     employee.show_hr_icon_display = bool(employee.user_id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePresenceStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_presence_state(self):
+            // """
+            // This method is overritten in several other modules which add additional
+            // presence criterions. e.g. hr_attendance, hr_holidays
+            // """
+            // # sudo: res.users - can access presence of accessible user
+            // employee_to_check_working = self.filtered(
+            //     lambda e: (e.user_id.sudo().presence_ids.status or "offline") == "offline"
+            // )
+            // working_now_list = employee_to_check_working._get_employee_working_now()
+            // for employee in self:
+            //     state = 'out_of_working_hour'
+            //     if employee.company_id.sudo().hr_presence_control_login:
+            //         # sudo: res.users - can access presence of accessible user
+            //         presence_status = employee.user_id.sudo().presence_ids.status or "offline"
+            //         if presence_status == "online":
+            //             state = 'present'
+            //         elif presence_status == "offline" and employee.id in working_now_list:
+            //             state = 'absent'
+            //     if not employee.active:
+            //         state = 'archive'
+            //     employee.hr_presence_state = state
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputePrimaryBankAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_primary_bank_account_id(self):
+            // for employee in self:
+            //     if employee.bank_account_ids:
+            //         primary_account = min(
+            //             employee.bank_account_ids,
+            //             key=lambda acc: employee.salary_distribution.get(str(acc.id), {}).get("sequence", float("inf")),
+            //         )
+            //         employee.primary_bank_account_id = primary_account
+            //     else:
+            //         employee.primary_bank_account_id = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeRangeUnitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_range_unit(self):
+            // self._load_fields_from_model(['range_unit'])
             */
             return default;
         }
@@ -987,18 +1637,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for partner in self:
             //     # use _origin to deal with onchange()
             //     partner_id = partner._origin.id
-            //     #active_test = False because if a partner has been deactivated you still want to raise the error,
-            //     #so that you can reactivate it instead of creating a new one, which would loose its history.
+            //     # active_test = False because if a partner has been deactivated you still want to raise the error,
+            //     # so that you can reactivate it instead of creating a new one, which would lose its history.
             //     Partner = self.with_context(active_test=False).sudo()
+            //     vats = [partner.vat]
+            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
+            //     if should_check_vat and partner.country_id and 'EU_PREFIX' in partner.country_id.country_group_codes:
+            //         if partner.vat[:2].isalpha():
+            //             vats.append(partner.vat[2:])
+            //         else:
+            //             vats.append(partner.country_id.code + partner.vat)
+            //             if new_code := EU_EXTRA_VAT_CODES.get(partner.country_id.code):
+            //                 vats.append(new_code + partner.vat)
             //     domain = [
-            //         ('vat', '=', partner.vat),
+            //         ('vat', 'in', vats),
             //     ]
+            //     if partner.country_id:
+            //         domain += [('country_id', 'in', [partner.country_id.id, False])]
             //     if partner.company_id:
             //         domain += [('company_id', 'in', [False, partner.company_id.id])]
             //     if partner_id:
             //         domain += [('id', '!=', partner_id), '!', ('id', 'child_of', partner_id)]
             //     # For VAT number being only one character, we will skip the check just like the regular check_vat
-            //     should_check_vat = partner.vat and len(partner.vat) != 1
+            // 
             //     partner.same_vat_partner_id = should_check_vat and not partner.parent_id and Partner.search(domain, limit=1)
             //     # check company_registry
             //     domain = [
@@ -1012,6 +1674,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeSeatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_seats(self):
+            // self._load_fields_from_model(['seats'])
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeServiceActivityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1020,6 +1692,44 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for vehicle in self:
             //     activities_state = set(state for state in vehicle.log_services.mapped('activity_state') if state and state != 'planned')
             //     vehicle.service_activity = sorted(activities_state)[0] if activities_state else 'none'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTrailerHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_trailer_hook(self):
+            // self._load_fields_from_model(['trailer_hook'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTransmissionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_transmission(self):
+            // self._load_fields_from_model(['transmission'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeTypeAddressLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _compute_type_address_label(self):
+            // for partner in self:
+            //     if partner.type == 'invoice':
+            //         partner.type_address_label = _('Invoice Address')
+            //     elif partner.type == 'delivery':
+            //         partner.type_address_label = _('Delivery Address')
+            //     elif partner.type == 'contact' and partner.parent_id:
+            //         partner.type_address_label = _('Company Address')
+            //     else:
+            //         partner.type_address_label = _('Address')
             */
             return default;
         }
@@ -1083,6 +1793,88 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeVehicleRangeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _compute_vehicle_range(self):
+            // self._load_fields_from_model(['vehicle_range'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_version_id(self):
+            // context_version_id = self.env.context.get('version_id', False)
+            // context_version = self.env['hr.version'].browse(context_version_id).exists() if context_version_id else self.env['hr.version']
+            // 
+            // for employee in self:
+            //     if context_version.employee_id == self:
+            //         version = context_version
+            //     else:
+            //         version = employee.current_version_id
+            //     employee.version_id = version
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeVersionsCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_versions_count(self):
+            // version_count_per_employee = dict(
+            //     self.env['hr.version']._read_group(
+            //         [('employee_id', 'in', self.ids)],
+            //         ['employee_id'],
+            //         ['id:count'],
+            //     ),
+            // )
+            // for employee in self:
+            //     employee.versions_count = version_count_per_employee.get(employee, 0)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkContactDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_contact_details(self):
+            // for employee in self:
+            //     if employee.work_contact_id:
+            //         if len(employee.work_contact_id.employee_ids) <= 1:
+            //             employee.work_phone = employee.work_contact_id.phone
+            //             employee.work_email = employee.work_contact_id.email
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkLocationNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_location_name(self):
+            // for employee in self:
+            //     employee.work_location_name = employee.version_id.work_location_id.name or None
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWorkLocationTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _compute_work_location_type(self):
+            // for employee in self:
+            //     employee.work_location_type = employee.version_id.work_location_id.location_type or 'other'
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeWorkPermitNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1092,6 +1884,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     name = employee.name.replace(' ', '_') + '_' if employee.name else ''
             //     permit_no = '_' + employee.permit_no if employee.permit_no else ''
             //     employee.work_permit_name = "%swork_permit%s" % (name, permit_no)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ConvertFieldsToValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _convert_fields_to_values(self, field_names):
+            // """ Returns dict of write() values for synchronizing ``field_names`` """
+            // if any(self._fields[fname].type == 'one2many' for fname in field_names):
+            //     raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
+            // return self._convert_to_write({fname: self[fname] for fname in field_names})
             */
             return default;
         }
@@ -1132,32 +1937,56 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def create(self, vals_list):
-            // ptc_values = [self._clean_vals_internal_user(vals) for vals in vals_list]
+            // to_update_drivers_cars = set()
+            // to_update_drivers_bikes = set()
+            // state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
+            // for vals in vals_list:
+            //     if vals.get('future_driver_id'):
+            //         state_id = vals.get('state_id')
+            //         if not state_waiting_list or state_waiting_list.id != state_id:
+            //             future_driver = vals['future_driver_id']
+            //             if vals.get('vehicle_type') == 'bike':
+            //                 to_update_drivers_bikes.add(future_driver)
+            //             elif vals.get('vehicle_type') == 'car':
+            //                 to_update_drivers_cars.add(future_driver)
+            // if to_update_drivers_cars:
+            //     self.search([
+            //         ('driver_id', 'in', to_update_drivers_cars),
+            //         ('vehicle_type', '=', 'car'),
+            //     ]).plan_to_change_car = True
+            // if to_update_drivers_bikes:
+            //     self.search([
+            //         ('driver_id', 'in', to_update_drivers_bikes),
+            //         ('vehicle_type', '=', 'bike'),
+            //     ]).plan_to_change_bike = True
+            // 
             // vehicles = super().create(vals_list)
-            // for vehicle, vals, ptc_value in zip(vehicles, vals_list, ptc_values):
-            //     if ptc_value:
-            //         vehicle.sudo().write(ptc_value)
-            //     if 'driver_id' in vals and vals['driver_id']:
+            // 
+            // for vehicle, vals in zip(vehicles, vals_list):
+            //     if vals.get('driver_id'):
             //         vehicle.create_driver_history(vals)
-            //     if 'future_driver_id' in vals and vals['future_driver_id']:
-            //         state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
-            //         states = vehicle.mapped('state_id').ids
-            //         if not state_waiting_list or state_waiting_list.id not in states:
-            //             future_driver = self.env['res.partner'].browse(vals['future_driver_id'])
-            //             if self.vehicle_type == 'bike':
-            //                 future_driver.sudo().write({'plan_to_change_bike': True})
-            //             if self.vehicle_type == 'car':
-            //                 future_driver.sudo().write({'plan_to_change_car': True})
             // return vehicles
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def create(self, vals_list):
-            // for vals in vals_list:
+            // vals_per_company = defaultdict(list)
+            // for idx, vals in enumerate(vals_list):
             //     if vals.get('user_id'):
             //         user = self.env['res.users'].browse(vals['user_id'])
             //         vals.update(self._sync_user(user, bool(vals.get('image_1920'))))
             //         vals['name'] = vals.get('name', user.name)
             //         self._remove_work_contact_id(user, vals.get('company_id'))
-            // employees = super().create(vals_list)
+            //     # Having one create per company is necessary to pass the company in the context to correctly set it in
+            //     # the underlying version created by the framework
+            //     vals_per_company[vals.get('company_id', self.env.company)].append((idx, vals))
+            // index_per_employee = {}
+            // employees = self.env['hr.employee']
+            // for company, vals_list in vals_per_company.items():
+            //     idxs, vals_list = zip(*vals_list)
+            //     new_employees = super(HrEmployee, self.with_company(company)).create(vals_list)
+            //     index_per_employee.update(dict(zip(new_employees, idxs)))
+            //     employees |= new_employees
+            // # As we do a custom batch by company, we must reorder the records to respect the original order.
+            // employees = employees.sorted(key=lambda employee: index_per_employee[employee])
             // # Sudo in case HR officer doesn't have the Contact Creation group
             // employees.filtered(lambda e: not e.work_contact_id).sudo()._create_work_contacts()
             // for employee_sudo in employees.sudo():
@@ -1181,6 +2010,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         '<b>Congratulations!</b> May I recommend you to setup an <a href="%s">onboarding plan?</a>',
             //     )) % url
             // employees._message_log_batch(onboarding_notes_bodies)
+            // employees.invalidate_recordset()
             // return employees
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def create(self, vals_list):
@@ -1192,16 +2022,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if vals.get('parent_id'):
             //         vals['company_name'] = False
             // partners = super().create(vals_list)
+            // # due to ir.default, compute is not called as there is a default value
+            // # hence calling the compute manually
+            // for partner, values in zip(partners, vals_list):
+            //     if 'lang' not in values and partner.parent_id:
+            //         partner._compute_lang()
             // 
             // if self.env.context.get('_partners_skip_fields_sync'):
             //     return partners
             // 
             // for partner, vals in zip(partners, vals_list):
             //     partner._fields_sync(vals)
-            //     # Lang: propagate from parent if no value was given
-            //     if 'lang' not in vals and partner.parent_id:
-            //         partner._onchange_parent_id_for_lang()
-            //     partner._handle_first_contact_creation()
             // return partners
             */
             return default;
@@ -1213,17 +2044,60 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def create_company(self):
             // self.ensure_one()
-            // if self.company_name:
-            //     # Create parent company
-            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
-            //     values.update(self._update_fields_values(self._address_fields()))
-            //     new_company = self.create(values)
+            // if (new_company := self._create_contact_parent_company()):
             //     # Set new company as my parent
             //     self.write({
             //         'parent_id': new_company.id,
             //         'child_ids': [Command.update(partner_id, dict(parent_id=new_company.id)) for partner_id in self.child_ids.ids]
             //     })
             // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateContactParentCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _create_contact_parent_company(self):
+            // self.ensure_one()
+            // if self.company_name:
+            //     # Create parent company
+            //     values = dict(name=self.company_name, is_company=True, vat=self.vat)
+            //     values.update(self._convert_fields_to_values(self._address_fields()))
+            //     return self.create(values)
+            // return self.browse()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateContractAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def create_contract(self, date):
+            // # Here we can assume that there is no existing contract on the date given
+            // self.ensure_one()
+            // if date and isinstance(date, str):
+            //     date = fields.Date.to_date(date)
+            // 
+            // contracts = self._get_contract_versions(date)[self.id]
+            // future_contract_dates = [d for d in list(contracts.keys()) if d > date]
+            // new_contract_date_end = min(future_contract_dates) + relativedelta(days=-1) if future_contract_dates else False
+            // 
+            // # There is already a version but with no contract defined on it so we simply write on it the dates
+            // if version_same_date := self.version_ids.filtered(lambda v: v.date_version == date):
+            //     version_same_date.write({
+            //         'contract_date_start': date,
+            //         'contract_date_end': new_contract_date_end
+            //     })
+            //     return version_same_date
+            // 
+            // return self.create_version({
+            //     'date_version': date,
+            //     'contract_date_start': date,
+            //     'contract_date_end': new_contract_date_end
+            // })
             */
             return default;
         }
@@ -1241,29 +2115,129 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CronCheckWorkPermitValidityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> CreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data_list) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _cron_check_work_permit_validity(self):
-            // # Called by a cron
-            // # Schedule an activity 1 month before the work permit expires
-            // outdated_days = fields.Date.today() + relativedelta(months=+1)
-            // nearly_expired_work_permits = self.search([('work_permit_scheduled_activity', '=', False), ('work_permit_expiration_date', '<', outdated_days)])
-            // employees_scheduled = self.env['hr.employee']
-            // for employee in nearly_expired_work_permits.filtered(lambda employee: employee.parent_id):
-            //     responsible_user_id = employee.parent_id.user_id.id
-            //     if responsible_user_id:
-            //         employees_scheduled |= employee
-            //         lang = self.env['res.users'].browse(responsible_user_id).lang
-            //         formated_date = format_date(employee.env, employee.work_permit_expiration_date, date_format="dd MMMM y", lang_code=lang)
-            //         employee.activity_schedule(
-            //             'mail.mail_activity_data_todo',
-            //             note=_('The work permit of %(employee)s expires at %(date)s.',
-            //                 employee=employee.name,
-            //                 date=formated_date),
-            //             user_id=responsible_user_id)
-            // employees_scheduled.write({'work_permit_scheduled_activity': True})
+            // def _create(self, data_list):
+            // versions = [vals['stored'].pop('version_id', None) for vals in data_list]
+            // result = super()._create(data_list)
+            // for (employee, version_id, vals) in zip(result, versions, data_list):
+            //     version = self.env['hr.version'].browse(version_id)
+            //     version.employee_id = employee.id
+            //     version.write({**vals.get('inherited', {})['hr.version'], 'employee_id': employee.id})
+            // return result
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateVersionAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def create_version(self, values):
+            // self.ensure_one()
+            // 
+            // date = values.get('date_version', False)
+            // if not date:
+            //     raise ValueError("date_version is required")
+            // 
+            // if isinstance(date, str):
+            //     date = fields.Date.to_date(date)
+            // elif isinstance(date, datetime):
+            //     date = date.date()
+            // 
+            // version_to_copy = self._get_version(date)
+            // if not version_to_copy:
+            //     version_to_copy = self.env['hr.version'].search([('employee_id', '=', self.id)], limit=1)
+            // if version_to_copy.date_version == date:
+            //     return version_to_copy
+            // 
+            // date_from, date_to = self.sudo()._get_contract_dates(date)
+            // contract_date_start = values.get('contract_date_start', date_from)
+            // contract_date_end = values.get('contract_date_end', date_to)
+            // employee_id = values.get('employee_id', self.id)
+            // 
+            // if isinstance(contract_date_start, str):
+            //     contract_date_start = fields.Date.to_date(contract_date_start)
+            // if isinstance(contract_date_end, str):
+            //     contract_date_end = fields.Date.to_date(contract_date_end)
+            // 
+            // if contract_date_start == date_from and contract_date_end != date_to:
+            //     versions_sudo_to_sync = self.env['hr.version'].with_context(sync_contract_dates=True).sudo().search([
+            //         ('employee_id', '=', employee_id),
+            //         ('contract_date_start', '=', date_from),
+            //     ])
+            //     if versions_sudo_to_sync:
+            //         versions_sudo_to_sync.write({
+            //             'contract_date_end': contract_date_end,
+            //         })
+            // self.check_access('write')
+            // version_to_copy.check_access('write')
+            // # to be sure even if the user has no access to certain fields, we can still copy the verison without any issues.
+            // copy_vals = {
+            //     'date_version': date,
+            //     'employee_id': employee_id,
+            //     'contract_date_start': contract_date_start,
+            //     'contract_date_end': contract_date_end,
+            // }
+            // if 'active' in values:
+            //     copy_vals['active'] = values['active']
+            // if calendar_id := values.get('resource_calendar_id'):
+            //     copy_vals['resource_calendar_id'] = calendar_id
+            // # apply the changes on the new versions.
+            // new_version_vals = {
+            //     field_name: field_value
+            //     for field_name, field_value in values.items()
+            //     if field_name not in copy_vals
+            // }
+            // version_fields = self.env['hr.version']._fields
+            // copy_vals = {
+            //     k: v
+            //     for k, v in version_to_copy.sudo().copy_data()[0].items()
+            //     if not (k in new_version_vals and version_fields[k].type in ['one2many', 'many2many'])
+            // } | copy_vals
+            // new_version = self.env['hr.version'].sudo().create(copy_vals).sudo(False)
+            // with self.env.protecting([f for f_name, f in version_fields.items() if f_name not in new_version_vals and f.copy], new_version):
+            //     properties_fields_vals = {
+            //         field_name: field_value
+            //         for field_name, field_value in copy_vals.items()
+            //         if version_fields[field_name].type == 'properties' and field_name not in new_version_vals
+            //     }
+            //     if properties_fields_vals:  # make sure properties vals are correctly copied.
+            //         new_version.sudo().write(properties_fields_vals)
+            //     new_version.write(new_version_vals)
+            // return new_version
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CreateWorkContactsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _create_work_contacts(self):
+            // if any(employee.work_contact_id for employee in self):
+            //     raise UserError(_('Some employee already have a work contact'))
+            // work_contacts = self.env['res.partner'].create([{
+            //     'email': employee.work_email,
+            //     'phone': employee.work_phone,
+            //     'name': employee.name,
+            //     'image_1920': employee.image_1920,
+            //     'company_id': employee.company_id.id
+            // } for employee in self])
+            // for employee, work_contact in zip(self, work_contacts):
+            //     employee.work_contact_id = work_contact
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CronUpdateCurrentVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _cron_update_current_version_id(self):
+            // self.search([])._compute_current_version_id()
             */
             return default;
         }
@@ -1273,27 +2247,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _default_category(self):
-            // return self.env['res.partner.category'].browse(self._context.get('category_id'))
+            // return self.env['res.partner.category'].browse(self.env.context.get('category_id'))
             */
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object default_fields) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def default_get(self, default_fields):
-            // """Add the company of the parent as default if we are creating a child partner.
-            // Also take the parent lang by default if any, otherwise, fallback to default DB lang."""
-            // values = super().default_get(default_fields)
-            // parent = self.env["res.partner"]
-            // if 'parent_id' in default_fields and values.get('parent_id'):
+            // def default_get(self, fields):
+            // """Add the company of the parent as default if we are creating a child partner. """
+            // values = super().default_get(fields)
+            // if 'parent_id' in fields and values.get('parent_id'):
             //     parent = self.browse(values.get('parent_id'))
             //     values['company_id'] = parent.company_id.id
-            // if 'lang' in default_fields:
-            //     values['lang'] = values.get('lang') or parent.lang or self.env.lang
             // # protection for `default_type` values leaking from menu action context (e.g. for crm's email)
-            // if 'type' in default_fields and values.get('type'):
+            // if 'type' in fields and values.get('type'):
             //     if values['type'] not in self._fields['type'].get_values(self.env):
             //         values['type'] = None
             // return values
@@ -1340,11 +2310,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _employee_attendance_intervals(self, start, stop, lunch=False):
             // self.ensure_one()
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
             // if not lunch:
             //     return self._get_expected_attendances(start, stop)
             // else:
-            //     return calendar._attendance_intervals_batch(start, stop, self.resource_id, lunch=True)[self.resource_id.id]
+            //     valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(start.date(), stop.date())
+            //     if not valid_versions:
+            //         calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //         return calendar._attendance_intervals_batch(start, stop, self.resource_id, lunch=True)[self.resource_id.id]
+            //     employee_tz = timezone(self.tz) if self.tz else None
+            //     duration_data = Intervals()
+            //     for version in valid_versions:
+            //         version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //         version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //         calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //         lunch_intervals = calendar._attendance_intervals_batch(
+            //             max(start, version_start),
+            //             min(stop, version_end),
+            //             resources=self.resource_id,
+            //             lunch=True)[self.resource_id.id]
+            //         duration_data = duration_data | lunch_intervals
+            //     return duration_data
             */
             return default;
         }
@@ -1353,18 +2338,61 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def fetch(self, field_names):
+            // def fetch(self, field_names=None):
             // if self.browse().has_access('read'):
             //     return super().fetch(field_names)
             // 
             // # HACK: retrieve publicly available values from hr.employee.public and
             // # copy them to the cache of self; non-public data will be missing from
             // # cache, and interpreted as an access error
+            // if field_names is None:
+            //     field_names = [field.name for field in self._determine_fields_to_fetch()]
+            // field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
             // self._check_private_fields(field_names)
             // self.flush_recordset(field_names)
             // public = self.env['hr.employee.public'].browse(self._ids)
             // public.fetch(field_names)
+            // # make sure all related fields from employee are in cache
+            // for field_name in field_names:
+            //     public_field = self.env['hr.employee.public']._fields[field_name]
+            //     private_field = self.env['hr.employee']._fields[field_name]
+            //     if (public_field.related and public_field.related_field.model_name == 'hr.employee'
+            //             or private_field.inherited and private_field.inherited_field.model_name == 'hr.version'):
+            //         public.mapped(field_name)
             // self._copy_cache_from(public, field_names)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> FieldStoreReprInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
+            // def _field_store_repr(self, field_name):
+            // if field_name == "avatar_128":
+            //     return [
+            //         Store.Attr("avatar_128_access_token", lambda g: g._get_avatar_128_access_token()),
+            //         "write_date",
+            //     ]
+            // if field_name == "im_status":
+            //     return [
+            //         "im_status",
+            //         Store.Attr("im_status_access_token", lambda g: g._get_im_status_access_token()),
+            //     ]
+            // return [field_name]
+            */
+            return default;
+        }
+
+        public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string field_expr, object query) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _field_to_sql(self, alias: str, field_expr: str, query: (Query | None) = None) -> SQL:
+            // """This is required to search for the related fields of version_id as version_id is not stored"""
+            // if field_expr == 'version_id':
+            //     field_expr = 'current_version_id'
+            // return super()._field_to_sql(alias, field_expr, query)
             */
             return default;
         }
@@ -1374,8 +2402,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _fields_sync(self, values):
-            // """ Sync commercial fields and address fields from company and to children after create/update,
-            // just as if those were all modeled as fields.related to the parent """
+            // """ Sync commercial fields and address fields from company and to children.
+            // Also synchronize address to parent. This somehow mimics related fields
+            // to the parent, with more control. This method should be called after
+            // updating values in cache e.g. self should contain new values.
+            // 
+            // :param dict values: updated values, triggering sync
+            // """
             // # 1. From UPSTREAM: sync from parent
             // if values.get('parent_id') or values.get('type') == 'contact':
             //     # 1a. Commercial fields: sync if parent changed
@@ -1383,10 +2416,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.sudo()._commercial_sync_from_company()
             //     # 1b. Address fields: sync if parent or use_parent changed *and* both are now set
             //     if self.parent_id and self.type == 'contact':
-            //         onchange_vals = self.onchange_parent_id().get('value', {})
-            //         self.update_address(onchange_vals)
+            //         if address_values := self.parent_id._get_address_values():
+            //             self._update_address(address_values)
             // 
-            // # 2. To DOWNSTREAM: sync children
+            // # 2. To UPSTREAM: sync parent address, as well as editable synchronized commercial fields
+            // address_to_upstream = (
+            //     # parent is set, potential address update as contact address = parent address
+            //     bool(self.parent_id) and bool(self.type == 'contact') and
+            //     # address updated, or parent updated
+            //     (any(field in values for field in self._address_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._address_fields())
+            // )
+            // if address_to_upstream:
+            //     new_address = self._get_address_values()
+            //     self.parent_id.write(new_address)  # is going to trigger _fields_sync again
+            // commercial_to_upstream = (
+            //     # has a parent and is not a commercial entity itself
+            //     bool(self.parent_id) and (self.commercial_partner_id != self) and
+            //     # actually updated, or parent updated
+            //     (any(field in values for field in self._synced_commercial_fields()) or 'parent_id' in values) and
+            //     # something is actually updated
+            //     any(self[fname] != self.parent_id[fname] for fname in self._synced_commercial_fields())
+            // )
+            // if commercial_to_upstream:
+            //     new_synced_commercials = self._get_synced_commercial_values()
+            //     self.parent_id.write(new_synced_commercials)
+            // 
+            // # 3. To DOWNSTREAM: sync children
             // self._children_sync(values)
             */
             return default;
@@ -1397,12 +2454,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def find_or_create(self, email, assert_valid_email=False):
-            // """ Find a partner with the given ``email`` or use :py:method:`~.name_create`
+            // """ Find a partner with the given ``email`` or use :meth:`name_create`
             // to create a new one.
             // 
             // :param str email: email-like string, which should contain at least one email,
             //     e.g. ``"Raoul Grosbedon <r.g@grosbedon.fr>"``
-            // :param boolean assert_valid_email: raise if no valid email is found
+            // :param bool assert_valid_email: raise if no valid email is found
             // :return: newly created record
             // """
             // if not email:
@@ -1432,8 +2489,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _format_auth_cookie(self):
             // """Format the cookie value for the given guest.
             // 
-            // :param guest: guest to format the cookie value for
-            // :return str: formatted cookie value
+            // :return: formatted cookie value
+            // :rtype: str
             // """
             // self.ensure_one()
             // return f"{self.id}{self._cookie_separator}{self.access_token}"
@@ -1463,12 +2520,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAccountsWithFixedAllocationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_accounts_with_fixed_allocations(self):
+            // self.ensure_one()
+            // return self.bank_account_ids.filtered(
+            //     lambda a: not self.salary_distribution.get(str(a.id), {}).get('amount_is_percentage', True)
+            // )
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAddressFormatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _get_address_format(self):
             // return self.country_id.address_format or self._get_default_address_format()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAddressValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_address_values(self):
+            // """ Get address values from record if at least one value is set. Otherwise
+            // it is considered empty and nothing is returned. """
+            // address_fields = self._address_fields()
+            // if any(self[key] for key in address_fields):
+            //     return self._convert_fields_to_values(address_fields)
+            // return {}
             */
             return default;
         }
@@ -1503,6 +2588,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAllContractDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_all_contract_dates(self):
+            // """
+            // Return a list of intervals (date_from, date_to) where the employee is in contract.
+            // For a permanent contract, the interval is (date_from, False).
+            // """
+            // self.ensure_one()
+            // return self.env['hr.version']._read_group(
+            //     [('employee_id', '=', self.id), ('contract_date_start', '!=', False)],
+            //     ['contract_date_start:day', 'contract_date_end:day'])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAllVersionsWithContractOverlapWithPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_all_versions_with_contract_overlap_with_period(self, date_from, date_to):
+            // """
+            // Returns the versions of all employees between date_from and date_to
+            // that have at least 1 day in contract during that period
+            // """
+            // all_employees = self.search(['|', ('active', '=', True), ('active', '=', False)])
+            // return all_employees._get_versions_with_contract_overlap_with_period(date_from, date_to)
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetAnalyticNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1514,20 +2631,166 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetAvatar128AccessTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: avatar_mixin.py) ---
+            // def _get_avatar_128_access_token(self):
+            // """Return a scoped access token for the `avatar_128` field. The token can be
+            // used with `ir_binary._find_record` to bypass access rights.
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, "avatar_128", scope="binary")
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetAvatarCardDataAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_avatar_card_data(self, fields):
+            // return self.read(fields)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetBankAccountSalaryAllocationAsync<TEntity>(IEnumerable<TEntity> entities, Guid account_id) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_bank_account_salary_allocation(self, account_id):
+            // ba_info = self.salary_distribution.get(str(account_id), {})
+            // return ba_info.get('amount', 0), ba_info.get('amount_is_percentage')
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetCalendarAttendancesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_calendar_attendances(self, date_from, date_to):
             // self.ensure_one()
-            // employee_timezone = timezone(self.tz) if self.tz else None
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
-            // return calendar\
-            //     .with_context(employee_timezone=employee_timezone)\
-            //     .get_work_duration_data(
+            // valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(date_from.date(), date_to.date())
+            // employee_tz = timezone(self.tz) if self.tz else None
+            // if not valid_versions:
+            //     calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //     return calendar.with_context(employee_timezone=employee_tz).get_work_duration_data(
             //         date_from,
             //         date_to,
             //         domain=[('company_id', 'in', [False, self.company_id.id])])
+            // duration_data = {'days': 0, 'hours': 0}
+            // for version in valid_versions:
+            //     version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //     version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //     calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //     version_duration_data = calendar\
+            //         .with_context(employee_timezone=employee_tz)\
+            //         .get_work_duration_data(
+            //             max(date_from, version_start),
+            //             min(date_to, version_end),
+            //             domain=[('company_id', 'in', [False, version.company_id.id])])
+            //     duration_data['days'] += version_duration_data['days']
+            //     duration_data['hours'] += version_duration_data['hours']
+            // return duration_data
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarPeriodsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object check_contract) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendar_periods(self, start, stop, check_contract=True):
+            // """
+            // :param datetime start: the start of the period
+            // :param datetime stop: the stop of the period
+            // """
+            // return self.sudo()._get_version_periods(start, stop, 'resource_calendar_id', check_contract)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarTzBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object dt) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendar_tz_batch(self, dt=None):
+            // """ Return a mapping { employee id : employee's effective schedule's (at dt) timezone }
+            // """
+            // employees_by_id = self.grouped('id')
+            // if not dt:
+            //     calendars = self._get_calendars()
+            //     return {
+            //         emp_id: calendar.sudo().tz or employees_by_id[emp_id].tz \
+            //             for emp_id, calendar in calendars.items()
+            //     }
+            // 
+            // employees_by_tz = self.grouped(lambda emp: emp._get_tz())
+            // 
+            // employee_timezones = {}
+            // for tz, employee_ids in employees_by_tz.items():
+            //     date_at = timezone(tz).localize(dt).date()
+            //     calendars = self._get_calendars(date_at)
+            //     employee_timezones |= {
+            //         emp_id: cal.sudo().tz or employees_by_id[emp_id].tz \
+            //             for emp_id, cal in calendars.items()
+            //     }
+            // return employee_timezones
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCalendarsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_calendars(self, date_from=None):
+            // res = super()._get_calendars(date_from=date_from)
+            // if not date_from:
+            //     return res
+            // 
+            // date_from = fields.Date.to_date(date_from)
+            // for employee in self:
+            //     employee_versions_sudo = employee.sudo().version_ids.filtered(lambda v: v._is_in_contract(date_from))
+            //     if employee_versions_sudo:
+            //         res[employee.id] = employee_versions_sudo[0].resource_calendar_id.sudo(False)
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCertificateSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_certificate_selection(self):
+            // return [
+            //     ('graduate', self.env._('Graduate')),
+            //     ('bachelor', self.env._('Bachelor')),
+            //     ('master', self.env._('Master')),
+            //     ('doctor', self.env._('Doctor')),
+            //     ('other', self.env._('Other')),
+            // ]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetCommercialValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_commercial_values(self):
+            // """ Get commercial values from record. Return only set values, as they
+            // are considered individually, and only set values should be taken into
+            // account. """
+            // set_commercial_fields = [fname for fname in self._commercial_fields() if self[fname]]
+            // if set_commercial_fields:
+            //     return self._convert_fields_to_values(set_commercial_fields)
+            // return {}
             */
             return default;
         }
@@ -1556,9 +2819,124 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.company_name or self.parent_id:
             //     if not name and self.type in displayed_types:
             //         name = type_description[self.type]
-            //     if not self.is_company:
+            //     if not self.is_company and not self.env.context.get('partner_display_name_hide_company'):
             //         name = f"{self.commercial_company_name or self.sudo().parent_id.name}, {name}"
             // return name.strip()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContractDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contract_dates(self, date):
+            // """
+            // Return a tuple (date_from, date_to) of the contract at the date given.
+            // (False, False) if the employee is not in contract at that date.
+            // """
+            // self.ensure_one()
+            // for date_from, date_to in self._get_all_contract_dates():
+            //     if date_from <= date and (date_to is False or date_to >= date):
+            //         return date_from, date_to
+            // return False, False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContractVersionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end, object domain) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contract_versions(self, date_start=None, date_end=None, domain=None):
+            // """
+            // Retrieves contract versions for employees within the specified date range and
+            // domain. The function constructs a dynamic domain to filter contracts based on
+            // the provided arguments and retrieves grouped results. The grouping ensures
+            // organization by employee and date, and the results are stored in a structured
+            // format for ease of use.
+            // 
+            // Args:
+            //     date_start (datetime.date | None): The start date for filtering contracts.
+            //     date_end (datetime.date | None): The end date for filtering contracts.
+            //     domain (list | None): Additional domain constraints for filtering.
+            // 
+            // Returns:
+            //     dict: A dictionary where keys are employee IDs and values are lists of
+            //           contract version records organized by contract date start and date
+            //           range.
+            // """
+            // version_domain = Domain('contract_date_start', '!=', False)
+            // if self.ids:
+            //     version_domain &= Domain('employee_id', 'in', self.ids)
+            // elif not any(self._ids):  # onchange
+            //     version_domain &= Domain('employee_id', 'in', self._origin.ids)
+            // if date_start:
+            //     version_domain &= Domain('contract_date_end', '=', False) | Domain('contract_date_end', '>=', date_start)
+            // if date_end:
+            //     version_domain &= Domain('contract_date_start', '<=', date_end)
+            // if domain:
+            //     version_domain &= domain
+            // all_versions = self.env['hr.version']._read_group(
+            //     domain=version_domain,
+            //     groupby=['employee_id', 'date_version:day'],
+            //     aggregates=['id:recordset'],
+            // )
+            // contract_versions_by_employee = defaultdict(lambda: defaultdict(lambda: self.env["hr.version"]))
+            // for employee, _date_version, version in all_versions:
+            //     first_version = next(iter(version), version)
+            //     contract_versions_by_employee[employee.id][first_version.contract_date_start] |= version
+            // return contract_versions_by_employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContractsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end, object use_latest_version, object domain) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_contracts(self, date_start=None, date_end=None, use_latest_version=True, domain=None):
+            // """
+            // Retrieve the contracts for employees within a specified date range and based
+            // on specified criteria, such as domain filtering and version selection.
+            // 
+            // This method is used to collect and organize employee contracts based on their
+            // versions, date ranges, and other specified options. The resulting contracts are
+            // grouped by employee, and their selection logic depends on whether the latest
+            // version should be used or not. It supports flexibility in contract retrieval by
+            // allowing optional filters for date range and domain.
+            // 
+            // Args:
+            //     date_start (Optional[datetime.date]): The start date to filter the contracts
+            //         by. If provided, only contract versions <= this date are considered
+            //         based on the selection logic.
+            //     date_end (Optional[datetime.date]): The end date to filter the contracts by.
+            //         Only contract versions within the range will be retrieved. Defaults to
+            //         None if not specified.
+            //     domain (Optional[dict]): A dictionary representing additional filters or
+            //         constraints to apply to the contract versions retrieved. Defaults to
+            //         None.
+            //     use_latest_version (bool): Indicates whether to retrieve the version
+            //     effective at the end of the contract (or before the date_end) for each employee (True) or
+            //     at the start of the contract (before the date_start) (False). Defaults to True.
+            // 
+            // Returns:
+            //     collections.defaultdict: A dictionary mapping each employee's identifier
+            //     (employee.id) to a set of their corresponding contracts. Each set contains
+            //     version records retrieved and filtered based on the specified criteria.
+            // """
+            // contract_versions_by_employee = self._get_contract_versions(date_start, date_end, domain)
+            // contracts_by_employee = defaultdict(lambda: self.env["hr.version"])
+            // for employee_id in contract_versions_by_employee:
+            //     for contract_versions in contract_versions_by_employee[employee_id].values():
+            //         effective_date = date_end if use_latest_version else date_start
+            //         if use_latest_version:
+            //             if effective_date:
+            //                 correct_versions = contract_versions.filtered(lambda v: v.date_version <= effective_date)
+            //                 contracts_by_employee[employee_id] |= correct_versions[-1] if correct_versions else contract_versions[0]
+            //             else:
+            //                 contracts_by_employee[employee_id] |= contract_versions[-1] if use_latest_version else contract_versions[0]
+            // return contracts_by_employee
             */
             return default;
         }
@@ -1594,6 +2972,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetDepartureDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_departure_date(self):
+            // # Primarily used in the archive wizard
+            // # to pick a good default for the departure date
+            // self.ensure_one()
+            // if self.date_end and self.date_end < fields.Date.today():
+            //     return self.departure_date
+            // return False
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetDriverHistoryDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1619,22 +3012,121 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetEmployeeWorkingNowInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_employee_working_now(self):
+            // """ Sudo needed to get resource_calendar_id as its normally only accessible by hr_users on version model
+            // (accessible on employee by inherits)."""
+            // working_now = []
+            // # We loop over all the employee tz and the resource calendar_id to detect working hours in batch.
+            // all_employee_tz = set(self.mapped('tz'))
+            // for tz in all_employee_tz:
+            //     employee_ids = self.filtered(lambda e: e.tz == tz)
+            //     resource_calendar_ids = employee_ids.sudo().mapped('resource_calendar_id')
+            //     for calendar_id in resource_calendar_ids:
+            //         res_employee_ids = employee_ids.sudo().filtered(lambda e: e.resource_calendar_id.id == calendar_id.id)
+            //         start_dt = fields.Datetime.now()
+            //         stop_dt = start_dt + timedelta(hours=1)
+            //         from_datetime = utc.localize(start_dt).astimezone(timezone(tz or 'UTC'))
+            //         to_datetime = utc.localize(stop_dt).astimezone(timezone(tz or 'UTC'))
+            //         # Getting work interval of the first is working. Functions called on resource_calendar_id
+            //         # are waiting for singleton
+            //         work_interval = res_employee_ids[0].resource_calendar_id._work_intervals_batch(from_datetime, to_datetime)[False]
+            //         # Employee that is not supposed to work have empty items.
+            //         if len(work_interval._items) > 0:
+            //             # The employees should be working now according to their work schedule
+            //             working_now += res_employee_ids.ids
+            // return working_now
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetExpectedAttendancesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_expected_attendances(self, date_from, date_to):
             // self.ensure_one()
-            // employee_timezone = timezone(self.tz) if self.tz else None
-            // calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
-            // calendar_intervals = calendar._work_intervals_batch(
-            //                         date_from,
-            //                         date_to,
-            //                         tz=employee_timezone,
-            //                         resources=self.resource_id,
-            //                         compute_leaves=True,
-            //                         domain=[('company_id', 'in', [False, self.company_id.id])])[self.resource_id.id]
-            // return calendar_intervals
+            // valid_versions = self.sudo()._get_versions_with_contract_overlap_with_period(date_from.date(), date_to.date())
+            // employee_tz = timezone(self.tz) if self.tz else None
+            // if not valid_versions:
+            //     calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+            //     calendar_intervals = calendar._work_intervals_batch(
+            //         date_from,
+            //         date_to,
+            //         tz=employee_tz,
+            //         resources=self.resource_id,
+            //         compute_leaves=True,
+            //         domain=[('company_id', 'in', [False, self.company_id.id])])[self.resource_id.id]
+            //     return calendar_intervals
+            // duration_data = Intervals()
+            // version_prev = datetime.combine(valid_versions[0].date_start, time.min, employee_tz)
+            // for version in valid_versions:
+            //     version_start = datetime.combine(version.date_start, time.min, employee_tz)
+            //     contract_start = datetime.combine(version.contract_date_start, time.min, employee_tz)
+            //     version_end = datetime.combine(version.date_end or date.max, time.max, employee_tz)
+            //     calendar = version.resource_calendar_id or version.company_id.resource_calendar_id
+            //     start_date = version_start if version_prev < version_start else contract_start
+            //     version_intervals = calendar._work_intervals_batch(
+            //                             max(date_from, start_date),
+            //                             min(date_to, version_end),
+            //                             tz=employee_tz,
+            //                             resources=self.resource_id,
+            //                             compute_leaves=True,
+            //                             domain=[('company_id', 'in', [False, self.company_id.id]), ('time_type', '=', 'leave')])[self.resource_id.id]
+            //     duration_data = duration_data | version_intervals
+            // return duration_data
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetFirstVersionDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object no_gap) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_first_version_date(self, no_gap=True):
+            // self.ensure_one()
+            // if not self.env.su and not self.env.user.has_group("hr.group_hr_user"):
+            //     raise AccessError(_("Only HR users can access first version date on an employee."))
+            // 
+            // def remove_gap(versions):
+            //     # We do not consider a gap of more than 4 days to be a same occupation
+            //     # versions are considered to be ordered correctly
+            //     if not versions:
+            //         return self.env['hr.version']
+            //     if len(versions) == 1:
+            //         return versions
+            //     current_version = versions[0]
+            //     older_versions = versions[1:]
+            //     current_date = current_version.date_start
+            //     for i, other_version in enumerate(older_versions):
+            //         # Consider current_version.date_end being false as an error and cut the loop
+            //         gap = (current_date - (other_version.date_end or date(2100, 1, 1))).days
+            //         current_date = other_version.date_start
+            //         if gap >= 4:
+            //             return older_versions[0:i] + current_version
+            //     return older_versions + current_version
+            // 
+            // versions = self._get_first_versions().sorted('date_start', reverse=True)
+            // if no_gap:
+            //     versions = remove_gap(versions)
+            // return min(versions.mapped('date_start')) if versions else False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetFirstVersionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_first_versions(self):
+            // self.ensure_one()
+            // versions = self.version_ids
+            // if self.env.context.get('before_date'):
+            //     versions = versions.filtered(lambda c: c.date_start <= self.env.context['before_date'])
+            // return versions
             */
             return default;
         }
@@ -1645,7 +3137,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_formview_action(self, access_uid=None):
             // """ Override this method in order to redirect many2one towards the right model depending on access_uid """
-            // res = super(HrEmployeePrivate, self).get_formview_action(access_uid=access_uid)
+            // res = super().get_formview_action(access_uid=access_uid)
             // user = self.env.user
             // if access_uid:
             //     user = self.env['res.users'].browse(access_uid).sudo()
@@ -1669,29 +3161,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     user = self.env['res.users'].browse(access_uid).sudo()
             // 
             // if user.has_group('hr.group_hr_user'):
-            //     return super(HrEmployeePrivate, self).get_formview_id(access_uid=access_uid)
+            //     return super().get_formview_id(access_uid=access_uid)
             // # Hardcode the form view for public employee
             // return self.env.ref('hr.hr_employee_public_view_form').id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetGravatarImageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _get_gravatar_image(self, email):
-            // email_hash = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
-            // url = "https://www.gravatar.com/avatar/" + email_hash
-            // try:
-            //     res = requests.get(url, params={'d': '404', 's': '128'}, timeout=5)
-            //     if res.status_code != requests.codes.ok:
-            //         return False
-            // except requests.exceptions.ConnectionError as e:
-            //     return False
-            // except requests.exceptions.Timeout as e:
-            //     return False
-            // return base64.b64encode(res.content)
             */
             return default;
         }
@@ -1704,6 +3176,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Returns the current guest record from the context, if applicable."""
             // guest = self.env.context.get('guest')
             // if isinstance(guest, self.pool['mail.guest']):
+            //     assert len(guest) <= 1, "Context guest should be empty or a single record."
             //     return guest.sudo(False).with_context(guest=guest)
             // return self.env['mail.guest']
             */
@@ -1729,6 +3202,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetImStatusAccessTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
+            // def _get_im_status_access_token(self):
+            // """Return a scoped access token for the `im_status` field. The token is used in
+            // `ir_websocket._prepare_subscribe_data` to grant access to presence channels.
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, "im_status", scope="mail.presence")
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1741,25 +3230,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Customers'),
-            //     'template': '/base/static/xls/res_partner.xlsx'
+            //     'label': _('Import Template for Contacts'),
+            //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
             */
             return default;
         }
 
-        public async Task<TEntity> GetMaritalStatusSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> GetNewHireFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _get_marital_status_selection(self):
-            // return [
-            //     ('single', _('Single')),
-            //     ('married', _('Married')),
-            //     ('cohabitant', _('Legal Cohabitant')),
-            //     ('widower', _('Widower')),
-            //     ('divorced', _('Divorced')),
-            // ]
+            // def _get_new_hire_field(self):
+            // return 'create_date'
             */
             return default;
         }
@@ -1771,11 +3254,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_odometer(self):
             // FleetVehicalOdometer = self.env['fleet.vehicle.odometer']
             // for record in self:
-            //     vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', '=', record.id)], limit=1, order='value desc')
+            //     vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', 'in', record.ids)], limit=1, order='value desc')
             //     if vehicle_odometer:
             //         record.odometer = vehicle_odometer.value
             //     else:
             //         record.odometer = 0
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetOrCreateGuestInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
+            // def _get_or_create_guest(self, *, guest_name, country_code, timezone):
+            // if not (guest := self._get_guest_from_context()):
+            //     guest = self.create(
+            //         {
+            //             "country_id": self.env["res.country"].search([("code", "=", country_code)]).id,
+            //             "lang": get_lang(self.env).code,
+            //             "name": guest_name,
+            //             "timezone": timezone,
+            //         }
+            //     )
+            //     guest._set_auth_cookie()
+            // return guest.sudo(False)
             */
             return default;
         }
@@ -1800,6 +3303,52 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetRemainingPercentageAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def get_remaining_percentage(self):
+            // self.ensure_one()
+            // distribution = self.salary_distribution or {}
+            // allocated = 0.0
+            // 
+            // for ba_id, vals in distribution.items():
+            //     if vals.get('amount_is_percentage'):
+            //         allocated += vals.get('amount', 0.0)
+            // 
+            // remaining = 100.0 - allocated
+            // return max(0.0, remaining)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetStoreAvatarCardFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // employee_fields = [
+            //     "company_id",
+            //     Store.One("department_id", ["name"]),
+            //     "work_email",
+            //     Store.One("work_location_id", ["location_type", "name"]),
+            //     "work_phone",
+            // ]
+            // user = target.get_user(self.env)
+            // if user.has_group("hr.group_hr_user"):
+            //     # job_title is not a field of hr.employee.public, but it is a field of hr.employee
+            //     employee_fields.append("job_title")
+            // # HACK: fetch the employee fields from employees to retrieve hr.employee.public fields if no access to hr.employee
+            // if len(self) > 0:
+            //     self.fetch([
+            //         field.field_name if isinstance(field, Store.Attr) else field
+            //         for field in employee_fields
+            //     ])
+            // return employee_fields
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetStreetSplitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1807,6 +3356,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_street_split(self):
             // self.ensure_one()
             // return tools.street_split(self.street or '')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetSyncedCommercialValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _get_synced_commercial_values(self):
+            // """ Get synchronized commercial values from ercord. Return only set values
+            // as for other commercial values. """
+            // set_synced_fields = [fname for fname in self._synced_commercial_fields() if self[fname]]
+            // if set_synced_fields:
+            //     return self._convert_fields_to_values(set_synced_fields)
+            // return {}
             */
             return default;
         }
@@ -1840,11 +3404,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_tz(self):
-            // # Finds the first valid timezone in his tz, his work hours tz,
-            // #  the company calendar tz or UTC and returns it as a string
             // self.ensure_one()
-            // return self.tz or\
-            //        self.resource_calendar_id.tz or\
+            // return self.resource_calendar_id.tz or\
+            //        self.tz or\
             //        self.company_id.resource_calendar_id.tz or\
             //        'UTC'
             */
@@ -1856,13 +3418,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_unusual_days(self, date_from, date_to=None):
-            // # Checking the calendar directly allows to not grey out the leaves taken
-            // # by the employee or fallback to the company calendar
-            // return (self.resource_calendar_id or self.env.company.resource_calendar_id)._get_unusual_days(
-            //     datetime.combine(fields.Date.from_string(date_from), time.min).replace(tzinfo=UTC),
-            //     datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=UTC),
-            //     self.company_id,
-            // )
+            // date_from_date = datetime.strptime(date_from, '%Y-%m-%d %H:%M:%S').date()
+            // date_to_date = datetime.strptime(date_to, '%Y-%m-%d %H:%M:%S').date() if date_to else None
+            // employee_versions = self.env['hr.version'].sudo().search([('employee_id', '=', self.id)]).filtered(
+            //     lambda v: v._is_overlapping_period(date_from_date, date_to_date))
+            // if not employee_versions:
+            //     # Checking the calendar directly allows to not grey out the leaves taken
+            //     # by the employee or fallback to the company calendar
+            //     return (self.resource_calendar_id or self.env.company.resource_calendar_id)._get_unusual_days(
+            //         datetime.combine(fields.Date.from_string(date_from), time.min).replace(tzinfo=UTC),
+            //         datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=UTC),
+            //         self.company_id,
+            //     )
+            // unusual_days = {}
+            // for version in employee_versions:
+            //     tmp_date_from = max(date_from_date, version.date_start)
+            //     tmp_date_to = min(date_to_date, version.date_end) if version.date_end else date_to_date
+            //     unusual_days.update(version.resource_calendar_id.sudo(False)._get_unusual_days(
+            //         datetime.combine(fields.Date.from_string(tmp_date_from), time.min).replace(tzinfo=UTC),
+            //         datetime.combine(fields.Date.from_string(tmp_date_to), time.max).replace(tzinfo=UTC),
+            //         self.company_id,
+            //     ))
+            // return unusual_days
             */
             return default;
         }
@@ -1873,6 +3450,78 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _get_user_m2o_to_empty_on_archived_employees(self):
             // return []
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetVersionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_version(self, date=fields.Date.today()):
+            // """
+            // Return the version that should be used for the given date.
+            // If no valid version is found, we return the very first version of the employee.
+            // """
+            // self.ensure_one()
+            // versions = self.version_ids.filtered_domain([('date_version', '<=', date)])
+            // return max(versions, key=lambda v: v.date_version) if versions else self.version_ids[0]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetVersionPeriodsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object field, object check_contract) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_version_periods(self, start, stop, field=None, check_contract=False):
+            // if field and field not in self:
+            //     raise UserError(self.env._(
+            //         "This field %(field_name)s doesn't exist on this model (hr.version).",
+            //         field_name=field
+            //     ))
+            // version_periods_by_employee = defaultdict(list)
+            // if check_contract:
+            //     versions = self._get_versions_with_contract_overlap_with_period(start.date(), stop.date())
+            // else:
+            //     versions = self.version_ids.filtered_domain([
+            //         ('date_start', '<=', stop),
+            //         '|',
+            //             ('date_end', '=', False),
+            //             ('date_end', '>=', start)
+            //     ])
+            // for version in versions:
+            //     # if employee is under fully flexible contract, use timezone of the employee
+            //     calendar_tz = timezone(version.resource_calendar_id.tz) if version.resource_calendar_id else timezone(version.employee_id.resource_id.tz)
+            //     date_start = datetime.combine(version.date_start, time.min).replace(tzinfo=calendar_tz).astimezone(utc)
+            //     end_date = version.date_end
+            //     if end_date:
+            //         date_end = datetime.combine(
+            //             end_date + relativedelta(days=1),
+            //             time.min,
+            //         ).replace(tzinfo=calendar_tz).astimezone(utc)
+            //     else:
+            //         date_end = stop
+            //     version_periods_by_employee[version.employee_id].append(
+            //         (max(date_start, start), min(date_end, stop), version[field] if field else version))
+            // return version_periods_by_employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetVersionsWithContractOverlapWithPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _get_versions_with_contract_overlap_with_period(self, date_from, date_to):
+            // """
+            // Returns the versions of the employee between date_from and date_to
+            // that have at least 1 day in contract during that period
+            // """
+            // return self.version_ids.filtered_domain([
+            //     ('contract_date_start', '!=', False), ('contract_date_start', '<=', date_to),
+            //     '|', ('contract_date_end', '>=', date_from), ('contract_date_end', '=', False),
+            // ])
             */
             return default;
         }
@@ -1894,11 +3543,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_views(self, views, options=None):
-            // if self.browse().has_access('read'):
-            //     return super().get_views(views, options)
-            // res = self.env['hr.employee.public'].get_views(views, options)
-            // res['models'].update({'hr.employee': res['models']['hr.employee.public']})
-            // return res
+            //         if self.browse().has_access('read'):
+            //             return super().get_views(views, options)
+            //         # returning public employee data would cause a traceback when building
+            //         # the private employee xml view
+            //         raise RedirectWarning(
+            //             message=_(
+            //             """You are not allowed to access "Employee" (hr.employee) records.
+            // We can redirect you to the public employee list."""
+            //             ),
+            //             action=self.env.ref('hr.hr_employee_public_action').id,
+            //             button_text=_("Employees profile"),
+            //         )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetYearSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _get_year_selection(self):
+            // current_year = datetime.now().year
+            // return [(str(i), i) for i in range(1970, current_year + 1)]
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
+            // def _get_year_selection(self):
+            // current_year = datetime.now().year
+            // return [(str(i), i) for i in range(1970, current_year + 1)]
             */
             return default;
         }
@@ -1918,19 +3589,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     and not any(parent[f] for f in address_fields)
             //     and len(parent.child_ids) == 1
             // ):
-            //     addr_vals = self._update_fields_values(address_fields)
-            //     parent.update_address(addr_vals)
+            //     addr_vals = self._convert_fields_to_values(address_fields)
+            //     parent._update_address(addr_vals)
             */
             return default;
         }
 
-        public async Task<TEntity> InverseKmHomeWorkInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> HasFieldAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, object operation) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _inverse_km_home_work(self):
+            // def _has_field_access(self, field, operation):
+            // # DISCLAIMER: Dirty hack to avoid having to create a bridge module to override only a
+            // # groups on a field which is not prefetched (because not stored) but would crash anyway
+            // # if we try to read them directly (very uncommon use case). Don't add your field on this
+            // # list if you can specify the group on the field directly (as all the other fields).
+            // return super()._has_field_access(field, operation) and (
+            //     self.env.su
+            //     or self.env.user.has_group("hr.group_hr_user")
+            //     or field.name not in ('activity_calendar_event_id', 'rating_ids', 'website_message_ids', 'message_has_sms_error')
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> InverseWorkContactDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _inverse_work_contact_details(self):
+            // employees_without_work_contact = self.env['hr.employee']
             // for employee in self:
-            //     employee.distance_home_work = employee.km_home_work / 1.609 if employee.distance_home_work_unit == "miles" else employee.km_home_work
+            //     if not employee.work_contact_id:
+            //         employees_without_work_contact += employee
+            //     else:
+            //         if len(employee.work_contact_id.employee_ids) <= 1:
+            //             employee.work_contact_id.sudo().write({
+            //                 'email': employee.work_email,
+            //                 'phone': employee.work_phone,
+            //             })
+            // if employees_without_work_contact:
+            //     employees_without_work_contact.sudo()._create_work_contacts()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsInContractInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _is_in_contract(self, date):
+            // return self._get_contract_dates(date) != (False, False)
             */
             return default;
         }
@@ -1948,12 +3657,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> LoadDemoDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _load_demo_data(self):
+            // dep_rd = self.env.ref('hr.dep_rd', raise_if_not_found=False)
+            // action_reload = {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'reload',
+            // }
+            // if dep_rd:
+            //     return action_reload
+            // convert.convert_file(env=self.sudo().env, module='hr', filename='data/scenarios/hr_scenario.xml', idref=None, mode='init')
+            // if 'resume_line_ids' in self:
+            //     convert.convert_file(env=self.env, module='hr_skills', filename='data/scenarios/hr_skills_scenario.xml', idref=None, mode='init')
+            // return action_reload
+            */
+            return default;
+        }
+
+        public async Task<TEntity> LoadFieldsFromModelInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_load) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def _load_fields_from_model(self, fields_to_load):
+            // '''
+            // Copies the desired fields from the models to the vehicles
+            // '''
+            // model_values = dict()
+            // for vehicle in self.filtered('model_id'):
+            //     if vehicle.model_id.id in model_values:
+            //         write_vals = model_values[vehicle.model_id.id]
+            //     else:
+            //         # Update only the desired fields from the model, only when the model has a truthy value.
+            //         write_vals = \
+            //             {
+            //                 vehicle_field: vehicle.model_id[model_field] for model_field, vehicle_field in MODEL_FIELDS_TO_VEHICLE.items()
+            //                 if vehicle_field in fields_to_load and vehicle.model_id[model_field]
+            //             }
+            //         model_values[vehicle.model_id.id] = write_vals
+            //     vehicle.update(write_vals)
+            */
+            return default;
+        }
+
         public async Task<TEntity> LoadRecordsCreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _load_records_create(self, vals_list):
-            // partners = super(Partner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
+            // partners = super(ResPartner, self.with_context(_partners_skip_fields_sync=True))._load_records_create(vals_list)
             // 
             // # batch up first part of _fields_sync
             // # group partners by commercial_partner_id (if not self) and parent_id (if type == contact)
@@ -1973,7 +3727,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     to_write = {}
             //     # commercial fields from commercial partner
             //     if cp_id:
-            //         to_write = self.browse(cp_id)._update_fields_values(self._commercial_fields())
+            //         to_write = self.browse(cp_id)._convert_fields_to_values(self._commercial_fields())
             //     # address fields from parent
             //     if add_id:
             //         parent = self.browse(add_id)
@@ -2001,7 +3755,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // demo_tag = self.env.ref('hr.employee_category_demo', raise_if_not_found=False)
             // if demo_tag:
             //     return
-            // convert.convert_file(self.env, 'hr', 'data/scenarios/hr_scenario.xml', None, mode='init', kind='data')
+            // convert.convert_file(self.env, 'hr', 'data/scenarios/hr_scenario.xml', None, mode='init')
             */
             return default;
         }
@@ -2011,7 +3765,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _mail_get_partner_fields(self, introspect_fields=False):
-            // return ['user_partner_id']
+            // return ['work_contact_id', 'user_partner_id']
             */
             return default;
         }
@@ -2027,13 +3781,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     If only an email address is received and that the regex cannot find
             //     a name, the name will have the email value.
             //     If 'force_email' key in context: must find the email address. """
-            // default_type = self._context.get('default_type')
+            // default_type = self.env.context.get('default_type')
             // if default_type and default_type not in self._fields['type'].get_values(self.env):
-            //     context = dict(self._context)
+            //     context = dict(self.env.context)
             //     context.pop('default_type')
             //     self = self.with_context(context)
             // name, email_normalized = tools.parse_contact_from_email(name)
-            // if self._context.get('force_email') and not email_normalized:
+            // if self.env.context.get('force_email') and not email_normalized:
             //     raise ValidationError(_("Couldn't create contact without email address!"))
             // 
             // create_values = {self._rec_name: name or email_normalized}
@@ -2041,6 +3795,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     create_values['email'] = email_normalized
             // partner = self.create(create_values)
             // return partner.id, partner.display_name
+            */
+            return default;
+        }
+
+        public async Task<TEntity> NewAsync<TEntity>(IEnumerable<TEntity> entities, object values, object origin, object @ref) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def new(self, values=None, origin=None, ref=None):
+            // if not values:
+            //     values = {}
+            // new_vals = values.copy()
+            // version_vals = {val: new_vals.pop(val) for val in values if val in self._fields and self._fields[val].inherited}
+            // 
+            // employee = super().new(new_vals, origin, ref)
+            // version_vals['employee_id'] = employee
+            // self.env['hr.version'].new({
+            //     f_name: value
+            //     for f_name, value in version_vals.items()
+            //     if self.env['hr.version']._has_field_access(self.env['hr.version']._fields[f_name], 'read')
+            // })
+            // return employee
+            */
+            return default;
+        }
+
+        public async Task<TEntity> NotifyExpiringContractWorkPermitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def notify_expiring_contract_work_permit(self):
+            // companies = self.env['res.company'].search([])
+            // employees_contract_expiring = self.env['hr.employee']
+            // employees_work_permit_expiring = self.env['hr.employee']
+            // 
+            // for company in companies:
+            //     employees_contract_expiring += self.env['hr.employee'].search([
+            //         ('company_id', '=', company.id),
+            //         ('contract_date_start', '!=', False),
+            //         ('contract_date_start', '<', fields.Date.today()),
+            //         ('contract_date_end', '=', fields.Date.today() + relativedelta(days=company.contract_expiration_notice_period)),
+            //     ])
+            // 
+            //     employees_work_permit_expiring += self.env['hr.employee'].search([
+            //         ('company_id', '=', company.id),
+            //         ('work_permit_expiration_date', '!=', False),
+            //         ('work_permit_expiration_date', '=', fields.Date.today() + relativedelta(days=company.work_permit_expiration_notice_period)),
+            //     ])
+            // 
+            // for employee in employees_contract_expiring:
+            //     employee.with_context(mail_activity_quick_update=True).activity_schedule(
+            //         'mail.mail_activity_data_todo', employee.contract_date_end,
+            //         _("The contract of %s is about to expire.", employee.name),
+            //         user_id=employee.hr_responsible_id.id or self.env.uid)
+            // 
+            // for employee in employees_work_permit_expiring:
+            //     employee.with_context(mail_activity_quick_update=True).activity_schedule(
+            //         'mail.mail_activity_data_todo', employee.work_permit_expiration_date,
+            //         _("The work permit of %s is about to expire.", employee.name),
+            //         user_id=employee.hr_responsible_id.id or self.env.uid)
+            // 
+            // return True
             */
             return default;
         }
@@ -2073,6 +3889,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> OnchangeContractDateStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_contract_date_start(self):
+            // if not self.contract_date_start:
+            //     self.contract_date_end = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeContractTemplateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_contract_template_id(self):
+            // if self.contract_template_id:
+            //     whitelist = self.env['hr.version']._get_whitelist_fields_from_template()
+            //     for field in self.contract_template_id._fields:
+            //         if field in whitelist and not self.env['hr.version']._fields[field].related:
+            //             self[field] = self.contract_template_id[field]
+            */
+            return default;
+        }
+
         public async Task<TEntity> OnchangeCountryIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -2080,17 +3921,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _onchange_country_id(self):
             // if self.country_id and self.country_id != self.state_id.country_id:
             //     self.state_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def onchange_email(self):
-            // if not self.image_1920 and self._context.get('gravatar_image') and self.email:
-            //     self.image_1920 = self._get_gravatar_image(self.email)
             */
             return default;
         }
@@ -2105,36 +3935,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return
             // result = {}
             // partner = self._origin
-            // if partner.parent_id and partner.parent_id != self.parent_id:
-            //     result['warning'] = {
-            //         'title': _('Warning'),
-            //         'message': _('Changing the company of a contact should only be done if it '
-            //                      'was never correctly set. If an existing contact starts working for a new '
-            //                      'company then a new contact should be created under that new '
-            //                      'company. You can use the "Discard" button to abandon this change.')}
-            // if partner.type == 'contact' or self.type == 'contact':
+            // if (partner.type or self.type) == 'contact':
             //     # for contacts: copy the parent address, if set (aka, at least one
             //     # value is set in the address: otherwise, keep the one from the
             //     # contact)
-            //     address_fields = self._address_fields()
-            //     if any(self.parent_id[key] for key in address_fields):
-            //         def convert(value):
-            //             return value.id if isinstance(value, models.BaseModel) else value
-            //         result['value'] = {key: convert(self.parent_id[key]) for key in address_fields}
+            //     if address_values := self.parent_id._get_address_values():
+            //         result['value'] = address_values
             // return result
             */
             return default;
         }
 
-        public async Task<TEntity> OnchangeParentIdForLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> OnchangePhoneValidationEmployeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _onchange_parent_id_for_lang(self):
-            // # While creating / updating child contact, take the parent lang by default if any
-            // # otherwise, fallback to default context / DB lang
-            // if self.parent_id:
-            //     self.lang = self.parent_id.lang or self.env.context.get('default_lang') or self.env.lang
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_phone_validation_employee(self):
+            // if self.work_phone:
+            //     self.work_phone = self._phone_format(number=self.work_phone, force_format='INTERNATIONAL') or self.work_phone
+            // if self.mobile_phone:
+            //     self.mobile_phone = self._phone_format(number=self.mobile_phone, force_format='INTERNATIONAL') or self.mobile_phone
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangePrivateStateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _onchange_private_state_id(self):
+            // if self.private_state_id:
+            //     self.private_country_id = self.private_state_id.country_id
             */
             return default;
         }
@@ -2214,6 +4045,33 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def _phone_get_number_fields(self):
             // return ['mobile_phone']
+            */
+            return default;
+        }
+
+        public async Task<TEntity> PrepareCreateValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _prepare_create_values(self, vals_list):
+            // result = super()._prepare_create_values(vals_list)
+            // new_vals_list = []
+            // Version = self.env['hr.version']
+            // version_fields = [fname for fname, field in Version._fields.items() if Version._has_field_access(field, 'write')]
+            // for vals in result:
+            //     employee_vals = {}
+            //     version_vals = {}
+            //     for fname, value in vals.items():
+            //         employee_field = self._fields.get(fname)
+            //         if not (employee_field and employee_field.inherited and employee_field.related_field.model_name == 'hr.version'):
+            //             employee_vals[fname] = value
+            //         else:
+            //             version_vals[fname] = value
+            //     new_vals_list.append({
+            //         **employee_vals,
+            //         **{k: v for k, v in version_vals.items() if k in version_fields},
+            //     })
+            // return new_vals_list
             */
             return default;
         }
@@ -2308,24 +4166,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _search_contract_renewal_due_soon(self, operator, value):
+            // if operator != 'in':
+            //     return NotImplemented
             // params = self.env['ir.config_parameter'].sudo()
             // delay_alert_contract = int(params.get_param('hr_fleet.delay_alert_contract', default=30))
-            // res = []
-            // assert operator in ('=', '!=', '<>') and value in (True, False), 'Operation not supported'
-            // if (operator == '=' and value is True) or (operator in ('<>', '!=') and value is False):
-            //     search_operator = 'in'
-            // else:
-            //     search_operator = 'not in'
             // today = fields.Date.context_today(self)
             // datetime_today = fields.Datetime.from_string(today)
             // limit_date = fields.Datetime.to_string(datetime_today + relativedelta(days=+delay_alert_contract))
-            // res_ids = self.env['fleet.vehicle.log.contract'].search([
+            // return [('log_contracts', 'any', [
             //     ('expiration_date', '>', today),
             //     ('expiration_date', '<', limit_date),
-            //     ('state', 'in', ['open', 'expired'])
-            // ]).mapped('vehicle_id').ids
-            // res.append(('id', search_operator, res_ids))
-            // return res
+            //     ('state', 'in', ['open', 'expired']),
+            // ])]
             */
             return default;
         }
@@ -2335,14 +4187,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
             // def _search_display_name(self, operator, value):
-            // if operator in expression.NEGATIVE_TERM_OPERATORS:
-            //     positive_operator = expression.TERM_OPERATORS_NEGATION[operator]
-            // else:
-            //     positive_operator = operator
-            // domain = expression.OR([[('name', positive_operator, value)], [('brand_id.name', positive_operator, value)]])
-            // if positive_operator != operator:
-            //     domain = ['!', *domain]
-            // return domain
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // return ['|', ('name', operator, value), ('brand_id.name', operator, value)]
             */
             return default;
         }
@@ -2351,13 +4198,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+            // def search_fetch(self, domain, field_names=None, offset=0, limit=None, order=None):
             // if self.browse().has_access('read'):
             //     return super().search_fetch(domain, field_names, offset, limit, order)
             // 
             // # HACK: retrieve publicly available values from hr.employee.public and
             // # copy them to the cache of self; non-public data will be missing from
             // # cache, and interpreted as an access error
+            // if field_names is None:
+            //     field_names = [field.name for field in self._determine_fields_to_fetch()]
+            // field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
             // self._check_private_fields(field_names)
             // self.flush_model(field_names)
             // public = self.env['hr.employee.public'].search_fetch(domain, field_names, offset, limit, order)
@@ -2373,16 +4223,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _search_get_overdue_contract_reminder(self, operator, value):
-            // res = []
-            // assert operator in ('=', '!=', '<>') and value in (True, False), 'Operation not supported'
-            // if (operator == '=' and value is True) or (operator in ('<>', '!=') and value is False):
-            //     search_operator = 'in'
-            // else:
-            //     search_operator = 'not in'
+            // if operator != 'in':
+            //     return NotImplemented
             // today = fields.Date.context_today(self)
             // # get the id of vehicles that have overdue contracts
             // # but exclude those for which a new contract has already been created for them
-            // vehicle_ids = self.env['fleet.vehicle']._search([
+            // return [
             //     ("log_contracts", "any", [
             //         ('expiration_date', '!=', False),
             //         ('expiration_date', '<', today),
@@ -2394,9 +4240,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             ('expiration_date', '>=', today),
             //             ('state', 'in', ['open', 'futur'])
             //         ]),
-            // ])
-            // res.append(('id', search_operator, vehicle_ids))
-            // return res
+            // ]
             */
             return default;
         }
@@ -2405,7 +4249,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, *, bypass_access=False, **kwargs):
             // """
             //     We override the _search because it is the method that checks the access rights
             //     This is correct to override the _search. That way we enforce the fact that calling
@@ -2414,14 +4258,36 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     browsed on the hr.employee model. This can be trusted as the ids of the public
             //     employees exactly match the ids of the related hr.employee.
             // """
-            // if self.browse().has_access('read'):
-            //     return super()._search(domain, offset, limit, order)
+            // if self.browse().has_access('read') or bypass_access:
+            //     return super()._search(domain, offset, limit, order, bypass_access=bypass_access, **kwargs)
+            // domain = Domain(domain)
+            // # HACK Some fields are inherited from the `current_version_id` and may have been already
+            // # optimized, showing current_version_id in the domain, but public employee does not have
+            // # that field and may have fields directly on the model, just change the condition to `id` in
+            // # that case.
+            // domain = domain.map_conditions(lambda cond: Domain('id', cond.operator, cond.value) if cond.field_expr == 'current_version_id' else cond)
             // try:
-            //     ids = self.env['hr.employee.public']._search(domain, offset, limit, order)
-            // except ValueError:
-            //     raise AccessError(_('You do not have access to this document.'))
+            //     ids = self.env['hr.employee.public']._search(domain, offset, limit, order, **kwargs)
+            // except ValueError as e:
+            //     raise AccessError(self.env._('You do not have access to this document.')) from e
             // # the result is expected from this table, so we should link tables
-            // return super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)], order=order)
+            // return super(HrEmployee, self.sudo())._search([('id', 'in', ids)], order=order)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchNewlyHiredInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _search_newly_hired(self, operator, value):
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
+            // new_hire_field = self._get_new_hire_field()
+            // new_hires = self.env['hr.employee'].sudo().search([
+            //     (new_hire_field, '>', fields.Datetime.now() - timedelta(days=90))
+            // ])
+            // return [('id', operator, new_hires.ids)]
             */
             return default;
         }
@@ -2431,18 +4297,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
             // def _search_vehicle_count(self, operator, value):
-            // if operator not in ['=', '!=', '<', '>'] or not isinstance(value, int):
-            //     raise NotImplementedError(_('Operation not supported.'))
-            // fleet_models = self.env['fleet.vehicle.model'].search([])
-            // if operator == '=':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count == value)
-            // elif operator == '!=':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count != value)
-            // elif operator == '<':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count < value)
-            // elif operator == '>':
-            //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count > value)
+            // fleet_models = self.env['fleet.vehicle.model'].search_fetch([], ['vehicle_count'])
+            // fleet_models = fleet_models.filtered_domain([('vehicle_count', operator, value)])
             // return [('id', 'in', fleet_models.ids)]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SearchVersionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _search_version_id(self, operator, value):
+            // if operator in ('any', 'any!'):
+            //     return Domain('current_version_id', operator, value)
+            // domain = Domain('id', operator, value)
+            // return Domain('id', 'in', self.env['hr.version']._search(domain).select('employee_id'))
             */
             return default;
         }
@@ -2474,11 +4344,65 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
             // def _set_odometer(self):
-            // for record in self:
-            //     if record.odometer:
-            //         date = fields.Date.context_today(record)
-            //         data = {'value': record.odometer, 'date': date, 'vehicle_id': record.id}
-            //         self.env['fleet.vehicle.odometer'].create(data)
+            // self.env['fleet.vehicle.odometer'].create([
+            //     {
+            //         'value': vehicle.odometer,
+            //         'date': fields.Date.context_today(vehicle),
+            //         'vehicle_id': vehicle.id,
+            //         'driver_id': vehicle.driver_id.id
+            //     } for vehicle in self if vehicle.odometer
+            // ])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SyncSalaryDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def _sync_salary_distribution(self):
+            // for employee in self:
+            //     current_salary_distribution = employee.salary_distribution or {}
+            //     current_ids = set(map(int, current_salary_distribution.keys()))
+            //     account_ids = set(employee.bank_account_ids.ids)
+            // 
+            //     added_ids = account_ids - current_ids
+            //     removed_ids = current_ids - account_ids
+            //     unchanged_ids = account_ids & current_ids
+            // 
+            //     # Preserve existing data and order
+            //     ordered = sorted([
+            //         (int(i), data) for i, data in current_salary_distribution.items()
+            //         if int(i) in unchanged_ids
+            //     ], key=lambda x: (not x[1].get('amount_is_percentage'), x[1].get('sequence', float('inf'))))
+            // 
+            //     new_salary_distribution = {str(i): data for i, data in ordered}
+            // 
+            //     # Redistribute removed % to first item
+            //     removed_percentage = sum(current_salary_distribution[str(i)]['amount']
+            //         for i in removed_ids if str(i) in current_salary_distribution and current_salary_distribution[str(i)]['amount_is_percentage'])
+            //     if removed_percentage and ordered:
+            //         first_id = str(ordered[0][0])
+            //         if new_salary_distribution[first_id]['amount_is_percentage']:
+            //             new_salary_distribution[first_id]['amount'] += removed_percentage
+            // 
+            //     # Add new entries with remaining %
+            //     total_allocated = sum(d['amount'] for d in new_salary_distribution.values() if d['amount_is_percentage'])
+            //     remaining = max(0.0, 100.0 - total_allocated)
+            //     seq = max((d.get('sequence', 0) for d in new_salary_distribution.values()), default=0)
+            //     amount = employee.currency_id.round(remaining / len(added_ids)) if added_ids else 0.0
+            //     for i, new_id in enumerate(added_ids):
+            //         seq += 1
+            //         if i == len(added_ids) - 1:
+            //             amount = remaining
+            //         new_salary_distribution[str(new_id)] = {
+            //             'amount': amount,
+            //             'amount_is_percentage': True,
+            //             'sequence': seq,
+            //         }
+            //         remaining -= amount
+            // 
+            //     employee.salary_distribution = new_salary_distribution
             */
             return default;
         }
@@ -2501,66 +4425,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        protected async Task<object> ToStoreInternalAsync()
+        public async Task<TEntity> SyncedCommercialFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None):
-            // if fields is None:
-            //     fields = ["avatar_128", "im_status", "name"]
-            // for guest in self:
-            //     data = guest._read_format(
-            //         [field for field in fields if field not in ["avatar_128"]],
-            //         load=False,
-            //     )[0]
-            //     if "avatar_128" in fields:
-            //         data["avatar_128_access_token"] = limited_field_access_token(guest, "avatar_128")
-            //         data["write_date"] = guest.write_date
-            //     store.add(guest, data)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def _synced_commercial_fields(self):
+            // """ Returns the list of fields that are managed by the commercial entity
+            // to which a partner belongs. When modified on a children, update is
+            // propagated until the commercial entity. """
+            // return ['vat']
             */
             return default;
         }
 
-        public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ToStoreDefaultsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def toggle_active(self):
-            // res = super(HrEmployeePrivate, self).toggle_active()
-            // unarchived_employees = self.filtered(lambda employee: employee.active)
-            // unarchived_employees.write({
-            //     'departure_reason_id': False,
-            //     'departure_description': False,
-            //     'departure_date': False
-            // })
-            // 
-            // archived_employees = self.filtered(lambda e: not e.active)
-            // if archived_employees:
-            //     # Empty links to this employees (example: manager, coach, time off responsible, ...)
-            //     employee_fields_to_empty = self._get_employee_m2o_to_empty_on_archived_employees()
-            //     user_fields_to_empty = self._get_user_m2o_to_empty_on_archived_employees()
-            //     employee_domain = [[(field, 'in', archived_employees.ids)] for field in employee_fields_to_empty]
-            //     user_domain = [[(field, 'in', archived_employees.user_id.ids)] for field in user_fields_to_empty]
-            //     employees = self.env['hr.employee'].search(expression.OR(employee_domain + user_domain))
-            //     for employee in employees:
-            //         for field in employee_fields_to_empty:
-            //             if employee[field] in archived_employees:
-            //                 employee[field] = False
-            //         for field in user_fields_to_empty:
-            //             if employee[field] in archived_employees.user_id:
-            //                 employee[field] = False
-            // 
-            // if len(self) == 1 and not self.active and not self.env.context.get('no_wizard', False):
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'name': _('Register Departure'),
-            //         'res_model': 'hr.departure.wizard',
-            //         'view_mode': 'form',
-            //         'target': 'new',
-            //         'context': {'active_id': self.id},
-            //         'views': [[False, 'form']]
-            //     }
-            // return res
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_guest.py) ---
+            // def _to_store_defaults(self, target):
+            // return ["avatar_128", "im_status", "name"]
             */
             return default;
         }
@@ -2584,7 +4467,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def unlink(self):
             // resources = self.mapped('resource_id')
-            // super(HrEmployeePrivate, self).unlink()
+            // super().unlink()
             // return resources.unlink()
             */
             return default;
@@ -2612,36 +4495,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdateAddressAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> UpdateAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def update_address(self, vals):
+            // def _update_address(self, vals):
+            // """ Filter values from vals that are liked to address definition, and
+            // update recordset using super().write to avoid loops and side effects
+            // due to synchronization of address fields through partner hierarchy. """
             // addr_vals = {key: vals[key] for key in self._address_fields() if key in vals}
             // if addr_vals:
-            //     return super().write(addr_vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateFieldsValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
-            // def _update_fields_values(self, fields):
-            // """ Returns dict of write() values for synchronizing ``fields`` """
-            // values = {}
-            // for fname in fields:
-            //     field = self._fields[fname]
-            //     if field.type == 'many2one':
-            //         values[fname] = self[fname].id
-            //     elif field.type == 'one2many':
-            //         raise AssertionError(_('One2Many fields cannot be synchronized as part of `commercial_fields` or `address fields`'))
-            //     elif field.type == 'many2many':
-            //         values[fname] = [Command.set(self[fname].ids)]
-            //     else:
-            //         values[fname] = self[fname]
-            // return values
+            //     super().write(addr_vals)
             */
             return default;
         }
@@ -2658,9 +4522,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if len(name) > 512:
             //     raise UserError(_("Guest's name is too long."))
             // self.name = name
-            // store = Store(self, fields=["avatar_128", "name"])
-            // self.channel_ids._bus_send_store(store)
-            // self._bus_send_store(store)
+            // for channel in self.channel_ids:
+            //     Store(bus_channel=channel).add(self, ["avatar_128", "name"]).bus_send()
+            // Store(bus_channel=self).add(self, ["avatar_128", "name"]).bus_send()
             */
             return default;
         }
@@ -2742,47 +4606,46 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 note=_('Specify the End date of %s', vehicle.driver_id.name))
             // 
             // if 'future_driver_id' in vals and vals['future_driver_id']:
+            //     future_driver = vals['future_driver_id']
             //     state_waiting_list = self.env.ref('fleet.fleet_vehicle_state_waiting_list', raise_if_not_found=False)
-            //     states = self.mapped('state_id').ids if 'state_id' not in vals else [vals['state_id']]
-            //     if not state_waiting_list or state_waiting_list.id not in states:
-            //         future_driver = self.env['res.partner'].browse(vals['future_driver_id'])
-            //         if self.vehicle_type == 'bike':
-            //             future_driver.sudo().write({'plan_to_change_bike': True})
-            //         if self.vehicle_type == 'car':
-            //             future_driver.sudo().write({'plan_to_change_car': True})
+            //     state_new_request = self.env.ref('fleet.fleet_vehicle_state_new_request', raise_if_not_found=False)
+            //     vehicle_types = set(self.filtered(lambda vehicle: not state_waiting_list or\
+            //                         vals.get('state_id', vehicle.state_id.id) not in [state_waiting_list.id, state_new_request.id]).mapped('vehicle_type'))
+            //     if vehicle_types:
+            //         vehicle_read_group = dict(self.env['fleet.vehicle']._read_group(
+            //             domain=[('driver_id', '=', future_driver), ('vehicle_type', 'in', vehicle_types), ('id', 'not in', self.ids)],
+            //             groupby=['vehicle_type'],
+            //             aggregates=['id:recordset'])
+            //         )
+            //         if 'bike' in vehicle_read_group:
+            //             vehicle_read_group['bike'].write({'plan_to_change_bike': True})
+            //         if 'car' in vehicle_read_group:
+            //             vehicle_read_group['car'].write({'plan_to_change_car': True})
             // 
             // if 'active' in vals and not vals['active']:
             //     self.env['fleet.vehicle.log.contract'].search([('vehicle_id', 'in', self.ids)]).active = False
             //     self.env['fleet.vehicle.log.services'].search([('vehicle_id', 'in', self.ids)]).active = False
             // 
-            // su_vals = self._clean_vals_internal_user(vals)
-            // if su_vals:
-            //     self.sudo().write(su_vals)
             // res = super(FleetVehicle, self).write(vals)
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def write(self, vals):
             // if 'work_contact_id' in vals:
-            //     account_ids = vals.get('bank_account_id') or self.bank_account_id.ids
-            //     if account_ids:
-            //         bank_accounts = self.env['res.partner.bank'].sudo().browse(account_ids)
-            //         for bank_account in bank_accounts:
-            //             if vals['work_contact_id'] != bank_account.partner_id.id:
-            //                 if bank_account.allow_out_payment:
-            //                     bank_account.allow_out_payment = False
-            //                 if vals['work_contact_id']:
-            //                     bank_account.partner_id = vals['work_contact_id']
             //     self.message_unsubscribe(self.work_contact_id.ids)
-            //     if vals['work_contact_id']:
-            //         self._message_subscribe([vals['work_contact_id']])
-            // if vals.get('user_id'):
+            // if 'user_id' in vals:
             //     # Update the profile pictures with user, except if provided
             //     user = self.env['res.users'].browse(vals['user_id'])
             //     vals.update(self._sync_user(user, (bool(all(emp.image_1920 for emp in self)))))
             //     self._remove_work_contact_id(user, vals.get('company_id'))
             // if 'work_permit_expiration_date' in vals:
             //     vals['work_permit_scheduled_activity'] = False
-            // res = super(HrEmployeePrivate, self).write(vals)
+            // if vals.get('tz'):
+            //     users_to_update = self.env['res.users']
+            //     for employee in self:
+            //         if employee.user_id and employee.company_id == employee.user_id.company_id and vals['tz'] != employee.user_id.tz:
+            //             users_to_update |= employee.user_id
+            //     if users_to_update:
+            //         users_to_update.write({'tz': vals['tz']})
             // if vals.get('department_id') or vals.get('user_id'):
             //     department_id = vals['department_id'] if vals.get('department_id') else self[:1].department_id.id
             //     # When added to a department or changing user, subscribe to the channels auto-subscribed by department
@@ -2794,6 +4657,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         employee.message_post(body=_(
             //             'Additional Information: \n %(description)s',
             //             description=vals.get('departure_description')))
+            // # Only one write call for all the fields from hr.version
+            // new_vals = vals.copy()
+            // version_vals = {val: new_vals.pop(val) for val in vals if val in self._fields and self._fields[val].inherited}
+            // res = super().write(new_vals)
+            // if 'work_contact_id' in vals:
+            //     account_ids = self.bank_account_ids.ids
+            //     if account_ids:
+            //         bank_accounts = self.env['res.partner.bank'].sudo().browse(account_ids)
+            //         for bank_account in bank_accounts:
+            //             if vals['work_contact_id'] != bank_account.partner_id.id:
+            //                 if bank_account.allow_out_payment:
+            //                     bank_account.allow_out_payment = False
+            //                 if vals['work_contact_id']:
+            //                     bank_account.partner_id = vals['work_contact_id']
+            // if version_vals:
+            //     version_vals['last_modified_date'] = fields.Datetime.now()
+            //     version_vals['last_modified_uid'] = self.env.uid
+            //     self.version_id.write(version_vals)
+            // 
+            //     for employee in self:
+            //         employee._track_set_log_message(Markup("<b>Modified on the Version '%s'</b>") % employee.version_id.display_name)
+            // if res and 'resource_calendar_id' in vals:
+            //     resources_per_calendar_id = defaultdict(lambda: self.env['resource.resource'])
+            //     for employee in self:
+            //         if employee.version_id == employee.current_version_id:
+            //             resources_per_calendar_id[employee.resource_calendar_id.id] += employee.resource_id
+            //     for calendar_id, resources in resources_per_calendar_id.items():
+            //         resources.write({'calendar_id': calendar_id})
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def write(self, vals):
@@ -2819,15 +4710,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             raise ValidationError(_('You cannot archive contacts linked to an active user.\n'
             //                                     'Ask an administrator to archive their associated user first.\n\n'
             //                                     'Linked active users :\n%(names)s', names=", ".join([u.display_name for u in users])))
+            // if vals.get('website'):
+            //     vals['website'] = self._clean_website(vals['website'])
+            // if vals.get('parent_id'):
+            //     vals['company_name'] = False
+            // if vals.get('name'):
+            //     for partner in self:
+            //         for bank in partner.bank_ids:
+            //             if bank.acc_holder_name == partner.name:
+            //                 bank.acc_holder_name = vals['name']
+            // 
+            // # filter to keep only really updated values -> field synchronize goes through
+            // # partner tree and we should avoid infinite loops in case same value is
+            // # updated due to cycles. Use case: updating a property field, which updated
+            // # a computed field, which has an inverse writing the same value on property
+            // # field. Yay.
+            // pre_values_list = [{fname: partner[fname] for fname in vals} for partner in self]
+            // 
             // # res.partner must only allow to set the company_id of a partner if it
             // # is the same as the company of all users that inherit from this partner
             // # (this is to allow the code from res_users to write to the partner!) or
             // # if setting the company_id to False (this is compatible with any user
             // # company)
-            // if vals.get('website'):
-            //     vals['website'] = self._clean_website(vals['website'])
-            // if vals.get('parent_id'):
-            //     vals['company_name'] = False
             // if 'company_id' in vals:
             //     company_id = vals['company_id']
             //     for partner in self:
@@ -2836,19 +4740,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             companies = set(user.company_id for user in partner.user_ids)
             //             if len(companies) > 1 or company not in companies:
             //                 raise UserError(
-            //                     ("The selected company is not compatible with the companies of the related user(s)"))
+            //                     self.env._("The selected company is not compatible with the companies of the related user(s)"))
             //         if partner.child_ids:
             //             partner.child_ids.write({'company_id': company_id})
             // result = True
             // # To write in SUPERUSER on field is_company and avoid access rights problems.
             // if 'is_company' in vals and not self.env.su and self.env.user.has_group('base.group_partner_manager'):
-            //     result = super(Partner, self.sudo()).write({'is_company': vals.get('is_company')})
+            //     result = super(ResPartner, self.sudo()).write({'is_company': vals.get('is_company')})
             //     del vals['is_company']
             // result = result and super().write(vals)
-            // for partner in self:
-            //     if any(u._is_internal() for u in partner.user_ids if u != self.env.user):
-            //         self.env['res.users'].check_access('write')
-            //     partner._fields_sync(vals)
+            // for partner, pre_values in zip(self, pre_values_list, strict=True):
+            //     if internal_users := partner.user_ids.filtered(lambda u: u._is_internal() and u != self.env.user):
+            //         internal_users.check_access('write')
+            //     updated = {fname: fvalue for fname, fvalue in vals.items() if partner[fname] != pre_values[fname]}
+            //     if updated:
+            //         partner._fields_sync(updated)
             // return result
             */
             return default;

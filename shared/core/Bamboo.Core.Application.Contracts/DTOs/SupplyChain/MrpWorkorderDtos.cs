@@ -13,4 +13,9 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Doall { get; set; }
     }
+    
+    public class MrpWorkorderSetStateRequestDto
+    {
+        public object State { get; set; }
+    }
 }

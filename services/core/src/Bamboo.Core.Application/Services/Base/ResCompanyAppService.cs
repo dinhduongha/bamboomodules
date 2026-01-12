@@ -42,12 +42,55 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> AccountPeppolSendWelcomeEmailInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _account_peppol_send_welcome_email(self):
+            // self.ensure_one()
+            // if self.account_peppol_proxy_state not in ('sender', 'receiver'):
+            //     return
+            // 
+            // mail_template = self.env.ref('account_peppol.mail_template_peppol_registration', raise_if_not_found=False)
+            // if not mail_template:
+            //     return
+            // 
+            // mail_template.send_mail(self.id, force_send=True)
+            */
+            return default;
+        }
+
         protected async Task<ResCompany> ActionCheckHashIntegrityInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
             // def _action_check_hash_integrity(self):
             // return self.env.ref('account.action_report_account_hash_integrity').report_action(self.id)
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ActionCloseStockValuationInternalAsync(object at_date)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _action_close_stock_valuation(self, at_date=None):
+            // aml_vals_list = []
+            // accounts_by_product = self._get_accounts_by_product()
+            // 
+            // vals_list = self._get_location_valuation_vals(at_date)
+            // if vals_list:
+            //     # Needed directly since it will impact the accounting stock valuation.
+            //     aml_vals_list += vals_list
+            // 
+            // vals_list = self._get_stock_valuation_account_vals(accounts_by_product, at_date, aml_vals_list)
+            // if vals_list:
+            //     aml_vals_list += vals_list
+            // 
+            // vals_list = self._get_continental_realtime_variation_vals(accounts_by_product, at_date, aml_vals_list)
+            // if vals_list:
+            //     aml_vals_list += vals_list
+            // return aml_vals_list
             */
             return default;
         }
@@ -61,6 +104,25 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_url',
             //     'target': 'self',
             //     'url': f'/hr_attendance/kiosk_mode_menu/{self.env.company.id}',
+            // }
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ActionOpenSmsTwilioAccountManageInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: res_company.py) ---
+            // def _action_open_sms_twilio_account_manage(self):
+            // return {
+            //     'name': _('Manage Twilio SMS'),
+            //     'res_model': 'sms.twilio.account.manage',
+            //     'res_id': False,
+            //     'context': self.env.context,
+            //     'type': 'ir.actions.act_window',
+            //     'views': [(False, 'form')],
+            //     'view_mode': 'form',
+            //     'target': 'new',
             // }
             */
             return default;
@@ -118,7 +180,7 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return {
             //     'type': 'ir.actions.act_window',
-            //     'name': _('Branches'),
+            //     'name': self.env._('Branches'),
             //     'res_model': 'res.company',
             //     'domain': [('parent_id', '=', self.id)],
             //     'context': {
@@ -131,15 +193,24 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResCompany> AssertTwilioSidInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: res_company.py) ---
+            // def _assert_twilio_sid(self):
+            // self.ensure_one()
+            // account_sid = self.sms_twilio_account_sid
+            // if not account_sid or len(account_sid) != 34 or not account_sid.startswith('AC'):
+            //     raise UserError(_("Invalid Twilio Account SID: must start with 'AC' and be 34 characters long."))
+            // if not re.match(r'^[A-Za-z0-9]{32}$', account_sid[2:]):
+            //     raise UserError(_("Invalid Twilio Account SID: must only contain alphanumeric characters after 'AC'."))
+            */
+            return default;
+        }
+
         public async Task<ResCompany> CacheInvalidationFieldsAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
-            // def cache_invalidation_fields(self):
-            // # EXTENDS base
-            // invalidation_fields = super().cache_invalidation_fields()
-            // invalidation_fields.add('check_account_audit_trail')
-            // return invalidation_fields
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def cache_invalidation_fields(self):
             // # This list is not well defined and tests should be improved
@@ -197,7 +268,7 @@ namespace Bamboo.Core.Application.Services
             //         ])
             //         if company_active_users:
             //             # You cannot disable companies with active users
-            //             raise ValidationError(_(
+            //             raise ValidationError(self.env._(
             //                 'The company %(company_name)s cannot be archived because it is still used '
             //                 'as the default company of %(active_users)s users.',
             //                 company_name=company.name,
@@ -207,15 +278,14 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> CheckAuditTrailRecordsInternalAsync()
+        protected async Task<ResCompany> CheckAuditTrailRestrictionInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
-            // def _check_audit_trail_records(self):
-            // if not self.check_account_audit_trail:
-            //     move_count = self.env['account.move'].search_count([('company_id', '=', self.id)], limit=1)
-            //     if move_count:
-            //         raise UserError(_("Can't disable audit trail when there are existing records."))
+            // def _check_audit_trail_restriction(self):
+            // companies = self.filtered(lambda c: not c.restrictive_audit_trail and c.force_restrictive_audit_trail)
+            // if companies:
+            //     raise ValidationError(_("Can't disable restricted audit trail: forced by localization."))
             */
             return default;
         }
@@ -237,7 +307,7 @@ namespace Bamboo.Core.Application.Services
             //         year = datetime.now().year
             // 
             //     max_day = calendar.monthrange(year, int(rec.fiscalyear_last_month))[1]
-            //     if rec.fiscalyear_last_day > max_day:
+            //     if rec.fiscalyear_last_day <= 0 or rec.fiscalyear_last_day > max_day:
             //         raise ValidationError(_("Invalid fiscal year last day"))
             */
             return default;
@@ -441,7 +511,7 @@ namespace Bamboo.Core.Application.Services
             //         for fname in company._get_company_root_delegated_field_names():
             //             if company[fname] != company.parent_id[fname]:
             //                 description = self.env['ir.model.fields']._get("res.company", fname).field_description
-            //                 raise ValidationError(_("The %s of a subsidiary must be the same as it's root company.", description))
+            //                 raise ValidationError(self.env._("The %s of a subsidiary must be the same as it's root company.", description))
             */
             return default;
         }
@@ -452,23 +522,67 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
             // def _check_set_account_price_include(self):
             // if any(company.sudo()._existing_accounting() for company in self):
-            //     raise ValidationError("Cannot change Price Tax computation method on a company that has already started invoicing.")
+            //     raise ValidationError(self.env._("Cannot change Price Tax computation method on a company that has already started invoicing."))
             */
             return default;
         }
 
-        protected async Task<ResCompany> CompanyDefaultGetInternalAsync(object @object, object field)
+        protected async Task<ResCompany> CheckTaxReturnConfigurationInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def _company_default_get(self, object=False, field=False):
-            // """ Returns the user's company
-            //     - Deprecated
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _check_tax_return_configuration(self):
             // """
-            // _logger.warning("The method '_company_default_get' on res.company is deprecated and shouldn't be used anymore")
-            // return self.env.company
+            // To override in localizations to check if the company is properly configured for tax returns.
+            // or related modules are installed.
+            // :raises RedirectWarning: if something is wrong configured.
+            // """
+            // return
             */
             return default;
+        }
+
+        public async Task<ResCompany> CloseStockValuationAsync(Guid id, ResCompanyCloseStockValuationRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def action_close_stock_valuation(self, at_date=None, auto_post=False):
+            // self.ensure_one()
+            // if at_date and isinstance(at_date, str):
+            //     at_date = fields.Date.from_string(at_date)
+            // last_closing_date = self._get_last_closing_date()
+            // if at_date and last_closing_date and at_date < fields.Date.to_date(last_closing_date):
+            //     raise UserError(self.env._('It exists closing entries after the selected date. Cancel them before generate an entry prior to them'))
+            // aml_vals_list = self._action_close_stock_valuation(at_date=at_date)
+            // 
+            // if not aml_vals_list:
+            //     # No account moves to create, so nothing to display.
+            //     raise UserError(_("Everything is correctly closed"))
+            // if not self.account_stock_journal_id:
+            //     raise UserError(self.env._("Please set the Journal for Inventory Valuation in the settings."))
+            // if not self.account_stock_valuation_id:
+            //     raise UserError(self.env._("Please set the Valuation Account for Inventory Valuation in the settings."))
+            // 
+            // moves_vals = {
+            //     'journal_id': self.account_stock_journal_id.id,
+            //     'date': at_date or fields.Date.today(),
+            //     'ref': _('Stock Closing'),
+            //     'line_ids': [Command.create(aml_vals) for aml_vals in aml_vals_list],
+            // }
+            // account_move = self.env['account.move'].create(moves_vals)
+            // self._save_closing_id(account_move.id)
+            // if auto_post:
+            //     account_move._post()
+            // 
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Journal Items"),
+            //     'res_model': 'account.move',
+            //     'res_id': account_move.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResCompany> ComputeAccountEnabledTaxCountryIdsInternalAsync()
@@ -490,6 +604,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> ComputeAccountFiscalCountryGroupCodesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _compute_account_fiscal_country_group_codes(self):
+            // for company in self:
+            //     company.account_fiscal_country_group_codes = (
+            //         company.account_fiscal_country_id.country_group_codes if company.account_fiscal_country_id else ['']
+            //     )
+            */
+            return default;
+        }
+
         protected async Task<ResCompany> ComputeAccountPeppolContactEmailInternalAsync()
         {
             /*
@@ -498,6 +625,17 @@ namespace Bamboo.Core.Application.Services
             // for company in self:
             //     if not company.account_peppol_contact_email:
             //         company.account_peppol_contact_email = company.email
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ComputeAccountPeppolEdiUserInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _compute_account_peppol_edi_user(self):
+            // for company in self:
+            //     company.account_peppol_edi_user = company.account_edi_proxy_client_ids.filtered(lambda u: u.proxy_type == 'peppol')
             */
             return default;
         }
@@ -515,6 +653,17 @@ namespace Bamboo.Core.Application.Services
             //             company.account_peppol_phone_number = company.phone
             //         except ValidationError:
             //             continue
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ComputeAccountStornoInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _compute_account_storno(self):
+            // for company in self:
+            //     company.account_storno = company.account_fiscal_country_id.code in STORNO_MANDATORY_COUNTRIES
             */
             return default;
         }
@@ -633,6 +782,35 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> ComputeDisplayAccountStornoInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _compute_display_account_storno(self):
+            // for company in self:
+            //     company.display_account_storno = company.account_fiscal_country_id.code in STORNO_MANDATORY_COUNTRIES | STORNO_OPTIONAL_COUNTRIES
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ComputeDomesticFiscalPositionIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _compute_domestic_fiscal_position_id(self):
+            // for company in self:
+            //     potential_domestic_fps = company.fiscal_position_ids.filtered_domain(
+            //     Domain('country_id', '=', company.country_id.id)
+            //     | Domain([
+            //             ('country_id', '=', False),
+            //             ('country_group_id', 'in', company.country_id.country_group_ids.ids),
+            //         ]),
+            //     ).sorted(lambda x: x.country_id.id or float('inf')).sorted('sequence')
+            //     company.domestic_fiscal_position_id = potential_domestic_fps[0] if potential_domestic_fps else False
+            */
+            return default;
+        }
+
         protected async Task<ResCompany> ComputeEmailFormattedInternalAsync()
         {
             /*
@@ -645,36 +823,6 @@ namespace Bamboo.Core.Application.Services
             //         company.email_formatted = company.catchall_formatted
             //     else:
             //         company.email_formatted = ''
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeEmailPrimaryColorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_company.py) ---
-            // def _compute_email_primary_color(self):
-            // """ When updating documents layout colors, force usage of same colors
-            // for emails as it is considered as base colors for all communication.
-            // Inverse is not true, people may change email colors without changing
-            // their overall layout. """
-            // for company in self:
-            //     company.email_primary_color = company.primary_color or '#000000'
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeEmailSecondaryColorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_company.py) ---
-            // def _compute_email_secondary_color(self):
-            // """ When updating documents layout colors, force usage of same colors
-            // for emails as it is considered as base colors for all communication.
-            // Inverse is not true, people may change email colors without changing
-            // their overall layout. """
-            // for company in self:
-            //     company.email_secondary_color = company.secondary_color or '#875A7B'
             */
             return default;
         }
@@ -699,15 +847,25 @@ namespace Bamboo.Core.Application.Services
             // def compute_fiscalyear_dates(self, current_date):
             // """
             // Returns the dates of the fiscal year containing the provided date for this company.
-            // :return: A dictionary containing:
-            //     * date_from
-            //     * date_to
+            // 
+            // :return: ``{'date_from': ..., 'date_to': ...}``
             // """
             // self.ensure_one()
             // date_from, date_to = date_utils.get_fiscal_year(current_date, day=self.fiscalyear_last_day, month=int(self.fiscalyear_last_month))
             // return {'date_from': date_from, 'date_to': date_to}
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResCompany> ComputeForceRestrictiveAuditTrailInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _compute_force_restrictive_audit_trail(self):
+            // for company in self:
+            //     company.force_restrictive_audit_trail = False
+            */
+            return default;
         }
 
         protected async Task<ResCompany> ComputeInvoiceTermsHtmlInternalAsync()
@@ -732,7 +890,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_logo_web(self):
             // for company in self:
             //     img = company.partner_id.image_1920
-            //     company.logo_web = img and base64.b64encode(tools.image_process(base64.b64decode(img), size=(180, 0)))
+            //     company.logo_web = img and base64.b64encode(image_process(base64.b64decode(img), size=(180, 0)))
             */
             return default;
         }
@@ -771,20 +929,66 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> ComputePeppolCanSendInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _compute_peppol_can_send(self):
+            // can_send_domain = self.env['account_edi_proxy_client.user']._get_can_send_domain()
+            // for company in self:
+            //     company.peppol_can_send = company.account_peppol_proxy_state in can_send_domain
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ComputePeppolParentCompanyIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _compute_peppol_parent_company_id(self):
+            // self.peppol_parent_company_id = False
+            // for company in self:
+            //     for parent_company in company.parent_ids[::-1][1:]:
+            //         if all((
+            //             company.peppol_eas,
+            //             company.peppol_endpoint,
+            //             company.peppol_eas == parent_company.peppol_eas,
+            //             company.peppol_endpoint == parent_company.peppol_endpoint,
+            //         )):
+            //             company.peppol_parent_company_id = parent_company
+            //             break
+            */
+            return default;
+        }
+
         protected async Task<ResCompany> ComputePeppolPurchaseJournalIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
             // def _compute_peppol_purchase_journal_id(self):
             // for company in self:
-            //     if not company.peppol_purchase_journal_id and company.account_peppol_proxy_state not in ('not_registered', 'rejected'):
+            //     if not company.peppol_purchase_journal_id and company.peppol_can_send:
             //         company.peppol_purchase_journal_id = self.env['account.journal'].search([
             //             *self.env['account.journal']._check_company_domain(company),
             //             ('type', '=', 'purchase'),
             //         ], limit=1)
             //         company.peppol_purchase_journal_id.is_peppol_journal = True
-            //     else:
-            //         company.peppol_purchase_journal_id = company.peppol_purchase_journal_id
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> ComputePeppolSelfBillingReceptionJournalIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _compute_peppol_self_billing_reception_journal_id(self):
+            // for company in self:
+            //     if not company.peppol_self_billing_reception_journal_id and company.peppol_can_send:
+            //         company.peppol_self_billing_reception_journal_id = self.env['account.journal'].search([
+            //             *self.env['account.journal']._check_company_domain(company),
+            //             ('type', '=', 'sale'),
+            //         ], limit=1)
+            //         company.peppol_self_billing_reception_journal_id.is_peppol_journal = True
             */
             return default;
         }
@@ -932,6 +1136,7 @@ namespace Bamboo.Core.Application.Services
             //                 install_demo=False,
             //             )
             //         self.env.cr.precommit.add(try_loading)
+            // companies._set_category_defaults()
             // return companies
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
             // def create(self, vals_list):
@@ -949,8 +1154,8 @@ namespace Bamboo.Core.Application.Services
             //         )
             // return res
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: res_company.py) ---
-            // def create(self, values):
-            // company = super(ResCompany, self).create(values)
+            // def create(self, vals_list):
+            // company = super().create(vals_list)
             // # use sudo as the user could have the right to create a company
             // # but not to create a project. On the other hand, when the company
             // # is created, it is not in the allowed_company_ids on the env
@@ -959,9 +1164,28 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
             // def create(self, vals_list):
             // res = super().create(vals_list)
-            // if not getattr(threading.current_thread(), 'testing', False):
+            // if modules.module.current_test:
+            //     # while running the test, mark enrichment as done
+            //     res.sudo().iap_enrich_auto_done = True
+            // else:
             //     res.iap_enrich_auto()
             // return res
+            --- ODOO METHOD SOURCE (MODULE: payment, FILE: res_company.py) ---
+            // def create(self, vals_list):
+            // companies = super().create(vals_list)
+            // 
+            // # Duplicate installed providers in the new companies.
+            // providers_sudo = self.env['payment.provider'].sudo().search(
+            //     [('company_id', '=', self.env.user.company_id.id), ('module_state', '=', 'installed')]
+            // )
+            // for company in companies:
+            //     if company.parent_id:  # The company is a branch.
+            //         continue  # Only consider top-level companies for provider duplication.
+            // 
+            //     for provider_sudo in providers_sudo:
+            //         provider_sudo.copy({'company_id': company.id})
+            // 
+            // return companies
             --- ODOO METHOD SOURCE (MODULE: product, FILE: res_company.py) ---
             // def create(self, vals_list):
             // companies = super().create(vals_list)
@@ -991,8 +1215,7 @@ namespace Bamboo.Core.Application.Services
             //     company.sudo()._create_per_company_picking_types()
             //     company.sudo()._create_per_company_rules()
             //     company.sudo()._set_per_company_inter_company_locations(inter_company_location)
-            // test_mode = getattr(threading.current_thread(), 'testing', False)
-            // if test_mode:
+            // if modules.module.current_test:
             //     self.env['stock.warehouse'].sudo().create([{'company_id': company.id} for company in companies])
             // return companies
             --- ODOO METHOD SOURCE (MODULE: web, FILE: models.py) ---
@@ -1190,12 +1413,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_company.py) ---
             // def _create_inventory_loss_location(self):
-            // parent_location = self.env.ref('stock.stock_location_locations_virtual', raise_if_not_found=False)
             // for company in self:
             //     inventory_loss_location = self.env['stock.location'].create({
             //         'name': 'Inventory adjustment',
             //         'usage': 'inventory',
-            //         'location_id': parent_location.id,
             //         'company_id': company.id,
             //     })
             //     self.env['ir.default'].set('product.template', 'property_stock_inventory', inventory_loss_location.id, company_id=company.id)
@@ -1280,7 +1501,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_company.py) ---
             // def create_missing_scrap_location(self):
             // company_ids  = self.env['res.company'].search([])
-            // companies_having_scrap_loc = self.env['stock.location'].search([('scrap_location', '=', True)]).mapped('company_id')
+            // companies_having_scrap_loc = self.env['stock.location'].search([('usage', '=', 'inventory')]).mapped('company_id')
             // company_without_property = company_ids - companies_having_scrap_loc
             // company_without_property._create_scrap_location()
             */
@@ -1321,10 +1542,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: res_company.py) ---
             // def _create_missing_subcontracting_dropshipping_rules(self):
-            // route = self.env.ref('mrp_subcontracting_dropshipping.route_subcontracting_dropshipping')
-            // company_ids = self.env['res.company'].search([])
-            // company_has_rules = self.env['stock.rule'].search([('route_id', '=', route.id)]).mapped('company_id')
-            // company_todo_rules = company_ids - company_has_rules
+            // route = self.env.ref('stock_dropshipping.route_drop_shipping')
+            // company_todo_rules = self.env['stock.rule'].search([('route_id', '=', route.id)]).mapped('company_id')
             // company_todo_rules._create_subcontracting_dropshipping_rules()
             */
             return default;
@@ -1459,7 +1678,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: res_company.py) ---
             // def _create_per_company_sequences(self):
-            // super(Company, self)._create_per_company_sequences()
+            // super()._create_per_company_sequences()
             // self._create_unbuild_sequence()
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: res_company.py) ---
             // def _create_per_company_sequences(self):
@@ -1482,12 +1701,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_company.py) ---
             // def _create_production_location(self):
-            // parent_location = self.env.ref('stock.stock_location_locations_virtual', raise_if_not_found=False)
             // for company in self:
             //     production_location = self.env['stock.location'].create({
             //         'name': 'Production',
             //         'usage': 'production',
-            //         'location_id': parent_location.id,
             //         'company_id': company.id,
             //     })
             //     self.env['ir.default'].set('product.template', 'property_stock_production', production_location.id, company_id=company.id)
@@ -1516,14 +1733,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_company.py) ---
             // def _create_scrap_location(self):
-            // parent_location = self.env.ref('stock.stock_location_locations_virtual', raise_if_not_found=False)
             // for company in self:
             //     scrap_location = self.env['stock.location'].create({
             //         'name': 'Scrap',
             //         'usage': 'inventory',
-            //         'location_id': parent_location.id,
             //         'company_id': company.id,
-            //         'scrap_location': True,
             //     })
             */
             return default;
@@ -1586,7 +1800,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: res_company.py) ---
             // def _create_subcontracting_dropshipping_rules(self):
-            // route = self.env.ref('mrp_subcontracting_dropshipping.route_subcontracting_dropshipping')
+            // dropship_route = self.env.ref('stock_dropshipping.route_drop_shipping')
             // supplier_location = self.env.ref('stock.stock_location_suppliers')
             // vals = []
             // for company in self:
@@ -1603,7 +1817,7 @@ namespace Bamboo.Core.Application.Services
             //             'location_dest_id': subcontracting_location.id,
             //             'location_src_id': supplier_location.id,
             //             'procure_method': 'make_to_stock',
-            //             'route_id': route.id,
+            //             'route_id': dropship_route.id,
             //             'picking_type_id': dropship_picking_type.id,
             //             'company_id': company.id,
             //         })
@@ -1637,14 +1851,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: res_company.py) ---
             // def _create_subcontracting_location(self):
-            // parent_location = self.env.ref('stock.stock_location_locations', raise_if_not_found=False)
             // for company in self:
             //     subcontracting_location = self.env['stock.location'].create({
-            //         'name': _('Subcontracting Location'),
+            //         'name': _('Subcontracting'),
             //         'usage': 'internal',
-            //         'location_id': parent_location.id,
             //         'company_id': company.id,
-            //         'is_subcontracting_location': True,
             //     })
             //     self.env['ir.default'].set(
             //         "res.partner",
@@ -1666,12 +1877,10 @@ namespace Bamboo.Core.Application.Services
             //    in case of resuply routes between warehouses belonging to the same company, because
             //    we don't want to create accounting entries at that time.
             // '''
-            // parent_location = self.env.ref('stock.stock_location_locations', raise_if_not_found=False)
             // for company in self:
             //     location = self.env['stock.location'].create({
             //         'name': _('Inter-warehouse transit'),
             //         'usage': 'transit',
-            //         'location_id': parent_location and parent_location.id or False,
             //         'company_id': company.id,
             //         'active': False
             //     })
@@ -1704,6 +1913,21 @@ namespace Bamboo.Core.Application.Services
             //     })
             // if unbuild_vals:
             //     self.env['ir.sequence'].create(unbuild_vals)
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> CronPostStockValuationInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _cron_post_stock_valuation(self):
+            // domain = Domain([('inventory_period', '=', 'daily'), ('inventory_valuation', '!=', 'real_time')])
+            // if fields.Date.today() == fields.Date.today() + relativedelta(day=31):
+            //     domain = domain & Domain([('inventory_period', '=', 'monthly')])
+            // companies = self.env['res.company'].search(domain)
+            // for company in companies:
+            //     company.action_close_stock_valuation(auto_post=True)
             */
             return default;
         }
@@ -1769,13 +1993,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: res_company.py) ---
             // def _default_project_time_mode_id(self):
-            // uom = self.env.ref('uom.product_uom_hour', raise_if_not_found=False)
-            // wtime = self.env.ref('uom.uom_categ_wtime')
-            // if not uom:
-            //     uom = self.env['uom.uom'].search([('category_id', '=', wtime.id), ('uom_type', '=', 'reference')], limit=1)
-            // if not uom:
-            //     uom = self.env['uom.uom'].search([('category_id', '=', wtime.id)], limit=1)
-            // return uom
+            // return self.env.ref('uom.product_uom_hour', raise_if_not_found=False)
             */
             return default;
         }
@@ -1785,13 +2003,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: res_company.py) ---
             // def _default_timesheet_encode_uom_id(self):
-            // uom = self.env.ref('uom.product_uom_hour', raise_if_not_found=False)
-            // wtime = self.env.ref('uom.uom_categ_wtime')
-            // if not uom:
-            //     uom = self.env['uom.uom'].search([('category_id', '=', wtime.id), ('uom_type', '=', 'reference')], limit=1)
-            // if not uom:
-            //     uom = self.env['uom.uom'].search([('category_id', '=', wtime.id)], limit=1)
-            // return uom
+            // return self.env.ref('uom.product_uom_hour', raise_if_not_found=False)
             */
             return default;
         }
@@ -1818,9 +2030,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
             // def _enrich(self):
             // """ This method calls the partner autocomplete service from IAP to enrich
-            // partner related fields of the company.
-            // 
-            // :return bool: either done, either failed """
+            // partner related fields of the company. """
             // self.ensure_one()
             // _logger.info("Starting enrich of company %s (%s)", self.name, self.id)
             // 
@@ -1830,7 +2040,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // company_data = self.env['res.partner'].enrich_by_domain(company_domain, timeout=COMPANY_AC_TIMEOUT)
             // if not company_data or company_data.get("error"):
-            //     return
+            //     return False
             // 
             // company_data = {field: value for field, value in company_data.items()
             //                 if field in self.partner_id._fields and value and (field == 'image_1920' or not self.partner_id[field])}
@@ -1869,6 +2079,48 @@ namespace Bamboo.Core.Application.Services
             //     f"{self.fields_get([field])[field]['string']} ({format_date(self.env, lock_date)})"
             //     for lock_date, field in sorted(lock_dates)
             // ])
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetAccountsByProductInternalAsync(object products)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_accounts_by_product(self, products=None):
+            // if not products:
+            //     products = self.env['product.product'].with_company(self).search([('is_storable', '=', True)])
+            // 
+            // accounts_by_product = {}
+            // for product in products:
+            //     accounts = product._get_product_accounts()
+            //     accounts_by_product[product] = {
+            //         'valuation': accounts['stock_valuation'],
+            //         'variation': accounts['stock_variation'],
+            //         'expense': accounts['expense'],
+            //     }
+            // return accounts_by_product
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetActivePeppolParentCompanyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _get_active_peppol_parent_company(self):
+            // """
+            // Gets the closest parent company (relative from the current)
+            // that has an active peppol connection.
+            // :return: res.company record: containing single company if found, empty if not.
+            // """
+            // self.ensure_one()
+            // 
+            // for parent_company in self.sudo().parent_ids[::-1][1:]:  # loop through parent companies starting from the closest parent
+            //     if parent_company.sudo().peppol_can_send:
+            //         return parent_company
+            // 
+            // return self.env['res.company']
             */
             return default;
         }
@@ -1935,10 +2187,14 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
             // def _get_company_domain(self):
             // """ Extract the company domain to be used by IAP services.
+            // 
             // The domain is extracted from the website or the email information.
-            // e.g:
-            //     - www.info.proximus.be -> proximus.be
-            //     - info@proximus.be -> proximus.be """
+            // 
+            // >>> company.email, company._get_company_domain()
+            // ("info@proximus.be", "proximus.be")
+            // >>> company.website, company._get_company_domain()
+            // ("www.info.proximus.be", "proximus.be")
+            // """
             // self.ensure_one()
             // 
             // company_domain = email_domain_extract(self.email) if self.email else False
@@ -1950,6 +2206,52 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // 
             // return company_domain
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetCompanyInfoOnPeppolInternalAsync(object edi_identification)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _get_company_info_on_peppol(self, edi_identification):
+            // 
+            // def _get_peppol_provider(participant_info):
+            //     if not participant_info:
+            //         return None
+            //     services = participant_info.get('services', [])
+            //     if not services:
+            //         return None
+            // 
+            //     service_href = services[0].get('href')
+            // 
+            //     provider_name = None
+            //     with contextlib.suppress(requests.exceptions.RequestException, etree.XMLSyntaxError):
+            //         response = requests.get(service_href, timeout=TIMEOUT)
+            //         if response.status_code == 200:
+            //             access_point_info = etree.fromstring(response.content)
+            //             provider_name = access_point_info.findtext('.//{*}ServiceDescription')
+            //     return provider_name
+            // 
+            // self.ensure_one()
+            // is_company_on_peppol = False
+            // external_provider = None
+            // error_msg = ''
+            // if (
+            //     (participant_info := self.partner_id._peppol_lookup_participant(edi_identification)) is not None
+            //     and (is_company_on_peppol := self.partner_id._check_peppol_participant_exists(participant_info, edi_identification))
+            // ):
+            //     error_msg = _(
+            //         "A participant with these details has already been registered on the network. "
+            //         "If you have previously registered to a Peppol service, please deregister."
+            //     )
+            //     if (external_provider := _get_peppol_provider(participant_info)) and "Odoo" not in external_provider:
+            //         error_msg += _("The Peppol service that is used is %s.", external_provider)
+            // return {
+            //     'is_on_peppol': is_company_on_peppol,
+            //     'external_provider': external_provider,
+            //     'error_msg': error_msg,
+            // }
             */
             return default;
         }
@@ -1975,6 +2277,61 @@ namespace Bamboo.Core.Application.Services
             // :rtype: set
             // """
             // return ['currency_id']
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetContinentalRealtimeVariationValsInternalAsync(object accounts_by_product, object at_date, object extra_aml_vals_list)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_continental_realtime_variation_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None):
+            // """ In continental perpetual the inventory variation is never posted.
+            // This method compute the variation for a period and post it.
+            // """
+            // extra_balance = self._get_extra_balance(extra_aml_vals_list)
+            // 
+            // fiscal_year_date_from = self.compute_fiscalyear_dates(fields.Date.today())['date_from']
+            // 
+            // amls_vals_list = []
+            // accounting_data_today = self.stock_accounting_value(accounts_by_product)
+            // accounting_data_last_period = self.stock_accounting_value(accounts_by_product, at_date=fiscal_year_date_from)
+            // 
+            // accounts = accounting_data_today.keys() | accounting_data_last_period.keys()
+            // 
+            // for account in accounts:
+            //     variation_acc = account.account_stock_variation_id
+            //     expense_acc = account.account_stock_expense_id
+            // 
+            //     if not variation_acc or not expense_acc:
+            //         continue
+            // 
+            //     balance_today = accounting_data_today.get(account, 0) - extra_balance[account]
+            //     balance_last_period = accounting_data_last_period.get(account, 0)
+            //     balance_over_period = balance_today - balance_last_period
+            // 
+            //     current_balance_domain = Domain([
+            //         ('account_id', '=', variation_acc.id),
+            //         ('company_id', '=', self.id),
+            //         ('parent_state', '=', 'posted'),
+            //     ])
+            //     if at_date:
+            //         current_balance_domain &= Domain([('date', '<=', at_date)])
+            //     existing_balance = sum(self.env['account.move.line'].search(current_balance_domain).mapped('balance'))
+            //     balance_over_period += existing_balance
+            // 
+            //     if self.currency_id.is_zero(balance_over_period):
+            //         continue
+            // 
+            //     amls_vals = self._prepare_inventory_aml_vals(
+            //         expense_acc,
+            //         variation_acc,
+            //         balance_over_period,
+            //         _('Closing: Stock Variation Over Period'),
+            //     )
+            //     amls_vals_list += amls_vals
+            // 
+            // return amls_vals_list
             */
             return default;
         }
@@ -2014,7 +2371,7 @@ namespace Bamboo.Core.Application.Services
             //     'ref': _('Opening Journal Entry'),
             //     'company_id': self.id,
             //     'journal_id': default_journal.id,
-            //     'date': self.account_opening_date - timedelta(days=1),
+            //     'date': (self.account_opening_date or fields.Date.start_of(fields.Date.today(), 'year')) - timedelta(days=1),
             // }
             */
             return default;
@@ -2057,6 +2414,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> GetExtraBalanceInternalAsync(object vals_list)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_extra_balance(self, vals_list=None):
+            // extra_balance = defaultdict(float)
+            // if not vals_list:
+            //     return extra_balance
+            // for vals in vals_list:
+            //     extra_balance[vals['account_id']] += (vals['debit'] - vals['credit'])
+            // return extra_balance
+            */
+            return default;
+        }
+
         public async Task<ResCompany> GetFiscalDatesAsync(Guid id, ResCompanyGetFiscalDatesRequestDto input)
         {
             /*
@@ -2083,6 +2455,94 @@ namespace Bamboo.Core.Application.Services
             // return results
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ResCompany> GetLastClosingDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_last_closing_date(self):
+            // self.ensure_one()
+            // key = f'{self.id}.stock_valuation_closing_ids'
+            // closing_ids = self.env['ir.config_parameter'].sudo().get_param(key)
+            // closing_ids = closing_ids.split(',') if closing_ids else []
+            // closing = self.env['account.move']
+            // while not closing and closing_ids:
+            //     closing_id = closing_ids.pop(-1)
+            //     closing_id = int(closing_id)
+            //     closing = self.env['account.move'].browse(closing_id).exists().filtered(lambda am: am.state == 'posted')
+            // if not closing:
+            //     return False
+            // am_state_field = self.env['ir.model.fields'].search([('model', '=', 'account.move'), ('name', '=', 'state')], limit=1)
+            // state_tracking = closing.message_ids.tracking_value_ids.filtered(lambda t: t.field_id == am_state_field).sorted('id')
+            // return state_tracking[-1:].create_date or fields.Datetime.to_datetime(closing.date)
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetLocationValuationValsInternalAsync(object at_date, object location_domain)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_location_valuation_vals(self, at_date=None, location_domain=False):
+            // location_domain = Domain.AND([
+            //     location_domain or [],
+            //     [('valuation_account_id', '!=', False)],
+            //     [('company_id', '=', self.id)],
+            // ])
+            // amls_vals_list = []
+            // valued_location = self.env['stock.location'].search(location_domain)
+            // last_closing_date = self._get_last_closing_date()
+            // moves_base_domain = Domain([
+            //     ('product_id.is_storable', '=', True),
+            //     ('product_id.valuation', '=', 'periodic')
+            // ])
+            // if last_closing_date:
+            //     moves_base_domain &= Domain([('date', '>', last_closing_date)])
+            // if at_date:
+            //     moves_base_domain &= Domain([('date', '<=', at_date)])
+            // moves_in_domain = Domain([
+            //     ('is_out', '=', True),
+            //     ('company_id', '=', self.id),
+            //     ('location_dest_id', 'in', valued_location.ids),
+            // ]) & moves_base_domain
+            // moves_in_by_location = self.env['stock.move']._read_group(
+            //     moves_in_domain,
+            //     ['location_dest_id', 'product_category_id'],
+            //     ['value:sum'],
+            // )
+            // moves_out_domain = Domain([
+            //     ('is_in', '=', True),
+            //     ('company_id', '=', self.id),
+            //     ('location_id', 'in', valued_location.ids),
+            // ]) & moves_base_domain
+            // moves_out_by_location = self.env['stock.move']._read_group(
+            //     moves_out_domain,
+            //     ['location_id', 'product_category_id'],
+            //     ['value:sum'],
+            // )
+            // account_balance = defaultdict(float)
+            // for location, category, value in moves_in_by_location:
+            //     stock_valuation_acc = category.property_stock_valuation_account_id or self.account_stock_valuation_id
+            //     account_balance[location.valuation_account_id, stock_valuation_acc] += value
+            // 
+            // for location, category, value in moves_out_by_location:
+            //     stock_valuation_acc = category.property_stock_valuation_account_id or self.account_stock_valuation_id
+            //     account_balance[location.valuation_account_id, stock_valuation_acc] -= value
+            // 
+            // for (location_account, stock_account), balance in account_balance.items():
+            //     if balance == 0:
+            //         continue
+            //     amls_vals = self._prepare_inventory_aml_vals(
+            //         location_account,
+            //         stock_account,
+            //         balance,
+            //         _('Closing: Location Reclassification - [%(account)s]', account=location_account.display_name),
+            //     )
+            //     amls_vals_list += amls_vals
+            // return amls_vals_list
+            */
+            return default;
         }
 
         protected async Task<ResCompany> GetLockDateViolationsInternalAsync(object accounting_date, object fiscalyear, object sale, object purchase, object tax, object hard)
@@ -2181,16 +2641,28 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResCompany> GetPeppolEdiModeInternalAsync()
+        protected async Task<ResCompany> GetPeppolEdiModeInternalAsync(object temporary_eas)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
-            // def _get_peppol_edi_mode(self):
+            // def _get_peppol_edi_mode(self, temporary_eas=False):
             // self.ensure_one()
             // config_param = self.env['ir.config_parameter'].sudo().get_param('account_peppol.edi.mode')
             // # by design, we can only have zero or one proxy user per company with type Peppol
             // peppol_user = self.sudo().account_edi_proxy_client_ids.filtered(lambda u: u.proxy_type == 'peppol')
-            // return peppol_user.edi_mode or config_param or 'prod'
+            // demo_if_demo_identifier = 'demo' if (temporary_eas or self.peppol_eas) == 'odemo' else False
+            // return demo_if_demo_identifier or peppol_user.edi_mode or config_param or 'prod'
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetPeppolWebhookEndpointInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _get_peppol_webhook_endpoint(self):
+            // self.ensure_one()
+            // return urljoin(self.get_base_url(), '/peppol/webhook')
             */
             return default;
         }
@@ -2202,7 +2674,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_public_user(self):
             // self.ensure_one()
             // # We need sudo to be able to see public users from others companies too
-            // public_users = self.env.ref('base.group_public').sudo().with_context(active_test=False).users
+            // public_users = self.env.ref('base.group_public').sudo().with_context(active_test=False).all_user_ids
             // public_users_for_company = public_users.filtered(lambda user: user.company_id == self)
             // 
             // if public_users_for_company:
@@ -2214,6 +2686,23 @@ namespace Bamboo.Core.Application.Services
             //         'company_id': self.id,
             //         'company_ids': [(6, 0, [self.id])],
             //     })
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetSmsApiClassInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms, FILE: res_company.py) ---
+            // def _get_sms_api_class(self):
+            // self.ensure_one()
+            // return SmsApi
+            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: res_company.py) ---
+            // def _get_sms_api_class(self):
+            // self.ensure_one()
+            // if self.sms_provider == 'twilio':
+            //     return SmsApiTwilio
+            // return super()._get_sms_api_class()
             */
             return default;
         }
@@ -2243,6 +2732,57 @@ namespace Bamboo.Core.Application.Services
             //     'social_tiktok': website_id.social_tiktok or social_media_links.get('social_tiktok'),
             // })
             // return social_media_links
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetStockValuationAccountValsInternalAsync(object accounts_by_product, object at_date, object extra_aml_vals_list)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _get_stock_valuation_account_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None):
+            // amls_vals_list = []
+            // if not accounts_by_product:
+            //     return amls_vals_list
+            // 
+            // extra_balance = self._get_extra_balance(extra_aml_vals_list)
+            // 
+            // inventory_data = self.stock_value(accounts_by_product, at_date)
+            // accounting_data = self.stock_accounting_value(accounts_by_product, at_date)
+            // 
+            // accounts = inventory_data.keys() | accounting_data.keys()
+            // for account in accounts:
+            //     account_variation = account.account_stock_variation_id
+            //     if not account_variation:
+            //         account_variation = self.env.company.expense_account_id
+            //     if not account_variation:
+            //         continue
+            //     balance = inventory_data.get(account, 0) - accounting_data.get(account, 0)
+            //     balance -= extra_balance.get(account.id, 0)
+            // 
+            //     if self.currency_id.is_zero(balance):
+            //         continue
+            // 
+            //     amls_vals = self._prepare_inventory_aml_vals(
+            //         account,
+            //         account_variation,
+            //         balance,
+            //         _('Closing: Stock Variation Global for company [%(company)s]', company=self.display_name),
+            //     )
+            //     amls_vals_list += amls_vals
+            // 
+            // return amls_vals_list
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> GetTextValidationInternalAsync(object confirmation_type)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_company.py) ---
+            // def _get_text_validation(self, confirmation_type):
+            // self.ensure_one()
+            // return bool(self.stock_text_confirmation and self.stock_confirmation_type == confirmation_type)
             */
             return default;
         }
@@ -2405,7 +2945,7 @@ namespace Bamboo.Core.Application.Services
             // arch, view = super()._get_view(view_id, view_type, **options)
             // 
             // if view_type == 'form':
-            //     for i, node in enumerate(arch.xpath("//field[@name='name' or @name='vat']")):
+            //     for i, node in enumerate(arch.xpath("//field[@name='name' or @name='vat' or @name='duns']")):
             //         node.set('widget', 'field_partner_autocomplete')
             // 
             // return arch, view
@@ -2494,6 +3034,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<ResCompany> HaveUnauthorizedPeppolParentCompanyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _have_unauthorized_peppol_parent_company(self):
+            // """
+            // Returns True if the company is using the active peppol connection of the parent company
+            // but the user does not have access to that parent company.
+            // """
+            // self.ensure_one()
+            // parent_company = self.peppol_parent_company_id
+            // return parent_company and parent_company not in self.env.user.company_ids
+            */
+            return default;
+        }
+
         public async Task<ResCompany> IapEnrichAutoAsync(Guid id)
         {
             /*
@@ -2501,7 +3057,7 @@ namespace Bamboo.Core.Application.Services
             // def iap_enrich_auto(self):
             // """ Enrich company. This method should be called by automatic processes
             // and a protection is added to avoid doing enrich in a loop. """
-            // if self.env.user._is_system():
+            // if self.env.user._is_system() and self.env.registry.ready:
             //     for company in self.filtered(lambda company: not company.iap_enrich_auto_done):
             //         company._enrich()
             //     self.iap_enrich_auto_done = True
@@ -2519,7 +3075,7 @@ namespace Bamboo.Core.Application.Services
             //     paperformat_euro = self.env.ref('base.paperformat_euro', False)
             //     if paperformat_euro:
             //         company.write({'paperformat_id': paperformat_euro.id})
-            // sup = super(Company, self)
+            // sup = super()
             // if hasattr(sup, 'init'):
             //     sup.init()
             */
@@ -2587,9 +3143,9 @@ namespace Bamboo.Core.Application.Services
             //     # No automatic install during the loading of a chart_template
             //     return False
             // if res := super().install_l10n_modules():
-            //     self.env.flush_all()
-            //     self.env.reset()     # clear the set of environments
-            //     env = self.env()     # get an environment that refers to the new registry
+            //     env = self.env
+            //     env.flush_all()
+            //     env.transaction.reset()
             //     for company in self.filtered(lambda c: c.country_id and not c.chart_template):
             //         template_code = company.parent_id.chart_template or self.env['account.chart.template']._guess_chart_template(company.country_id)
             //         if template_code != 'generic_coa':
@@ -2606,25 +3162,14 @@ namespace Bamboo.Core.Application.Services
             // is_ready_and_not_test = (
             //     not tools.config['test_enable']
             //     and (self.env.registry.ready or not self.env.registry._init)
-            //     and not getattr(threading.current_thread(), 'testing', False)
+            //     and not modules.module.current_test
+            //     and not self.env.context.get('install_mode')  # due to savepoint when importing the file
             // )
             // if uninstalled_modules and is_ready_and_not_test:
             //     return uninstalled_modules.button_immediate_install()
             // return is_ready_and_not_test
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResCompany> InstallModulesInternalAsync(object module_names)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: res_company.py) ---
-            // def _install_modules(self, module_names):
-            // modules_sudo = self.env['ir.module.module'].sudo().search([('name', 'in', module_names)])
-            // STATES = ['installed', 'to install', 'to upgrade']
-            // modules_sudo.filtered(lambda m: m.state not in STATES).button_immediate_install()
-            */
-            return default;
         }
 
         protected async Task<ResCompany> InverseCityInternalAsync()
@@ -2666,14 +3211,34 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
             // def _inverse_peppol_purchase_journal_id(self):
             // for company in self:
-            //     # This avoid having 2 or more journals from the same company with
+            //     # This avoid having 2 or more purchase journals from the same company with
             //     # `is_peppol_journal` set to True (which could occur after changes).
             //     journals_to_reset = self.env['account.journal'].search([
             //         ('company_id', '=', company.id),
+            //         ('type', '=', 'purchase'),
             //         ('is_peppol_journal', '=', True),
             //     ])
             //     journals_to_reset.is_peppol_journal = False
             //     company.peppol_purchase_journal_id.is_peppol_journal = True
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> InversePeppolSelfBillingReceptionJournalIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _inverse_peppol_self_billing_reception_journal_id(self):
+            // for company in self:
+            //     # This avoid having 2 or more sale journals from the same company with
+            //     # `is_peppol_journal` set to True (which could occur after changes).
+            //     journals_to_reset = self.env['account.journal'].search([
+            //         ('company_id', '=', company.id),
+            //         ('type', '=', 'sale'),
+            //         ('is_peppol_journal', '=', True),
+            //     ])
+            //     journals_to_reset.is_peppol_journal = False
+            //     company.peppol_self_billing_reception_journal_id.is_peppol_journal = True
             */
             return default;
         }
@@ -2722,21 +3287,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ResCompany> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_company.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('id', '=', data['pos.config']['data'][0]['company_id'])]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', '=', config.company_id.id)]
             */
             return default;
         }
 
-        protected async Task<ResCompany> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResCompany> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_company.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return [
             //     'id', 'currency_id', 'email', 'website', 'company_registry', 'vat', 'name', 'phone', 'partner_id',
             //     'country_id', 'state_id', 'tax_calculation_rounding_method', 'nomenclature_id', 'point_of_sale_use_ticket_qr_code',
@@ -2820,22 +3385,16 @@ namespace Bamboo.Core.Application.Services
             //             "Peppol BIS Billing UBL Invoice V3",
             //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1":
             //             "Peppol BIS Billing UBL CreditNote V3",
+            //         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:selfbilling:3.0::2.1": "Peppol BIS Self-Billing UBL Invoice V3",
+            //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:selfbilling:3.0::2.1": "Peppol BIS Self-Billing UBL CreditNote V3",
             //         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:nen.nl:nlcius:v1.0::2.1":
             //             "SI-UBL 2.0 Invoice",
             //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:nen.nl:nlcius:v1.0::2.1":
             //             "SI-UBL 2.0 CreditNote",
-            //         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:sg:3.0::2.1":
-            //             "SG Peppol BIS Billing 3.0 Invoice",
-            //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:sg:3.0::2.1":
-            //             "SG Peppol BIS Billing 3.0 Credit Note",
             //         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0::2.1":
             //             "XRechnung UBL Invoice V2.0",
             //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0::2.1":
             //             "XRechnung UBL CreditNote V2.0",
-            //         "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0::2.1":
-            //             "AU-NZ Peppol BIS Billing 3.0 Invoice",
-            //         "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0::2.1":
-            //             "AU-NZ Peppol BIS Billing 3.0 CreditNote",
             //     }
             // }
             */
@@ -2853,6 +3412,33 @@ namespace Bamboo.Core.Application.Services
             //     for module, identifiers in self._peppol_modules_document_types().items()
             //     for identifier, document_name in identifiers.items()
             // }
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> PrepareInventoryAmlValsInternalAsync(object debit_acc, object credit_acc, object balance, object @ref, Guid product_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _prepare_inventory_aml_vals(self, debit_acc, credit_acc, balance, ref, product_id=False):
+            // if balance < 0:
+            //     temp = credit_acc
+            //     credit_acc = debit_acc
+            //     debit_acc = temp
+            //     balance = abs(balance)
+            // return [{
+            //     'account_id': credit_acc.id,
+            //     'name': ref,
+            //     'debit': 0,
+            //     'credit': balance,
+            //     'product_id': product_id,
+            // }, {
+            //     'account_id': debit_acc.id,
+            //     'name': ref,
+            //     'debit': balance,
+            //     'credit': 0,
+            //     'product_id': product_id,
+            // }]
             */
             return default;
         }
@@ -2902,40 +3488,32 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> RunPaymentOnboardingStepInternalAsync(Guid menu_id)
+        protected async Task<ResCompany> ResetPeppolConfigurationInternalAsync(object soft)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: payment, FILE: res_company.py) ---
-            // def _run_payment_onboarding_step(self, menu_id=None):
-            // """ Install the suggested payment modules and configure the providers.
-            // 
-            // It's checked that the current company has a Chart of Account.
-            // 
-            // :param int menu_id: The menu from which the user started the onboarding step, as an
-            //                     `ir.ui.menu` id
-            // :return: The action returned by `action_stripe_connect_account`
-            // :rtype: dict
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
+            // def _reset_peppol_configuration(self, soft=False):
             // """
-            // self.env.company.get_chart_of_accounts_or_fail()
+            // Reset all peppol configuration fields to their default value before registering.
+            // The EAS, endpoint, email, and phone number will be recomputed so that branch companies that uses
+            // their parent configuration can have their default values back
+            // (as these fields will be overwritten for them when they register as parent).
             // 
-            // self._install_modules(['payment_stripe'])
+            // :param soft: If True, will only set state to unregistered, but keep peppol config intact, so the user can register again
+            // """
+            // self.account_peppol_proxy_state = 'not_registered'
+            // self.account_peppol_migration_key = False
+            // if not soft:
+            //     self.peppol_external_provider = False
+            //     self.peppol_eas = False
+            //     self.peppol_endpoint = False
+            //     self.account_peppol_contact_email = False
+            //     self.account_peppol_phone_number = False
             // 
-            // # Create a new env including the freshly installed module(s)
-            // new_env = api.Environment(self.env.cr, self.env.uid, self.env.context)
-            // 
-            // # Configure Stripe
-            // stripe_provider = new_env['payment.provider'].search([
-            //     *self.env['payment.provider']._check_company_domain(self.env.company),
-            //     ('code', '=', 'stripe')
-            // ], limit=1)
-            // if not stripe_provider:
-            //     base_provider = self.env.ref('payment.payment_provider_stripe')
-            //     # Use sudo to access payment provider record that can be in different company.
-            //     stripe_provider = base_provider.sudo().with_context(
-            //         stripe_connect_onboarding=True,
-            //     ).copy(default={'company_id': self.env.company.id})
-            // 
-            // return stripe_provider.action_stripe_connect_account(menu_id=menu_id)
+            //     self._compute_account_peppol_contact_email()
+            //     self._compute_account_peppol_phone_number()
+            // self.partner_id._compute_peppol_eas()
+            // self.partner_id._compute_peppol_endpoint()
             */
             return default;
         }
@@ -2953,23 +3531,6 @@ namespace Bamboo.Core.Application.Services
             //     new_endpoint = sanitizer(endpoint)
             //     if new_endpoint:
             //         values['peppol_endpoint'] = new_endpoint
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> SanitizePeppolEndpointInternalAsync(object vals, object eas, object endpoint)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_company.py) ---
-            // def _sanitize_peppol_endpoint(self, vals, eas=False, endpoint=False):
-            // # TODO: remove in master
-            // if not (peppol_eas := vals.get('peppol_eas', eas)) or not (peppol_endpoint := vals.get('peppol_endpoint', endpoint)):
-            //     return vals
-            // 
-            // if sanitizer := PEPPOL_ENDPOINT_SANITIZERS.get(peppol_eas):
-            //     vals['peppol_endpoint'] = sanitizer(peppol_endpoint)
-            // 
-            // return vals
             */
             return default;
         }
@@ -3007,6 +3568,23 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCompany> SaveClosingIdInternalAsync(Guid move_id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _save_closing_id(self, move_id):
+            // self.ensure_one()
+            // key = f'{self.id}.stock_valuation_closing_ids'
+            // closing_ids = self.env['ir.config_parameter'].sudo().get_param(key)
+            // ids = closing_ids.split(',') if closing_ids else []
+            // ids.append(str(move_id))
+            // if len(ids) > 10:
+            //     ids = ids[1:]
+            // self.env['ir.config_parameter'].sudo().set_param(key, ','.join(ids))
+            */
+            return default;
+        }
+
         public async Task<ResCompany> SaveOnboardingCompanyDataAsync(Guid id)
         {
             /*
@@ -3039,18 +3617,37 @@ namespace Bamboo.Core.Application.Services
             // def _search_display_name(self, operator, value):
             // context = dict(self.env.context)
             // newself = self
-            // constraint = []
+            // constraint = Domain.TRUE
             // if context.pop('user_preference', None):
             //     # We browse as superuser. Otherwise, the user would be able to
             //     # select only the currently visible companies (according to rules,
             //     # which are probably to allow to see the child companies) even if
             //     # she belongs to some other companies.
             //     companies = self.env.user.company_ids
-            //     constraint = [('id', 'in', companies.ids)]
+            //     constraint = Domain('id', 'in', companies.ids)
             //     newself = newself.sudo()
             // newself = newself.with_context(context)
-            // domain = super(Company, newself)._search_display_name(operator, value)
-            // return expression.AND([domain, constraint])
+            // domain = super(ResCompany, newself)._search_display_name(operator, value)
+            // return domain & constraint
+            */
+            return default;
+        }
+
+        protected async Task<ResCompany> SetCategoryDefaultsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def _set_category_defaults(self):
+            // for company in self:
+            //     self.env['ir.default'].set('product.category', 'property_account_expense_categ_id', company.expense_account_id.id, company_id=company.id)
+            //     self.env['ir.default'].set('product.category', 'property_account_income_categ_id', company.income_account_id.id, company_id=company.id)
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def _set_category_defaults(self):
+            // for company in self:
+            //     self.env['ir.default'].set('product.category', 'property_valuation', company.inventory_valuation, company_id=company.id)
+            //     self.env['ir.default'].set('product.category', 'property_cost_method', company.cost_method, company_id=company.id)
+            //     self.env['ir.default'].set('product.category', 'property_stock_journal', company.account_stock_journal_id.id, company_id=company.id)
+            //     self.env['ir.default'].set('product.category', 'property_stock_valuation_account_id', company.account_stock_valuation_id.id, company_id=company.id)
             */
             return default;
         }
@@ -3095,6 +3692,73 @@ namespace Bamboo.Core.Application.Services
             //     'views': [[view_id, 'form']],
             //     'context': context,
             // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResCompany> SettingInitCreditCardAccountActionAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
+            // def setting_init_credit_card_account_action(self):
+            // """ Called by the Financial configuration menu 'Add a credit card account' """
+            // view_id = self.env.ref('account.setup_credit_card_account_wizard').id
+            // context = {'dialog_size': 'medium', **self.env.context}
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Setup Credit Card Account'),
+            //     'res_model': 'account.setup.bank.manual.config',
+            //     'target': 'new',
+            //     'view_mode': 'form',
+            //     'views': [[view_id, 'form']],
+            //     'context': context,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResCompany> StockAccountingValueAsync(Guid id, ResCompanyStockAccountingValueRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def stock_accounting_value(self, accounts_by_product=None, at_date=None):
+            // self.ensure_one()
+            // if not accounts_by_product:
+            //     accounts_by_product = self._get_accounts_by_product()
+            // account_data = defaultdict(float)
+            // stock_valuation_accounts_ids = set()
+            // for dummy, accounts in accounts_by_product.items():
+            //     stock_valuation_accounts_ids.add(accounts['valuation'].id)
+            // stock_valuation_accounts = self.env['account.account'].browse(stock_valuation_accounts_ids)
+            // domain = Domain([
+            //     ('account_id', 'in', stock_valuation_accounts.ids),
+            //     ('company_id', '=', self.id),
+            //     ('parent_state', '=', 'posted'),
+            // ])
+            // if at_date:
+            //     domain = domain & Domain([('date', '<=', at_date)])
+            // amls_group = self.env['account.move.line']._read_group(domain, ['account_id'], ['balance:sum'])
+            // for account, balance in amls_group:
+            //     account_data[account] += balance
+            // return account_data
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<ResCompany> StockValueAsync(Guid id, ResCompanyStockValueRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: res_company.py) ---
+            // def stock_value(self, accounts_by_product=None, at_date=None):
+            // self.ensure_one()
+            // value_by_account: dict = defaultdict(float)
+            // if not accounts_by_product:
+            //     accounts_by_product = self._get_accounts_by_product()
+            // for product, accounts in accounts_by_product.items():
+            //     account = accounts['valuation']
+            //     product_value = product.with_context(to_date=at_date).total_value
+            //     value_by_account[account] += product_value
+            // return value_by_account
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -3262,17 +3926,15 @@ namespace Bamboo.Core.Application.Services
             //     record = record.with_context(ignore_exceptions=True)
             //     fiscal_lock_date = max(record.user_fiscalyear_lock_date, record.user_hard_lock_date)
             //     sessions_in_period = pos_session_model.search(
-            //         [
-            //             ("company_id", "child_of", record.id),
-            //             ("state", "!=", "closed"),
-            //             *expression.OR([
-            //                 [("start_at", "<=", fiscal_lock_date)],
-            //                 [("start_at", "<=", record.user_tax_lock_date)],
-            //                 # The `config_id.journal_id.type` is either 'sale' or 'misc'
-            //                 [("config_id.journal_id.type", "=", 'sale'),
-            //                  ("start_at", "<=", record.user_sale_lock_date)],
-            //             ])
-            //         ]
+            //         Domain("company_id", "child_of", record.id)
+            //         & Domain("state", "!=", "closed")
+            //         & Domain.OR((
+            //             Domain("start_at", "<=", fiscal_lock_date),
+            //             Domain("start_at", "<=", record.user_tax_lock_date),
+            //             # The `config_id.journal_id.type` is either 'sale' or 'misc'
+            //             Domain("config_id.journal_id.type", "=", 'sale')
+            //                 & Domain("start_at", "<=", record.user_sale_lock_date),
+            //         ))
             //     )
             //     if sessions_in_period:
             //         sessions_str = ', '.join(sessions_in_period.mapped('name'))
@@ -3352,16 +4014,16 @@ namespace Bamboo.Core.Application.Services
             // we use this generic method to lock the records passed as parameter.
             // 
             // :param records: The records to lock.
+            // :return: Whether we have locked all records (if there were records to lock)
             // """
-            // if not records.ids:
-            //     return
-            // self._cr.execute(f'SELECT * FROM {records._table} WHERE id IN %s FOR UPDATE SKIP LOCKED', [tuple(records.ids)])
-            // available_ids = {r[0] for r in self._cr.fetchall()}
-            // all_locked = available_ids == set(records.ids)
-            // if not all_locked and allow_raising:
+            // # TODO deprecate and use lock_for_update directly
+            // try:
+            //     records.lock_for_update()
+            // except LockError:
+            //     if not allow_raising:
+            //         return False
             //     raise UserError(_("Some documents are being sent by another process already."))
-            // else:
-            //     return all_locked
+            // return True
             */
             return default;
         }
@@ -3370,30 +4032,31 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
-            // def write(self, values):
-            // self._validate_locks(values)
+            // def write(self, vals):
+            // self._validate_locks(vals)
             // 
-            // self.env['res.company'].invalidate_model(fnames=[f'user_{field}' for field in LOCK_DATE_FIELDS if field in values])
+            // self.env['res.company'].invalidate_model(fnames=[f'user_{field}' for field in LOCK_DATE_FIELDS if field in vals])
             // 
             // # Reflect the change on accounts
             // for company in self:
-            //     if values.get('bank_account_code_prefix'):
-            //         new_bank_code = values.get('bank_account_code_prefix') or company.bank_account_code_prefix
+            //     if vals.get('bank_account_code_prefix'):
+            //         new_bank_code = vals.get('bank_account_code_prefix') or company.bank_account_code_prefix
             //         company.reflect_code_prefix_change(company.bank_account_code_prefix, new_bank_code)
             // 
-            //     if values.get('cash_account_code_prefix'):
-            //         new_cash_code = values.get('cash_account_code_prefix') or company.cash_account_code_prefix
+            //     if vals.get('cash_account_code_prefix'):
+            //         new_cash_code = vals.get('cash_account_code_prefix') or company.cash_account_code_prefix
             //         company.reflect_code_prefix_change(company.cash_account_code_prefix, new_cash_code)
             // 
-            //     #forbid the change of currency_id if there are already some accounting entries existing
-            //     if 'currency_id' in values and values['currency_id'] != company.currency_id.id:
+            //     # forbid the change of currency_id if there are already some accounting entries existing
+            //     if 'currency_id' in vals and vals['currency_id'] != company.currency_id.id:
             //         if company.root_id._existing_accounting():
             //             raise UserError(_('You cannot change the currency of the company since some journal items already exist'))
             // 
-            // companies = super().write(values)
+            // companies = super().write(vals)
             // 
+            // self._set_category_defaults()
             // # We revoke all active exceptions affecting the changed lock dates and recreate them (with the updated lock dates)
-            // changed_soft_lock_fields = [field for field in SOFT_LOCK_DATE_FIELDS if field in values]
+            // changed_soft_lock_fields = [field for field in SOFT_LOCK_DATE_FIELDS if field in vals]
             // for company in self:
             //     active_exceptions = self.env['account.lock_exception'].search(
             //         self.env['account.lock_exception']._get_active_exceptions_domain(company, changed_soft_lock_fields),
@@ -3407,18 +4070,20 @@ namespace Bamboo.Core.Application.Services
             // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_company.py) ---
             // def write(self, vals):
-            // search_domains = []  # Overtime to generate
+            // search_domain = Domain.FALSE  # Overtime to generate
             // # Also recompute if the threshold have changed
             // if 'overtime_company_threshold' in vals or 'overtime_employee_threshold' in vals:
-            //     for company in self:
-            //         # If we modify the thresholds only
-            //         if (vals.get('overtime_company_threshold') != company.overtime_company_threshold) or\
-            //             (vals.get('overtime_employee_threshold') != company.overtime_employee_threshold):
-            //             search_domains.append([('employee_id.company_id', '=', company.id)])
+            //     # If we modify the thresholds only
+            //     search_domain = Domain.OR(
+            //         Domain('employee_id.company_id', '=', company.id)
+            //         for company in self
+            //         if (vals.get('overtime_company_threshold') != company.overtime_company_threshold)
+            //         or (vals.get('overtime_employee_threshold') != company.overtime_employee_threshold)
+            //     )
             // 
             // res = super().write(vals)
-            // if search_domains:
-            //     self.env['hr.attendance'].search(OR(search_domains))._update_overtime()
+            // if not search_domain.is_false():
+            //     self.env['hr.attendance'].search(search_domain)._update_overtime()
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: product, FILE: res_company.py) ---
@@ -3440,47 +4105,45 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: web, FILE: models.py) ---
-            // def write(self, values):
-            // res = super().write(values)
+            // def write(self, vals):
+            // res = super().write(vals)
             // style_fields = {'external_report_layout_id', 'font', 'primary_color', 'secondary_color'}
-            // if not style_fields.isdisjoint(values):
+            // if not style_fields.isdisjoint(vals):
             //     self._update_asset_style()
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def write(self, values):
+            // def write(self, vals):
+            // if 'parent_id' in vals:
+            //     raise UserError(self.env._("The company hierarchy cannot be changed."))
+            // 
+            // if vals.get('currency_id'):
+            //     currency = self.env['res.currency'].browse(vals['currency_id'])
+            //     if not currency.active:
+            //         currency.write({'active': True})
+            // 
+            // res = super().write(vals)
             // invalidation_fields = self.cache_invalidation_fields()
             // asset_invalidation_fields = {'font', 'primary_color', 'secondary_color', 'external_report_layout_id'}
             // 
             // companies_needs_l10n = (
-            //     values.get('country_id')
+            //     vals.get('country_id')
             //     and self.filtered(lambda company: not company.country_id)
-            //     or self.browse()
-            // )
-            // if not invalidation_fields.isdisjoint(values):
+            // ) or self.browse()
+            // if not invalidation_fields.isdisjoint(vals):
             //     self.env.registry.clear_cache()
             // 
-            // if not asset_invalidation_fields.isdisjoint(values):
+            // if not asset_invalidation_fields.isdisjoint(vals):
             //     # this is used in the content of an asset (see asset_styles_company_report)
             //     # and thus needs to invalidate the assets cache when this is changed
             //     self.env.registry.clear_cache('assets')  # not 100% it is useful a test is missing if it is the case
             // 
-            // if 'parent_id' in values:
-            //     raise UserError(_("The company hierarchy cannot be changed."))
-            // 
-            // if values.get('currency_id'):
-            //     currency = self.env['res.currency'].browse(values['currency_id'])
-            //     if not currency.active:
-            //         currency.write({'active': True})
-            // 
-            // res = super(Company, self).write(values)
-            // 
             // # Archiving a company should also archive all of its branches
-            // if values.get('active') is False:
+            // if vals.get('active') is False:
             //     self.child_ids.active = False
             // 
             // for company in self:
             //     # Copy modified delegated fields from root to branches
-            //     if (changed := set(values) & set(self._get_company_root_delegated_field_names())) and not company.parent_id:
+            //     if (changed := set(vals) & set(self._get_company_root_delegated_field_names())) and not company.parent_id:
             //         branches = self.sudo().search([
             //             ('id', 'child_of', company.id),
             //             ('id', '!=', company.id),
@@ -3493,7 +4156,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # invalidate company cache to recompute address based on updated partner
             // company_address_fields = self._get_company_address_field_names()
-            // company_address_fields_upd = set(company_address_fields) & set(values.keys())
+            // company_address_fields_upd = set(company_address_fields) & set(vals.keys())
             // if company_address_fields_upd:
             //     self.invalidate_model(company_address_fields)
             // return res

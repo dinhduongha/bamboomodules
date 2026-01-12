@@ -27,22 +27,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-set-to-confirm")]
-        public async Task<IActionResult> ActionSetToConfirmAsync(Guid id)
-        {
-            var result = await _appService.SetToConfirmAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-validate")]
-        public async Task<IActionResult> ActionValidateAsync(Guid id)
-        {
-            var result = await _appService.ValidateAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/activity-update")]
         public async Task<IActionResult> ActivityUpdateAsync(Guid id)
         {

@@ -67,28 +67,11 @@ namespace Bamboo.Core.Application.Services
             // new = records - existing
             // if new and message:
             //     for record in new:
-            //         record.with_context(mail_create_nosubscribe=True).message_post(
+            //         record.with_context(mail_post_autofollow_author_skip=True).message_post(
             //             body=message,
             //             subtype_xmlid='mail.mt_note',
             //         )
             // return records
-            */
-            return default;
-        }
-
-        protected async Task<object> ConditionToSqlInternalAsync(string @alias, string fname, string @operator, object @value, object query)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
-            // def _condition_to_sql(self, alias: str, fname: str, operator: str, value, query) -> SQL:
-            // if fname == 'number':
-            //     # sanitize the phone number
-            //     sanitize = self.env.user._phone_format
-            //     if isinstance(value, str):
-            //         value = sanitize(number=value) or value
-            //     elif isinstance(value, list) and all(isinstance(number, str) for number in value):
-            //         value = [sanitize(number=number) or number for number in value]
-            // return super()._condition_to_sql(alias, fname, operator, value, query)
             */
             return default;
         }
@@ -139,12 +122,27 @@ namespace Bamboo.Core.Application.Services
             //     new_records = self.create([{'number': n, 'active': False} for n in todo])
             //     if message:
             //         for record in new_records:
-            //             record.with_context(mail_create_nosubscribe=True).message_post(
+            //             record.with_context(mail_post_autofollow_author_skip=True).message_post(
             //                 body=message,
             //                 subtype_xmlid='mail.mt_note',
             //             )
             //     records += new_records
             // return records
+            */
+            return default;
+        }
+
+        protected async Task<PhoneBlacklist> SearchNumberInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
+            // def _search_number(self, operator, value):
+            // sanitize = self.env.user._phone_format
+            // if operator in ('in', 'not in'):
+            //     value = [sanitize(number=number) or number for number in value]
+            // else:
+            //     value = sanitize(number=value) or value
+            // return [('number', operator, value)]
             */
             return default;
         }

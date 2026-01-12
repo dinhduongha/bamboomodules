@@ -19,18 +19,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/connect")]
-        public async Task<IActionResult> ConnectAsync(Guid id, [FromBody] FetchmailServerConnectRequestDto input)
-        {
-            var result = await _appService.ConnectAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/fetch-mail")]
-        public async Task<IActionResult> FetchMailAsync(Guid id, [FromBody] FetchmailServerFetchMailRequestDto input)
+        public async Task<IActionResult> FetchMailAsync(Guid id)
         {
-            var result = await _appService.FetchMailAsync(id, input);
+            var result = await _appService.FetchMailAsync(id);
             return Ok(result);
         }
         

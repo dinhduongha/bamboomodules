@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-operation-form")]
+        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid id)
+        {
+            var result = await _appService.OpenOperationFormAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-unarchive")]
         public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
         {

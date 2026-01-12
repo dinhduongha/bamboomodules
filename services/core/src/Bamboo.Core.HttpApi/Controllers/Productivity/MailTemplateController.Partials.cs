@@ -11,10 +11,10 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/cancel-unlink")]
-        public async Task<IActionResult> CancelUnlinkAsync(Guid id)
+        [Route("{id}/action-open-mail-preview")]
+        public async Task<IActionResult> ActionOpenMailPreviewAsync(Guid id)
         {
-            var result = await _appService.CancelUnlinkAsync(id);
+            var result = await _appService.OpenMailPreviewAsync(id);
             return Ok(result);
         }
         
@@ -31,14 +31,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> CreateActionAsync(Guid id)
         {
             var result = await _appService.CreateActionAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/open-delete-confirmation-modal")]
-        public async Task<IActionResult> OpenDeleteConfirmationModalAsync(Guid id)
-        {
-            var result = await _appService.OpenDeleteConfirmationModalAsync(id);
             return Ok(result);
         }
         

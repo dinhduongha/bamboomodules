@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class ResUsersSettingsSetCustomNotificationsRequestDto
+    public class ResUsersSettingsSetEmbeddedActionsSettingRequestDto
     {
-        public object CustomNotifications { get; set; }
+        public Guid ActionId { get; set; }
+        public Guid ResId { get; set; }
+        public object Vals { get; set; }
     }
     
     public class ResUsersSettingsSetResUsersSettingsRequestDto

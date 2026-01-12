@@ -11,10 +11,42 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        {
+            var result = await _appService.ArchiveAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-compute-bom-days")]
         public async Task<IActionResult> ActionComputeBomDaysAsync(Guid id)
         {
             var result = await _appService.ComputeBomDaysAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-operation-form")]
+        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid id)
+        {
+            var result = await _appService.OpenOperationFormAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-set-bom-on-orderpoint")]
+        public async Task<IActionResult> ActionSetBomOnOrderpointAsync(Guid id)
+        {
+            var result = await _appService.SetBomOnOrderpointAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        {
+            var result = await _appService.UnarchiveAsync(id);
             return Ok(result);
         }
         
@@ -55,22 +87,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> OnchangeProductTmplIdAsync(Guid id)
         {
             var result = await _appService.OnchangeProductTmplIdAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/onchange-product-uom-id")]
-        public async Task<IActionResult> OnchangeProductUomIdAsync(Guid id)
-        {
-            var result = await _appService.OnchangeProductUomIdAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

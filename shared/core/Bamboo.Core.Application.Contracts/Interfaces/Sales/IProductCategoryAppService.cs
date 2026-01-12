@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductCategoryAppService : IGenericApplicationService<ProductCategory>
     {
-        Task<ProductCategory> OnchangePropertyCostAsync(Guid id);
+        Task<ProductCategory> CopyDataAsync(Guid id, ProductCategoryCopyDataRequestDto input);
     }
 }

@@ -17,8 +17,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<IrAttachment> GenerateAccessTokenAsync(Guid id);
         Task<IrAttachment> GetAsync(Guid id);
         Task<IrAttachment> GetServingGroupsAsync(Guid id);
+        Task<IrAttachment> InitAsync(Guid id);
+        Task<IrAttachment> PreviewAttachmentAsync(Guid id);
         Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid id);
         Task<IrAttachment> RegisterAsMainAttachmentAsync(Guid id, IrAttachmentRegisterAsMainAttachmentRequestDto input);
-        Task<IrAttachment> ValidateAccessAsync(Guid id, IrAttachmentValidateAccessRequestDto input);
     }
 }

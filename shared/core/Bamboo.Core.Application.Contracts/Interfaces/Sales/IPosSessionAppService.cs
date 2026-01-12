@@ -11,15 +11,18 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IPosSessionAppService : IGenericApplicationService<PosSession>
     {
         Task<PosSession> CloseSessionFromUiAsync(Guid id, PosSessionCloseSessionFromUiRequestDto input);
+        Task<PosSession> DeleteCashInOutAsync(Guid id, PosSessionDeleteCashInOutRequestDto input);
         Task<PosSession> DeleteOpeningControlSessionAsync(Guid id);
+        Task<PosSession> FilterLocalDataAsync(Guid id, PosSessionFilterLocalDataRequestDto input);
         Task<PosSession> FindProductByBarcodeAsync(Guid id, PosSessionFindProductByBarcodeRequestDto input);
+        Task<PosSession> GetCashInOutListAsync(Guid id);
         Task<PosSession> GetClosingControlDataAsync(Guid id);
         Task<PosSession> GetPosUiProductPricelistItemByProductAsync(Guid id, PosSessionGetPosUiProductPricelistItemByProductRequestDto input);
         Task<PosSession> GetSessionOrdersAsync(Guid id);
         Task<PosSession> GetTotalDiscountAsync(Guid id);
         Task<PosSession> LoadDataAsync(Guid id, PosSessionLoadDataRequestDto input);
+        Task<PosSession> LoadDataParamsAsync(Guid id);
         Task<PosSession> LogPartnerMessageAsync(Guid id, PosSessionLogPartnerMessageRequestDto input);
-        Task<PosSession> LoginAsync(Guid id);
         Task<PosSession> OpenFrontendCbAsync(Guid id);
         Task<PosSession> PosSessionCloseAsync(Guid id, PosSessionPosSessionCloseRequestDto input);
         Task<PosSession> PosSessionClosingControlAsync(Guid id, PosSessionPosSessionClosingControlRequestDto input);

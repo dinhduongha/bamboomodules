@@ -15,6 +15,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<FleetVehicle> CreateDriverHistoryAsync(Guid id, FleetVehicleCreateDriverHistoryRequestDto input);
         Task<FleetVehicle> OpenAssignationLogsAsync(Guid id);
         Task<FleetVehicle> OpenEmployeeAsync(Guid id);
+        Task<FleetVehicle> OpenOdometerReportAsync(Guid id);
         Task<FleetVehicle> ReturnToOpenAsync(Guid id);
         Task<FleetVehicle> SendEmailAsync(Guid id);
         Task<FleetVehicle> ViewBillsAsync(Guid id);

@@ -4,11 +4,6 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class AccountFiscalPositionAdjustValsCountryIdRequestDto
-    {
-        public object Vals { get; set; }
-    }
-    
     public class AccountFiscalPositionMapAccountRequestDto
     {
         public object Account { get; set; }
@@ -17,10 +12,5 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class AccountFiscalPositionMapTaxRequestDto
     {
         public object Taxes { get; set; }
-    }
-    
-    public class AccountFiscalPositionRaiseVatErrorMessageRequestDto
-    {
-        public object Country { get; set; }
     }
 }

@@ -24,46 +24,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> FindRecordCheckAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object access_token, object field) where TEntity : IEntity<Guid>, IIrBinaryable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_binary.py) ---
-            // def _find_record_check_access(self, record, access_token, field):
-            // if record._name == "product.product" and field == "image_128":
-            //     return record.sudo()
-            // return super()._find_record_check_access(record, access_token, field)
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: ir_binary.py) ---
-            // def _find_record_check_access(self, record, access_token, field):
-            // if record._name in ["product.product", "pos.category"] and field in ["image_128", "image_512"]:
-            //     return record.sudo()
-            // return super()._find_record_check_access(record, access_token, field)
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_binary.py) ---
-            // def _find_record_check_access(self, record, access_token, field):
-            // if (
-            //     'website_published' in record._fields
-            //     and field in record._fields
-            //     and not record._fields[field].groups
-            //     and record.sudo().website_published
-            // ):
-            //     return record.sudo()
-            // 
-            // return super()._find_record_check_access(record, access_token, field=field)
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: ir_binary.py) ---
-            // def _find_record_check_access(self, record, access_token, field):
-            // if record._name == "slide.slide":
-            //     record.check_access('read')
-            // return super()._find_record_check_access(record, access_token, field)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_binary.py) ---
-            // def _find_record_check_access(self, record, access_token, field):
-            // if record._name == 'ir.attachment':
-            //     return record.validate_access(access_token)
-            // 
-            // record.check_access('read')
-            // return record
-            */
-            return default;
-        }
-
         public async Task<TEntity> FindRecordInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xmlid, object res_model, Guid res_id, object access_token, object field) where TEntity : IEntity<Guid>, IIrBinaryable
         {
             /*
@@ -104,6 +64,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     :param Optional[id] res_id: id of the record
             //     :param Optional[str] access_token: access token to use instead
             //         of the access rights and access rules.
+            //     :param Optional[str] field: image field name to check the access to
             //     :returns: single record
             //     :raises MissingError: when no record was found.
             //     """
@@ -113,10 +74,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif res_id is not None and res_model in self.env:
             //         record = self.env[res_model].browse(res_id).exists()
             //     if not record:
-            //         raise MissingError(f"No record found for xmlid={xmlid}, res_model={res_model}, id={res_id}")
-            //     if access_token and verify_limited_field_access_token(record, field, access_token):
+            //         raise MissingError(f"No record found for xmlid={xmlid}, res_model={res_model}, id={res_id}")  # pylint: disable=missing-gettext
+            //     if access_token and verify_limited_field_access_token(record, field, access_token, scope="binary"):
             //         return record.sudo()
-            //     record = self._find_record_check_access(record, access_token, field)
+            //     if record._can_return_content(field, access_token):
+            //         return record.sudo()
+            //     record.check_access("read")
             //     return record
             */
             return default;
@@ -265,15 +228,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ``application/octet-stream``.
             //     :rtype: odoo.http.Stream
             //     """
-            //     with replace_exceptions(ValueError, by=UserError(f'Expected singleton: {record}')):
+            //     with replace_exceptions(ValueError, by=UserError(f'Expected singleton: {record}')):  # pylint: disable=missing-gettext
             //         record.ensure_one()
             // 
             //     try:
             //         field_def = record._fields[field_name]
             //     except KeyError:
-            //         raise UserError(f"Record has no field {field_name!r}.")
+            //         raise UserError(f"Record has no field {field_name!r}.")  # pylint: disable=missing-gettext
             //     if field_def.type != 'binary':
-            //         raise UserError(
+            //         raise UserError(  # pylint: disable=missing-gettext
             //             f"Field {field_def!r} is type {field_def.type!r} but "
             //             f"it is only possible to stream Binary or Image fields."
             //         )
@@ -285,10 +248,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             stream.mimetype = mimetype
             //         elif not stream.mimetype:
             //             if stream.type == 'data':
-            //                 head = stream.data[:1024]
+            //                 head = stream.data[:MIMETYPE_HEAD_SIZE]
             //             else:
             //                 with open(stream.path, 'rb') as file:
-            //                     head = file.read(1024)
+            //                     head = file.read(MIMETYPE_HEAD_SIZE)
             //             stream.mimetype = guess_mimetype(head, default=default_mimetype)
             // 
             //         if filename:
@@ -340,16 +303,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if record._name == 'ir.attachment' and field_name in ('raw', 'datas', 'db_datas'):
             //     return record._to_http_stream()
             // 
-            // record.check_field_access_rights('read', [field_name])
+            // field = record._fields[field_name]
+            // record._check_field_access(field, 'read')
             // 
-            // if record._fields[field_name].attachment:
+            // if field.attachment:
             //     field_attachment = self.env['ir.attachment'].sudo().search(
             //         domain=[('res_model', '=', record._name),
             //                 ('res_id', '=', record.id),
             //                 ('res_field', '=', field_name)],
             //         limit=1)
             //     if not field_attachment:
-            //         raise MissingError("The related attachment does not exist.")
+            //         raise MissingError(self.env._("The related attachment does not exist."))
             //     return field_attachment._to_http_stream()
             // 
             // return Stream.from_binary_field(record, field_name)

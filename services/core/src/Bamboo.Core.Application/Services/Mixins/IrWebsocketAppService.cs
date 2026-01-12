@@ -24,6 +24,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        public async Task<TEntity> AfterSubscribeDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IIrWebsocketable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
+            // def _after_subscribe_data(self, data):
+            // """Function invoked after subscribe data have been processed.
+            // Modules can override this method to add custom behavior."""
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
+            // def _after_subscribe_data(self, data):
+            // current_partner, current_guest = self.env["res.partner"]._get_current_persona()
+            // if current_partner or current_guest:
+            //     data["missed_presences"]._send_presence(bus_target=current_partner or current_guest)
+            */
+            return default;
+        }
+
         protected async Task<object> AuthenticateInternalAsync()
         {
             /*
@@ -54,34 +70,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // req = request or wsrequest
             // channels.append('broadcast')
-            // channels.extend(self.env.user.groups_id)
+            // channels.extend(self.env.user.all_group_ids)
             // if req.session.uid:
             //     channels.append(self.env.user.partner_id)
             // return channels
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
-            // def _build_bus_channel_list(self, channels):
-            // channels = list(channels)  # do not alter original list
-            // discuss_channel_ids = list()
-            // for channel in list(channels):
-            //     if isinstance(channel, str) and channel.startswith("mail.guest_"):
-            //         channels.remove(channel)
-            //         guest = self.env["mail.guest"]._get_guest_from_token(channel.split("_")[1])
-            //         if guest:
-            //             self = self.with_context(guest=guest)
-            //     if isinstance(channel, str):
-            //         match = re.findall(r'discuss\.channel_(\d+)', channel)
-            //         if match:
-            //             channels.remove(channel)
-            //             discuss_channel_ids.append(int(match[0]))
-            // guest = self.env["mail.guest"]._get_guest_from_context()
-            // if guest:
-            //     channels.append(guest)
-            // domain = ["|", ("is_member", "=", True), ("id", "in", discuss_channel_ids)]
-            // all_user_channels = self.env["discuss.channel"].search(domain)
-            // member_specific_channels = [(c, "members") for c in all_user_channels if c.id not in discuss_channel_ids]
-            // channels.extend([*all_user_channels, *member_specific_channels])
-            // return super()._build_bus_channel_list(channels)
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_websocket.py) ---
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_websocket.py) ---
             // def _build_bus_channel_list(self, channels):
             // if self.env.uid:
             //     # Do not alter original list.
@@ -102,121 +95,58 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 if not document.exists():
             //                     continue
             // 
-            //                 document.check_access('read')
-            //                 document.check_field_access_rights('read', [field_name])
-            //                 document.check_access('write')
-            //                 document.check_field_access_rights('write', [field_name])
+            //                 try:
+            //                     document.check_access('read')
+            //                     document.check_access('write')
+            //                     if field := document._fields.get(field_name):
+            //                         document._check_field_access(field, 'read')
+            //                         document._check_field_access(field, 'write')
+            //                 except AccessError:
+            //                     continue
             // 
             //                 channels.append((self.env.registry.db_name, 'editor_collaboration', model_name, field_name, res_id))
             // return super()._build_bus_channel_list(channels)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> BuildPresenceChannelListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object presences) where TEntity : IEntity<Guid>, IIrWebsocketable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
-            // def _build_presence_channel_list(self, presences):
-            // """
-            // Return the list of presences to subscribe to.
-            // 
-            // :param typing.List[typing.Tuple[str, int]] presences: The presence
-            //     list sent by the client where the first element is the model
-            //     name and the second is the record id.
-            // """
-            // channels = []
-            // if self.env.user and self.env.user._is_internal():
-            //     channels.extend(
-            //         (partner, "presence")
-            //         for partner in self.env["res.partner"]
-            //         .with_context(active_test=False)
-            //         .search([("id", "in", [int(p[1]) for p in presences if p[0] == "res.partner"])])
-            //     )
-            // return channels
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: ir_websocket.py) ---
+            // def _build_bus_channel_list(self, channels):
+            // channels = list(channels)  # do not alter original list
+            // if any(
+            //     channel == "im_livechat.looking_for_help"
+            //     for channel in channels
+            //     if isinstance(channel, str)
+            // ):
+            //     if self.env.user.has_group("im_livechat.im_livechat_group_user"):
+            //         channels.append(
+            //             (self.env.ref("im_livechat.im_livechat_group_user"), "LOOKING_FOR_HELP")
+            //         )
+            //     channels.remove("im_livechat.looking_for_help")
+            // return super()._build_bus_channel_list(channels)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
-            // def _build_presence_channel_list(self, presences):
-            // channels = super()._build_presence_channel_list(presences)
-            // guest_ids = [int(p[1]) for p in presences if p[0] == "mail.guest"]
-            // if self.env.user and self.env.user._is_internal():
-            //     channels.extend(
-            //         (guest, "presence")
-            //         for guest in self.env["mail.guest"].search([("id", "in", guest_ids)])
-            //     )
-            //     # Partners already handled in super call (bus)
-            //     return channels
-            // self_discuss_channels = self.env["discuss.channel"]
-            // if self.env.user and not self.env.user._is_public():
-            //     self_discuss_channels = self.env.user.partner_id.channel_ids
-            // elif guest := self.env["mail.guest"]._get_guest_from_context():
-            //     # sudo - mail.guest: guest can access their own channels.
-            //     self_discuss_channels = guest.sudo().channel_ids
-            // partner_domain = [
-            //     ("id", "in", [int(p[1]) for p in presences if p[0] == "res.partner"]),
-            //     ("channel_ids", "in", self_discuss_channels.ids),
+            // def _build_bus_channel_list(self, channels):
+            // channels = list(channels)  # do not alter original list
+            // discuss_channel_ids = list()
+            // for channel in list(channels):
+            //     if isinstance(channel, str) and channel.startswith("mail.guest_"):
+            //         channels.remove(channel)
+            //         guest = self.env["mail.guest"]._get_guest_from_token(channel.split("_")[1])
+            //         if guest:
+            //             self = self.with_context(guest=guest)
+            //     if isinstance(channel, str):
+            //         match = re.findall(r'discuss\.channel_(\d+)', channel)
+            //         if match:
+            //             channels.remove(channel)
+            //             discuss_channel_ids.append(int(match[0]))
+            // guest = self.env["mail.guest"]._get_guest_from_context()
+            // if guest:
+            //     channels.append(guest)
+            // domain = ["|", ("is_member", "=", True), ("id", "in", discuss_channel_ids)]
+            // all_user_channels = self.env["discuss.channel"].search(domain)
+            // internal_specific_channels = [
+            //     (c, "internal_users")
+            //     for c in all_user_channels
+            //     if not self.env.user.share
             // ]
-            // # sudo - res.partner: allow access when sharing a common channel.
-            // channels.extend(
-            //     (partner, "presence")
-            //     for partner in self.env["res.partner"].sudo().search(partner_domain)
-            // )
-            // guest_domain = [("id", "in", guest_ids), ("channel_ids", "in", self_discuss_channels.ids)]
-            // # sudo - mail.guest: allow access when sharing a common channel.
-            // channels.extend(
-            //     (guest, "presence") for guest in self.env["mail.guest"].sudo().search(guest_domain)
-            // )
-            // return channels
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetMissedPresencesBusTargetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrWebsocketable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
-            // def _get_missed_presences_bus_target(self):
-            // return (
-            //     self.env.user.partner_id if self.env.user and not self.env.user._is_public() else None
-            // )
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
-            // def _get_missed_presences_bus_target(self):
-            // if self.env.user and not self.env.user._is_public():
-            //     return super()._get_missed_presences_bus_target()
-            // if guest := self.env["mail.guest"]._get_guest_from_context():
-            //     return guest
-            // return None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetMissedPresencesIdentityDomainsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object presence_channels) where TEntity : IEntity<Guid>, IIrWebsocketable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
-            // def _get_missed_presences_identity_domains(self, presence_channels):
-            // """
-            // Return a list of domains that will be combined with `expression.OR` to
-            // find presences related to `presence_channels`. This is used to find
-            // missed presences when subscribing to presence channels.
-            // 
-            // :param typing.List[typing.Tuple[recordset, str]] presence_channels: The
-            //     presence channels the user subscribed to.
-            // """
-            // partners = self.env["res.partner"].browse(
-            //     [p.id for p, _ in presence_channels if isinstance(p, self.pool["res.partner"])]
-            // )
-            // # sudo: res.partner - can acess users of partner channels to find
-            // # their presences as those channels were already verified during
-            // # `_build_bus_channel_list`.
-            // return [[("user_id", "in", partners.with_context(active_test=False).sudo().user_ids.ids)]]
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
-            // def _get_missed_presences_identity_domains(self, presence_channels):
-            // identity_domain = super()._get_missed_presences_identity_domains(presence_channels)
-            // if guest_ids := [
-            //     g.id for g, _ in presence_channels if isinstance(g, self.pool["mail.guest"])
-            // ]:
-            //     identity_domain.append([("guest_id", "in", guest_ids)])
-            // return identity_domain
+            // channels.extend([*all_user_channels, *internal_specific_channels])
+            // return super()._build_bus_channel_list(channels)
             */
             return default;
         }
@@ -224,19 +154,39 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnWebsocketClosedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cookies) where TEntity : IEntity<Guid>, IIrWebsocketable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_websocket.py) ---
+            // def _on_websocket_closed(self, cookies):
+            // """
+            // Override to mark the session as inactive when the WebSocket connection closes.
+            // 
+            // This ensures that the session is flagged for re-authentication if the user
+            // closes their last tab, by forcing inactivity tracking when the connection is lost.
+            // 
+            // :param dict cookies: A dictionary containing the user's session ID cookie.
+            // :return: None
+            // """
+            // if self.env.user:
+            //     session = root.session_store.get(cookies["session_id"])
+            //     if not session.is_new:
+            //         # `is_new` is a mitigation to avoid calls with arbitrary `session_id`
+            //         # which would create a new session file in the session filestore with an arbitrary name
+            //         # e.g. `env['ir.websocket']._on_websocket_closed({'session_id': 'A'*84})`
+            //         self.env["ir.http"]._set_session_inactivity(session, force=True)
+            // super()._on_websocket_closed(cookies)
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
             // def _on_websocket_closed(self, cookies):
-            // if self.env.user and not self.env.user._is_public():
-            //     self.env["bus.presence"].search([("user_id", "=", self.env.uid)]).status = "offline"
+            // """Function invoked upon WebSocket termination.
+            // Modules can override this method to add custom behavior."""
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
             // def _on_websocket_closed(self, cookies):
             // super()._on_websocket_closed(cookies)
             // if self.env.user and not self.env.user._is_public():
-            //     return
+            //     # sudo: mail.presence - user can update their own presence
+            //     self.env.user.sudo().presence_ids.status = "offline"
             // token = cookies.get(self.env["mail.guest"]._cookie_name, "")
             // if guest := self.env["mail.guest"]._get_guest_from_token(token):
-            //     # sudo - bus.presence: guests can write their own presence
-            //     self.env["bus.presence"].sudo().search([("guest_id", "=", guest.id)]).status = "offline"
+            //     # sudo: mail.presence - guest can update their own presence
+            //     guest.sudo().presence_ids.status = "offline"
             */
             return default;
         }
@@ -247,10 +197,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
             // def _prepare_subscribe_data(self, channels, last):
             // """
-            // Parse the data sent by the client and return the list of channels,
-            // missed presences and the last known notification id. This will be used
-            // both by the websocket controller and the websocket request class when
-            // the `subscribe` event is received.
+            // Parse the data sent by the client and return the list of channels
+            // and the last known notification id. This will be used both by the
+            // websocket controller and the websocket request class when the
+            // `subscribe` event is received.
             // 
             // :param typing.List[str] channels: List of channels to subscribe to sent
             //     by the client.
@@ -260,7 +210,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     A dict containing the following keys:
             //     - channels (set of str): The list of channels to subscribe to.
             //     - last (int): The last known notification id.
-            //     - missed_presences (odoo.models.Recordset): The missed presences.
             // 
             // :raise ValueError: If the list of channels is not a list of strings.
             // """
@@ -268,28 +217,88 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise ValueError("bus.Bus only string channels are allowed.")
             // # sudo - bus.bus: reading non-sensitive last bus id.
             // last = 0 if last > self.env["bus.bus"].sudo()._bus_last_id() else last
-            // str_presence_channels = {
-            //     c for c in channels if isinstance(c, str) and c.startswith("odoo-presence-")
-            // }
-            // presence_channels = self._build_presence_channel_list(
-            //     [tuple(c.replace("odoo-presence-", "").split("_")) for c in str_presence_channels]
+            // return {"channels": OrderedSet(self._build_bus_channel_list(list(channels))), "last": last}
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
+            // def _prepare_subscribe_data(self, channels, last):
+            // data = super()._prepare_subscribe_data(channels, last)
+            // model_ids_to_token = defaultdict(dict)
+            // for channel in channels:
+            //     if not isinstance(channel, str) or not channel.startswith(PRESENCE_CHANNEL_PREFIX):
+            //         continue
+            //     data["channels"].discard(channel)
+            //     if not (match := re.match(PRESENCE_CHANNEL_REGEX, channel)):
+            //         _logger.warning("Malformed presence channel: %s", channel)
+            //         continue
+            //     model, record_id, token = match.groups()
+            //     model_ids_to_token[model][int(record_id)] = token or ""
+            // # sudo - res.partner, mail.guest: can access presence targets to decide whether
+            // # the current user is allowed to read it or not.
+            // partner_ids = model_ids_to_token["res.partner"].keys()
+            // partners = (
+            //     self.env["res.partner"]
+            //     .with_context(active_test=False)
+            //     .sudo()
+            //     .search([("id", "in", partner_ids)])
+            //     .sudo(False)
             // )
+            // partner, guest = self.env["res.partner"]._get_current_persona()
+            // allowed_partners = (
+            //     partners.filtered(
+            //         lambda p: verify_limited_field_access_token(
+            //             p, "im_status", model_ids_to_token["res.partner"][p.id], scope="mail.presence"
+            //         )
+            //         or p.has_access("read")
+            //     )
+            //     | partner
+            // )
+            // guest_ids = model_ids_to_token["mail.guest"].keys()
+            // guests = self.env["mail.guest"].sudo().search([("id", "in", guest_ids)]).sudo(False)
+            // allowed_guests = (
+            //     guests.filtered(
+            //         lambda g: verify_limited_field_access_token(
+            //             g, "im_status", model_ids_to_token["mail.guest"][g.id], scope="mail.presence"
+            //         )
+            //         or g.has_access("read")
+            //     )
+            //     | guest
+            // )
+            // data["channels"].update((partner, "presence") for partner in allowed_partners)
+            // data["channels"].update((guest, "presence") for guest in allowed_guests)
             // # There is a gap between a subscription client side (which is debounced)
             // # and the actual subcription thus presences can be missed. Send a
             // # notification to avoid missing presences during a subscription.
-            // domain = expression.AND(
-            //     [
-            //         [("last_poll", ">", datetime.now() - timedelta(seconds=2))],
-            //         expression.OR(self._get_missed_presences_identity_domains(presence_channels)),
-            //     ]
+            // presence_domain = Domain("last_poll", ">", datetime.now() - timedelta(seconds=2)) & (
+            //     Domain(
+            //         "user_id",
+            //         "in",
+            //         allowed_partners.with_context(active_test=False).sudo().user_ids.ids,
+            //     )
+            //     | Domain("guest_id", "in", allowed_guests.ids)
             // )
-            // # sudo: bus.presence: can access presences linked to presence channels.
-            // missed_presences = self.env["bus.presence"].sudo().search(domain)
-            // all_channels = OrderedSet(presence_channels)
-            // all_channels.update(
-            //     self._build_bus_channel_list([c for c in channels if c not in str_presence_channels])
-            // )
-            // return {"channels": all_channels, "last": last, "missed_presences": missed_presences}
+            // # sudo: mail.presence: access to presence was validated with access token.
+            // data["missed_presences"] = self.env["mail.presence"].sudo().search(presence_domain)
+            // return data
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ServeIrWebsocketInternalAsync<TEntity>(IEnumerable<TEntity> entities, object event_name, object data) where TEntity : IEntity<Guid>, IIrWebsocketable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
+            // def _serve_ir_websocket(self, event_name, data):
+            // """Process websocket events.
+            // Modules can override this method to handle their own events. But overriding this method is
+            // not recommended and should be carefully considered, because at the time of writing this
+            // message, Odoo.sh does not use this method. Each new event should have a corresponding http
+            // route and Odoo.sh infrastructure should be updated to reflect it. On top of that, the
+            // event processing is very time, ressource and error sensitive."""
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
+            // def _serve_ir_websocket(self, event_name, data):
+            // """Override to process update_presence."""
+            // super()._serve_ir_websocket(event_name, data)
+            // if event_name == "update_presence":
+            //     self._update_mail_presence(**data)
             */
             return default;
         }
@@ -301,54 +310,60 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _subscribe(self, og_data):
             // data = self._prepare_subscribe_data(og_data["channels"], og_data["last"])
             // dispatch.subscribe(data["channels"], data["last"], self.env.registry.db_name, wsrequest.ws)
-            // if bus_target := self._get_missed_presences_bus_target():
-            //     data["missed_presences"]._send_presence(bus_target=bus_target)
+            // self._after_subscribe_data(data)
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
+            // def _subscribe(self, og_data):
+            // super()._subscribe(og_data)
             */
             return default;
         }
 
-        public async Task<TEntity> UpdateBusPresenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object inactivity_period, object im_status_ids_by_model) where TEntity : IEntity<Guid>, IIrWebsocketable
+        public async Task<TEntity> UpdateMailPresenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object inactivity_period) where TEntity : IEntity<Guid>, IIrWebsocketable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_websocket.py) ---
-            // def _update_bus_presence(self, inactivity_period, im_status_ids_by_model):
-            // if self.env.user and not self.env.user._is_public():
-            //     self.env['bus.presence'].update_presence(
-            //         inactivity_period,
-            //         identity_field='user_id',
-            //         identity_value=self.env.uid
-            //     )
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_websocket.py) ---
+            // def _update_mail_presence(self, inactivity_period):
+            // """
+            // Override to track user inactivity via WebSocket presence updates.
+            // 
+            // This method extends the base `_update_mail_presence` to update the session's
+            // inactivity state using the provided inactivity duration from the frontend.
+            // 
+            // :param float inactivity_period: Duration of user inactivity in milliseconds.
+            // :return: None
+            // """
+            // #  This method can either be called due to an http (/websocket/update_bus_presence)
+            // # or a websocket request.
+            // req = request or wsrequest
+            // self.env["ir.http"]._set_session_inactivity(req.session, inactivity_period)
+            // super()._update_mail_presence(inactivity_period)
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: ir_websocket.py) ---
-            // def _update_bus_presence(self, inactivity_period, im_status_ids_by_model):
-            // super()._update_bus_presence(inactivity_period, im_status_ids_by_model)
+            // def _update_mail_presence(self, inactivity_period):
+            // super()._update_mail_presence(inactivity_period)
             // #  This method can either be called due to an http or a
             // #  websocket request. The request itself is necessary to
             // #  retrieve the current guest. Let's retrieve the proper
             // #  request.
             // req = request or wsrequest
-            // if req.env.user._is_internal():
+            // if self.env.user._is_internal():
             //     ip_address = req.httprequest.remote_addr
-            //     users_log = req.env['res.users.log'].sudo().search_count([
-            //         ('create_uid', '=', req.env.user.id),
-            //         ('ip', '=', ip_address),
-            //         ('create_date', '>=', Datetime.to_string(Datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)))])
-            //     if not users_log:
-            //         with Registry(req.env.cr.dbname).cursor() as cr:
-            //             env = Environment(cr, req.env.user.id, {})
-            //             env['res.users.log'].sudo().create({'ip': ip_address})
+            //     domain = [
+            //         ("create_uid", "=", self.env.user.id),
+            //         ("ip", "=", ip_address),
+            //         ("create_date", ">=", fields.Date.today()),
+            //     ]
+            //     if not self.env["res.users.log"].sudo().search_count(domain, limit=1):
+            //         with Registry(self.env.cr.dbname).cursor() as cr:
+            //             env = Environment(cr, self.env.user.id, {})
+            //             env["res.users.log"].sudo().create({"ip": ip_address})
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_websocket.py) ---
-            // def _update_bus_presence(self, inactivity_period, im_status_ids_by_model):
-            // super()._update_bus_presence(inactivity_period, im_status_ids_by_model)
-            // if not self.env.user or self.env.user._is_public():
-            //     guest = self.env["mail.guest"]._get_guest_from_context()
-            //     if not guest:
-            //         return
-            //     # sudo: bus.presence - guests currently need sudo to write their own presence
-            //     self.env["bus.presence"].sudo().update_presence(
-            //         inactivity_period,
-            //         identity_field="guest_id",
-            //         identity_value=guest.id,
-            //     )
+            // def _update_mail_presence(self, inactivity_period):
+            // partner, guest = self.env["res.partner"]._get_current_persona()
+            // if not partner and not guest:
+            //     return
+            // self.env["mail.presence"]._try_update_presence(
+            //     self.env.user if partner else guest, inactivity_period
+            // )
             */
             return default;
         }

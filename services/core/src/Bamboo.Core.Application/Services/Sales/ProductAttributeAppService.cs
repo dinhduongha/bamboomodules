@@ -79,23 +79,26 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductAttribute> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<ProductAttribute> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_domain(self, data):
-            // loaded_attribute_ids = {ptal['attribute_id'] for ptal in data['product.template.attribute.line']['data']}
-            // return [('id', 'in', list(loaded_attribute_ids))]
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_attribute.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return ['name', 'display_type', 'create_variant']
             */
             return default;
         }
 
-        protected async Task<ProductAttribute> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ProductAttribute> OnchangeDisablePreviewVariantsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return ['name', 'display_type', 'template_value_ids', 'attribute_line_ids', 'create_variant']
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_attribute.py) ---
+            // def _onchange_disable_preview_variants(self):
+            // """ The option to preview variants is only available for instantly created single variants.
+            // """
+            // if self.create_variant != 'always' or self.display_type == 'multi':
+            //     self.preview_variants = 'hidden'
+            //     self.is_thumbnail_visible = False
             */
             return default;
         }

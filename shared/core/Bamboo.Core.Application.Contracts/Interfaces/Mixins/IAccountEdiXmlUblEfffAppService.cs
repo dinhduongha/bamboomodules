@@ -10,7 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IAccountEdiXmlUblEfffAppService : IMixinAppService
     {
-        Task<TEntity> ExportInvoiceEcosioSchematronsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAccountEdiXmlUblEfffable;
         Task<TEntity> ExportInvoiceFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblEfffable;
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
-    public class PaymentProviderStripeConnectAccountRequestDto
+    public class PaymentProviderStartOnboardingRequestDto
     {
         public Guid MenuId { get; set; }
     }

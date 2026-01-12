@@ -26,55 +26,12 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        protected async Task<DecimalPrecision> CheckMainCurrencyRoundingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: decimal_precision.py) ---
-            // def _check_main_currency_rounding(self):
-            // if any(precision.name == 'Account' and
-            //         tools.float_compare(self.env.company.currency_id.rounding, 10 ** - precision.digits, precision_digits=6) == -1
-            //         for precision in self):
-            //     raise ValidationError(_("You cannot define the decimal precision of 'Account' as greater than the rounding factor of the company's main currency"))
-            // return True
-            */
-            return default;
-        }
-
-        protected async Task<DecimalPrecision> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<DecimalPrecision> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: decimal_precision.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'digits']
-            */
-            return default;
-        }
-
-        protected async Task<DecimalPrecision> OnchangeDigitsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: decimal_precision.py) ---
-            // def _onchange_digits(self):
-            // if self.name != "Product Unit of Measure":  # precision_get() relies on this name
-            //     return
-            // # We are changing the precision of UOM fields; check whether the
-            // # precision is equal or higher than existing units of measure.
-            // rounding = 1.0 / 10.0**self.digits
-            // dangerous_uom = self.env['uom.uom'].search([('rounding', '<', rounding)])
-            // if dangerous_uom:
-            //     uom_descriptions = [
-            //         " - %s (id=%s, precision=%s)" % (uom.name, uom.id, uom.rounding)
-            //         for uom in dangerous_uom
-            //     ]
-            //     return {'warning': {
-            //         'title': _('Warning!'),
-            //         'message': _(
-            //             "You are setting a Decimal Accuracy less precise than the UOMs:\n"
-            //             "%s\n"
-            //             "This may cause inconsistencies in computations.\n"
-            //             "Please increase the rounding of those units of measure, or the digits of this Decimal Accuracy.",
-            //             '\n'.join(uom_descriptions)),
-            //     }}
             */
             return default;
         }
@@ -87,8 +44,8 @@ namespace Bamboo.Core.Application.Services
             // if self.digits < self._origin.digits:
             //     return {
             //         'warning': {
-            //             'title': _("Warning for %s", self.name),
-            //             'message': _(
+            //             'title': self.env._("Warning for %s", self.name),
+            //             'message': self.env._(
             //                 "The precision has been reduced for %s.\n"
             //                 "Note that existing data WON'T be updated by this change.\n\n"
             //                 "As decimal precisions impact the whole system, this may cause critical issues.\n"

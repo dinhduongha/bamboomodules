@@ -17,13 +17,15 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("PointOfSale", Category = "Sales", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
+    [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public class PosConfigAppService : GenericApplicationService<PosConfig>, IPosConfigAppService
     {
+        private readonly IHrMixinAppService _hrMixinAppService;
         private readonly IPosBusMixinAppService _posBusMixinAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public PosConfigAppService(IRepository<PosConfig, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosBusMixinAppService posBusMixinAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public PosConfigAppService(IRepository<PosConfig, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IHrMixinAppService hrMixinAppService, IPosBusMixinAppService posBusMixinAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
+            _hrMixinAppService = hrMixinAppService;
             _posBusMixinAppService = posBusMixinAppService;
             _posLoadMixinAppService = posLoadMixinAppService;
         }
@@ -35,8 +37,7 @@ namespace Bamboo.Core.Application.Services
             // def _action_to_open_ui(self):
             // if not self.current_session_id:
             //     self.env['pos.session'].create({'user_id': self.env.uid, 'config_id': self.id})
-            // path = '/pos/web' if self._force_http() else '/pos/ui'
-            // pos_url = path + '?config_id=%d&from_backend=True' % self.id
+            // pos_url = '/pos/ui/%d?from_backend=True' % self.id
             // debug = request and request.session.debug
             // if debug:
             //     pos_url += '&debug=%s' % debug
@@ -111,7 +112,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // if invalid_reward_products_msg:
             //     prefix_error_msg = _("To continue, make the following reward products available in Point of Sale.")
-            //     raise UserError(f"{prefix_error_msg}\n{invalid_reward_products_msg}")
+            //     raise UserError(f"{prefix_error_msg}\n{invalid_reward_products_msg}")  # pylint: disable=missing-gettext
             // if gift_card_programs:
             //     for gc_program in gift_card_programs:
             //         # Do not allow a gift card program with more than one rule or reward, and check that they make sense
@@ -143,6 +144,18 @@ namespace Bamboo.Core.Application.Services
             // for config in self:
             //     if any(pricelist.company_id.id not in [False, config.company_id.id] for pricelist in config.available_pricelist_ids):
             //         raise ValidationError(_("The selected pricelists must belong to no company or the company of the point of sale."))
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> CheckCompanyHasFiscalCountryInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _check_company_has_fiscal_country(self):
+            // self.ensure_one()
+            // if not self.company_id.account_fiscal_country_id:
+            //     raise ValidationError(_("The company must have a fiscal country set."))
             */
             return default;
         }
@@ -192,18 +205,6 @@ namespace Bamboo.Core.Application.Services
             //                                 " the Accounting application."))
             //     if config.invoice_journal_id.currency_id and config.invoice_journal_id.currency_id != config.currency_id:
             //         raise ValidationError(_("The invoice journal must be in the same currency as the Sales Journal or the company currency if that is not set."))
-            */
-            return default;
-        }
-
-        protected async Task<PosConfig> CheckCustomerDisplayTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _check_customer_display_type(self):
-            // for config in self:
-            //     if config.customer_display_type == 'proxy' and (not config.is_posbox or not config.proxy_ip):
-            //         raise UserError(_("You must set the iot box's IP address to use an IoT-connected screen. You'll find the field under the 'IoT Box' option."))
             */
             return default;
         }
@@ -316,12 +317,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _check_payment_method_ids_journal(self):
-            // for cash_method in self.payment_method_ids.filtered(lambda m: m.journal_id.type == 'cash'):
-            //     if self.env['pos.config'].search_count([('id', '!=', self.id), ('payment_method_ids', 'in', cash_method.ids)], limit=1):
-            //         raise ValidationError(_("This cash payment method is already used in another Point of Sale.\n"
-            //                                 "A new cash payment method should be created for this Point of Sale."))
-            //     if len(cash_method.journal_id.pos_payment_method_ids) > 1:
-            //         raise ValidationError(_("You cannot use the same journal on multiples cash payment methods."))
+            // for config in self:
+            //     for cash_method in config.payment_method_ids.filtered(lambda m: m.journal_id.type == 'cash'):
+            //         if self.env['pos.config'].search_count([('id', '!=', config.id), ('payment_method_ids', 'in', cash_method.ids)], limit=1):
+            //             raise ValidationError(_("This cash payment method is already used in another Point of Sale.\n"
+            //                                     "A new cash payment method should be created for this Point of Sale."))
+            //         if len(cash_method.journal_id.pos_payment_method_ids) > 1:
+            //             raise ValidationError(_("You cannot use the same journal on multiples cash payment methods."))
             */
             return default;
         }
@@ -405,10 +407,25 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def action_close_kiosk_session(self):
             // if self.current_session_id and self.current_session_id.order_ids:
-            //     self.current_session_id.order_ids.filtered(lambda o: o.state not in ['paid', 'invoiced']).unlink()
+            //     self.current_session_id.order_ids.filtered(lambda o: o.state == 'draft').unlink()
             // 
             // self._notify('STATUS', {'status': 'closed'})
             // return self.current_session_id.action_pos_session_closing_control()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosConfig> CloseUiAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def close_ui(self):
+            // return self.open_ui()
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def close_ui(self):
+            // if self.self_ordering_mode == "kiosk":
+            //     return self.action_close_kiosk_session()
+            // return super().close_ui()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -493,6 +510,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosConfig> ComputeFastPaymentMethodIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _compute_fast_payment_method_ids(self):
+            // for config in self:
+            //     config.fast_payment_method_ids = config.fast_payment_method_ids.filtered(lambda pm: pm.id in config.payment_method_ids.ids)
+            //     if not config.fast_payment_method_ids:
+            //         config.use_fast_payment = False
+            */
+            return default;
+        }
+
         protected async Task<PosConfig> ComputeIsInstalledAccountAccountantInternalAsync()
         {
             /*
@@ -517,12 +547,25 @@ namespace Bamboo.Core.Application.Services
             //         ['cash_register_balance_end_real', 'stop_at'],
             //         order="stop_at desc", limit=1)
             //     if session:
-            //         timezone = pytz.timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
+            //         timezone = self.env.tz
             //         pos_config.last_session_closing_date = session[0]['stop_at'].astimezone(timezone).date()
             //         pos_config.last_session_closing_cash = session[0]['cash_register_balance_end_real']
             //     else:
             //         pos_config.last_session_closing_cash = 0
             //         pos_config.last_session_closing_date = False
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> ComputeLocalDataIntegrityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _compute_local_data_integrity(self):
+            // self.last_data_change = self.env.cr.now()
+            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
+            // def _compute_local_data_integrity(self):
+            // super()._compute_local_data_integrity()
             */
             return default;
         }
@@ -564,6 +607,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosConfig> ComputeStatisticsForSessionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _compute_statistics_for_session(self):
+            // for config in self:
+            //     session = config.session_ids.filtered(lambda s: s.state != 'closed' and not s.rescue)
+            //     session_record = session[0] if session else None
+            //     if not session_record or not session_record.exists():
+            //         config.statistics_for_current_session = False
+            //         continue
+            //     config.statistics_for_current_session = config.get_statistics_for_session(session_record)
+            */
+            return default;
+        }
+
         protected async Task<PosConfig> ComputeStatusInternalAsync()
         {
             /*
@@ -575,38 +634,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosConfig> ConfigSequenceImplementationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _config_sequence_implementation(self):
-            // return 'standard'
-            */
-            return default;
-        }
-
         public override async Task<PosConfig> CreateAsync(PosConfig entity, List<string> fields)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def create(self, vals_list):
+            // if not self._default_warehouse_id():
+            //     self.env['stock.warehouse'].create({
+            //         'code': vals_list[0].get('name')[:3],  # first 3 characters of pos.config name
+            //         'company_id': self.env.company.id,
+            //     })
             // for vals in vals_list:
             //     self._check_header_footer(vals)
-            //     IrSequence = self.env['ir.sequence'].sudo()
-            //     val = {
-            //         'name': _('POS Order %s', vals['name']),
-            //         'padding': 4,
-            //         'prefix': "%s/" % vals['name'],
-            //         'code': "pos.order",
-            //         'company_id': vals.get('company_id', False),
-            //         'implementation': self._config_sequence_implementation(),
-            //     }
-            //     # force sequence_id field to new pos.order sequence
-            //     vals['sequence_id'] = IrSequence.create(val).id
             // 
-            //     val.update(name=_('POS order line %s', vals['name']), code='pos.order.line')
-            //     vals['sequence_line_id'] = IrSequence.create(val).id
             // pos_configs = super().create(vals_list)
+            // pos_configs._create_sequences()
             // pos_configs.sudo()._check_modules_to_install()
             // pos_configs.sudo()._check_groups_implied()
             // pos_configs._update_preparation_printers_menuitem_visibility()
@@ -616,8 +658,13 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // for vals in vals_list:
             //     is_restaurant = 'module_pos_restaurant' in vals and vals['module_pos_restaurant']
-            //     if is_restaurant and 'iface_splitbill' not in vals:
-            //         vals['iface_splitbill'] = True
+            //     if is_restaurant:
+            //         if 'iface_printbill' not in vals:
+            //             vals['iface_printbill'] = True
+            //         if 'show_product_images' not in vals:
+            //             vals['show_product_images'] = False
+            //         if 'show_category_images' not in vals:
+            //             vals['show_category_images'] = False
             //     if not is_restaurant or not vals.get('iface_tipproduct', False):
             //         vals['set_tip_after_payment'] = False
             // pos_configs = super().create(vals_list)
@@ -627,8 +674,9 @@ namespace Bamboo.Core.Application.Services
             // return pos_configs
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def create(self, vals_list):
-            // self._prepare_self_order_splash_screen(vals_list)
+            // self._prepare_self_order_splash_screen(vals_list, is_new=True)
             // pos_config_ids = super().create(vals_list)
+            // pos_config_ids._ensure_public_attachments()
             // pos_config_ids._prepare_self_order_custom_btn()
             // return pos_config_ids
             */
@@ -729,6 +777,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosConfig> CreateSequencesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _create_sequences(self):
+            // for pos_config in self:
+            //     sequence_vals = {
+            //         'padding': 6,
+            //         'code': "pos.order",
+            //         'company_id': pos_config.company_id.id,
+            //         'implementation': 'no_gap',
+            //     }
+            // 
+            //     # Create sequences for all orders
+            //     pos_config.order_seq_id = self.env['ir.sequence'].sudo().create({
+            //         **sequence_vals,
+            //         'name': _('POS order from config #%s', pos_config.id),
+            //     })
+            // 
+            //     # Create sequences for order that are created from self ore backend
+            //     pos_config.order_backend_seq_id = self.env['ir.sequence'].sudo().create({
+            //         **sequence_vals,
+            //         'name': _('POS order backend from config #%s', pos_config.id),
+            //     })
+            // 
+            //     # Create sequences for all order lines
+            //     pos_config.order_line_seq_id = self.env['ir.sequence'].sudo().create({
+            //         **sequence_vals,
+            //         'name': _('POS order line from config #%s', pos_config.id),
+            //     })
+            // 
+            //     # Create sequences for devices
+            //     pos_config.device_seq_id = self.env['ir.sequence'].sudo().create({
+            //         **sequence_vals,
+            //         'name': _('POS device from config #%s', pos_config.id),
+            //         'padding': 0,
+            //     })
+            */
+            return default;
+        }
+
         protected async Task<PosConfig> DefaultDiscountValueOnModuleInstallInternalAsync()
         {
             /*
@@ -791,7 +880,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _default_picking_type_id(self):
-            // return self.env['stock.warehouse'].search(self.env['stock.warehouse']._check_company_domain(self.env.company), limit=1).pos_type_id.id
+            // return self.env['stock.warehouse'].with_context(active_test=False).search(self.env['stock.warehouse']._check_company_domain(self.env.company), limit=1).pos_type_id.id
             */
             return default;
         }
@@ -812,10 +901,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _default_warehouse_id(self):
-            // warehouse = self.env['stock.warehouse'].search(self.env['stock.warehouse']._check_company_domain(self.env.company), limit=1).id
-            // if not warehouse:
-            //     self.env['stock.warehouse']._warehouse_redirect_warning()
-            // return warehouse
+            // return self.env['stock.warehouse'].search(self.env['stock.warehouse']._check_company_domain(self.env.company), limit=1).id
             */
             return default;
         }
@@ -827,9 +913,9 @@ namespace Bamboo.Core.Application.Services
             // def _employee_domain(self, user_id):
             // domain = self._check_company_domain(self.company_id)
             // if len(self.basic_employee_ids) > 0:
-            //     domain = AND([
+            //     domain = Domain.AND([
             //         domain,
-            //         ['|', ('user_id', '=', user_id), ('id', 'in', self.basic_employee_ids.ids + self.advanced_employee_ids.ids)]
+            //         ['|', ('user_id', '=', user_id), ('id', 'in', self.basic_employee_ids.ids + self.advanced_employee_ids.ids + self.minimal_employee_ids.ids)]
             //     ])
             // return domain
             */
@@ -849,6 +935,30 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosConfig> EnsurePublicAttachmentsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def _ensure_public_attachments(self):
+            // self.self_ordering_image_background_ids.write({"public": True})
+            // self.self_ordering_image_home_ids.write({"public": True})
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> EnvWithCleanContextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _env_with_clean_context(self):
+            // safe_context = {}
+            // if 'allowed_company_ids' in self.env.context:
+            //     safe_context['allowed_company_ids'] = self.env.context['allowed_company_ids']
+            // return self.env(context=safe_context)
+            */
+            return default;
+        }
+
         public async Task<PosConfig> ExecuteAsync(Guid id)
         {
             /*
@@ -862,44 +972,23 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosConfig> ForceHttpInternalAsync()
+        protected async Task<PosConfig> GenerateSingleQrCodeInternalAsync(object url)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _force_http(self):
-            // enforce_https = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.enforce_https')
-            // if not enforce_https and (self.other_devices or self.printer_ids.filtered(lambda pt: pt.printer_type == 'epson_epos')):
-            //     return True
-            // return False
-            --- ODOO METHOD SOURCE (MODULE: pos_six, FILE: pos_config.py) ---
-            // def _force_http(self):
-            // enforce_https = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.enforce_https')
-            // if not enforce_https and self.payment_method_ids.filtered(lambda pm: pm.use_payment_terminal == 'six'):
-            //     return True
-            // return super(PosConfig, self)._force_http()
-            */
-            return default;
-        }
-
-        protected async Task<PosConfig> GetAvailableCategoriesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _get_available_categories(self):
-            // return (
-            //     self.env["pos.category"]
-            //     .search(
-            //         [
-            //             *(
-            //                 self.limit_categories
-            //                 and self.iface_available_categ_ids
-            //                 and [("id", "in", self.iface_available_categ_ids._get_descendants().ids)]
-            //                 or []
-            //             ),
-            //         ],
-            //         order="sequence",
-            //     )
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def _generate_single_qr_code__(self, url):  # noqa: PLW3201
+            // qr = qrcode.QRCode(
+            //     version=1,
+            //     error_correction=qrcode.constants.ERROR_CORRECT_L,
+            //     box_size=10,
+            //     border=4,
             // )
+            // qr.add_data(url)
+            // qr.make(fit=True)
+            // return {
+            //     'png': qr.make_image(fill_color="black", back_color="transparent"),
+            //     'svg': qr.make_image(fill_color="black", back_color="transparent", image_factory=qrcode.image.svg.SvgImage),
+            // }
             */
             return default;
         }
@@ -910,25 +999,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _get_available_pricelists(self):
             // self.ensure_one()
-            // return self.available_pricelist_ids if self.use_pricelist else self.pricelist_id
-            */
-            return default;
-        }
-
-        protected async Task<PosConfig> GetAvailableProductDomainInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _get_available_product_domain(self):
-            // domain = [
-            //     *self.env['product.product']._check_company_domain(self.company_id),
-            //     ('active', '=', True),
-            //     ('available_in_pos', '=', True),
-            //     ('sale_ok', '=', True),
-            // ]
-            // if self.limit_categories and self.iface_available_categ_ids:
-            //     domain.append(('pos_categ_ids', 'in', self._get_available_categories().ids))
-            // return domain
+            // return self.available_pricelist_ids + self.pricelist_id if self.use_pricelist else self.pricelist_id
             */
             return default;
         }
@@ -944,17 +1015,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> GetCategoriesAsync(Guid id, PosConfigGetCategoriesRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def get_categories(self, categories):
-            // # filters out unavailable external id
-            // return [self.env.ref(category).id for category in categories if self.env.ref(category, raise_if_not_found=False)]
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<PosConfig> GetCustomerDisplayDataInternalAsync()
         {
             /*
@@ -964,21 +1024,25 @@ namespace Bamboo.Core.Application.Services
             // return {
             //     'config_id': self.id,
             //     'access_token': self.access_token,
-            //     'type': self.customer_display_type,
             //     'has_bg_img': bool(self.customer_display_bg_img),
             //     'company_id': self.company_id.id,
-            //     **({'proxy_ip': self._get_display_device_ip()} if self.customer_display_type != 'none' else {}),
+            //     'proxy_ip': self._get_display_device_ip(),
             // }
             */
             return default;
         }
 
-        protected async Task<PosConfig> GetCustomerDisplayTypesInternalAsync()
+        protected async Task<PosConfig> GetDefaultDemoDataXmlIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _get_customer_display_types(self):
-            // return [('none', 'None'), ('local', 'The same device'), ('remote', 'Another device'), ('proxy', 'An IOT-connected screen')]
+            // def _get_default_demo_data_xml_id(self):
+            // return 'point_of_sale.pos_config_main'
+            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
+            // def _get_default_demo_data_xml_id(self):
+            // if self.module_pos_restaurant:
+            //     return 'pos_restaurant.pos_config_main_restaurant'
+            // return super()._get_default_demo_data_xml_id()
             */
             return default;
         }
@@ -992,6 +1056,28 @@ namespace Bamboo.Core.Application.Services
             // if not tip_product_id or (tip_product_id.sudo().company_id and tip_product_id.sudo().company_id != self.env.company):
             //     tip_product_id = self.env['product.product'].search([('default_code', '=', 'TIPS')], limit=1)
             // return tip_product_id
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> GetDemoDataLoaderMethodsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _get_demo_data_loader_methods(self):
+            // return {
+            //     'point_of_sale.pos_config_clothes': self._load_onboarding_clothes_demo_data,
+            //     'point_of_sale.pos_config_bakery': self._load_onboarding_bakery_demo_data,
+            //     'point_of_sale.pos_config_main': self._load_onboarding_furniture_demo_data,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
+            // def _get_demo_data_loader_methods(self):
+            // mapping = super()._get_demo_data_loader_methods()
+            // mapping.update({
+            //     'pos_restaurant.pos_config_main_restaurant': self._load_restaurant_demo_data,
+            //     'pos_restaurant.pos_config_main_bar': self._load_bar_demo_data,
+            // })
+            // return mapping
             */
             return default;
         }
@@ -1012,10 +1098,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _get_forbidden_change_fields(self):
-            // forbidden_keys = ['module_pos_hr', 'module_pos_restaurant', 'available_pricelist_ids',
-            //                   'limit_categories', 'iface_available_categ_ids', 'use_pricelist', 'module_pos_discount',
-            //                   'payment_method_ids', 'iface_tipproduc']
-            // return forbidden_keys
+            // return ['module_pos_restaurant', 'payment_method_ids']
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
             // def _get_forbidden_change_fields(self):
             // forbidden_keys = super(PosConfig, self)._get_forbidden_change_fields()
@@ -1060,21 +1143,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _get_limited_partner_count(self):
-            // default_limit = 100
-            // config_param = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.limited_customer_count', default_limit)
+            // config_param = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.limited_customer_count', DEFAULT_LIMIT_LOAD_PARTNER)
             // try:
             //     return int(config_param)
             // except (TypeError, ValueError, OverflowError):
-            //     return default_limit
+            //     return DEFAULT_LIMIT_LOAD_PARTNER
             */
             return default;
         }
 
-        public async Task<PosConfig> GetLimitedPartnersLoadingAsync(Guid id)
+        public async Task<PosConfig> GetLimitedPartnersLoadingAsync(Guid id, PosConfigGetLimitedPartnersLoadingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def get_limited_partners_loading(self):
+            // def get_limited_partners_loading(self, offset=0):
             // return self.env.execute_query(SQL("""
             //     WITH pm AS
             //     (
@@ -1091,8 +1173,8 @@ namespace Bamboo.Core.Application.Services
             //         partner.company_id=%s OR partner.company_id IS NULL
             //     )
             //     ORDER BY  COALESCE(pm.order_count, 0) DESC,
-            //               NAME limit %s;
-            // """, self.company_id.id, self._get_limited_partner_count()))
+            //               NAME limit %s offset %s;
+            // """, self.company_id.id, self._get_limited_partner_count(), offset))
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1102,58 +1184,26 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def get_limited_product_count(self):
-            // default_limit = 20000
-            // config_param = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.limited_product_count', default_limit)
+            // config_param = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.limited_product_count', DEFAULT_LIMIT_LOAD_PRODUCT)
             // try:
             //     return int(config_param)
             // except (TypeError, ValueError, OverflowError):
-            //     return default_limit
+            //     return DEFAULT_LIMIT_LOAD_PRODUCT
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> GetLimitedProductsLoadingAsync(Guid id, PosConfigGetLimitedProductsLoadingRequestDto input)
+        protected async Task<PosConfig> GetNextOrderRefsInternalAsync(object device_identifier)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def get_limited_products_loading(self, fields):
-            // query = self.env['product.product']._where_calc(
-            //     self._get_available_product_domain()
-            // )
-            // sql = SQL(
-            //     """
-            //     WITH pm AS (
-            //           SELECT product_id,
-            //                  MAX(write_date) date
-            //             FROM stock_move_line
-            //         GROUP BY product_id
-            //     )
-            //        SELECT product_product.id
-            //          FROM %s
-            //     LEFT JOIN pm ON product_product.id=pm.product_id
-            //         WHERE %s
-            //      ORDER BY product_product__product_tmpl_id.is_favorite DESC,
-            //               CASE WHEN product_product__product_tmpl_id.type = 'service' THEN 1 ELSE 0 END DESC,
-            //               pm.date DESC NULLS LAST,
-            //               product_product.write_date DESC
-            //         LIMIT %s
-            //     """,
-            //     query.from_clause,
-            //     query.where_clause or SQL("TRUE"),
-            //     self.get_limited_product_count(),
-            // )
-            // product_ids = [r[0] for r in self.env.execute_query(sql)]
-            // product_ids.extend(self._get_special_products().ids)
-            // products = self.env['product.product'].search([('id', 'in', product_ids)])
-            // # sort products by product_ids order
-            // id_to_index = {pid: index for index, pid in enumerate(product_ids)}
-            // products = products.sorted(key=lambda p: id_to_index[p.id])
-            // product_combo = products.filtered(lambda p: p['type'] == 'combo')
-            // product_in_combo = product_combo.combo_ids.combo_item_ids.product_id
-            // products_available = products | product_in_combo
-            // return products_available.read(fields, load=False)
+            // def _get_next_order_refs(self, device_identifier='0'):
+            // next_number = self.order_backend_seq_id._next()
+            // year_2_digits = str(datetime.now().year)[-2:]
+            // tracking_number = f"{int(next_number) % 1000}"
+            // return f"{year_2_digits}{device_identifier}-{self.id}-{next_number}", tracking_number
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         protected async Task<PosConfig> GetPaymentMethodInternalAsync(object payment_type)
@@ -1184,6 +1234,62 @@ namespace Bamboo.Core.Application.Services
             //     "has_chart_template": has_chart_template,
             //     "is_restaurant_installed": bool(self.env['ir.module.module'].search_count([('name', '=', 'pos_restaurant'), ('state', '=', 'installed')])),
             //     "is_main_company": main_company and self.env.company.id == main_company.id or False
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosConfig> GetPosQrOrderDataAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def get_pos_qr_order_data(self):
+            // 
+            // url_form = "https://www.odoo.com/app/point-of-sale-restaurant-qr-code"
+            // 
+            // table_data = []
+            // if self.self_ordering_mode not in ['mobile', 'consultation']:
+            //     return {
+            //         'success': False,
+            //         'error': 'INVALID_SELF_ORDERING_MODE',
+            //     }
+            // 
+            // table_ids = None
+            // if self.module_pos_restaurant:
+            //     table_ids = self.floor_ids.table_ids
+            // 
+            // if table_ids and self.self_ordering_mode == 'mobile':
+            //     for table in table_ids:
+            //         url = self._get_self_order_url(table.id)
+            //         table_data.append({
+            //             'url': url,
+            //             'name': f"{table.floor_id.name} - {table.table_number}",
+            //             'images': self._generate_single_qr_code__(unquote(url)),
+            //         })
+            // else:
+            //     url = self._get_self_order_url()
+            //     table_data.append({
+            //         'url': url,
+            //         'name': "generic",
+            //         'images': self._generate_single_qr_code__(unquote(url)),
+            //     })
+            // 
+            // zip_buffer = BytesIO()
+            // with zipfile.ZipFile(zip_buffer, "w", 0) as zip_file:
+            //     for index, qr_data in enumerate(table_data):
+            //         with zip_file.open(f"{qr_data['name']} ({index + 1}).png", "w") as buf:
+            //             qr_data['images']['png'].save(buf, format="PNG")
+            //         with zip_file.open(f"{qr_data['name']} ({index + 1}).svg", "w") as buf:
+            //             buf.write(qr_data['images']['svg'].to_string())
+            // zip_buffer.seek(0)
+            // 
+            // return {
+            //     'success': True,
+            //     'table_data': table_data,
+            //     'self_ordering_mode': self.self_ordering_mode,
+            //     'db_name': self.env.cr.dbname,
+            //     'redirect_url': url_form,
+            //     'zip_archive': base64.b64encode(zip_buffer.read()).decode('utf-8'),
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1246,15 +1352,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> GetRecordsAsync(Guid id, PosConfigGetRecordsRequestDto input)
+        public async Task<PosConfig> GetRecordByRefAsync(Guid id, PosConfigGetRecordByRefRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def get_records(self, data):
-            // records = {}
-            // for model, ids in data.items():
-            //     records[model] = self.env[model].browse(ids).read(self.env[model]._load_pos_data_fields(self.id), load=False)
-            // return records
+            // def get_record_by_ref(self, recordRefs):
+            // # filters out unavailable external id
+            // return [self.env.ref(record).id for record in recordRefs if self.env.ref(record, raise_if_not_found=False)]
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1290,7 +1394,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def _get_self_order_url(self, table_id: Optional[int] = None) -> str:
             // self.ensure_one()
-            // return url_quote(self.get_base_url() + self._get_self_order_route(table_id))
+            // long_url = self.get_base_url() + self._get_self_order_route(table_id)
+            // return self.env['link.tracker'].search_or_create([{
+            //     'url': long_url,
+            //     'title': f"Self Order {self.name}" if not table_id else f"Self Order {self.name} - Table id {table_id}",
+            // }]).short_url
             */
             return default;
         }
@@ -1343,6 +1451,68 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<PosConfig> GetStatisticsForSessionAsync(Guid id, PosConfigGetStatisticsForSessionRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def get_statistics_for_session(self, session):
+            // self.ensure_one()
+            // currency = self.currency_id
+            // timezone = pytz.timezone(self.env.context.get('tz') or self.env.user.tz or 'UTC')
+            // statistics = {
+            //     'cash': {
+            //         'raw_opening_cash': session.cash_register_balance_start,
+            //         'opening_cash': currency.format(session.cash_register_balance_start)
+            //     },
+            //     'date': {
+            //         'is_started': bool(session.start_at),
+            //         'start_date': session.start_at.astimezone(timezone).strftime('%b %d') if session.start_at else False,
+            //     },
+            //     'orders': {
+            //         'paid': False,
+            //         'draft': False,
+            //     },
+            // }
+            // 
+            // all_paid_orders = session.order_ids.filtered(lambda o: o.state == 'paid')
+            // refund_orders = all_paid_orders.filtered(lambda o: o.is_refund)
+            // draft_orders = session.order_ids.filtered(lambda o: o.state == 'draft')
+            // non_refund_orders = all_paid_orders - refund_orders
+            // 
+            // # calculate total refunded amount per original order for refund count check
+            // refund_totals = defaultdict(float)
+            // for refund in refund_orders:
+            //     if refund.refunded_order_id:
+            //         refund_totals[refund.refunded_order_id.id] += abs(refund.amount_total)
+            // 
+            // # count paid orders that are not completely refunded
+            // paid_order_count = sum(
+            //     1 for order in non_refund_orders
+            //     if refund_totals.get(order.id, 0.0) != order.amount_total
+            // )
+            // 
+            // if paid_order_count:
+            //     total_paid = sum(all_paid_orders.mapped('amount_total'))
+            //     statistics['orders']['paid'] = {
+            //         'amount': total_paid,
+            //         'count': paid_order_count,
+            //         'display': f"{currency.format(total_paid)} ({paid_order_count} {'order' if paid_order_count == 1 else 'orders'})"
+            //     }
+            // 
+            // if draft_orders:
+            //     total_draft = sum(draft_orders.mapped('amount_total'))
+            //     count_draft = len(draft_orders)
+            //     statistics['orders']['draft'] = {
+            //         'amount': total_draft,
+            //         'count': count_draft,
+            //         'display': f"{currency.format(total_draft)} ({count_draft} {'order' if count_draft == 1 else 'orders'})"
+            //     }
+            // 
+            // return statistics
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<PosConfig> GetSuffixedRefNameInternalAsync(object ref_name)
         {
             /*
@@ -1356,6 +1526,40 @@ namespace Bamboo.Core.Application.Services
             //     return f"{ref_name}_{self.env.company.id}"
             */
             return default;
+        }
+
+        protected async Task<PosConfig> GetUrlToCacheInternalAsync(object debug)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _get_url_to_cache(self, debug):
+            // url_to_cache = [
+            //     f"/pos/ui/{self.id}?from_backend=True",
+            //     f"/pos/ui/{self.id}",
+            // ]
+            // return self.env["ir.qweb"]._get_asset_links("point_of_sale.assets_prod", debug=debug) + url_to_cache
+            */
+            return default;
+        }
+
+        public async Task<PosConfig> HasValidSelfPaymentMethodAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_config.py) ---
+            // def has_valid_self_payment_method(self):
+            // res = super().has_valid_self_payment_method()
+            // if self.self_ordering_mode == 'mobile':
+            //     return res or bool(self.self_order_online_payment_method_id)
+            // return res or any(pm.is_online_payment for pm in self.payment_method_ids)
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def has_valid_self_payment_method(self):
+            // """ Checks if the POS config has a valid payment method (terminal or online). """
+            // self.ensure_one()
+            // if self.self_ordering_mode == 'mobile':
+            //     return False
+            // return any(pm.use_payment_terminal in self._supported_kiosk_payment_terminal() for pm in self.payment_method_ids)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<PosConfig> InstallPosRestaurantAsync(Guid id)
@@ -1413,6 +1617,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosConfig> IsQuantitiesSetInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _is_quantities_set(self):
+            // return self.is_closing_entry_by_product
+            */
+            return default;
+        }
+
         protected async Task<PosConfig> KeepNewValsInternalAsync(object vals)
         {
             /*
@@ -1449,170 +1663,250 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosConfig> LoadBarDataInternalAsync()
+        protected async Task<PosConfig> LoadBarDemoDataInternalAsync(object with_demo_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
-            // def _load_bar_data(self):
-            // convert.convert_file(self.env, 'pos_restaurant', 'data/scenarios/bar_data.xml', None, noupdate=True, mode='init', kind='data')
-            */
-            return default;
-        }
-
-        protected async Task<PosConfig> LoadFurnitureDataInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _load_furniture_data(self):
-            // if not self.env.user.has_group('base.group_system'):
-            //     raise AccessError(_("You must have 'Administration Settings' access to load furniture data."))
-            // product_module = self.env['ir.module.module'].search([('name', '=', 'product')])
-            // if not product_module.demo:
-            //     convert.convert_file(self.env, 'product', 'data/product_category_demo.xml', None, noupdate=True, mode='init', kind='data')
-            //     convert.convert_file(self.env, 'product', 'data/product_attribute_demo.xml', None, noupdate=True, mode='init', kind='data')
-            //     convert.convert_file(self.env, 'product', 'data/product_demo.xml', None, noupdate=True, mode='init', kind='data')
-            // 
-            // convert.convert_file(self.env, 'point_of_sale', 'data/scenarios/furniture_data.xml', None, noupdate=True, mode='init', kind='data')
-            */
-            return default;
-        }
-
-        public async Task<PosConfig> LoadOnboardingBakeryScenarioAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def load_onboarding_bakery_scenario(self):
-            // ref_name = 'point_of_sale.pos_config_bakery'
-            // if not self.env.ref(ref_name, raise_if_not_found=False):
-            //     convert.convert_file(self.env, 'point_of_sale', 'data/scenarios/bakery_data.xml', None, mode='init', noupdate=True, kind='data')
-            // 
-            // journal, payment_methods_ids = self._create_journal_and_payment_methods(cash_journal_vals={'name': _("Cash Bakery"), 'show_on_dashboard': False})
-            // bakery_categories = self.get_categories([
-            //     'point_of_sale.pos_category_breads',
-            //     'point_of_sale.pos_category_pastries',
+            // def _load_bar_demo_data(self, with_demo_data=True):
+            // self.ensure_one()
+            // convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/bar_category_data.xml', idref=None, mode='init', noupdate=True)
+            // if with_demo_data:
+            //     convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/bar_demo_data.xml', idref=None, mode='init', noupdate=True)
+            // bar_categories = self.get_record_by_ref([
+            //     'pos_restaurant.pos_category_cocktails',
+            //     'pos_restaurant.pos_category_soft_drinks',
             // ])
-            // config = self.env['pos.config'].create({
-            //     'name': _('Bakery Shop'),
-            //     'company_id': self.env.company.id,
-            //     'journal_id': journal.id,
-            //     'payment_method_ids': payment_methods_ids,
-            //     'limit_categories': True,
-            //     'iface_available_categ_ids': bakery_categories,
-            // })
-            // self.env['ir.model.data']._update_xmlids([{
-            //     'xml_id': self._get_suffixed_ref_name(ref_name),
-            //     'record': config,
-            //     'noupdate': True,
-            // }])
+            // if bar_categories:
+            //     self.limit_categories = True
+            //     self.iface_available_categ_ids = bar_categories
+            */
+            return default;
+        }
+
+        public async Task<PosConfig> LoadDataParamsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def load_data_params(self):
+            // response = {}
+            // fields = self._load_pos_self_data_fields(self)
+            // response['pos.config'] = {
+            //     'fields': fields,
+            //     'relations': self.env['pos.session']._load_pos_data_relations('pos.config', fields)
+            // }
+            // 
+            // for model in self._load_self_data_models():
+            //     fields = self.env[model]._load_pos_self_data_fields(self)
+            //     response[model] = {
+            //         'fields': fields,
+            //         'relations': self.env['pos.session']._load_pos_data_relations(model, fields)
+            //     }
+            // 
+            // return response
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> LoadOnboardingBarScenarioAsync(Guid id)
+        public async Task<PosConfig> LoadDemoDataAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def load_demo_data(self):
+            // self = self.with_context(bypass_categories_forbidden_change=True)
+            // xml_id = self.get_external_id().get(self.id) or self._get_default_demo_data_xml_id()
+            // loaders = self._get_demo_data_loader_methods()
+            // for prefix, loader in loaders.items():
+            //     if xml_id.startswith(prefix):
+            //         return loader(True)
+            // return loaders.get(self._get_default_demo_data_xml_id(), self._load_onboarding_furniture_demo_data)(True)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PosConfig> LoadOnboardingBakeryDemoDataInternalAsync(object with_demo_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _load_onboarding_bakery_demo_data(self, with_demo_data=True):
+            // self.ensure_one()
+            // convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/bakery_category_data.xml', idref=None, mode='init', noupdate=True)
+            // if with_demo_data:
+            //     convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/bakery_data.xml', idref=None, mode='init', noupdate=True)
+            // 
+            // bakery_categories = self.get_record_by_ref([
+            //     'point_of_sale.pos_category_breads',
+            //     'point_of_sale.pos_category_pastries',
+            // ])
+            // if bakery_categories:
+            //     self.limit_categories = True
+            //     self.iface_available_categ_ids = bakery_categories
+            */
+            return default;
+        }
+
+        public async Task<PosConfig> LoadOnboardingBakeryScenarioAsync(Guid id, PosConfigLoadOnboardingBakeryScenarioRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def load_onboarding_bakery_scenario(self, with_demo_data=True):
+            // journal, payment_methods_ids = self._create_journal_and_payment_methods(
+            //     cash_journal_vals={'name': _('Cash Bakery'), 'show_on_dashboard': False})
+            // config = self.env['pos.config'].create({
+            //     'name': _('Bakery Shop'),
+            //     'company_id': self.env.company.id,
+            //     'journal_id': journal.id,
+            //     'payment_method_ids': payment_methods_ids
+            // })
+            // self.env['ir.model.data']._update_xmlids([{
+            //     'xml_id': self._get_suffixed_ref_name('point_of_sale.pos_config_bakery'),
+            //     'record': config,
+            //     'noupdate': True,
+            // }])
+            // config._load_onboarding_bakery_demo_data(with_demo_data)
+            // return {'config_id': config.id}
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosConfig> LoadOnboardingBarScenarioAsync(Guid id, PosConfigLoadOnboardingBarScenarioRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
-            // def load_onboarding_bar_scenario(self):
-            // ref_name = 'pos_restaurant.pos_config_main_bar'
-            // if not self.env.ref(ref_name, raise_if_not_found=False):
-            //     self._load_bar_data()
+            // def load_onboarding_bar_scenario(self, with_demo_data=True):
             // journal, payment_methods_ids = self._create_journal_and_payment_methods(cash_journal_vals={'name': 'Cash Bar', 'show_on_dashboard': False})
-            // bar_categories = self.get_categories([
-            //     'pos_restaurant.pos_category_cocktails',
-            //     'pos_restaurant.pos_category_soft_drinks',
-            // ])
             // config = self.env['pos.config'].create({
             //     'name': 'Bar',
             //     'company_id': self.env.company.id,
             //     'journal_id': journal.id,
             //     'payment_method_ids': payment_methods_ids,
-            //     'limit_categories': True,
-            //     'iface_available_categ_ids': bar_categories,
             //     'iface_splitbill': True,
             //     'module_pos_restaurant': True,
+            //     'default_screen': 'register'
             // })
             // self.env['ir.model.data']._update_xmlids([{
-            //     'xml_id': self._get_suffixed_ref_name(ref_name),
+            //     'xml_id': self._get_suffixed_ref_name('pos_restaurant.pos_config_main_bar'),
             //     'record': config,
             //     'noupdate': True,
             // }])
+            // if not self.env.ref('pos_restaurant.floor_main', raise_if_not_found=False):
+            //     convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/restaurant_floor.xml', idref=None, mode='init', noupdate=True)
+            // config_floors = [(5, 0)]
+            // if (floor_main := self.env.ref('pos_restaurant.floor_main', raise_if_not_found=False)):
+            //     config_floors += [(4, floor_main.id)]
+            // if (floor_patio := self.env.ref('pos_restaurant.floor_patio', raise_if_not_found=False)):
+            //     config_floors += [(4, floor_patio.id)]
+            // config.update({'floor_ids': config_floors})
+            // config._load_bar_demo_data(with_demo_data)
+            // return {'config_id': config.id}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> LoadOnboardingClothesScenarioAsync(Guid id)
+        protected async Task<PosConfig> LoadOnboardingClothesDemoDataInternalAsync(object with_demo_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def load_onboarding_clothes_scenario(self):
-            // if not self.env.user.has_group('base.group_system'):
-            //     raise AccessError(_("You must have 'Administration Settings' access to load clothes data."))
-            // ref_name = 'point_of_sale.pos_config_clothes'
-            // if not self.env.ref(ref_name, raise_if_not_found=False):
-            //     convert.convert_file(self.env, 'point_of_sale', 'data/scenarios/clothes_data.xml', None, noupdate=True, mode='init', kind='data')
-            // 
-            // clothes_categories = self.get_categories([
+            // def _load_onboarding_clothes_demo_data(self, with_demo_data=True):
+            // self.ensure_one()
+            // convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/clothes_category_data.xml', idref=None, mode='init', noupdate=True)
+            // if with_demo_data:
+            //     product_module = self.env['ir.module.module'].search([('name', '=', 'product')])
+            //     if not product_module.demo:
+            //         convert.convert_file(self._env_with_clean_context(), 'product', 'data/product_attribute_demo.xml', idref=None, mode='init', noupdate=True)
+            //     convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/clothes_data.xml', idref=None, mode='init', noupdate=True)
+            // clothes_categories = self.get_record_by_ref([
             //     'point_of_sale.pos_category_upper',
             //     'point_of_sale.pos_category_lower',
             //     'point_of_sale.pos_category_others'
             // ])
-            // journal, payment_methods_ids = self._create_journal_and_payment_methods(cash_journal_vals={'name': _("Cash Clothes Shop"), 'show_on_dashboard': False})
+            // if clothes_categories:
+            //     self.limit_categories = True
+            //     self.iface_available_categ_ids = clothes_categories
+            */
+            return default;
+        }
+
+        public async Task<PosConfig> LoadOnboardingClothesScenarioAsync(Guid id, PosConfigLoadOnboardingClothesScenarioRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def load_onboarding_clothes_scenario(self, with_demo_data=True):
+            // journal, payment_methods_ids = self._create_journal_and_payment_methods(
+            //     cash_journal_vals={'name': _('Cash Clothes Shop'), 'show_on_dashboard': False})
             // config = self.env['pos.config'].create([{
             //     'name': _('Clothes Shop'),
             //     'company_id': self.env.company.id,
             //     'journal_id': journal.id,
-            //     'payment_method_ids': payment_methods_ids,
-            //     'limit_categories': True,
-            //     'iface_available_categ_ids': clothes_categories,
+            //     'payment_method_ids': payment_methods_ids
             // }])
             // self.env['ir.model.data']._update_xmlids([{
-            //     'xml_id': self._get_suffixed_ref_name(ref_name),
+            //     'xml_id': self._get_suffixed_ref_name('point_of_sale.pos_config_clothes'),
             //     'record': config,
             //     'noupdate': True,
             // }])
+            // config._load_onboarding_clothes_demo_data(with_demo_data)
+            // return {'config_id': config.id}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> LoadOnboardingFurnitureScenarioAsync(Guid id)
+        protected async Task<PosConfig> LoadOnboardingFurnitureDemoDataInternalAsync(object with_demo_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def load_onboarding_furniture_scenario(self):
-            // ref_name = 'point_of_sale.pos_config_main'
-            // if not self.env.ref(ref_name, raise_if_not_found=False):
-            //     self._load_furniture_data()
+            // def _load_onboarding_furniture_demo_data(self, with_demo_data=False):
+            // self.ensure_one()
+            // convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/furniture_category_data.xml', idref=None, mode='init', noupdate=True)
+            // if with_demo_data:
+            //     product_module = self.env['ir.module.module'].search([('name', '=', 'product')])
+            //     if not product_module.demo:
+            //         convert.convert_file(self._env_with_clean_context(), 'product', 'data/product_category_demo.xml', idref=None, mode='init', noupdate=True)
+            //         convert.convert_file(self._env_with_clean_context(), 'product', 'data/product_attribute_demo.xml', idref=None, mode='init', noupdate=True)
+            //         convert.convert_file(self._env_with_clean_context(), 'product', 'data/product_demo.xml', idref=None, mode='init', noupdate=True)
+            //     convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/scenarios/furniture_data.xml', idref=None, mode='init', noupdate=True)
             // 
-            // journal, payment_methods_ids = self._create_journal_and_payment_methods(
-            //     cash_ref='point_of_sale.cash_payment_method_furniture',
-            //     cash_journal_vals={'name': _("Cash Furn. Shop"), 'show_on_dashboard': False},
-            // )
-            // furniture_categories = self.get_categories([
+            // furniture_categories = self.get_record_by_ref([
             //     'point_of_sale.pos_category_miscellaneous',
             //     'point_of_sale.pos_category_desks',
             //     'point_of_sale.pos_category_chairs'
             // ])
+            // if furniture_categories:
+            //     self.limit_categories = True
+            //     self.iface_available_categ_ids = furniture_categories
+            */
+            return default;
+        }
+
+        public async Task<PosConfig> LoadOnboardingFurnitureScenarioAsync(Guid id, PosConfigLoadOnboardingFurnitureScenarioRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def load_onboarding_furniture_scenario(self, with_demo_data=True):
+            // journal, payment_methods_ids = self._create_journal_and_payment_methods(
+            //     cash_ref='point_of_sale.cash_payment_method_furniture',
+            //     cash_journal_vals={'name': _("Cash Furn. Shop"), 'show_on_dashboard': False},
+            // )
             // config = self.env['pos.config'].create([{
             //     'name': _('Furniture Shop'),
             //     'company_id': self.env.company.id,
             //     'journal_id': journal.id,
-            //     'payment_method_ids': payment_methods_ids,
-            //     'limit_categories': True,
-            //     'iface_available_categ_ids': furniture_categories,
+            //     'payment_method_ids': payment_methods_ids
             // }])
             // self.env['ir.model.data']._update_xmlids([{
-            //     'xml_id': self._get_suffixed_ref_name(ref_name),
+            //     'xml_id': self._get_suffixed_ref_name('point_of_sale.pos_config_main'),
             //     'record': config,
             //     'noupdate': True,
             // }])
-            // if self.env.company.id == self.env.ref('base.main_company').id:
-            //     existing_session = self.env.ref('point_of_sale.pos_closed_session_2', raise_if_not_found=False)
-            //     if not existing_session:
-            //         convert.convert_file(self.env, 'point_of_sale', 'data/orders_demo.xml', None, noupdate=True, mode='init', kind='data')
+            // config._load_onboarding_furniture_demo_data(with_demo_data)
+            // existing_session = self.env.ref('point_of_sale.pos_closed_session_2', raise_if_not_found=False)
+            // if with_demo_data and self.env.company.id == self.env.ref('base.main_company').id and not existing_session:
+            //     convert.convert_file(self._env_with_clean_context(), 'point_of_sale', 'data/orders_demo.xml', idref=None, mode='init', noupdate=True)
+            // return {'config_id': config.id}
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_config.py) ---
-            // def load_onboarding_furniture_scenario(self):
-            // super().load_onboarding_furniture_scenario()
+            // def load_onboarding_furniture_scenario(self, with_demo_data=True):
+            // res = super().load_onboarding_furniture_scenario(with_demo_data)
             // self._ensure_downpayment_product()
+            // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1626,7 +1920,7 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // 
             // journal, payment_methods_ids = self._create_journal_and_payment_methods()
-            // restaurant_categories = self.get_categories([
+            // restaurant_categories = self.get_record_by_ref([
             //     'pos_restaurant.food',
             //     'pos_restaurant.drinks',
             // ])
@@ -1644,84 +1938,173 @@ namespace Bamboo.Core.Application.Services
             //     'iface_splitbill': True,
             //     'module_pos_restaurant': True,
             //     'self_ordering_mode': 'kiosk',
+            //     'self_ordering_pay_after': 'each',
             // })
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> LoadOnboardingRestaurantScenarioAsync(Guid id)
+        public async Task<PosConfig> LoadOnboardingRestaurantScenarioAsync(Guid id, PosConfigLoadOnboardingRestaurantScenarioRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
-            // def load_onboarding_restaurant_scenario(self):
-            // ref_name = 'pos_restaurant.pos_config_main_restaurant'
-            // if not self.env.ref(ref_name, raise_if_not_found=False):
-            //     self._load_restaurant_data()
-            // 
-            // journal, payment_methods_ids = self._create_journal_and_payment_methods(cash_journal_vals={'name': 'Cash Restaurant', 'show_on_dashboard': False})
-            // restaurant_categories = self.get_categories([
-            //     'pos_restaurant.food',
-            //     'pos_restaurant.drinks',
-            // ])
+            // def load_onboarding_restaurant_scenario(self, with_demo_data=True):
+            // journal, payment_methods_ids = self._create_journal_and_payment_methods(cash_journal_vals={'name': _('Cash Restaurant'), 'show_on_dashboard': False})
+            // presets = self.get_record_by_ref([
+            //     'pos_restaurant.pos_takein_preset',
+            //     'pos_restaurant.pos_takeout_preset',
+            //     'pos_restaurant.pos_delivery_preset',
+            // ]) + self.env['pos.preset'].search([]).ids
             // config = self.env['pos.config'].create({
             //     'name': _('Restaurant'),
             //     'company_id': self.env.company.id,
             //     'journal_id': journal.id,
             //     'payment_method_ids': payment_methods_ids,
-            //     'limit_categories': True,
-            //     'iface_available_categ_ids': restaurant_categories,
             //     'iface_splitbill': True,
             //     'module_pos_restaurant': True,
+            //     'use_presets': bool(presets),
+            //     'default_preset_id': presets[0] if presets else False,
+            //     'available_preset_ids': [(6, 0, presets)],
             // })
             // self.env['ir.model.data']._update_xmlids([{
-            //     'xml_id': self._get_suffixed_ref_name(ref_name),
+            //     'xml_id': self._get_suffixed_ref_name('pos_restaurant.pos_config_main_restaurant'),
             //     'record': config,
             //     'noupdate': True,
             // }])
-            // if self.env.company.id == self.env.ref('base.main_company').id:
-            //     existing_session = self.env.ref('pos_restaurant.pos_closed_session_3', raise_if_not_found=False)
-            //     if not existing_session:
-            //         convert.convert_file(self.env, 'pos_restaurant', 'data/restaurant_session_floor.xml', None, noupdate=True, mode='init', kind='data')
+            // if bool(presets):
+            //     # Ensure the "Presets" menu is visible when installing the restaurant scenario
+            //     self.env.ref("point_of_sale.group_pos_preset").implied_by_ids |= self.env.ref("base.group_user")
+            // if not self.env.ref('pos_restaurant.floor_main', raise_if_not_found=False):
+            //     convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/restaurant_floor.xml', idref=None, mode='init', noupdate=True)
+            // config_floors = [(5, 0)]
+            // if (floor_main := self.env.ref('pos_restaurant.floor_main', raise_if_not_found=False)):
+            //     config_floors += [(4, floor_main.id)]
+            // if (floor_patio := self.env.ref('pos_restaurant.floor_patio', raise_if_not_found=False)):
+            //     config_floors += [(4, floor_patio.id)]
+            // config.update({'floor_ids': config_floors})
+            // config._load_restaurant_demo_data(with_demo_data)
+            // existing_session = self.env.ref('pos_restaurant.pos_closed_session_3', raise_if_not_found=False)
+            // if with_demo_data and self.env.company.id == self.env.ref('base.main_company').id and not existing_session:
+            //     convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/restaurant_demo_session.xml', idref=None, mode='init', noupdate=True)
+            // return {'config_id': config.id}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosConfig> LoadPosDataDomainInternalAsync(object data)
+        public async Task<PosConfig> LoadOnboardingRetailScenarioAsync(Guid id, PosConfigLoadOnboardingRetailScenarioRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('id', '=', data['pos.session']['data'][0]['config_id'])]
+            // def load_onboarding_retail_scenario(self, with_demo_data=False):
+            // journal, payment_methods_ids = self._create_journal_and_payment_methods(
+            //     cash_journal_vals={'name': _("Cash %s", self.env.company.name), 'show_on_dashboard': False},
+            // )
+            // config = self.env['pos.config'].create([{
+            //     'name': self.env.company.name,
+            //     'company_id': self.env.company.id,
+            //     'journal_id': journal.id,
+            //     'payment_method_ids': payment_methods_ids
+            // }])
+            // self.env['ir.model.data']._update_xmlids([{
+            //     'xml_id': self._get_suffixed_ref_name('point_of_sale.pos_config_retail'),
+            //     'record': config,
+            //     'noupdate': True,
+            // }])
+            // return {'config_id': config.id}
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PosConfig> LoadPosDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // return [('id', '=', config.id)]
             */
             return default;
         }
 
-        protected async Task<PosConfig> LoadPosDataInternalAsync(object data)
+        protected async Task<PosConfig> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def _load_pos_data(self, data):
-            // domain = self._load_pos_data_domain(data)
-            // fields = self._load_pos_data_fields(self.id)
-            // data = self.search_read(domain, fields, load=False)
+            // def _load_pos_data_read(self, records, config):
+            // read_records = super()._load_pos_data_read(records, config)
+            // if not read_records:
+            //     return read_records
             // 
-            // if not data[0]['use_pricelist']:
-            //     data[0]['pricelist_id'] = False
+            // record = read_records[0]
+            // record['_server_version'] = exp_version()
+            // record['_base_url'] = self.get_base_url()
+            // record['_data_server_date'] = self.env.context.get('pos_last_server_date') or self.env.cr.now()
+            // record['_has_cash_move_perm'] = self.env.user.has_group('account.group_account_invoice')
+            // record['_has_cash_delete_perm'] = self.env.user.has_group('account.group_account_basic')
+            // record['_pos_special_products_ids'] = self.env['pos.config']._get_special_products().ids
             // 
-            // return {
-            //     'data': data,
-            //     'fields': fields,
+            // # Add custom fields for 'formula' taxes.
+            // # We can ignore data for _load_pos_data_domain since isn't needed in the domain computation of account.tax
+            // taxes = self.env['account.tax'].search(self.env['account.tax']._load_pos_data_domain({}, config))
+            // product_fields = taxes._eval_taxes_computation_prepare_product_fields()
+            // record['_product_default_values'] = \
+            //     self.env['account.tax']._eval_taxes_computation_prepare_product_default_values(product_fields)
+            // 
+            // if not record['use_pricelist']:
+            //     record['pricelist_id'] = False
+            // record['_IS_VAT'] = self.env.company.country_id.id in self.env.ref("base.europe").country_ids.ids
+            // return read_records
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> LoadPosSelfDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def _load_pos_self_data_domain(self, data, config):
+            // return [('id', '=', config.id)]
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> LoadPosSelfDataReadInternalAsync(object records, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def _load_pos_self_data_read(self, records, config):
+            // read_records = super()._load_pos_data_read(records, config)
+            // if not read_records:
+            //     return read_records
+            // record = read_records[0]
+            // record['_self_ordering_image_home_ids'] = config.self_ordering_image_home_ids.ids
+            // record['_self_ordering_image_background_ids'] = config.self_ordering_image_background_ids.ids
+            // record['_pos_special_products_ids'] = config._get_special_products().ids
+            // record['_self_ordering_style'] = {
+            //     'primaryBgColor': self.env.company.email_secondary_color,
+            //     'primaryTextColor': self.env.company.email_primary_color,
             // }
+            // record['_self_order_pos'] = True
+            // return read_records
             */
             return default;
         }
 
-        protected async Task<PosConfig> LoadRestaurantDataInternalAsync()
+        protected async Task<PosConfig> LoadRestaurantDemoDataInternalAsync(object with_demo_data)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
-            // def _load_restaurant_data(self):
-            // convert.convert_file(self.env, 'pos_restaurant', 'data/scenarios/restaurant_data.xml', None, noupdate=True, mode='init', kind='data')
+            // def _load_restaurant_demo_data(self, with_demo_data=True):
+            // self.ensure_one()
+            // convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/restaurant_category_data.xml', idref=None, mode='init', noupdate=True)
+            // if with_demo_data:
+            //     convert.convert_file(self._env_with_clean_context(), 'pos_restaurant', 'data/scenarios/restaurant_demo_data.xml', idref=None, mode='init', noupdate=True)
+            // restaurant_categories = self.get_record_by_ref([
+            //     'pos_restaurant.food',
+            //     'pos_restaurant.drinks',
+            // ])
+            // if restaurant_categories:
+            //     self.limit_categories = True
+            //     self.iface_available_categ_ids = restaurant_categories
             */
             return default;
         }
@@ -1731,31 +2114,14 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def load_self_data(self):
-            // # Init our first record, in case of self_order is pos_config
-            // config_fields = self._load_pos_self_data_fields(self.id)
-            // response = {
-            //     'pos.config': {
-            //         'data': self.env['pos.config'].search_read([('id', '=', self.id)], config_fields, load=False),
-            //         'fields': config_fields,
-            //     }
-            // }
-            // response['pos.config']['data'][0]['_self_ordering_image_home_ids'] = self._get_self_ordering_attachment(self.self_ordering_image_home_ids)
-            // response['pos.config']['data'][0]['_pos_special_products_ids'] = self._get_special_products().ids
-            // self.env['pos.session']._load_pos_data_relations('pos.config', response)
+            // response = {}
+            // response['pos.config'] = self.env['pos.config']._load_pos_self_data_search_read(response, self)
             // 
-            // # Classic data loading
             // for model in self._load_self_data_models():
             //     try:
-            //         response[model] = self.env[model]._load_pos_self_data(response)
-            //         self.env['pos.session']._load_pos_data_relations(model, response)
-            //     except AccessError as e:
-            //         response[model] = {
-            //             'data': [],
-            //             'fields': self.env[model]._load_pos_self_data_fields(self.id),
-            //             'error': e.args[0]
-            //         }
-            // 
-            //         self.env['pos.session']._load_pos_data_relations(model, response)
+            //         response[model] = self.env[model]._load_pos_self_data_search_read(response, self)
+            //     except AccessError:
+            //         response[model] = []
             // 
             // return response
             */
@@ -1767,10 +2133,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def _load_self_data_models(self):
-            // return ['pos.session', 'pos.order', 'pos.order.line', 'pos.payment', 'pos.payment.method', 'res.currency', 'pos.category', 'product.product', 'product.combo', 'product.combo.item',
-            //     'res.company', 'account.tax', 'account.tax.group', 'pos.printer', 'res.country', 'product.pricelist', 'product.pricelist.item', 'account.fiscal.position', 'account.fiscal.position.tax',
-            //     'res.lang', 'product.template.attribute.line', 'product.attribute', 'product.attribute.custom.value', 'product.template.attribute.value',
-            //     'decimal.precision', 'uom.uom', 'pos.printer', 'pos_self_order.custom_link', 'restaurant.floor', 'restaurant.table', 'account.cash.rounding']
+            // return ['pos.session', 'pos.preset', 'resource.calendar.attendance', 'pos.order', 'pos.order.line', 'pos.payment', 'pos.payment.method', 'res.partner',
+            //     'res.currency', 'pos.category', 'product.template', 'product.product', 'product.combo', 'product.combo.item', 'res.company', 'account.tax',
+            //     'account.tax.group', 'pos.printer', 'res.country', 'product.category', 'product.pricelist', 'product.pricelist.item', 'account.fiscal.position',
+            //     'res.lang', 'product.attribute', 'product.attribute.custom.value', 'product.template.attribute.line', 'product.template.attribute.value', 'product.tag',
+            //     'decimal.precision', 'uom.uom', 'pos.printer', 'pos_self_order.custom_link', 'restaurant.floor', 'restaurant.table', 'account.cash.rounding',
+            //     'res.country', 'res.country.state', 'mail.template']
             */
             return default;
         }
@@ -1779,17 +2147,18 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def notify_synchronisation(self, session_id, login_number, records={}):
+            // def notify_synchronisation(self, session_id, device_identifier, records={}):
+            // self.ensure_one()
             // static_records = {}
             // 
             // for model, ids in records.items():
-            //     fields = self.env[model]._load_pos_data_fields(self.id)
-            //     static_records[model] = self.env[model].browse(ids).read(fields, load=False)
+            //     records = self.env[model].browse(ids).exists()
+            //     static_records[model] = self.env[model]._load_pos_data_read(records, self)
             // 
             // self._notify('SYNCHRONISATION', {
             //     'static_records': static_records,
             //     'session_id': session_id,
-            //     'login_number': login_number,
+            //     'device_identifier': device_identifier,
             //     'records': records
             // })
             // 
@@ -1812,6 +2181,8 @@ namespace Bamboo.Core.Application.Services
             // for employee in self.advanced_employee_ids:
             //     if employee in self.basic_employee_ids:
             //         self.basic_employee_ids -= employee
+            //     if employee in self.minimal_employee_ids:
+            //         self.minimal_employee_ids -= employee
             */
             return default;
         }
@@ -1822,11 +2193,40 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_config.py) ---
             // def _onchange_basic_employee_ids(self):
             // for employee in self.basic_employee_ids:
-            //     if employee in self.advanced_employee_ids:
-            //         if employee.user_id._has_group('point_of_sale.group_pos_manager'):
-            //             self.basic_employee_ids -= employee
-            //         else:
-            //             self.advanced_employee_ids -= employee
+            //     if employee.user_id._has_group('point_of_sale.group_pos_manager'):
+            //         self.basic_employee_ids -= employee
+            //     elif employee in self.advanced_employee_ids:
+            //         self.advanced_employee_ids -= employee
+            //     elif employee in self.minimal_employee_ids:
+            //         self.minimal_employee_ids -= employee
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> OnchangeEpsonPrinterIpInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def _onchange_epson_printer_ip(self):
+            // for rec in self:
+            //     if rec.epson_printer_ip:
+            //         rec.epson_printer_ip = format_epson_certified_domain(rec.epson_printer_ip)
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> OnchangeMinimalEmployeeIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_config.py) ---
+            // def _onchange_minimal_employee_ids(self):
+            // for employee in self.minimal_employee_ids:
+            //     if employee.user_id._has_group('point_of_sale.group_pos_manager'):
+            //         self.minimal_employee_ids -= employee
+            //     elif employee in self.basic_employee_ids:
+            //         self.basic_employee_ids -= employee
+            //     elif employee in self.advanced_employee_ids:
+            //         self.advanced_employee_ids -= employee
             */
             return default;
         }
@@ -1919,9 +2319,12 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You do not have permission to open a POS session. Please try opening a session with a different user"))
             // 
             // if not self.current_session_id:
-            //     self._check_before_creating_new_session()
+            //     res = self._check_before_creating_new_session()
+            //     if res:
+            //         return res
             // self._validate_fields(self._fields)
             // 
+            // self._check_company_has_fiscal_country()
             // return self._action_to_open_ui()
             --- ODOO METHOD SOURCE (MODULE: pos_discount, FILE: pos_config.py) ---
             // def open_ui(self):
@@ -1941,19 +2344,18 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // 
             // if not self.current_session_id:
-            //     self._check_before_creating_new_session()
+            //     res = self._check_before_creating_new_session()
+            //     if res:
+            //         return res
             //     session = self.env['pos.session'].create({'user_id': self.env.uid, 'config_id': self.id})
             //     session.set_opening_control(0, "")
             //     self._notify('STATUS', {'status': 'open'})
             // 
-            // ctx = dict(self._context, app_id='pos_self_order', footer=False)
-            // 
             // return {
-            //     'res_model': 'pos.config',
-            //     'type': 'ir.actions.client',
-            //     'tag': 'install_kiosk_pwa',
+            //     'type': 'ir.actions.act_url',
+            //     'name': _('Self Order'),
             //     'target': 'new',
-            //     'context': ctx
+            //     'url': self.get_kiosk_url(),
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1997,11 +2399,11 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosConfig> PrepareSelfOrderSplashScreenInternalAsync(object vals_list)
+        protected async Task<PosConfig> PrepareSelfOrderSplashScreenInternalAsync(object vals_list, object is_new)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
-            // def _prepare_self_order_splash_screen(self, vals_list):
+            // def _prepare_self_order_splash_screen(self, vals_list, is_new=False):
             // for vals in vals_list:
             //     if not vals.get('self_ordering_mode'):
             //         return True
@@ -2009,10 +2411,18 @@ namespace Bamboo.Core.Application.Services
             //     if not vals.get('self_ordering_image_home_ids'):
             //         vals['self_ordering_image_home_ids'] = [(0, 0, {
             //             'name': image_name,
-            //             'datas': base64.b64encode(file_open(opj("pos_self_order/static/img", image_name), "rb").read()),
+            //             'type': 'url',
+            //             'url': f'/pos_self_order/static/img/{image_name}',
             //             'res_model': 'pos.config',
-            //             'type': 'binary',
             //         }) for image_name in ['landing_01.jpg', 'landing_02.jpg', 'landing_03.jpg']]
+            // 
+            //     if is_new and not vals.get('self_ordering_image_background_ids'):
+            //         vals['self_ordering_image_background_ids'] = [(0, 0, {
+            //             'name': "background.jpg",
+            //             'type': 'url',
+            //             'url': '/pos_self_order/static/img/kiosk_background.jpg',
+            //             'res_model': 'pos.config',
+            //         })]
             // 
             // return True
             */
@@ -2084,16 +2494,21 @@ namespace Bamboo.Core.Application.Services
             // delete_record_ids = {}
             // dynamic_records = {}
             // 
-            // for model, domain in domain.items():
-            //     ids = record_ids[model]
-            //     delete_record_ids[model] = [id for id in ids if not self.env[model].browse(id).exists()]
-            //     dynamic_records[model] = self.env[model].search(domain)
+            // for model, dom in domain.items():
+            //     ids = record_ids.get(model, [])
+            //     browsed = self.env[model].browse(ids)
+            // 
+            //     dynamic_records[model] = self.env[model].search(dom)
+            //     delete_record_ids[model] = browsed.filtered(lambda r: not r.exists()).ids
+            //     # Cancelled orders must be forced deleted from the user interface.
+            //     if model == "pos.order":
+            //         delete_record_ids[model] += browsed.filtered(lambda r: r.state == "cancel").ids
             // 
             // pos_order_data = dynamic_records.get('pos.order') or self.env['pos.order']
-            // data = pos_order_data.read_pos_data([], self.id)
+            // data = pos_order_data.read_pos_data([], self)
             // 
             // for key, records in dynamic_records.items():
-            //     fields = self.env[key]._load_pos_data_fields(self.id)
+            //     fields = self.env[key]._load_pos_data_fields(self)
             //     ids = list(set(records.ids + [record['id'] for record in data.get(key, [])]))
             //     dynamic_records[key] = self.env[key].browse(ids).read(fields, load=False)
             // 
@@ -2104,6 +2519,20 @@ namespace Bamboo.Core.Application.Services
             // return {
             //     'dynamic_records': dynamic_records,
             //     'deleted_record_ids': delete_record_ids,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosConfig> RegisterNewDeviceIdentifierAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def register_new_device_identifier(self):
+            // self.ensure_one()
+            // identifier = self.device_seq_id._next()
+            // return {
+            //     'device_identifier': identifier,
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2164,10 +2593,10 @@ namespace Bamboo.Core.Application.Services
             // def _set_default_pos_load_limit(self):
             // param_model = self.env["ir.config_parameter"]
             // if not param_model.get_param("point_of_sale.limited_product_count"):
-            //     param_model.set_param("point_of_sale.limited_product_count", 20000)
+            //     param_model.set_param("point_of_sale.limited_product_count", DEFAULT_LIMIT_LOAD_PRODUCT)
             // 
             // if not param_model.get_param("point_of_sale.limited_customer_count"):
-            //     param_model.set_param("point_of_sale.limited_customer_count", 100)
+            //     param_model.set_param("point_of_sale.limited_customer_count", DEFAULT_LIMIT_LOAD_PARTNER)
             */
             return default;
         }
@@ -2215,8 +2644,8 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def _split_qr_codes_list(self, floors: List[Dict], cols: int) -> List[Dict]:
             // """
-            // :floors: the list of floors
-            // :cols: the number of qr codes per row
+            // :param floors: the list of floors
+            // :param cols: the number of qr codes per row
             // """
             // self.ensure_one()
             // return [
@@ -2226,6 +2655,21 @@ namespace Bamboo.Core.Application.Services
             //     }
             //     for floor in floors
             // ]
+            */
+            return default;
+        }
+
+        protected async Task<PosConfig> SupportedKioskPaymentTerminalInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
+            // def _supported_kiosk_payment_terminal(self):
+            // return ['adyen', 'razorpay', 'stripe', 'pine_labs']
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order_qfpay, FILE: pos_config.py) ---
+            // def _supported_kiosk_payment_terminal(self):
+            // res = super()._supported_kiosk_payment_terminal()
+            // res.append('qfpay')
+            // return res
             */
             return default;
         }
@@ -2245,11 +2689,9 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def update_customer_display(self, order, access_token):
+            // def update_customer_display(self, order, device_uuid):
             // self.ensure_one()
-            // if not access_token or not secrets.compare_digest(self.access_token, access_token):
-            //     return
-            // self._notify("UPDATE_CUSTOMER_DISPLAY", order)
+            // self._notify(f"UPDATE_CUSTOMER_DISPLAY-{device_uuid}", order)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2267,7 +2709,11 @@ namespace Bamboo.Core.Application.Services
             //         'event_ticket_ids': [{
             //             'ticket_id': ticket.id,
             //             'seats_available': ticket.seats_available
-            //         } for ticket in event.event_ticket_ids]
+            //         } for ticket in event.event_ticket_ids],
+            //         'event_slot_ids': [{
+            //             'slot_id': slot.id,
+            //             'seats_available': slot.seats_available
+            //         } for slot in event.event_slot_ids]
             //     })
             // 
             // for record in self:
@@ -2361,7 +2807,6 @@ namespace Bamboo.Core.Application.Services
             // if ('is_order_printer' in vals and not vals['is_order_printer']):
             //     vals['printer_ids'] = [fields.Command.clear()]
             // 
-            // bypass_categories_forbidden_change = self.env.context.get('bypass_categories_forbidden_change', False)
             // bypass_payment_method_ids_forbidden_change = self.env.context.get('bypass_payment_method_ids_forbidden_change', False)
             // 
             // self._preprocess_x2many_vals_from_settings_view(vals)
@@ -2371,40 +2816,11 @@ namespace Bamboo.Core.Application.Services
             //     forbidden_fields = []
             //     for key in self._get_forbidden_change_fields():
             //         if key in vals.keys():
-            //             if bypass_categories_forbidden_change and key in ('limit_categories', 'iface_available_categ_ids'):
-            //                 continue
             //             if bypass_payment_method_ids_forbidden_change and key == 'payment_method_ids':
             //                 continue
-            //             if key == 'use_pricelist' and vals[key]:
-            //                 continue
-            //             if key == 'available_pricelist_ids':
-            //                 will_unlink_a_pricelist = \
-            //                     (
-            //                         (not isinstance(vals[key], list) or len(vals[key]) == 0)
-            //                         and self.available_pricelist_ids
-            //                     ) or (
-            //                         isinstance(vals[key], list) and any(
-            //                             (
-            //                                 len(cmd) >= 1
-            //                                 and cmd[0] == Command.CLEAR
-            //                                 and self.available_pricelist_ids
-            //                             ) or (
-            //                                 len(cmd) >= 2
-            //                                 and cmd[0] in {Command.UNLINK, Command.DELETE}
-            //                                 and cmd[1] in self.available_pricelist_ids.ids
-            //                             ) or (
-            //                                 len(cmd) == 3
-            //                                 and cmd[0] == Command.SET
-            //                                 and set(self.available_pricelist_ids.ids) - set(cmd[2])
-            //                             )
-            //                             for cmd in vals[key]
-            //                         )
-            //                     )
-            // 
-            //                 if not will_unlink_a_pricelist:
-            //                     continue
             //             field_name = self._fields[key].get_description(self.env)["string"]
             //             forbidden_fields.append(field_name)
+            // 
             //     if len(forbidden_fields) > 0:
             //         raise UserError(_(
             //             "Unable to modify this PoS Configuration because you can't modify %s while a session is open.",
@@ -2412,6 +2828,10 @@ namespace Bamboo.Core.Application.Services
             //         ))
             // 
             // result = super(PosConfig, self).write(vals)
+            // 
+            // for config in self:
+            //     if config.use_presets and config.default_preset_id and config.default_preset_id.id not in config.available_preset_ids.ids:
+            //         config.available_preset_ids |= config.default_preset_id
             // 
             // self.sudo()._set_fiscal_position()
             // self.sudo()._check_modules_to_install()
@@ -2423,8 +2843,20 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // if 'advanced_employee_ids' not in vals:
             //     vals['advanced_employee_ids'] = []
-            // vals['advanced_employee_ids'] += [(4, emp_id) for emp_id in self._get_group_pos_manager().users.employee_id.ids]
-            // return super().write(vals)
+            // vals['advanced_employee_ids'] += [(4, emp_id) for emp_id in self._get_group_pos_manager().user_ids.employee_id.ids]
+            // 
+            // # write employees in sudo, because we have no access to these corecords
+            // sudo_vals = {
+            //     field_name: value
+            //     for field_name in ('minimal_employee_ids', 'basic_employee_ids', 'advanced_employee_ids')
+            //     if not self.env.su
+            //     if (value := vals.pop(field_name, ()))
+            // }
+            // 
+            // res = super().write(vals)
+            // if sudo_vals:
+            //     super(PosConfig, self.sudo()).write(sudo_vals)
+            // return res
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
             // def write(self, vals):
             // if ('module_pos_restaurant' in vals and vals['module_pos_restaurant'] is False):
@@ -2440,7 +2872,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_config.py) ---
             // def write(self, vals):
             // self._prepare_self_order_splash_screen([vals])
-            // 
             // for record in self:
             //     if vals.get('self_ordering_mode') == 'kiosk' or (vals.get('pos_self_ordering_mode') == 'mobile' and vals.get('pos_self_ordering_service_mode') == 'counter'):
             //         vals['self_ordering_pay_after'] = 'each'
@@ -2455,6 +2886,7 @@ namespace Bamboo.Core.Application.Services
             //         vals['self_ordering_service_mode'] = 'table'
             // 
             // res = super().write(vals)
+            // self._ensure_public_attachments()
             // self._prepare_self_order_custom_btn()
             // return res
             */

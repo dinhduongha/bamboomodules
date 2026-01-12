@@ -31,8 +31,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_alias.py) ---
             // def _alias_bounce_incoming_email(self, message, message_dict, set_invalid=True):
-            // """Set alias status to invalid and create bounce message to the sender
-            // and the alias responsible.
+            // """Set alias status to invalid and create bounce message to the sender.
             // 
             // This method must be called when a message received on the alias has
             // caused an error due to the mis-configuration of the alias.
@@ -53,8 +52,6 @@ namespace Bamboo.Core.Application.Services
             // self.env['mail.thread']._routing_create_bounce_email(
             //     message_dict['email_from'], body, message,
             //     references=message_dict['message_id'],
-            //     # add the alias creator as recipient if set
-            //     recipient_ids=self.create_uid.partner_id.ids if self.create_uid.active else [],
             // )
             */
             return default;
@@ -105,7 +102,12 @@ namespace Bamboo.Core.Application.Services
             // domain should match the one used on the related record. """
             // 
             // # in sudo, to be able to read alias_parent_model_id (ir.model)
-            // tocheck = self.sudo().filtered(lambda domain: domain.alias_domain_id.company_ids)
+            // tocheck = self.sudo().filtered(lambda alias: alias.alias_domain_id.company_ids)
+            // # transient check, mainly for tests / install
+            // tocheck = tocheck.filtered(lambda alias:
+            //     (not alias.alias_model_id.model or alias.alias_model_id.model in self.env) and
+            //     (not alias.alias_parent_model_id.model or alias.alias_parent_model_id.model in self.env)
+            // )
             // if not tocheck:
             //     return
             // 
@@ -228,12 +230,12 @@ namespace Bamboo.Core.Application.Services
             //         domain_to_names[alias_domain].append(alias_name)
             // 
             // # matches existing alias
-            // domain = expression.OR([
-            //     ['&', ('alias_name', 'in', alias_names), ('alias_domain_id', '=', alias_domain.id)]
+            // domain = Domain.OR(
+            //     Domain('alias_name', 'in', alias_names) & Domain('alias_domain_id', '=', alias_domain.id)
             //     for alias_domain, alias_names in domain_to_names.items()
-            // ])
+            // )
             // if domain and self:
-            //     domain = expression.AND([domain, [('id', 'not in', self.ids)]])
+            //     domain &= Domain('id', 'not in', self.ids)
             // existing = self.search(domain, limit=1) if domain else self.env['mail.alias']
             // if not existing:
             //     return
@@ -378,7 +380,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_alias_contact_description(self):
             // if self.alias_contact == 'employees':
             //     return _('addresses linked to registered employees')
-            // return super(Alias, self)._get_alias_contact_description()
+            // return super()._get_alias_contact_description()
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_alias.py) ---
             // def _get_alias_contact_description(self):
             // if self.alias_contact == 'partners':
@@ -418,22 +420,6 @@ namespace Bamboo.Core.Application.Services
             //         }, minimal_qcontext=True)
             */
             return default;
-        }
-
-        public async Task<MailAlias> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_alias.py) ---
-            // def init(self):
-            // """Make sure there aren't multiple records for the same name and alias
-            // domain. Not in _sql_constraint because COALESCE is not supported for
-            // PostgreSQL constraint. """
-            // self.env.cr.execute("""
-            //     CREATE UNIQUE INDEX IF NOT EXISTS mail_alias_name_domain_unique
-            //     ON mail_alias (alias_name, COALESCE(alias_domain_id, 0))
-            // """)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<MailAlias> IsEncodableInternalAsync(object alias_name, object charset)
@@ -502,7 +488,8 @@ namespace Bamboo.Core.Application.Services
             // :param bool is_email: whether to keep a right part, otherwise only
             //   left part is kept;
             // 
-            // :return str: sanitized alias name
+            // :returns: sanitized alias name
+            // :rtype: str
             // """
             // sanitized_name = name.strip() if name else ''
             // if is_email:

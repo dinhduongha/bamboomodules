@@ -70,7 +70,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.write({
             //     'state': 'close',
-            //     'closed_uid': self._uid,
+            //     'closed_uid': self.env.uid,
             //     'closed_date': datetime.today().strftime(tools.DEFAULT_SERVER_DATETIME_FORMAT),
             //     'closed_reason_id': reason_id,
             // })
@@ -195,7 +195,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _compute_uid_has_answered(self):
             // for post in self:
-            //     post.uid_has_answered = post._uid in post.child_ids.create_uid.ids
+            //     post.uid_has_answered = post.env.uid in post.child_ids.create_uid.ids
             */
             return default;
         }
@@ -206,7 +206,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _compute_user_favourite(self):
             // for post in self:
-            //     post.user_favourite = post._uid in post.favourite_ids.ids
+            //     post.user_favourite = post.env.uid in post.favourite_ids.ids
             */
             return default;
         }
@@ -216,7 +216,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _compute_user_vote(self):
-            // votes = self.env['forum.post.vote'].search_read([('post_id', 'in', self._ids), ('user_id', '=', self._uid)], ['vote', 'post_id'])
+            // votes = self.env['forum.post.vote'].sudo().search_read([('post_id', 'in', self._ids), ('user_id', '=', self.env.uid)], ['vote', 'post_id'])
             // mapped_vote = dict([(v['post_id'][0], v['vote']) for v in votes])
             // for vote in self:
             //     vote.user_vote = mapped_vote.get(vote.id, 0)
@@ -280,7 +280,7 @@ namespace Bamboo.Core.Application.Services
             //     'date': self.create_date,
             // }
             // # done with the author user to have create_uid correctly set
-            // new_message = question.with_user(self_sudo.create_uid.id).with_context(mail_create_nosubscribe=True).sudo().message_post(**values).sudo(False)
+            // new_message = question.with_user(self_sudo.create_uid.id).with_context(mail_post_autofollow_author_skip=True).sudo().message_post(**values).sudo(False)
             // 
             // # unlink the original answer, using SUPERUSER_ID to avoid karma issues
             // self.sudo().unlink()
@@ -345,7 +345,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _default_website_meta(self):
-            // res = super(Post, self)._default_website_meta()
+            // res = super()._default_website_meta()
             // res['default_opengraph']['og:title'] = res['default_twitter']['twitter:title'] = self.name
             // res['default_opengraph']['og:description'] = res['default_twitter']['twitter:description'] = self.plain_content
             // res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = self.env['website'].image_url(self.create_uid, 'image_1024')
@@ -393,7 +393,7 @@ namespace Bamboo.Core.Application.Services
             // """ Instead of the classic form view, redirect to the post on the website directly """
             // self.ensure_one()
             // if not force_website and not self.state == 'active':
-            //     return super(Post, self)._get_access_action(access_uid=access_uid, force_website=force_website)
+            //     return super()._get_access_action(access_uid=access_uid, force_website=force_website)
             // return {
             //     'type': 'ir.actions.act_url',
             //     'url': '/forum/%s/%s' % (self.forum_id.id, self.id),
@@ -401,22 +401,6 @@ namespace Bamboo.Core.Application.Services
             //     'target_type': 'public',
             //     'res_id': self.id,
             // }
-            */
-            return default;
-        }
-
-        protected async Task<ForumPost> GetMailMessageAccessInternalAsync(List<Guid> res_ids, object operation, object model_name)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
-            // def _get_mail_message_access(self, res_ids, operation, model_name=None):
-            // # XDO FIXME: to be correctly fixed with new _get_mail_message_access and filter access rule
-            // if operation in ('write', 'unlink') and (not model_name or model_name == 'forum.post'):
-            //     # Make sure only author or moderator can edit/delete messages
-            //     for post in self.browse(res_ids):
-            //         if not post.can_edit:
-            //             raise AccessError(_('%d karma required to edit a post.', post.karma_edit))
-            // return super(Post, self)._get_mail_message_access(res_ids, operation, model_name=model_name)
             */
             return default;
         }
@@ -531,7 +515,7 @@ namespace Bamboo.Core.Application.Services
             //     res["text"] = self.plain_content or self.name
             //     res["answerCount"] = self.child_count
             // if self.create_uid.sudo().website_published:
-            //     res["author"]["url"] = self.env['ir.http']._url_for(f"/forum/user/{ self.create_uid.sudo().id }")
+            //     res["author"]["url"] = self.env['ir.http']._url_for(f"/profile/user/{ self.create_uid.sudo().id }")
             // return res
             */
             return default;
@@ -548,6 +532,20 @@ namespace Bamboo.Core.Application.Services
             // return self.env['website'].get_client_action(self.website_url)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<ForumPost> MailGetOperationForMailMessageOperationInternalAsync(object message_operation)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
+            // def _mail_get_operation_for_mail_message_operation(self, message_operation):
+            // if message_operation in ('write', 'unlink'):
+            //     filtered_self = self.filtered(lambda post: post.can_edit)
+            // else:
+            //     filtered_self = self
+            // return super(ForumPost, filtered_self)._mail_get_operation_for_mail_message_operation(message_operation)
+            */
+            return default;
         }
 
         public async Task<ForumPost> MarkAsOffensiveBatchAsync(Guid id, ForumPostMarkAsOffensiveBatchRequestDto input)
@@ -615,9 +613,9 @@ namespace Bamboo.Core.Application.Services
             //     self.ensure_one()
             //     if not self.can_comment:
             //         raise AccessError(_('%d karma required to comment.', self.karma_comment))
-            //     if not kwargs.get('record_name') and self.parent_id:
-            //         kwargs['record_name'] = self.parent_id.name
-            // return super(Post, self).message_post(message_type=message_type, **kwargs)
+            //     if not kwargs.get('force_record_name') and self.parent_id.name:
+            //         kwargs['force_record_name'] = self.parent_id.name
+            // return super().message_post(message_type=message_type, **kwargs)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -626,8 +624,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Add access button to everyone if the document is active. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -688,14 +685,13 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _notify_thread_by_inbox(self, message, recipients_data, msg_vals=False, **kwargs):
-            // """ Override to avoid keeping all notified recipients of a comment.
-            // We avoid tracking needaction on post comments. Only emails should be
-            // sufficient. """
-            // if msg_vals is None:
-            //     msg_vals = {}
+            // # Override to avoid keeping all notified recipients of a comment.
+            // # We avoid tracking needaction on post comments. Only emails should be
+            // # ufficient.
+            // msg_vals = msg_vals or {}
             // if msg_vals.get('message_type', message.message_type) == 'comment':
             //     return
-            // return super(Post, self)._notify_thread_by_inbox(message, recipients_data, msg_vals=msg_vals, **kwargs)
+            // return super()._notify_thread_by_inbox(message, recipients_data, msg_vals=msg_vals, **kwargs)
             */
             return default;
         }
@@ -747,11 +743,8 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
             // def _search_can_view(self, operator, value):
-            // if operator not in ('=', '!=', '<>'):
-            //     raise ValueError('Invalid operator: %s' % (operator,))
-            // 
-            // if not value:
-            //     operator = '!=' if operator == '=' else '='
+            // if operator != 'in':
+            //     return NotImplemented
             // 
             // user = self.env.user
             // # Won't impact sitemap, search() in converter is forced as public user
@@ -771,8 +764,7 @@ namespace Bamboo.Core.Application.Services
             //             and (p.active or p.create_uid = %(user_id)s)
             //         )
             // )""", user_id=user.id, karma=user.karma)
-            // op = 'in' if operator == '=' else "not in"
-            // return [('id', op, sql)]
+            // return [('id', 'in', sql)]
             */
             return default;
         }
@@ -792,36 +784,36 @@ namespace Bamboo.Core.Application.Services
             // }
             // 
             // domain = website.website_domain()
-            // domain = expression.AND([domain, [('state', '=', 'active'), ('can_view', '=', True)]])
+            // domain &= Domain('state', '=', 'active') & Domain('can_view', '=', True)
             // include_answers = options.get('include_answers', False)
             // if not include_answers:
-            //     domain = expression.AND([domain, [('parent_id', '=', False)]])
+            //     domain &= Domain('parent_id', '=', False)
             // forum = options.get('forum')
             // if forum:
-            //     domain = expression.AND([domain, [('forum_id', '=', self.env['ir.http']._unslug(forum)[1])]])
+            //     domain &= Domain('forum_id', '=', self.env['ir.http']._unslug(forum)[1])
             // tags = options.get('tag')
             // if tags:
-            //     domain = expression.AND([domain, [('tag_ids', 'in', [self.env['ir.http']._unslug(tag)[1] for tag in tags.split(',')])]])
+            //     domain &= Domain('tag_ids', 'in', [self.env['ir.http']._unslug(tag)[1] for tag in tags.split(',')])
             // filters = options.get('filters')
             // if filters == 'unanswered':
-            //     domain = expression.AND([domain, [('child_ids', '=', False)]])
+            //     domain &= Domain('child_ids', '=', False)
             // elif filters == 'solved':
-            //     domain = expression.AND([domain, [('has_validated_answer', '=', True)]])
+            //     domain &= Domain('has_validated_answer', '=', True)
             // elif filters == 'unsolved':
-            //     domain = expression.AND([domain, [('has_validated_answer', '=', False)]])
+            //     domain &= Domain('has_validated_answer', '=', False)
             // user = self.env.user
             // my = options.get('my')
             // create_uid = user.id if my == 'mine' else options.get('create_uid')
             // if create_uid:
-            //     domain = expression.AND([domain, [('create_uid', '=', create_uid)]])
+            //     domain &= Domain('create_uid', '=', create_uid)
             // if my == 'followed':
-            //     domain = expression.AND([domain, [('message_partner_ids', '=', user.partner_id.id)]])
+            //     domain &= Domain('message_partner_ids', '=', user.partner_id.id)
             // elif my == 'tagged':
-            //     domain = expression.AND([domain, [('tag_ids.message_partner_ids', '=', user.partner_id.id)]])
+            //     domain &= Domain('tag_ids.message_partner_ids', '=', user.partner_id.id)
             // elif my == 'favourites':
-            //     domain = expression.AND([domain, [('favourite_ids', '=', user.id)]])
+            //     domain &= Domain('favourite_ids', '=', user.id)
             // elif my == 'upvoted':
-            //     domain = expression.AND([domain, [('vote_ids.user_id', '=', user.id)]])
+            //     domain &= Domain('vote_ids.user_id', '=', user.id)
             // 
             // # 'sorting' from the form's "Order by" overrides order during auto-completion
             // order = options.get('sorting', order)
@@ -983,7 +975,7 @@ namespace Bamboo.Core.Application.Services
             // def vote(self, upvote=True):
             // self.ensure_one()
             // Vote = self.env['forum.post.vote']
-            // existing_vote = Vote.search([('post_id', '=', self.id), ('user_id', '=', self._uid)])
+            // existing_vote = Vote.search([('post_id', '=', self.id), ('user_id', '=', self.env.uid)])
             // new_vote_value = '1' if upvote else '-1'
             // if existing_vote:
             //     if upvote:

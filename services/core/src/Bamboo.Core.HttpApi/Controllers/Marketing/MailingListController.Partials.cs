@@ -99,14 +99,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/close-dialog")]
-        public async Task<IActionResult> CloseDialogAsync(Guid id)
-        {
-            var result = await _appService.CloseDialogAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MailingListCopyDataRequestDto input)
         {

@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def call_cache_clearing_methods(self):
             // self.env.invalidate_all()
-            // self.env.registry.clear_cache()
+            // self.env.registry.clear_cache('stable')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -121,18 +121,18 @@ namespace Bamboo.Core.Application.Services
             // """
             // assert access_mode in ('read', 'write', 'create', 'unlink'), 'Invalid access mode'
             // lang = self.env.lang or 'en_US'
-            // self._cr.execute(f"""
+            // self.env.cr.execute(f"""
             //     SELECT COALESCE(c.name->>%s, c.name->>'en_US'), COALESCE(g.name->>%s, g.name->>'en_US')
             //       FROM ir_model_access a
             //       JOIN ir_model m ON (a.model_id = m.id)
             //       JOIN res_groups g ON (a.group_id = g.id)
-            //  LEFT JOIN ir_module_category c ON (c.id = g.category_id)
+            //  LEFT JOIN res_groups_privilege c ON (c.id = g.privilege_id)
             //      WHERE m.model = %s
             //        AND a.active = TRUE
             //        AND a.perm_{access_mode} = TRUE
             //   ORDER BY c.name, g.name NULLS LAST
             // """, [lang, lang, model_name])
-            // return [('%s/%s' % x) if x[0] else x[1] for x in self._cr.fetchall()]
+            // return [('%s/%s' % x) if x[0] else x[1] for x in self.env.cr.fetchall()]
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -143,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
             // def _make_access_error(self, model: str, mode: str):
             // """ Return the exception corresponding to an access error. """
-            // _logger.info('Access Denied by ACLs for operation: %s, uid: %s, model: %s', mode, self._uid, model)
+            // _logger.info('Access Denied by ACLs for operation: %s, uid: %s, model: %s', mode, self.env.uid, model)
             // 
             // operation_error = str(ACCESS_ERROR_HEADER[mode]) % {
             //     'document_kind': self.env['ir.model']._get(model).name or model,
@@ -158,7 +158,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // resolution_info = str(ACCESS_ERROR_RESOLUTION)
             // 
-            // return AccessError(f"{operation_error}\n\n{group_info}\n\n{resolution_info}")
+            // return AccessError(operation_error + "\n\n" + group_info + "\n\n" + resolution_info)
             */
             return default;
         }

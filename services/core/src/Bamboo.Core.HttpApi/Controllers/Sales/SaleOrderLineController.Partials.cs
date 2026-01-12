@@ -43,18 +43,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/has-valued-move-ids")]
-        public async Task<IActionResult> HasValuedMoveIdsAsync(Guid id)
+        [Route("{id}/get-parent-section-line")]
+        public async Task<IActionResult> GetParentSectionLineAsync(Guid id)
         {
-            var result = await _appService.HasValuedMoveIdsAsync(id);
+            var result = await _appService.GetParentSectionLineAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/has-valued-move-ids")]
+        public async Task<IActionResult> HasValuedMoveIdsAsync(Guid id)
         {
-            var result = await _appService.InitAsync(id);
+            var result = await _appService.HasValuedMoveIdsAsync(id);
             return Ok(result);
         }
         

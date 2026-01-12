@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/refresh-routes")]
         public async Task<IActionResult> RefreshRoutesAsync(Guid id)
         {

@@ -12,6 +12,7 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
@@ -49,21 +50,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> GetAsync(Guid id, IrSequenceGetRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
-            // def get(self, code):
-            // """ Draw an interpolated string using the specified sequence.
-            // 
-            // The sequence to use is specified by its code. This method is
-            // deprecated.
-            // """
-            // return self.get_id(code, 'code')
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<IrSequence> GetCurrentSequenceInternalAsync(object sequence_date)
         {
             /*
@@ -84,27 +70,6 @@ namespace Bamboo.Core.Application.Services
             // return self._create_date_range_seq(sequence_date)
             */
             return default;
-        }
-
-        public async Task<IrSequence> GetIdAsync(Guid id, IrSequenceGetIdRequestDto input)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
-            // def get_id(self, sequence_code_or_id, code_or_id='id'):
-            // """ Draw an interpolated string using the specified sequence.
-            // 
-            // The sequence to use is specified by the ``sequence_code_or_id``
-            // argument, which can be a code or an id (as controlled by the
-            // ``code_or_id`` argument. This method is deprecated.
-            // """
-            // _logger.warning("ir_sequence.get() and ir_sequence.get_id() are deprecated. "
-            //                 "Please use ir_sequence.next_by_code() or ir_sequence.next_by_id().")
-            // if code_or_id == 'id':
-            //     return self.browse(sequence_code_or_id).next_by_id()
-            // else:
-            //     return self.next_by_code(sequence_code_or_id)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<IrSequence> GetNextCharAsync(Guid id, IrSequenceGetNextCharRequestDto input)
@@ -146,15 +111,16 @@ namespace Bamboo.Core.Application.Services
             //     return (s % d) if s else ''
             // 
             // def _interpolation_dict():
-            //     now = range_date = effective_date = datetime.now(pytz.timezone(self._context.get('tz') or 'UTC'))
-            //     if date or self._context.get('ir_sequence_date'):
-            //         effective_date = fields.Datetime.from_string(date or self._context.get('ir_sequence_date'))
-            //     if date_range or self._context.get('ir_sequence_date_range'):
-            //         range_date = fields.Datetime.from_string(date_range or self._context.get('ir_sequence_date_range'))
+            //     now = range_date = effective_date = datetime.now(self.env.tz)
+            //     if date or self.env.context.get('ir_sequence_date'):
+            //         effective_date = fields.Datetime.from_string(date or self.env.context.get('ir_sequence_date'))
+            //     if date_range or self.env.context.get('ir_sequence_date_range'):
+            //         range_date = fields.Datetime.from_string(date_range or self.env.context.get('ir_sequence_date_range'))
             // 
             //     sequences = {
             //         'year': '%Y', 'month': '%m', 'day': '%d', 'y': '%y', 'doy': '%j', 'woy': '%W',
-            //         'weekday': '%w', 'h24': '%H', 'h12': '%I', 'min': '%M', 'sec': '%S'
+            //         'weekday': '%w', 'h24': '%H', 'h12': '%I', 'min': '%M', 'sec': '%S',
+            //         'isoyear': '%G', 'isoy': '%g', 'isoweek': '%V',
             //     }
             //     res = {}
             //     for key, format in sequences.items():
@@ -169,7 +135,7 @@ namespace Bamboo.Core.Application.Services
             // try:
             //     interpolated_prefix = _interpolate(self.prefix, d)
             //     interpolated_suffix = _interpolate(self.suffix, d)
-            // except (ValueError, TypeError):
+            // except (ValueError, TypeError, KeyError):
             //     raise UserError(_('Invalid prefix or suffix for sequence “%s”', self.name))
             // return interpolated_prefix, interpolated_suffix
             */
@@ -216,7 +182,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
             // def _next_do(self):
             // if self.implementation == 'standard':
-            //     number_next = _select_nextval(self._cr, 'ir_sequence_%03d' % self.id)
+            //     number_next = _select_nextval(self.env.cr, 'ir_sequence_%03d' % self.id)
             // else:
             //     number_next = _update_nogap(self, self.number_increment)
             // return self.get_next_char(number_next)
@@ -233,7 +199,7 @@ namespace Bamboo.Core.Application.Services
             // if not self.use_date_range:
             //     return self._next_do()
             // # date mode
-            // dt = sequence_date or self._context.get('ir_sequence_date', fields.Date.today())
+            // dt = sequence_date or self.env.context.get('ir_sequence_date', fields.Date.today())
             // seq_date = self.env['ir.sequence.date_range'].search([('sequence_id', '=', self.id), ('date_from', '<=', dt), ('date_to', '>=', dt)], limit=1)
             // if not seq_date:
             //     seq_date = self._create_date_range_seq(dt)
@@ -249,6 +215,27 @@ namespace Bamboo.Core.Application.Services
             // def _set_number_next_actual(self):
             // for seq in self:
             //     seq.write({'number_next': seq.number_next_actual or 1})
+            */
+            return default;
+        }
+
+        protected async Task<IrSequence> UnlinkSequenceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_sequence.py) ---
+            // def _unlink_sequence(self):
+            // configs = self.env['pos.config'].search(domain=[
+            //     '|', '|', '|',
+            //     ('order_seq_id', 'in', self.ids),
+            //     ('order_line_seq_id', 'in', self.ids),
+            //     ('device_seq_id', 'in', self.ids),
+            //     ('order_backend_seq_id', 'in', self.ids)
+            // ])
+            // if len(configs):
+            //     raise UserError(_(
+            //         "You cannot delete a sequence used in an active POS config: %s",
+            //         configs.order_seq_id.mapped('name')
+            //     ))
             */
             return default;
         }

@@ -9,13 +9,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object HelpMessage { get; set; }
     }
     
-    public class ProductProductGetProductInfoPosRequestDto
-    {
-        public object Price { get; set; }
-        public object Quantity { get; set; }
-        public Guid PosConfigId { get; set; }
-    }
-    
     public class ProductProductViewHeaderGetRequestDto
     {
         public Guid ViewId { get; set; }

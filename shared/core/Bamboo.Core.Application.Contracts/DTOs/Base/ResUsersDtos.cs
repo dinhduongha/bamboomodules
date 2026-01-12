@@ -12,7 +12,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class ResUsersAuthenticateRequestDto
     {
-        public object Db { get; set; }
         public object Credential { get; set; }
         public object UserAgentEnv { get; set; }
     }
@@ -23,16 +22,14 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object NewPasswd { get; set; }
     }
     
-    public class ResUsersCheckRequestDto
-    {
-        public object Db { get; set; }
-        public object Uid { get; set; }
-        public object Passwd { get; set; }
-    }
-    
     public class ResUsersCopyDataRequestDto
     {
         public object Default { get; set; }
+    }
+    
+    public class ResUsersGetFormviewActionRequestDto
+    {
+        public object AccessUid { get; set; }
     }
     
     public class ResUsersGetSelectedCalendarsPartnerIdsRequestDto
@@ -72,6 +69,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class ResUsersResetPasswordRequestDto
     {
         public object Login { get; set; }
+    }
+    
+    public class ResUsersSetupOutgoingMailServerRequestDto
+    {
+        public object ServerType { get; set; }
     }
     
     public class ResUsersSignupRequestDto

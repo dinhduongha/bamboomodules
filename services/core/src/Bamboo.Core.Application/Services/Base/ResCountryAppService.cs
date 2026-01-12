@@ -42,6 +42,36 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<ResCountry> ComputeCountryGroupCodesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
+            // def _compute_country_group_codes(self):
+            // '''If a country has no associated country groups, assign [''] to country_group_codes.
+            // This prevents storing [] as False, which helps avoid iteration over a False value and
+            // maintains a valid structure.
+            // '''
+            // for country in self:
+            //     country.country_group_codes = [g.code for g in country.country_group_ids if g.code] or ['']
+            */
+            return default;
+        }
+
+        protected async Task<ResCountry> ComputeHasForeignFiscalPositionInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_country.py) ---
+            // def _compute_has_foreign_fiscal_position(self):
+            // for country in self:
+            //     country.has_foreign_fiscal_position = self.env['account.fiscal.position'].search([
+            //         *self._check_company_domain(self.env.company),
+            //         ('foreign_vat', '!=', False),
+            //         ('country_id', '=', country.id),
+            //     ], limit=1)
+            */
+            return default;
+        }
+
         protected async Task<ResCountry> ComputeImageUrlInternalAsync()
         {
             /*
@@ -57,15 +87,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCountry> ComputeIsStripeSupportedCountryInternalAsync()
+        protected async Task<ResCountry> ComputeProviderSupportInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: res_country.py) ---
-            // def _compute_is_stripe_supported_country(self):
+            // def _compute_provider_support(self):
             // for country in self:
-            //     country.is_stripe_supported_country = stripe.const.COUNTRY_MAPPING.get(
-            //         country.code, country.code
-            //     ) in stripe.const.SUPPORTED_COUNTRIES
+            //     country.is_stripe_supported_country = (
+            //         stripe is not None
+            //         and stripe.const.COUNTRY_MAPPING.get(
+            //             country.code, country.code
+            //         ) in stripe.const.SUPPORTED_COUNTRIES
+            //     )
+            //     country.is_mercado_pago_supported_country = (
+            //         mercado_pago
+            //         and country.code in mercado_pago.const.SUPPORTED_COUNTRIES
+            //     )
             */
             return default;
         }
@@ -81,12 +118,23 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResCountry> LoadPosDataFieldsInternalAsync(Guid config_id)
+        protected async Task<ResCountry> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_country.py) ---
-            // def _load_pos_data_fields(self, config_id):
+            // def _load_pos_data_fields(self, config):
             // return ['id', 'name', 'code', 'vat_label']
+            */
+            return default;
+        }
+
+        protected async Task<ResCountry> LoadPosSelfDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_country.py) ---
+            // def _load_pos_self_data_fields(self, config):
+            // fields = super()._load_pos_self_data_fields(config)
+            // return fields + ["state_ids"]
             */
             return default;
         }

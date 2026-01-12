@@ -8,11 +8,11 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Inventory/Inventory, Module: stock
+    // Category: Supply Chain/Inventory, Module: stock
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
-    [Route("api/v1/inventory/StockLocation")]
+    [Route("api/v1/supply-chain/StockLocation")]
     public partial class StockLocationController : AbpController
     {
         private readonly IStockLocationAppService _appService;

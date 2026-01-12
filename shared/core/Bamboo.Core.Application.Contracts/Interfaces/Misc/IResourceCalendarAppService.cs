@@ -13,9 +13,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResourceCalendar> CopyDataAsync(Guid id, ResourceCalendarCopyDataRequestDto input);
         Task<ResourceCalendar> GetWorkDurationDataAsync(Guid id, ResourceCalendarGetWorkDurationDataRequestDto input);
         Task<ResourceCalendar> GetWorkHoursCountAsync(Guid id, ResourceCalendarGetWorkHoursCountRequestDto input);
-        Task<ResourceCalendar> OpenContractsAsync(Guid id);
         Task<ResourceCalendar> PlanDaysAsync(Guid id, ResourceCalendarPlanDaysRequestDto input);
         Task<ResourceCalendar> PlanHoursAsync(Guid id, ResourceCalendarPlanHoursRequestDto input);
+        Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid id);
         Task<ResourceCalendar> SwitchCalendarTypeAsync(Guid id);
         Task<ResourceCalendar> TransferLeavesToAsync(Guid id, ResourceCalendarTransferLeavesToRequestDto input);
     }

@@ -85,7 +85,7 @@ namespace Bamboo.Core.Application.Services
             // :return:    An action on account.move.
             // '''
             // self.ensure_one()
-            // return (self.invoice_ids | self.reconciled_invoice_ids).with_context(
+            // return self.reconciled_invoice_ids.with_context(
             //     create=False
             // )._get_records_action(
             //     name=_("Paid Invoices"),
@@ -526,7 +526,6 @@ namespace Bamboo.Core.Application.Services
             //             pay.destination_account_id = self.env['account.account'].with_company(pay.company_id).search([
             //                 *self.env['account.account']._check_company_domain(pay.company_id),
             //                 ('account_type', '=', 'asset_receivable'),
-            //                 ('deprecated', '=', False),
             //             ], limit=1)
             //     elif pay.partner_type == 'supplier':
             //         # Send money to pay a bill or receive money to refund it.
@@ -536,7 +535,6 @@ namespace Bamboo.Core.Application.Services
             //             pay.destination_account_id = self.env['account.account'].with_company(pay.company_id).search([
             //                 *self.env['account.account']._check_company_domain(pay.company_id),
             //                 ('account_type', '=', 'liability_payable'),
-            //                 ('deprecated', '=', False),
             //             ], limit=1)
             */
             return default;
@@ -622,9 +620,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_payment.py) ---
             // def _compute_outstanding_account_id(self):
             // # EXTENDS account
-            // expense_company_payments = self.filtered(lambda payment: payment.expense_sheet_id.payment_mode == 'company_account')
+            // expense_company_payments = self.filtered(lambda payment: payment.expense_ids.payment_mode == 'company_account')
             // for payment in expense_company_payments:
-            //     payment.outstanding_account_id = payment.expense_sheet_id._get_expense_account_destination()
+            //     payment.outstanding_account_id = payment.expense_ids._get_expense_account_destination()
             // super(AccountPayment, self - expense_company_payments)._compute_outstanding_account_id()
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_payment.py) ---
             // def _compute_outstanding_account_id(self):
@@ -646,20 +644,6 @@ namespace Bamboo.Core.Application.Services
             // for pay in self:
             //     if pay.partner_bank_id not in pay.available_partner_bank_ids:
             //         pay.partner_bank_id = pay.available_partner_bank_ids[:1]._origin
-            */
-            return default;
-        }
-
-        protected async Task<AccountPayment> ComputePartnerIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def _compute_partner_id(self):
-            // for pay in self:
-            //     if pay.partner_id == pay.journal_id.company_id.partner_id:
-            //         pay.partner_id = False
-            //     else:
-            //         pay.partner_id = pay.partner_id
             */
             return default;
         }
@@ -831,6 +815,11 @@ namespace Bamboo.Core.Application.Services
             //     else:
             //         payment.show_partner_bank_account = payment.payment_method_code in self._get_method_codes_using_bank_account()
             //     payment.require_partner_bank_account = payment.state == 'draft' and payment.payment_method_code in self._get_method_codes_needing_bank_account()
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_payment.py) ---
+            // def _compute_show_require_partner_bank(self):
+            // expense_payments = self.filtered(lambda pay: pay.move_id.expense_ids)
+            // super()._compute_show_require_partner_bank()
+            // expense_payments.require_partner_bank_account = False
             */
             return default;
         }
@@ -857,7 +846,7 @@ namespace Bamboo.Core.Application.Services
             // self.env['account.move.line'].flush_model(fnames=['move_id', 'account_id', 'statement_line_id'])
             // self.env['account.partial.reconcile'].flush_model(fnames=['debit_move_id', 'credit_move_id'])
             // 
-            // self._cr.execute('''
+            // self.env.cr.execute('''
             //     SELECT
             //         payment.id,
             //         ARRAY_AGG(DISTINCT invoice.id) AS invoice_ids,
@@ -883,7 +872,7 @@ namespace Bamboo.Core.Application.Services
             // ''', {
             //     'payment_ids': tuple(stored_payments.ids)
             // })
-            // query_res = self._cr.dictfetchall()
+            // query_res = self.env.cr.dictfetchall()
             // 
             // for pay in self:
             //     pay.reconciled_invoice_ids = pay.invoice_ids.filtered(lambda m: m.is_sale_document(True))
@@ -900,7 +889,7 @@ namespace Bamboo.Core.Application.Services
             //     pay.reconciled_invoices_count = len(pay.reconciled_invoice_ids)
             //     pay.reconciled_bills_count = len(pay.reconciled_bill_ids)
             // 
-            // self._cr.execute('''
+            // query_res = dict(self.env.execute_query(SQL('''
             //     SELECT
             //         payment.id,
             //         ARRAY_AGG(DISTINCT counterpart_line.statement_line_id) AS statement_line_ids
@@ -921,10 +910,8 @@ namespace Bamboo.Core.Application.Services
             //         AND line.id != counterpart_line.id
             //         AND counterpart_line.statement_line_id IS NOT NULL
             //     GROUP BY payment.id
-            // ''', {
-            //     'payment_ids': tuple(stored_payments.ids)
-            // })
-            // query_res = dict((payment_id, statement_line_ids) for payment_id, statement_line_ids in self._cr.fetchall())
+            // ''', payment_ids=tuple(stored_payments.ids)
+            // )))
             // 
             // for pay in self:
             //     statement_line_ids = query_res.get(pay.id, [])
@@ -954,7 +941,7 @@ namespace Bamboo.Core.Application.Services
             //             if move.company_currency_id.is_zero(sum(liquidity.mapped('amount_residual'))) or not any(liquidity.account_id.mapped('reconcile')) else
             //             'in_process'
             //         )
-            //     if payment.state == 'in_process' and payment.invoice_ids and all(invoice.payment_state == 'paid' for invoice in payment.invoice_ids):
+            //     if payment.state == 'in_process' and payment.reconciled_invoice_ids and all(invoice.payment_state == 'paid' for invoice in payment.reconciled_invoice_ids):
             //         payment.state = 'paid'
             */
             return default;
@@ -1096,8 +1083,8 @@ namespace Bamboo.Core.Application.Services
             // def _creation_message(self):
             // # EXTENDS mail
             // self.ensure_one()
-            // if self.move_id.expense_sheet_id:
-            //     return _("Payment created for: %s", self.move_id.expense_sheet_id._get_html_link())
+            // if self.move_id.expense_ids:
+            //     return _("Payment created for: %s", self.move_id.expense_ids._get_html_link())
             // return super()._creation_message()
             */
             return default;
@@ -1424,6 +1411,9 @@ namespace Bamboo.Core.Application.Services
             //     'date', 'amount', 'payment_type', 'partner_type', 'payment_reference',
             //     'currency_id', 'partner_id', 'destination_account_id', 'partner_bank_id', 'journal_id'
             // )
+            --- ODOO METHOD SOURCE (MODULE: account_check_printing, FILE: account_payment.py) ---
+            // def _get_trigger_fields_to_synchronize(self):
+            // return super()._get_trigger_fields_to_synchronize() + ('check_number',)
             */
             return default;
         }
@@ -1454,29 +1444,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def init(self):
-            // super().init()
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_payment_journal_id_company_id_idx',
-            //     tablename='account_payment',
-            //     expressions=['journal_id', 'company_id']
-            // )
-            // create_index(
-            //     self.env.cr,
-            //     indexname='account_payment_unmatched_idx',
-            //     tablename='account_payment',
-            //     expressions=['journal_id', 'company_id'],
-            //     where="NOT is_matched OR is_matched IS NULL"
-            // )
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<AccountPayment> InverseCheckNumberInternalAsync()
         {
             /*
@@ -1490,13 +1457,15 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountPayment> InversePartnerIdInternalAsync()
+        protected async Task<AccountPayment> InverseMemoInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
-            // def _inverse_partner_id(self):
-            // # todo: remove in master
-            // pass
+            // def _inverse_memo(self):
+            // for payment in self:
+            //     move = payment.move_id
+            //     if move:
+            //         move.ref = payment.memo
             */
             return default;
         }
@@ -1523,17 +1492,6 @@ namespace Bamboo.Core.Application.Services
             //     ):
             //         attachments_to_link.write({'res_model': self._name, 'res_id': payment.id})
             // return super()._message_mail_after_hook(mails)
-            */
-            return default;
-        }
-
-        protected async Task<AccountPayment> MustDeleteAllExpensePaymentsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_payment.py) ---
-            // def _must_delete_all_expense_payments(self):
-            // if self.expense_sheet_id and self.expense_sheet_id.account_move_ids.payment_ids - self:  # If not all the payments are to be deleted
-            //     raise UserError(_("You cannot delete only some payments linked to an expense report. All payments must be deleted at the same time."))
             */
             return default;
         }
@@ -1574,20 +1532,19 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountPayment> OpenExpenseReportAsync(Guid id)
+        public async Task<AccountPayment> OpenExpenseAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_payment.py) ---
-            // def action_open_expense_report(self):
+            // def action_open_expense(self):
             // self.ensure_one()
             // return {
-            //     'name': self.expense_sheet_id.name,
+            //     'name': self.expense_ids.name,
             //     'type': 'ir.actions.act_window',
-            //     'view_type': 'form',
             //     'view_mode': 'form',
             //     'views': [(False, 'form')],
-            //     'res_model': 'hr.expense.sheet',
-            //     'res_id': self.expense_sheet_id.id
+            //     'res_model': 'hr.expense',
+            //     'res_id': self.expense_ids.id,
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1638,7 +1595,7 @@ namespace Bamboo.Core.Application.Services
             // res = super(AccountPayment, self - payments_need_tx).action_post()
             // 
             // for tx in transactions:  # Process the transactions with a payment by token
-            //     tx._send_payment_request()
+            //     tx._charge_with_token()
             // 
             // # Post payments for issued transactions
             // transactions._post_process()
@@ -1744,10 +1701,10 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_payment.py) ---
             // def _prepare_payment_transaction_vals(self, **extra_create_values):
             // self.ensure_one()
-            // if self._context.get('active_model', '') == 'account.move':
-            //     invoice_ids = self._context.get('active_ids', [])
-            // elif self._context.get('active_model', '') == 'account.move.line':
-            //     invoice_ids = self.env['account.move'].search([('line_ids', '=', self._context.get('active_ids'))]).ids
+            // if self.env.context.get('active_model', '') == 'account.move':
+            //     invoice_ids = self.env.context.get('active_ids', [])
+            // elif self.env.context.get('active_model', '') == 'account.move.line':
+            //     invoice_ids = self.env['account.move.line'].browse(self.env.context.get('active_ids')).move_id.ids
             // else:
             //     invoice_ids = []
             // return {
@@ -1763,7 +1720,6 @@ namespace Bamboo.Core.Application.Services
             //     'operation': 'offline',
             //     'payment_id': self.id,
             //     'invoice_ids': [Command.set(invoice_ids)],
-            //     **extra_create_values,
             // }
             */
             return default;
@@ -1846,6 +1802,19 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<AccountPayment> SearchReconciledInvoiceIdsInternalAsync(object @operator, object @value)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
+            // def _search_reconciled_invoice_ids(self, operator, value):
+            // if operator not in ('in', '='):
+            //     return NotImplemented
+            // move_ids = self.env['account.move'].browse(value).reconciled_payment_ids.ids
+            // return [('id', 'in', move_ids)]
+            */
+            return default;
+        }
+
         protected async Task<AccountPayment> SeekForLinesInternalAsync()
         {
             /*
@@ -1896,6 +1865,8 @@ namespace Bamboo.Core.Application.Services
             //     return
             // 
             // for pay in self:
+            //     if pay.move_id.state == 'posted':
+            //         continue
             //     liquidity_lines, counterpart_lines, writeoff_lines = pay._seek_for_lines()
             //     # Make sure to preserve the write-off amount.
             //     # This allows to create a new payment with custom 'line_ids'.
@@ -1945,6 +1916,19 @@ namespace Bamboo.Core.Application.Services
             // self.write({'is_sent': False})
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<AccountPayment> ValidPaymentStatesInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
+            // def _valid_payment_states(self):
+            // """ This method is used to know in which edition we are: Community or Enterprise
+            //     and fetch the payment states accordingly.
+            // """
+            // return ['in_process', 'paid'] if self.env['account.move']._get_invoice_in_payment_state() == 'paid' else ['in_process']
+            */
+            return default;
         }
 
         public async Task<AccountPayment> ValidateAsync(Guid id)
@@ -2033,10 +2017,10 @@ namespace Bamboo.Core.Application.Services
             // trigger_fields = {
             //     'date', 'amount', 'payment_type', 'partner_type', 'payment_reference',
             //     'currency_id', 'partner_id', 'destination_account_id', 'partner_bank_id', 'journal_id'
-            //     'ref', 'expense_sheet_id', 'payment_method_line_id'
+            //     'ref', 'payment_method_line_id'
             // }
-            // if self.expense_sheet_id and any(field_name in trigger_fields for field_name in vals):
-            //     raise UserError(_("You cannot do this modification since the payment is linked to an expense report."))
+            // if self.expense_ids and any(field_name in trigger_fields for field_name in vals):
+            //     raise UserError(_("You cannot do this modification since the payment is linked to an expense."))
             // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);

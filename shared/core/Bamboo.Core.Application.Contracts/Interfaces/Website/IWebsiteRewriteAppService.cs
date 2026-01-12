@@ -10,6 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsiteRewriteAppService : IGenericApplicationService<WebsiteRewrite>
     {
+        Task<WebsiteRewrite> GetImportTemplatesAsync(Guid id);
         Task<WebsiteRewrite> RefreshRoutesAsync(Guid id);
     }
 }

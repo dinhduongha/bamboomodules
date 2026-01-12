@@ -19,6 +19,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-redirect-lead")]
+        public async Task<IActionResult> ActionRedirectLeadAsync(Guid id)
+        {
+            var result = await _appService.RedirectLeadAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-redirect-to-attempts")]
         public async Task<IActionResult> ActionRedirectToAttemptsAsync(Guid id)
         {

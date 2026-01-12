@@ -11,6 +11,14 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
+        [Route("{id}/action-event-view")]
+        public async Task<IActionResult> ActionEventViewAsync(Guid id)
+        {
+            var result = await _appService.EventViewAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-view-question-answers")]
         public async Task<IActionResult> ActionViewQuestionAnswersAsync(Guid id)
         {

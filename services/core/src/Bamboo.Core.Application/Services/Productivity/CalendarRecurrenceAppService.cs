@@ -99,7 +99,7 @@ namespace Bamboo.Core.Application.Services
             //         }]
             //         event.with_user(event._get_event_user())._google_delete(google_service, event.google_id)
             //         event.google_id = False
-            // self.env['calendar.event'].create(vals)
+            // self.env['calendar.event'].with_context(skip_contact_description=True).create(vals)
             // 
             // self.calendar_event_ids.need_sync = False
             // return detached_events
@@ -124,7 +124,7 @@ namespace Bamboo.Core.Application.Services
             //         }]
             //         event._microsoft_delete(event.user_id, event.microsoft_id)
             //         event.ms_universal_event_id = False
-            // self.env['calendar.event'].create(vals)
+            // self.env['calendar.event'].with_context(skip_contact_description=True).create(vals)
             // self.calendar_event_ids.need_sync_m = False
             // return detached_events
             */
@@ -213,7 +213,7 @@ namespace Bamboo.Core.Application.Services
             //     # Google reuse the event google_id to identify the recurrence in that case
             //     base_event = self.env['calendar.event'].search([('google_id', '=', vals['google_id'])])
             //     if not base_event:
-            //         base_event = self.env['calendar.event'].create(base_values)
+            //         base_event = self.env['calendar.event'].with_context(skip_contact_description=True).create(base_values)
             //     else:
             //         # We override the base_event values because they could have been changed in Google interface
             //         # The event google_id will be recalculated once the recurrence is created
@@ -224,7 +224,7 @@ namespace Bamboo.Core.Application.Services
             //     vals['event_tz'] = gevent.start.get('timeZone')
             //     attendee_values[base_event.id] = {'attendee_ids': base_values.get('attendee_ids')}
             // 
-            // recurrence = super(RecurrenceRule, self.with_context(dont_notify=True))._create_from_google(gevents, vals_list)
+            // recurrence = super(CalendarRecurrence, self.with_context(dont_notify=True))._create_from_google(gevents, vals_list)
             // generic_values_creation = {
             //     rec.id: attendee_values[rec.base_event_id.id]
             //     for rec in recurrence if attendee_values.get(rec.base_event_id.id)
@@ -380,8 +380,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_microsoft_sync_domain(self):
             // # Do not sync Odoo recurrences with Outlook Calendar anymore.
-            // domain = expression.FALSE_DOMAIN
-            // return self._extend_microsoft_domain(domain)
+            // return self._extend_microsoft_domain(Domain.FALSE)
             */
             return default;
         }
@@ -594,7 +593,7 @@ namespace Bamboo.Core.Application.Services
             // # older versions of the module. When synced, these recurrency may come back from Google after database cleaning
             // # and trigger errors as the records are not properly populated.
             // # We also prevent sync of other user recurrent events.
-            // return [('calendar_event_ids.user_id', '=', self.env.user.id), ('rrule', '!=', False)]
+            // return Domain('calendar_event_ids.user_id', '=', self.env.user.id) & Domain('rrule', '!=', False)
             */
             return default;
         }
@@ -832,16 +831,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CalendarRecurrence> MicrosoftValuesInternalAsync(object fields_to_sync)
+        protected async Task<CalendarRecurrence> MicrosoftValuesInternalAsync(object fields_to_sync, object initial_values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
-            // def _microsoft_values(self, fields_to_sync):
+            // def _microsoft_values(self, fields_to_sync, initial_values=()):
             // """
             // Get values to update the whole Outlook event recurrence.
             // (done through the first event of the Outlook recurrence).
             // """
-            // return self.base_event_id._microsoft_values(fields_to_sync, initial_values={'type': 'seriesMaster'})
+            // return self.base_event_id._microsoft_values(fields_to_sync, initial_values={**dict(initial_values), 'type': 'seriesMaster'})
             */
             return default;
         }

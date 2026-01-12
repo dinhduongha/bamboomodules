@@ -11,8 +11,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IHrWorkEntryAppService : IGenericApplicationService<HrWorkEntry>
     {
         Task<HrWorkEntry> ApproveLeaveAsync(Guid id);
-        Task<HrWorkEntry> InitAsync(Guid id);
+        Task<HrWorkEntry> GetUnusualDaysAsync(Guid id, HrWorkEntryGetUnusualDaysRequestDto input);
         Task<HrWorkEntry> RefuseLeaveAsync(Guid id);
+        Task<HrWorkEntry> SplitAsync(Guid id, HrWorkEntrySplitRequestDto input);
         Task<HrWorkEntry> ValidateAsync(Guid id);
     }
 }

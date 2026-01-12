@@ -14,4 +14,9 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object ModelName { get; set; }
         public object PropertyOrigins { get; set; }
     }
+    
+    public class IrModelHasSearchableParentRelationRequestDto
+    {
+        public object ModelNames { get; set; }
+    }
 }

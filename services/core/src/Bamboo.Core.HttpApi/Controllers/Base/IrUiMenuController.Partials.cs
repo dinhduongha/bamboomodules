@@ -41,21 +41,5 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.LoadWebMenusAsync(id, input);
             return Ok(result);
         }
-        
-        [HttpPost]
-        [Route("{id}/search-count")]
-        public async Task<IActionResult> SearchCountAsync(Guid id, [FromBody] IrUiMenuSearchCountRequestDto input)
-        {
-            var result = await _appService.SearchCountAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/search-fetch")]
-        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] IrUiMenuSearchFetchRequestDto input)
-        {
-            var result = await _appService.SearchFetchAsync(id, input);
-            return Ok(result);
-        }
     }
 }

@@ -17,18 +17,20 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner" })]
+    [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner", "html_builder" })]
     public class BlogPostAppService : GenericApplicationService<BlogPost>, IBlogPostAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteCoverPropertiesMixinAppService _websiteCoverPropertiesMixinAppService;
+        private readonly IWebsitePageVisibilityOptionsMixinAppService _websitePageVisibilityOptionsMixinAppService;
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
-        public BlogPostAppService(IRepository<BlogPost, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IWebsiteCoverPropertiesMixinAppService websiteCoverPropertiesMixinAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public BlogPostAppService(IRepository<BlogPost, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IWebsiteCoverPropertiesMixinAppService websiteCoverPropertiesMixinAppService, IWebsitePageVisibilityOptionsMixinAppService websitePageVisibilityOptionsMixinAppService, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadAppService = mailThreadAppService;
             _websiteCoverPropertiesMixinAppService = websiteCoverPropertiesMixinAppService;
+            _websitePageVisibilityOptionsMixinAppService = websitePageVisibilityOptionsMixinAppService;
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
             _websiteSearchableMixinAppService = websiteSearchableMixinAppService;
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
@@ -113,7 +115,7 @@ namespace Bamboo.Core.Application.Services
             // def _default_content(self):
             // text = html_escape(_("Start writing here..."))
             // return """
-            //     <p class="o_default_snippet_text">%(text)s</p>
+            //     <p>%(text)s</p>
             // """ % {"text": text}
             */
             return default;
@@ -165,8 +167,7 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
-            // """ Add access button to everyone if the document is published. """
+            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
             // groups = super()._notify_get_recipients_groups(
             //     message, model_description, msg_vals=msg_vals
             // )
@@ -188,11 +189,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
             // def _notify_thread_by_inbox(self, message, recipients_data, msg_vals=False, **kwargs):
-            // """ Override to avoid keeping all notified recipients of a comment.
-            // We avoid tracking needaction on post comments. Only emails should be
-            // sufficient. """
-            // if msg_vals is None:
-            //     msg_vals = {}
+            // # Override to avoid keeping all notified recipients of a comment.
+            // # We avoid tracking needaction on post comments. Only emails should be
+            // # sufficient.
+            // msg_vals = msg_vals or {}
             // if msg_vals.get('message_type', message.message_type) == 'comment':
             //     return
             // return super(BlogPost, self)._notify_thread_by_inbox(message, recipients_data, msg_vals=msg_vals, **kwargs)

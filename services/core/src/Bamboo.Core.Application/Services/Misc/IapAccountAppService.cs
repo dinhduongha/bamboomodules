@@ -34,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             // return {
             //     'type': 'ir.actions.act_url',
             //     'url': self.env['iap.account'].get_credits_url(
-            //         account_token=self.account_token,
+            //         account_token=self.sudo().account_token,
             //         service_name=self.service_name,
             //     ),
             // }
@@ -79,14 +79,14 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
             // def _get_account_information_from_iap(self):
             // # During testing, we don't want to call the iap server
-            // if self.is_running_test_suite():
+            // if module.current_test:
             //     return
             // route = '/iap/1/get-accounts-information'
             // endpoint = iap_tools.iap_get_endpoint(self.env)
-            // url = werkzeug.urls.url_join(endpoint, route)
+            // url = url_join(endpoint, route)
             // params = {
             //     'iap_accounts': [{
-            //         'token': account.account_token,
+            //         'token': account.sudo().account_token,
             //         'service': account.service_id.technical_name,
             //     } for account in self if account.service_id],
             //     'dbuuid': self.env['ir.config_parameter'].sudo().get_param('database.uuid'),
@@ -99,7 +99,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // for token, information in accounts_information.items():
             //     information.pop('link_to_service_page', None)
-            //     accounts = self.filtered(lambda acc: secrets.compare_digest(acc.account_token, token))
+            //     accounts = self.filtered(lambda acc: secrets.compare_digest(acc.sudo().account_token, token))
             // 
             //     for account in accounts:
             //         # Default rounding of 4 decimal places to avoid large decimals
@@ -124,7 +124,7 @@ namespace Bamboo.Core.Application.Services
             //         ('company_ids', '=', False)
             // ]
             // accounts = self.search(domain, order='id desc')
-            // accounts_without_token = accounts.filtered(lambda acc: not acc.account_token)
+            // accounts_without_token = accounts.filtered(lambda acc: not acc.sudo().account_token)
             // if accounts_without_token:
             //     with self.pool.cursor() as cr:
             //         # In case of a further error that will rollback the database, we should
@@ -139,8 +139,8 @@ namespace Bamboo.Core.Application.Services
             // if not accounts:
             //     service = self.env['iap.service'].search([('technical_name', '=', service_name)], limit=1)
             //     if not service:
-            //         raise UserError("No service exists with the provided technical name")
-            //     if self.is_running_test_suite():
+            //         raise UserError(self.env._("No service exists with the provided technical name"))
+            //     if module.current_test:
             //         # During testing, we don't want to commit the creation of a new IAP account to the database
             //         return self.sudo().create({'service_id': service.id})
             // 
@@ -159,7 +159,7 @@ namespace Bamboo.Core.Application.Services
             //             account = IapAccount.create({'service_id': service.id})
             //         # fetch 'account_token' into cache with this cursor,
             //         # as self's cursor cannot see this account
-            //         account_token = account.account_token
+            //         account_token = account.sudo().account_token
             //     account = self.browse(account.id)
             //     self.env.cache.set(account, IapAccount._fields['account_token'], account_token)
             //     return account
@@ -201,10 +201,10 @@ namespace Bamboo.Core.Application.Services
             // if account:
             //     route = '/iap/1/balance'
             //     endpoint = iap_tools.iap_get_endpoint(self.env)
-            //     url = werkzeug.urls.url_join(endpoint, route)
+            //     url = url_join(endpoint, route)
             //     params = {
             //         'dbuuid': self.env['ir.config_parameter'].sudo().get_param('database.uuid'),
-            //         'account_token': account.account_token,
+            //         'account_token': account.sudo().account_token,
             //         'service_name': service_name,
             //     }
             //     try:
@@ -222,36 +222,37 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
-            // def get_credits_url(self, service_name, base_url='', credit=0, trial=False, account_token=False):
-            // """ Called notably by ajax crash manager, buy more widget, partner_autocomplete, sanilmail. """
+            // def get_credits_url(self, service_name, account_token=None):
+            // """ Called notably by: buy more widget, partner_autocomplete, snailmail, ... """
             // dbuuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
-            // if not base_url:
-            //     endpoint = iap_tools.iap_get_endpoint(self.env)
-            //     route = '/iap/1/credit'
-            //     base_url = werkzeug.urls.url_join(endpoint, route)
-            // if not account_token:
-            //     account_token = self.get(service_name).account_token
+            // endpoint = iap_tools.iap_get_endpoint(self.env)
+            // route = '/iap/1/credit'
+            // base_url = url_join(endpoint, route)
+            // account_token = account_token or self.get(service_name).sudo().account_token
+            // hashed_account_token = self._hash_iap_token(account_token)
             // d = {
             //     'dbuuid': dbuuid,
             //     'service_name': service_name,
-            //     'account_token': account_token,
-            //     'credit': credit,
+            //     'account_token': hashed_account_token,
+            //     'hashed': 1,
             // }
-            // if trial:
-            //     d.update({'trial': trial})
             // return '%s?%s' % (base_url, werkzeug.urls.url_encode(d))
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IapAccount> IsRunningTestSuiteAsync(Guid id)
+        protected async Task<IapAccount> HashIapTokenInternalAsync(object key)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
-            // def is_running_test_suite():
-            // return hasattr(threading.current_thread(), 'testing') and threading.current_thread().testing
+            // def _hash_iap_token(self, key):
+            // # disregard possible suffix
+            // key = (key or '').split('+')[0]
+            // if not key:
+            //     raise UserError(_('The IAP token provided is invalid or empty.'))
+            // return hashlib.sha1(key.encode('utf-8')).hexdigest()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return default;
         }
 
         public async Task<IapAccount> OpenRegistrationWizardAsync(Guid id)

@@ -35,6 +35,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        {
+            var result = await _appService.GetImportTemplatesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] AccountAnalyticLineGetUnusualDaysRequestDto input)
+        {
+            var result = await _appService.GetUnusualDaysAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/get-views")]
         public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountAnalyticLineGetViewsRequestDto input)
         {

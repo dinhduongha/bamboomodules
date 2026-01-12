@@ -28,7 +28,17 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     public class PosOrderReadPosDataRequestDto
     {
         public object Data { get; set; }
-        public Guid ConfigId { get; set; }
+        public object Config { get; set; }
+    }
+    
+    public class PosOrderReadPosDataUuidRequestDto
+    {
+        public object Uuid { get; set; }
+    }
+    
+    public class PosOrderReadPosOrdersRequestDto
+    {
+        public object Domain { get; set; }
     }
     
     public class PosOrderRemoveFromUiRequestDto
@@ -51,9 +61,12 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object BasicImage { get; set; }
     }
     
-    public class PosOrderSendTableCountNotificationRequestDto
+    public class PosOrderSendSelfOrderReceiptRequestDto
     {
-        public List<Guid> TableIds { get; set; }
+        public object Email { get; set; }
+        public Guid MailTemplateId { get; set; }
+        public object TicketImage { get; set; }
+        public object BasicImage { get; set; }
     }
     
     public class PosOrderSentMessageOnSmsRequestDto

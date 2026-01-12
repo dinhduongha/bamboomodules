@@ -60,18 +60,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<MrpUnbuild> ComputeLotIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_unbuild.py) ---
-            // def _compute_lot_id(self):
-            // for order in self:
-            //     if order.mo_id:
-            //         order.lot_id = order.mo_id.lot_producing_id
-            */
-            return default;
-        }
-
         protected async Task<MrpUnbuild> ComputeProductIdInternalAsync()
         {
             /*
@@ -148,7 +136,6 @@ namespace Bamboo.Core.Application.Services
             // location_dest_id = bom_line_id and self.location_dest_id or product_prod_location
             // warehouse = location_dest_id.warehouse_id
             // return self.env['stock.move'].create({
-            //     'name': self.name,
             //     'date': self.create_date,
             //     'bom_line_id': bom_line_id,
             //     'byproduct_id': byproduct_id,
@@ -172,7 +159,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_unbuild.py) ---
             // def _generate_move_from_existing_move(self, move, factor, location_id, location_dest_id):
             // return self.env['stock.move'].create({
-            //     'name': self.name,
             //     'date': self.create_date,
             //     'product_id': move.product_id.id,
             //     'product_uom_qty': move.quantity * factor,
@@ -219,7 +205,7 @@ namespace Bamboo.Core.Application.Services
             // return {
             //     'move_id': finished_move.id,
             //     'lot_id': self.lot_id.id,
-            //     'quantity': finished_move.product_uom_qty,
+            //     'quantity': finished_move.product_uom_qty - finished_move.quantity,
             //     'product_id': finished_move.product_id.id,
             //     'product_uom_id': finished_move.product_uom.id,
             //     'location_id': finished_move.location_id.id,
@@ -254,8 +240,8 @@ namespace Bamboo.Core.Application.Services
             // def action_unbuild(self):
             // self.ensure_one()
             // self._check_company()
-            // # remove the default_* keys that was only needed in the unbuild wizard
-            // self.env.context = dict(clean_context(self.env.context))
+            // # remove the default_* keys that were only needed in the unbuild wizard
+            // self = self.with_env(self.env(context=clean_context(self.env)))  # noqa: PLW0642
             // if self.product_id.tracking != 'none' and not self.lot_id.id:
             //     raise UserError(_('You should provide a lot number for the final product.'))
             // 
@@ -270,24 +256,31 @@ namespace Bamboo.Core.Application.Services
             // 
             // finished_moves = consume_moves.filtered(lambda m: m.product_id == self.product_id)
             // consume_moves -= finished_moves
+            // error_message = _(
+            //     "Please specify a manufacturing order.\n"
+            //     "It will allow us to retrieve the lots/serial numbers of the correct components and/or byproducts."
+            // )
             // 
             // if any(produce_move.has_tracking != 'none' and not self.mo_id for produce_move in produce_moves):
-            //     raise UserError(_('Some of your components are tracked, you have to specify a manufacturing order in order to retrieve the correct components.'))
+            //     raise UserError(error_message)
             // 
             // if any(consume_move.has_tracking != 'none' and not self.mo_id for consume_move in consume_moves):
-            //     raise UserError(_('Some of your byproducts are tracked, you have to specify a manufacturing order in order to retrieve the correct byproducts.'))
+            //     raise UserError(error_message)
             // 
             // for finished_move in finished_moves:
-            //     finished_move_line_vals = self._prepare_finished_move_line_vals(finished_move)
-            //     self.env['stock.move.line'].create(finished_move_line_vals)
+            //     if float_compare(finished_move.product_uom_qty, finished_move.quantity, precision_rounding=finished_move.product_uom.rounding) > 0:
+            //         finished_move_line_vals = self._prepare_finished_move_line_vals(finished_move)
+            //         self.env['stock.move.line'].create(finished_move_line_vals)
             // 
             // # TODO: Will fail if user do more than one unbuild with lot on the same MO. Need to check what other unbuild has aready took
             // qty_already_used = defaultdict(float)
             // for move in produce_moves | consume_moves:
+            //     if float_compare(move.product_uom_qty, move.quantity, precision_rounding=move.product_uom.rounding) < 1:
+            //         continue
             //     original_move = move in produce_moves and self.mo_id.move_raw_ids or self.mo_id.move_finished_ids
             //     original_move = original_move.filtered(lambda m: m.product_id == move.product_id)
             //     if not original_move:
-            //         move.quantity = float_round(move.product_uom_qty, precision_rounding=move.product_uom.rounding)
+            //         move.quantity = move.product_uom.round(move.product_uom_qty)
             //         continue
             //     needed_quantity = move.product_uom_qty
             //     moves_lines = original_move.mapped('move_line_ids')
@@ -296,9 +289,11 @@ namespace Bamboo.Core.Application.Services
             //     for move_line in moves_lines:
             //         # Iterate over all move_lines until we unbuilded the correct quantity.
             //         taken_quantity = min(needed_quantity, move_line.quantity - qty_already_used[move_line])
-            //         taken_quantity = float_round(taken_quantity, precision_rounding=move.product_uom.rounding)
+            //         taken_quantity = move.product_uom.round(taken_quantity)
             //         if taken_quantity:
             //             move_line_vals = self._prepare_move_line_vals(move, move_line, taken_quantity)
+            //             if move_line.owner_id:
+            //                 move_line_vals['owner_id'] = move_line.owner_id.id
             //             unbuild_move_line = self.env["stock.move.line"].create(move_line_vals)
             //             needed_quantity -= taken_quantity
             //             qty_already_used[move_line] += taken_quantity
@@ -342,7 +337,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_unbuild.py) ---
             // def action_validate(self):
             // self.ensure_one()
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // available_qty = self.env['stock.quant']._get_available_quantity(self.product_id, self.location_id, self.lot_id, strict=True)
             // unbuild_qty = self.product_uom_id._compute_quantity(self.product_qty, self.product_id.uom_id)
             // if float_compare(available_qty, unbuild_qty, precision_digits=precision) >= 0:

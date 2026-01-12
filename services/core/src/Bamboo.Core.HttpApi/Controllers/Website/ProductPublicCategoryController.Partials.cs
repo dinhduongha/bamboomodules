@@ -17,5 +17,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.CheckParentIdAsync(id);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/get-available-snippet-categories")]
+        public async Task<IActionResult> GetAvailableSnippetCategoriesAsync(Guid id, [FromBody] ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
+        {
+            var result = await _appService.GetAvailableSnippetCategoriesAsync(id, input);
+            return Ok(result);
+        }
     }
 }

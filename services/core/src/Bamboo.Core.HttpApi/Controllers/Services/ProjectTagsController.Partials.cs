@@ -17,5 +17,13 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.ArrangeTagListByIdAsync(id, input);
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Route("{id}/formatted-read-group")]
+        public async Task<IActionResult> FormattedReadGroupAsync(Guid id, [FromBody] ProjectTagsFormattedReadGroupRequestDto input)
+        {
+            var result = await _appService.FormattedReadGroupAsync(id, input);
+            return Ok(result);
+        }
     }
 }

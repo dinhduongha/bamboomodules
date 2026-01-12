@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("PointOfSale", Category = "Sales", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
+    [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public class PosOrderAppService : GenericApplicationService<PosOrder>, IPosOrderAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             // id_mapping = {item['old_id']: int(item['id']) for item in coupon_updates}
             // history_lines_create_vals = []
             // for coupon in coupon_data:
-            //     card_id = id_mapping.get(int(coupon['card_id'], False)) or int(coupon['card_id'])
+            //     card_id = id_mapping.get(int(coupon['card_id']), False) or int(coupon['card_id'])
             //     if not self.env['loyalty.card'].browse(card_id).exists():
             //         continue
             //     issued = coupon['won']
@@ -62,46 +62,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosOrder> AddMailAttachmentInternalAsync(object name, object ticket, object basic_receipt)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _add_mail_attachment(self, name, ticket, basic_ticket):
-            // attachment = []
-            // filename = 'Receipt-' + name + '.jpg'
-            // receipt = self.env['ir.attachment'].create({
-            //     'name': filename,
-            //     'type': 'binary',
-            //     'datas': ticket,
-            //     'res_model': 'pos.order',
-            //     'res_id': self.ids[0],
-            //     'mimetype': 'image/jpeg',
-            // })
-            // attachment += [(4, receipt.id)]
-            // if basic_ticket:
-            //     filename = 'Receipt-' + name + '-1' + '.jpg'
-            //     basic_receipt = self.env['ir.attachment'].create({
-            //         'name': filename,
-            //         'type': 'binary',
-            //         'datas': basic_ticket,
-            //         'res_model': 'pos.order',
-            //         'res_id': self.ids[0],
-            //         'mimetype': 'image/jpeg',
-            //     })
-            //     attachment += [(4, basic_receipt.id)]
-            // 
-            // 
-            // if self.mapped('account_move'):
-            //     report = self.env['ir.actions.report']._render_qweb_pdf("account.account_invoices", self.account_move.ids[0])
-            //     filename = name + '.pdf'
-            //     invoice = self.env['ir.attachment'].create({
-            //         'name': filename,
-            //         'type': 'binary',
-            //         'datas': base64.b64encode(report[0]),
-            //         'res_model': 'pos.order',
-            //         'res_id': self.ids[0],
-            //         'mimetype': 'application/x-pdf'
-            //     })
-            //     attachment += [(4, invoice.id)]
-            // 
-            // return attachment
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
             // def _add_mail_attachment(self, name, ticket, basic_receipt):
             // attachment = super()._add_mail_attachment(name, ticket, basic_receipt)
@@ -109,13 +69,13 @@ namespace Bamboo.Core.Application.Services
             //                                                                           p.pos_report_print_id)
             // if gift_card_programs:
             //     gift_cards = self.env['loyalty.card'].search([('source_pos_order_id', '=', self.id),
-            //                                                   ('program_id', 'in', gift_card_programs.mapped('id'))])
+            //                                                   ('program_id', 'in', gift_card_programs.ids)])
             //     if gift_cards:
             //         for program in gift_card_programs:
             //             filtered_gift_cards = gift_cards.filtered(lambda gc: gc.program_id == program)
             //             if filtered_gift_cards:
             //                 action_report = program.pos_report_print_id
-            //                 report = action_report._render_qweb_pdf(action_report.report_name, filtered_gift_cards.mapped('id'))
+            //                 report = action_report._render_qweb_pdf(action_report.report_name, filtered_gift_cards.ids)
             //                 filename = name + '.pdf'
             //                 gift_card_pdf = self.env['ir.attachment'].create({
             //                     'name': filename,
@@ -141,32 +101,9 @@ namespace Bamboo.Core.Application.Services
             // """Create a new payment for the order"""
             // self.ensure_one()
             // self.env['pos.payment'].create(data)
-            // self.amount_paid = sum(self.payment_ids.mapped('amount'))
+            // self.amount_paid = self._compute_amount_paid()
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<PosOrder> ApplyInvoicePaymentsInternalAsync(object is_reverse)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _apply_invoice_payments(self, is_reverse=False):
-            // receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).with_company(self.company_id).property_account_receivable_id
-            // payment_moves = self.payment_ids.sudo().with_company(self.company_id)._create_payment_moves(is_reverse)
-            // if receivable_account.reconcile:
-            //     invoice_receivables = self.account_move.line_ids.filtered(lambda line: line.account_id == receivable_account and not line.reconciled)
-            //     if invoice_receivables:
-            //         credit_line_ids = payment_moves._context.get('credit_line_ids', None)
-            //         payment_receivables = payment_moves.mapped('line_ids').filtered(
-            //             lambda line: (
-            //                 (credit_line_ids and line.id in credit_line_ids) or
-            //                 (not credit_line_ids and line.account_id == receivable_account and line.partner_id)
-            //             )
-            //         )
-            //         (invoice_receivables | payment_receivables).sudo().with_company(self.company_id).reconcile()
-            // return payment_moves
-            */
-            return default;
         }
 
         protected async Task<PosOrder> CheckExistingLoyaltyCardsInternalAsync(object coupon_data)
@@ -178,9 +115,8 @@ namespace Bamboo.Core.Application.Services
             // for coupon_id, coupon_vals in coupon_data.items():
             //     partner_id = coupon_vals.get('partner_id', False)
             //     if partner_id:
-            //         partner_coupons = self.env['loyalty.card'].search(
-            //             [('partner_id', '=', partner_id), ('program_type', '=', 'loyalty')])
-            //         existing_coupon_for_program = partner_coupons.filtered(lambda c: c.program_id.id == coupon_vals['program_id'])
+            //         existing_coupon_for_program = self.env['loyalty.card'].search(
+            //             [('partner_id', '=', partner_id), ('program_type', 'in', ['loyalty', 'ewallet']), ('program_id', '=', coupon_vals['program_id'])])
             //         if existing_coupon_for_program:
             //             coupon_vals['coupon_id'] = existing_coupon_for_program[0].id
             //             coupon_key_to_modify.append([coupon_id, existing_coupon_for_program[0].id])
@@ -225,12 +161,31 @@ namespace Bamboo.Core.Application.Services
             // values.setdefault('pricelist_id', session.config_id.pricelist_id.id)
             // values.setdefault('fiscal_position_id', session.config_id.default_fiscal_position_id.id)
             // values.setdefault('company_id', session.config_id.company_id.id)
+            // 
+            // if not values.get('pos_reference'):
+            //     reference, tracking_number = session.config_id._get_next_order_refs()
+            //     values['pos_reference'] = reference
+            //     values['tracking_number'] = tracking_number
+            // 
+            // if not values.get('sequence_number'):
+            //     self._update_sequence_number(session, values)
+            // 
             // return values
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
             // def _complete_values_from_session(self, session, values):
             // values = super(PosOrder, self)._complete_values_from_session(session, values)
             // values['crm_team_id'] = values['crm_team_id'] if values.get('crm_team_id') else session.config_id.crm_team_id.id
             // return values
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> ComputeAmountPaidInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _compute_amount_paid(self):
+            // return sum(self.payment_ids.mapped('amount'))
             */
             return default;
         }
@@ -267,7 +222,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_contact_details(self):
             // for order in self:
             //     order.email = order.partner_id.email or ""
-            //     order.mobile = order._phone_format(number=order.partner_id.mobile or order.partner_id.phone or "",
+            //     order.mobile = order._phone_format(number=order.partner_id.phone or "",
             //                 country=order.partner_id.country_id)
             */
             return default;
@@ -294,9 +249,20 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _compute_has_refundable_lines(self):
-            // digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // for order in self:
             //     order.has_refundable_lines = any([float_compare(line.qty, line.refunded_qty, digits) > 0 for line in order.lines])
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> ComputeInvoiceStatusInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _compute_invoice_status(self):
+            // for order in self:
+            //     order.invoice_status = 'invoiced' if len(order.account_move) else 'to_invoice'
             */
             return default;
         }
@@ -340,10 +306,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _compute_margin(self):
             // for order in self:
+            //     sign = -1 if order.is_refund else 1
             //     if order.is_total_cost_computed:
             //         order.margin = sum(order.lines.mapped('margin'))
-            //         amount_untaxed = order.currency_id.round(sum(line.price_subtotal for line in order.lines))
-            //         order.margin_percent = not float_is_zero(amount_untaxed, precision_rounding=order.currency_id.rounding) and order.margin / amount_untaxed or 0
+            //         amount_untaxed = order.currency_id.round(sum(line.price_subtotal for line in order.lines)) * sign
+            //         order.margin_percent = not float_is_zero(amount_untaxed, precision_rounding=order.currency_id.rounding) \
+            //                                 and order.margin / amount_untaxed \
+            //                                 or 0
             //     else:
             //         order.margin = 0
             //         order.margin_percent = 0
@@ -372,6 +341,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosOrder> ComputeOrderConfigIdInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _compute_order_config_id(self):
+            // for order in self:
+            //     if order.session_id:
+            //         order.config_id = order.session_id.config_id
+            */
+            return default;
+        }
+
         protected async Task<PosOrder> ComputeOrderNameInternalAsync(object session)
         {
             /*
@@ -381,7 +362,8 @@ namespace Bamboo.Core.Application.Services
             // if self.refunded_order_id.exists():
             //     return _('%(refunded_order)s REFUND', refunded_order=self.refunded_order_id.name)
             // else:
-            //     return session.config_id.sequence_id._next()
+            //     last_reference_part = self.get_reference_last_part()
+            //     return f"{session.config_id.name} - {last_reference_part}"
             */
             return default;
         }
@@ -443,7 +425,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_refund_related_fields(self):
             // for order in self:
             //     order.refund_orders_count = len(order.mapped('lines.refund_orderline_ids.order_id'))
-            //     order.refunded_order_id = order.lines.refunded_orderline_id.order_id
+            //     order.refunded_order_id = next(iter(order.lines.refunded_orderline_id.order_id), False)
             */
             return default;
         }
@@ -485,17 +467,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosOrder> ComputeTrackingNumberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_tracking_number(self):
-            // for record in self:
-            //     record.tracking_number = str((record.session_id.id % 10) * 100 + record.sequence_number % 100).zfill(3)
-            */
-            return default;
-        }
-
         protected async Task<PosOrder> ComputeUseSelfOrderOnlinePaymentInternalAsync()
         {
             /*
@@ -524,14 +495,17 @@ namespace Bamboo.Core.Application.Services
             // coupon_data = {int(k): v for k, v in coupon_data.items()}
             // 
             // self._check_existing_loyalty_cards(coupon_data)
+            // self._remove_duplicate_coupon_data(coupon_data)
+            // updated_gift_cards = self._process_existing_gift_cards(coupon_data)
+            // 
             // # Map negative id to newly created ids.
             // coupon_new_id_map = {k: k for k in coupon_data.keys() if k > 0}
             // 
             // # Create the coupons that were awarded by the order.
-            // coupons_to_create = {k: v for k, v in coupon_data.items() if k < 0 and not v.get('giftCardId')}
+            // coupons_to_create = {k: v for k, v in coupon_data.items() if k < 0}
             // coupon_create_vals = [{
             //     'program_id': p['program_id'],
-            //     'partner_id': get_partner_id(p.get('partner_id', False)),
+            //     'partner_id': get_partner_id(p.get('partner_id', self.partner_id.id)),
             //     'code': p.get('code') or p.get('barcode') or self.env['loyalty.card']._generate_code(),
             //     'points': 0,
             //     'expiration_date': p.get('date_to', False),
@@ -541,18 +515,6 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Pos users don't have the create permission
             // new_coupons = self.env['loyalty.card'].with_context(action_no_send_mail=True).sudo().create(coupon_create_vals)
-            // 
-            // # We update the gift card that we sold when the gift_card_settings = 'scan_use'.
-            // gift_cards_to_update = [v for v in coupon_data.values() if v.get('giftCardId')]
-            // updated_gift_cards = self.env['loyalty.card']
-            // for coupon_vals in gift_cards_to_update:
-            //     gift_card = self.env['loyalty.card'].browse(coupon_vals.get('giftCardId'))
-            //     gift_card.write({
-            //         'points': coupon_vals['points'],
-            //         'source_pos_order_id': self.id,
-            //         'partner_id': get_partner_id(coupon_vals.get('partner_id', False)),
-            //     })
-            //     updated_gift_cards |= gift_card
             // 
             // # Map the newly created coupons
             // for old_id, new_id in zip(coupons_to_create.keys(), new_coupons):
@@ -583,6 +545,26 @@ namespace Bamboo.Core.Application.Services
             //             filtered(lambda c: c.trigger == 'create').pos_report_print_id
             //     for report in report_per_program[coupon.program_id]:
             //         coupon_per_report[report.id].append(coupon.id)
+            // 
+            // # Adding loyalty history lines
+            // loyalty_points = [
+            //     {
+            //         'order_id': self.id,
+            //         'card_id': coupon_id,
+            //         'spent': -coupon_vals['points'] if coupon_vals['points'] < 0 else 0,
+            //         'won': coupon_vals['points'] if coupon_vals['points'] > 0 else 0,
+            //     }
+            //     for coupon_id, coupon_vals in coupon_data.items()
+            // ]
+            // coupon_updates = [
+            //     {
+            //         'id': coupon.id,
+            //         'old_id': coupon_new_id_map[coupon.id],
+            //     }
+            //     for coupon in all_coupons
+            // ]
+            // self.add_loyalty_history_lines(loyalty_points, coupon_updates)
+            // 
             // return {
             //     'coupon_updates': [{
             //         'old_id': coupon_new_id_map[coupon.id],
@@ -649,20 +631,24 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _create_invoice(self, move_vals):
-            // self.ensure_one()
-            // invoice = self.env['account.move'].sudo()\
+            // AccountMove = self.env['account.move']
+            // 
+            // invoice = AccountMove.sudo()\
             //     .with_company(self.company_id)\
             //     .with_context(default_move_type=move_vals['move_type'], linked_to_pos=True)\
             //     .create(move_vals)
+            // currency = self.currency_id
+            // amount_total = sum(order.amount_total for order in self)
+            // payment_total = sum(order.amount_paid for order in self)
             // 
             // if self.config_id.cash_rounding:
             //     line_ids_commands = []
             //     rate = invoice.invoice_currency_rate
             //     sign = invoice.direction_sign
-            //     amount_paid = (-1 if self.amount_total < 0.0 else 1) * self.amount_paid
+            //     amount_paid = (-1 if amount_total < 0.0 else 1) * payment_total
             //     difference_currency = sign * (amount_paid - invoice.amount_total)
             //     difference_balance = invoice.company_currency_id.round(difference_currency / rate) if rate else 0.0
-            //     if not self.currency_id.is_zero(difference_currency):
+            //     if not currency.is_zero(difference_currency):
             //         rounding_line = invoice.line_ids.filtered(lambda line: line.display_type == 'rounding' and not line.tax_line_id)
             //         if rounding_line:
             //             line_ids_commands.append(Command.update(rounding_line.id, {
@@ -689,12 +675,33 @@ namespace Bamboo.Core.Application.Services
             //             'amount_currency': existing_terms_line.amount_currency - difference_currency,
             //             'balance': existing_terms_line.balance - difference_balance,
             //         }))
-            //         with self.env['account.move']._check_balanced({'records': invoice}):
+            //         with AccountMove._check_balanced({'records': invoice}):
             //             invoice.with_context(skip_invoice_sync=True).line_ids = line_ids_commands
-            // invoice.message_post(body=_("This invoice has been created from the point of sale session: %s", self._get_html_link()))
+            // body = _("This invoice has been created from the point of sale session:%s",
+            //             Markup().join(Markup("%s ") % order._get_html_link() for order in self)
+            //         )
+            // invoice.message_post(body=body)
             // return invoice
             */
             return default;
+        }
+
+        public async Task<PosOrder> CreateInvoicesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_create_invoices(self):
+            // return {
+            //     'name': _('Create Invoice(s)'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('point_of_sale.view_pos_make_invoice').id,
+            //     'res_model': 'pos.make.invoice',
+            //     'target': 'new',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {'dialog_size': 'medium'}
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PosOrder> CreateMiscReversalMoveInternalAsync(object payment_moves)
@@ -702,10 +709,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _create_misc_reversal_move(self, payment_moves):
-            // """ Create a misc move to reverse this POS order and "remove" it from the POS closing entry.
-            // This is done by taking data from the order and using it to somewhat replicate the resulting entry in order to
-            // reverse partially the movements done ine the POS closing entry.
+            // """ Create a misc move to reverse POS orders and "remove" it from the POS closing entry.
+            // This is done by taking data from the orders and using it to somewhat replicate the resulting entry in orders to
+            // reverse partially the movements done in the POS closing entry.
             // """
+            // self.ensure_one()
             // aml_values_list_per_nature = self._prepare_aml_values_list_per_nature()
             // move_lines = []
             // for aml_values_list in aml_values_list_per_nature.values():
@@ -824,52 +832,71 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosOrder> EnsureToKeepLastPreparationChangeInternalAsync(object vals)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _ensure_to_keep_last_preparation_change(self, vals):
+            // for record in self:
+            //     if record.last_order_preparation_change:
+            //         change = json.loads(record.last_order_preparation_change)
+            //         if not change.get('metadata'):
+            //             return
+            // 
+            //         local_change = json.loads(vals.get('last_order_preparation_change', '{}'))
+            //         if not local_change.get('metadata'):
+            //             vals['last_order_preparation_change'] = record.last_order_preparation_change
+            //             return
+            // 
+            //         server_date = fields.Datetime.from_string(change['metadata'].get('serverDate'))
+            //         local_date = fields.Datetime.from_string(local_change['metadata'].get('serverDate'))
+            // 
+            //         if server_date > local_date:
+            //             _logger.warning("Preparation changes were outdated, probably linked to a synching issue.")
+            //             vals['last_order_preparation_change'] = record.last_order_preparation_change
+            //         else:
+            //             local_change['metadata']['serverDate'] = fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            //             vals['last_order_preparation_change'] = json.dumps(local_change)
+            */
+            return default;
+        }
+
         protected async Task<PosOrder> GeneratePosOrderInvoiceInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _generate_pos_order_invoice(self):
-            // moves = self.env['account.move']
+            // if not self.env['res.company']._with_locked_records(self, allow_raising=False):
+            //     raise UserError(_("Some orders are already being invoiced. Please try again later."))
+            // self.state = 'done'
             // 
-            // for order in self:
-            //     # Force company for all SUPERUSER_ID action
-            //     if order.account_move:
-            //         moves += order.account_move
-            //         continue
+            // company = self.company_id
+            // invoice_vals = self._prepare_invoice_vals()
+            // invoice = self._create_invoice(invoice_vals)
+            // invoice.sudo().with_company(company).with_context(**self._get_invoice_post_context())._post()
             // 
-            //     if not order.partner_id:
-            //         raise UserError(_('Please provide a partner for the sale.'))
+            // # invoice payments
+            // payment_moves_from_closed_sessions = {}
+            // all_payment_moves = self.env['account.move']
+            // for session, orders in self.grouped('session_id').items():
+            //     is_session_closed = session.state == 'closed'
+            //     for order in orders:
+            //         order_payments = order.payment_ids.sudo().with_company(company)
+            //         payment_moves = order_payments._create_payment_moves(is_session_closed)
+            //         all_payment_moves |= payment_moves
+            //         if is_session_closed:
+            //             payment_moves_from_closed_sessions[order] = payment_moves
             // 
-            //     move_vals = order._prepare_invoice_vals()
-            //     new_move = order._create_invoice(move_vals)
+            // self._reconcile_invoice_payments(invoice, all_payment_moves)
             // 
-            //     order.state = 'invoiced'
-            //     new_move.sudo().with_company(order.company_id).with_context(**order._get_invoice_post_context())._post()
+            // # reverse payment moves from closed sessions
+            // for order, payment_moves in payment_moves_from_closed_sessions.items():
+            //     order._create_misc_reversal_move(payment_moves)
             // 
-            //     moves += new_move
-            //     payment_moves = order._apply_invoice_payments(order.session_id.state == 'closed')
+            // if self.env.context.get('generate_pdf', True):
+            //     invoice.with_context(skip_invoice_sync=True)._generate_and_send()
             // 
-            //     # Send and Print
-            //     if self.env.context.get('generate_pdf', True):
-            //         new_move.with_context(skip_invoice_sync=True)._generate_and_send()
-            // 
-            //     if order.session_id.state == 'closed':  # If the session isn't closed this isn't needed.
-            //         # If a client requires the invoice later, we need to revers the amount from the closing entry, by making a new entry for that.
-            //         order._create_misc_reversal_move(payment_moves)
-            // 
-            // if not moves:
-            //     return {}
-            // 
-            // return {
-            //     'name': _('Customer Invoice'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('account.view_move_form').id,
-            //     'res_model': 'account.move',
-            //     'context': "{'move_type':'out_invoice'}",
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'current',
-            //     'res_id': moves and moves.ids[0] or False,
-            // }
+            // return invoice
             */
             return default;
         }
@@ -901,7 +928,7 @@ namespace Bamboo.Core.Application.Services
             //     database, because it was probably added for the online payment flow.
             // """
             // self.ensure_one()
-            // is_paid = self.state in ('paid', 'done', 'invoiced')
+            // is_paid = self.state in ('paid', 'done')
             // if is_paid:
             //     return {
             //         'id': self.id,
@@ -968,23 +995,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosOrder> GetInvoiceLinesValuesInternalAsync(object line_values, object pos_line)
+        protected async Task<PosOrder> GetInvoiceLinesValuesInternalAsync(object line_values, object pos_line, object move_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_invoice_lines_values(self, line_values, pos_order_line):
+            // def _get_invoice_lines_values(self, line_values, pos_line, move_type):
+            // # correct quantity sign based on move type and if line is refund.
+            // is_refund_order = pos_line.order_id.is_refund
+            // qty_sign = -1 if (
+            //     (move_type == 'out_invoice' and is_refund_order)
+            //     or (move_type == 'out_refund' and not is_refund_order)
+            // ) else 1
+            // 
+            // if line_values['product_id'].type == 'combo':
+            //     quantity = int(line_values['quantity']) if line_values['quantity'] == int(
+            //         line_values['quantity']) else line_values['quantity']
+            //     return {
+            //         'display_type': 'line_section',
+            //         'name': f"{line_values['product_id'].name} x {quantity}",
+            //         'quantity': qty_sign * line_values['quantity'],
+            //         'product_uom_id': line_values['uom_id'].id,
+            //     }
+            // 
             // return {
             //     'product_id': line_values['product_id'].id,
-            //     'quantity': line_values['quantity'],
+            //     'quantity': qty_sign * line_values['quantity'],
             //     'discount': line_values['discount'],
             //     'price_unit': line_values['price_unit'],
             //     'name': line_values['name'],
             //     'tax_ids': [(6, 0, line_values['tax_ids'].ids)],
             //     'product_uom_id': line_values['uom_id'].id,
+            //     'extra_tax_data': self.env['account.tax']._export_base_line_extra_tax_data(line_values),
             // }
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _get_invoice_lines_values(self, line_values, pos_line):
-            // inv_line_vals = super()._get_invoice_lines_values(line_values, pos_line)
+            // def _get_invoice_lines_values(self, line_values, pos_line, move_type):
+            // inv_line_vals = super()._get_invoice_lines_values(line_values, pos_line, move_type)
             // 
             // if pos_line.sale_order_origin_id:
             //     origin_line = pos_line.sale_order_line_id
@@ -1006,12 +1051,56 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosOrder> GetMailAttachmentsInternalAsync(object name, object ticket, object basic_ticket)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _get_mail_attachments(self, name, ticket, basic_ticket):
+            // attachments = []
+            // receipt = self.env['ir.attachment'].create({
+            //     'name': 'Receipt-' + name + '.jpg',
+            //     'type': 'binary',
+            //     'datas': ticket,
+            //     'res_model': 'pos.order',
+            //     'res_id': self.ids[0],
+            //     'mimetype': 'image/jpeg',
+            // })
+            // attachments += [(4, receipt.id)]
+            // 
+            // if basic_ticket:
+            //     basic_receipt = self.env['ir.attachment'].create({
+            //         'name': 'Receipt-' + name + '-1' + '.jpg',
+            //         'type': 'binary',
+            //         'datas': basic_ticket,
+            //         'res_model': 'pos.order',
+            //         'res_id': self.ids[0],
+            //         'mimetype': 'image/jpeg',
+            //     })
+            //     attachments += [(4, basic_receipt.id)]
+            // 
+            // if self.mapped('account_move'):
+            //     report = self.env['ir.actions.report']._render_qweb_pdf("account.account_invoices", self.account_move.ids[0])
+            //     invoice = self.env['ir.attachment'].create({
+            //         'name': name + '.pdf',
+            //         'type': 'binary',
+            //         'datas': base64.b64encode(report[0]),
+            //         'res_model': 'pos.order',
+            //         'res_id': self.ids[0],
+            //         'mimetype': 'application/pdf'
+            //     })
+            //     attachments += [(4, invoice.id)]
+            // 
+            // return attachments
+            */
+            return default;
+        }
+
         protected async Task<PosOrder> GetOpenOrderInternalAsync(object order)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _get_open_order(self, order):
-            // return self.env["pos.order"].search([('uuid', '=', order.get('uuid'))], limit=1)
+            // return self.env["pos.order"].search([('uuid', '=', order.get('uuid'))], limit=1, order='id desc')
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
             // def _get_open_order(self, order):
             // config_id = self.env['pos.session'].browse(order.get('session_id')).config_id
@@ -1023,7 +1112,7 @@ namespace Bamboo.Core.Application.Services
             //     domain += ['|', ('uuid', '=', order.get('uuid')), '&', ('table_id', '=', order.get('table_id')), ('state', '=', 'draft')]
             // else:
             //     domain += [('uuid', '=', order.get('uuid'))]
-            // return self.env["pos.order"].search(domain, limit=1)
+            // return self.env["pos.order"].search(domain, limit=1, order='id desc')
             */
             return default;
         }
@@ -1038,15 +1127,37 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<PosOrder> GetOrderToPrintAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
+            // def get_order_to_print(self):
+            // self.ensure_one()
+            // 
+            // # Lock the line
+            // self.env.cr.execute("SELECT id FROM pos_order WHERE id = %s FOR UPDATE NOWAIT", (self.id,))
+            // 
+            // if self.nb_print > 0:
+            //     raise ValueError("This order has already been printed automatically.")
+            // 
+            // self.nb_print += 1
+            // return self.read_pos_data([], self.config_id.id)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<PosOrder> GetPartnerBankIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _get_partner_bank_id(self):
             // bank_partner_id = False
-            // if self.amount_total <= 0 and self.partner_id.bank_ids:
+            // amount_total = sum(order.amount_total for order in self)
+            // if amount_total <= 0 and self.partner_id.bank_ids:
             //     bank_partner_id = self.partner_id.bank_ids[0].id
-            // elif self.amount_total >= 0 and self.company_id.partner_id.bank_ids:
+            // elif amount_total >= 0 and self.payment_ids and self.payment_ids[0].payment_method_id.journal_id.bank_account_id:
+            //     bank_partner_id = self.payment_ids[0].payment_method_id.journal_id.bank_account_id.id
+            // elif amount_total >= 0 and self.company_id.partner_id.bank_ids:
             //     bank_partner_id = self.company_id.partner_id.bank_ids[0].id
             // return bank_partner_id
             */
@@ -1060,10 +1171,9 @@ namespace Bamboo.Core.Application.Services
             // def _get_pos_anglo_saxon_price_unit(self, product, partner_id, quantity):
             // moves = self.filtered(lambda o: o.partner_id.id == partner_id)\
             //     .mapped('picking_ids.move_ids')\
-            //     ._filter_anglo_saxon_moves(product)\
+            //     .filtered(lambda m: m.is_valued and m.product_id.valuation == 'real_time' and m.product_id.id == product.id)\
             //     .sorted(lambda x: x.date)
-            // price_unit = product.with_company(self.company_id)._compute_average_price(0, quantity, moves)
-            // return price_unit
+            // return moves._get_price_unit()
             --- ODOO METHOD SOURCE (MODULE: pos_mrp, FILE: pos_order.py) ---
             // def _get_pos_anglo_saxon_price_unit(self, product, partner_id, quantity):
             // bom = product.env['mrp.bom']._bom_find(product, company_id=self.mapped('picking_ids.move_line_ids').company_id.id, bom_type='phantom')[product]
@@ -1079,6 +1189,29 @@ namespace Bamboo.Core.Application.Services
             // return total_price_unit
             */
             return default;
+        }
+
+        public async Task<PosOrder> GetPreparationChangeAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def get_preparation_change(self):
+            // self.ensure_one()
+            // return {
+            //     'last_order_preparation_change': self.last_order_preparation_change,
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosOrder> GetReferenceLastPartAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def get_reference_last_part(self):
+            // return self.pos_reference.split('-')[-1]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PosOrder> GetRefundedOrdersInternalAsync(object order)
@@ -1119,7 +1252,7 @@ namespace Bamboo.Core.Application.Services
             // _logger.warning('Session %s (ID: %s) was closed but received order %s (total: %s) belonging to it',
             //                 closed_session.name,
             //                 closed_session.id,
-            //                 order['name'],
+            //                 order['uuid'],
             //                 order['amount_total'])
             // 
             // open_session = PosSession.search([
@@ -1128,7 +1261,7 @@ namespace Bamboo.Core.Application.Services
             // ], limit=1)
             // 
             // if open_session:
-            //     _logger.warning('Using open session %s for saving order %s', open_session.name, order['name'])
+            //     _logger.warning('Using open session %s for uuid number %s', open_session.name, order['uuid'])
             //     return open_session
             // 
             // raise UserError(_('No open session available. Please open a new session to capture the order.'))
@@ -1151,38 +1284,39 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosOrder> LinkComboItemsInternalAsync(object combo_child_uuids_by_parent_uuid)
+        protected async Task<PosOrder> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _link_combo_items(self, combo_child_uuids_by_parent_uuid):
-            // self.ensure_one()
-            // 
-            // for parent_uuid, child_uuids in combo_child_uuids_by_parent_uuid.items():
-            //     parent_line = self.lines.filtered(lambda line: line.uuid == parent_uuid)
-            //     if not parent_line:
-            //         continue
-            //     parent_line.combo_line_ids = [(6, 0, self.lines.filtered(lambda line: line.uuid in child_uuids).ids)]
+            // def _load_pos_data_domain(self, data, config):
+            // return [('state', '=', 'draft'), ('config_id', '=', config.id)]
             */
             return default;
         }
 
-        protected async Task<PosOrder> LoadPosDataDomainInternalAsync(object data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('state', '=', 'draft'), ('session_id', '=', data['pos.session']['data'][0]['id'])]
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> LoadPosSelfDataDomainInternalAsync(object data)
+        protected async Task<PosOrder> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _load_pos_self_data_domain(self, data):
+            // def _load_pos_self_data_domain(self, data, config):
             // return [('id', '=', False)]
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> LoadPosSelfDataFieldsInternalAsync(object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
+            // def _load_pos_self_data_fields(self, config):
+            // result = super()._load_pos_self_data_fields(config)
+            // return result + ['online_payment_method_id', 'next_online_payment_amount']
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
+            // def _load_pos_self_data_fields(self, config):
+            // return ['id', 'uuid', 'name', 'display_name', 'access_token', 'last_order_preparation_change', 'date_order', 'amount_total', 'amount_paid', 'amount_return', 'user_id', 'amount_tax', 'lines', 'pricelist_id', 'company_id', 'country_code', 'sequence_number', 'session_id',
+            //         'config_id', 'currency_id', 'currency_rate', 'is_refund', 'has_refundable_lines', 'state', 'account_move', 'preset_id', 'floating_order_name', 'general_customer_note', 'internal_note', 'nb_print', 'pos_reference', 'fiscal_position_id', 'payment_ids', 'to_invoice',
+            //         'shipping_date', 'preset_time', 'is_invoiced', 'is_tipped', 'tip_amount', 'ticket_code', 'tracking_number', 'email', 'mobile', 'table_id', 'course_ids',
+            //         'table_stand_number', 'self_ordering_table_id', 'create_date', 'write_date', 'source', 'partner_id', 'customer_count']
             */
             return default;
         }
@@ -1229,17 +1363,28 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def action_pos_order_cancel(self):
-            // cancellable_orders = self.filtered(lambda order: order.state == 'draft')
-            // cancellable_orders.write({'state': 'cancel'})
+            // if self.env.context.get('active_ids'):
+            //     orders = self.browse(self.env.context.get('active_ids'))
+            //     order_is_in_futur = any(order.preset_time and order.preset_time.date() > fields.Date.today() for order in orders)
+            //     if order_is_in_futur:
+            //         raise UserError(_('The order delivery / pickup date is in the future. You cannot cancel it.'))
+            // 
+            // today_orders = self.filtered(lambda order: order.state == 'draft' and (not order.preset_time or order.preset_time.date() <= fields.Date.today()))
+            // next_days_orders = self.filtered(lambda order: order.preset_time and order.preset_time.date() > fields.Date.today() and order.state == 'draft')
+            // next_days_orders.session_id = False
+            // today_orders.write({'state': 'cancel'})
+            // for config in today_orders.config_id:
+            //     config.notify_synchronisation(config.current_session_id.id, self.env.context.get('login_number', 0))
             // return {
-            //     'pos.order': cancellable_orders.read(self._load_pos_data_fields(self.config_id.ids[0]), load=False)
+            //     'pos.order': self._load_pos_data_read(today_orders, self.config_id)
             // }
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
             // def action_pos_order_cancel(self):
-            // result = super().action_pos_order_cancel()
-            // if self.table_id:
-            //     self.send_table_count_notification(self.table_id)
-            // return result
+            // orders = super().action_pos_order_cancel()
+            // success_orders_ids = [o['id'] for o in orders['pos.order'] if o['state'] == 'cancel']
+            // orders_ids = self.browse(success_orders_ids)
+            // self._send_notification(orders_ids)
+            // return orders
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1249,12 +1394,22 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def action_pos_order_invoice(self):
-            // if len(self.company_id) > 1:
-            //     raise UserError(_("You cannot invoice orders belonging to different companies."))
-            // self.write({'to_invoice': True})
-            // if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
-            //     self._create_order_picking()
-            // return self._generate_pos_order_invoice()
+            // self.ensure_one()
+            // if not (move := self.account_move):
+            //     self.write({'to_invoice': True})
+            //     if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
+            //         self._create_order_picking()
+            //     move = self._generate_pos_order_invoice()
+            // return {
+            //     'name': _('Customer Invoice'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('account.view_move_form').id,
+            //     'res_model': 'account.move',
+            //     'context': "{'move_type':'out_invoice'}",
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'current',
+            //     'res_id': move.id,
+            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -1304,27 +1459,11 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosOrder> PostChatterMessageInternalAsync(object body)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _post_chatter_message(self, body):
-            // self.message_post(body=body)
-            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_order.py) ---
-            // def _post_chatter_message(self, body):
-            // body += Markup("<br/>")
-            // body += _("Cashier %s", self.cashier)
-            // self.message_post(body=body)
-            */
-            return default;
-        }
-
         protected async Task<PosOrder> PrepareAmlValuesListPerNatureInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _prepare_aml_values_list_per_nature(self):
-            // self.ensure_one()
             // AccountTax = self.env['account.tax']
             // sign = 1 if self.amount_total < 0 else -1
             // commercial_partner = self.partner_id.commercial_partner_id
@@ -1344,39 +1483,30 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Create the tax lines
             // for tax_line in tax_results['tax_lines_to_add']:
-            //     tax_rep = self.env['account.tax.repartition.line'].browse(tax_line['tax_repartition_line_id'])
             //     aml_vals_list_per_nature['tax'].append({
             //         **tax_line,
-            //         'tax_tag_invert': tax_rep.document_type == 'invoice',
+            //         'display_type': 'tax',
             //     })
             //     total_amount_currency += tax_line['amount_currency']
             //     total_balance += tax_line['balance']
             // 
             // # Create the aml values for order lines.
             // for base_line_vals, update_base_line_vals in tax_results['base_lines_to_update']:
-            //     order_line = base_line_vals['record']
-            //     amount_currency = update_base_line_vals['amount_currency']
-            //     balance = company_currency.round(amount_currency * rate)
-            //     aml_vals_list_per_nature['product'].append({
-            //         'name': order_line.full_product_name,
-            //         'product_id': order_line.product_id.id,
-            //         'quantity': order_line.qty * sign,
-            //         'account_id': base_line_vals['account_id'].id,
-            //         'partner_id': base_line_vals['partner_id'].id,
-            //         'currency_id': base_line_vals['currency_id'].id,
-            //         'tax_ids': [(6, 0, base_line_vals['tax_ids'].ids)],
-            //         'tax_tag_ids': update_base_line_vals['tax_tag_ids'],
-            //         'amount_currency': amount_currency,
-            //         'balance': balance,
-            //         'tax_tag_invert': not base_line_vals['is_refund'],
-            //     })
-            //     total_amount_currency += amount_currency
-            //     total_balance += balance
+            //     product_dict = self._prepare_product_aml_dict(base_line_vals, update_base_line_vals, rate, sign)
+            //     aml_vals_list_per_nature['product'].append(product_dict)
+            //     total_amount_currency += product_dict['amount_currency']
+            //     total_balance += product_dict['balance']
             // 
             // # Cash rounding.
             // cash_rounding = self.config_id.rounding_method
             // if self.config_id.cash_rounding and cash_rounding and (not self.config_id.only_round_cash_method or any(p.payment_method_id.is_cash_count for p in self.payment_ids)):
-            //     amount_currency = cash_rounding.compute_difference(self.currency_id, total_amount_currency)
+            //     if self.config_id.only_round_cash_method and any(not p.payment_method_id.is_cash_count for p in self.payment_ids):
+            //         # If only_round_cash_method is True, and there are non-cash payments, cash rounding must be computed
+            //         # based on the total amount of the order, and total payment amount.
+            //         total_payment_amount = self.currency_id.round(sum(p.amount for p in self.payment_ids))
+            //         amount_currency = sign * self.currency_id.round(self.currency_id.round(total_amount_currency) + total_payment_amount)
+            //     else:
+            //         amount_currency = cash_rounding.compute_difference(self.currency_id, total_amount_currency)
             //     if not self.currency_id.is_zero(amount_currency):
             //         balance = company_currency.round(amount_currency * rate)
             // 
@@ -1402,19 +1532,19 @@ namespace Bamboo.Core.Application.Services
             //                 'balance': balance,
             //                 'display_type': 'rounding',
             //             })
-            // 
             // # Stock.
-            // if self.company_id.anglo_saxon_accounting and self.picking_ids.ids:
+            // if self.company_id.inventory_valuation == 'real_time' and self.picking_ids.ids:
             //     stock_moves = self.env['stock.move'].sudo().search([
             //         ('picking_id', 'in', self.picking_ids.ids),
-            //         ('product_id.categ_id.property_valuation', '=', 'real_time')
+            //         ('product_id.valuation', '=', 'real_time'),
             //     ])
             //     for stock_move in stock_moves:
-            //         expense_account = stock_move.product_id._get_product_accounts()['expense']
-            //         stock_output_account = stock_move.product_id.categ_id.property_stock_account_output_categ_id
-            //         balance = -sum(stock_move.stock_valuation_layer_ids.mapped('value'))
+            //         product_accounts = stock_move.product_id._get_product_accounts()
+            //         expense_account = product_accounts['expense']
+            //         stock_account = product_accounts['stock_valuation']
+            //         balance = -sum(stock_move.mapped('value'))
             //         aml_vals_list_per_nature['stock'].append({
-            //             'name': _("Stock input for %s", stock_move.product_id.name),
+            //             'name': _("Stock variation for %s", stock_move.product_id.name),
             //             'account_id': expense_account.id,
             //             'partner_id': commercial_partner.id,
             //             'currency_id': self.company_id.currency_id.id,
@@ -1422,8 +1552,8 @@ namespace Bamboo.Core.Application.Services
             //             'balance': balance,
             //         })
             //         aml_vals_list_per_nature['stock'].append({
-            //             'name': _("Stock output for %s", stock_move.product_id.name),
-            //             'account_id': stock_output_account.id,
+            //             'name': _("Stock variation for %s", stock_move.product_id.name),
+            //             'account_id': stock_account.id,
             //             'partner_id': commercial_partner.id,
             //             'currency_id': self.company_id.currency_id.id,
             //             'amount_currency': -balance,
@@ -1453,6 +1583,7 @@ namespace Bamboo.Core.Application.Services
             //             'currency_id': self.currency_id.id,
             //             'amount_currency': payment_id.amount,
             //             'balance': self.session_id._amount_converter(payment_id.amount, self.date_order, False),
+            //             'display_type': 'payment_term',
             //         })
             // 
             // return aml_vals_list_per_nature
@@ -1460,67 +1591,45 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosOrder> PrepareComboLineUuidsInternalAsync(object order_vals)
+        protected async Task<PosOrder> PrepareInvoiceLinesInternalAsync(object move_type)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_combo_line_uuids(self, order_vals):
-            // acc = {}
-            // lines = [line[2] for line in order_vals['lines'] if line[0] in [0, 1]]
-            // 
-            // for line in lines:
-            //     if combo_line_ids := line.get('combo_line_ids'):
-            //         acc[line['uuid']] = [l['uuid'] for l in lines if l.get('id') in combo_line_ids]
-            // 
-            //     line['combo_line_ids'] = False
-            //     line['combo_parent_id'] = False
-            // 
-            // return acc
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareInvoiceLinesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_invoice_lines(self):
+            // def _prepare_invoice_lines(self, move_type):
             // """ Prepare a list of orm commands containing the dictionaries to fill the
             // 'invoice_line_ids' field when creating an invoice.
             // 
             // :return: A list of Command.create to fill 'invoice_line_ids' when calling account.move.create.
             // """
-            // line_values_list = self._prepare_tax_base_line_values()
             // invoice_lines = []
-            // for line_values in line_values_list:
-            //     line = line_values['record']
-            //     invoice_lines_values = self._get_invoice_lines_values(line_values, line)
-            //     if line.product_id.type == 'combo':
-            //         quantity = int(invoice_lines_values['quantity']) if invoice_lines_values['quantity'] == int(invoice_lines_values['quantity']) else invoice_lines_values['quantity']
-            //         invoice_lines.append(Command.create({
-            //             'display_type': 'line_section',
-            //             'name': f'{line.product_id.name} x {quantity}',
-            //         }))
-            //         continue
+            // for order in self:
+            //     line_values_list = order.with_context(invoicing=True)._prepare_tax_base_line_values()
+            //     for line_values in line_values_list:
+            //         line = line_values['record']
+            //         invoice_lines_values = order._get_invoice_lines_values(line_values, line, move_type)
+            //         invoice_lines.append((0, None, invoice_lines_values))
             // 
-            //     invoice_lines.append((0, None, invoice_lines_values))
-            //     is_percentage = self.pricelist_id and any(
-            //         self.pricelist_id.item_ids.filtered(
-            //             lambda rule: rule.compute_price == "percentage")
-            //     )
-            //     if is_percentage and float_compare(line.price_unit, line.product_id.lst_price, precision_rounding=self.currency_id.rounding) < 0:
+            //         is_percentage = order.pricelist_id and any(
+            //             order.pricelist_id.item_ids.filtered(
+            //                 lambda rule: rule.compute_price == "percentage")
+            //         )
+            //         if is_percentage and float_compare(line.price_unit, line.product_id.lst_price, precision_rounding=order.currency_id.rounding) < 0:
+            //             invoice_lines.append((0, None, {
+            //                 'name': _('Price discount from %(original_price)s to %(discounted_price)s',
+            //                         original_price=float_repr(line.product_id.lst_price, order.currency_id.decimal_places),
+            //                         discounted_price=float_repr(line.price_unit, order.currency_id.decimal_places)),
+            //                 'display_type': 'line_note',
+            //             }))
+            //         if line.customer_note:
+            //             invoice_lines.append((0, None, {
+            //                 'name': line.customer_note,
+            //                 'display_type': 'line_note',
+            //             }))
+            //     if order.general_customer_note:
             //         invoice_lines.append((0, None, {
-            //             'name': _('Price discount from %(original_price)s to %(discounted_price)s',
-            //                       original_price=float_repr(line.product_id.lst_price, self.currency_id.decimal_places),
-            //                       discounted_price=float_repr(line.price_unit, self.currency_id.decimal_places)),
+            //             'name': order.general_customer_note,
             //             'display_type': 'line_note',
             //         }))
-            //     if line.customer_note:
-            //         invoice_lines.append((0, None, {
-            //             'name': line.customer_note,
-            //             'display_type': 'line_note',
-            //         }))
-            // 
             // return invoice_lines
             */
             return default;
@@ -1531,36 +1640,56 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _prepare_invoice_vals(self):
-            // self.ensure_one()
-            // timezone = pytz.timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
-            // invoice_date = fields.Datetime.now() if self.session_id.state == 'closed' else self.date_order
+            // """We have orders filtered by company > config > partners > fiscal_positions so it won't make any issue
+            // when we access user, partner, bank or similar directly.
+            // """
+            // timezone = self.env.tz
+            // invoice_date = fields.Datetime.now()
+            // is_single_order = len(self) == 1
+            // 
+            // if is_single_order and self.session_id.state != 'closed':
+            //     invoice_date = self.date_order
+            // 
             // pos_refunded_invoice_ids = []
             // for orderline in self.lines:
             //     if orderline.refunded_orderline_id and orderline.refunded_orderline_id.order_id.account_move:
             //         pos_refunded_invoice_ids.append(orderline.refunded_orderline_id.order_id.account_move.id)
             // 
+            // fiscal_position = self.fiscal_position_id
+            // pos_config = self.config_id
+            // rounding_method = pos_config.rounding_method
+            // move_type = 'out_invoice' if not any(order.is_refund for order in self) else 'out_refund'
+            // invoice_payment_term_id = (
+            //     self.partner_id.property_payment_term_id.id
+            //     if self.partner_id.property_payment_term_id and any(p.payment_method_id.type == 'pay_later' for p in self.payment_ids)
+            //     else False
+            // )
+            // 
             // vals = {
-            //     'invoice_origin': self.name,
+            //     'invoice_origin': ', '.join(ref or '' for ref in self.mapped('pos_reference')),
             //     'pos_refunded_invoice_ids': pos_refunded_invoice_ids,
             //     'pos_order_ids': self.ids,
-            //     'journal_id': self.session_id.config_id.invoice_journal_id.id,
-            //     'move_type': 'out_invoice' if self.amount_total >= 0 else 'out_refund',
-            //     'ref': self.name,
+            //     'ref': self.name if is_single_order else False,
+            //     'journal_id': self.config_id.invoice_journal_id.id,
+            //     'move_type': move_type,
             //     'partner_id': self.partner_id.address_get(['invoice'])['invoice'],
+            //     'partner_shipping_id': self.partner_id.address_get(['delivery'])['delivery'],
             //     'partner_bank_id': self._get_partner_bank_id(),
             //     'currency_id': self.currency_id.id,
-            //     'invoice_user_id': self.user_id.id,
             //     'invoice_date': invoice_date.astimezone(timezone).date(),
-            //     'fiscal_position_id': self.fiscal_position_id.id,
-            //     'invoice_line_ids': self._prepare_invoice_lines(),
-            //     'invoice_payment_term_id': False,
-            //     'invoice_cash_rounding_id': self.config_id.rounding_method.id,
+            //     'invoice_user_id': self.user_id.id,
+            //     'fiscal_position_id': fiscal_position.id,
+            //     'invoice_line_ids': self._prepare_invoice_lines(move_type),
+            //     'invoice_payment_term_id': invoice_payment_term_id,
+            //     'invoice_cash_rounding_id': rounding_method.id,
             // }
-            // if self.refunded_order_id.account_move:
+            // if is_single_order and self.refunded_order_id.account_move:
             //     vals['ref'] = _('Reversal of: %s', self.refunded_order_id.account_move.name)
             //     vals['reversed_entry_id'] = self.refunded_order_id.account_move.id
-            // if self.floating_order_name:
-            //     vals.update({'narration': self.floating_order_name})
+            // 
+            // if any(order.floating_order_name for order in self):
+            //     vals.update({'narration': ', '.join(self.filtered('floating_order_name').mapped('floating_order_name'))})
+            // 
             // return vals
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
             // def _prepare_invoice_vals(self):
@@ -1632,22 +1761,61 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosOrder> PreparePosLogInternalAsync(object body)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _prepare_pos_log(self, body):
+            // return body
+            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_order.py) ---
+            // def _prepare_pos_log(self, body):
+            // return super()._prepare_pos_log(body) + Markup("<br/>") + _("Cashier %s", self.cashier)
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> PrepareProductAmlDictInternalAsync(object base_line_vals, object update_base_line_vals, object rate, object sign)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _prepare_product_aml_dict(self, base_line_vals, update_base_line_vals, rate, sign):
+            // amount_currency = update_base_line_vals['amount_currency']
+            // balance = self.company_id.currency_id.round(amount_currency * rate)
+            // order_line = base_line_vals['record']
+            // return {
+            //     'name': order_line.full_product_name,
+            //     'product_id': order_line.product_id.id,
+            //     'quantity': order_line.qty * sign,
+            //     'account_id': base_line_vals['account_id'].id,
+            //     'partner_id': base_line_vals['partner_id'].id,
+            //     'currency_id': base_line_vals['currency_id'].id,
+            //     'tax_ids': [(6, 0, base_line_vals['tax_ids'].ids)],
+            //     'tax_tag_ids': update_base_line_vals['tax_tag_ids'],
+            //     'amount_currency': amount_currency,
+            //     'balance': balance,
+            //     'no_followup': False,
+            // }
+            */
+            return default;
+        }
+
         protected async Task<PosOrder> PrepareRefundValuesInternalAsync(object current_session)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _prepare_refund_values(self, current_session):
             // self.ensure_one()
+            // pos_reference, tracking_number = current_session.config_id._get_next_order_refs()
             // return {
             //     'name': _('%(name)s REFUND', name=self.name),
             //     'session_id': current_session.id,
             //     'date_order': fields.Datetime.now(),
-            //     'pos_reference': self.pos_reference,
+            //     'pos_reference': pos_reference,
             //     'lines': False,
-            //     'amount_tax': -self.amount_tax,
-            //     'amount_total': -self.amount_total,
             //     'amount_paid': 0,
-            //     'is_total_cost_computed': False
+            //     'is_total_cost_computed': False,
+            //     'is_refund': True,
+            //     'tracking_number': tracking_number,
             // }
             */
             return default;
@@ -1660,11 +1828,12 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_tax_base_line_values(self):
             // """ Convert pos order lines into dictionaries that would be used to compute taxes later.
             // 
-            // :param sign: An optional parameter to force the sign of amounts.
             // :return: A list of python dictionaries (see '_prepare_base_line_for_taxes_computation' in account.tax).
             // """
-            // self.ensure_one()
-            // return self.lines._prepare_tax_base_line_values()
+            // result = []
+            // for order in self:
+            //     result.extend(order.lines._prepare_tax_base_line_values() or [])
+            // return result
             */
             return default;
         }
@@ -1689,6 +1858,74 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<PosOrder> ProcessExistingGiftCardsInternalAsync(object coupon_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
+            // def _process_existing_gift_cards(self, coupon_data):
+            // updated_gift_cards = self.env['loyalty.card']
+            // coupon_key_to_remove = []
+            // for coupon_id, coupon_vals in coupon_data.items():
+            //     program_id = self.env['loyalty.program'].browse(coupon_vals['program_id'])
+            //     if program_id.program_type == 'gift_card':
+            //         updated = False
+            //         gift_card = self.env['loyalty.card'].search([
+            //             ('|'),
+            //             ('code', '=', coupon_vals.get('code', '')),
+            //             ('id', '=', coupon_vals.get('coupon_id', False))
+            //         ])
+            //         if not gift_card.exists():
+            //             continue
+            // 
+            //         if not gift_card.partner_id and self.partner_id:
+            //             updated = True
+            //             gift_card.partner_id = self.partner_id
+            //             gift_card.history_ids.create({
+            //                 'card_id': gift_card.id,
+            //                 'description': _('Assigning partner %s', self.partner_id.name),
+            //                 'used': 0,
+            //                 'issued': gift_card.points,
+            //             })
+            // 
+            //         if len([id for id in gift_card.history_ids.mapped('order_id') if id != 0]) == 0:
+            //             updated = True
+            //             gift_card.source_pos_order_id = self.id
+            //             gift_card.history_ids.create({
+            //                 'card_id': gift_card.id,
+            //                 'order_model': self._name,
+            //                 'order_id': self.id,
+            //                 'description': _('Assigning order %s', self.display_name),
+            //                 'used': 0,
+            //                 'issued': gift_card.points,
+            //             })
+            // 
+            //         if coupon_vals.get('points') != gift_card.points:
+            //             # Coupon vals contains negative points
+            //             updated = True
+            //             new_value = gift_card.points + coupon_vals['points']
+            //             gift_card.points = new_value
+            //             gift_card.history_ids.create({
+            //                 'card_id': gift_card.id,
+            //                 'order_model': self._name,
+            //                 'order_id': self.id,
+            //                 'description': _('Onsite %s', self.display_name),
+            //                 'used': -coupon_vals['points'] if coupon_vals['points'] < 0 else 0,
+            //                 'issued': coupon_vals['points'] if coupon_vals['points'] > 0 else 0,
+            //             })
+            // 
+            //         if updated:
+            //             updated_gift_cards |= gift_card
+            // 
+            //         coupon_key_to_remove.append(coupon_id)
+            // 
+            // for key in coupon_key_to_remove:
+            //     coupon_data.pop(key, None)
+            // 
+            // return updated_gift_cards
+            */
+            return default;
+        }
+
         protected async Task<PosOrder> ProcessOrderInternalAsync(object order, object existing_order)
         {
             /*
@@ -1707,6 +1944,9 @@ namespace Bamboo.Core.Application.Services
             // if pos_session.state == 'closing_control' or pos_session.state == 'closed':
             //     order['session_id'] = self._get_valid_session(order).id
             // 
+            // if not order.get('source'):
+            //     order['source'] = 'pos'
+            // 
             // if order.get('partner_id'):
             //     partner_id = self.env['res.partner'].browse(order['partner_id'])
             //     if not partner_id.exists():
@@ -1716,12 +1956,11 @@ namespace Bamboo.Core.Application.Services
             //         })
             // 
             // pos_order = False
-            // combo_child_uuids_by_parent_uuid = self._prepare_combo_line_uuids(order)
+            // record_uuid_mapping = order.pop('relations_uuid_mapping', {})
             // 
             // if not existing_order:
             //     pos_order = self.create({
             //         **{key: value for key, value in order.items() if key != 'name'},
-            //         'pos_reference': order.get('name')
             //     })
             //     pos_order = pos_order.with_company(pos_order.company_id)
             // else:
@@ -1735,16 +1974,32 @@ namespace Bamboo.Core.Application.Services
             //     # when vals change the state to 'paid'
             //     for field in ['lines', 'payment_ids']:
             //         if order.get(field):
-            //             existing_record_ids = self.env[pos_order[field]._name].browse([r[1] for r in order[field] if r[1] != 0]).exists().ids
-            //             existing_records_vals = [r for r in order[field] if r[0] not in [1, 2, 3, 4] or r[1] in existing_record_ids]
-            //             pos_order.write({field: existing_records_vals})
+            //             existing_ids = set(pos_order[field].ids)
+            //             pos_order.write({field: order[field]})
+            //             added_ids = set(pos_order[field].ids) - existing_ids
+            //             if added_ids:
+            //                 _logger.info("Added %s %s to pos.order #%s", field, list(added_ids), pos_order.id)
             //             order[field] = []
             // 
             //     del order['uuid']
             //     del order['access_token']
+            //     if order.get('state') == 'paid':
+            //         # The "paid" state will be assigned later by `_process_saved_order`
+            //         order['state'] = pos_order.state
             //     pos_order.write(order)
             // 
-            // pos_order._link_combo_items(combo_child_uuids_by_parent_uuid)
+            // for model_name, mapping in record_uuid_mapping.items():
+            //     owner_records = self.env[model_name].search([('uuid', 'in', mapping.keys())])
+            //     for uuid, fields in mapping.items():
+            //         for name, uuids in fields.items():
+            //             params = self.env[model_name]._fields[name]
+            //             if params.type in ['one2many', 'many2many']:
+            //                 records = self.env[params.comodel_name].search([('uuid', 'in', uuids)])
+            //                 owner_records.filtered(lambda r: r.uuid == uuid).write({name: [Command.link(r.id) for r in records]})
+            //             else:
+            //                 record = self.env[params.comodel_name].search([('uuid', '=', uuids)])
+            //                 owner_records.filtered(lambda r: r.uuid == uuid).write({name: record.id})
+            // 
             // self = self.with_company(pos_order.company_id)
             // self._process_payment_lines(order, pos_order, pos_session, draft)
             // return pos_order._process_saved_order(draft)
@@ -1767,6 +2022,15 @@ namespace Bamboo.Core.Application.Services
             //     self.env['event.registration'].browse(event_to_cancel).write({'state': 'cancel'})
             // 
             // return res
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
+            // def _process_order(self, order, existing_order):
+            // draft = order.get('state') == 'draft'
+            // pos_session = self.env['pos.session'].browse(order['session_id'])
+            // online_payment_methods = pos_session.config_id.payment_method_ids.filtered('is_online_payment')
+            // if draft and online_payment_methods:
+            //     # online payment lines should not be created in draft orders
+            //     order['payment_ids'] = [payment for payment in order.get('payment_ids', []) if payment[0] not in [0, 1] or (payment[2].get('payment_method_id') not in online_payment_methods.ids)]
+            // return super()._process_order(order, existing_order)
             */
             return default;
         }
@@ -1792,7 +2056,7 @@ namespace Bamboo.Core.Application.Services
             // prec_acc = order.currency_id.decimal_places
             // 
             // # Recompute amount paid because we don't trust the client
-            // order.with_context(backend_recomputation=True).write({'amount_paid': sum(order.payment_ids.mapped('amount'))})
+            // order.write({'amount_paid': order._compute_amount_paid()})
             // 
             // if not draft and not float_is_zero(pos_order['amount_return'], prec_acc):
             //     cash_payment_method = pos_session.payment_method_ids.filtered('is_cash_count')[:1]
@@ -1801,7 +2065,7 @@ namespace Bamboo.Core.Application.Services
             //     return_payment_vals = {
             //         'name': _('return'),
             //         'pos_order_id': order.id,
-            //         'amount': -pos_order['amount_return'],
+            //         'amount': pos_order['amount_return'],
             //         'payment_date': fields.Datetime.now(),
             //         'payment_method_id': cash_payment_method.id,
             //         'is_change': True,
@@ -1824,13 +2088,18 @@ namespace Bamboo.Core.Application.Services
             //     except psycopg2.DatabaseError:
             //         # do not hide transactional errors, the order(s) won't be saved!
             //         raise
+            //     except UserError as e:
+            //         _logger.warning('Could not fully process the POS Order: %s', tools.exception_to_unicode(e))
             //     except Exception as e:
-            //         _logger.error('Could not fully process the POS Order: %s', tools.exception_to_unicode(e))
+            //         _logger.error('Could not fully process the POS Order: %s', tools.exception_to_unicode(e), exc_info=True)
             //     self._create_order_picking()
             //     self._compute_total_cost_in_real_time()
             // 
-            // if self.to_invoice and self.state == 'paid':
+            // if self.to_invoice and self.state == 'paid' and self.config_id.invoice_journal_id:
             //     self._generate_pos_order_invoice()
+            // elif not self.config_id.invoice_journal_id:
+            //     _logger.warning('Trying to create an invoice without any journal configured')
+            //     raise UserError(_('No invoice journal configured for this POS session.'))
             // 
             // return self.id
             */
@@ -1841,44 +2110,83 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def read_pos_data(self, data, config_id):
+            // def read_pos_data(self, data, config):
             // # If the previous session is closed, the order will get a new session_id due to _get_valid_session in _process_order
-            // session_ids = set({order.get('session_id') for order in data})
-            // is_new_session = any(order.get('session_id') not in session_ids for order in data)
-            // 
+            // account_moves = self.sudo().account_move | self.sudo().payment_ids.account_move_id
             // return {
-            //     'pos.order': self.read(self._load_pos_data_fields(config_id), load=False) if config_id else [],
-            //     'pos.session': self.session_id._load_pos_data({})['data'] if config_id and is_new_session else [],
-            //     'pos.payment': self.payment_ids.read(self.payment_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
-            //     'pos.order.line': self.lines.read(self.lines._load_pos_data_fields(config_id), load=False) if config_id else [],
-            //     'pos.pack.operation.lot': self.lines.pack_lot_ids.read(self.lines.pack_lot_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
-            //     "product.attribute.custom.value": self.lines.custom_attribute_value_ids.read(self.lines.custom_attribute_value_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
+            //     'pos.order': self._load_pos_data_read(self, config) if config else [],
+            //     'pos.session': [],
+            //     'pos.payment': self.env['pos.payment']._load_pos_data_read(self.payment_ids, config) if config else [],
+            //     'pos.order.line': self.env['pos.order.line']._load_pos_data_read(self.lines, config) if config else [],
+            //     'pos.pack.operation.lot': self.env['pos.pack.operation.lot']._load_pos_data_read(self.lines.pack_lot_ids, config) if config else [],
+            //     'product.attribute.custom.value': self.env['product.attribute.custom.value']._load_pos_data_read(self.lines.custom_attribute_value_ids, config) if config else [],
+            //     'account.move': self.env['account.move'].sudo()._load_pos_data_read(account_moves, config) if config else [],
             // }
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def read_pos_data(self, data, config_id):
-            // results = super().read_pos_data(data, config_id)
+            // def read_pos_data(self, data, config):
+            // results = super().read_pos_data(data, config)
             // paid_orders = self.filtered_domain([('state', 'in', ['paid', 'done', 'invoiced'])])
             // 
             // if not paid_orders:
             //     return results
             // 
             // lines_with_event = paid_orders.mapped('lines').filtered(lambda line: line.event_ticket_id)
-            // event_event_fields = self.env['event.event']._load_pos_data_fields(paid_orders[0].config_id.id)
-            // event_ticket_fields = self.env['event.event.ticket']._load_pos_data_fields(paid_orders[0].config_id.id)
-            // event_registrations_fields = self.env['event.registration']._load_pos_data_fields(paid_orders[0].config_id.id)
-            // event_registrations_answer_fields = self.env['event.registration.answer']._load_pos_data_fields(paid_orders[0].config_id.id)
-            // results['event.registration'] = lines_with_event.event_registration_ids.read(event_registrations_fields, load=False)
-            // results['event.event'] = lines_with_event.event_registration_ids.mapped('event_id').read(event_event_fields, load=False)
-            // results['event.event.ticket'] = lines_with_event.event_registration_ids.mapped('event_ticket_id').read(event_ticket_fields, load=False)
-            // results['event.registration.answer'] = lines_with_event.event_registration_ids.mapped('registration_answer_ids').read(event_registrations_answer_fields, load=False)
+            // event_registration_ids = lines_with_event.event_registration_ids
+            // results['event.registration'] = self.env['event.registration']._load_pos_data_read(event_registration_ids, config)
+            // results['event.event'] = self.env['event.event']._load_pos_data_read(event_registration_ids.mapped('event_id'), config)
+            // results['event.event.ticket'] = self.env['event.event.ticket']._load_pos_data_read(event_registration_ids.mapped('event_ticket_id'), config)
+            // results['event.slot'] = self.env['event.slot']._load_pos_data_read(event_registration_ids.mapped('event_slot_id'), config)
+            // results['event.registration.answer'] = self.env['event.registration.answer']._load_pos_data_read(event_registration_ids.mapped('registration_answer_ids'), config)
             // 
-            // for registration in lines_with_event.event_registration_ids:
+            // for registration in event_registration_ids:
             //     if registration.email:
             //         registration.action_send_badge_email()
             // 
             // return results
+            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
+            // def read_pos_data(self, data, config):
+            // result = super().read_pos_data(data, config)
+            // result['restaurant.order.course'] = self.env['restaurant.order.course']._load_pos_data_read(self.course_ids, config)
+            // return result
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosOrder> ReadPosDataUuidAsync(Guid id, PosOrderReadPosDataUuidRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def read_pos_data_uuid(self, uuid):
+            // return self.read_pos_orders([('uuid', '=', uuid)])
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<PosOrder> ReadPosOrdersAsync(Guid id, PosOrderReadPosOrdersRequestDto input)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def read_pos_orders(self, domain=False):
+            // orders = self.search(domain)
+            // config_id = orders[0].config_id if orders else False
+            // return orders.read_pos_data([], config_id) if config_id else {'pos.order': []}
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PosOrder> ReconcileInvoicePaymentsInternalAsync(object invoice, object payment_moves)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _reconcile_invoice_payments(self, invoice, payment_moves):
+            // receivable_account = self.env["res.partner"]._find_accounting_partner(invoice.partner_id).with_company(self.company_id).property_account_receivable_id
+            // if not receivable_account.reconcile:
+            //     return
+            // payment_receivable_lines = payment_moves.pos_payment_ids._get_receivable_lines_for_invoice_reconciliation(receivable_account)
+            // invoice_receivable_lines = invoice.line_ids.filtered(lambda line: line.account_id == receivable_account and not line.reconciled)
+            // (payment_receivable_lines | invoice_receivable_lines).sudo().with_company(invoice.company_id).reconcile()
+            */
+            return default;
         }
 
         public async Task<PosOrder> RefundAsync(Guid id)
@@ -1919,13 +2227,38 @@ namespace Bamboo.Core.Application.Services
             //     refund_order = order.copy(
             //         order._prepare_refund_values(current_session)
             //     )
-            //     for line in order.lines:
-            //         PosOrderLineLot = self.env['pos.pack.operation.lot']
+            //     for line in order.lines.filtered(lambda l: l.refunded_qty < l.qty):
+            //         PosPackOperationLot = self.env['pos.pack.operation.lot']
             //         for pack_lot in line.pack_lot_ids:
-            //             PosOrderLineLot += pack_lot.copy()
-            //         line.copy(line._prepare_refund_data(refund_order, PosOrderLineLot))
+            //             PosPackOperationLot += pack_lot.copy()
+            //         refund_line = line.copy(line._prepare_refund_data(refund_order, PosPackOperationLot))
+            //         refund_line._onchange_amount_line_all()
+            //     refund_order._compute_prices()
             //     refund_orders |= refund_order
+            //     refund_order.config_id.notify_synchronisation(current_session.id, 0)
+            // refund_orders._compute_prices()
             // return refund_orders
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> RemoveDuplicateCouponDataInternalAsync(object coupon_data)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
+            // def _remove_duplicate_coupon_data(self, coupon_data):
+            // # to prevent duplicates, it is necessary to check if the history line already exists
+            // items_to_remove = []
+            // for coupon_id, coupon_vals in coupon_data.items():
+            //     existing_history = self.env['loyalty.history'].search_count([
+            //         ('card_id.program_id', '=', coupon_vals['program_id']),
+            //         ('order_model', '=', self._name),
+            //         ('order_id', '=', self.id),
+            //     ])
+            //     if existing_history:
+            //         items_to_remove.append(coupon_id)
+            // for item in items_to_remove:
+            //     coupon_data.pop(item)
             */
             return default;
         }
@@ -1948,12 +2281,6 @@ namespace Bamboo.Core.Application.Services
             // orders.mapped('payment_ids').sudo().unlink()
             // orders.sudo().unlink()
             // return orders.ids
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
-            // def remove_from_ui(self, server_ids):
-            // tables = self.env['pos.order'].search([('id', 'in', server_ids)]).table_id
-            // order_ids = super().remove_from_ui(server_ids)
-            // self.send_table_count_notification(tables)
-            // return order_ids
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
             // def remove_from_ui(self, server_ids):
             // order_ids = self.env['pos.order'].browse(server_ids)
@@ -1970,16 +2297,13 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def search_paid_order_ids(self, config_id, domain, limit, offset):
             // """Search for 'paid' orders that satisfy the given domain, limit and offset."""
-            // default_domain = [('state', '!=', 'draft'), ('state', '!=', 'cancel')]
-            // if domain == []:
-            //     real_domain = AND([[['config_id', '=', config_id]], default_domain])
-            // else:
-            //     real_domain = AND([domain, default_domain])
+            // pos_config = self.env['pos.config'].browse(config_id)
+            // default_domain = Domain('state', '!=', 'draft') & Domain('state', '!=', 'cancel') & Domain('config_id', 'in', [config_id] + pos_config.trusted_config_ids.ids)
+            // real_domain = Domain(domain) & default_domain
             // orders = self.search(real_domain, limit=limit, offset=offset, order='create_date desc')
             // # We clean here the orders that does not have the same currency.
             // # As we cannot use currency_id in the domain (because it is not a stored field),
             // # we must do it after the search.
-            // pos_config = self.env['pos.config'].browse(config_id)
             // orders = orders.filtered(lambda order: order.currency_id == pos_config.currency_id)
             // orderlines = self.env['pos.order.line'].search(['|', ('refunded_orderline_id.order_id', 'in', orders.ids), ('order_id', 'in', orders.ids)])
             // 
@@ -2000,37 +2324,22 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<PosOrder> SearchTrackingNumberInternalAsync(object @operator, object @value)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _search_tracking_number(self, operator, value):
-            // #search is made over the pos_reference field
-            // #The pos_reference field is like 'Order 00001-001-0001'
-            // if operator in ['ilike', '='] and isinstance(value, str):
-            //     if value[0] == '%' and value[-1] == '%':
-            //         value = value[1:-1]
-            //     value = value.zfill(3)
-            //     search = '% ____' + value[0] + '-___-__' + value[1:]
-            //     return [('pos_reference', operator, search or '')]
-            // else:
-            //     raise NotImplementedError(_("Unsupported search operation"))
-            */
-            return default;
-        }
-
         public async Task<PosOrder> SendMailAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def action_send_mail(self):
-            // template_id = self.env['ir.model.data']._xmlid_to_res_id('point_of_sale.pos_email_marketing_template', raise_if_not_found=False)
+            // template = self.env['mail.template'].search([('model', '=', self._name)], limit=1)
             // return {
             //     'name': _('Send Email'),
             //     'view_mode': 'form',
             //     'res_model': 'mail.compose.message',
             //     'type': 'ir.actions.act_window',
-            //     'context': {'default_composition_mode': 'mass_mail', 'default_template_id': template_id},
+            //     'context': {
+            //         'default_composition_mode': 'mass_mail',
+            //         'default_res_ids': self.ids,
+            //         'default_template_id': template.id,
+            //     },
             //     'target': 'new'
             // }
             */
@@ -2044,8 +2353,24 @@ namespace Bamboo.Core.Application.Services
             // def _send_notification(self, order_ids):
             // config_ids = order_ids.config_id
             // for config in config_ids:
-            //     config.notify_synchronisation(config.current_session_id.id, self.env.context.get('login_number', 0))
+            //     config.notify_synchronisation(config.current_session_id.id, self.env.context.get('device_identifier', 0))
             //     config._notify('ORDER_STATE_CHANGED', {})
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> SendNotificationOnlinePaymentStatusInternalAsync(object status)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
+            // def _send_notification_online_payment_status(self, status):
+            // self.config_id._notify("ONLINE_PAYMENT_STATUS", {
+            //     'status': status,  # progress, success, fail
+            //     'data': {
+            //         'pos.order': self.read(self._load_pos_self_data_fields(self.config_id), load=False),
+            //         'pos.payment': self.payment_ids.read(self.payment_ids._load_pos_self_data_fields(self.config_id), load=False),
+            //     }
+            // })
             */
             return default;
         }
@@ -2061,26 +2386,72 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<PosOrder> SendPaymentResultInternalAsync(object payment_result)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
+            // def _send_payment_result(self, payment_result):
+            // self.ensure_one()
+            // self.config_id._notify('PAYMENT_STATUS', {
+            //     'payment_result': payment_result,
+            //     'data': {
+            //         'pos.order': self.read(self._load_pos_self_data_fields(self.config_id), load=False),
+            //         'pos.order.line': self.lines.read(self.lines._load_pos_self_data_fields(self.config_id), load=False),
+            //     }
+            // })
+            // if payment_result == 'Success':
+            //     self._send_order()
+            */
+            return default;
+        }
+
         public async Task<PosOrder> SendReceiptAsync(Guid id, PosOrderSendReceiptRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def action_send_receipt(self, email, ticket_image, basic_image):
-            // self.env['mail.mail'].sudo().create(self._prepare_mail_values(email, ticket_image, basic_image)).send()
+            // self.ensure_one()
             // self.email = email
+            // mail_template_id = 'point_of_sale.email_template_pos_receipt'
+            // mail_template = self.env.ref(mail_template_id, raise_if_not_found=False)
+            // if not mail_template:
+            //     raise UserError(_("The mail template with xmlid %s has been deleted.", mail_template_id))
+            // mail_template.send_mail(self.id, force_send=True, email_values={'email_to': email,
+            //                                                                 'attachment_ids': self._get_mail_attachments(self.name, ticket_image, basic_image)})
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosOrder> SendTableCountNotificationAsync(Guid id, PosOrderSendTableCountNotificationRequestDto input)
+        public async Task<PosOrder> SendSelfOrderReceiptAsync(Guid id, PosOrderSendSelfOrderReceiptRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
-            // def send_table_count_notification(self, table_ids):
-            //  # Cannot remove the method in stable
-            // pass
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
+            // def action_send_self_order_receipt(self, email, mail_template_id, ticket_image, basic_image):
+            // self.ensure_one()
+            // self.email = email
+            // mail_template = self.env['mail.template'].browse(mail_template_id)
+            // if not mail_template:
+            //     raise UserError(_("The mail template with xmlid %s has been deleted.", mail_template_id))
+            // email_values = {'email_to': email}
+            // if self.state == 'paid' and ticket_image:
+            //     email_values['attachment_ids'] = self._get_mail_attachments(self.name, ticket_image, basic_image)
+            // mail_template.send_mail(self.id, force_send=True, email_values=email_values)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<PosOrder> SendSelfOrderReceiptInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
+            // def _send_self_order_receipt(self):
+            // if self.email:
+            //     try:
+            //         self.action_send_self_order_receipt(self.email, self.preset_id.mail_template_id.id, False, False)
+            //     except UserError as e:
+            //         _logger.warning("Error while sending email: %s", e.args[0])
+            */
+            return default;
         }
 
         public async Task<PosOrder> SentMessageOnSmsAsync(Guid id, PosOrderSentMessageOnSmsRequestDto input)
@@ -2144,22 +2515,26 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param orders: dictionary with the orders to be created.
             // :type orders: dict.
-            // :param draft: Indicate if the orders are meant to be finalized or temporarily saved.
-            // :type draft: bool.
-            // :Returns: list -- list of db-ids for the created and updated orders.
+            // :returns: list of db-ids for the created and updated orders.
+            // :rtype: list
             // """
             // sync_token = randrange(100_000_000)  # Use to differentiate 2 parallels calls to this function in the logs
             // _logger.info("PoS synchronisation #%d started for PoS orders references: %s", sync_token, [self._get_order_log_representation(order) for order in orders])
             // order_ids = []
+            // 
             // for order in orders:
             //     order_log_name = self._get_order_log_representation(order)
             //     _logger.debug("PoS synchronisation #%d processing order %s order full data: %s", sync_token, order_log_name, pformat(order))
             // 
-            //     if len(self._get_refunded_orders(order)) > 1:
+            //     refunded_orders = self._get_refunded_orders(order)
+            //     if len(refunded_orders) > 1:
             //         raise ValidationError(_('You can only refund products from the same order.'))
+            //     elif len(refunded_orders) == 1:
+            //         order_ids.append(refunded_orders[0].id)
             // 
             //     existing_order = self._get_open_order(order)
             //     if existing_order and existing_order.state == 'draft':
+            //         existing_order._ensure_to_keep_last_preparation_change(order)
             //         order_ids.append(self._process_order(order, existing_order))
             //         _logger.info("PoS synchronisation #%d order %s updated pos.order #%d", sync_token, order_log_name, order_ids[-1])
             //     elif not existing_order:
@@ -2168,81 +2543,56 @@ namespace Bamboo.Core.Application.Services
             //     else:
             //         # In theory, this situation is unintended
             //         # In practice it can happen when "Tip later" option is used
+            //         existing_order._ensure_to_keep_last_preparation_change(order)
             //         order_ids.append(existing_order.id)
             //         _logger.info("PoS synchronisation #%d order %s sync ignored for existing PoS order %s (state: %s)", sync_token, order_log_name, existing_order, existing_order.state)
             // 
             // # Sometime pos_orders_ids can be empty.
             // pos_order_ids = self.env['pos.order'].browse(order_ids)
-            // config_id = pos_order_ids.config_id.ids[0] if pos_order_ids else False
+            // config = pos_order_ids.config_id[0] if pos_order_ids else False
             // 
             // for order in pos_order_ids:
             //     order._ensure_access_token()
             //     if not self.env.context.get('preparation'):
-            //         order.config_id.notify_synchronisation(order.config_id.current_session_id.id, self.env.context.get('login_number', 0))
+            //         order.config_id.notify_synchronisation(order.config_id.current_session_id.id, self.env.context.get('device_identifier', 0))
             // 
             // _logger.info("PoS synchronisation #%d finished", sync_token)
-            // return pos_order_ids.read_pos_data(orders, config_id)
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
-            // def sync_from_ui(self, orders):
-            // result = super().sync_from_ui(orders)
-            // 
-            // if self.env.context.get('table_ids'):
-            //     order_ids = [order['id'] for order in result['pos.order']]
-            //     table_orders = self.search([
-            //         "&",
-            //         ('table_id', 'in', self.env.context['table_ids']),
-            //         ('state', '=', 'draft'),
-            //         ('id', 'not in', order_ids)
-            //     ])
-            // 
-            //     if len(table_orders) > 0:
-            //         config_id = table_orders[0].config_id.id
-            //         result['pos.order'].extend(table_orders.read(table_orders._load_pos_data_fields(config_id), load=False))
-            //         result['pos.payment'].extend(table_orders.payment_ids.read(table_orders.payment_ids._load_pos_data_fields(config_id), load=False))
-            //         result['pos.order.line'].extend(table_orders.lines.read(table_orders.lines._load_pos_data_fields(config_id), load=False))
-            //         result['pos.pack.operation.lot'].extend(table_orders.lines.pack_lot_ids.read(table_orders.lines.pack_lot_ids._load_pos_data_fields(config_id), load=False))
-            //         result["product.attribute.custom.value"].extend(table_orders.lines.custom_attribute_value_ids.read(table_orders.lines.custom_attribute_value_ids._load_pos_data_fields(config_id), load=False))
-            // 
-            // return result
+            // return pos_order_ids.read_pos_data(orders, config)
             --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
             // def sync_from_ui(self, orders):
             // data = super().sync_from_ui(orders)
             // if len(orders) == 0:
             //     return data
             // 
-            // order_ids = self.browse([o['id'] for o in data["pos.order"]])
-            // for order in order_ids:
-            //     for line in order.lines.filtered(lambda l: l.product_id == order.config_id.down_payment_product_id and l.qty != 0 and (l.sale_order_origin_id or l.refunded_orderline_id.sale_order_origin_id)):
-            //         sale_lines = line.sale_order_origin_id.order_line or line.refunded_orderline_id.sale_order_origin_id.order_line
-            //         sale_order_origin = line.sale_order_origin_id or line.refunded_orderline_id.sale_order_origin_id
-            //         if not any(line.display_type and line.is_downpayment for line in sale_lines):
-            //             self.env['sale.order.line'].create(
-            //                 self.env['sale.advance.payment.inv']._prepare_down_payment_section_values(sale_order_origin)
-            //             )
-            //         order_reference = line.name
+            // AccountTax = self.env['account.tax']
+            // pos_orders = self.browse([o['id'] for o in data["pos.order"]])
+            // for pos_order in pos_orders:
+            //     # TODO: the way to retrieve the sale order in not consistent... is it a bad code or intended?
+            //     used_pos_lines = pos_order.lines.sale_order_origin_id.order_line.pos_order_line_ids
+            //     downpayment_pos_order_lines = pos_order.lines.filtered(lambda line: (
+            //         line not in used_pos_lines
+            //         and line.product_id == pos_order.config_id.down_payment_product_id
+            //     ))
+            //     so_x_pos_order_lines = downpayment_pos_order_lines\
+            //         .grouped(lambda l: l.sale_order_origin_id or l.refunded_orderline_id.sale_order_origin_id)
+            //     sale_orders = self.env['sale.order']
+            //     for sale_order, pos_order_lines in so_x_pos_order_lines.items():
+            //         if not sale_order:
+            //             continue
             // 
-            //         if order.partner_id.lang and order.partner_id.lang != line.env.lang:
-            //             line = line.with_context(lang=order.partner_id.lang)
+            //         sale_orders += sale_order
+            //         down_payment_base_lines = pos_order_lines._prepare_tax_base_line_values()
+            //         AccountTax._add_tax_details_in_base_lines(down_payment_base_lines, sale_order.company_id)
+            //         AccountTax._round_base_lines_tax_details(down_payment_base_lines, sale_order.company_id)
             // 
-            //         sale_order_line_description = _("Down payment (ref: %(order_reference)s on \n %(date)s)", order_reference=order_reference, date=format_date(line.env, line.order_id.date_order))
-            //         sale_line = self.env['sale.order.line'].create({
-            //             'order_id': sale_order_origin.id,
-            //             'product_id': line.product_id.id,
-            //             'price_unit': line.price_unit,
-            //             'product_uom_qty': 0,
-            //             'tax_id': [(6, 0, line.tax_ids.ids)],
-            //             'is_downpayment': True,
-            //             'discount': line.discount,
-            //             'sequence': sale_lines and sale_lines[-1].sequence + 2 or 10,
-            //             'name': sale_order_line_description
-            //         })
-            //         line.sale_order_line_id = sale_line
+            //         sale_order_sudo = sale_order.sudo()
+            //         sale_order_sudo._create_down_payment_section_line_if_needed()
+            //         sale_order_sudo._create_down_payment_lines_from_base_lines(down_payment_base_lines)
             // 
-            //     so_lines = order.lines.mapped('sale_order_line_id')
-            // 
-            //     if order.state != 'draft':
-            //         # confirm the unconfirmed sale orders that are linked to the sale order lines
-            //         sale_orders = so_lines.mapped('order_id')
+            //     # Confirm the unconfirmed sale orders that are linked to the sale order lines.
+            //     so_lines = pos_order.lines.mapped('sale_order_line_id')
+            //     sale_orders |= so_lines.mapped('order_id')
+            //     if pos_order.state != 'draft':
             //         for sale_order in sale_orders.filtered(lambda so: so.state in ['draft', 'sent']):
             //             sale_order.action_confirm()
             // 
@@ -2253,7 +2603,7 @@ namespace Bamboo.Core.Application.Services
             //     # track the waiting pickings
             //     waiting_picking_ids = set()
             //     for so_line in so_lines:
-            //         so_line_stock_move_ids = so_line.move_ids.group_id.stock_move_ids
+            //         so_line_stock_move_ids = so_line.move_ids.reference_ids.move_ids
             //         for stock_move in so_line.move_ids:
             //             picking = stock_move.picking_id
             //             if not picking.state in ['waiting', 'confirmed', 'assigned']:
@@ -2268,7 +2618,7 @@ namespace Bamboo.Core.Application.Services
             // 
             //             qty_delivered = max(so_line.qty_delivered, get_expected_qty_to_ship_later())
             //             new_qty = so_line.product_uom_qty - qty_delivered
-            //             if float_compare(new_qty, 0, precision_rounding=stock_move.product_uom.rounding) <= 0:
+            //             if stock_move.product_uom.compare(new_qty, 0) <= 0:
             //                 new_qty = 0
             //             stock_move.product_uom_qty = so_line.compute_uom_qty(new_qty, stock_move, False)
             //             # If the product is delivered with more than one step, we need to update the quantity of the other steps
@@ -2278,7 +2628,7 @@ namespace Bamboo.Core.Application.Services
             //             waiting_picking_ids.add(picking.id)
             // 
             //     def is_product_uom_qty_zero(move):
-            //         return float_is_zero(move.product_uom_qty, precision_rounding=move.product_uom.rounding)
+            //         return move.product_uom.is_zero(move.product_uom_qty)
             // 
             //     # cancel the waiting pickings if each product_uom_qty of move is zero
             //     for picking in self.env['stock.picking'].browse(waiting_picking_ids):
@@ -2291,15 +2641,6 @@ namespace Bamboo.Core.Application.Services
             // return data
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
             // def sync_from_ui(self, orders):
-            // for order in orders:
-            //     if order.get('id'):
-            //         order_id = order['id']
-            // 
-            //         if isinstance(order_id, int):
-            //             old_order = self.env['pos.order'].browse(order_id)
-            //             if old_order.takeaway:
-            //                 order['takeaway'] = old_order.takeaway
-            // 
             // result = super().sync_from_ui(orders)
             // order_ids = self.browse([order['id'] for order in result['pos.order'] if order.get('id')])
             // self._send_notification(order_ids)
@@ -2313,8 +2654,18 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _unlink_except_draft_or_cancel(self):
-            // for pos_order in self.filtered(lambda pos_order: pos_order.state not in ['draft', 'cancel']):
+            // if any(pos_order.state not in ['draft', 'cancel'] for pos_order in self):
             //     raise UserError(_('In order to delete a sale, it must be new or cancelled.'))
+            */
+            return default;
+        }
+
+        protected async Task<PosOrder> UpdateSequenceNumberInternalAsync(object session, object values)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def _update_sequence_number(self, session, values):
+            // values['sequence_number'] = session.config_id.order_seq_id._next()
             */
             return default;
         }
@@ -2386,15 +2737,25 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def action_view_invoice(self):
-            // return {
-            //     'name': _('Customer Invoice'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('account.view_move_form').id,
-            //     'res_model': 'account.move',
-            //     'context': "{'move_type':'out_invoice'}",
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.account_move.id,
-            // }
+            // invoices = self.account_move
+            // if (len(invoices) == 1):
+            //     return {
+            //         'name': _('Customer Invoice'),
+            //         'view_mode': 'form',
+            //         'view_id': self.env.ref('account.view_move_form').id,
+            //         'res_model': 'account.move',
+            //         'context': "{'move_type':'out_invoice'}",
+            //         'type': 'ir.actions.act_window',
+            //         'res_id': self.account_move.id,
+            //     }
+            // else:
+            //     return {
+            //         'name': _('Customer Invoices'),
+            //         'view_mode': 'list,form',
+            //         'res_model': 'account.move',
+            //         'type': 'ir.actions.act_window',
+            //         'domain': [('id', 'in', invoices.ids)],
+            //     }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -2457,7 +2818,8 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // for order in self:
             //     if vals.get('state') and vals['state'] == 'paid' and order.name == '/':
-            //         vals['name'] = self._compute_order_name()
+            //         session = self.env['pos.session'].browse(vals['session_id']) if not self.session_id and vals.get('session_id') else False
+            //         vals['name'] = self._compute_order_name(session)
             //     if vals.get('mobile'):
             //         vals['mobile'] = order._phone_format(number=vals.get('mobile'),
             //                 country=order.partner_id.country_id or self.env.company.country_id)
@@ -2471,13 +2833,13 @@ namespace Bamboo.Core.Application.Services
             // res = super().write(vals)
             // for order in self:
             //     if vals.get('payment_ids'):
-            //         order.with_context(backend_recomputation=True)._compute_prices()
-            //         totally_paid_or_more = float_compare(order.amount_paid, self._get_rounded_amount(order.amount_total), precision_rounding=order.currency_id.rounding)
-            //         if totally_paid_or_more < 0 and order.state in ['paid', 'done', 'invoiced']:
+            //         order._compute_prices()
+            //         totally_paid_or_more = order.currency_id.compare_amounts(order.amount_paid, order.amount_total)
+            //         if totally_paid_or_more < 0 and order.state in ['paid', 'done']:
             //             raise UserError(_('The paid amount is different from the total amount of the order.'))
             //         elif totally_paid_or_more > 0 and order.state == 'paid':
             //             list_line.append(_("Warning, the paid amount is higher than the total amount. (Difference: %s)", formatLang(self.env, order.amount_paid - order.amount_total, currency_obj=order.currency_id)))
-            //         if order.nb_print > 0 and vals.get('payment_ids'):
+            //         if order.nb_print > 0 and any(command[0] in [0, 1] and command[2].get('payment_status') and command[2]['payment_status'] != 'cancelled' for command in vals.get('payment_ids')):
             //             raise UserError(_('You cannot change the payment of a printed order.'))
             // 
             // if len(list_line) > 0:
@@ -2497,7 +2859,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // can_change_self_order_domain = [('state', '=', 'draft')]
             // if vals['use_self_order_online_payment']:
-            //     can_change_self_order_domain = expression.AND([can_change_self_order_domain, [('config_id.self_order_online_payment_method_id', '!=', False)]])
+            //     can_change_self_order_domain += [('config_id.self_order_online_payment_method_id', '!=', False)]
             // 
             // can_change_self_order_orders = self.filtered_domain(can_change_self_order_domain)
             // cannot_change_self_order_orders = self - can_change_self_order_orders
@@ -2515,6 +2877,12 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // if 'crm_team_id' in vals:
             //     vals['crm_team_id'] = vals['crm_team_id'] if vals.get('crm_team_id') else self.session_id.crm_team_id.id
+            // return super().write(vals)
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
+            // def write(self, vals):
+            // if 'table_id' in vals and self.self_ordering_table_id:
+            //     # Clear stale self-order table link when the order is transferred to a new table.
+            //     vals['self_ordering_table_id'] = vals['table_id']
             // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);

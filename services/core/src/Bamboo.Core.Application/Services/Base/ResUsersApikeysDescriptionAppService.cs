@@ -127,7 +127,7 @@ namespace Bamboo.Core.Application.Services
             // custom_duration = ('-1', 'Custom Date')  # Will force the user to enter a date manually
             // if self.env.is_system():
             //     return durations + [persistent_duration, custom_duration]
-            // max_duration = max(group.api_key_duration for group in self.env.user.groups_id) or 1.0
+            // max_duration = max(group.api_key_duration for group in self.env.user.all_group_ids) or 1.0
             // return list(filter(
             //     lambda duration: int(duration[0]) <= max_duration, durations
             // )) + [custom_duration]

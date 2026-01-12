@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace Bamboo.Core.Application.Contracts.DTOs
 {
+    public class HrApplicantCopyDataRequestDto
+    {
+        public object Default { get; set; }
+    }
+    
     public class HrApplicantGetEmptyListHelpRequestDto
     {
         public object HelpMessage { get; set; }
@@ -17,7 +22,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class HrApplicantMessageNewRequestDto
     {
-        public object Msg { get; set; }
+        public object MsgDict { get; set; }
         public object CustomValues { get; set; }
     }
     

@@ -195,6 +195,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<GamificationGoal> MailGetPartnerFieldsInternalAsync(object introspect_fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
+            // def _mail_get_partner_fields(self, introspect_fields=False):
+            // return ['user_partner_id']
+            */
+            return default;
+        }
+
         public async Task<GamificationGoal> ReachAsync(Guid id)
         {
             /*
@@ -258,7 +268,7 @@ namespace Bamboo.Core.Application.Services
             //                 'time': time,
             //             }
             //             code = definition.compute_code.strip()
-            //             safe_eval(code, cxt, mode="exec", nocopy=True)
+            //             safe_eval(code, cxt, mode="exec")
             //             # the result of the evaluated codeis put in the 'result' local variable, propagated to the context
             //             result = cxt.get('result')
             //             if isinstance(result, (float, int)):

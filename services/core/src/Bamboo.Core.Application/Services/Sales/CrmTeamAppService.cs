@@ -45,9 +45,10 @@ namespace Bamboo.Core.Application.Services
             // :param int creation_delta_days: Take into account all leads created in the last nb days (by default 7).
             //                                 If set to zero we take all the past leads.
             // 
-            // :return teams_data, members_data: structure-based result of assignment
-            //   process. For more details about data see ``CrmTeam._allocate_leads()``
-            //   and ``CrmTeam._assign_and_convert_leads``;
+            // :returns: 2-elements tuple (teams_data, members_data) as a
+            //   structure-based result of assignment process. For more details
+            //   about data see :meth:`CrmTeam._allocate_leads` and
+            //   :meth:`CrmTeam._assign_and_convert_leads`;
             // """
             // if not (self.env.user.has_group('sales_team.group_sale_manager') or self.env.is_system()):
             //     raise exceptions.UserError(_('Lead/Opportunities automatic assignment is limited to managers or administrators'))
@@ -76,8 +77,9 @@ namespace Bamboo.Core.Application.Services
             // :param teams_data: see ``CrmTeam._allocate_leads()``;
             // :param members_data: see ``CrmTeam._assign_and_convert_leads()``;
             // 
-            // :return list: list of formatted logs, ready to be formatted into a nice
+            // :returns: list of formatted logs, ready to be formatted into a nice
             // plaintext or html message at caller's will
+            // :rtype: list[str]
             // """
             // # extract some statistics
             // assigned = sum(len(teams_data[team]['assigned']) + len(teams_data[team]['merged']) for team in teams_data)
@@ -157,7 +159,10 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             action['help'] += "<p>%s</p>" % _("""As you are a member of no Sales Team, you are showed the Pipeline of the <b>first team by default.</b>
             //                                 To work with the CRM, you should join a team.""")
-            // action_context = safe_eval(action['context'], {'uid': self.env.uid})
+            // try:
+            //     action_context = safe_eval(action['context'], {'uid': self.env.uid})
+            // except (NameError, ValueError):
+            //     action_context = {}
             // action['context'] = action_context
             // return action
             */
@@ -180,7 +185,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _alias_get_creation_values(self):
-            // values = super(Team, self)._alias_get_creation_values()
+            // values = super()._alias_get_creation_values()
             // values['alias_model_id'] = self.env['ir.model']._get('crm.lead').id
             // if self.id:
             //     if not self.use_leads and not self.use_opportunities:
@@ -266,8 +271,7 @@ namespace Bamboo.Core.Application.Services
             // Heuristic of this method is the following:
             //   * find unassigned leads for each team, aka leads being
             //     * without team, without user -> not assigned;
-            //     * not in a won stage, and not having False/0 (lost) or 100 (won)
-            //       probability) -> live leads;
+            //     * not won nor inactive -> live leads;
             //     * created in the last creation_delta_days (in the last week by default)
             //       This avoid to take into account old leads in the allocation.
             //     * if set, a delay after creation can be applied (see BUNDLE_HOURS_DELAY)
@@ -297,34 +301,47 @@ namespace Bamboo.Core.Application.Services
             // allocation will be proportional to their size (assignment of their
             // members).
             // 
-            // :config int crm.assignment.bundle: deprecated
-            // :config int crm.assignment.commit.bundle: optional config parameter allowing
-            //   to set size of lead batch to be committed together. By default 100
-            //   which is a good trade-off between transaction time and speed
-            // :config float crm.assignment.delay: optional config parameter giving a
-            //   delay before taking a lead into assignment process (BUNDLE_HOURS_DELAY)
-            //   given in hours. Purpose if to allow other crons or automation rules
-            //   to make their job. This option is mainly historic as its purpose was
-            //   to let automation rules prepare leads and score before PLS was added
-            //   into CRM. This is now not required anymore but still supported;
+            // Supported ``ir.config_parameter`` settings.
+            // 
+            // ``crm.assignment.bundle``
+            //     deprecated
+            // 
+            // ``crm.assignment.commit.bundle`` (``int``)
+            //     Allow to set size of lead batch to be committed together. By
+            //     default 100 which is a good trade-off between transaction time and
+            //     speed.
+            // 
+            // ``crm.assignment.delay`` (``float``)
+            //     Give a delay before taking a lead into assignment process
+            //     (BUNDLE_HOURS_DELAY) given in hours. Purpose if to allow other
+            //     crons or automation rules to make their job. This option is mainly
+            //     historic as its purpose was to let automation rules prepare leads
+            //     and score before PLS was added into CRM. This is now not required
+            //     anymore but still supported;
             // 
             // :param int creation_delta_days: see ``CrmTeam._action_assign_leads()``;
             // 
-            // :return teams_data: dict() with each team assignment result:
-            //   team: {
-            //     'assigned': set of lead IDs directly assigned to the team (no
-            //       duplicate or merged found);
-            //     'merged': set of lead IDs merged and assigned to the team (main
-            //       leads being results of merge process);
-            //     'duplicates': set of lead IDs found as duplicates and merged into
-            //       other leads. Those leads are unlinked during assign process and
-            //       are already removed at return of this method;
-            //   }, ...
+            // :rtype: dict[str, Any]
+            // :return: dictionary mapping each team with assignment result:
+            // 
+            //     ``assigned`` (``set[int]``)
+            //         Lead IDs directly assigned to the team
+            //         (no duplicate or merged found)
+            // 
+            //     ``merged`` (``set[int]``)
+            //         Lead IDs merged and assigned to the team
+            //         (main leads being results of merge process)
+            // 
+            //     ``duplicates`` (``set[int]``)
+            //         Lead IDs found as duplicates and merged into other leads.
+            //         Those leads are unlinked during assign process and are already
+            //         removed at return of this method
+            // 
             // """
             // 
             // BUNDLE_HOURS_DELAY = float(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.delay', default=0))
             // BUNDLE_COMMIT_SIZE = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // 
             // # leads
             // max_create_dt = self.env.cr.now() - datetime.timedelta(hours=BUNDLE_HOURS_DELAY)
@@ -336,21 +353,18 @@ namespace Bamboo.Core.Application.Services
             //     if not team.assignment_max:
             //         continue
             // 
-            //     lead_domain = expression.AND([
+            //     lead_domain = Domain.AND([
             //         literal_eval(team.assignment_domain or '[]'),
             //         [('create_date', '<=', max_create_dt)],
             //         ['&', ('team_id', '=', False), ('user_id', '=', False)],
-            //         ['|', ('stage_id', '=', False), ('stage_id.is_won', '=', False)]
+            //         [('won_status', '!=', 'won')]
             //     ])
             //     if creation_delta_days > 0:
-            //         lead_domain = expression.AND([
-            //             lead_domain,
-            //             [('create_date', '>', self.env.cr.now() - datetime.timedelta(days=creation_delta_days))]
-            //         ])
+            //         lead_domain &= Domain('create_date', '>', self.env.cr.now() - datetime.timedelta(days=creation_delta_days))
             // 
             //     leads = self.env["crm.lead"].search(lead_domain)
-            //     # Fill duplicate cache: search for duplicate lead before the assignation
-            //     # avoid to flush during the search at every assignation
+            //     # Fill duplicate cache: search for duplicate lead before the assignment
+            //     # avoid to flush during the search at every assignment
             //     for lead in leads:
             //         if lead not in duplicates_lead_cache:
             //             duplicates_lead_cache[lead] = lead._get_lead_duplicates(email=lead.email_from)
@@ -369,7 +383,7 @@ namespace Bamboo.Core.Application.Services
             // # and the first commit occur at the end of the bundle,
             // # the first transaction can be long which we want to avoid
             // if auto_commit:
-            //     self._cr.commit()
+            //     self.env.cr.commit()
             // 
             // # assignment process data
             // global_data = dict(assigned=set(), merged=set(), duplicates=set())
@@ -401,13 +415,13 @@ namespace Bamboo.Core.Application.Services
             //         # unlink duplicates once
             //         self.env['crm.lead'].browse(lead_unlink_ids).unlink()
             //         lead_unlink_ids = set()
-            //         self._cr.commit()
+            //         self.env.cr.commit()
             // 
             // # unlink duplicates once
             // self.env['crm.lead'].browse(lead_unlink_ids).unlink()
             // 
             // if auto_commit:
-            //     self._cr.commit()
+            //     self.env.cr.commit()
             // 
             // # some final log
             // _logger.info('## Assigned %s leads', (len(global_data['assigned']) + len(global_data['merged'])))
@@ -447,13 +461,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // :param bool force_quota: see ``CrmTeam._action_assign_leads()``;
             // 
-            // :return members_data: dict() with each member assignment result:
+            // :returns: dict() with each member assignment result:
             //   membership: {
             //     'assigned': set of lead IDs directly assigned to the member;
             //   }, ...
             // 
             // """
-            // auto_commit = not getattr(threading.current_thread(), 'testing', False)
+            // auto_commit = not modules.module.current_test
             // result_data = {}
             // commit_bundle_size = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
             // teams_with_members = self.filtered(lambda team: team.crm_team_member_ids)
@@ -467,6 +481,30 @@ namespace Bamboo.Core.Application.Services
             //     # and make sure we need them before fetching them
             //     ['id:array_agg'],
             // ))
+            // 
+            // def _assign_lead(lead, members, member_leads, members_quota, assign_lst, optional_lst=None):
+            //     """ Find relevant member whose domain(s) accept the lead. If found convert
+            //     and update internal structures accordingly. """
+            //     member_found = next((member for member in members if lead in member_leads[member]), False)
+            //     if not member_found:
+            //         return
+            //     lead.with_context(mail_auto_subscribe_no_notify=True).convert_opportunity(
+            //         lead.partner_id,
+            //         user_ids=member_found.user_id.ids
+            //     )
+            //     result_data[member_found]['assigned'] += lead
+            // 
+            //     # if member still has quota, move at end of list; otherwise just remove
+            //     assign_lst.remove(member_found)
+            //     if optional_lst is not None:
+            //         optional_lst.remove(member_found)
+            //     members_quota[member_found] -= 1
+            //     if members_quota[member_found] > 0:
+            //         assign_lst.append(member_found)
+            //         if optional_lst is not None:
+            //             optional_lst.append(member_found)
+            //     return member_found
+            // 
             // for team, leads_to_assign_ids in leads_per_team.items():
             //     members_to_assign = list(team.crm_team_member_ids.filtered(lambda member:
             //         not member.assignment_optout and quota_per_member.get(member, 0) > 0
@@ -477,41 +515,68 @@ namespace Bamboo.Core.Application.Services
             //         member: {"assigned": self.env["crm.lead"], "quota": quota_per_member[member]}
             //         for member in members_to_assign
             //     })
-            //     # Need to check that record still exists since the ids have been fetched at the begining of the process
-            //     # Previous iteration has commited the change, records may have been deleted in the meanwhile
-            //     leads_to_assign = self.env['crm.lead'].browse(leads_to_assign_ids).exists()
-            //     leads_per_member = {
-            //         member: leads_to_assign.filtered_domain(literal_eval(member.assignment_domain or '[]'))
-            //         for member in members_to_assign
+            //     # Need to check that record still exists since the ids have been fetched at the beginning of the process
+            //     # Previous iteration has committed the change, records may have been deleted in the meanwhile
+            //     to_assign = self.env['crm.lead'].browse(leads_to_assign_ids).exists()
+            // 
+            //     members_to_assign_wpref = [
+            //         m for m in members_to_assign
+            //         if m.assignment_domain_preferred and literal_eval(m.assignment_domain_preferred or '')
+            //     ]
+            //     preferred_leads_per_member = {
+            //         member: to_assign.filtered_domain(
+            //             Domain.AND([
+            //                 literal_eval(member.assignment_domain or '[]'),
+            //                 literal_eval(member.assignment_domain_preferred)
+            //             ])
+            //         ) for member in members_to_assign_wpref
             //     }
-            //     for lead in leads_to_assign.sorted(lambda lead: (-lead.probability, id)):
+            //     preferred_leads = self.env['crm.lead'].concat(*[lead for lead in preferred_leads_per_member.values()])
+            //     assigned_preferred_leads = self.env['crm.lead']
+            // 
+            //     # first assign loop: preferred leads, always priority
+            //     for lead in preferred_leads.sorted(lambda lead: (-lead.probability, id)):
             //         counter += 1
-            //         member_found = next((member for member in members_to_assign if lead in leads_per_member[member]), False)
+            //         member_found = _assign_lead(lead, members_to_assign_wpref, preferred_leads_per_member, quota_per_member, members_to_assign, members_to_assign_wpref)
             //         if not member_found:
             //             continue
-            //         lead.with_context(mail_auto_subscribe_no_notify=True).convert_opportunity(
-            //             lead.partner_id,
-            //             user_ids=member_found.user_id.ids
-            //         )
-            //         result_data[member_found]['assigned'] += lead
-            //         members_to_assign.remove(member_found)
-            //         quota_per_member[member_found] -= 1
-            //         if quota_per_member[member_found] > 0:
-            //             # If the member should receive more lead, send him back at the end of the list
-            //             members_to_assign.append(member_found)
-            // 
+            //         assigned_preferred_leads += lead
             //         if auto_commit and counter % commit_bundle_size == 0:
             //             self.env.cr.commit()
+            // 
+            //     # second assign loop: fill up with other leads
+            //     to_assign = to_assign - assigned_preferred_leads
+            //     leads_per_member = {
+            //         member: to_assign.filtered_domain(literal_eval(member.assignment_domain or '[]'))
+            //         for member in members_to_assign
+            //     }
+            //     for lead in to_assign.sorted(lambda lead: (-lead.probability, id)):
+            //         counter += 1
+            //         member_found = _assign_lead(lead, members_to_assign, leads_per_member, quota_per_member, members_to_assign)
+            //         if not member_found:
+            //             continue
+            //         if auto_commit and counter % commit_bundle_size == 0:
+            //             self.env.cr.commit()
+            // 
             //     # Make sure we commit at least at the end of the team
             //     if auto_commit:
             //         self.env.cr.commit()
             //     # Once we are done with a team we don't need to keep the leads in memory
             //     # Try to avoid to explode memory usage
             //     self.env.invalidate_all()
-            // 
-            // _logger.info('Assigned %s leads to %s salesmen', sum(len(r['assigned']) for r in result_data.values()), len(result_data))
+            //     _logger.info(
+            //         'Team %s: Assigned %s leads based on preference, on a potential of %s (limited by quota)',
+            //         team.name, len(assigned_preferred_leads), len(preferred_leads)
+            //     )
+            // _logger.info(
+            //     'Assigned %s leads to %s salesmen',
+            //     sum(len(r['assigned']) for r in result_data.values()), len(result_data)
+            // )
             // for member, member_info in result_data.items():
-            //     _logger.info('-> member %s of team %s: assigned %d/%d leads (%s)', member.id, member.crm_team_id.id, len(member_info["assigned"]), member_info["quota"], member_info["assigned"])
+            //     _logger.info(
+            //         '-> member %s of team %s: assigned %d/%d leads (%s)',
+            //         member.id, member.crm_team_id.id, len(member_info["assigned"]), member_info["quota"], member_info["assigned"]
+            //     )
             // return result_data
             */
             return default;
@@ -529,7 +594,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // See sub methods for more details about assign process.
             // 
-            // :return action: a client notification giving some insights on assign
+            // :returns: action, a client notification giving some insights on assign
             //   process;
             // """
             // teams_data, members_data = self._action_assign_leads(force_quota=True, creation_delta_days=0)
@@ -589,7 +654,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _compute_assignment_enabled(self):
-            // assign_enabled = self.env['ir.config_parameter'].sudo().get_param('crm.lead.auto.assignment', False)
+            // assign_enabled = self.env['crm.lead']._is_rule_based_assignment_activated()
             // auto_assign_enabled = False
             // if assign_enabled:
             //     assign_cron = self.sudo().env.ref('crm.ir_cron_crm_lead_assign', raise_if_not_found=False)
@@ -616,7 +681,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def _compute_dashboard_button_name(self):
-            // super(Team, self)._compute_dashboard_button_name()
+            // super()._compute_dashboard_button_name()
             // team_with_pipelines = self.filtered(lambda el: el.use_opportunities)
             // team_with_pipelines.update({'dashboard_button_name': _("Pipeline")})
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
@@ -628,7 +693,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_dashboard_button_name(self):
             // super(CrmTeam, self)._compute_dashboard_button_name()
             // teams_with_opp = self.filtered(lambda team: team.use_opportunities)
-            // if self._context.get('in_sales_app'):
+            // if self.env.context.get('in_sales_app'):
             //     teams_with_opp.update({'dashboard_button_name': _("Sales Analysis")})
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
             // def _compute_dashboard_button_name(self):
@@ -640,44 +705,34 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmTeam> ComputeDashboardGraphInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _compute_dashboard_graph(self):
-            // for team in self:
-            //     team.dashboard_graph_data = json.dumps(team._get_dashboard_graph_data())
-            */
-            return default;
-        }
-
         protected async Task<CrmTeam> ComputeInvoicedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
             // def _compute_invoiced(self):
-            // if not self:
-            //     return
+            // if self.ids:
+            //     today = fields.Date.today()
+            //     data_map = dict(self.env.execute_query(SQL(
+            //         ''' SELECT
+            //                 move.team_id AS team_id,
+            //                 SUM(move.amount_untaxed_signed) AS amount_untaxed_signed
+            //             FROM account_move move
+            //             WHERE move.move_type IN ('out_invoice', 'out_refund', 'out_receipt')
+            //             AND move.payment_state IN ('in_payment', 'paid', 'reversed')
+            //             AND move.state = 'posted'
+            //             AND move.team_id IN %s
+            //             AND move.date BETWEEN %s AND %s
+            //             GROUP BY move.team_id
+            //         ''',
+            //         tuple(self.ids),
+            //         fields.Date.to_string(today.replace(day=1)),
+            //         fields.Date.to_string(today),
+            //     )))
+            // else:
+            //     data_map = {}
             // 
-            // query = '''
-            //     SELECT
-            //         move.team_id AS team_id,
-            //         SUM(move.amount_untaxed_signed) AS amount_untaxed_signed
-            //     FROM account_move move
-            //     WHERE move.move_type IN ('out_invoice', 'out_refund', 'out_receipt')
-            //     AND move.payment_state IN ('in_payment', 'paid', 'reversed')
-            //     AND move.state = 'posted'
-            //     AND move.team_id IN %s
-            //     AND move.date BETWEEN %s AND %s
-            //     GROUP BY move.team_id
-            // '''
-            // today = fields.Date.today()
-            // params = [tuple(self.ids), fields.Date.to_string(today.replace(day=1)), fields.Date.to_string(today)]
-            // self._cr.execute(query, params)
-            // 
-            // data_map = dict((v[0], v[1]) for v in self._cr.fetchall())
             // for team in self:
-            //     team.invoiced = data_map.get(team.id, 0.0)
+            //     team.invoiced = data_map.get(team._origin.id, 0.0)
             */
             return default;
         }
@@ -723,7 +778,6 @@ namespace Bamboo.Core.Application.Services
             // def _compute_lead_unassigned_count(self):
             // leads_data = self.env['crm.lead']._read_group([
             //     ('team_id', 'in', self.ids),
-            //     ('type', '=', 'lead'),
             //     ('user_id', '=', False),
             // ], ['team_id'], ['__count'])
             // counts = {team.id: count for team, count in leads_data}
@@ -772,119 +826,15 @@ namespace Bamboo.Core.Application.Services
             //     return
             // # done in a loop, but to be used in form view only -> not optimized
             // for team in self:
-            //     member_warning = False
             //     other_memberships = self.env['crm.team.member'].search([
             //         ('crm_team_id', '!=', team._origin.id if team.ids else False),
             //         ('user_id', 'in', team.member_ids.ids)
             //     ])
             //     if other_memberships:
-            //         member_warning = _("Adding %(user_names)s in this team will remove them from %(team_names)s.",
+            //         team.member_warning = _("%(user_names)s already in other teams (%(team_names)s).",
             //                            user_names=", ".join(other_memberships.mapped('user_id.name')),
             //                            team_names=", ".join(other_memberships.mapped('crm_team_id.name'))
             //                           )
-            //     if member_warning:
-            //         team.member_warning = member_warning + " " + _("Working in multiple teams? Activate the option under Configuration>Settings.")
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> ComputeOpportunitiesDataInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _compute_opportunities_data(self):
-            // opportunity_data = self.env['crm.lead']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('probability', '<', 100),
-            //     ('type', '=', 'opportunity'),
-            // ], ['team_id'], ['__count', 'expected_revenue:sum'])
-            // counts_amounts = {team.id: (count, expected_revenue_sum) for team, count, expected_revenue_sum in opportunity_data}
-            // for team in self:
-            //     team.opportunities_count, team.opportunities_amount = counts_amounts.get(team.id, (0, 0))
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> ComputeOpportunitiesOverdueDataInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _compute_opportunities_overdue_data(self):
-            // opportunity_data = self.env['crm.lead']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('probability', '<', 100),
-            //     ('type', '=', 'opportunity'),
-            //     ('date_deadline', '<', fields.Date.to_string(fields.Datetime.now()))
-            // ], ['team_id'], ['__count', 'expected_revenue:sum'])
-            // counts_amounts = {team.id: (count, expected_revenue_sum) for team, count, expected_revenue_sum in opportunity_data}
-            // for team in self:
-            //     team.opportunities_overdue_count, team.opportunities_overdue_amount = counts_amounts.get(team.id, (0, 0))
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> ComputePosOrderAmountTotalInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: crm_team.py) ---
-            // def _compute_pos_order_amount_total(self):
-            // data = self.env['report.pos.order']._read_group([
-            //     ('session_id.state', '=', 'opened'),
-            //     ('config_id.crm_team_id', 'in', self.ids),
-            // ], ['config_id'], ['price_total:sum'])
-            // rg_results = {config.id: price_total_sum for config, price_total_sum in data}
-            // for team in self:
-            //     team.pos_order_amount_total = sum([
-            //         rg_results.get(config.id, 0.0)
-            //         for config in team.pos_config_ids
-            //     ])
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> ComputePosSessionsOpenCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: crm_team.py) ---
-            // def _compute_pos_sessions_open_count(self):
-            // for team in self:
-            //     team.pos_sessions_open_count = self.env['pos.session'].search_count([('config_id.crm_team_id', '=', team.id), ('state', '=', 'opened')])
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> ComputeQuotationsToInvoiceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _compute_quotations_to_invoice(self):
-            // query = self.env['sale.order']._where_calc([
-            //     ('team_id', 'in', self.ids),
-            //     ('state', 'in', ['draft', 'sent']),
-            // ])
-            // self.env['sale.order']._apply_ir_rules(query, 'read')
-            // select_sql = SQL("""
-            //     SELECT team_id, count(*), sum(amount_total /
-            //         CASE COALESCE(currency_rate, 0)
-            //         WHEN 0 THEN 1.0
-            //         ELSE currency_rate
-            //         END
-            //     ) as amount_total
-            //     FROM sale_order
-            //     WHERE %s
-            //     GROUP BY team_id
-            // """, query.where_clause or SQL("TRUE"))
-            // self.env.cr.execute(select_sql)
-            // quotation_data = self.env.cr.dictfetchall()
-            // teams = self.browse()
-            // for datum in quotation_data:
-            //     team = self.browse(datum['team_id'])
-            //     team.quotations_amount = datum['amount_total']
-            //     team.quotations_count = datum['count']
-            //     teams |= team
-            // remaining = (self - teams)
-            // remaining.quotations_amount = 0
-            // remaining.quotations_count = 0
             */
             return default;
         }
@@ -905,22 +855,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmTeam> ComputeSalesToInvoiceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _compute_sales_to_invoice(self):
-            // sale_order_data = self.env['sale.order']._read_group([
-            //     ('team_id', 'in', self.ids),
-            //     ('invoice_status','=','to invoice'),
-            // ], ['team_id'], ['__count'])
-            // data_map = {team.id: count for team, count in sale_order_data}
-            // for team in self:
-            //     team.sales_to_invoice_count = data_map.get(team.id,0.0)
-            */
-            return default;
-        }
-
         protected async Task<CrmTeam> ConstrainsAssignmentDomainInternalAsync()
         {
             /*
@@ -937,6 +871,25 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<CrmTeam> ConstrainsCompanyMembersInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
+            // def _constrains_company_members(self):
+            // for team in self.filtered('company_id'):
+            //     invalid_members = team.crm_team_member_ids.filtered(
+            //         lambda m: team.company_id not in m.user_id.company_ids
+            //     )
+            //     if invalid_members:
+            //         raise UserError(_("The following team members are not allowed in company '%(company)s' of the Sales Team '%(team)s': %(users)s",
+            //             company=team.company_id.display_name,
+            //             team=team.name,
+            //             users=", ".join(invalid_members.mapped('user_id.name'))
+            //         ))
+            */
+            return default;
+        }
+
         protected async Task<CrmTeam> CronAssignLeadsInternalAsync(object force_quota, object creation_delta_days)
         {
             /*
@@ -948,7 +901,7 @@ namespace Bamboo.Core.Application.Services
             // The cron is designed to run at least once a day or more.
             // A number of leads will be assigned each time depending on the daily leads
             // already assigned.
-            // This allows the assignation process based on the cron to work on a daily basis
+            // This allows the assignment process based on the cron to work on a daily basis
             // without allocating too much leads on members if the cron is executed multiple
             // times a day.
             // The daily quota of leads can be forcefully assigned with force_quota
@@ -963,31 +916,6 @@ namespace Bamboo.Core.Application.Services
             //     ('assignment_optout', '=', False)
             // ])._action_assign_leads(force_quota=force_quota, creation_delta_days=creation_delta_days)
             // return True
-            */
-            return default;
-        }
-
-        protected async Task<object> ExtraSqlConditionsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _extra_sql_conditions(self):
-            // if self.use_opportunities:
-            //     return SQL("type LIKE 'opportunity'")
-            // return super(Team,self)._extra_sql_conditions()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _extra_sql_conditions(self):
-            // if self._in_sale_scope():
-            //     return SQL("state = 'sale'")
-            // return super()._extra_sql_conditions()
-            --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
-            // def _extra_sql_conditions(self):
-            // if self.use_opportunities and self._context.get('in_sales_app'):
-            //     return SQL("state = 'sale'")
-            // return super(CrmTeam,self)._extra_sql_conditions()
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _extra_sql_conditions(self) -> SQL:
-            // return SQL()
             */
             return default;
         }
@@ -1020,56 +948,12 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<CrmTeam> GetDashboardGraphDataInternalAsync()
+        protected async Task<CrmTeam> GetDefaultColorInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _get_dashboard_graph_data(self):
-            // def get_week_name(start_date, locale):
-            //     """ Generates a week name (string) from a datetime according to the locale:
-            //         E.g.: locale    start_date (datetime)      return string
-            //               "en_US"      November 16th           "16-22 Nov"
-            //               "en_US"      December 28th           "28 Dec-3 Jan"
-            //     """
-            //     if (start_date + relativedelta(days=6)).month == start_date.month:
-            //         short_name_from = format_date(start_date, 'd', locale=locale)
-            //     else:
-            //         short_name_from = format_date(start_date, 'd MMM', locale=locale)
-            //     short_name_to = format_date(start_date + relativedelta(days=6), 'd MMM', locale=locale)
-            //     return short_name_from + '-' + short_name_to
-            // 
-            // self.ensure_one()
-            // values = []
-            // today = fields.Date.from_string(fields.Date.context_today(self))
-            // start_date, end_date = self._graph_get_dates(today)
-            // graph_data = self._graph_data(start_date, end_date)
-            // x_field = 'label'
-            // y_field = 'value'
-            // 
-            // # generate all required x_fields and update the y_values where we have data for them
-            // locale = self._context.get('lang') or 'en_US'
-            // 
-            // weeks_in_start_year = int(date(start_date.year, 12, 28).isocalendar()[1]) # This date is always in the last week of ISO years
-            // week_count = (end_date.isocalendar()[1] - start_date.isocalendar()[1]) % weeks_in_start_year + 1
-            // for week in range(week_count):
-            //     short_name = get_week_name(start_date + relativedelta(days=7 * week), locale)
-            //     values.append({x_field: short_name, y_field: 0, 'type': 'future' if week + 1 == week_count else 'past'})
-            // 
-            // for data_item in graph_data:
-            //     index = int((data_item.get('x_value') - start_date.isocalendar()[1]) % weeks_in_start_year)
-            //     values[index][y_field] = data_item.get('y_value')
-            // 
-            // [graph_title, graph_key] = self._graph_title_and_key()
-            // color = '#875A7B' if '+e' in version else '#7c7bad'
-            // 
-            // # If no actual data available, show some sample data
-            // if not graph_data:
-            //     graph_key = _('Sample data')
-            //     for value in values:
-            //         value['type'] = 'o_sample_data'
-            //         # we use unrealistic values for the sample data
-            //         value['value'] = random.randint(0, 20)
-            // return [{'values': values, 'area': True, 'title': graph_title, 'key': graph_key, 'color': color}]
+            // def _get_default_color(self):
+            // return random.randint(1, 11)
             */
             return default;
         }
@@ -1105,7 +989,7 @@ namespace Bamboo.Core.Application.Services
             //   5- any team matching my company (based on company rule)
             // 
             // :param user_id: salesperson to target, fallback on env.uid;
-            // :domain: optional domain to filter teams (like use_lead = True);
+            // :param domain: optional domain to filter teams (like use_lead = True);
             // """
             // if not user_id:
             //     user = self.env.user
@@ -1169,202 +1053,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<CrmTeam> GraphDataInternalAsync(object start_date, object end_date)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_data(self, start_date, end_date):
-            // """ return format should be an iterable of dicts that contain {'x_value': ..., 'y_value': ...}
-            //     x_values should be weeks.
-            //     y_values are floats.
-            // """
-            // # apply rules
-            // extra_conditions = self._extra_sql_conditions() or SQL("TRUE")
-            // dashboard_graph_model = self._graph_get_model()
-            // GraphModel = self.env[dashboard_graph_model]
-            // where_query = GraphModel._where_calc([])
-            // GraphModel._apply_ir_rules(where_query, 'read')
-            // if where_clause := where_query.where_clause:
-            //     extra_conditions = SQL("%s AND (%s)", extra_conditions, where_clause)
-            // 
-            // sql = SQL(
-            //     """
-            //     SELECT %(x_query)s as x_value, %(y_query)s as y_value
-            //     FROM %(table)s
-            //     WHERE team_id = %(team_id)s
-            //         AND DATE(%(date_column)s) >= %(start_date)s
-            //         AND DATE(%(date_column)s) <= %(end_date)s
-            //         AND %(extra_conditions)s
-            //     GROUP BY x_value
-            //     """,
-            //     x_query=self._graph_x_query(),
-            //     y_query=self._graph_y_query(),
-            //     table=self._graph_get_table(GraphModel),
-            //     team_id=self.id,
-            //     date_column=self._graph_date_column(),
-            //     start_date=start_date,
-            //     end_date=end_date,
-            //     extra_conditions=extra_conditions,
-            // )
-            // 
-            // self._cr.execute(sql)
-            // return self.env.cr.dictfetchall()
-            */
-            return default;
-        }
-
-        protected async Task<object> GraphDateColumnInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_date_column(self):
-            // if self.use_opportunities:
-            //     return SQL('create_date')
-            // return super(Team,self)._graph_date_column()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_date_column(self):
-            // if self._in_sale_scope():
-            //     return SQL('date')
-            // return super()._graph_date_column()
-            --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
-            // def _graph_date_column(self):
-            // if self.use_opportunities and self._context.get('in_sales_app'):
-            //     return SQL('date')
-            // return super(CrmTeam,self)._graph_date_column()
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_date_column(self) -> SQL:
-            // return SQL('create_date')
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> GraphGetDatesInternalAsync(object today)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_get_dates(self, today):
-            // """ return a coherent start and end date for the dashboard graph covering a month period grouped by week.
-            // """
-            // start_date = today - relativedelta(months=1)
-            // # we take the start of the following week if we group by week
-            // # (to avoid having twice the same week from different month)
-            // start_date += relativedelta(days=8 - start_date.isocalendar()[2])
-            // return [start_date, today]
-            */
-            return default;
-        }
-
-        protected async Task<string> GraphGetModelInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_get_model(self):
-            // if self.use_opportunities:
-            //     return 'crm.lead'
-            // return super(Team,self)._graph_get_model()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_get_model(self):
-            // if self._in_sale_scope():
-            //     return 'sale.report'
-            // return super()._graph_get_model()
-            --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
-            // def _graph_get_model(self):
-            // if self.use_opportunities and self._context.get('in_sales_app') :
-            //     return 'sale.report'
-            // return super(CrmTeam,self)._graph_get_model()
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_get_model(self) -> str:
-            // """ skeleton function defined here because it'll be called by crm and/or sale
-            // """
-            // raise UserError(_('Undefined graph model for Sales Team: %s', self.name))
-            */
-            return default;
-        }
-
-        protected async Task<object> GraphGetTableInternalAsync(object GraphModel)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_get_table(self, GraphModel):
-            // if self._in_sale_scope():
-            //     # For a team not shared between company, we make sure the amounts are expressed
-            //     # in the currency of the team company and not converted to the current company currency,
-            //     # as the amounts of the sale report are converted in the currency
-            //     # of the current company (for multi-company reporting, see #83550)
-            //     GraphModel = GraphModel.with_company(self.company_id)
-            //     return SQL(f"({GraphModel._table_query}) AS {GraphModel._table}")
-            // return super()._graph_get_table(GraphModel)
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_get_table(self, GraphModel) -> SQL:
-            // return SQL(GraphModel._table)
-            */
-            return default;
-        }
-
-        protected async Task<CrmTeam> GraphTitleAndKeyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_title_and_key(self):
-            // if self.use_opportunities:
-            //     return ['', _('New Opportunities')] # no more title
-            // return super(Team, self)._graph_title_and_key()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_title_and_key(self):
-            // if self._in_sale_scope():
-            //     return ['', _('Sales: Untaxed Total')] # no more title
-            // return super()._graph_title_and_key()
-            --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
-            // def _graph_title_and_key(self):
-            // if self.use_opportunities and self._context.get('in_sales_app'):
-            //     return ['', _('Sales: Untaxed Total')]
-            // return super(CrmTeam,self)._graph_title_and_key()
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_title_and_key(self):
-            // """ Returns an array containing the appropriate graph title and key respectively.
-            // 
-            //     The key is for lineCharts, to have the on-hover label.
-            // """
-            // return ['', '']
-            */
-            return default;
-        }
-
-        protected async Task<object> GraphXQueryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_x_query(self) -> SQL:
-            // return SQL('EXTRACT(WEEK FROM %s)', self._graph_date_column())
-            */
-            return default;
-        }
-
-        protected async Task<object> GraphYQueryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
-            // def _graph_y_query(self):
-            // if self.use_opportunities:
-            //     return SQL('count(*)')
-            // return super(Team,self)._graph_y_query()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
-            // def _graph_y_query(self):
-            // if self._in_sale_scope():
-            //     return SQL('SUM(price_subtotal)')
-            // return super()._graph_y_query()
-            --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
-            // def _graph_y_query(self):
-            // if self.use_opportunities and self._context.get('in_sales_app'):
-            //     return SQL('SUM(price_subtotal)')
-            // return super(CrmTeam,self)._graph_y_query()
-            --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def _graph_y_query(self) -> SQL:
-            // raise UserError(_('Undefined graph model for Sales Team: %s', self.name))
-            */
-            return default;
-        }
-
         protected async Task<CrmTeam> InSaleScopeInternalAsync()
         {
             /*
@@ -1422,6 +1110,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<CrmTeam> OpenLeadsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
+            // def action_open_leads(self):
+            // action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
+            // rcontext = {
+            //     'team': self,
+            // }
+            // action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<CrmTeam> OpenUnassignedLeadsAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
+            // def action_open_unassigned_leads(self):
+            // action = self.action_open_leads()
+            // context_str = action.get('context', '{}')
+            // if context_str:
+            //     try:
+            //         context = safe_eval(action['context'], {'active_id': self.id, 'uid': self.env.uid})
+            //     except (NameError, ValueError):
+            //         context = {}
+            // else:
+            //     context = {}
+            // action['context'] = context | {'search_default_unassigned': True}
+            // return action
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<CrmTeam> OpportunityForecastAsync(Guid id)
         {
             /*
@@ -1440,13 +1163,8 @@ namespace Bamboo.Core.Application.Services
             // def action_primary_channel_button(self):
             // self.ensure_one()
             // if self.use_opportunities:
-            //     action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
-            //     rcontext = {
-            //         'team': self,
-            //     }
-            //     action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
-            //     return action
-            // return super(Team,self).action_primary_channel_button()
+            //     return self.action_open_leads()
+            // return super().action_primary_channel_button()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: crm_team.py) ---
             // def action_primary_channel_button(self):
             // if self._in_sale_scope():
@@ -1454,7 +1172,7 @@ namespace Bamboo.Core.Application.Services
             // return super().action_primary_channel_button()
             --- ODOO METHOD SOURCE (MODULE: sale_crm, FILE: crm_team.py) ---
             // def action_primary_channel_button(self):
-            // if self._context.get('in_sales_app') and self.use_opportunities:
+            // if self.env.context.get('in_sales_app') and self.use_opportunities:
             //     return self.env["ir.actions.actions"]._for_xml_id("sale.action_order_report_so_salesteam")
             // return super(CrmTeam,self).action_primary_channel_button()
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
@@ -1514,7 +1232,7 @@ namespace Bamboo.Core.Application.Services
             //                 'variable': frequency.variable,
             //                 'won_count': frequency.won_count if float_compare(frequency.won_count, 0.1, 2) == 1 else 0.1,
             //             })
-            // return super(Team, self).unlink()
+            // return super().unlink()
             */
             return await base.UnlinkAsync(ids);
         }
@@ -1570,7 +1288,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_team.py) ---
             // def write(self, vals):
-            // result = super(Team, self).write(vals)
+            // result = super().write(vals)
             // if 'use_leads' in vals or 'use_opportunities' in vals:
             //     for team in self:
             //         alias_vals = team._alias_get_creation_values()
@@ -1580,13 +1298,13 @@ namespace Bamboo.Core.Application.Services
             //         })
             // return result
             --- ODOO METHOD SOURCE (MODULE: sales_team, FILE: crm_team.py) ---
-            // def write(self, values):
-            // res = super(CrmTeam, self).write(values)
-            // # manually launch company sanity check
-            // if values.get('company_id'):
-            //     self.crm_team_member_ids._check_company(fnames=['crm_team_id'])
+            // def write(self, vals):
+            // res = super().write(vals)
             // 
-            // if values.get('member_ids'):
+            // if vals.get('company_id'):  # Force re-check of memberships constraint for this team
+            //     self.crm_team_member_ids._constrains_membership()
+            // 
+            // if vals.get('member_ids'):
             //     self._add_members_to_favorites()
             // return res
             */

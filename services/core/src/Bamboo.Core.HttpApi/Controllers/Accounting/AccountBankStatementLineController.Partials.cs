@@ -19,10 +19,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("{id}/formatted-read-group")]
+        public async Task<IActionResult> FormattedReadGroupAsync(Guid id, [FromBody] AccountBankStatementLineFormattedReadGroupRequestDto input)
         {
-            var result = await _appService.InitAsync(id);
+            var result = await _appService.FormattedReadGroupAsync(id, input);
             return Ok(result);
         }
         

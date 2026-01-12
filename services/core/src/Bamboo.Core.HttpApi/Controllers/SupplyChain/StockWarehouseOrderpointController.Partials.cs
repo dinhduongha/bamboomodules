@@ -75,10 +75,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/get-visibility-days")]
-        public async Task<IActionResult> GetVisibilityDaysAsync(Guid id)
+        [Route("{id}/get-horizon-days")]
+        public async Task<IActionResult> GetHorizonDaysAsync(Guid id)
         {
-            var result = await _appService.GetVisibilityDaysAsync(id);
+            var result = await _appService.GetHorizonDaysAsync(id);
             return Ok(result);
         }
     }

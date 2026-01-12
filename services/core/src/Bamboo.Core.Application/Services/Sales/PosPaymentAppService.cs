@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("PointOfSale", Category = "Sales", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
+    [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public class PosPaymentAppService : GenericApplicationService<PosPayment>, IPosPaymentAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -51,7 +51,7 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment.py) ---
             // def _check_amount(self):
             // for payment in self:
-            //     if payment.pos_order_id.state in ['invoiced', 'done']:
+            //     if payment.pos_order_id.state == 'done' or payment.pos_order_id.account_move:
             //         raise ValidationError(_('You cannot edit a payment for a posted order.'))
             */
             return default;
@@ -115,7 +115,7 @@ namespace Bamboo.Core.Application.Services
             //     pm_id = vals['payment_method_id']
             //     if pm_id not in online_account_payments_by_pm:
             //         online_account_payments_by_pm[pm_id] = set()
-            //     online_account_payments_by_pm[pm_id].add(vals.get('online_account_payment_id'))
+            //     online_account_payments_by_pm[pm_id].add(vals.get('online_account_payment_id') or None)
             // 
             // opms_read_id = self.env['pos.payment.method'].search_read(['&', ('id', 'in', list(online_account_payments_by_pm.keys())), ('is_online_payment', '=', True)], ["id"])
             // opms_id = {opm_read_id['id'] for opm_read_id in opms_read_id}
@@ -146,7 +146,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment.py) ---
             // def _create_payment_moves(self, is_reverse=False):
             // result = self.env['account.move']
-            // credit_line_ids = []
             // change_payment = self.filtered(lambda p: p.is_change and p.payment_method_id.type == 'cash')
             // payment_to_change = self.filtered(lambda p: not p.is_change and p.payment_method_id.type == 'cash')[:1]
             // for payment in self - change_payment:
@@ -176,6 +175,7 @@ namespace Bamboo.Core.Application.Services
             //         'account_id': accounting_partner.with_company(order.company_id).property_account_receivable_id.id,  # The field being company dependant, we need to make sure the right value is received.
             //         'partner_id': accounting_partner.id,
             //         'move_id': payment_move.id,
+            //         'no_followup': False,
             //     }, amounts['amount'], amounts['amount_converted'])
             //     is_split_transaction = payment.payment_method_id.split_transactions
             //     if is_split_transaction and is_reverse:
@@ -188,24 +188,60 @@ namespace Bamboo.Core.Application.Services
             //         'account_id': reversed_move_receivable_account_id,
             //         'move_id': payment_move.id,
             //         'partner_id': accounting_partner.id if is_split_transaction and is_reverse else False,
+            //         'no_followup': False,
             //     }, amounts['amount'], amounts['amount_converted'])
-            //     lines = self.env['account.move.line'].create([credit_line_vals, debit_line_vals])
-            //     if amounts['amount_converted'] < 0:
-            //         credit_line_ids += lines.filtered(lambda l: l.debit).ids
-            //     else:
-            //         credit_line_ids += lines.filtered(lambda l: l.credit).ids
+            //     self.env['account.move.line'].create([credit_line_vals, debit_line_vals])
             //     payment_move._post()
-            // return result.with_context(credit_line_ids=credit_line_ids)
+            // return result
             */
             return default;
         }
 
-        protected async Task<PosPayment> LoadPosDataDomainInternalAsync(object data)
+        protected async Task<PosPayment> GetReceivableLinesForInvoiceReconciliationInternalAsync(object receivable_account)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment.py) ---
-            // def _load_pos_data_domain(self, data):
-            // return [('pos_order_id', 'in', [order['id'] for order in data['pos.order']['data']])]
+            // def _get_receivable_lines_for_invoice_reconciliation(self, receivable_account):
+            // """
+            // If this payment is linked to an account.move, this returns the corresponding receivable lines
+            // that should be reconciled with the invoice's receivable lines.
+            // The introduced heuristics here is important for cases where the pos receivable account is the same
+            // as the receivable account of the customer.
+            // 
+            // - positive payment -> negative balance lines
+            // - negative payment -> positive balance lines
+            // """
+            // 
+            // result = self.env['account.move.line']
+            // for payment in self:
+            //     if not payment.account_move_id:
+            //         continue
+            // 
+            //     currency = payment.currency_id
+            //     is_positive_amount = currency.compare_amounts(payment.amount, 0) > 0
+            // 
+            //     for line in payment.account_move_id.line_ids:
+            //         if currency.compare_amounts(line.balance, 0) == 0 or line.account_id != receivable_account or line.reconciled:
+            //             continue
+            // 
+            //         if is_positive_amount:
+            //             if currency.compare_amounts(line.balance, 0) < 0:
+            //                 result |= line
+            //         else:
+            //             if currency.compare_amounts(line.balance, 0) > 0:
+            //                 result |= line
+            // 
+            // return result
+            */
+            return default;
+        }
+
+        protected async Task<PosPayment> LoadPosDataDomainInternalAsync(object data, object config)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment.py) ---
+            // def _load_pos_data_domain(self, data, config):
+            // return [('pos_order_id', 'in', [order['id'] for order in data['pos.order']])]
             */
             return default;
         }
@@ -226,15 +262,6 @@ namespace Bamboo.Core.Application.Services
             // res = super(PosPayment, self)._update_payment_line_for_tip(tip_amount)
             // if self.payment_method_id.use_payment_terminal == 'adyen':
             //     self._adyen_capture()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant_stripe, FILE: pos_payment.py) ---
-            // def _update_payment_line_for_tip(self, tip_amount):
-            // """Capture the payment when a tip is set."""
-            // res = super(PosPayment, self)._update_payment_line_for_tip(tip_amount)
-            // 
-            // if self.payment_method_id.use_payment_terminal == 'stripe':
-            //     self.payment_method_id.stripe_capture_payment(self.transaction_id, amount=self.amount)
-            // 
             // return res
             */
             return default;

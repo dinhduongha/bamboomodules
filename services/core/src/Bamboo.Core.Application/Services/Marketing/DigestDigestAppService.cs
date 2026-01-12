@@ -177,14 +177,14 @@ namespace Bamboo.Core.Application.Services
             // """
             // start, end, companies = self._get_kpi_compute_parameters()
             // 
-            // base_domain = [
+            // base_domain = Domain([
             //     ('company_id', 'in', companies.ids),
             //     (date_field, '>=', start),
             //     (date_field, '<', end),
-            // ]
+            // ])
             // 
             // if additional_domain:
-            //     base_domain = expression.AND([base_domain, additional_domain])
+            //     base_domain &= Domain(additional_domain)
             // 
             // values = self.env[model]._read_group(
             //     domain=base_domain,
@@ -408,7 +408,7 @@ namespace Bamboo.Core.Application.Services
             //     'pos.order',
             //     'kpi_pos_total_value',
             //     date_field='date_order',
-            //     additional_domain=[('state', 'not in', ['draft', 'cancel', 'invoiced'])],
+            //     additional_domain=[('state', 'not in', ['draft', 'cancel']), ('account_move', '=', False)],
             //     sum_field='amount_total',
             // )
             */
@@ -472,12 +472,12 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_account_total_revenue'] = 'account.action_move_out_invoice_type?menu_id=%s' % self.env.ref('account.menu_finance').id
             // return res
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_crm_lead_created'] = 'crm.crm_lead_action_pipeline?menu_id=%s' % self.env.ref('crm.crm_menu_root').id
             // res['kpi_crm_opportunities_won'] = 'crm.crm_lead_action_pipeline?menu_id=%s' % self.env.ref('crm.crm_menu_root').id
             // if user.has_group('crm.group_use_lead'):
@@ -487,8 +487,9 @@ namespace Bamboo.Core.Application.Services
             // def _compute_kpis_actions(self, company, user):
             // """ Give an optional action to display in digest email linked to some KPIs.
             // 
-            // :return dict: key: kpi name (field name), value: an action that will be
+            // :returns: key: kpi name (field name), value: an action that will be
             //   concatenated with /odoo/action-{action}
+            // :rtype: dict
             // """
             // return {}
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: digest.py) ---
@@ -498,24 +499,23 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
-            // res['kpi_livechat_rating'] = 'im_livechat.rating_rating_action_livechat_report'
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_livechat_conversations'] = 'im_livechat.im_livechat_report_operator_action'
             // res['kpi_livechat_response'] = 'im_livechat.im_livechat_report_channel_time_to_answer_action'
             // return res
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_pos_total'] = 'point_of_sale.action_pos_sale_graph?menu_id=%s' % self.env.ref('point_of_sale.menu_point_root').id
             // return res
             --- ODOO METHOD SOURCE (MODULE: project, FILE: digest_digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_project_task_opened'] = 'project.open_view_project_all?menu_id=%s' % self.env.ref('project.menu_main_pm').id
             // return res
             --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: digest.py) ---
             // def _compute_kpis_actions(self, company, user):
-            // res = super(Digest, self)._compute_kpis_actions(company, user)
+            // res = super()._compute_kpis_actions(company, user)
             // res['kpi_all_sale_total'] = 'sale.report_all_channels_sales_action?menu_id=%s' % self.env.ref('sale.sale_menu_root').id
             // return res
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: digest.py) ---
@@ -535,7 +535,7 @@ namespace Bamboo.Core.Application.Services
             // """ Compute KPIs to display in the digest template. It is expected to be
             // a list of KPIs, each containing values for 3 columns display.
             // 
-            // :return list: result [{
+            // :return: result [{
             //     'kpi_name': 'kpi_mail_message',
             //     'kpi_fullname': 'Messages',  # translated
             //     'kpi_action': 'crm.crm_lead_action_pipeline',  # xml id of an action to execute
@@ -604,10 +604,11 @@ namespace Bamboo.Core.Application.Services
             // def _compute_preferences(self, company, user):
             // """ Give an optional text for preferences, like a shortcut for configuration.
             // 
-            // :return string: html to put in template
+            // :returns: html to put in template
+            // :rtype: str
             // """
             // preferences = []
-            // if self._context.get('digest_slowdown'):
+            // if self.env.context.get('digest_slowdown'):
             //     _dummy, new_perioridicy_str = self._get_next_periodicity()
             //     preferences.append(
             //         _("We have noticed you did not connect these last few days. We have automatically switched your preference to %(new_perioridicy_str)s Digests.",
@@ -680,7 +681,7 @@ namespace Bamboo.Core.Application.Services
             // def _compute_tips(self, company, user, tips_count=1, consumed=True):
             // tips = self.env['digest.tip'].search([
             //     ('user_ids', '!=', user.id),
-            //     '|', ('group_id', 'in', user.groups_id.ids), ('group_id', '=', False)
+            //     '|', ('group_id', 'in', user.all_group_ids.ids), ('group_id', '=', False)
             // ], limit=tips_count)
             // tip_descriptions = [
             //     tools.html_sanitize(

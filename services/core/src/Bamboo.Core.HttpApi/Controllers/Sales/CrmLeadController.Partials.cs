@@ -35,6 +35,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-livechat")]
+        public async Task<IActionResult> ActionOpenLivechatAsync(Guid id)
+        {
+            var result = await _appService.OpenLivechatAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-redirect-to-livechat-sessions")]
         public async Task<IActionResult> ActionRedirectToLivechatSessionsAsync(Guid id)
         {
@@ -55,6 +63,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionRescheduleMeetingAsync(Guid id)
         {
             var result = await _appService.RescheduleMeetingAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-restore")]
+        public async Task<IActionResult> ActionRestoreAsync(Guid id)
+        {
+            var result = await _appService.RestoreAsync(id);
             return Ok(result);
         }
         
@@ -115,10 +131,10 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-snooze")]
-        public async Task<IActionResult> ActionSnoozeAsync(Guid id)
+        [Route("{id}/action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
         {
-            var result = await _appService.SnoozeAsync(id);
+            var result = await _appService.UnarchiveAsync(id);
             return Ok(result);
         }
         
@@ -212,9 +228,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/iap-enrich")]
-        public async Task<IActionResult> IapEnrichAsync(Guid id, [FromBody] CrmLeadIapEnrichRequestDto input)
+        public async Task<IActionResult> IapEnrichAsync(Guid id)
         {
-            var result = await _appService.IapEnrichAsync(id, input);
+            var result = await _appService.IapEnrichAsync(id);
             return Ok(result);
         }
         
@@ -259,6 +275,14 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/prepare-pls-tooltip-data")]
+        public async Task<IActionResult> PreparePlsTooltipDataAsync(Guid id)
+        {
+            var result = await _appService.PreparePlsTooltipDataAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/redirect-lead-opportunity-view")]
         public async Task<IActionResult> RedirectLeadOpportunityViewAsync(Guid id)
         {
@@ -279,14 +303,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> SearchGeoPartnerAsync(Guid id)
         {
             var result = await _appService.SearchGeoPartnerAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
         

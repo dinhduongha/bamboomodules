@@ -26,19 +26,6 @@ namespace Bamboo.Core.Application.Services
             _busListenerMixinAppService = busListenerMixinAppService;
         }
 
-        protected async Task<IrAttachment> AutoInitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def _auto_init(self):
-            // res = super(IrAttachment, self)._auto_init()
-            // tools.create_index(self._cr, 'ir_attachment_res_idx',
-            //                    self._table, ['res_model', 'res_id'])
-            // return res
-            */
-            return default;
-        }
-
         protected async Task<IrAttachment> BuildZipFromAttachmentsInternalAsync()
         {
             /*
@@ -59,15 +46,15 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_attachment.py) ---
             // def _bus_channel(self):
-            // return self.env.user._bus_channel()
+            // return self.env.user
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
             // def _bus_channel(self):
             // self.ensure_one()
             // if self.res_model == "discuss.channel" and self.res_id:
-            //     return self.env["discuss.channel"].browse(self.res_id)._bus_channel()
+            //     return self.env["discuss.channel"].browse(self.res_id)
             // guest = self.env["mail.guest"]._get_guest_from_context()
             // if self.env.user._is_public() and guest:
-            //     return guest._bus_channel()
+            //     return guest
             // return super()._bus_channel()
             */
             return default;
@@ -112,86 +99,126 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrAttachment> CanReturnContentInternalAsync(object field_name, object access_token)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _can_return_content(self, field_name=None, access_token=None):
+            // attachment_sudo = self.sudo().with_context(prefetch_fields=False)
+            // if access_token:
+            //     if not consteq(attachment_sudo.access_token or "", access_token):
+            //         raise AccessError("Invalid access token")  # pylint: disable=missing-gettext
+            //     return True
+            // if attachment_sudo.public:
+            //     return True
+            // if self.env.user._is_portal():
+            //     # Check the read access on the record linked to the attachment
+            //     # eg: Allow to download an attachment on a task from /my/tasks/task_id
+            //     self.check_access('read')
+            //     return True
+            // return super()._can_return_content(field_name, access_token)
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> CheckAccessInternalAsync(object operation)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _check_access(self, operation):
+            // """Check access for attachments.
+            // 
+            // Rules:
+            // - `public` is always accessible for reading.
+            // - If we have `res_model and res_id`, the attachment is accessible if the
+            //   referenced model is accessible. Also, when `res_field != False` and
+            //   the user is not an administrator, we check the access on the field.
+            // - If we don't have a referenced record, the attachment is accessible to
+            //   the administrator and the creator of the attachment.
+            // """
+            // res = super()._check_access(operation)
+            // remaining = self
+            // error_func = None
+            // forbidden_ids = OrderedSet()
+            // if res:
+            //     forbidden, error_func = res
+            //     if forbidden == self:
+            //         return res
+            //     remaining -= forbidden
+            //     forbidden_ids.update(forbidden._ids)
+            // elif not self:
+            //     return None
+            // 
+            // if operation in ('create', 'unlink'):
+            //     # check write operation instead of unlinking and creating for
+            //     # related models and field access
+            //     operation = 'write'
+            // 
+            // # collect the records to check (by model)
+            // model_ids = defaultdict(set)            # {model_name: set(ids)}
+            // att_model_ids = []                      # [(att_id, (res_model, res_id))]
+            // # DLE P173: `test_01_portal_attachment`
+            // remaining = remaining.sudo()
+            // remaining.fetch(SECURITY_FIELDS)  # fetch only these fields
+            // for attachment in remaining:
+            //     if attachment.public and operation == 'read':
+            //         continue
+            //     att_id = attachment.id
+            //     res_model, res_id = attachment.res_model, attachment.res_id
+            //     if not self.env.is_system():
+            //         if not res_id and attachment.create_uid.id != self.env.uid:
+            //             forbidden_ids.add(att_id)
+            //             continue
+            //         if res_field := attachment.res_field:
+            //             try:
+            //                 field = self.env[res_model]._fields[res_field]
+            //             except KeyError:
+            //                 # field does not exist
+            //                 field = None
+            //             if field is None or not self._has_field_access(field, operation):
+            //                 forbidden_ids.add(att_id)
+            //                 continue
+            //     if res_model and res_id:
+            //         model_ids[res_model].add(res_id)
+            //         att_model_ids.append((att_id, (res_model, res_id)))
+            // forbidden_res_model_id = set(self._inaccessible_comodel_records(model_ids, operation))
+            // forbidden_ids.update(att_id for att_id, res in att_model_ids if res in forbidden_res_model_id)
+            // 
+            // if forbidden_ids:
+            //     forbidden = self.browse(forbidden_ids)
+            //     forbidden.invalidate_recordset(SECURITY_FIELDS)  # avoid cache pollution
+            //     if error_func is None:
+            //         def error_func():
+            //             return AccessError(self.env._(
+            //                 "Sorry, you are not allowed to access this document. "
+            //                 "Please contact your system administrator.\n\n"
+            //                 "(Operation: %(operation)s)\n\n"
+            //                 "Records: %(records)s, User: %(user)s",
+            //                 operation=operation,
+            //                 records=forbidden[:6],
+            //                 user=self.env.uid,
+            //             ))
+            //     return forbidden, error_func
+            // return None
+            */
+            return default;
+        }
+
         public async Task<IrAttachment> CheckAsync(Guid id, IrAttachmentCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def check(self, mode, values=None):
             // """ Restricts the access to an ir.attachment, according to referred mode """
-            // if self.env.is_superuser():
-            //     return True
+            // warnings.warn("Since 19.0, use check_access", DeprecationWarning, stacklevel=2)
             // # Always require an internal user (aka, employee) to access to a attachment
             // if not (self.env.is_admin() or self.env.user._is_internal()):
             //     raise AccessError(_("Sorry, you are not allowed to access this document."))
-            // # collect the records to check (by model)
-            // model_ids = defaultdict(set)            # {model_name: set(ids)}
-            // if self:
-            //     # DLE P173: `test_01_portal_attachment`
-            //     self.env['ir.attachment'].flush_model(['res_model', 'res_id', 'create_uid', 'public', 'res_field'])
-            //     self._cr.execute('SELECT res_model, res_id, create_uid, public, res_field FROM ir_attachment WHERE id IN %s', [tuple(self.ids)])
-            //     for res_model, res_id, create_uid, public, res_field in self._cr.fetchall():
-            //         if public and mode == 'read':
-            //             continue
-            //         if not self.env.is_system():
-            //             if not res_id and create_uid != self.env.uid:
-            //                 raise AccessError(_("Sorry, you are not allowed to access this document."))
-            //             if res_field:
-            //                 field = self.env[res_model]._fields[res_field]
-            //                 if not field.is_accessible(self.env):
-            //                     raise AccessError(_("Sorry, you are not allowed to access this document."))
-            //         if not (res_model and res_id):
-            //             continue
-            //         model_ids[res_model].add(res_id)
-            // if values and values.get('res_model') and values.get('res_id'):
-            //     model_ids[values['res_model']].add(values['res_id'])
-            // 
-            // # check access rights on the records
-            // for res_model, res_ids in model_ids.items():
-            //     # ignore attachments that are not attached to a resource anymore
-            //     # when checking access rights (resource was deleted but attachment
-            //     # was not)
-            //     if res_model not in self.env:
-            //         continue
-            //     if res_model == 'res.users' and len(res_ids) == 1 and self.env.uid == list(res_ids)[0]:
-            //         # by default a user cannot write on itself, despite the list of writeable fields
-            //         # e.g. in the case of a user inserting an image into his image signature
-            //         # we need to bypass this check which would needlessly throw us away
-            //         continue
-            //     records = self.env[res_model].browse(res_ids).exists()
-            //     # For related models, check if we can write to the model, as unlinking
-            //     # and creating attachments can be seen as an update to the model
-            //     access_mode = 'write' if mode in ('create', 'unlink') else mode
-            //     records.check_access(access_mode)
+            // self.check_access(mode)
+            // if values and any(self._inaccessible_comodel_records({values.get('res_model'): [values.get('res_id')]}, mode)):
+            //     raise AccessError(_("Sorry, you are not allowed to access this document."))
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<IrAttachment> CheckAttachmentsAccessInternalAsync(object attachment_tokens)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
-            // def _check_attachments_access(self, attachment_tokens):
-            // """This method relies on access rules/rights and therefore it should not be called from a sudo env."""
-            // self = self.sudo(False)
-            // attachment_tokens = attachment_tokens or ([None] * len(self))
-            // if len(attachment_tokens) != len(self):
-            //     raise UserError(_("An access token must be provided for each attachment."))
-            // for attachment, access_token in zip(self, attachment_tokens):
-            //     try:
-            //         attachment_sudo = attachment.with_user(SUPERUSER_ID).exists()
-            //         if not attachment_sudo:
-            //             raise MissingError(_("The attachment %s does not exist.", attachment.id))
-            //         try:
-            //             attachment.check('write')
-            //         except AccessError:
-            //             if not access_token or not attachment_sudo.access_token or not consteq(attachment_sudo.access_token, access_token):
-            //                 message_sudo = self.env['mail.message'].sudo().search([('attachment_ids', 'in', attachment_sudo.ids)], limit=1)
-            //                 if not message_sudo or not message_sudo.is_current_user_or_guest_author:
-            //                     raise
-            //     except (AccessError, MissingError):
-            //         raise UserError(_("The attachment %s does not exist or you do not have the rights to access it.", attachment.id))
-            */
-            return default;
         }
 
         protected async Task<IrAttachment> CheckContentsInternalAsync(object values)
@@ -226,7 +253,6 @@ namespace Bamboo.Core.Application.Services
             // for attachment in self:
             //     # restrict writing on attachments that could be served by the
             //     # ir.http's dispatch exception handling
-            //     # XDO note: this should be done in check(write), constraints for access rights?
             //     # XDO note: if read on sudo, read twice, one for constraints, one for _inverse_datas as user
             //     if attachment.type == 'binary' and attachment.url:
             //         has_group = self.env.user.has_group
@@ -255,13 +281,24 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def _compute_datas(self):
-            // if self._context.get('bin_size'):
+            // if self.env.context.get('bin_size'):
             //     for attach in self:
             //         attach.datas = human_size(attach.file_size)
             //     return
             // 
             // for attach in self:
             //     attach.datas = base64.b64encode(attach.raw or b'')
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> ComputeHasThumbnailInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
+            // def _compute_has_thumbnail(self):
+            // for attachment in self.with_context(bin_size=True):
+            //     attachment.has_thumbnail = bool(attachment.thumbnail)
             */
             return default;
         }
@@ -419,21 +456,6 @@ namespace Bamboo.Core.Application.Services
         public override async Task<IrAttachment> CreateAsync(IrAttachment entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: ir_attachment.py) ---
-            // def create(self, vals_list):
-            // attachments = super().create(vals_list)
-            // if self.env.context.get('sync_attachment', True):
-            //     expenses_attachments = attachments.filtered(lambda att: att.res_model == 'hr.expense')
-            //     if expenses_attachments:
-            //         expenses = self.env['hr.expense'].browse(expenses_attachments.mapped('res_id'))
-            //         for expense in expenses.filtered('sheet_id'):
-            //             checksums = set(expense.sheet_id.attachment_ids.mapped('checksum'))
-            //             for attachment in expense.attachment_ids.filtered(lambda att: att.checksum not in checksums):
-            //                 attachment.copy({
-            //                     'res_model': 'hr.expense.sheet',
-            //                     'res_id': expense.sheet_id.id,
-            //                 })
-            // return attachments
             --- ODOO METHOD SOURCE (MODULE: product, FILE: ir_attachment.py) ---
             // def create(self, vals_list):
             // """Create product.document for attachments added in products chatters"""
@@ -445,11 +467,12 @@ namespace Bamboo.Core.Application.Services
             //             and not attachment.res_field
             //     )
             //     if product_attachments:
-            //         self.env['product.document'].sudo().create(
+            //         self.env['product.document'].sudo().create([
             //             {
             //                 'ir_attachment_id': attachment.id
-            //             } for attachment in product_attachments
-            //         )
+            //             }
+            //             for attachment in product_attachments
+            //         ])
             // return attachments
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_attachment.py) ---
             // def create(self, vals_list):
@@ -469,18 +492,23 @@ namespace Bamboo.Core.Application.Services
             //     in vals.items()
             //     if key not in ('file_size', 'checksum', 'store_fname')
             // } for vals in vals_list]
+            // checksum_raw_map = {}
             // 
             // for values in vals_list:
-            //     values = self._check_contents(values)
-            //     raw, datas = values.pop('raw', None), values.pop('datas', None)
-            //     if raw or datas:
+            //     # needs to be popped in all cases to bypass `_inverse_datas`
+            //     datas = values.pop('datas', None)
+            //     if raw := values.get('raw'):
             //         if isinstance(raw, str):
-            //             # b64decode handles str input but raw needs explicit encoding
-            //             raw = raw.encode()
-            //         values.update(self._get_datas_related_values(
-            //             raw or base64.b64decode(datas or b''),
-            //             values['mimetype']
-            //         ))
+            //             values['raw'] = raw.encode()
+            //     elif datas:
+            //         values['raw'] = base64.b64decode(datas)
+            //     else:
+            //         values['raw'] = b''
+            // 
+            //     values = self._check_contents(values)
+            //     if raw := values.pop('raw'):
+            //         values.update(self._get_datas_related_values(raw, values['mimetype']))
+            //         checksum_raw_map[values['checksum']] = raw
             // 
             //     # 'check()' only uses res_model and res_id from values, and make an exists.
             //     # We can group the values by model, res_id to make only one query when
@@ -489,10 +517,17 @@ namespace Bamboo.Core.Application.Services
             //     record_tuple_set.add(record_tuple)
             // 
             // # don't use possible contextual recordset for check, see commit for details
-            // Attachments = self.browse()
+            // model_and_ids = defaultdict(set)
             // for res_model, res_id in record_tuple_set:
-            //     Attachments.check('create', values={'res_model':res_model, 'res_id':res_id})
-            // return super().create(vals_list)
+            //     model_and_ids[res_model].add(res_id)
+            // if any(self._inaccessible_comodel_records(model_and_ids, 'write')):
+            //     raise AccessError(_("Sorry, you are not allowed to access this document."))
+            // records = super().create(vals_list)
+            // if self._storage() != 'db':
+            //     for checksum, raw in checksum_raw_map.items():
+            //         self._file_write(raw, checksum)
+            // records._check_serving_attachments()
+            // return records
             */
             return await base.CreateAsync(entity, fields);
         }
@@ -528,95 +563,145 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrAttachment> DecodeEdiBinaryInternalAsync(object filename, object content)
+        protected async Task<IrAttachment> CronMigrateLocalToCloudStorageInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
-            // def _decode_edi_binary(self, filename, content):
-            // """Decodes any file into a list of one dictionary representing an attachment.
-            // This is a fallback for all files that are not decoded by other methods.
-            // :returns:           A list with a dictionary.
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: ir_attachment.py) ---
+            // def _cron_migrate_local_to_cloud_storage(self):
             // """
-            // return [{
-            //     'filename': filename,
-            //     'content': content,
-            //     'attachment': self,
-            //     'sort_weight': 100,
-            //     'type': 'binary',
-            // }]
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> DecodeEdiPdfInternalAsync(object filename, object content)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
-            // def _decode_edi_pdf(self, filename, content):
-            // """Decodes a pdf and unwrap sub-attachment into a list of dictionary each representing an attachment.
-            // :returns:           A list of dictionary for each attachment.
+            // The Http server only reschedules the cron job asap without migrating any attachment.
+            // The cron server will continue the migrating process stopped at the last time by using
+            // ``cloud_storage_migration_min_attachment_id``
             // """
-            // try:
-            //     buffer = io.BytesIO(content)
-            //     pdf_reader = OdooPdfFileReader(buffer, strict=False)
-            // except Exception as e:
-            //     # Malformed pdf
-            //     _logger.info('Error when reading the pdf file "%s": %s', filename, e)
-            //     return []
+            // ICP = self.env['ir.config_parameter']
+            // if not ICP.get_param('cloud_storage_provider'):
+            //     raise UserError(_("Cloud storage provider is not configured"))
             // 
-            // # Process embedded files.
-            // to_process = []
-            // try:
-            //     for xml_name, xml_content in pdf_reader.getAttachments():
-            //         embedded_files = self.env['ir.attachment']._decode_edi_xml(xml_name, xml_content)
-            //         for file_data in embedded_files:
-            //             file_data['sort_weight'] += 1
-            //             file_data['originator_pdf'] = self
-            //         to_process.extend(embedded_files)
-            // except (NotImplementedError, StructError, PdfReadError) as e:
-            //     _logger.warning("Unable to access the attachments of %s. Tried to decrypt it, but %s.", filename, e)
+            // # check ir.config_parameter values' formats are correct
+            // cron = self.env.ref('cloud_storage_migration.ir_cron_manual_migrate_local_to_cloud_storage')
+            // min_file_size = int(ICP.get_param('cloud_storage_min_file_size', DEFAULT_CLOUD_STORAGE_MIN_FILE_SIZE))
+            // max_file_size = int(ICP.get_param('cloud_storage_migration_max_file_size', 10**9))  # default 1GB
+            // max_batch_file_size = int(ICP.get_param('cloud_storage_migration_max_batch_file_size', 10**10))  # default 10GB
+            // message_model_names = ICP.get_param('cloud_storage_migration_message_models', '').split(',')
+            // message_model_names = tuple(m_ for m in message_model_names if (m_ := m.strip()) and m_ in self.env)
+            // all_model_names = ICP.get_param('cloud_storage_migration_all_models', '').split(',')
+            // all_model_names = tuple(m_ for m in all_model_names if (m_ := m.strip()) and m_ in self.env)
+            // if not message_model_names and not all_model_names:
+            //     raise UserError(_("No model for cloud storage migration"))
             // 
-            // # Process the pdf itself.
-            // to_process.append({
-            //     'filename': filename,
-            //     'content': content,
-            //     'pdf_reader': pdf_reader,
-            //     'attachment': self,
-            //     'on_close': buffer.close,
-            //     'sort_weight': 20,
-            //     'type': 'pdf',
-            // })
+            // max_attachment_id = int(ICP.get_param('cloud_storage_migration_max_attachment_id', 0))
+            // if not max_attachment_id:
+            //     max_attachment_id = self.env['ir.attachment'].sudo().search_fetch([], ['id'], limit=1, order='id desc').id or 1
+            //     ICP.set_param('cloud_storage_migration_max_attachment_id', max_attachment_id)
             // 
-            // return to_process
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> DecodeEdiXmlInternalAsync(object filename, object content)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
-            // def _decode_edi_xml(self, filename, content):
-            // """Decodes an xml into a list of one dictionary representing an attachment.
-            // :returns:           A list with a dictionary.
-            // """
-            // try:
-            //     xml_tree = etree.fromstring(content)
-            // except Exception as e:
-            //     _logger.info('Error when reading the xml file "%s": %s', filename, e)
-            //     return []
+            // if request:
+            //     # Don't upload in HTTP server, if the method is called by ``Manually Run`` button from web client
+            //     # The cron job should be rescheduled asap in cron server
+            //     cron._trigger()
+            //     return
             // 
-            // to_process = []
-            // if xml_tree is not None:
-            //     to_process.append({
-            //         'attachment': self,
-            //         'filename': filename,
-            //         'content': content,
-            //         'xml_tree': xml_tree,
-            //         'sort_weight': 10,
-            //         'type': 'xml',
-            //     })
-            // return to_process
+            // def commit_min_attachment_id(attachment_id):
+            //     # directly write data of ir_config_parameter to avoid invalidating ormcache
+            //     self.env.cr.execute("UPDATE ir_config_parameter SET value = %s WHERE key = 'cloud_storage_migration_min_attachment_id'", (str(attachment_id),))
+            //     self.env['ir.cron']._commit_progress(1)  # record this attachment as attempted to avoid reprocessing
+            // 
+            // limit_time_real = config['limit_time_real']
+            // # ``config['limit_time_real_cron'] == 0`` means unlimited time for cron worker,
+            // # but will fallback to ``config['limit_time_real']`` for cron thread
+            // # here we use ``config['limit_time_real']`` for simplicity
+            // if config['limit_time_real_cron'] and config['limit_time_real_cron'] > 0:
+            //     limit_time_real = config['limit_time_real_cron']
+            // # use half of the time limit to mitigate the timeout problem
+            // end_time = limit_time_real // 2 + time.monotonic()
+            // 
+            // check_model = []
+            // if message_model_names:
+            //     check_model.append(SQL('(ia.res_model IN %s AND mar.attachment_id IS NOT NULL)', message_model_names))
+            // if all_model_names:
+            //     check_model.append(SQL('(ia.res_model IN %s)', all_model_names))
+            // check_model = SQL(' OR ').join(check_model)
+            // 
+            // check_documents = SQL("""
+            //     AND NOT EXISTS (
+            //         SELECT 1
+            //         FROM documents_document dd
+            //         WHERE dd.attachment_id = ia.id
+            //     )""") if 'documents.document' in self.env else SQL("")
+            // 
+            // # check ir_attachment records which are used by any mail_message.attachment_ids
+            // query = SQL("""
+            //     WITH last_attachment AS (
+            //         SELECT value::integer AS id
+            //         FROM ir_config_parameter
+            //         WHERE key = 'cloud_storage_migration_min_attachment_id'
+            //         LIMIT 1
+            //     )
+            //     SELECT ia.id
+            //     FROM ir_attachment ia
+            //     LEFT JOIN message_attachment_rel mar
+            //     ON mar.attachment_id = ia.id
+            //     WHERE ia.id <= %(max_attachment_id)s
+            //     AND ia.id > COALESCE((SELECT id FROM last_attachment), 0)
+            //     AND ia.type = 'binary'
+            //     AND ia.url IS NULL
+            //     AND ia.res_id IS NOT NULL
+            //     AND ia.res_field IS NULL
+            //     AND ia.store_fname IS NOT NULL
+            //     AND (%(check_model)s)
+            //     AND ia.file_size BETWEEN %(min_file_size)s AND %(max_file_size)s
+            //     AND ia.create_date < %(create_date)s
+            //     %(check_documents)s
+            //     ORDER BY ia.id ASC
+            //     LIMIT 1;
+            // """,
+            //     max_attachment_id=max_attachment_id,
+            //     check_model=check_model,
+            //     # ignore if attachment is too small or too large
+            //     min_file_size=min_file_size,
+            //     max_file_size=max_file_size,
+            //     # ignore attachments uploaded recently in case their binaries are unfortunately used by business
+            //     # codes which may block important business operations
+            //     create_date=fields.Datetime.now() - timedelta(days=7),
+            //     # ignore if attachment is used by documents.document
+            //     check_documents=check_documents,
+            // )
+            // 
+            // session = requests.Session()
+            // 
+            // total_file_size = 0
+            // first_attachment = True
+            // while True:
+            //     self.env.cr.execute(query)
+            //     res = self.env.cr.fetchone()
+            //     attachment = self.env['ir.attachment'].browse(res[0] if res else False)
+            // 
+            //     if not attachment:
+            //         commit_min_attachment_id(max_attachment_id)
+            //         return
+            // 
+            //     total_file_size += attachment.file_size
+            //     if max_batch_file_size and total_file_size >= max_batch_file_size:
+            //         if first_attachment:
+            //             # skip in case attachment.file_size > max_batch_file_size
+            //             commit_min_attachment_id(attachment.id)
+            //         break
+            //     first_attachment = False
+            // 
+            //     # commit before migration to upload the file only once even if it causes timeout
+            //     commit_min_attachment_id(attachment.id)
+            // 
+            //     try:
+            //         attachment._migrate_local_to_cloud_storage(session)
+            //         self.env['ir.cron']._commit_progress(0)  # progress already recorded via ``commit_min_attachment_id``
+            //         _logger.info('uploaded attachment %s to cloud storage', attachment.id)
+            //     except Exception as e:  # noqa: BLE001
+            //         _logger.warning('Failed to upload attachment %s to cloud storage: %s', attachment.id, e)
+            //         self.env.cr.rollback()
+            // 
+            //     if end_time < time.monotonic():
+            //         break
+            // 
+            // cron._trigger()
             */
             return default;
         }
@@ -644,6 +729,32 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrAttachment> ExceptAuditTrailInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
+            // def _except_audit_trail(self):
+            // audit_trail_attachments = self.filtered(lambda attachment:
+            //     attachment.res_model == 'account.move'
+            //     and attachment.res_id
+            //     and attachment.raw
+            //     and attachment.company_id.restrictive_audit_trail
+            //     and guess_mimetype(attachment.raw) in (
+            //         'application/pdf',
+            //         'application/xml',
+            //     )
+            // )
+            // id2move = self.env['account.move'].browse(set(audit_trail_attachments.mapped('res_id'))).exists().grouped('id')
+            // for attachment in audit_trail_attachments:
+            //     move = id2move.get(attachment.res_id)
+            //     if move and move.posted_before and move.company_id.restrictive_audit_trail:
+            //         ue = UserError(_("You cannot remove parts of a restricted audit trail."))
+            //         ue._audit_trail = True
+            //         raise ue
+            */
+            return default;
+        }
+
         protected async Task<IrAttachment> FileDeleteInternalAsync(object fname)
         {
             /*
@@ -655,17 +766,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrAttachment> FileReadInternalAsync(object fname)
+        protected async Task<IrAttachment> FileReadInternalAsync(object fname, object size)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def _file_read(self, fname):
+            // def _file_read(self, fname, size=None):
             // assert isinstance(self, IrAttachment)
             // full_path = self._full_path(fname)
             // try:
             //     with open(full_path, 'rb') as f:
-            //         return f.read()
-            // except (IOError, OSError):
+            //         return f.read(size)
+            // except OSError:
             //     _logger.info("_read_file reading %s", full_path, exc_info=True)
             // return b''
             */
@@ -685,8 +796,9 @@ namespace Bamboo.Core.Application.Services
             //             fp.write(bin_value)
             //         # add fname to checklist, in case the transaction aborts
             //         self._mark_for_gc(fname)
-            //     except IOError:
-            //         _logger.info("_file_write writing %s", full_path, exc_info=True)
+            //     except OSError:
+            //         _logger.info("_file_write writing %s", full_path)
+            //         raise
             // return fname
             */
             return default;
@@ -697,35 +809,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def _filestore(self):
-            // return config.filestore(self._cr.dbname)
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> FilterAttachmentAccessInternalAsync(List<Guid> attachment_ids)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def _filter_attachment_access(self, attachment_ids):
-            // """Filter the given attachment to return only the records the current user have access to.
-            // 
-            // :param attachment_ids: List of attachment ids we want to filter
-            // :return: <ir.attachment> the current user have access to
-            // """
-            // ret_attachments = self.env['ir.attachment']
-            // attachments = self.browse(attachment_ids)
-            // if not attachments.has_access('read'):
-            //     return ret_attachments
-            // 
-            // for attachment in attachments.sudo():
-            //     # Use SUDO here to not raise an error during the prefetch
-            //     # And then drop SUDO right to check if we can access it
-            //     try:
-            //         attachment.sudo(False).check('read')
-            //         ret_attachments |= attachment
-            //     except AccessError:
-            //         continue
-            // return ret_attachments
+            // return config.filestore(self.env.cr.dbname)
             */
             return default;
         }
@@ -741,7 +825,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // # Migrate only binary attachments and bypass the res_field automatic
             // # filter added in _search override
-            // self.search(expression.AND([
+            // self.search(Domain.AND([
             //     self._get_storage_domain(),
             //     ['&', ('type', '=', 'binary'), '|', ('res_field', '=', False), ('res_field', '!=', False)]
             // ]))._migrate()
@@ -774,10 +858,12 @@ namespace Bamboo.Core.Application.Services
             //     mimetype = file.content_type
             //     filename = file.filename
             // elif mimetype == 'GUESS':
-            //     head = file.read(1024)
+            //     head = file.read(MIMETYPE_HEAD_SIZE)
             //     file.seek(-len(head), 1)  # rewind
             //     mimetype = guess_mimetype(head)
             //     filename = fix_filename_extension(file.filename, mimetype)
+            //     if mimetype in ('application/zip', *_olecf_mimetypes):
+            //         mimetype = mimetypes.guess_type(filename)[0]
             // elif all(mimetype.partition('/')):
             //     filename = fix_filename_extension(file.filename, mimetype)
             // else:
@@ -800,9 +886,29 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def _full_path(self, path):
             // # sanitize path
-            // path = re.sub('[.]', '', path)
+            // path = re.sub('[.:]', '', path)
             // path = path.strip('/\\')
             // return os.path.join(self._filestore(), path)
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> GcDocIndexInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: api_doc, FILE: ir_attachment.py) ---
+            // def _gc_doc_index(self):
+            // """ Garbage collect the outdated /doc/index.json attachments. """
+            // sequence = str(self.env.registry.get_sequences(self.env.cr)[0])
+            // attachments = self.search_fetch(
+            //     [('name', 'like', R'odoo-doc-index-%-%.json')],
+            //     ['name'],
+            // ).filtered(
+            //     lambda doc: doc.name.split('-')[3] != sequence,
+            // )
+            // if attachments:
+            //     attachments.unlink()
+            // _logger.info("GC'd %s /doc cached index", len(attachments))
             */
             return default;
         }
@@ -824,7 +930,7 @@ namespace Bamboo.Core.Application.Services
             // # the LOCK statement will wait until those concurrent transactions end.
             // # But this transaction will not see the new attachements if it has done
             // # other requests before the LOCK (like the method _storage() above).
-            // cr = self._cr
+            // cr = self.env.cr
             // cr.commit()
             // 
             // # prevent all concurrent updates on ir_attachment while collecting,
@@ -861,7 +967,7 @@ namespace Bamboo.Core.Application.Services
             // # Clean up the checklist. The checklist is split in chunks and files are garbage-collected
             // # for each chunk.
             // removed = 0
-            // for names in self.env.cr.split_for_in_conditions(checklist):
+            // for names in split_every(self.env.cr.IN_MAX, checklist):
             //     # determine which files to keep among the checklist
             //     self.env.cr.execute("SELECT store_fname FROM ir_attachment WHERE store_fname IN %s", [names])
             //     whitelist = set(row[0] for row in self.env.cr.fetchall())
@@ -874,7 +980,7 @@ namespace Bamboo.Core.Application.Services
             //                 os.unlink(self._full_path(fname))
             //                 _logger.debug("_file_gc unlinked %s", self._full_path(fname))
             //                 removed += 1
-            //             except (OSError, IOError):
+            //             except OSError:
             //                 _logger.info("_file_gc could not unlink %s", self._full_path(fname), exc_info=True)
             //         with contextlib.suppress(OSError):
             //             os.unlink(filepath)
@@ -943,7 +1049,7 @@ namespace Bamboo.Core.Application.Services
             // def _generate_cloud_storage_blob_name(self):
             // """
             // Generate a unique blob name for the attachment
-            // :param attachment: an ir.attachment record
+            // 
             // :return: A unique blob name str
             // """
             // return f'{self.id}/{uuid.uuid4()}/{self.name}'
@@ -959,10 +1065,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // Generate the download info for the public client to directly download
             // the attachment's blob from the cloud storage.
-            // :param attachment: an ir.attachment record
+            // 
             // :return: An download_info dictionary containing:
-            //     * download_url: cloud storage url with permission to download the file
-            //     * time_to_expiry: the time in seconds before the download url expires
+            // 
+            //     download_url
+            //         cloud storage url with permission to download the file
+            //     time_to_expiry
+            //         the time in seconds before the download url expires
             // """
             // raise NotImplementedError()
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_azure, FILE: ir_attachment.py) ---
@@ -1022,14 +1131,17 @@ namespace Bamboo.Core.Application.Services
             // """
             // Generate the upload info for the public client to directly upload a
             // file to the cloud storage.
-            // :param attachment: an ir.attachment record
+            // 
             // :return: An upload_info dictionary containing:
-            //     * upload_url: cloud storage url with permission to upload the file
-            //     * method: the request method used to upload the file
-            //     * response_status: the status of the response for a successful
-            //         upload request
-            //     * [Optionally] headers: a dictionary of headers to be added to the
-            //         upload request
+            // 
+            //     upload_url
+            //         cloud storage url with permission to upload the file
+            //     method
+            //         the request method used to upload the file
+            //     response_status
+            //         the status of the response for a successful upload request
+            //     [Optionally] headers
+            //         a dictionary of headers to be added to the upload request
             // """
             // raise NotImplementedError()
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_azure, FILE: ir_attachment.py) ---
@@ -1069,7 +1181,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // Generate a cloud blob url without signature or token for the attachment.
             // This url is only used to identify the cloud blob.
-            // :param attachment: an ir.attachment record
+            // 
             // :return: A cloud blob url str
             // """
             // raise NotImplementedError()
@@ -1104,9 +1216,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_azure, FILE: ir_attachment.py) ---
             // def _get_cloud_storage_azure_info(self):
-            // match = self._cloud_storage_azure_url_pattern.match(self.url or '')
+            // match = self._cloud_storage_azure_url_pattern.fullmatch(self.url or '')
             // if not match:
-            //     raise ValidationError(f'"{self.url}" is not a valid Azure Blob Storage URL.')
+            //     raise ValidationError(self.env._('%s is not a valid Azure Blob Storage URL.', self.url))
             // return {
             //     'account_name': match['account_name'],
             //     'container_name': match['container_name'],
@@ -1121,13 +1233,29 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_google, FILE: ir_attachment.py) ---
             // def _get_cloud_storage_google_info(self):
-            // match = self._cloud_storage_google_url_pattern.match(self.url)
+            // match = self._cloud_storage_google_url_pattern.fullmatch(self.url or '')
             // if not match:
-            //     raise ValidationError('%s is not a valid Google Cloud Storage URL.', self.url)
+            //     raise ValidationError(self.env._('%s is not a valid Google Cloud Storage URL.', self.url))
             // return {
             //     'bucket_name': match['bucket_name'],
             //     'blob_name': unquote(match['blob_name']),
             // }
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> GetCloudStorageUnsupportedModelsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage, FILE: ir_attachment.py) ---
+            // def _get_cloud_storage_unsupported_models(self):
+            // # Some models may use their attachments' data in the business code
+            // # We should avoid those attachments to be uploaded to the cloud storage
+            // models = self.env.registry.descendants(['mail.thread.main.attachment'], '_inherit', '_inherits')
+            // if 'documents.mixin' in self.env:
+            //     models.update(self.env.registry.descendants(['documents.mixin'], '_inherit'))
+            //     models.add('documents.document')
+            // return list(models)
             */
             return default;
         }
@@ -1150,54 +1278,9 @@ namespace Bamboo.Core.Application.Services
             //     'db_datas': data,
             // }
             // if data and self._storage() != 'db':
-            //     values['store_fname'] = self._file_write(data, values['checksum'])
+            //     values['store_fname'], _full_path = self._get_path(data, checksum)
             //     values['db_datas'] = False
             // return values
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> GetEdiSupportedFormatsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
-            // def _get_edi_supported_formats(self):
-            // """Get the list of supported formats.
-            // This function is meant to be overriden to add formats.
-            // 
-            // :returns:           A list of dictionary.
-            // 
-            // * format:           Optional but helps debugging.
-            //                     There are other methods that require the attachment
-            //                     to be an XML other than the standard one.
-            // * check:            Function to be called on the attachment to pre-check if decoding will work.
-            // * decoder:          Function to be called on the attachment to unwrap it.
-            // """
-            // 
-            // def is_xml(attachment):
-            //     # XML attachments received by mail have a 'text/plain' mimetype (cfr. context key:
-            //     # 'attachments_mime_plainxml'). Therefore, if content start with '<?xml', or if the filename ends with
-            //     # '.xml', it is considered as XML.
-            //     is_text_plain_xml = 'text/plain' in attachment.mimetype and (guess_mimetype(attachment.raw).endswith('/xml') or attachment.name.endswith('.xml'))
-            //     return attachment.mimetype.endswith('/xml') or is_text_plain_xml
-            // 
-            // return [
-            //     {
-            //         'format': 'pdf',
-            //         'check': lambda attachment: 'pdf' in attachment.mimetype,
-            //         'decoder': self._decode_edi_pdf,
-            //     },
-            //     {
-            //         'format': 'xml',
-            //         'check': is_xml,
-            //         'decoder': self._decode_edi_xml,
-            //     },
-            //     {
-            //         'format': 'binary',
-            //         'check': lambda attachment: True,
-            //         'decoder': self._decode_edi_binary,
-            //     },
-            // ]
             */
             return default;
         }
@@ -1210,6 +1293,23 @@ namespace Bamboo.Core.Application.Services
             // """Return a dict with the values that we need on the media dialog."""
             // self.ensure_one()
             // return self._read_format(['id', 'name', 'description', 'mimetype', 'checksum', 'url', 'type', 'res_id', 'res_model', 'public', 'access_token', 'image_src', 'image_width', 'image_height', 'original_id'])[0]
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> GetOwnershipTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
+            // def _get_ownership_token(self):
+            // """ Returns a scoped limited access token that indicates ownership of the attachment when
+            //     using _has_attachments_ownership. If verified by verify_limited_field_access_token,
+            //     accessing the attachment bypasses the ACLs.
+            // 
+            //     :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, field_name="id", scope="attachment_ownership")
             */
             return default;
         }
@@ -1231,6 +1331,22 @@ namespace Bamboo.Core.Application.Services
             // if os.path.isfile(full_path) and not self._same_content(bin_data, full_path):
             //     raise UserError(_("The attachment collides with an existing file."))
             // return fname, full_path
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> GetRawAccessTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _get_raw_access_token(self):
+            // """Return a scoped access token for the `raw` field. The token can be
+            // used with `ir_binary._find_record` to bypass access rights.
+            // 
+            // :rtype: str
+            // """
+            // self.ensure_one()
+            // return limited_field_access_token(self, "raw", scope="binary")
             */
             return default;
         }
@@ -1257,7 +1373,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_attachment.py) ---
             // def get_serving_groups(self):
-            // return super(Attachment, self).get_serving_groups() + ['website.group_website_designer']
+            // return super().get_serving_groups() + ['website.group_website_designer']
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def get_serving_groups(self):
             // """ An ir.attachment record may be used as a fallback in the
@@ -1284,6 +1400,93 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrAttachment> GetStoreOwnershipFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
+            // def _get_store_ownership_fields(self):
+            // return [Store.Attr("ownership_token", lambda a: a._get_ownership_token())]
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> GetThumbnailTokenInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
+            // def _get_thumbnail_token(self):
+            // self.ensure_one()
+            // return limited_field_access_token(self, "thumbnail", scope="binary")
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> HasAttachmentsOwnershipInternalAsync(object attachment_tokens)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
+            // def _has_attachments_ownership(self, attachment_tokens):
+            // """ Checks if the current user has ownership of all attachments in the recordset.
+            //     Ownership is defined as either:
+            //     - Having 'write' access to the attachment.
+            //     - Providing a valid, scoped 'attachment_ownership' access token.
+            // 
+            //     :param list attachment_tokens: A list of access tokens
+            // """
+            // attachment_tokens = attachment_tokens or ([None] * len(self))
+            // if len(attachment_tokens) != len(self):
+            //     raise UserError(_("An access token must be provided for each attachment."))
+            // 
+            // def is_owned(attachment, token):
+            //     if not attachment.exists():
+            //         return False
+            //     if attachment.sudo(False).has_access("write"):
+            //         return True
+            //     return token and verify_limited_field_access_token(
+            //         attachment, "id", token, scope="attachment_ownership"
+            //     )
+            // 
+            // return all(is_owned(att, tok) for att, tok in zip(self, attachment_tokens, strict=True))
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> InaccessibleComodelRecordsInternalAsync(List<Guid> model_and_ids, string operation)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _inaccessible_comodel_records(self, model_and_ids: dict[str, Collection[int]], operation: str):
+            // # check access rights on the records
+            // if self.env.su:
+            //     return
+            // for res_model, res_ids in model_and_ids.items():
+            //     res_ids = OrderedSet(filter(None, res_ids))
+            //     if not res_model or not res_ids:
+            //         # nothing to check
+            //         continue
+            //     # forbid access to attachments linked to removed models as we do not
+            //     # know what persmissions should be checked
+            //     if res_model not in self.env:
+            //         for res_id in res_ids:
+            //             yield res_model, res_id
+            //         continue
+            //     records = self.env[res_model].browse(res_ids)
+            //     if res_model == 'res.users' and len(records) == 1 and self.env.uid == records.id:
+            //         # by default a user cannot write on itself, despite the list of writeable fields
+            //         # e.g. in the case of a user inserting an image into his image signature
+            //         # we need to bypass this check which would needlessly throw us away
+            //         continue
+            //     try:
+            //         records = records._filtered_access(operation)
+            //     except MissingError:
+            //         records = records.exists()._filtered_access(operation)
+            //     res_ids.difference_update(records._ids)
+            //     for res_id in res_ids:
+            //         yield res_model, res_id
+            */
+            return default;
+        }
+
         protected async Task<IrAttachment> IndexDocxInternalAsync(object bin_data)
         {
             /*
@@ -1306,7 +1509,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrAttachment> IndexInternalAsync(object bin_data, object file_type, object checksum)
+        protected async Task<IrAttachment> IndexInternalAsync(object bin_data, string file_type, object checksum)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
@@ -1327,19 +1530,15 @@ namespace Bamboo.Core.Application.Services
             //     index_content_cache[checksum] = res
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def _index(self, bin_data, file_type, checksum=None):
+            // def _index(self, bin_data: bytes, file_type: str, checksum=None) -> str | None:
             // """ compute the index content of the given binary data.
-            //     This is a python implementation of the unix command 'strings'.
-            //     :param bin_data : datas in binary form
-            //     :return index_content : string containing all the printable character of the binary data
+            // This is a python implementation of the unix command 'strings'.
             // """
-            // index_content = False
-            // if file_type:
-            //     index_content = file_type.split('/')[0]
-            //     if index_content == 'text': # compute index_content only for text type
-            //         words = re.findall(b"[\x20-\x7E]{4,}", bin_data)
-            //         index_content = b"\n".join(words).decode('ascii')
-            // return index_content
+            // # compute index_content only for text type
+            // if file_type and file_type.startswith('text/'):
+            //     words = re.findall(rb"[\x20-\x7E]{4,}", bin_data)
+            //     return b"\n".join(words).decode('ascii')
+            // return None
             */
             return default;
         }
@@ -1351,18 +1550,78 @@ namespace Bamboo.Core.Application.Services
             // def _index_opendoc(self, bin_data):
             // '''Index OpenDocument documents (.odt, .ods...)'''
             // 
-            // buf = u""
             // f = io.BytesIO(bin_data)
+            // buf = []
+            // MAX_COLUMN_REPEAT = 100
+            // MAX_ROW_REPEAT = 50
+            // main_namespaces = {
+            //     'office': 'urn:oasis:names:tc:opendocument:xmlns:office:1.0',
+            //     'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
+            //     'table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
+            //     'manifest': 'urn:oasis:names:tc:opendocument:xmlns:manifest:1.0'
+            // }
+            // 
+            // def extract_row(row):
+            //     cells = []
+            //     for cell in row.xpath('.//table:table-cell | .//table:covered-table-cell', namespaces=main_namespaces):
+            //         repeat = cell.get(f'{{{main_namespaces["table"]}}}number-columns-repeated')
+            //         repeat_count = min(int(repeat), MAX_COLUMN_REPEAT) if repeat and repeat.isdigit() else 1
+            //         text_parts = cell.xpath('.//text:p//text()', namespaces=main_namespaces)
+            //         cell_text = ' '.join(t.strip() for t in text_parts if t.strip())
+            //         cells.extend([cell_text] * repeat_count)
+            //     return cells
+            // 
+            // def extract_spreadsheet(content):
+            //     sheets_csv = []
+            //     tables = content.xpath('.//table:table', namespaces=main_namespaces)
+            //     for table in tables:
+            //         table_rows = []
+            //         table_name = table.get(f'{{{main_namespaces["table"]}}}name')
+            //         if not table_name:
+            //             table_name = f"Sheet{len(sheets_csv) + 1}"
+            //         table_name_escaped = _csv_escape(table_name)
+            //         for row in table.xpath('.//table:table-row', namespaces=main_namespaces):
+            //             row_repeat = row.get(f'{{{main_namespaces["table"]}}}number-rows-repeated')
+            //             row_repeat_count = min(int(row_repeat), MAX_ROW_REPEAT) if row_repeat and row_repeat.isdigit() else 1
+            // 
+            //             cells = extract_row(row)
+            //             if not any(cells):
+            //                 continue
+            // 
+            //             while cells and not cells[-1]:
+            //                 cells.pop()
+            // 
+            //             row_str = ','.join([table_name_escaped] + list(map(_csv_escape, cells)))
+            //             if row_str.replace(',', '').strip():
+            //                 table_rows.extend([row_str] * row_repeat_count)
+            // 
+            //         if table_rows:
+            //             sheets_csv.append('\n'.join(table_rows))
+            // 
+            //     return sheets_csv
+            // 
+            // def extract_text(content):
+            //     lines = []
+            //     for element in content.xpath('.//text:p | .//text:h | .//text:list-item', namespaces=main_namespaces):
+            //         text = ''.join(element.xpath('.//text()', namespaces=main_namespaces)).strip()
+            //         if text:
+            //             lines.append(text)
+            //     return lines
+            // 
             // if zipfile.is_zipfile(f):
             //     try:
             //         zf = zipfile.ZipFile(f)
-            //         content = xml.dom.minidom.parseString(zf.read("content.xml"))
-            //         for val in ["text:p", "text:h", "text:list"]:
-            //             for element in content.getElementsByTagName(val):
-            //                 buf += textToString(element) + "\n"
+            //         content = etree.fromstring(zf.read('content.xml'))
+            //         mime_type = zf.read('mimetype').decode('utf-8').strip()
+            //         if mime_type and 'spreadsheet' in mime_type:
+            //             buf.extend(extract_spreadsheet(content))
+            //         else:
+            //             buf.extend(extract_text(content))
             //     except Exception:
             //         pass
-            // return buf
+            // 
+            // buf_str = '\n\n'.join(buf)
+            // return _clean_text_content(buf_str)
             */
             return default;
         }
@@ -1373,24 +1632,37 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
             // def _index_pdf(self, bin_data):
             // '''Index PDF documents'''
-            // if PDFResourceManager is None:
-            //     return
-            // buf = u""
-            // if bin_data.startswith(b'%PDF-'):
-            //     f = io.BytesIO(bin_data)
-            //     try:
-            //         resource_manager = PDFResourceManager()
-            //         with io.StringIO() as content, TextConverter(resource_manager, content) as device:
-            //             logging.getLogger("pdfminer").setLevel(logging.CRITICAL)
-            //             interpreter = PDFPageInterpreter(resource_manager, device)
+            // if not bin_data.startswith(b'%PDF-'):
+            //     return ""
+            // try:
+            //     if not importlib.util.find_spec('pdfminer.high_level'):
+            //         return ""
+            //     from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter  # noqa: PLC0415
+            //     from pdfminer.converter import TextConverter  # noqa: PLC0415
+            //     from pdfminer.layout import LAParams  # noqa: PLC0415
+            //     from pdfminer.pdfpage import PDFPage  # noqa: PLC0415
+            //     logging.getLogger("pdfminer").setLevel(logging.CRITICAL)
+            // except ImportError:
+            //     # warned already during init of module
+            //     return ""
+            // f = io.BytesIO(bin_data)
+            // try:
+            //     resource_manager = PDFResourceManager()
+            //     laparams = LAParams(detect_vertical=True)
             // 
-            //             for page in PDFPage.get_pages(f):
-            //                 interpreter.process_page(page)
+            //     with io.StringIO() as content, TextConverter(
+            //         resource_manager,
+            //         content,
+            //         laparams=laparams
+            //     ) as device:
+            //         interpreter = PDFPageInterpreter(resource_manager, device)
+            //         for page in PDFPage.get_pages(f):
+            //             interpreter.process_page(page)
             // 
-            //             buf = content.getvalue()
-            //     except Exception:
-            //         pass
-            // return buf
+            //         buf = content.getvalue()
+            //     return _clean_text_content(buf)
+            // except Exception:  # noqa: BLE001
+            //     return ""
             */
             return default;
         }
@@ -1427,20 +1699,57 @@ namespace Bamboo.Core.Application.Services
             // def _index_xlsx(self, bin_data):
             // '''Index Microsoft .xlsx documents'''
             // 
-            // buf = u""
+            // try:
+            //     from openpyxl import load_workbook  # noqa: PLC0415
+            //     logging.getLogger("openpyxl").setLevel(logging.CRITICAL)
+            // except ImportError:
+            //     _logger.info('openpyxl is not installed.')
+            //     return ""
+            // 
             // f = io.BytesIO(bin_data)
-            // if zipfile.is_zipfile(f):
-            //     try:
-            //         zf = zipfile.ZipFile(f)
-            //         content = xml.dom.minidom.parseString(zf.read("xl/sharedStrings.xml"))
-            //         for val in ["t"]:
-            //             for element in content.getElementsByTagName(val):
-            //                 buf += textToString(element) + "\n"
-            //     except Exception:
-            //         pass
-            // return buf
+            // all_sheets = []
+            // try:
+            //     with warnings.catch_warnings():
+            //         warnings.simplefilter("ignore")
+            //         workbook = load_workbook(f, data_only=True, read_only=True)
+            //         for sheet in workbook.worksheets:
+            //             sheet_name = sheet.title
+            //             sheet_name_escaped = _csv_escape(sheet_name)
+            //             sheet_rows = []
+            //             for row in sheet.iter_rows(values_only=True):
+            //                 if not any(row):
+            //                     continue
+            //                 row_cells = [sheet_name_escaped] + [
+            //                     _csv_escape(str(cell) if cell is not None else '') for cell in row
+            //                 ]
+            //                 sheet_rows.append(','.join(row_cells))
+            //             sheet_data = '\n'.join(sheet_rows)
+            //             if sheet_data:
+            //                 all_sheets.append(sheet_data)
+            // except Exception:  # noqa: BLE001
+            //     pass
+            // 
+            // all_sheets_str = '\n\n'.join(all_sheets)
+            // return _clean_text_content(all_sheets_str)
             */
             return default;
+        }
+
+        public async Task<IrAttachment> InitAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: ir_attachment.py) ---
+            // def init(self):
+            // if self.env.registry.has_trigram:
+            //     indexed_field = SQL('UNACCENT(index_content)') if self.env.registry.has_unaccent else SQL('index_content')
+            // 
+            //     self.env.cr.execute(SQL('''
+            //         CREATE INDEX IF NOT EXISTS ir_attachment_index_content_applicant_trgm_idx
+            //             ON ir_attachment USING gin (%(indexed_field)s gin_trgm_ops)
+            //          WHERE res_model = 'hr.applicant'
+            //     ''', indexed_field=indexed_field))
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<IrAttachment> InverseDatasInternalAsync()
@@ -1463,6 +1772,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<IrAttachment> IsRemoteSourceInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _is_remote_source(self):
+            // self.ensure_one()
+            // return self.url and not self.file_size and self.url.startswith(('http://', 'https://', 'ftp://'))
+            */
+            return default;
+        }
+
         protected async Task<IrAttachment> MarkForGcInternalAsync(object fname)
         {
             /*
@@ -1470,7 +1790,7 @@ namespace Bamboo.Core.Application.Services
             // def _mark_for_gc(self, fname):
             // """ Add ``fname`` in a checklist for the filestore garbage collection. """
             // assert isinstance(self, IrAttachment)
-            // fname = re.sub('[.]', '', fname).strip('/\\')
+            // fname = re.sub('[.:]', '', fname).strip('/\\')
             // # we use a spooldir: add an empty file in the subdirectory 'checklist'
             // full_path = os.path.join(self._full_path('checklist'), fname)
             // if not os.path.exists(full_path):
@@ -1490,15 +1810,71 @@ namespace Bamboo.Core.Application.Services
             // def _migrate(self):
             // record_count = len(self)
             // storage = self._storage().upper()
-            // # When migrating to filestore verifying if the directory has write permission
-            // if storage == 'FILE':
-            //     filestore = self._filestore()
-            //     if not os.access(filestore, os.W_OK):
-            //         raise PermissionError("Write permission denied for filestore directory.")
             // for index, attach in enumerate(self):
             //     _logger.debug("Migrate attachment %s/%s to %s", index + 1, record_count, storage)
             //     # pass mimetype, to avoid recomputation
             //     attach.write({'raw': attach.raw, 'mimetype': attach.mimetype})
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> MigrateLocalToCloudStorageInternalAsync(object session)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: ir_attachment.py) ---
+            // def _migrate_local_to_cloud_storage(self, session):
+            // """Migrate attachment from local binary storage to cloud storage"""
+            // if self.type != 'binary':
+            //     raise ValidationError(_("Attachment (%s) is not a binary attachment and cannot be migrated to cloud storage.", self.id))
+            // if not self.store_fname:
+            //     raise ValidationError(_("Attachment (%s) does not have a stored filename and cannot be migrated to cloud storage.", self.id))
+            // filepath = self._full_path(self.store_fname)
+            // self.url = self._generate_cloud_storage_url()
+            // upload_info = self._generate_cloud_storage_upload_info()
+            // headers = upload_info.get('headers')
+            // with open(filepath, 'rb') as f:
+            //     # upload rate limit can be set by nginx proxy for
+            //     # google cloud storage or azure blob storage by url matching
+            //     response = session.request(upload_info['method'], upload_info['url'], data=f, headers=headers, timeout=(10, 30))
+            //     if response.status_code != upload_info['response_status']:
+            //         raise ValidationError(_('Failed to upload attachment %(id)s to cloud storage: %(code)s', id=self.id, code=response.status_code))
+            // self.write({
+            //     'type': 'cloud_storage',
+            //     'mimetype': self.mimetype,  # force kept the mimetype
+            //     'raw': False,
+            // })
+            */
+            return default;
+        }
+
+        protected async Task<IrAttachment> MigrateRemoteToLocalInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: cloud_storage, FILE: ir_attachment.py) ---
+            // def _migrate_remote_to_local(self):
+            // if self.type != 'cloud_storage':
+            //     return super()._migrate_remote_to_local()
+            // url = self._generate_cloud_storage_download_info()['url']
+            // response = requests.get(url, timeout=10)
+            // response.raise_for_status()
+            // if response.status_code != 200:
+            //     raise ValidationError(_(
+            //         "Failed to download attachment (%(id)s) from cloud: %(code)s - %(reason)s",
+            //         id=self.id, code=response.status_code, reason=response.reason,
+            //     ))
+            // attachment_data = response.content
+            // _logger.info("Migrating attachment (%s) with url (%s) from cloud_storage to binary.", self.id, self.url)
+            // self.write({
+            //     'type': 'binary',
+            //     'url': False,
+            //     'raw': attachment_data,
+            // })
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def _migrate_remote_to_local(self):
+            // if self.type == 'binary':
+            //     return
+            // if self.type == 'url':
+            //     raise ValidationError(_("URL attachment (%s) shouldn't be migrated to local.", self.id))
             */
             return default;
         }
@@ -1508,10 +1884,11 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
             // def _post_add_create(self, **kwargs):
-            // move_attachments = self.filtered(lambda attachment: attachment.res_model == 'account.move')
-            // moves_per_id = self.env['account.move'].browse([attachment.res_id for attachment in move_attachments]).grouped('id')
-            // for attachment in move_attachments:
-            //     moves_per_id[attachment.res_id]._check_and_decode_attachment(attachment)
+            // for move_id, attachments in self.filtered(lambda attachment: attachment.res_model == 'account.move').grouped('res_id').items():
+            //     move = self.env['account.move'].browse(move_id)
+            //     files_data = move._to_files_data(attachments)
+            //     files_data.extend(move._unwrap_attachments(files_data))
+            //     move._extend_with_attachments(files_data)
             // super()._post_add_create(**kwargs)
             --- ODOO METHOD SOURCE (MODULE: cloud_storage, FILE: ir_attachment.py) ---
             // def _post_add_create(self, **kwargs):
@@ -1536,6 +1913,17 @@ namespace Bamboo.Core.Application.Services
             // """
             // super()._post_add_create(**kwargs)
             // self.register_as_main_attachment(force=False)
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: ir_attachment.py) ---
+            // def _post_add_create(self, **kwargs):
+            // super()._post_add_create(**kwargs)
+            // if self.res_model == "mrp.bom":
+            //     bom = self.env['mrp.bom'].browse(self.res_id)
+            //     self.res_model = bom.product_id._name if bom.product_id else bom.product_tmpl_id._name
+            //     self.res_id = bom.product_id.id if bom.product_id else bom.product_tmpl_id.id
+            //     self.env['product.document'].create({
+            //         'ir_attachment_id': self.id,
+            //         'attached_on_mrp': 'bom'
+            //     })
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def _post_add_create(self, **kwargs):
             // # TODO master: rename to _post_upload, better indicating its usage
@@ -1575,7 +1963,10 @@ namespace Bamboo.Core.Application.Services
             //             nw, nh = map(int, max_resolution.split('x'))
             //             if w > nw or h > nh:
             //                 img = img.resize(nw, nh)
-            //                 quality = int(ICP('base.image_autoresize_quality', 80))
+            //                 if _subtype == 'jpeg':  # Do not affect PNGs color palette
+            //                     quality = int(ICP('base.image_autoresize_quality', 80))
+            //                 else:
+            //                     quality = 0
             //                 image_data = img.image_quality(quality=quality)
             //                 if is_raw:
             //                     values['raw'] = image_data
@@ -1591,6 +1982,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<IrAttachment> PreviewAttachmentAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: ir_attachment.py) ---
+            // def action_preview_attachment(self):
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': '/web/content/%s/%s' % (self.id, self.name),
+            //     'target': 'new',
+            // }
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         public async Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid id)
         {
             /*
@@ -1601,7 +2006,7 @@ namespace Bamboo.Core.Application.Services
             //     ("url", "=like", "/web/assets/%"),
             //     ('res_model', '=', 'ir.ui.view'),
             //     ('res_id', '=', 0),
-            //     ('create_uid', '=', SUPERUSER_ID),
+            //     ('create_uid', '=', api.SUPERUSER_ID),
             // ]).unlink()
             // self.env.registry.clear_cache('assets')
             */
@@ -1661,78 +2066,96 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
-            // # add res_field=False in domain if not present; the arg[0] trick below
-            // # works for domain items and '&'/'|'/'!' operators too
+            // def _search(self, domain, offset=0, limit=None, order=None, *, active_test=True, bypass_access=False):
+            // assert not self._active_name, "active name not supported on ir.attachment"
             // disable_binary_fields_attachments = False
-            // if not self.env.context.get('skip_res_field_check') and not any(arg[0] in ('id', 'res_field') for arg in domain):
+            // domain = Domain(domain)
+            // if (
+            //     not self.env.context.get('skip_res_field_check')
+            //     and not any(d.field_expr in ('id', 'res_field') for d in domain.iter_conditions())
+            //     and not bypass_access
+            // ):
             //     disable_binary_fields_attachments = True
-            //     domain = [('res_field', '=', False)] + domain
+            //     domain &= Domain('res_field', '=', False)
             // 
-            // if self.env.is_superuser():
-            //     # rules do not apply for the superuser
-            //     return super()._search(domain, offset, limit, order)
+            // domain = domain.optimize(self)
+            // if self.env.su or bypass_access or domain.is_false():
+            //     return super()._search(domain, offset, limit, order, active_test=active_test, bypass_access=bypass_access)
             // 
-            // # For attachments, the permissions of the document they are attached to
-            // # apply, so we must remove attachments for which the user cannot access
-            // # the linked document. For the sake of performance, fetch the fields to
-            // # determine those permissions within the same SQL query.
-            // fnames_to_read = ['id', 'res_model', 'res_id', 'res_field', 'public', 'create_uid']
-            // query = super()._search(domain, offset, limit, order)
-            // rows = self.env.execute_query(query.select(
-            //     *[self._field_to_sql(self._table, fname) for fname in fnames_to_read],
-            // ))
+            // # General access rules
+            // # - public == True are always accessible
+            // sec_domain = Domain('public', '=', True)
+            // # - res_id == False needs to be system user or creator
+            // res_ids = condition_values(self, 'res_id', domain)
+            // if not res_ids or False in res_ids:
+            //     if self.env.is_system():
+            //         sec_domain |= Domain('res_id', '=', False)
+            //     else:
+            //         sec_domain |= Domain('res_id', '=', False) & Domain('create_uid', '=', self.env.uid)
             // 
-            // # determine permissions based on linked records
-            // all_ids = []
-            // allowed_ids = set()
-            // model_attachments = defaultdict(lambda: defaultdict(set))   # {res_model: {res_id: set(ids)}}
-            // for id_, res_model, res_id, res_field, public, create_uid in rows:
-            //     all_ids.append(id_)
-            //     if public:
-            //         allowed_ids.add(id_)
-            //         continue
-            // 
-            //     if res_field and not self.env.is_system():
-            //         field = self.env[res_model]._fields[res_field]
-            //         if field.groups and not self.env.user.has_groups(field.groups):
+            // # Search by res_model and res_id, filter using permissions from res_model
+            // # - res_id != False needs then check access on the linked res_model record
+            // # - res_field != False needs to check field access on the res_model
+            // res_model_names = condition_values(self, 'res_model', domain)
+            // if 0 < len(res_model_names or ()) <= 5:
+            //     env = self.with_context(active_test=False).env
+            //     for res_model_name in res_model_names:
+            //         comodel = env.get(res_model_name)
+            //         if comodel is None:
             //             continue
+            //         codomain = Domain('res_model', '=', comodel._name)
+            //         comodel_res_ids = condition_values(self, 'res_id', domain.map_conditions(
+            //             lambda cond: codomain & cond if cond.field_expr == 'res_model' else cond
+            //         ))
+            //         query = comodel._search(Domain('id', 'in', comodel_res_ids) if comodel_res_ids else Domain.TRUE)
+            //         if query.is_empty():
+            //             continue
+            //         if query.where_clause:
+            //             codomain &= Domain('res_id', 'in', query)
+            //         if not disable_binary_fields_attachments and not self.env.is_system():
+            //             accessible_fields = [
+            //                 field.name
+            //                 for field in comodel._fields.values()
+            //                 if field.type == 'binary' or (field.relational and field.comodel_name == self._name)
+            //                 if comodel._has_field_access(field, 'read')
+            //             ]
+            //             accessible_fields.append(False)
+            //             codomain &= Domain('res_field', 'in', accessible_fields)
+            //         sec_domain |= codomain
             // 
-            //     if not res_id and (self.env.is_system() or create_uid == self.env.uid):
-            //         allowed_ids.add(id_)
-            //         continue
-            //     if not (res_field and disable_binary_fields_attachments) and res_model and res_id:
-            //         model_attachments[res_model][res_id].add(id_)
+            //     return super()._search(domain & sec_domain, offset, limit, order, active_test=active_test)
             // 
-            // # check permissions on records model by model
-            // for res_model, targets in model_attachments.items():
-            //     if res_model not in self.env:
-            //         allowed_ids.update(id_ for ids in targets.values() for id_ in ids)
-            //         continue
-            //     if not self.env[res_model].has_access('read'):
-            //         continue
-            //     # filter ids according to what access rules permit
-            //     ResModel = self.env[res_model].with_context(active_test=False)
-            //     for res_id in ResModel.search([('id', 'in', list(targets))])._ids:
-            //         allowed_ids.update(targets[res_id])
-            // 
-            // # filter out all_ids by keeping allowed_ids only
-            // result = [id_ for id_ in all_ids if id_ in allowed_ids]
-            // 
-            // # If the original search reached the limit, it is important the
-            // # filtered record set does so too. When a JS view receive a
-            // # record set whose length is below the limit, it thinks it
-            // # reached the last page. To avoid an infinite recursion due to the
-            // # permission checks the sub-call need to be aware of the number of
-            // # expected records to retrieve
-            // if len(all_ids) == limit and len(result) < self._context.get('need', limit):
-            //     need = self._context.get('need', limit) - len(result)
-            //     more_ids = self.with_context(need=need)._search(
-            //         domain, offset + len(all_ids), limit, order,
-            //     )
-            //     result.extend(list(more_ids)[:limit - len(result)])
-            // 
-            // return self.browse(result)._as_query(order)
+            // # We do not have a small restriction on res_model. We still need to
+            // # support other queries such as: `('id', 'in' ...)`.
+            // # Restrict with domain and add all attachments linked to a model.
+            // domain &= sec_domain | Domain('res_model', '!=', False)
+            // domain = domain.optimize_full(self)
+            // ordered = bool(order)
+            // if limit is None:
+            //     records = self.sudo().with_context(active_test=False).search_fetch(
+            //         domain, SECURITY_FIELDS, order=order).sudo(False)
+            //     return records._filtered_access('read')[offset:]._as_query(ordered)
+            // # Fetch by small batches
+            // sub_offset = 0
+            // limit += offset
+            // result = []
+            // if not ordered:
+            //     # By default, order by model to batch access checks.
+            //     order = 'res_model nulls first, id'
+            // while len(result) < limit:
+            //     records = self.sudo().with_context(active_test=False).search_fetch(
+            //         domain,
+            //         SECURITY_FIELDS,
+            //         offset=sub_offset,
+            //         limit=PREFETCH_MAX,
+            //         order=order,
+            //     ).sudo(False)
+            //     result.extend(records._filtered_access('read')._ids)
+            //     if len(records) < PREFETCH_MAX:
+            //         # There are no more records
+            //         break
+            //     sub_offset += PREFETCH_MAX
+            // return self.browse(result[offset:limit])._as_query(ordered)
             */
             return default;
         }
@@ -1742,17 +2165,31 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def _set_attachment_data(self, asbytes):
+            // old_fnames = []
+            // checksum_raw_map = {}
+            // 
             // for attach in self:
             //     # compute the fields that depend on datas
             //     bin_data = asbytes(attach)
             //     vals = self._get_datas_related_values(bin_data, attach.mimetype)
+            //     if bin_data:
+            //         checksum_raw_map[vals['checksum']] = bin_data
             // 
             //     # take current location in filestore to possibly garbage-collect it
-            //     fname = attach.store_fname
+            //     if attach.store_fname:
+            //         old_fnames.append(attach.store_fname)
+            // 
             //     # write as superuser, as user probably does not have write access
             //     super(IrAttachment, attach.sudo()).write(vals)
-            //     if fname:
+            // 
+            // if self._storage() != 'db':
+            //     # before touching the filestore, flush to prevent the GC from
+            //     # running until the end of the transaction
+            //     self.flush_recordset(['checksum', 'store_fname'])
+            //     for fname in old_fnames:
             //         self._file_delete(fname)
+            //     for checksum, raw in checksum_raw_map.items():
+            //         self._file_write(raw, checksum)
             */
             return default;
         }
@@ -1844,54 +2281,30 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrAttachment> ToStoreInternalAsync()
+        protected async Task<IrAttachment> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
-            // def _to_store(self, store: Store, **kwargs):
-            // super()._to_store(store, **kwargs)
-            // for attachment in self:
-            //     # TODO master: make a real computed / inverse field and stop propagating
-            //     # kwargs through hook methods
-            //     # sudo: discuss.voice.metadata - checking the existence of voice metadata for accessible attachments is fine
-            //     store.add(attachment, {"voice": bool(attachment.sudo().voice_ids)})
+            // def _to_store_defaults(self, target):
+            // # sudo: discuss.voice.metadata - checking the existence of voice metadata for accessible
+            // # attachments is fine
+            // return super()._to_store_defaults(target) + [Store.Many("voice_ids", [], sudo=True)]
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
-            // def _to_store(self, store: Store, /, *, fields=None, extra_fields=None):
-            // if fields is None:
-            //     fields = [
-            //         "checksum",
-            //         "create_date",
-            //         "filename",
-            //         "mimetype",
-            //         "name",
-            //         "res_name",
-            //         "size",
-            //         "thread",
-            //         "type",
-            //         "url",
-            //     ]
-            // if extra_fields:
-            //     fields.extend(extra_fields)
-            // for attachment in self:
-            //     data = attachment._read_format(
-            //         [field for field in fields if field not in ["filename", "size", "thread"]],
-            //         load=False,
-            //     )[0]
-            //     if "filename" in fields:
-            //         data["filename"] = attachment.name
-            //     if "size" in fields:
-            //         data["size"] = attachment.file_size
-            //     if "thread" in fields:
-            //         data["thread"] = (
-            //             Store.one(
-            //                 self.env[attachment.res_model].browse(attachment.res_id),
-            //                 as_thread=True,
-            //                 only_id=True,
-            //             )
-            //             if attachment.res_model != "mail.compose.message" and attachment.res_id
-            //             else False
-            //         )
-            //     store.add(attachment, data)
+            // def _to_store_defaults(self, target):
+            // return [
+            //     "checksum",
+            //     "create_date",
+            //     "file_size",
+            //     "has_thumbnail",
+            //     "mimetype",
+            //     "name",
+            //     Store.Attr("raw_access_token", lambda a: a._get_raw_access_token()),
+            //     "res_name",
+            //     Store.One("thread", [], as_thread=True),
+            //     Store.Attr("thumbnail_access_token", lambda a: a._get_thumbnail_token()),
+            //     "type",
+            //     "url",
+            // ]
             */
             return default;
         }
@@ -1899,36 +2312,42 @@ namespace Bamboo.Core.Application.Services
         public override async Task<object> UnlinkAsync(List<Guid> ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: ir_attachment.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
             // def unlink(self):
-            // if self.env.context.get('sync_attachment', True):
-            //     attachments_to_unlink = self.env['ir.attachment']
-            //     expenses_attachments = self.filtered(lambda att: att.res_model == 'hr.expense')
-            //     if expenses_attachments:
-            //         expenses = self.env['hr.expense'].browse(expenses_attachments.mapped('res_id'))
-            //         for expense in expenses.exists().filtered('sheet_id'):
-            //             checksums = set(expense.attachment_ids.mapped('checksum'))
-            //             attachments_to_unlink += expense.sheet_id.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            //     sheets_attachments = self.filtered(lambda att: att.res_model == 'hr.expense.sheet')
-            //     if sheets_attachments:
-            //         sheets = self.env['hr.expense.sheet'].browse(sheets_attachments.mapped('res_id'))
-            //         for sheet in sheets.exists():
-            //             checksums = set((sheet.attachment_ids & sheets_attachments).mapped('checksum'))
-            //             attachments_to_unlink += sheet.expense_line_ids.attachment_ids.filtered(lambda att: att.checksum in checksums)
-            //     super(IrAttachment, attachments_to_unlink).unlink()
-            // return super().unlink()
+            // invoice_pdf_attachments = self.filtered(lambda attachment:
+            //     attachment.res_model == 'account.move'
+            //     and attachment.res_id
+            //     and attachment.res_field in ('invoice_pdf_report_file', 'ubl_cii_xml_file')
+            //     and attachment.company_id.restrictive_audit_trail
+            // )
+            // if invoice_pdf_attachments:
+            //     # only detach the document from the field, but keep it in the database for the audit trail
+            //     # it shouldn't be an issue as there aren't any security group on the fields as it is the public report
+            //     invoice_pdf_attachments.res_field = False
+            //     today = format_date(self.env, fields.Date.context_today(self))
+            //     for attachment in invoice_pdf_attachments:
+            //         attachment_name = attachment.name
+            //         attachment_extension = ''
+            //         dot_index = attachment_name.rfind('.')
+            //         if dot_index > 0:
+            //             attachment_name = attachment.name[:dot_index]
+            //             attachment_extension = attachment.name[dot_index:]
+            //         attachment.name = _(
+            //             '%(attachment_name)s (detached by %(user)s on %(date)s)%(attachment_extension)s',
+            //             attachment_name=attachment_name,
+            //             attachment_extension=attachment_extension,
+            //             user=self.env.user.name,
+            //             date=today,
+            //         )
+            // return super(IrAttachment, self - invoice_pdf_attachments).unlink()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def unlink(self):
-            // if not self:
-            //     return True
-            // self.check('unlink')
-            // 
             // # First delete in the database, *then* in the filesystem if the
             // # database allowed it. Helps avoid errors when concurrent transactions
             // # are deleting the same file, and some of the transactions are
             // # rolled back by PostgreSQL (due to concurrent updates detection).
-            // to_delete = set(attach.store_fname for attach in self if attach.store_fname)
-            // res = super(IrAttachment, self).unlink()
+            // to_delete = OrderedSet(attach.store_fname for attach in self if attach.store_fname)
+            // res = super().unlink()
             // for file_path in to_delete:
             //     self._file_delete(file_path)
             // 
@@ -1951,66 +2370,47 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrAttachment> UnwrapEdiAttachmentsInternalAsync()
+        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrAttachment entity, List<string> fields)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
-            // def _unwrap_edi_attachments(self):
-            // """Decodes ir.attachment and unwrap sub-attachment into a sorted list of
-            // dictionary each representing an attachment.
-            // 
-            // :returns:           A list of dictionary for each attachment.
-            // * filename:         The name of the attachment.
-            // * content:          The content of the attachment.
-            // * type:             The type of the attachment.
-            // * xml_tree:         The tree of the xml if type is xml.
-            // * pdf_reader:       The pdf_reader if type is pdf.
-            // * attachment:       The associated ir.attachment if any
-            // * sort_weight:      The associated weigth used for sorting the arrays
-            // """
-            // to_process = []
-            // 
-            // for attachment in self:
-            //     supported_formats = attachment._get_edi_supported_formats()
-            //     for supported_format in supported_formats:
-            //         if supported_format['check'](attachment):
-            //             to_process += supported_format['decoder'](attachment.name, attachment.raw)
-            //             break
-            // 
-            // to_process.sort(key=lambda x: x['sort_weight'])
-            // 
-            // return to_process
-            */
-            return default;
-        }
-
-        public async Task<IrAttachment> ValidateAccessAsync(Guid id, IrAttachmentValidateAccessRequestDto input)
-        {
-            /*
+            // def write(self, vals):
+            // if vals.keys() & {'res_id', 'res_model', 'raw', 'datas', 'store_fname', 'db_datas', 'company_id'}:
+            //     try:
+            //         self._except_audit_trail()
+            //     except UserError as e:
+            //         if (
+            //             not hasattr(e, '_audit_trail')
+            //             or vals.get('res_model') != 'documents.document'
+            //             or vals.keys() & {'raw', 'datas', 'store_fname', 'db_datas'}
+            //         ):
+            //             raise  # do not raise if trying to version the attachment through a document
+            //         vals.pop('res_model', None)
+            //         vals.pop('res_id', None)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def validate_access(self, access_token):
-            // self.ensure_one()
-            // record_sudo = self.sudo()
-            // 
-            // if access_token:
-            //     tok = record_sudo.with_context(prefetch_fields=False).access_token
-            //     valid_token = consteq(tok or '', access_token)
-            //     if not valid_token:
-            //         raise AccessError("Invalid access token")
-            //     return record_sudo
-            // 
-            // if record_sudo.with_context(prefetch_fields=False).public:
-            //     return record_sudo
-            // 
-            // if self.env.user._is_portal():
-            //     # Check the read access on the record linked to the attachment
-            //     # eg: Allow to download an attachment on a task from /my/tasks/task_id
-            //     self.check('read')
-            //     return record_sudo
-            // 
-            // return self
+            // def write(self, vals):
+            // self.check_access('write')
+            // if vals.get('res_model') or vals.get('res_id'):
+            //     model_and_ids = defaultdict(OrderedSet)
+            //     if 'res_model' in vals and 'res_id' in vals:
+            //         model_and_ids[vals['res_model']].add(vals['res_id'])
+            //     else:
+            //         for record in self:
+            //             model_and_ids[vals.get('res_model', record.res_model)].add(vals.get('res_id', record.res_id))
+            //     if any(self._inaccessible_comodel_records(model_and_ids, 'write')):
+            //         raise AccessError(_("Sorry, you are not allowed to access this document."))
+            // # remove computed field depending of datas
+            // for field in ('file_size', 'checksum', 'store_fname'):
+            //     vals.pop(field, False)
+            // if 'mimetype' in vals or 'datas' in vals or 'raw' in vals:
+            //     vals = self._check_contents(vals)
+            // res = super().write(vals)
+            // if 'url' in vals or 'type' in vals:
+            //     self._check_serving_attachments()
+            // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

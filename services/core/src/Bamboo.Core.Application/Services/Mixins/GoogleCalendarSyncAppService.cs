@@ -67,7 +67,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # Increase performance handling 'future_events' edge case as it was an 'all_events' update.
             //     if archive_future_events:
             //         recurrence_update_setting = 'all_events'
-            // super(Meeting, self).action_mass_archive(recurrence_update_setting)
+            // super().action_mass_archive(recurrence_update_setting)
             */
             return default;
         }
@@ -162,12 +162,59 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def action_sendmail(self):
-            // email = self.env.user.email
-            // if email:
-            //     self.attendee_ids._send_mail_to_attendees(
+            // if self.env.user.email:
+            //     self.attendee_ids._notify_attendees(
             //         self.env.ref('calendar.calendar_template_meeting_invitation', raise_if_not_found=False),
             //     )
             // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlinkEventAsync<TEntity>(IEnumerable<TEntity> entities, Guid attendee_id, object recurrence) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def action_unlink_event(self, attendee_id=None, recurrence=False):
+            // """
+            // Delete the event after displaying the delete wizard if necessary.
+            // 
+            // :param attendee_id: The ID of the attendee for the event
+            // :param recurrence: Boolean indicating if the event is recurring
+            // :return: Action to delete the event
+            // """
+            // if self.user_id._has_any_active_synchronization() or len(self.ids) > 1:
+            //     self.unlink()
+            //     return {
+            //         'type': 'ir.actions.act_url',
+            //         'target': 'self',
+            //         'url': '/odoo/calendar'
+            //     }
+            // 
+            // template = self.env.ref('calendar.calendar_template_delete_event', raise_if_not_found=False)
+            // if not template:
+            //     self.unlink()
+            //     _logger.warning('Template "calendar.calendar_template_delete_event" was not found. Cannot send delete notifications.')
+            //     return {}
+            // 
+            // if self.ids and (lang := template._render_lang(self.ids)[self.id]):
+            //     context = {
+            //         'default_use_template': bool(template),
+            //         'default_template_id': template.id,
+            //         'default_attendee_id': attendee_id,
+            //         'default_calendar_event_id': self.id,
+            //         'default_recurrence': recurrence,
+            //         'model_description': self.with_context(lang=lang),
+            //     }
+            //     return {
+            //         'name': _('Delete Event'),
+            //         'res_model': 'calendar.popover.delete.wizard',
+            //         'view_id': self.env.ref('calendar.view_event_delete_wizard_form').id,
+            //         'type': 'ir.actions.act_window',
+            //         'context': context,
+            //         'target': 'new',
+            //         'views': [(False, 'form')],
+            //     }
             */
             return default;
         }
@@ -202,7 +249,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         }]
             //         event.with_user(event._get_event_user())._google_delete(google_service, event.google_id)
             //         event.google_id = False
-            // self.env['calendar.event'].create(vals)
+            // self.env['calendar.event'].with_context(skip_contact_description=True).create(vals)
             // 
             // self.calendar_event_ids.need_sync = False
             // return detached_events
@@ -326,7 +373,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for event in self:
             //     # remove the tracking data to avoid calling _track_template in the pre-commit phase
             //     self.env.cr.precommit.data.pop(f'mail.tracking.create.{event._name}.{event.id}', None)
-            // super(Meeting, my_cancelled_records)._cancel()
+            // super(CalendarEvent, my_cancelled_records)._cancel()
             // attendees = (self - my_cancelled_records).attendee_ids.filtered(lambda a: a.partner_id == user.partner_id)
             // attendees.state = 'declined'
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
@@ -380,12 +427,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
             // def _check_any_records_to_sync(self):
             // """ Returns True if there are pending records to be synchronized from Odoo to Google, False otherwise. """
-            // is_active_clause = (self._active_name, '=', True) if self._active_name else expression.TRUE_LEAF
-            // domain = expression.AND([self._get_sync_domain(), [
-            //     '|',
-            //         '&', ('google_id', '=', False), is_active_clause,
-            //         ('need_sync', '=', True),
-            // ]])
+            // is_active_clause = Domain(self._active_name, '=', True) if self._active_name else Domain.TRUE
+            // domain = self._get_sync_domain()
+            // domain &= (Domain('google_id', '=', False) & is_active_clause) | Domain('need_sync', '=', True)
             // return self.search_count(domain, limit=1) > 0
             */
             return default;
@@ -445,11 +489,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: calendar_event.py) ---
             // def _check_employees_availability_for_event(self, schedule_by_partner, event_interval):
-            // unavailable_partners = []
+            // unavailable_partners = self.env["res.partner"]
             // for partner, schedule in schedule_by_partner.items():
             //     common_interval = schedule & event_interval
             //     if sum_intervals(common_interval) != sum_intervals(event_interval):
-            //         unavailable_partners.append(partner.id)
+            //         unavailable_partners |= partner
             // return unavailable_partners
             */
             return default;
@@ -475,13 +519,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _check_modify_event_permission(self, values):
-            // # Check if event modification attempt by attendee is valid to avoid duplicate events creation.
-            // for event in self:
-            //     # Edge case: when restarting the synchronization, guests can write 'need_sync=True' on events.
-            //     google_sync_restart = values.get('need_sync') and len(values)
-            //     if not google_sync_restart and (event.guests_readonly and self.env.user.id != event.user_id.id):
-            //         raise ValidationError(_("The following event can only be updated by the organizer "
-            //                                 "according to the event permissions set on Google Calendar."))
+            // """ Check if event modification attempt by attendee is valid to avoid duplicate events creation. """
+            // # Edge case: when restarting the synchronization, guests can write 'need_sync=True' on events.
+            // google_sync_restart = values.get('need_sync') and len(values)
+            // # Edge case 2: when resetting an account, we must be able to erase the event's google_id.
+            // skip_event_permission = self.env.context.get('skip_event_permission', False)
+            // # Edge case 3: check if event is synchronizable in order to make sure the error is worth it.
+            // is_synchronizable = self._check_values_to_sync(values)
+            // if google_sync_restart or skip_event_permission or not is_synchronizable:
+            //     return
+            // if any(event.guests_readonly and self.env.user.id != event.user_id.id for event in self):
+            //     raise ValidationError(
+            //         _("The following event can only be updated by the organizer "
+            //         "according to the event permissions set on Google Calendar.")
+            //     )
             */
             return default;
         }
@@ -612,19 +663,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeCandidateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: calendar.py) ---
-            // def _compute_candidate_id(self):
-            // for event in self:
-            //     if not event.applicant_id:
-            //         continue
-            //     event.candidate_id = event.applicant_id.candidate_id
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeCurrentAttendeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -677,7 +715,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Hide private events' name for events which don't belong to the current user. """
             // hidden = self.filtered(lambda event: event._check_private_event_conditions())
             // hidden.display_name = _('Busy')
-            // super(Meeting, self - hidden)._compute_display_name()
+            // super(CalendarEvent, self - hidden)._compute_display_name()
             */
             return default;
         }
@@ -717,13 +755,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeEffectivePrivacyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _compute_effective_privacy(self):
+            // for event in self:
+            //     event.effective_privacy = event.privacy or event.sudo().user_id.calendar_default_privacy
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeFieldValueInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _compute_field_value(self, field):
             // if field.compute_sudo:
-            //     return super(Meeting, self.with_context(prefetch_fields=False))._compute_field_value(field)
+            //     return super(CalendarEvent, self.with_context(prefetch_fields=False))._compute_field_value(field)
             // return super()._compute_field_value(field)
             */
             return default;
@@ -930,24 +979,32 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeUnavailablePartnerIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _compute_unavailable_partner_ids(self):
+            // self.unavailable_partner_ids = False
+            // for start, stop, events in interval_from_events(self):
+            //     events_by_partner_id = events.partner_ids._get_busy_calendar_events(
+            //         start, stop)
+            //     for event in events:
+            //         for partner in event.partner_ids:
+            //             if event._is_partner_unavailable(partner, events_by_partner_id.get(partner._origin.id, self.env["calendar.event"])):
+            //                 event.unavailable_partner_ids |= partner
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: calendar_event.py) ---
             // def _compute_unavailable_partner_ids(self):
+            // super()._compute_unavailable_partner_ids()
             // complete_events = self.filtered(
             //     lambda event: event.start and event.stop and (event.stop > event.start or (event.stop >= event.start and event.allday)) and event.partner_ids)
-            // incomplete_event = self - complete_events
-            // incomplete_event.unavailable_partner_ids = []
             // if not complete_events:
             //     return
             // event_intervals = complete_events._get_events_interval()
             // for event, event_interval in event_intervals.items():
             //     # Event_interval is empty when an allday event contains at least one day where the company is closed
             //     if not event_interval:
-            //         event.unavailable_partner_ids = event.partner_ids
             //         continue
             //     start = event_interval._items[0][0]
             //     stop = event_interval._items[-1][1]
             //     schedule_by_partner = event.partner_ids._get_schedule(start, stop, merge=False)
-            //     event.unavailable_partner_ids = event._check_employees_availability_for_event(
+            //     event.unavailable_partner_ids |= event._check_employees_availability_for_event(
             //         schedule_by_partner, event_interval)
             */
             return default;
@@ -991,7 +1048,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_videocall_source(self):
             // events_with_google_url = self.filtered(lambda event: self.MEET_ROUTE in (event.videocall_location or ''))
             // events_with_google_url.videocall_source = 'google_meet'
-            // super(Meeting, self - events_with_google_url)._compute_videocall_source()
+            // super(CalendarEvent, self - events_with_google_url)._compute_videocall_source()
             */
             return default;
         }
@@ -1008,7 +1065,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # We need to make sure that the attendee_ids are recreated with new ids to avoid sharing attendees between events
             // # The copy should not have the same attendee status than the original event
             // default.update(partner_ids=[Command.set([])], attendee_ids=[Command.set([])])
-            // new_events = super().copy(default)
+            // new_events = super(CalendarEvent, self.with_context(skip_contact_description=True)).copy(default)
             // for old_event, new_event in zip(self, new_events):
             //     new_event.write({'partner_ids': [(Command.set(old_event.partner_ids.ids))]})
             // return new_events
@@ -1021,17 +1078,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def create(self, vals_list):
+            // description_context = self.env.context.get('skip_contact_description', False)
             // notify_context = self.env.context.get('dont_notify', False)
-            // return super(Meeting, self.with_context(dont_notify=notify_context)).create([
+            // return super(CalendarEvent, self.with_context(dont_notify=notify_context, skip_contact_description=description_context)).create([
             //     dict(vals, need_sync=False) if vals.get('recurrence_id') or vals.get('recurrency') else vals
             //     for vals in vals_list
             // ])
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
             // def create(self, vals_list):
-            // if any(vals.get('google_id') for vals in vals_list):
-            //     self.env.registry.clear_cache()  # _event_ids_from_google_ids
-            // if self.env.user.google_synchronization_stopped:
-            //     for vals in vals_list:
+            // user_ids = {v['user_id'] for v in vals_list if v.get('user_id')}
+            // users_with_sync = self.env['res.users'].browse(user_ids).filtered(lambda u: not u.sudo().google_synchronization_stopped)
+            // users_with_sync_set = set(users_with_sync.ids)
+            // 
+            // for vals in vals_list:
+            //     if vals.get('user_id', False) and vals['user_id'] not in users_with_sync_set:
             //         vals.update({'need_sync': False})
             // records = super().create(vals_list)
             // self._handle_allday_recurrences_edge_case(records, vals_list)
@@ -1061,7 +1121,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # Google reuse the event google_id to identify the recurrence in that case
             //     base_event = self.env['calendar.event'].search([('google_id', '=', vals['google_id'])])
             //     if not base_event:
-            //         base_event = self.env['calendar.event'].create(base_values)
+            //         base_event = self.env['calendar.event'].with_context(skip_contact_description=True).create(base_values)
             //     else:
             //         # We override the base_event values because they could have been changed in Google interface
             //         # The event google_id will be recalculated once the recurrence is created
@@ -1072,7 +1132,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     vals['event_tz'] = gevent.start.get('timeZone')
             //     attendee_values[base_event.id] = {'attendee_ids': base_values.get('attendee_ids')}
             // 
-            // recurrence = super(RecurrenceRule, self.with_context(dont_notify=True))._create_from_google(gevents, vals_list)
+            // recurrence = super(CalendarRecurrence, self.with_context(dont_notify=True))._create_from_google(gevents, vals_list)
             // generic_values_creation = {
             //     rec.id: attendee_values[rec.base_event_id.id]
             //     for rec in recurrence if attendee_values.get(rec.base_event_id.id)
@@ -1091,7 +1151,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _create_videocall_channel_id(self, name, partner_ids):
-            // videocall_channel = self.env['discuss.channel'].create_group(partner_ids, default_display_mode='video_full_screen', name=name)
+            // videocall_channel = self.env['discuss.channel']._create_group(partner_ids, default_display_mode='video_full_screen', name=name)
             // # if recurrent event, set channel to all other records of the same recurrency
             // if self.recurrency:
             //     recurrent_events_without_channel = self.env['calendar.event'].search([
@@ -1129,21 +1189,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def default_get(self, fields):
             // # super default_model='crm.lead' for easier use in addons
-            // if self.env.context.get('default_res_model') and not self.env.context.get('default_res_model_id'):
-            //     self = self.with_context(
-            //         default_res_model_id=self.env['ir.model']._get_id(self.env.context['default_res_model'])
+            // context = dict(self.env.context)
+            // if context.get('default_res_model') and not context.get('default_res_model_id'):
+            //     context.update(
+            //         default_res_model_id=self.env['ir.model']._get_id(context['default_res_model'])
+            //     )
+            // if context.get('default_res_model_id') and not context.get('default_res_model'):
+            //     context.update(
+            //         default_res_model=self.env['ir.model'].browse(self.env.context['default_res_model_id']).sudo().model
             //     )
             // 
-            // defaults = super(Meeting, self).default_get(fields)
+            // defaults = super(CalendarEvent, self.with_context(context)).default_get(fields)
             // 
             // # support active_model / active_id as replacement of default_* if not already given
             // if 'res_model_id' not in defaults and 'res_model_id' in fields and \
-            //         self.env.context.get('active_model') and self.env.context['active_model'] != 'calendar.event':
-            //     defaults['res_model_id'] = self.env['ir.model']._get_id(self.env.context['active_model'])
-            //     defaults['res_model'] = self.env.context.get('active_model')
+            //         context.get('active_model') and context['active_model'] != 'calendar.event':
+            //     defaults['res_model_id'] = self.env['ir.model']._get_id(context['active_model'])
+            //     defaults['res_model'] = context.get('active_model')
             // if 'res_id' not in defaults and 'res_id' in fields and \
-            //         defaults.get('res_model_id') and self.env.context.get('active_id'):
-            //     defaults['res_id'] = self.env.context['active_id']
+            //         defaults.get('res_model_id') and context.get('active_id'):
+            //     defaults['res_id'] = context['active_id']
             // 
             // return defaults
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: calendar.py) ---
@@ -1172,14 +1237,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         default_partner_ids=self.env.context.get('default_partner_ids'),
             //         default_name=self.env.context.get('default_name')
             //     )
-            // elif self.env.context.get('default_candidate_id'):
-            //     self_ctx = self.with_context(
-            //         default_res_model='hr.candidate',  # res_model seems to be lost without this
-            //         default_res_model_id=self.env.ref('hr_recruitment.model_hr_candidate').id,
-            //         default_res_id=self.env.context.get('default_candidate_id'),
-            //         default_partner_ids=self.env.context.get('default_partner_ids'),
-            //         default_name=self.env.context.get('default_name')
-            //     )
             // 
             // defaults = super(CalendarEvent, self_ctx).default_get(fields)
             // 
@@ -1202,8 +1259,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _default_partners(self):
             // """ When active_model is res.partner, the current partners should be attendees """
             // partners = self.env.user.partner_id
-            // active_id = self._context.get('active_id')
-            // if self._context.get('active_model') == 'res.partner' and active_id and active_id not in partners.ids:
+            // active_id = self.env.context.get('active_id')
+            // if self.env.context.get('active_model') == 'res.partner' and active_id and active_id not in partners.ids:
             //     partners |= self.env['res.partner'].browse(active_id)
             // return partners
             */
@@ -1260,7 +1317,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         partners = event._mail_get_partners()[event.id].filtered(
             //             lambda partner: partner.phone_sanitized and partner not in declined_partners
             //         )
-            //         if event.user_id and not alarm.sms_notify_responsible:
+            //         if event.user_id and not alarm.notify_responsible:
             //             partners -= event.user_id.partner_id
             //         event._message_sms_with_template(
             //             template=alarm.sms_template_id,
@@ -1278,16 +1335,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _ensure_attendees_have_email(self):
             // self.calendar_event_ids.filtered(lambda e: e.active)._ensure_attendees_have_email()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> EventIdsFromGoogleIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> google_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
-            // def _event_ids_from_google_ids(self, google_ids):
-            // return self.search([('google_id', 'in', google_ids)]).ids
             */
             return default;
         }
@@ -1332,7 +1379,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def find_partner_customer(self):
             // self.ensure_one()
             // return next(
-            //     (attendee.partner_id for attendee in self.attendee_ids.sorted('create_date')
+            //     (attendee.partner_id for attendee in self.attendee_ids
             //      if attendee.partner_id != self.user_id.partner_id),
             //     self.env['calendar.attendee']
             // )
@@ -1380,7 +1427,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _from_google_ids(self, google_ids):
             // if not google_ids:
             //     return self.browse()
-            // return self.browse(self._event_ids_from_google_ids(google_ids))
+            // return self.search([('google_id', 'in', google_ids)])
             */
             return default;
         }
@@ -1431,18 +1478,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetAttendeeEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
-            // def _get_attendee_emails(self):
-            // """ Get comma-separated attendee email addresses. """
-            // self.ensure_one()
-            // return ",".join([e for e in self.attendee_ids.mapped("email") if e])
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetAttendeeStatusO2mInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attendee) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -1451,6 +1486,30 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.user_id and self.user_id == attendee.partner_id.user_id:
             //     return 'organizer'
             // return ATTENDEE_CONVERTER_O2M.get(attendee.state, 'None')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetContactDetailsDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object organizer, object partners) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _get_contact_details_description(self, organizer, partners):
+            // """Build sanitized HTML with the organizer details and the details
+            // of the contact partner (the first partner which is not the organizer).
+            // """
+            // odoobot = self.env.ref('base.user_root')
+            // contact_description = []
+            // # Organizer
+            // if organizer and organizer != odoobot:
+            //     contact_description.extend(self._prepare_partner_contact_details_html(_("Organized by"), organizer.partner_id))
+            // # First contact partner
+            // first_partner = partners.filtered(lambda partner: partner not in (odoobot.partner_id + organizer.partner_id))[:1]
+            // if first_partner:
+            //     if contact_description:
+            //         contact_description.append("")  # To add a blank line between the organizer and partner details
+            //     contact_description.extend(self._prepare_partner_contact_details_html(_("Contact Details"), first_partner))
+            // return Markup("<br/>").join(contact_description)
             */
             return default;
         }
@@ -1471,7 +1530,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _get_customer_description(self):
-            // """:return (html): Sanitized HTML description for customer to include in calendar exports"""
+            // """
+            // :rtype: str
+            // :returns: html Sanitized HTML description for customer to include in calendar exports
+            // """
             // return html_sanitize(self.description) if not is_html_empty(self.description) else ''
             */
             return default;
@@ -1482,7 +1544,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _get_customer_summary(self):
-            // """:return (str): The summary to include in calendar exports"""
+            // """
+            // :rtype: str
+            // :returns: The summary to include in calendar exports
+            // """
             // return self.name or ''
             */
             return default;
@@ -1536,14 +1601,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _get_default_privacy_domain(self):
-            // # search user settings from calendars that are not private ('public' and 'confidential').
-            // public_users_settings_ids = self.env['res.users.settings'].sudo().search(
-            //     [('calendar_default_privacy', '!=', 'private')]).ids
+            // # Sub query user settings from calendars that are not private ('public' and 'confidential').
+            // public_calendars_settings = self.env['res.users.settings'].sudo()._search([('calendar_default_privacy', '!=', 'private')]).select('user_id')
             // # display public, confidential events and events with default privacy when owner's default privacy is not private
-            // return [
-            //     '|', '|', '|', ('privacy', '=', 'public'), ('privacy', '=', 'confidential'), ('user_id', '=', self.env.user.id),
-            //     '&', ('privacy', '=', False), ('user_id.res_users_settings_id', 'in', public_users_settings_ids)
-            // ]
+            // return ['|', '|',
+            //     ('privacy', 'in', ['public', 'confidential']),
+            //     ('user_id', '=', self.env.user.id),
+            //     '&',
+            //         ('privacy', '=', False),
+            //         '|',
+            //             ('user_id', '=', False),
+            //             ('user_id', 'in', public_calendars_settings)]
             */
             return default;
         }
@@ -1568,7 +1636,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         1) if user add duration for 2 hours, return : August-23-2013 at (04-30 To 06-30) (Europe/Brussels)
             //         2) if event all day ,return : AllDay, July-31-2013
             // """
-            // timezone = self._context.get('tz') or self.env.user.partner_id.tz or 'UTC'
+            // timezone = self.env.context.get('tz') or self.env.user.partner_id.tz or 'UTC'
             // 
             // # get date/time format according to context
             // format_date, format_time = self._get_date_formats()
@@ -1752,8 +1820,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             interval_by_event[event] = allday_event_interval & global_interval
             //     else:
             //         interval_by_event[event] = Intervals([(
-            //             timezone_datetime(event.start),
-            //             timezone_datetime(event.stop),
+            //             localized(event.start),
+            //             localized(event.stop),
             //             self.env['resource.calendar']
             //         )])
             // return interval_by_event
@@ -1782,7 +1850,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _get_google_synced_fields(self):
             // return {'name', 'description', 'allday', 'start', 'date_end', 'stop',
-            //         'attendee_ids', 'alarm_ids', 'location', 'privacy', 'active', 'show_as'}
+            //         'attendee_ids', 'alarm_ids', 'location', 'privacy', 'active', 'show_as', 'videocall_location'}
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_google_synced_fields(self):
             // return {'rrule'}
@@ -1879,20 +1947,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetMailMessageAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids, object operation, object model_name) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
-            // def _get_mail_message_access(self, res_ids, operation, model_name=None):
-            // if operation == 'read' and (not model_name or model_name == 'event.event'):
-            //     for event in self.browse(res_ids):
-            //         if event.privacy == "private" and self.env.user.partner_id not in event.attendee_ids.partner_id:
-            //             return 'write'
-            // return super()._get_mail_message_access(res_ids, operation, model_name=model_name)
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetMailTzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -1910,8 +1964,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_microsoft_sync_domain(self):
             // # Do not sync Odoo recurrences with Outlook Calendar anymore.
-            // domain = expression.FALSE_DOMAIN
-            // return self._extend_microsoft_domain(domain)
+            // return self._extend_microsoft_domain(Domain.FALSE)
             */
             return default;
         }
@@ -1958,7 +2011,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def get_next_alarm_date(self, events_by_alarm):
             // self.ensure_one()
-            // now = fields.datetime.now()
+            // now = fields.Datetime.now()
             // sorted_alarms = self.alarm_ids.sorted("duration_minutes")
             // triggered_alarms = sorted_alarms.filtered(lambda alarm: alarm.id in events_by_alarm)[0]
             // event_has_future_alarms = sorted_alarms[0] != triggered_alarms
@@ -2121,12 +2174,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // domain = self._get_sync_domain()
             // if not full_sync:
-            //     is_active_clause = (self._active_name, '=', True) if self._active_name else expression.TRUE_LEAF
-            //     domain = expression.AND([domain, [
-            //         '|',
-            //             '&', ('google_id', '=', False), is_active_clause,
-            //             ('need_sync', '=', True),
-            //     ]])
+            //     is_active_clause = Domain(self._active_name, '=', True) if self._active_name else Domain.TRUE
+            //     domain &= (Domain('google_id', '=', False) & is_active_clause) | Domain('need_sync', '=', True)
             // # We want to limit to 200 event sync per transaction, it shouldn't be a problem for the day to day
             // # but it allows to run the first synchro within an acceptable time without timeout.
             // # If there is a lot of event to synchronize to google the first time,
@@ -2306,7 +2355,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def get_state_selections(self):
-            // return Attendee.STATE_SELECTION
+            // return CalendarAttendee.STATE_SELECTION
             */
             return default;
         }
@@ -2321,20 +2370,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             // day_range = int(ICP.get_param('google_calendar.sync.range_days', default=365))
             // lower_bound = fields.Datetime.subtract(fields.Datetime.now(), days=day_range)
             // upper_bound = fields.Datetime.add(fields.Datetime.now(), days=day_range)
-            // return [
+            // return Domain([
             //     ('partner_ids.user_ids', 'in', self.env.user.id),
             //     ('stop', '>', lower_bound),
             //     ('start', '<', upper_bound),
             //     # Do not sync events that follow the recurrence, they are already synced at recurrence creation
             //     '!', '&', '&', ('recurrency', '=', True), ('recurrence_id', '!=', False), ('follow_recurrence', '=', True)
-            // ]
+            // ])
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_sync_domain(self):
             // # Empty rrule may exists in historical data. It is not a desired behavior but it could have been created with
             // # older versions of the module. When synced, these recurrency may come back from Google after database cleaning
             // # and trigger errors as the records are not properly populated.
             // # We also prevent sync of other user recurrent events.
-            // return [('calendar_event_ids.user_id', '=', self.env.user.id), ('rrule', '!=', False)]
+            // return Domain('calendar_event_ids.user_id', '=', self.env.user.id) & Domain('rrule', '!=', False)
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
             // def _get_sync_domain(self):
             // """Return a domain used to search records to synchronize.
@@ -2351,17 +2400,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
             // def _get_sync_partner(self, emails):
             // normalized_emails = [email_normalize(contact) for contact in emails if email_normalize(contact)]
-            // user_partners = self.env['mail.thread']._mail_search_on_user(normalized_emails, extra_domain=[('share', '=', False)])
-            // partners = list(user_partners)
-            // remaining = [email for email in normalized_emails if
-            //              email not in [partner.email_normalized for partner in partners]]
-            // if remaining:
-            //     partners += self.env['mail.thread']._mail_find_partner_from_emails(remaining, records=self, force_create=True)
-            // unsorted_partners = self.env['res.partner'].browse([p.id for p in partners if p.id])
+            // partners = self.env['mail.thread']._partner_find_from_emails_single(normalized_emails)
             // # partners needs to be sorted according to the emails order provided by google
             // k = {value: idx for idx, value in enumerate(emails)}
-            // result = unsorted_partners.sorted(key=lambda p: k.get(p.email_normalized, -1))
-            // return result
+            // return partners.sorted(key=lambda p: k.get(p.email_normalized, -1))
             */
             return default;
         }
@@ -2538,7 +2580,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _google_delete(self, google_service: GoogleCalendarService, google_id, timeout=TIMEOUT):
             // with google_calendar_token(self.env.user.sudo()) as token:
             //     if token:
-            //         is_recurrence = self._context.get('is_recurrence', False)
+            //         is_recurrence = self.env.context.get('is_recurrence', False)
             //         google_service.google_service = google_service.google_service.with_context(is_recurrence=is_recurrence)
             //         google_service.delete(google_id, token=token, timeout=timeout)
             //         # When the record has been deleted on our side, we need to delete it on google but we don't want
@@ -2614,7 +2656,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // with google_calendar_token(self.env.user.sudo()) as token:
             //     if token:
             //         try:
-            //             send_updates = self._context.get('send_updates', True) and not self._is_event_over()
+            //             send_updates = self.env.context.get('send_updates', True) and not self._is_event_over()
             //             google_service.google_service = google_service.google_service.with_context(send_updates=send_updates)
             //             google_values = google_service.insert(values, token=token, timeout=timeout, need_video_call=self._need_video_call())
             //             self.with_context(dont_notify=True).write(self._get_post_sync_values(values, google_values))
@@ -2700,6 +2742,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // }
             // if not self.google_id and not self.videocall_location and not self.location:
             //     values['conferenceData'] = {'createRequest': {'requestId': uuid4().hex}}
+            // if self.google_id and not self.videocall_location:
+            //     values['conferenceData'] = None
             // if self.privacy:
             //     values['visibility'] = self.privacy
             // if self.show_as:
@@ -2982,6 +3026,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> IsPartnerUnavailableInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object partner_events) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _is_partner_unavailable(self, partner, partner_events):
+            // self.ensure_one()
+            // return any(
+            //     intervals_overlap((self.start, self.stop), (partner_event.start, partner_event.stop))
+            //     for partner_event in partner_events
+            //     if partner_event != self
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> MailGetOperationForMailMessageOperationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message_operation) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _mail_get_operation_for_mail_message_operation(self, message_operation):
+            // # reading messages on private events requires write access, not just read access
+            // private = self.filtered(
+            //     lambda event: event.privacy == "private" and self.env.user.partner_id not in event.attendee_ids.partner_id
+            // ) if message_operation == "read" else self.browse()
+            // result = super(CalendarEvent, self - private)._mail_get_operation_for_mail_message_operation(message_operation)
+            // result.update(dict.fromkeys(private, 'write'))
+            // return result
+            */
+            return default;
+        }
+
         public async Task<TEntity> MicrosoftToOdooRecurrenceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -3026,16 +3101,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        public async Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
-            // def _microsoft_values(self, fields_to_sync):
+            // def _microsoft_values(self, fields_to_sync, initial_values=()):
             // """
             // Get values to update the whole Outlook event recurrence.
             // (done through the first event of the Outlook recurrence).
             // """
-            // return self.base_event_id._microsoft_values(fields_to_sync, initial_values={'type': 'seriesMaster'})
+            // return self.base_event_id._microsoft_values(fields_to_sync, initial_values={**dict(initial_values), 'type': 'seriesMaster'})
             */
             return default;
         }
@@ -3044,8 +3119,8 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
-            // def _microsoft_values_occurence(self, initial_values={}):
-            // values = initial_values
+            // def _microsoft_values_occurence(self, initial_values=()):
+            // values = dict(initial_values)
             // values['type'] = 'occurrence'
             // 
             // if self.allday:
@@ -3149,9 +3224,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif self.env.user.partner_id.email not in emails:
             //     commands_attendee += [(0, 0, {'state': 'accepted', 'partner_id': self.env.user.partner_id.id})]
             //     commands_partner += [(4, self.env.user.partner_id.id)]
-            // partners = self.env['mail.thread']._mail_find_partner_from_emails(emails, records=self, force_create=True)
+            // partners = self.env['mail.thread']._partner_find_from_emails_single(emails, no_create=False)
             // attendees_by_emails = {a.email: a for a in existing_attendees}
-            // for email, partner, attendee_info in zip(emails, partners, microsoft_attendees):
+            // partners_by_emails = {p.email_normalized: p for p in partners}
+            // for email, attendee_info in zip(emails, microsoft_attendees):
+            //     partner = partners_by_emails.get(email_normalize(email) or email, self.env['res.partner'])
             //     # Responses from external invitations are stored in the 'responseStatus' field.
             //     # This field only carries the current user's event status because Microsoft hides other user's status.
             //     if self.env.user.email == email and microsoft_event.responseStatus:
@@ -3386,6 +3463,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> PreparePartnerContactDetailsHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object section_title, object partner) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _prepare_partner_contact_details_html(self, section_title, partner):
+            // details = list(filter(None, [
+            //     partner.name,
+            //     partner.email and Markup("<a href='mailto:%(email)s'>%(email)s</a>") % {'email': partner.email},
+            //     partner.phone and Markup("<a href='tel:%(phone)s'>%(phone)s</a>") % {'phone': partner.phone},
+            // ]))
+            // if details:
+            //     details.insert(0, Markup("<strong>%s</strong>") % section_title)
+            // return details
+            */
+            return default;
+        }
+
         public async Task<TEntity> RangeCalculationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object duration) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -3425,22 +3519,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ReadGroupAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object groupby, object offset, object limit, object @orderby, object lazy) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        public async Task<List<object>> ReadGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, object offset, object limit, object order) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
-            // def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-            // groupby = [groupby] if isinstance(groupby, str) else groupby
-            // fields_aggregates = [
-            //     field_name for field_name in (fields or list(self._fields))
-            //     if ':' in field_name or (field_name in self and self._fields[field_name].aggregator)
-            // ]
-            // grouped_fields = {group_field.split(':')[0] for group_field in groupby + fields_aggregates}
-            // private_fields = grouped_fields - self._get_public_fields()
+            // def _read_group(self, domain, groupby=(), aggregates=(), having=(), offset=0, limit=None, order=None) -> list[tuple]:
+            // fnames = {
+            //     spec.split(':')[0] for spec in itertools.chain(
+            //         groupby,
+            //         aggregates,
+            //         [cond[0] for cond in having if isinstance(cond, (list, tuple))]
+            //     )
+            // }
+            // private_fields = fnames - self._get_public_fields()
             // if not self.env.su and private_fields:
-            //     domain = AND([domain, self._get_default_privacy_domain()])
-            //     return super(Meeting, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
-            // return super(Meeting, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+            //     domain = Domain.AND([domain, self._get_default_privacy_domain()])
+            // return super()._read_group(domain, groupby, aggregates, having=having, offset=offset, limit=limit, order=order)
+            */
+            return default;
+        }
+
+        public async Task<List<object>> ReadGroupingSetsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object grouping_sets, object aggregates, object order) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _read_grouping_sets(self, domain, grouping_sets, aggregates=(), order=None) -> list[tuple]:
+            // fnames = {
+            //     spec.split(':')[0] for spec in itertools.chain(
+            //         *grouping_sets,
+            //         aggregates,
+            //     )
+            // }
+            // private_fields = fnames - self._get_public_fields()
+            // if not self.env.su and private_fields:
+            //     domain = Domain.AND([domain, self._get_default_privacy_domain()])
+            // return super()._read_grouping_sets(domain, grouping_sets, aggregates, order=order)
             */
             return default;
         }
@@ -3474,7 +3587,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Copy current event values, delete it and recreate it with the new organizer user. """
             // self.ensure_one()
             // event_copy = {**self.copy_data()[0], 'microsoft_id': False}
-            // self.env['calendar.event'].with_user(sender_user).create({**event_copy, **values})
+            // self.env['calendar.event'].with_user(sender_user).with_context(skip_contact_description=True).create(
+            //     {**event_copy, **values},
+            // )
             // if self.ms_universal_event_id:
             //     self._microsoft_delete(self._get_organizer(), self.microsoft_id)
             */
@@ -3550,7 +3665,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # Archive all events and delete recurrence, reactivate base event and apply updated values.
             //     base_event.action_mass_archive("all_events")
             //     base_event.recurrence_id.unlink()
-            //     base_event.write({
+            //     base_event.with_context(skip_attendee_notification=True).write({
             //         'active': True,
             //         'recurrence_id': False,
             //         **values, **time_values
@@ -3659,7 +3774,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _search_current_attendee(self, operator, value):
-            // return [("id", operator, value)]
+            // return [
+            //     ('attendee_ids', 'any', [
+            //         ('partner_id', '=', self.env.user.partner_id.id),
+            //         ('id', operator, value)
+            //     ])
+            // ]
             */
             return default;
         }
@@ -3762,6 +3882,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> SetupEventRecurrentAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object events_by_alarm) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _setup_event_recurrent_alarms(self, events_by_alarm):
+            // """ Setup alarms for recurrent events """
+            // for event in self:
+            //     if event.recurrence_id:
+            //         next_date = event.get_next_alarm_date(events_by_alarm)
+            //         # In cron, setup alarm only when there is a next date on the target. Otherwise the 'now()'
+            //         # check in the call below can generate undeterministic behavior and setup random alarms.
+            //         if next_date:
+            //             event.recurrence_id.with_context(date=next_date)._setup_alarms()
+            */
+            return default;
+        }
+
         public async Task<TEntity> SkipSendMailStatusUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -3823,33 +3960,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SplitRecurrenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object time_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
-            // def _split_recurrence(self, time_values):
-            // """Apply time changes to events and update the recurrence accordingly.
-            // 
-            // :return: detached events
-            // """
-            // self.ensure_one()
-            // if not time_values:
-            //     return self.browse()
-            // if self.follow_recurrence and self.recurrency:
-            //     previous_week_day_field = weekday_to_field(self._get_start_date().weekday())
-            // else:
-            //     # When we try to change recurrence values of an event not following the recurrence, we get the parameters from
-            //     # the base_event
-            //     previous_week_day_field = weekday_to_field(self.recurrence_id.base_event_id._get_start_date().weekday())
-            // self.write(time_values)
-            // return self._apply_recurrence_values({
-            //     previous_week_day_field: False,
-            //     **self._get_recurrence_params(),
-            // }, future=True)
-            */
-            return default;
-        }
-
         public async Task<TEntity> StopAtInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
@@ -3895,7 +4005,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             activity_values['summary'] = event.name
             //         if 'description' in fields:
             //             activity_values['note'] = event.description
-            //         if 'start' in fields:
+            //         # protect against loops in case of ill-managed timezones
+            //         if 'start' in fields and not self.env.context.get('mail_activity_meeting_update'):
             //             activity_values['date_deadline'] = self._get_activity_deadline_from_start(event.start, event.allday)
             //         if 'user_id' in fields:
             //             activity_values['user_id'] = event.user_id.id
@@ -3913,8 +4024,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """Synchronize Google recurrences in Odoo. Creates new recurrences, updates
             // existing ones.
             // 
-            // :param google_recurrences: Google recurrences to synchronize in Odoo
+            // :param google_events: Google recurrences to synchronize in Odoo
             // :param write_dates: A dictionary mapping Odoo record IDs to their write dates.
+            // :param default_reminders:
             // :return: synchronized odoo recurrences
             // """
             // write_dates = dict(write_dates or {})
@@ -3925,7 +4037,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     dict(self._odoo_values(e, default_reminders), need_sync=False)
             //     for e in new
             // ]
-            // new_odoo = self.with_context(dont_notify=True)._create_from_google(new, odoo_values)
+            // new_odoo = self.with_context(dont_notify=True, skip_contact_description=True)._create_from_google(new, odoo_values)
             // cancelled = existing.cancelled()
             // cancelled_odoo = self.browse(cancelled.odoo_ids(self.env))
             // 
@@ -4090,22 +4202,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
-            // def write(self, values):
-            // recurrence_update_setting = values.get('recurrence_update')
+            // def write(self, vals):
+            // recurrence_update_setting = vals.get('recurrence_update')
             // if recurrence_update_setting in ('all_events', 'future_events') and len(self) == 1:
-            //     values = dict(values, need_sync=False)
+            //     vals = dict(vals, need_sync=False)
             // notify_context = self.env.context.get('dont_notify', False)
             // if not notify_context and ([self.env.user.id != record.user_id.id for record in self]):
-            //     self._check_modify_event_permission(values)
-            // res = super(Meeting, self.with_context(dont_notify=notify_context)).write(values)
-            // if recurrence_update_setting in ('all_events',) and len(self) == 1 and values.keys() & self._get_google_synced_fields():
+            //     self._check_modify_event_permission(vals)
+            // res = super(CalendarEvent, self.with_context(dont_notify=notify_context)).write(vals)
+            // if recurrence_update_setting == 'all_events' and len(self) == 1 and vals.keys() & self._get_google_synced_fields():
             //     self.recurrence_id.need_sync = True
             // return res
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: google_sync.py) ---
             // def write(self, vals):
             // google_service = GoogleCalendarService(self.env['google.service'])
-            // if 'google_id' in vals:
-            //     self.env.registry.clear_cache()  # _event_ids_from_google_ids
             // synced_fields = self._get_google_synced_fields()
             // if 'need_sync' not in vals and vals.keys() & synced_fields and not self.env.user.google_synchronization_stopped:
             //     vals['need_sync'] = True

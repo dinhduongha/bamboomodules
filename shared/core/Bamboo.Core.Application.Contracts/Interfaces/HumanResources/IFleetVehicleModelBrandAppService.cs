@@ -11,5 +11,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
     public interface IFleetVehicleModelBrandAppService : IGenericApplicationService<FleetVehicleModelBrand>
     {
         Task<FleetVehicleModelBrand> BrandModelAsync(Guid id);
+        Task<FleetVehicleModelBrand> OpenBrandFormAsync(Guid id);
     }
 }

@@ -8,11 +8,11 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Manufacturing/Maintenance, Module: maintenance
+    // Category: Supply Chain/Maintenance, Module: maintenance
     // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
-    [Route("api/v1/manufacturing/MaintenanceEquipment")]
+    [Route("api/v1/supply-chain/MaintenanceEquipment")]
     public partial class MaintenanceEquipmentController : AbpController
     {
         private readonly IMaintenanceEquipmentAppService _appService;

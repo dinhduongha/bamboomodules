@@ -8,4 +8,9 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Default { get; set; }
     }
+    
+    public class HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto
+    {
+        public Guid LevelId { get; set; }
+    }
 }

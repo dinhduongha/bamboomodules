@@ -59,14 +59,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-payment-provider")]
-        public async Task<IActionResult> ActionOpenStepPaymentProviderAsync(Guid id)
-        {
-            var result = await _appService.OpenStepPaymentProviderAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-step-sales-tax")]
         public async Task<IActionResult> ActionOpenStepSalesTaxAsync(Guid id)
         {
@@ -95,14 +87,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionValidateStepBaseDocumentLayoutAsync(Guid id)
         {
             var result = await _appService.ValidateStepBaseDocumentLayoutAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-validate-step-payment-provider")]
-        public async Task<IActionResult> ActionValidateStepPaymentProviderAsync(Guid id)
-        {
-            var result = await _appService.ValidateStepPaymentProviderAsync(id);
             return Ok(result);
         }
         

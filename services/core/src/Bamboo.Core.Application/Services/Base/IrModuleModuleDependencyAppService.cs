@@ -33,7 +33,7 @@ namespace Bamboo.Core.Application.Services
             // to_search = {key: True for key in module_names}
             // res = {}
             // def search_direct_deps(to_search, res):
-            //     to_search_list = list(to_search.keys())
+            //     to_search_list = to_search.keys()
             //     dependencies = self.web_search_read(domain=[("module_id.name", "in", to_search_list)], specification={"module_id":{"fields":{"name":{}}}, "name": {}, })["records"]
             //     to_search.clear()
             //     for dependency in dependencies:
@@ -42,7 +42,7 @@ namespace Bamboo.Core.Application.Services
             //         if dep_name not in res and dep_name not in to_search and dep_name not in to_search_list:
             //             to_search[dep_name] = True
             //         if mod_name not in res:
-            //             res[mod_name] = list()
+            //             res[mod_name] = []
             //         res[mod_name].append(dep_name)
             // search_direct_deps(to_search, res)
             // while to_search:
@@ -58,11 +58,11 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def _compute_depend(self):
             // # retrieve all modules corresponding to the dependency names
-            // names = list(set(dep.name for dep in self))
+            // names = {dep.name for dep in self}
             // mods = self.env['ir.module.module'].search([('name', 'in', names)])
             // 
             // # index modules by name, and assign dependencies
-            // name_mod = dict((mod.name, mod) for mod in mods)
+            // name_mod = {mod.name: mod for mod in mods}
             // for dep in self:
             //     dep.depend_id = name_mod.get(dep.name)
             */
@@ -85,8 +85,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def _search_depend(self, operator, value):
-            // assert operator == 'in'
-            // modules = self.env['ir.module.module'].browse(set(value))
+            // if operator not in ('in', 'any'):
+            //     return NotImplemented
+            // modules = self.env['ir.module.module'].browse(value)
             // return [('name', 'in', modules.mapped('name'))]
             */
             return default;

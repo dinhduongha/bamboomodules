@@ -14,5 +14,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<IrModel> GetAuthorizedFieldsAsync(Guid id, IrModelGetAuthorizedFieldsRequestDto input);
         Task<IrModel> GetAvailableModelsAsync(Guid id);
         Task<IrModel> GetCompatibleFormModelsAsync(Guid id);
+        Task<IrModel> HasSearchableParentRelationAsync(Guid id, IrModelHasSearchableParentRelationRequestDto input);
     }
 }

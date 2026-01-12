@@ -20,9 +20,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/action-apply-inventory")]
-        public async Task<IActionResult> ActionApplyInventoryAsync(Guid id)
+        public async Task<IActionResult> ActionApplyInventoryAsync(Guid id, [FromBody] StockQuantApplyInventoryRequestDto input)
         {
-            var result = await _appService.ApplyInventoryAsync(id);
+            var result = await _appService.ApplyInventoryAsync(id, input);
             return Ok(result);
         }
         
@@ -103,14 +103,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> ActionViewStockMovesAsync(Guid id)
         {
             var result = await _appService.ViewStockMovesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-warning-duplicated-sn")]
-        public async Task<IActionResult> ActionWarningDuplicatedSnAsync(Guid id)
-        {
-            var result = await _appService.WarningDuplicatedSnAsync(id);
             return Ok(result);
         }
         

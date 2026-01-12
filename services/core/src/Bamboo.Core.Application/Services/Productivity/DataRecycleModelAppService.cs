@@ -144,7 +144,7 @@ namespace Bamboo.Core.Application.Services
             // def _recycle_records(self, batch_commits=False):
             // self.env.flush_all()
             // records_to_clean = []
-            // is_test = bool(config['test_enable'] or config['test_file'])
+            // is_test = modules.module.current_test
             // 
             // existing_recycle_records = self.env['data_recycle.record'].with_context(
             //     active_test=False).search([('recycle_model_id', 'in', self.ids)])
@@ -153,14 +153,14 @@ namespace Bamboo.Core.Application.Services
             //     mapped_existing_records[recycle_record.recycle_model_id].append(recycle_record.res_id)
             // 
             // for recycle_model in self:
-            //     rule_domain = ast.literal_eval(recycle_model.domain) if recycle_model.domain and recycle_model.domain != '[]' else []
+            //     rule_domain = Domain(ast.literal_eval(recycle_model.domain)) if recycle_model.domain and recycle_model.domain != '[]' else Domain.TRUE
             //     if recycle_model.time_field_id and recycle_model.time_field_delta and recycle_model.time_field_delta_unit:
             //         if recycle_model.time_field_id.ttype == 'date':
             //             now = fields.Date.today()
             //         else:
             //             now = fields.Datetime.now()
             //         delta = relativedelta(**{recycle_model.time_field_delta_unit: recycle_model.time_field_delta})
-            //         rule_domain = expression.AND([rule_domain, [(recycle_model.time_field_id.name, '<=', now - delta)]])
+            //         rule_domain &= Domain(recycle_model.time_field_id.name, '<=', now - delta)
             //     model = self.env[recycle_model.res_model_name]
             //     if recycle_model.include_archived:
             //         model = model.with_context(active_test=False)
@@ -212,7 +212,6 @@ namespace Bamboo.Core.Application.Services
             //             }
             //         ),
             //         model=self._name,
-            //         notify_author=True,
             //         partner_ids=partner_ids,
             //         res_id=self.id,
             //         subject=_('Data to Recycle'),

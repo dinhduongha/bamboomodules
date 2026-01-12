@@ -30,8 +30,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: google_recaptcha, FILE: ir_http.py) ---
             // def _add_public_key_to_session_info(self, session_info):
             // """Add the ReCaptcha public key to the given session_info object"""
-            // public_key = self.env['ir.config_parameter'].sudo().get_param('recaptcha_public_key')
-            // if public_key:
+            // config_params = self.env['ir.config_parameter'].sudo()
+            // recaptcha_enabled = str2bool(config_params.get_param('enable_recaptcha', default=True))
+            // public_key = config_params.get_param('recaptcha_public_key')
+            // if public_key and recaptcha_enabled:
             //     session_info['recaptcha_public_key'] = public_key
             // return session_info
             */
@@ -69,18 +71,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # 'rpc' scope does not really exist, we basically require a global key (scope NULL)
             //     uid = request.env['res.users.apikeys']._check_credentials(scope='rpc', key=token)
             //     if not uid:
-            //         raise werkzeug.exceptions.Unauthorized(
-            //             "Invalid apikey",
-            //             www_authenticate=werkzeug.datastructures.WWWAuthenticate('bearer'))
+            //         e = "Invalid apikey"
+            //         raise Unauthorized(e, www_authenticate=WWWAuthenticate('bearer'))
             //     if request.env.uid and request.env.uid != uid:
-            //         raise AccessDenied("Session user does not match the used apikey")
+            //         e = "Session user does not match the used apikey."
+            //         raise AccessDenied(e)
             //     request.update_env(user=uid)
+            //     request.session.can_save = False  # stateless
             // elif not request.env.uid:
-            //     raise werkzeug.exceptions.Unauthorized(
-            //         'User not authenticated, use the "Authorization" header',
-            //         www_authenticate=werkzeug.datastructures.WWWAuthenticate('bearer'))
+            //     e = "User not authenticated, use an API Key with a Bearer Authorization header."
+            //     raise Unauthorized(e, www_authenticate=WWWAuthenticate('bearer'))
             // elif not check_sec_headers():
-            //     raise AccessDenied("Missing \"Authorization\" or Sec-headers for interactive usage")
+            //     e = 'Missing "Authorization" or Sec-headers for interactive usage.'
+            //     raise werkzeug.exceptions.Unauthorized(e, www_authenticate=WWWAuthenticate('bearer'))
             // cls._auth_method_user()
             */
             return default;
@@ -117,6 +120,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
             // def _auth_method_none(cls):
             // request.env = api.Environment(request.env.cr, None, request.env.context)
+            // request.env.transaction.default_env = request.env
             */
             return default;
         }
@@ -159,7 +163,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if website:
             //         request.update_env(user=website._get_cached('user_id'))
             // 
-            // if not request.uid:
+            // if not request.env.uid:
             //     super()._auth_method_public()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
             // def _auth_method_public(cls):
@@ -204,10 +208,95 @@ namespace Bamboo.Core.Application.Services.Mixins
         protected async Task<object> AuthenticateInternalAsync(object endpoint)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _authenticate(cls, endpoint):
+            // """
+            // Extend the standard `_authenticate` to enforce identity re-confirmation.
+            // 
+            // This method checks whether the current session requires identity confirmation due to timeout or inactivity.
+            // If a logout is required, a `SessionExpiredException` is raised, which the client handles by redirecting
+            // to the login page.
+            // If a check identity is required, a `CheckIdentityException` is raised, which the client handles by showing the
+            // re-authentication dialog.
+            // 
+            // :param endpoint: The HTTP route endpoint being accessed.
+            // :type endpoint: werkzeug.routing.Rule
+            // 
+            // :raises CheckIdentityException: If the session requires identity re-confirmation.
+            // :raises SessionExpiredException: If the session requires a full login.
+            // :return: None
+            // """
+            // super()._authenticate(endpoint)
+            // if endpoint.routing["auth"] == "user" and request.session.uid is not None:
+            //     if must_check_identity := cls._must_check_identity():
+            //         if must_check_identity.get("logout"):
+            //             raise SessionExpiredException(f"User {request.session.uid} needs to login again")
+            //         elif endpoint.routing.get("check_identity", True) and must_check_identity.get("check_identity"):
+            //             raise CheckIdentityException(f"User {request.session.uid} needs to confirm his identity")
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
             // def _authenticate(cls, endpoint):
             // auth = 'none' if http.is_cors_preflight(request, endpoint) else endpoint.routing['auth']
             // cls._authenticate_explicit(auth)
+            */
+            return default;
+        }
+
+        protected async Task<object> CheckIdentityInternalAsync(object credential)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _check_identity(cls, credential):
+            // """
+            // Verify the user's identity using the given credentials.
+            // 
+            // Handles both single and multi-factor authentication flows depending on the
+            // current session state and configured timeout rules.
+            // 
+            // :param dict credential: A dictionary containing authentication data. Must include
+            //     a "type" key (e.g., "password", "totp", "webauthn"). If empty, the method
+            //     returns the list of available authentication methods.
+            // 
+            // :return: A dictionary indicating the outcome of the identity check:
+            // 
+            //     - {"auth_methods": [...]} if no credential is provided,
+            //     - {"mfa": True, "auth_methods": [...]} if a second factor is required,
+            //     - None if re-authentication is complete.
+            // 
+            // :rtype: dict or None
+            // """
+            // check_identity = cls._must_check_identity() or {}
+            // first_fa = check_identity.get("1fa")
+            // user = request.env.user
+            // auth_methods = user._get_auth_methods()
+            // if not credential:
+            //     if first_fa and first_fa in auth_methods:
+            //         auth_methods.remove(first_fa)
+            //     return {"user_id": user.id, "login": user.login, "auth_methods": auth_methods}
+            // 
+            // if credential.get("type") in ("totp", "totp_mail"):
+            //     credential["token"] = int(re.sub(r"\s", "", credential["token"]))
+            // 
+            // auth = user._check_credentials(credential, {"interactive": True})
+            // 
+            // if first_fa and first_fa != auth["auth_method"]:
+            //     request.session.pop("identity-check-1fa")
+            // elif auth["mfa"] != "skip" and len(auth_methods) > 1 and check_identity.get("mfa"):
+            //     request.session["identity-check-1fa"] = (time.time(), credential["type"])
+            //     auth_methods.remove(credential["type"])
+            //     return {"mfa": True, "auth_methods": auth_methods}
+            // 
+            // request.session.pop("identity-check-next", None)
+            // request.session["identity-check-last"] = time.time()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ColorSchemeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrHttpable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_http.py) ---
+            // def color_scheme(self):
+            // return "light"
             */
             return default;
         }
@@ -217,6 +306,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
             // def _dispatch(cls, endpoint):
+            // # Verify the captcha in case it was set on @http.route
+            // # https://httpwg.org/specs/rfc9110.html#safe.methods
+            // captcha = endpoint.routing.get('captcha')
+            // if captcha and request.httprequest.method not in SAFE_HTTP_METHODS:
+            //     request.env['ir.http']._verify_request_recaptcha_token(captcha)
             // result = endpoint(**request.params)
             // if isinstance(result, Response) and result.is_qweb:
             //     result.flatten()
@@ -237,7 +331,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _frontend_pre_dispatch(cls):
             // super()._frontend_pre_dispatch()
             // 
-            // if not request.context.get('tz'):
+            // if not request.env.context.get('tz'):
             //     with contextlib.suppress(pytz.UnknownTimeZoneError):
             //         request.update_context(tz=pytz.timezone(request.geoip.location.time_zone).zone)
             // 
@@ -261,10 +355,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // request.update_context(
             //     allowed_company_ids=allowed_company_ids,
             //     website_id=website.id,
-            //     **cls._get_web_editor_context(),
+            //     **cls._get_editor_context(),
             // )
             // 
-            // request.website = website.with_context(request.context)
+            // request.website = website.with_context(request.env.context)
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: ir_http.py) ---
+            // def _frontend_pre_dispatch(cls):
+            // super()._frontend_pre_dispatch()
+            // 
+            // # lazy to make sure those are only evaluated when requested
+            // # All those records are sudoed !
+            // request.cart = lazy(request.website._get_and_cache_current_cart)
+            // request.fiscal_position = lazy(request.website._get_and_cache_current_fiscal_position)
+            // request.pricelist = lazy(request.website._get_and_cache_current_pricelist)
             */
             return default;
         }
@@ -365,12 +468,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_http.py) ---
             // def get_currencies(self):
-            // Currency = self.env['res.currency']
-            // currencies = Currency.search_fetch([], ['symbol', 'position', 'decimal_places'])
-            // return {
-            //     c.id: {'symbol': c.symbol, 'position': c.position, 'digits': [69, c.decimal_places]}
-            //     for c in currencies
-            // }
+            // return self.env['res.currency'].get_all_currencies()
             */
             return default;
         }
@@ -394,12 +492,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        protected async Task<object> GetEditorContextInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_http.py) ---
+            // def _get_editor_context(cls):
+            // """ Check for ?editable and stuff in the query-string """
+            // return {
+            //     key: True
+            //     for key in CONTEXT_KEYS
+            //     if key in request.httprequest.args and key not in request.env.context
+            // }
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
+            // def _get_editor_context(cls):
+            // ctx = super()._get_editor_context()
+            // if request.is_frontend_multilang and request.lang == cls._get_default_lang():
+            //     ctx['edit_translations'] = False
+            // return ctx
+            */
+            return default;
+        }
+
         protected async Task<object> GetErrorHtmlInternalAsync(object env, object code, object values)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: http_routing, FILE: ir_http.py) ---
             // def _get_error_html(cls, env, code, values):
-            // return code, env['ir.ui.view']._render_template('http_routing.%s' % code, values)
+            // try:
+            //     return code, env['ir.ui.view']._render_template('http_routing.%s' % code, values)
+            // except MissingError:
+            //     if str(code)[0] == '4':
+            //         return code, env['ir.ui.view']._render_template('http_routing.4xx', values)
+            //     raise
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def _get_error_html(cls, env, code, values):
             // if code in ('page_404', 'protected_403'):
@@ -418,27 +542,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // code = 500  # default code
             // values = dict(
             //     exception=exception,
-            //     traceback=traceback.format_exc(),
+            //     traceback=''.join(traceback.format_exception(exception)),
             // )
-            // if isinstance(exception, exceptions.AccessDenied):
-            //     code = 403
-            // elif isinstance(exception, exceptions.UserError):
+            // 
+            // if isinstance(exception, exceptions.UserError):
+            //     code = exception.http_status
             //     values['error_message'] = exception.args[0]
-            //     code = 400
-            //     if isinstance(exception, exceptions.AccessError):
-            //         code = 403
-            // 
-            // elif isinstance(exception, QWebException):
-            //     values.update(qweb_exception=exception)
-            // 
-            //     if isinstance(exception.__context__, exceptions.UserError):
-            //         code = 400
-            //         values['error_message'] = exception.__context__.args[0]
-            //         if isinstance(exception.__context__, exceptions.AccessError):
-            //             code = 403
-            // 
             // elif isinstance(exception, werkzeug.exceptions.HTTPException):
             //     code = exception.code
+            //     values['error_message'] = exception.description
+            // 
+            // if hasattr(exception, 'qweb'):
+            //     values.update(qweb_exception=exception.qweb)
+            //     if code == 404 and exception.qweb.path:
+            //         # If there is a path, it means that the error does not
+            //         # come directly from the called template (for example a
+            //         # "/t" from a t-call MissingError)
+            //         code = 500
             // 
             // values.update(
             //     status_message=werkzeug.http.HTTP_STATUS_CODES.get(code, ''),
@@ -464,6 +584,19 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetFrontendSessionInfoAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrHttpable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def get_frontend_session_info(self):
+            // """
+            // Extend the frontend session info with inactivity timeout and user login.
+            // 
+            // dds the user's inactivity timeout (if applicable) to the session info
+            // returned to the frontend web client.
+            // 
+            // :return: The updated session information dictionary.
+            // :rtype: dict
+            // """
+            // session_info = super().get_frontend_session_info()
+            // return self._session_info_common_auth_timeout(session_info)
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: ir_http.py) ---
             // def get_frontend_session_info(self):
             // session_info = super().get_frontend_session_info()
@@ -477,17 +610,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def get_frontend_session_info(self) -> dict:
             // session_info = super(IrHttp, self).get_frontend_session_info()
             // 
-            // IrHttpModel = request.env['ir.http'].sudo()
-            // modules = IrHttpModel.get_translation_frontend_modules()
-            // user_context = request.session.context if request.session.uid else {}
-            // lang = user_context.get('lang')
-            // translation_hash = request.env['ir.http'].get_web_translations_hash(modules, lang)
-            // 
+            // if request.is_frontend:
+            //     lang = request.lang.code
+            //     session_info['bundle_params']['lang'] = lang
             // session_info.update({
             //     'translationURL': '/website/translations',
-            //     'cache_hashes': {
-            //         'translations': translation_hash,
-            //     },
             // })
             // return session_info
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_http.py) ---
@@ -501,17 +628,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "is_internal_user": user._is_internal(),
             //     'is_website_user': user._is_public() if session_uid else False,
             //     'uid': session_uid,
+            //     "registry_hash": hmac(self.env(su=True), "webclient-cache", self.env.registry.registry_sequence),
             //     'is_frontend': True,
-            //     'profile_session': request.session.profile_session,
-            //     'profile_collectors': request.session.profile_collectors,
-            //     'profile_params': request.session.profile_params,
+            //     'profile_session': request.session.get('profile_session'),
+            //     'profile_collectors': request.session.get('profile_collectors'),
+            //     'profile_params': request.session.get('profile_params'),
             //     'show_effect': bool(request.env['ir.config_parameter'].sudo().get_param('base_setup.show_effect')),
-            //     'currencies': self.get_currencies(),
+            //     'currencies': self.env['res.currency'].get_all_currencies(),
             //     'quick_login': str2bool(request.env['ir.config_parameter'].sudo().get_param('web.quick_login', default=True), True),
             //     'bundle_params': {
             //         'lang': request.session.context['lang'],
             //     },
-            //     'test_mode': bool(config['test_enable'] or config['test_file']),
+            //     'test_mode': config['test_enable'],
             // }
             // if request.session.debug:
             //     session_info['bundle_params']['debug'] = request.session.debug
@@ -524,7 +652,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return session_info
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def get_frontend_session_info(self):
-            // session_info = super(Http, self).get_frontend_session_info()
+            // session_info = super().get_frontend_session_info()
             // geoip_country_code = request.geoip.country_code
             // geoip_phone_code = request.env['res.country']._phone_code_for(geoip_country_code) if geoip_country_code else None
             // session_info.update({
@@ -550,6 +678,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     session['turnstile_site_key'] = site_key
             // 
             // return session
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: ir_http.py) ---
+            // def get_frontend_session_info(self):
+            // session_info = super().get_frontend_session_info()
+            // session_info.update({
+            //     'add_to_cart_action': request.website.add_to_cart_action,
+            // })
+            // return session_info
             */
             return default;
         }
@@ -602,6 +737,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 return matched_code
             // 
             // return super().get_nearest_lang(lang_code)
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: ir_http.py) ---
+            // def get_nearest_lang(self, lang_code):
+            // if request and self._is_survey_frontend(request.httprequest.path):
+            //     return super(IrHttp, self.with_context(web_force_installed_langs=True)).get_nearest_lang(lang_code)
+            // return super().get_nearest_lang(lang_code)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def get_nearest_lang(self, lang_code):
             // # get_nearest_lang() is used by @http_routing:IrHttp._match
@@ -612,7 +752,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // website_id = False
             // if getattr(request, 'is_frontend', True):
             //     website_id = self.env.get('website_id', request.website_routing)
-            // return super(Http, self.with_context(website_id=website_id)).get_nearest_lang(lang_code)
+            // return super(IrHttp, self.with_context(website_id=website_id)).get_nearest_lang(lang_code)
             */
             return default;
         }
@@ -672,12 +812,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: http_routing, FILE: ir_http.py) ---
             // def get_translation_frontend_modules(self) -> list[str]:
             // Modules = request.env['ir.module.module'].sudo()
-            // extra_modules_domain = self._get_translation_frontend_modules_domain()
             // extra_modules_name = self._get_translation_frontend_modules_name()
-            // if extra_modules_domain:
-            //     new = Modules.search(
-            //         expression.AND([extra_modules_domain, [('state', '=', 'installed')]])
-            //     ).mapped('name')
+            // extra_modules_domain = Domain(self._get_translation_frontend_modules_domain())
+            // if not extra_modules_domain.is_true():
+            //     new = Modules.search(extra_modules_domain & Domain('state', '=', 'installed')).mapped('name')
             //     extra_modules_name += new
             // return extra_modules_name
             */
@@ -708,6 +846,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_translation_frontend_modules_name(cls):
             // mods = super()._get_translation_frontend_modules_name()
             // return mods + ['auth_password_policy']
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: ir_http.py) ---
+            // def _get_translation_frontend_modules_name(cls):
+            // mods = super()._get_translation_frontend_modules_name()
+            // return mods + ['delivery']
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_http.py) ---
+            // def _get_translation_frontend_modules_name(cls):
+            // return ["html_editor", *super()._get_translation_frontend_modules_name()]
             --- ODOO METHOD SOURCE (MODULE: http_routing, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls) -> list[str]:
             // """ Return a list of module name where web-translations and
@@ -720,7 +865,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return mods + ["mass_mailing"]
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
-            // mods = super(IrHttp, cls)._get_translation_frontend_modules_name()
+            // mods = super()._get_translation_frontend_modules_name()
             // return mods + ['payment']
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
@@ -728,11 +873,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return mods + ['point_of_sale']
             --- ODOO METHOD SOURCE (MODULE: portal, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
-            // mods = super(IrHttp, cls)._get_translation_frontend_modules_name()
+            // mods = super()._get_translation_frontend_modules_name()
             // return mods + ['portal']
             --- ODOO METHOD SOURCE (MODULE: portal_rating, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
-            // mods = super(IrHttp, cls)._get_translation_frontend_modules_name()
+            // mods = super()._get_translation_frontend_modules_name()
             // return mods + ['portal_rating']
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
@@ -740,20 +885,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return mods + ["pos_self_order"]
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
-            // modules = super()._get_translation_frontend_modules_name()
-            // return modules + ["survey"]
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_http.py) ---
-            // def _get_translation_frontend_modules_name(cls):
-            // mods = super(IrHttp, cls)._get_translation_frontend_modules_name()
-            // return mods + ['web_editor']
+            // mods = super()._get_translation_frontend_modules_name()
+            // return mods + ['survey']
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
             // mods = super()._get_translation_frontend_modules_name()
-            // installed = request.registry._init_modules.union(odoo.conf.server_wide_modules)
-            // return mods + [mod for mod in installed if mod.startswith('website')]
+            // installed = request.registry._init_modules.union(odoo.tools.config['server_wide_modules'])
+            // return mods + [mod for mod in installed if 'website' in mod]
             --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
-            // mods = super(IrHttp, cls)._get_translation_frontend_modules_name()
+            // mods = super()._get_translation_frontend_modules_name()
             // return mods + ['im_livechat']
             --- ODOO METHOD SOURCE (MODULE: website_mail, FILE: ir_http.py) ---
             // def _get_translation_frontend_modules_name(cls):
@@ -763,15 +904,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetTranslationsForWebclientAsync<TEntity>(IEnumerable<TEntity> entities, object modules, object lang) where TEntity : IEntity<Guid>, IIrHttpable
+        public async Task<TEntity> GetTranslationsForWebclientInternalAsync<TEntity>(IEnumerable<TEntity> entities, object modules, object lang) where TEntity : IEntity<Guid>, IIrHttpable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_http.py) ---
+            // def _get_translations_for_webclient(self, modules, lang):
+            // all_imported_modules = self.env['ir.module.module']._get_imported_module_names()
+            // non_imported_modules = [m for m in modules if m not in all_imported_modules]
+            // imported_modules = [m for m in modules if m in all_imported_modules]
+            // 
+            // translations_per_module, lang_params = super()._get_translations_for_webclient(non_imported_modules, lang)
+            // for module in imported_modules:
+            //     translations_per_module[module] = self.env['ir.module.module']._get_imported_module_translations_for_webclient(module, lang)
+            // return translations_per_module, lang_params
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
-            // def get_translations_for_webclient(self, modules, lang):
-            // if not modules:
-            //     modules = self.pool._init_modules
+            // def _get_translations_for_webclient(self, modules, lang):
             // if not lang:
-            //     lang = self._context.get("lang")
+            //     lang = self.env.context.get("lang")
             // lang_data = self.env['res.lang']._get_data(code=lang)
             // lang_params = {
             //     "name": lang_data.name,
@@ -779,7 +928,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "direction": lang_data.direction,
             //     "date_format": lang_data.date_format,
             //     "time_format": lang_data.time_format,
-            //     "short_time_format": lang_data.short_time_format,
             //     "grouping": lang_data.grouping,
             //     "decimal_point": lang_data.decimal_point,
             //     "thousands_sep": lang_data.thousands_sep,
@@ -816,69 +964,48 @@ namespace Bamboo.Core.Application.Services.Mixins
             // return values
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def _get_values_500_error(cls, env, values, exception):
-            // View = env["ir.ui.view"]
             // values = super()._get_values_500_error(env, values, exception)
-            // if 'qweb_exception' in values:
-            //     try:
-            //         # exception.name might be int, string
-            //         exception_template = int(exception.name)
-            //     except ValueError:
-            //         exception_template = exception.name
-            //     view = View._view_obj(exception_template)
-            //     if exception.html and exception.html in view.arch:
+            // if hasattr(exception, 'qweb'):
+            //     qweb_error = exception.qweb
+            //     exception_template = qweb_error.ref
+            //     View = env["ir.ui.view"].sudo()
+            //     view = exception_template and View._get_template_view(exception_template)
+            //     if not view or qweb_error.element and qweb_error.element in view.arch:
             //         values['view'] = view
             //     else:
             //         # There might be 2 cases where the exception code can't be found
             //         # in the view, either the error is in a child view or the code
             //         # contains branding (<div t-att-data="request.browse('ok')"/>).
             //         et = view.with_context(inherit_branding=False)._get_combined_arch()
-            //         node = et.xpath(exception.path) if exception.path else et
+            //         node = et.xpath(qweb_error.path) if qweb_error.path else et
             //         line = node is not None and len(node) > 0 and etree.tostring(node[0], encoding='unicode')
             //         if line:
-            //             values['view'] = View._views_get(exception_template).filtered(
+            //             values['view'] = View._views_get(view.id).filtered(
             //                 lambda v: line in v.arch
             //             )
             //             values['view'] = values['view'] and values['view'][0]
             // # Needed to show reset template on translated pages (`_prepare_environment` will set it for main lang)
-            // values['editable'] = request.uid and request.env.user.has_group('website.group_website_designer')
+            // values['editable'] = request.env.uid and request.env.user.has_group('website.group_website_designer')
             // return values
             */
             return default;
         }
 
-        protected async Task<object> GetWebEditorContextInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_http.py) ---
-            // def _get_web_editor_context(cls):
-            // """ Check for ?editable and stuff in the query-string """
-            // return {
-            //     key: True
-            //     for key in CONTEXT_KEYS
-            //     if key in request.httprequest.args and key not in request.env.context
-            // }
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
-            // def _get_web_editor_context(cls):
-            // ctx = super()._get_web_editor_context()
-            // if request.is_frontend_multilang and request.lang == cls._get_default_lang():
-            //     ctx['edit_translations'] = False
-            // return ctx
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetWebTranslationsHashAsync<TEntity>(IEnumerable<TEntity> entities, object modules, object lang) where TEntity : IEntity<Guid>, IIrHttpable
+        public async Task<TEntity> GetWebTranslationsHashInternalAsync<TEntity>(IEnumerable<TEntity> entities, object modules, object lang) where TEntity : IEntity<Guid>, IIrHttpable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
-            // def get_web_translations_hash(self, modules, lang):
-            // translations, lang_params = self.get_translations_for_webclient(modules, lang)
+            // def _get_web_translations_hash(self, modules, lang):
+            // translations, lang_params = self._get_translations_for_webclient(modules, lang)
             // translation_cache = {
             //     'lang_parameters': lang_params,
             //     'modules': translations,
             //     'lang': lang,
             //     'multi_lang': len(self.env['res.lang'].sudo().get_installed()) > 1,
             // }
+            // if self.env.context.get('cache_translation_data'):
+            //     # put in the transactional cache
+            //     self.env.cr.cache['translation_data'] = translation_cache
             // return hashlib.sha1(json.dumps(translation_cache, sort_keys=True, default=json_default).encode()).hexdigest()
             */
             return default;
@@ -904,6 +1031,28 @@ namespace Bamboo.Core.Application.Services.Mixins
         protected async Task<object> HandleErrorInternalAsync(object exception)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _handle_error(cls, exception):
+            // """
+            // Handle exceptions raised during request processing.
+            // 
+            // If the exception is a `CheckIdentityException` and the route is HTTP-based,
+            // the user is redirected to the identity confirmation page. This ensures that
+            // re-authentication can be completed before redirecting to the original request.
+            // 
+            // All other exceptions, e.g. `JSONRPC` calls, are handled by displaying the authentication form in a dialog
+            // rather than a page.
+            // 
+            // :param Exception exception: The exception raised during request dispatch.
+            // :return: An HTTP response for identity confirmation, or the default error response.
+            // :rtype: werkzeug.wrappers.Response
+            // """
+            // if request.dispatcher.routing_type == "http" and isinstance(exception, CheckIdentityException):
+            //     response = request.redirect_query(
+            //         "/auth-timeout/check-identity", {"redirect": request.httprequest.full_path}
+            //     )
+            //     return response
+            // return super()._handle_error(exception)
             --- ODOO METHOD SOURCE (MODULE: http_routing, FILE: ir_http.py) ---
             // def _handle_error(cls, exception):
             // response = super()._handle_error(exception)
@@ -914,7 +1063,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return response
             // 
             // # minimal setup to serve frontend pages
-            // if not request.uid:
+            // if not request.env.uid:
             //     cls._auth_method_public()
             // cls._handle_debug()
             // cls._frontend_pre_dispatch()
@@ -922,7 +1071,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // code, values = cls._get_exception_code_values(exception)
             // 
-            // request.cr.rollback()
+            // request.env.cr.rollback()
             // if code in (404, 403):
             //     try:
             //         response = cls._serve_fallback()
@@ -937,6 +1086,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // try:
             //     code, html = cls._get_error_html(request.env, code, values)
             // except Exception:
+            //     _logger.exception("Couldn't render a template for http status %s", code)
             //     code, html = 418, request.env['ir.ui.view']._render_template('http_routing.http_error', values)
             // 
             // response = Response(html, status=code, content_type='text/html;charset=utf-8')
@@ -1034,6 +1184,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             // except Exception as exception:  # noqa: BLE001
             //     _logger.warning(exception)
             //     return False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> IsSurveyFrontendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object path) where TEntity : IEntity<Guid>, IIrHttpable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: survey, FILE: ir_http.py) ---
+            // def _is_survey_frontend(self, path):
+            // return bool(SURVEY_URL_PREFIX_REGEX.match(path))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> LazySessionInfoAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrHttpable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_http.py) ---
+            // def lazy_session_info(self):
+            // res = super().lazy_session_info()
+            // res['show_sale_receipts'] = self.env['ir.config_parameter'].sudo().get_param('account.show_sale_receipts')
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: ir_http.py) ---
+            // def lazy_session_info(self):
+            // res = super().lazy_session_info()
+            // if self.env.user and self.env.user.employee_id:
+            //     employee = self.env.user.employee_id
+            //     res['attendance_user_data'] = HrAttendance._get_user_attendance_data(employee)
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_http.py) ---
+            // def lazy_session_info(self):
+            // return {}
             */
             return default;
         }
@@ -1215,6 +1397,66 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        protected async Task<object> MustCheckIdentityInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _must_check_identity(cls):
+            // """
+            // Determine whether the current user session requires identity confirmation.
+            // 
+            // This method checks two timeout conditions:
+            // - `lock_timeout`: maximum allowed session duration before re-authentication is required,
+            // regardless of user activity.
+            // - `lock_timeout_inactivity`: period of inactivity after which re-authentication is required.
+            // 
+            // It compares the current time to session timestamps and evaluates whether the thresholds have been exceeded:
+            // - `lock_timeout` compares with the session timestamp `create_time`
+            // - `lock_timeout_inactivity` compares with the session timestamp `identity-check-next`
+            // 
+            // :return: A dictionary describing the re-authentication requirement, or None if no check is needed.
+            // 
+            //     Possible keys:
+            //     - "logout": True if a full logout is required
+            //     - "check_identity": True if an identity check is required
+            //     - "mfa": True if multi-factor authentication is required
+            //     - "1fa": previously used auth method, to avoid reuse as second factor
+            // 
+            // :rtype: dict or None
+            // """
+            // session = request.session
+            // env = request.env(user=request.session.uid)
+            // timeouts = env.user._get_lock_timeouts()
+            // for timeout_type, reauth_type, session_key, session_key_default, first_timeout in [
+            //     ("lock_timeout", "logout", "create_time", 0, 0),
+            //     (
+            //         "lock_timeout_inactivity",
+            //         "check_identity",
+            //         "identity-check-next",
+            //         None,
+            //         timeouts["lock_timeout_inactivity"][0][0] if timeouts.get("lock_timeout_inactivity") else 0,
+            //     ),
+            // ]:
+            //     for timeout, mfa in reversed(timeouts[timeout_type]):
+            //         threshold = time.time() - timeout
+            //         timestamp = session.get(session_key, session_key_default)
+            //         # Only the lowest inactivity timeout will set `identity-check-next` in the session
+            //         # Hence, an inactivity timeout with a greater timeout must reduce its timeout with the first timeout
+            //         # to get if its timeout is reached according to when `identity-check-next` was set at the lowest timeout
+            //         # It doesn't apply for `create_time`, which is set as soon as the session is created
+            //         if timestamp is not None and timestamp - first_timeout <= threshold:
+            //             res = {reauth_type: True, "mfa": mfa}
+            //             if mfa:
+            //                 first_fa = session.get("identity-check-1fa")
+            //                 if first_fa:
+            //                     timestamp_1fa, auth_method_1fa = first_fa
+            //                     if timestamp_1fa > threshold:
+            //                         res["1fa"] = auth_method_1fa
+            //             return res
+            */
+            return default;
+        }
+
         protected async Task<object> PostDispatchInternalAsync(object response)
         {
             /*
@@ -1259,6 +1501,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     val = request.httprequest.args.get(key)
             //     if val is not None:
             //         request.session[key] = val
+            --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_http.py) ---
+            // def _pre_dispatch(cls, rule, args):
+            // super()._pre_dispatch(rule, args)
+            // ctx = cls._get_editor_context()
+            // request.update_context(**ctx)
             --- ODOO METHOD SOURCE (MODULE: http_routing, FILE: ir_http.py) ---
             // def _pre_dispatch(cls, rule, args):
             // super()._pre_dispatch(rule, args)
@@ -1269,7 +1516,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # update the context of "<model(...):...>" args
             //     for key, val in list(args.items()):
             //         if isinstance(val, models.BaseModel):
-            //             args[key] = val.with_context(request.context)
+            //             args[key] = val.with_context(request.env.context)
             // 
             // if request.is_frontend_multilang:
             //     # A product with id 1 and named 'egg' is accessible via a
@@ -1281,10 +1528,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     # '/fr/foo/oeuf-1'. While it is nice (for humans) to have a
             //     # pretty URL, the real reason of this redirection is SEO.
             //     if request.httprequest.method in ('GET', 'HEAD'):
-            //         try:
-            //             _, path = rule.build(args)
-            //         except odoo.exceptions.MissingError:
-            //             raise werkzeug.exceptions.NotFound()
+            //         _, path = rule.build(args)
             //         assert path is not None
             //         generated_path = werkzeug.urls.url_unquote_plus(path)
             //         current_path = werkzeug.urls.url_unquote_plus(request.httprequest.path)
@@ -1297,11 +1541,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _pre_dispatch(cls, rule, args):
             // super()._pre_dispatch(rule, args)
             // cls._handle_debug()
-            --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_http.py) ---
-            // def _pre_dispatch(cls, rule, args):
-            // super()._pre_dispatch(rule, args)
-            // ctx = cls._get_web_editor_context()
-            // request.update_context(**ctx)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def _pre_dispatch(cls, rule, arguments):
             // super()._pre_dispatch(rule, arguments)
@@ -1348,12 +1587,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             // env = request.env if request.env.uid else request.env['base'].with_user(SUPERUSER_ID).env
             // request.update_context(lang=get_lang(env).code)
             // 
+            // # Replace uid and lang placeholder by the current request.env.uid and request.env.lang
+            // # before checking the access.
             // for key, val in list(args.items()):
             //     if not isinstance(val, models.BaseModel):
             //         continue
             // 
-            //     # Replace uid and lang placeholder by the current request.env.uid and request.env.lang
             //     args[key] = val.with_env(request.env)
+            // 
+            // for key, val in list(args.items()):
+            //     if not isinstance(val, models.BaseModel):
+            //         continue
             // 
             //     try:
             //         # explicitly crash now, instead of crashing later
@@ -1361,9 +1605,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     except (odoo.exceptions.AccessError, odoo.exceptions.MissingError) as e:
             //         # custom behavior in case a record is not accessible / has been removed
             //         if handle_error := rule.endpoint.routing.get('handle_params_access_error'):
-            //             if response := handle_error(e):
+            //             if response := handle_error(e, **args):
             //                 werkzeug.exceptions.abort(response)
-            //         if isinstance(e, odoo.exceptions.MissingError):
+            //         if request.env.user.is_public or isinstance(e, odoo.exceptions.MissingError):
             //             raise werkzeug.exceptions.NotFound() from e
             //         raise
             */
@@ -1391,14 +1635,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return False
             // template = False
             // if hasattr(response, '_cached_page'):
-            //     website_page, template = response._cached_page, response._cached_template
+            //     website_page, template = response._cached_page, response._cached_view_id
             // elif hasattr(response, 'qcontext'):  # classic response
             //     main_object = response.qcontext.get('main_object')
             //     website_page = getattr(main_object, '_name', False) == 'website.page' and main_object
             //     template = response.qcontext.get('response_template')
+            //     if isinstance(template, str) and '.' not in template:
+            //         template = 'website.%s' % template
             // 
-            // view = template and request.env['website'].get_template(template)
-            // if not request.env.cr.readonly and view and view.track:
+            // if template and not request.env.cr.readonly and request.env['ir.ui.view']._get_cached_template_info(template)['track']:
             //     request.env['website.visitor']._handle_webpage_dispatch(website_page)
             // 
             // return False
@@ -1429,7 +1674,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def routing_map(self, key=None):
             // _logger.info("Generating routing map for key %s", str(key))
             // registry = Registry(threading.current_thread().dbname)
-            // installed = registry._init_modules.union(odoo.conf.server_wide_modules)
+            // installed = registry._init_modules.union(odoo.tools.config['server_wide_modules'])
             // mods = sorted(installed)
             // # Note : when routing map is generated, we put it on the class `cls`
             // # to make it available for all instance. Since `env` create an new instance
@@ -1474,8 +1719,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return parent
             // 
             // # minimal setup to serve frontend pages
-            // if not request.uid:
-            //     cls._auth_method_public()
             // cls._frontend_pre_dispatch()
             // cls._handle_debug()
             // 
@@ -1506,23 +1749,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_http.py) ---
             // def _serve_page(cls):
             // req_page = request.httprequest.path
+            // WebsitePage = request.env['website.page'].sudo()
+            // page_info = WebsitePage._get_page_info(request)
             // 
-            // def _search_page(comparator='='):
-            //     page_domain = [('url', comparator, req_page)] + request.website.website_domain()
-            //     return request.env['website.page'].sudo().search(page_domain, order='website_id asc', limit=1)
-            // 
-            // # specific page first
-            // page = _search_page()
-            // 
-            // # case insensitive search
-            // if not page:
-            //     page = _search_page('=ilike')
-            //     if page:
-            //         logger.info("Page %r not found, redirecting to existing page %r", req_page, page.url)
-            //         return request.redirect(page.url)
+            // # redirect to the right url
+            // if page_info and page_info['url'] != req_page:
+            //     logger.info("Page %r not found, redirecting to existing page %r", req_page, page_info['url'])
+            //     return request.redirect(page_info['url'])
             // 
             // # redirect without trailing /
-            // if not page and req_page != "/" and req_page.endswith("/"):
+            // if not page_info and req_page != "/" and req_page.endswith("/"):
             //     # mimick `_postprocess_args()` redirect
             //     path = request.httprequest.path[:-1]
             //     if request.lang != cls._get_default_lang():
@@ -1531,22 +1767,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         path += '?' + request.httprequest.query_string.decode('utf-8')
             //     return request.redirect(path, code=301)
             // 
-            // if (
-            //     page
-            //     and (request.env.user.has_group('website.group_website_designer') or page.is_visible)
-            //     and (
-            //         # If a generic page (niche case) has been COWed and that COWed
-            //         # page received a URL change, it should not let you access the
-            //         # generic page anymore, despite having a different URL.
-            //         page.website_id
-            //         or not page.view_id._get_specific_views().filtered(lambda view: view.website_id == request.website)
-            //     )
-            // ):
-            //     _, ext = os.path.splitext(req_page)
-            //     response = request.render(page.view_id.id, {
-            //         'main_object': page,
-            //     }, mimetype=EXTENSION_TO_WEB_MIMETYPES.get(ext, 'text/html'))
-            //     return response
+            // if page_info:
+            //     return WebsitePage.browse(page_info['id'])._get_response(request)
+            // 
             // return False
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: ir_http.py) ---
             // def _serve_page(cls):
@@ -1589,12 +1812,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _serve_redirect(cls):
             // req_page = request.httprequest.path
             // req_page_with_qs = request.httprequest.environ['REQUEST_URI']
-            // domain = [
-            //     ('redirect_type', 'in', ('301', '302')),
+            // domain = (
+            //     Domain('redirect_type', 'in', ('301', '302'))
             //     # trailing / could have been removed by server_page
-            //     ('url_from', 'in', [req_page_with_qs, req_page.rstrip('/'), req_page + '/'])
-            // ]
-            // domain += request.website.website_domain()
+            //     & Domain('url_from', 'in', [req_page_with_qs, req_page.rstrip('/'), req_page + '/'])
+            //     & request.website.website_domain()
+            // )
             // return request.env['website.rewrite'].sudo().search(domain, order='url_from DESC', limit=1)
             */
             return default;
@@ -1603,6 +1826,19 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> SessionInfoAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrHttpable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def session_info(self):
+            // """
+            // Extend the backend session info with inactivity timeout metadata.
+            // 
+            // Adds the user's inactivity timeout (if applicable) to the session info
+            // returned to the backend web client.
+            // 
+            // :return: The updated session information dictionary.
+            // :rtype: dict
+            // """
+            // session_info = super().session_info()
+            // return self._session_info_common_auth_timeout(session_info)
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: ir_http.py) ---
             // def session_info(self):
             // res = super(IrHttp, self).session_info()
@@ -1634,7 +1870,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res = super().session_info()
             // ICP = self.env['ir.config_parameter'].sudo()
             // if ICP.get_param('cloud_storage_provider'):
-            //     res['cloud_storage_min_file_size'] = ICP.get_param('cloud_storage_min_file_size', DEFAULT_CLOUD_STORAGE_MIN_FILE_SIZE)
+            //     res['cloud_storage_min_file_size'] = int(ICP.get_param('cloud_storage_min_file_size', DEFAULT_CLOUD_STORAGE_MIN_FILE_SIZE))
+            //     res['cloud_storage_unsupported_models'] = self.env['ir.attachment']._get_cloud_storage_unsupported_models()
             // return res
             --- ODOO METHOD SOURCE (MODULE: google_recaptcha, FILE: ir_http.py) ---
             // def session_info(self):
@@ -1645,7 +1882,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ The widget 'timesheet_uom' needs to know which UoM conversion factor and which javascript
             //     widget to apply, depending on the current company.
             // """
-            // result = super(Http, self).session_info()
+            // result = super().session_info()
             // if self.env.user._is_internal():
             //     company_ids = self.env.user.company_ids
             // 
@@ -1677,16 +1914,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             // guest = self.env['mail.guest']._get_guest_from_context()
             // if not request.session.uid and guest:
             //     user_context = {'lang': guest.lang}
-            //     mods = odoo.conf.server_wide_modules or []
-            //     lang = user_context.get("lang")
-            //     translation_hash = self.env['ir.http'].sudo().get_web_translations_hash(mods, lang)
-            //     result['cache_hashes']['translations'] = translation_hash
             //     result["user_context"] = user_context
             // return result
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: ir_http.py) ---
             // def session_info(self):
             // """ Add information about iap enrich to perform """
-            // session_info = super(Http, self).session_info()
+            // session_info = super().session_info()
             // if session_info.get('is_admin'):
             //     session_info['iap_company_enrich'] = not self.env.user.company_id.iap_enrich_auto_done
             // return session_info
@@ -1717,9 +1950,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'web.max_file_upload_size',
             //     default=DEFAULT_MAX_CONTENT_LENGTH,
             // ))
-            // mods = odoo.conf.server_wide_modules or []
-            // if request.db:
-            //     mods = list(request.registry._init_modules) + mods
             // is_internal_user = user._is_internal()
             // session_info = {
             //     "uid": session_uid,
@@ -1729,6 +1959,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "is_internal_user": is_internal_user,
             //     "user_context": user_context,
             //     "db": self.env.cr.dbname,
+            //     "registry_hash": hmac(self.env(su=True), "webclient-cache", self.env.registry.registry_sequence),
             //     "user_settings": self.env['res.users.settings']._find_or_create_for_user(user)._res_users_settings_format(),
             //     "server_version": version_info.get('server_version'),
             //     "server_version_info": version_info.get('server_version_info'),
@@ -1741,39 +1972,29 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "partner_id": user.partner_id.id if session_uid and user.partner_id else None,
             //     "web.base.url": IrConfigSudo.get_param('web.base.url', default=''),
             //     "active_ids_limit": int(IrConfigSudo.get_param('web.active_ids_limit', default='20000')),
-            //     'profile_session': request.session.profile_session,
-            //     'profile_collectors': request.session.profile_collectors,
-            //     'profile_params': request.session.profile_params,
+            //     'profile_session': request.session.get('profile_session'),
+            //     'profile_collectors': request.session.get('profile_collectors'),
+            //     'profile_params': request.session.get('profile_params'),
             //     "max_file_upload_size": max_file_upload_size,
             //     "home_action_id": user.action_id.id,
-            //     "cache_hashes": {
-            //         "translations": self.env['ir.http'].sudo().get_web_translations_hash(
-            //             mods, request.session.context['lang']
-            //         ) if session_uid else None,
-            //     },
-            //     "currencies": self.sudo().get_currencies(),
+            //     "currencies": self.env['res.currency'].get_all_currencies(),
             //     'bundle_params': {
             //         'lang': request.session.context['lang'],
             //     },
-            //     'test_mode': bool(config['test_enable'] or config['test_file']),
+            //     'test_mode': config['test_enable'],
             //     'view_info': self.env['ir.ui.view'].get_view_info(),
+            //     'groups': {
+            //         'base.group_allow_export': user.has_group('base.group_allow_export') if session_uid else False,
+            //     },
             // }
             // if request.session.debug:
             //     session_info['bundle_params']['debug'] = request.session.debug
             // if is_internal_user:
-            //     # the following is only useful in the context of a webclient bootstrapping
-            //     # but is still included in some other calls (e.g. '/web/session/authenticate')
-            //     # to avoid access errors and unnecessary information, it is only included for users
-            //     # with access to the backend ('internal'-type users)
-            //     menus = self.env['ir.ui.menu'].with_context(lang=request.session.context['lang']).load_menus(request.session.debug)
-            //     ordered_menus = {str(k): v for k, v in menus.items()}
-            //     menu_json_utf8 = json.dumps(ordered_menus, sort_keys=True).encode()
-            //     session_info['cache_hashes'].update({
-            //         "load_menus": hashlib.sha512(menu_json_utf8).hexdigest()[:64], # sha512/256
-            //     })
             //     # We need sudo since a user may not have access to ancestor companies
-            //     disallowed_ancestor_companies_sudo = user.company_ids.sudo().parent_ids - user.company_ids
-            //     all_companies_in_hierarchy_sudo = disallowed_ancestor_companies_sudo + user.company_ids
+            //     # We use `_get_company_ids` because it is cached and we sudo it because env.user return a sudo user.
+            //     user_companies = self.env['res.company'].browse(user._get_company_ids()).sudo()
+            //     disallowed_ancestor_companies_sudo = user_companies.parent_ids - user_companies
+            //     all_companies_in_hierarchy_sudo = disallowed_ancestor_companies_sudo + user_companies
             //     session_info.update({
             //         # current_company should be default_company
             //         "user_companies": {
@@ -1783,9 +2004,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                     'id': comp.id,
             //                     'name': comp.name,
             //                     'sequence': comp.sequence,
-            //                     'child_ids': (comp.child_ids & user.company_ids).ids,
+            //                     'child_ids': (comp.child_ids & all_companies_in_hierarchy_sudo).ids,
             //                     'parent_id': comp.parent_id.id,
-            //                 } for comp in user.company_ids
+            //                     'currency_id': comp.currency_id.id,
+            //                 } for comp in user_companies
             //             },
             //             'disallowed_ancestor_companies': {
             //                 comp.id: {
@@ -1798,7 +2020,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             },
             //         },
             //         "show_effect": True,
-            //         "display_switch_company_menu": user.has_group('base.group_multi_company') and len(user.company_ids) > 1,
             //     })
             // return session_info
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: ir_http.py) ---
@@ -1807,6 +2028,74 @@ namespace Bamboo.Core.Application.Services.Mixins
             // result["tour_enabled"] = self.env.user.tour_enabled
             // result['current_tour'] = self.env["web_tour.tour"].get_current_tour()
             // return result
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SessionInfoCommonAuthTimeoutInternalAsync<TEntity>(IEnumerable<TEntity> entities, object session_info) where TEntity : IEntity<Guid>, IIrHttpable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _session_info_common_auth_timeout(self, session_info):
+            // """
+            // Add inactivity timeout metadata to the session info dictionary.
+            // 
+            // This method is used to include the user's applicable inactivity timeout
+            // (in seconds) in the session information returned to the frontend. The
+            // timeout is only added for authenticated (non-public) users.
+            // 
+            // :param dict session_info: The original session information dictionary.
+            // :return: The updated session information with inactivity timeout (if applicable).
+            // :rtype: dict
+            // """
+            // if not self.env.user._is_public() and (timeout := self.env.user._get_lock_timeout_inactivity()):
+            //     session_info["lock_timeout_inactivity"] = timeout
+            // return session_info
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SetSessionInactivityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object session, object inactivity_period, object force) where TEntity : IEntity<Guid>, IIrHttpable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: ir_http.py) ---
+            // def _set_session_inactivity(self, session, inactivity_period=0, force=False):
+            // """
+            // Set or clear the session's inactivity timeout flag.
+            // 
+            // This method is used to track user inactivity and determine when a session
+            // should trigger re-authentication. It is called when presence data is received
+            // through the websocket, either:
+            // 
+            // - because the web client, in Javascript, sent an event that the user is inactive
+            // - because the websocket connection was closed (e.g., the user closed the browser,
+            //   the last tab to Odoo was closed, internet disconnection, ...)
+            // 
+            // :param Session session: The user's HTTP session object.
+            // :param float inactivity_period: Duration of user inactivity in milliseconds.
+            // :param bool force: If True, forcibly mark the session as inactive regardless of duration.
+            //     This is typically used when the WebSocket connection is closed (e.g., the user closes
+            //     their last browser tab), signaling that the user has gone away. The inactivity timeout
+            //     still applies in this case. If the user becomes active again (e.g., reopens the tab)
+            //     before the threshold is reached, the session will be considered active again,
+            //     and re-authentication will not be required.
+            // 
+            // :return: None
+            // """
+            // # inactivity_period sent by the js is in milliseconds
+            // inactivity_period = inactivity_period / 1000
+            // timeout = self.env.user._get_lock_timeout_inactivity()
+            // inactive = timeout and (force or inactivity_period >= timeout)
+            // if inactive:
+            //     next_check = time.time() + timeout - inactivity_period
+            //     if not session.get("identity-check-next") or next_check < session["identity-check-next"]:
+            //         session["identity-check-next"] = next_check
+            //         # Save manually, websocket requests do not save the session automatically
+            //         root.session_store.save(session)
+            // elif not inactive and (timestamp := session.get("identity-check-next")) and timestamp > time.time():
+            //     session.pop("identity-check-next")
+            //     # Save manually, websocket requests do not save the session automatically
+            //     root.session_store.save(session)
             */
             return default;
         }
@@ -1877,7 +2166,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
-            // def _slugify(cls, value: str, max_length: int = 0, path: bool = False) -> str:
+            // def _slugify(cls, value: str, max_length: int = None, path: bool = False) -> str:
             // if not path:
             //     return cls._slugify_one(value, max_length=max_length)
             // else:
@@ -1899,12 +2188,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
-            // def _slugify_one(cls, value: str, max_length: int = 0) -> str:
+            // def _slugify_one(cls, value: str, max_length: int = None) -> str:
             // """ Transform a string to a slug that can be used in a url path.
             //     This method will first try to do the job with python-slugify if present.
-            //     Otherwise it will process string by stripping leading and ending spaces,
-            //     converting unicode chars to ascii, lowering all chars and replacing spaces
-            //     and underscore with hyphen "-".
+            //     Otherwise it will process string by replacing spaces and underscores with
+            //     dashes '-',removing every character that is not a word or a dash,
+            //     collapsing multiple dashes like --- into a single dash, removing leading
+            //     and trailing dashes and converting to lowercase.
+            //     Example: ^h☺e$#!l(%l}o 你好& becomes hello-你好
             // """
             // if slugify_lib:
             //     # There are 2 different libraries only python-slugify is supported
@@ -1912,9 +2203,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return slugify_lib.slugify(value, max_length=max_length)
             //     except TypeError:
             //         pass
-            // uni = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
-            // slug_str = re.sub(r'[\W_]+', '-', uni).strip('-').lower()
-            // return slug_str[:max_length] if max_length > 0 else slug_str
+            // uni = unicodedata.normalize('NFKD', value)
+            // slugified_segments = []
+            // for slug in re.split('-|_| ', uni):
+            //     slug = re.sub(r'([^\w])+', '', slug)
+            //     if slug:
+            //         slugified_segments.append(slug.lower())
+            // slugified_str = unicodedata.normalize('NFC', '-'.join(slugified_segments))
+            // return slugified_str[:max_length]
             */
             return default;
         }
@@ -2030,7 +2326,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if url and not url.netloc and not url.scheme and (url.path or force_lang):
             //     location = werkzeug.urls.url_join(request.httprequest.path, location)
             //     lang_url_codes = [info.url_code for info in Lang._get_frontend().values()]
-            //     lang_code = lang_code or request.context['lang']
+            //     lang_code = lang_code or request.env.context['lang']
             //     lang_url_code = Lang._get_data(code=lang_code).url_code
             //     lang_url_code = lang_url_code if lang_url_code in lang_url_codes else lang_code
             //     if (len(lang_url_codes) > 1 or force_lang) and cls._is_multilang_url(location, lang_url_codes):
@@ -2067,18 +2363,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     canonical_domain: str | tuple[str, str, str, str, str] | None = None,
             //     prefetch_langs: bool = False, force_default_lang: bool = False) -> str:
             // """ Returns the given URL adapted for the given lang, meaning that:
+            // 
             // 1. It will have the lang suffixed to it
             // 2. The model converter parts will be translated
             // 
             // If it is not possible to rebuild a path, use the current one instead.
-            // `url_quote_plus` is applied on the returned path.
+            // :func:`url_quote_plus` is applied on the returned path.
             // 
             // It will also force the canonical domain is requested.
-            // Eg:
-            // - `_get_url_localized(lang_fr, '/shop/my-phone-14')` will return
-            //     `/fr/shop/mon-telephone-14`
-            // - `_get_url_localized(lang_fr, '/shop/my-phone-14', True)` will return
-            //     `<base_url>/fr/shop/mon-telephone-14`
+            // 
+            // >>> _get_url_localized(lang_fr, '/shop/my-phone-14')
+            // '/fr/shop/mon-telephone-14'
+            // >>> _get_url_localized(lang_fr, '/shop/my-phone-14', True)
+            // '<base_url>/fr/shop/mon-telephone-14'
             // """
             // if not lang_code:
             //     lang = request.lang
@@ -2098,8 +2395,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     rule, args = request.env['ir.http']._match(url)
             //     for key, val in list(args.items()):
             //         if isinstance(val, models.BaseModel):
-            //             if isinstance(val._uid, RequestUID):
-            //                 args[key] = val = val.with_user(request.uid)
+            //             if isinstance(val.env.uid, RequestUID):
+            //                 args[key] = val = val.with_user(request.env.uid)
             //             if val.env.context.get('lang') != lang.code:
             //                 args[key] = val = val.with_context(lang=lang.code)
             //             if prefetch_langs:
@@ -2114,7 +2411,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if canonical_domain:
             //     # canonical URLs should not have qs
-            //     return werkzeug.urls.url_join(canonical_domain, path)
+            //     return tools.urls.urljoin(canonical_domain, path)
             // 
             // return path + sep + qs
             */
@@ -2211,7 +2508,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> VerifyRequestRecaptchaTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object action) where TEntity : IEntity<Guid>, IIrHttpable
+        public async Task<TEntity> VerifyRequestRecaptchaTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, string action) where TEntity : IEntity<Guid>, IIrHttpable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_recaptcha, FILE: ir_http.py) ---
@@ -2220,11 +2517,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     If no recaptcha private key is set the recaptcha verification
             //     is considered inactive and this method will return True.
             // """
+            // super()._verify_request_recaptcha_token(action)
+            // config_params = request.env['ir.config_parameter'].sudo()
+            // recaptcha_enabled = str2bool(config_params.get_param('enable_recaptcha', default=True))
+            // if not recaptcha_enabled:
+            //     return
             // ip_addr = request.httprequest.remote_addr
             // token = request.params.pop('recaptcha_token_response', False)
             // recaptcha_result = request.env['ir.http']._verify_recaptcha_token(ip_addr, token, action)
             // if recaptcha_result in ['is_human', 'no_secret']:
-            //     return True
+            //     return
             // if recaptcha_result == 'wrong_secret':
             //     raise ValidationError(_("The reCaptcha private key is invalid."))
             // elif recaptcha_result == 'wrong_token':
@@ -2234,23 +2536,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif recaptcha_result == 'bad_request':
             //     raise UserError(_("The request is invalid or malformed."))
             // else:
-            //     return False
+            //     raise UserError(_("Suspicious activity detected by google reCAPTCHA."))
             --- ODOO METHOD SOURCE (MODULE: website_cf_turnstile, FILE: ir_http.py) ---
             // def _verify_request_recaptcha_token(self, action):
             // """ Verify the recaptcha token for the current request.
             //     If no recaptcha private key is set the recaptcha verification
             //     is considered inactive and this method will return True.
             // """
-            // res = super()._verify_request_recaptcha_token(action)
-            // 
-            // if not res:  # check result of google_recaptcha
-            //     return res
-            // 
+            // super()._verify_request_recaptcha_token(action)
             // ip_addr = request.httprequest.remote_addr
             // token = request.params.pop('turnstile_captcha', False)
             // turnstile_result = request.env['ir.http']._verify_turnstile_token(ip_addr, token, action)
             // if turnstile_result in ['is_human', 'no_secret']:
-            //     return True
+            //     return
             // if turnstile_result == 'wrong_secret':
             //     raise ValidationError(_("The Cloudflare turnstile private key is invalid."))
             // elif turnstile_result == 'wrong_token':
@@ -2260,10 +2558,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif turnstile_result == 'bad_request':
             //     raise UserError(_("The request is invalid or malformed."))
             // else:  # wrong_action e.g.
-            //     return False
+            //     raise UserError(_("Suspicious activity detected by Turnstile CAPTCHA."))
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_http.py) ---
-            // def _verify_request_recaptcha_token(self, action):
-            // return True
+            // def _verify_request_recaptcha_token(self, action: str):
+            // return
             */
             return default;
         }
@@ -2336,7 +2634,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_http.py) ---
             // def webclient_rendering_context(self):
             // return {
-            //     'menu_data': request.env['ir.ui.menu'].load_menus(request.session.debug),
+            //     'color_scheme': self.color_scheme(),
             //     'session_info': self.session_info(),
             // }
             */

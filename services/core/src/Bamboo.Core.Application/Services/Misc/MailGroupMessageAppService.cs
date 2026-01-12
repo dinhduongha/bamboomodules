@@ -128,7 +128,7 @@ namespace Bamboo.Core.Application.Services
             //         raise UserError(_('The email "%s" is not valid.', message.email_from))
             // 
             // existing_moderation = self.env['mail.group.moderation'].search(
-            //     expression.OR([
+            //     Domain.OR([
             //         [
             //             ('email', '=', email_normalize(message.email_from)),
             //             ('mail_group_id', '=', message.mail_group_id.id)
@@ -161,15 +161,13 @@ namespace Bamboo.Core.Application.Services
             // def _get_pending_same_author_same_group(self):
             // """Return the pending messages of the same authors in the same groups."""
             // return self.search(
-            //     expression.AND([
-            //         expression.OR([
-            //             [
-            //                 ('mail_group_id', '=', message.mail_group_id.id),
-            //                 ('email_from_normalized', '=', message.email_from_normalized),
-            //             ] for message in self
-            //         ]),
-            //         [('moderation_status', '=', 'pending_moderation')],
+            //     Domain.OR([
+            //         [
+            //             ('mail_group_id', '=', message.mail_group_id.id),
+            //             ('email_from_normalized', '=', message.email_from_normalized),
+            //         ] for message in self
             //     ])
+            //     & Domain('moderation_status', '=', 'pending_moderation')
             // )
             */
             return default;

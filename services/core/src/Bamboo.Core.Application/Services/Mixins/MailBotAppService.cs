@@ -24,32 +24,34 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ApplyLogicInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object values, object command) where TEntity : IEntity<Guid>, IMailBotable
+        public async Task<TEntity> ApplyLogicInternalAsync<TEntity>(IEnumerable<TEntity> entities, object channel, object values, object command) where TEntity : IEntity<Guid>, IMailBotable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_bot, FILE: mail_bot.py) ---
-            // def _apply_logic(self, record, values, command=None):
+            // def _apply_logic(self, channel, values, command=None):
             // """ Apply bot logic to generate an answer (or not) for the user
             // The logic will only be applied if odoobot is in a chat with a user or
             // if someone pinged odoobot.
             // 
-            //  :param record: the discuss channel where the user message was posted/odoobot will answer.
+            //  :param channel: the discuss channel where the user message was posted/odoobot will answer.
             //  :param values: msg_values of the message_post or other values needed by logic
             //  :param command: the name of the called command if the logic is not triggered by a message_post
             // """
-            // record.ensure_one()
+            // channel.ensure_one()
             // odoobot_id = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
             // if values.get("author_id") == odoobot_id or values.get("message_type") != "comment" and not command:
             //     return
             // body = values.get("body", "").replace("\xa0", " ").strip().lower().strip(".!")
-            // if answer := self._get_answer(record, body, values, command):
-            //     record.sudo().message_post(
-            //         author_id=odoobot_id,
-            //         body=answer,
-            //         message_type="comment",
-            //         silent=True,
-            //         subtype_xmlid="mail.mt_comment",
-            //     )
+            // if answer := self._get_answer(channel, body, values, command):
+            //     answers = answer if isinstance(answer, list) else [answer]
+            //     for ans in answers:
+            //         channel.sudo().message_post(
+            //             author_id=odoobot_id,
+            //             body=ans,
+            //             message_type="comment",
+            //             silent=True,
+            //             subtype_xmlid="mail.mt_comment",
+            //         )
             */
             return default;
         }
@@ -194,70 +196,83 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetAnswerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object body, object values, object command) where TEntity : IEntity<Guid>, IMailBotable
+        public async Task<TEntity> GetAnswerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object channel, object body, object values, object command) where TEntity : IEntity<Guid>, IMailBotable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_bot, FILE: mail_bot.py) ---
-            // def _get_answer(self, record, body, values, command=False):
+            // def _get_answer(self, channel, body, values, command=False):
             // odoobot = self.env.ref("base.partner_root")
             // # onboarding
             // odoobot_state = self.env.user.odoobot_state
             // 
-            // if record.channel_type == "chat" and odoobot in record.channel_member_ids.partner_id:
+            // if channel.channel_type == "chat" and odoobot in channel.channel_member_ids.partner_id:
             //     # main flow
             //     source = _("Thanks")
             //     description = _("This is a temporary canned response to see how canned responses work.")
             //     if odoobot_state == 'onboarding_emoji' and self._body_contains_emoji(body):
             //         self.env.user.odoobot_state = "onboarding_command"
             //         self.env.user.odoobot_failed = False
-            //         return html_escape(
-            //             _("Great! 👍%(new_line)sTo access special commands, %(bold_start)sstart your sentence "
-            //               "with%(bold_end)s %(command_start)s/%(command_end)s. Try getting help."
-            //               )) % self._get_style_dict()
+            //         return self.env._(
+            //             "Great! 👍%(new_line)sTo access special commands, %(bold_start)sstart your "
+            //             "sentence with%(bold_end)s %(command_start)s/%(command_end)s. Try getting "
+            //             "help.",
+            //             **self._get_style_dict()
+            //         )
             //     elif odoobot_state == 'onboarding_command' and command == 'help':
             //         self.env.user.odoobot_state = "onboarding_ping"
             //         self.env.user.odoobot_failed = False
-            //         return html_escape(
-            //             _("Wow you are a natural!%(new_line)sPing someone with @username to grab their attention. "
-            //               "%(bold_start)sTry to ping me using%(bold_end)s %(command_start)s@OdooBot%(command_end)s"
-            //               " in a sentence.")) % self._get_style_dict()
+            //         return self.env._(
+            //             "Wow you are a natural!%(new_line)sPing someone with @username to grab their "
+            //             "attention. %(bold_start)sTry to ping me using%(bold_end)s "
+            //             "%(command_start)s@OdooBot%(command_end)s in a sentence.",
+            //             **self._get_style_dict()
+            //         )
             //     elif odoobot_state == "onboarding_ping" and odoobot.id in values.get("partner_ids", []):
             //         self.env.user.odoobot_state = "onboarding_attachement"
             //         self.env.user.odoobot_failed = False
-            //         return html_escape(
-            //             _("Yep, I am here! 🎉 %(new_line)sNow, try %(bold_start)ssending an attachment%(bold_end)s,"
-            //               " like a picture of your cute dog...")) % self._get_style_dict()
+            //         return self.env._(
+            //             "Yep, I am here! 🎉 %(new_line)sNow, try %(bold_start)ssending an "
+            //             "attachment%(bold_end)s, like a picture of your cute dog...",
+            //             **self._get_style_dict()
+            //         )
             //     elif odoobot_state == "onboarding_attachement" and values.get("attachment_ids"):
             //         self.env["mail.canned.response"].create({
             //             "source": source,
             //             "substitution": _("Thanks for your feedback. Goodbye!"),
-            //             "description": description,
             //         })
             //         self.env.user.odoobot_failed = False
             //         self.env.user.odoobot_state = "onboarding_canned"
-            //         return html_escape(
-            //             _("Wonderful! 😇%(new_line)sTry typing %(command_start)s:%(command_end)s to use canned responses."
-            //               " I've created a temporary one for you.")) % self._get_style_dict()
+            //         return self.env._(
+            //             "Wonderful! 😇%(new_line)sTry typing %(command_start)s::%(command_end)s to use "
+            //             "canned responses. I've created a temporary one for you.",
+            //             **self._get_style_dict()
+            //         )
             //     elif odoobot_state == "onboarding_canned" and self.env.context.get("canned_response_ids"):
             //         self.env["mail.canned.response"].search([
             //             ("create_uid", "=", self.env.user.id),
             //             ("source", "=", source),
-            //             ("description", "=", description),
             //         ]).unlink()
             //         self.env.user.odoobot_failed = False
             //         self.env.user.odoobot_state = "idle"
-            //         return html_escape(
-            //             _("Good, you can customize canned responses in the Discuss application."
-            //               "%(new_line)s%(new_line)s%(bold_start)sIt's the end of this overview%(bold_end)s,"
-            //               " you can now %(bold_start)sclose this conversation%(bold_end)s or start the tour again with"
-            //               " typing %(command_start)sstart the tour%(command_end)s."
-            //               " Enjoy discovering Odoo!")) % self._get_style_dict()
+            //         return [
+            //             self.env._(
+            //                 "Great! You can customize %(bold_start)scanned responses%(bold_end)s in the Discuss app.",
+            //                 **self._get_style_dict(),
+            //             ),
+            //             self.env._(
+            //                 "That’s the end of this overview. You can %(bold_start)sclose this conversation%(bold_end)s or type "
+            //                 "%(command_start)sstart the tour%(command_end)s to see it again. Enjoy exploring Odoo!",
+            //                 **self._get_style_dict(),
+            //             ),
+            //         ]
             //     # repeat question if needed
             //     elif odoobot_state == 'onboarding_canned' and not self._is_help_requested(body):
             //         self.env.user.odoobot_failed = True
-            //         return html_escape(
-            //             _("Not sure what you are doing. Please, type %(command_start)s:%(command_end)s and wait for the"
-            //               " propositions. Select one of them and press enter.")) % self._get_style_dict()
+            //         return self.env._(
+            //             "Not sure what you are doing. Please, type %(command_start)s:%(command_end)s "
+            //             "and wait for the propositions. Select one of them and press enter.",
+            //             **self._get_style_dict()
+            //         )
             //     elif odoobot_state in (False, "idle", "not_initialized") and (_('start the tour') in body.lower()):
             //         self.env.user.odoobot_state = "onboarding_emoji"
             //         return _("To start, try to send me an emoji :)")
@@ -268,44 +283,63 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return _("That's not nice! I'm a bot but I have feelings... 💔")
             //     # help message
             //     elif self._is_help_requested(body) or odoobot_state == 'idle':
-            //         return html_escape(
-            //             _("Unfortunately, I'm just a bot 😞 I don't understand! If you need help discovering our product, "
-            //               "please check %(document_link_start)sour documentation%(document_link_end)s or"
-            //               " %(slides_link_start)sour videos%(slides_link_end)s.")) % self._get_style_dict()
+            //         return self.env._(
+            //             "Unfortunately, I'm just a bot 😞 I don't understand! If you need help "
+            //             "discovering our product, please check %(document_link_start)sour "
+            //             "documentation%(document_link_end)s or %(slides_link_start)sour "
+            //             "videos%(slides_link_end)s.",
+            //             **self._get_style_dict()
+            //         )
             //     else:
             //         # repeat question
             //         if odoobot_state == 'onboarding_emoji':
             //             self.env.user.odoobot_failed = True
-            //             return (html_escape(
-            //                 _("Not exactly. To continue the tour, send an emoji:"
-            //                   " %(bold_start)stype%(bold_end)s%(command_start)s :)%(command_end)s and press enter."))
-            //                     % self._get_style_dict())
+            //             return self.env._(
+            //                 "Not exactly. To continue the tour, send an emoji:"
+            //                 " %(bold_start)stype%(bold_end)s%(command_start)s :)%(command_end)s and "
+            //                 "press enter.",
+            //                 **self._get_style_dict()
+            //             )
             //         elif odoobot_state == 'onboarding_attachement':
             //             self.env.user.odoobot_failed = True
-            //             return html_escape(
-            //                 _("To %(bold_start)ssend an attachment%(bold_end)s, click on the %(paperclip_icon)s icon and"
-            //                   " select a file.")) % self._get_style_dict()
+            //             return self.env._(
+            //                 "To %(bold_start)ssend an attachment%(bold_end)s, click on the "
+            //                 "%(paperclip_icon)s icon and select a file.",
+            //                 **self._get_style_dict()
+            //             )
             //         elif odoobot_state == 'onboarding_command':
             //             self.env.user.odoobot_failed = True
-            //             return html_escape(
-            //                 _("Not sure what you are doing. Please, type %(command_start)s/%(command_end)s and wait for the propositions."
-            //                   " Select %(command_start)shelp%(command_end)s and press enter.")) % self._get_style_dict()
+            //             return self.env._(
+            //                 "Not sure what you are doing. Please, type "
+            //                 "%(command_start)s/%(command_end)s and wait for the propositions."
+            //                 " Select %(command_start)shelp%(command_end)s and press enter.",
+            //                 **self._get_style_dict()
+            //             )
             //         elif odoobot_state == 'onboarding_ping':
             //             self.env.user.odoobot_failed = True
-            //             return html_escape(
-            //                 _("Sorry, I am not listening. To get someone's attention, %(bold_start)sping him%(bold_end)s."
-            //                   " Write %(command_start)s@OdooBot%(command_end)s and select me.")) % self._get_style_dict()
-            //         return random.choice([
-            //             html_escape(
-            //                 _("I'm not smart enough to answer your question.%(new_line)sTo follow my guide,"
-            //                   " ask: %(command_start)sstart the tour%(command_end)s.")) % self._get_style_dict(),
-            //             _("Hmmm..."),
-            //             _("I'm afraid I don't understand. Sorry!"),
-            //             html_escape(
-            //                 _("Sorry I'm sleepy. Or not! Maybe I'm just trying to hide my unawareness of human language..."
-            //                   "%(new_line)sI can show you features if you write: %(command_start)sstart the"
-            //                   " tour%(command_end)s.")) % self._get_style_dict()
-            //         ])
+            //             return self.env._(
+            //                 "Sorry, I am not listening. To get someone's attention, %(bold_start)sping "
+            //                 "him%(bold_end)s. Write %(command_start)s@OdooBot%(command_end)s and select"
+            //                 " me.",
+            //                 **self._get_style_dict()
+            //             )
+            //         return random.choice(
+            //             [
+            //                 self.env._(
+            //                     "I'm not smart enough to answer your question.%(new_line)sTo follow my "
+            //                     "guide, ask: %(command_start)sstart the tour%(command_end)s.",
+            //                     **self._get_style_dict()
+            //                 ),
+            //                 self.env._("Hmmm..."),
+            //                 self.env._("I'm afraid I don't understand. Sorry!"),
+            //                 self.env._(
+            //                     "Sorry I'm sleepy. Or not! Maybe I'm just trying to hide my unawareness"
+            //                     " of human language...%(new_line)sI can show you features if you write:"
+            //                     " %(command_start)sstart the tour%(command_end)s.",
+            //                     **self._get_style_dict()
+            //                 ),
+            //             ]
+            //         )
             // return False
             */
             return default;
@@ -328,30 +362,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "slides_link_end": Markup("</a>"),
             //     "paperclip_icon": Markup("<i class='fa fa-paperclip' aria-hidden='true'/>"),
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsBotInPrivateChannelInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IMailBotable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail_bot, FILE: mail_bot.py) ---
-            // def _is_bot_in_private_channel(self, record):
-            // odoobot_id = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
-            // if record._name == 'discuss.channel' and record.channel_type == 'chat':
-            //     return odoobot_id in record.with_context(active_test=False).channel_partner_ids.ids
-            // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsBotPingedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailBotable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail_bot, FILE: mail_bot.py) ---
-            // def _is_bot_pinged(self, values):
-            // odoobot_id = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
-            // return odoobot_id in values.get('partner_ids', [])
             */
             return default;
         }

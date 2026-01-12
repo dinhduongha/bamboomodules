@@ -27,6 +27,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/check-existing-page")]
+        public async Task<IActionResult> CheckExistingPageAsync(Guid id, [FromBody] WebsiteCheckExistingPageRequestDto input)
+        {
+            var result = await _appService.CheckExistingPageAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/configurator-addons-apply")]
+        public async Task<IActionResult> ConfiguratorAddonsApplyAsync(Guid id, [FromBody] WebsiteConfiguratorAddonsApplyRequestDto input)
+        {
+            var result = await _appService.ConfiguratorAddonsApplyAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/configurator-apply")]
         public async Task<IActionResult> ConfiguratorApplyAsync(Guid id)
         {
@@ -119,6 +135,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         public async Task<IActionResult> GetClientActionUrlAsync(Guid id, [FromBody] WebsiteGetClientUrlRequestDto input)
         {
             var result = await _appService.GetClientUrlAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-configurator-product-page-styles")]
+        public async Task<IActionResult> GetConfiguratorProductPageStylesAsync(Guid id)
+        {
+            var result = await _appService.GetConfiguratorProductPageStylesAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-configurator-shop-page-styles")]
+        public async Task<IActionResult> GetConfiguratorShopPageStylesAsync(Guid id)
+        {
+            var result = await _appService.GetConfiguratorShopPageStylesAsync(id);
             return Ok(result);
         }
         
@@ -275,14 +307,6 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/sale-get-order")]
-        public async Task<IActionResult> SaleGetOrderAsync(Guid id, [FromBody] WebsiteSaleGetOrderRequestDto input)
-        {
-            var result = await _appService.SaleGetOrderAsync(id, input);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/sale-product-domain")]
         public async Task<IActionResult> SaleProductDomainAsync(Guid id)
         {
@@ -324,9 +348,9 @@ namespace Bamboo.Core.HttpApi.Controllers
         
         [HttpPost]
         [Route("{id}/website-domain")]
-        public async Task<IActionResult> WebsiteDomainAsync(Guid id, [FromBody] WebsiteWebsiteDomainRequestDto input)
+        public async Task<IActionResult> WebsiteDomainAsync(Guid id)
         {
-            var result = await _appService.WebsiteDomainAsync(id, input);
+            var result = await _appService.WebsiteDomainAsync(id);
             return Ok(result);
         }
     }

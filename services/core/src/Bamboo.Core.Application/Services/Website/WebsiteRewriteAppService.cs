@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
     public class WebsiteRewriteAppService : GenericApplicationService<WebsiteRewrite>, IWebsiteRewriteAppService
     {
 
@@ -82,6 +82,19 @@ namespace Bamboo.Core.Application.Services
             //     rewrite.display_name = f"{rewrite.redirect_type} - {rewrite.name}"
             */
             return default;
+        }
+
+        public async Task<WebsiteRewrite> GetImportTemplatesAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: website_rewrite.py) ---
+            // def get_import_templates(self):
+            // return [{
+            //     'label': _("Import Template for Redirects"),
+            //     'template': '/website/static/xls/redirects_import_template.xlsx',
+            // }]
+            */
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<WebsiteRewrite> InvalidateRoutingInternalAsync()

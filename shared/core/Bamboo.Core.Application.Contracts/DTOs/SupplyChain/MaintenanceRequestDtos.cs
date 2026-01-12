@@ -6,7 +6,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
 {
     public class MaintenanceRequestMessageNewRequestDto
     {
-        public object Msg { get; set; }
+        public object MsgDict { get; set; }
         public object CustomValues { get; set; }
     }
 }

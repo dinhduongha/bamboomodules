@@ -174,23 +174,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_supplier.py) ---
             // def _search_available_today(self, operator, value):
-            // if (not operator in ['=', '!=']) or (not value in [True, False]):
-            //     return []
+            // if operator not in ('in', 'not in'):
+            //     return NotImplemented
             // 
-            // searching_for_true = (operator == '=' and value) or (operator == '!=' and not value)
+            // today = fields.Date.context_today(self)
+            // fieldname = WEEKDAY_TO_NAME[today.weekday()]
+            // truth = operator == 'in'
             // 
-            // now = fields.Datetime.now().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone(self.env.user.tz or 'UTC'))
-            // fieldname = WEEKDAY_TO_NAME[now.weekday()]
+            // recurrency_domain = Domain('recurrency_end_date', '=', False) \
+            //     | Domain('recurrency_end_date', '>' if truth else '<', today)
             // 
-            // recurrency_domain = expression.OR([
-            //     [('recurrency_end_date', '=', False)],
-            //     [('recurrency_end_date', '>' if searching_for_true else '<', now)]
-            // ])
-            // 
-            // return expression.AND([
-            //     recurrency_domain,
-            //     [(fieldname, operator, value)]
-            // ])
+            // return recurrency_domain & Domain(fieldname, operator, value)
             */
             return default;
         }
@@ -305,23 +299,6 @@ namespace Bamboo.Core.Application.Services
             //         env['{self._name}'].browse([{supplier.id}])._send_auto_email()""")
             */
             return default;
-        }
-
-        public async Task<LunchSupplier> ToggleActiveAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_supplier.py) ---
-            // def toggle_active(self):
-            // """ Archiving related lunch product """
-            // res = super().toggle_active()
-            // active_suppliers = self.filtered(lambda s: s.active)
-            // inactive_suppliers = self - active_suppliers
-            // Product = self.env['lunch.product'].with_context(active_test=False)
-            // Product.search([('supplier_id', 'in', active_suppliers.ids)]).write({'active': True})
-            // Product.search([('supplier_id', 'in', inactive_suppliers.ids)]).write({'active': False})
-            // return res
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

@@ -9,14 +9,14 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object Default { get; set; }
     }
     
-    public class ProjectTaskEmailSplitRequestDto
+    public class ProjectTaskCreateFromTemplateRequestDto
     {
-        public object Msg { get; set; }
+        public object Values { get; set; }
     }
     
     public class ProjectTaskGetEmptyListHelpRequestDto
     {
-        public object Help { get; set; }
+        public object HelpMessage { get; set; }
     }
     
     public class ProjectTaskGetMentionSuggestionsRequestDto
@@ -33,7 +33,7 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class ProjectTaskMessageNewRequestDto
     {
-        public object Msg { get; set; }
+        public object MsgDict { get; set; }
         public object CustomValues { get; set; }
     }
     
@@ -45,8 +45,13 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     
     public class ProjectTaskMessageUpdateRequestDto
     {
-        public object Msg { get; set; }
+        public object MsgDict { get; set; }
         public object UpdateVals { get; set; }
+    }
+    
+    public class ProjectTaskPlanTaskInCalendarRequestDto
+    {
+        public object Vals { get; set; }
     }
     
     public class ProjectTaskRatingApplyRequestDto

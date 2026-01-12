@@ -20,6 +20,11 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object AccountTypes { get; set; }
     }
     
+    public class AccountAccountSpreadsheetFetchBalanceTagRequestDto
+    {
+        public object ArgsList { get; set; }
+    }
+    
     public class AccountAccountSpreadsheetFetchDebitCreditRequestDto
     {
         public object ArgsList { get; set; }

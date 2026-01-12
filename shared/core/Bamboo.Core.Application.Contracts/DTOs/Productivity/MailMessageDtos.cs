@@ -14,11 +14,6 @@ namespace Bamboo.Core.Application.Contracts.DTOs
         public object FieldNames { get; set; }
     }
     
-    public class MailMessageIsThreadMessageRequestDto
-    {
-        public object Vals { get; set; }
-    }
-    
     public class MailMessageMarkAllAsReadRequestDto
     {
         public object Domain { get; set; }

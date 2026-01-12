@@ -36,6 +36,50 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public override async Task<DiscussChannelRtcSession> CreateAsync(DiscussChannelRtcSession entity, List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: discuss_channel_rtc_session.py) ---
+            // def create(self, vals_list):
+            // rtc_sessions = super().create(vals_list)
+            // for livechat_session in rtc_sessions.filtered(
+            //     lambda s: s.channel_member_id.livechat_member_type in ("agent", "visitor")
+            // ):
+            //     call_history = livechat_session.channel_id.call_history_ids.sorted(
+            //         lambda c: (c.create_date, c.id)
+            //     )[-1]
+            //     call_history.livechat_participant_history_ids |= (
+            //         livechat_session.channel_member_id.livechat_member_history_ids
+            //     )
+            // return rtc_sessions
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_rtc_session.py) ---
+            // def create(self, vals_list):
+            // rtc_sessions = super().create(vals_list)
+            // rtc_sessions_by_channel = defaultdict(lambda: self.env["discuss.channel.rtc.session"])
+            // for rtc_session in rtc_sessions:
+            //     rtc_sessions_by_channel[rtc_session.channel_id] += rtc_session
+            // for channel, rtc_sessions in rtc_sessions_by_channel.items():
+            //     Store(bus_channel=channel).add(
+            //         channel,
+            //         {"rtc_session_ids": Store.Many(rtc_sessions, mode="ADD")},
+            //     ).bus_send()
+            // for channel in rtc_sessions.channel_id.filtered(lambda c: len(c.rtc_session_ids) == 1):
+            //     body = Markup('<div data-oe-type="call" class="o_mail_notification"></div>')
+            //     message = channel.message_post(body=body, message_type="notification")
+            //     # sudo - discuss.call.history: can create call history when call is created.
+            //     self.env["discuss.call.history"].sudo().create(
+            //         {
+            //             "channel_id": channel.id,
+            //             "start_dt": fields.Datetime.now(),
+            //             "start_call_message_id": message.id,
+            //         },
+            //     )
+            //     Store(bus_channel=channel).add(message, [Store.Many("call_history_ids", [])]).bus_send()
+            // return rtc_sessions
+            */
+            return await base.CreateAsync(entity, fields);
+        }
+
         protected async Task<DiscussChannelRtcSession> DeleteInactiveRtcSessionsInternalAsync()
         {
             /*
@@ -89,12 +133,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<DiscussChannelRtcSession> GetStoreExtraFieldsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_rtc_session.py) ---
+            // def _get_store_extra_fields(self):
+            // return ["is_camera_on", "is_deaf", "is_muted", "is_screen_sharing_on"]
+            */
+            return default;
+        }
+
         protected async Task<DiscussChannelRtcSession> InactiveRtcSessionDomainInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_rtc_session.py) ---
             // def _inactive_rtc_session_domain(self):
-            // return [('write_date', '<', fields.Datetime.now() - relativedelta(minutes=1))]
+            // return [('write_date', '<', fields.Datetime.now() - relativedelta(minutes=1, seconds=15))]
             */
             return default;
         }
@@ -122,27 +176,18 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<DiscussChannelRtcSession> ToStoreInternalAsync(object store, object extra)
+        protected async Task<DiscussChannelRtcSession> ToStoreDefaultsInternalAsync(object target)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_rtc_session.py) ---
-            // def _to_store(self, store: Store, extra=False):
-            // for rtc_session in self:
-            //     data = rtc_session._read_format([], load=False)[0]
-            //     data["channelMember"] = Store.one(
-            //         rtc_session.channel_member_id,
-            //         fields={"channel": [], "persona": ["name", "im_status"]},
-            //     )
-            //     if extra:
-            //         data.update(
-            //             {
-            //                 "isCameraOn": rtc_session.is_camera_on,
-            //                 "isDeaf": rtc_session.is_deaf,
-            //                 "isSelfMuted": rtc_session.is_muted,
-            //                 "isScreenSharingOn": rtc_session.is_screen_sharing_on,
-            //             }
-            //         )
-            //     store.add(rtc_session, data)
+            // def _to_store_defaults(self, target):
+            // return Store.One(
+            //     "channel_member_id",
+            //     [
+            //         Store.One("channel_id", [], as_thread=True),
+            //         *self.env["discuss.channel.member"]._to_store_persona("avatar_card"),
+            //     ],
+            // )
             */
             return default;
         }
@@ -157,7 +202,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // valid_values = {'is_screen_sharing_on', 'is_camera_on', 'is_muted', 'is_deaf'}
             // self.write({key: values[key] for key in valid_values if key in values})
-            // store = Store(self, extra=True)
+            // store = Store().add(self, extra_fields=self._get_store_extra_fields())
             // self.channel_id._bus_send(
             //     "discuss.channel.rtc.session/update_and_broadcast",
             //     {"data": store.get_result(), "channelId": self.channel_id.id},

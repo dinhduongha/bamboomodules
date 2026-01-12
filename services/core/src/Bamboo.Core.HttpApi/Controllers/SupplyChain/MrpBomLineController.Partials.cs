@@ -33,13 +33,5 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.OnchangeProductIdAsync(id);
             return Ok(result);
         }
-        
-        [HttpPost]
-        [Route("{id}/onchange-product-uom-id")]
-        public async Task<IActionResult> OnchangeProductUomIdAsync(Guid id)
-        {
-            var result = await _appService.OnchangeProductUomIdAsync(id);
-            return Ok(result);
-        }
     }
 }

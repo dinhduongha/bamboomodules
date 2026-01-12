@@ -25,13 +25,5 @@ namespace Bamboo.Core.HttpApi.Controllers
             var result = await _appService.ShowAuditTrailDuringExceptionAsync(id);
             return Ok(result);
         }
-        
-        [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
-        {
-            var result = await _appService.InitAsync(id);
-            return Ok(result);
-        }
     }
 }

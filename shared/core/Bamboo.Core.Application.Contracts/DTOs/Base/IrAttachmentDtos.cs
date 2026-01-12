@@ -24,9 +24,4 @@ namespace Bamboo.Core.Application.Contracts.DTOs
     {
         public object Force { get; set; }
     }
-    
-    public class IrAttachmentValidateAccessRequestDto
-    {
-        public object AccessToken { get; set; }
-    }
 }

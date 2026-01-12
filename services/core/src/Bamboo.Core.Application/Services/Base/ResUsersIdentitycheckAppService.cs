@@ -34,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             // if self.auth_method == 'webauthn':
             //     try:
             //         credential = {
-            //             'webauthn_response': self.password,
+            //             'webauthn_response': self.env.context.get('password'),
             //             'type': 'webauthn',
             //         }
             //         self.create_uid._check_credentials(credential, {'interactive': True})
@@ -47,7 +47,7 @@ namespace Bamboo.Core.Application.Services
             // try:
             //     credential = {
             //         'login': self.env.user.login,
-            //         'password': self.password,
+            //         'password': self.env.context.get('password'),
             //         'type': 'password',
             //     }
             //     self.create_uid._check_credentials(credential, {'interactive': True})
@@ -78,9 +78,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def run_check(self):
+            // # The password must be in the context with the key name `'password'`
             // assert request, "This method can only be accessed over HTTP"
             // self._check_identity()
-            // self.password = False
             // 
             // request.session['identity-check-last'] = time.time()
             // ctx, model, ids, method, args, kwargs = json.loads(self.sudo().request)

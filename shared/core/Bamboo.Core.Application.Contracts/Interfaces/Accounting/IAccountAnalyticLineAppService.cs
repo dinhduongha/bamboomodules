@@ -10,6 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAnalyticLineAppService : IGenericApplicationService<AccountAnalyticLine>
     {
+        Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid id);
+        Task<AccountAnalyticLine> GetUnusualDaysAsync(Guid id, AccountAnalyticLineGetUnusualDaysRequestDto input);
         Task<AccountAnalyticLine> GetViewsAsync(Guid id, AccountAnalyticLineGetViewsRequestDto input);
         Task<AccountAnalyticLine> InvoiceFromTimesheetAsync(Guid id);
         Task<AccountAnalyticLine> OnChangeUnitAmountAsync(Guid id);

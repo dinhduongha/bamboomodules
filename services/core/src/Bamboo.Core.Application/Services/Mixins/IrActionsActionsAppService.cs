@@ -39,6 +39,38 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionOpenParentActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def action_open_parent_action(self):
+            // return {
+            //     "type": "ir.actions.act_window",
+            //     "target": "current",
+            //     "views": [[False, "form"]],
+            //     "res_model": self._name,
+            //     "res_id": self.parent_id.id,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenScheduledActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def action_open_scheduled_action(self):
+            // return {
+            //     "type": "ir.actions.act_window",
+            //     "target": "current",
+            //     "views": [[False, "form"]],
+            //     "res_model": "ir.cron",
+            //     "res_id": self.ir_cron_ids.ids[0],
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> AssociatedViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -81,9 +113,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             // kwargs = {k: validator(kwargs.get(k, v)) for k, (v, validator) in defaults.items()}
             // kwargs['humanReadable'] = kwargs.pop('humanreadable')
             // if kwargs['humanReadable']:
-            //     kwargs['fontName'] = _DEFAULT_BARCODE_FONT
+            //     kwargs['fontName'] = get_barcode_font()
             // 
-            // if kwargs['width'] * kwargs['height'] > 400000 or max(kwargs['width'], kwargs['height']) > 10000:
+            // if kwargs['width'] * kwargs['height'] > 1200000 or max(kwargs['width'], kwargs['height']) > 10000:
             //     raise ValueError("Barcode too large")
             // 
             // if barcode_type == 'UPCA' and len(value) in (11, 12, 13):
@@ -96,7 +128,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif barcode_type == 'QR':
             //     # for `QR` type, `quiet` is not supported. And is simply ignored.
             //     # But we can use `barBorder` to get a similar behaviour.
-            //     if kwargs['quiet']:
+            //     # quiet=True & barBorder=4 by default cf above, remove border only if quiet=False
+            //     if not kwargs['quiet']:
             //         kwargs['barBorder'] = 0
             // 
             // if barcode_type in ('EAN8', 'EAN13') and not check_barcode_encoding(value, barcode_type):
@@ -167,7 +200,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         command_args.extend(['--page-width', str(paperformat_id.page_width) + 'mm'])
             //         command_args.extend(['--page-height', str(paperformat_id.page_height) + 'mm'])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-margin-top'):
+            //     if specific_paperformat_args and 'data-report-margin-top' in specific_paperformat_args:
             //         command_args.extend(['--margin-top', str(specific_paperformat_args['data-report-margin-top'])])
             //     else:
             //         command_args.extend(['--margin-top', str(paperformat_id.margin_top)])
@@ -183,17 +216,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             dpi = paperformat_id.dpi
             //     if dpi:
             //         command_args.extend(['--dpi', str(dpi)])
-            //         if wkhtmltopdf_dpi_zoom_ratio:
+            //         if _wkhtml().dpi_zoom_ratio:
             //             command_args.extend(['--zoom', str(96.0 / dpi)])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-header-spacing'):
+            //     if specific_paperformat_args and 'data-report-header-spacing' in specific_paperformat_args:
             //         command_args.extend(['--header-spacing', str(specific_paperformat_args['data-report-header-spacing'])])
             //     elif paperformat_id.header_spacing:
             //         command_args.extend(['--header-spacing', str(paperformat_id.header_spacing)])
             // 
             //     command_args.extend(['--margin-left', str(paperformat_id.margin_left)])
             // 
-            //     if specific_paperformat_args and specific_paperformat_args.get('data-report-margin-bottom'):
+            //     if specific_paperformat_args and 'data-report-margin-bottom' in specific_paperformat_args:
             //         command_args.extend(['--margin-bottom', str(specific_paperformat_args['data-report-margin-bottom'])])
             //     else:
             //         command_args.extend(['--margin-bottom', str(paperformat_id.margin_bottom)])
@@ -218,13 +251,51 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckChildRecursionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<TEntity> CanExecuteActionOnRecordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _check_child_recursion(self):
-            // if self._has_cycle('child_ids'):
+            // def _can_execute_action_on_records(self, records):
+            // self.ensure_one()
+            // 
+            // action_groups = self.group_ids
+            // if action_groups:
+            //     if not (action_groups & self.env.user.all_group_ids):
+            //         raise AccessError(_("You don't have enough access rights to run this action."))
+            // else:
+            //     model_name = self.model_id.model
+            //     try:
+            //         self.env[model_name].check_access("write")
+            //     except AccessError:
+            //         _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
+            //             self.name, self.env.user.login, model_name,
+            //         )
+            //         raise
+            // 
+            // if not self.group_ids and records.ids:
+            //     # check access rules on real records only; base automations of
+            //     # type 'onchange' can run server actions on new records
+            //     try:
+            //         records.check_access('write')
+            //     except AccessError:
+            //         _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
+            //             self.name, self.env.user.login, records,
+            //         )
+            //         raise
+            */
+            return default;
+        }
+
+        public async Task<TEntity> CheckChildrenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _check_children(self):
+            // if self._has_cycle():
             //     raise ValidationError(_('Recursion found in child server actions'))
+            // 
+            // if (children_with_warnings := self.child_ids.filtered('warning')):
+            //     raise ValidationError(_("Following child actions have warnings: %(children)s", children=', '.join(children_with_warnings.mapped('name'))))
             */
             return default;
         }
@@ -301,28 +372,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckWebhookFieldIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<TEntity> ComputeAllowedStatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _check_webhook_field_ids(self):
-            // """Check that the selected fields don't have group restrictions"""
-            // restricted_fields = dict()
-            // for action in self:
-            //     Model = self.env[action.model_id.model]
-            //     for model_field in action.webhook_field_ids:
-            //         # you might think that the ir.model.field record holds references
-            //         # to the groups, but that's not the case - we need to field object itself
-            //         field = Model._fields[model_field.name]
-            //         if field.groups:
-            //             restricted_fields.setdefault(action.name, []).append(model_field.field_description)
-            // if restricted_fields:
-            //     restricted_field_per_action = "\n".join([f"{action}: {', '.join(f for f in fields)}" for action, fields in restricted_fields.items()])
-            //     raise ValidationError(_("Group-restricted fields cannot be included in "
-            //                             "webhook payloads, as it could allow any user to "
-            //                             "accidentally leak sensitive information. You will "
-            //                             "have to remove the following fields from the webhook payload "
-            //                             "in the following actions:\n %s", restricted_field_per_action))
+            // def _compute_allowed_states(self):
+            // self.allowed_states = [value for value, __ in self._fields['state'].selection]
             */
             return default;
         }
@@ -356,15 +411,15 @@ namespace Bamboo.Core.Application.Services.Mixins
             // be updated by the action - only used for object_write actions.
             // """
             // for action in self:
-            //     if action.model_id and action.state in ('object_write', 'object_create'):
-            //         if action.state == 'object_create':
+            //     if action.model_id and action.state in ('object_write', 'object_create', 'object_copy'):
+            //         if action.state in ('object_create', 'object_copy'):
             //             action.crud_model_id = action.model_id
             //             action.update_field_id = False
             //             action.update_path = False
             //         elif action.state == 'object_write':
             //             if action.update_path:
             //                 # we need to traverse relations to find the target model and field
-            //                 model, field, _ = action._traverse_path()
+            //                 model, field = action._traverse_path()
             //                 action.crud_model_id = model
             //                 action.update_field_id = field
             //                 need_update_model = action.evaluation_type == 'value' and action.update_field_id and action.update_field_id.relation
@@ -392,18 +447,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeLinkFieldIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _compute_link_field_id(self):
-            // invalid = self.filtered(lambda act: act.link_field_id.model_id != act.model_id)
-            // if invalid:
-            //     invalid.link_field_id = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeModelIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -415,6 +458,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ComputeNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _compute_name(self):
+            // for action in self:
+            //     was_automated = action.name == action.automated_name
+            //     action.automated_name = action._generate_action_name()
+            //     if was_automated:
+            //         action.name = action.automated_name
+            */
+            return default;
+        }
+
         public async Task<TEntity> ComputeParamsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -422,7 +479,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_params(self):
             // self_bin = self.with_context(bin_size=False, bin_size_params_store=False)
             // for record, record_bin in zip(self, self_bin):
-            //     record.params = record_bin.params_store and safe_eval(record_bin.params_store, {'uid': self._uid})
+            //     record.params = record_bin.params_store and safe_eval(record_bin.params_store, {'uid': self.env.uid})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeShowCodeHistoryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _compute_show_code_history(self):
+            // self.show_code_history = False
+            // History = self.env["ir.actions.server.history"]
+            // for action in self.filtered(lambda a: a.state == "code"):
+            //     action.show_code_history = History.search_count([
+            //         ("action_id", "=", action.id),
+            //         ("code", "!=", action.code),
+            //     ]) > 0
             */
             return default;
         }
@@ -433,12 +506,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _compute_value_field_to_show(self):  # check if value_field_to_show can be removed and use ttype in xml view instead
             // for action in self:
-            //     if action.update_field_id.ttype in ('one2many', 'many2one', 'many2many'):
+            //     if action.evaluation_type == 'sequence':
+            //         action.value_field_to_show = 'sequence_id'
+            //     elif action.update_field_id.ttype in ('one2many', 'many2one', 'many2many'):
             //         action.value_field_to_show = 'resource_ref'
             //     elif action.update_field_id.ttype == 'selection':
             //         action.value_field_to_show = 'selection_value'
             //     elif action.update_field_id.ttype == 'boolean':
             //         action.value_field_to_show = 'update_boolean_value'
+            //     elif action.update_field_id.ttype == 'html':
+            //         action.value_field_to_show = 'html_value'
             //     else:
             //         action.value_field_to_show = 'value'
             */
@@ -469,6 +546,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             missing_modes.remove(act.view_id.type)
             //             act.views.append((act.view_id.id, act.view_id.type))
             //         act.views.extend([(False, mode) for mode in missing_modes])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ComputeWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _compute_warning(self):
+            // for action in self:
+            //     if (warnings := action._get_warning_messages()):
+            //         action.warning = "\n\n".join(warnings)
+            //     else:
+            //         action.warning = False
             */
             return default;
         }
@@ -553,7 +644,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def create(self, vals_list):
-            // res = super(IrActions, self).create(vals_list)
+            // res = super().create(vals_list)
             // # self.get_bindings() depends on action records
             // self.env.registry.clear_cache()
             // return res
@@ -563,7 +654,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for vals in vals_list:
             //     if not vals.get('name') and vals.get('res_model'):
             //         vals['name'] = self.env[vals['res_model']]._description
-            // return super(IrActionsActWindow, self).create(vals_list)
+            // return super().create(vals_list)
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def create(self, vals_list):
+            // for vals in vals_list:
+            //     if parent_id := vals.get('parent_id'):
+            //         parent = self.browse(parent_id)
+            //         vals['model_id'] = parent.model_id.id
+            //         vals['group_ids'] = parent.group_ids.ids
+            // actions = super().create(vals_list)
+            // 
+            // # create first history entries
+            // history_vals = []
+            // for action, vals in zip(actions, vals_list):
+            //     if "code" in vals:
+            //         history_vals.append({"action_id": action.id, "code": vals.get("code")})
+            // if history_vals:
+            //     self.env["ir.actions.server.history"].create(history_vals)
+            // 
+            // return actions
             */
             return default;
         }
@@ -596,6 +705,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     expr = action.value
             //     if action.evaluation_type == 'equation':
             //         expr = safe_eval(action.value, eval_context)
+            //     elif action.evaluation_type == 'sequence':
+            //         expr = action.sequence_id.next_by_id()
             //     elif action.update_field_id.ttype in ['one2many', 'many2many']:
             //         operation = action.update_m2m_operation
             //         if operation == 'add':
@@ -618,6 +729,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     elif action.update_field_id.ttype == 'float':
             //         with contextlib.suppress(Exception):
             //             expr = float(action.value)
+            //     elif action.update_field_id.ttype == 'html':
+            //         expr = action.html_value
             //     result[action.id] = expr
             // return result
             */
@@ -629,8 +742,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _existing(self):
-            // self._cr.execute("SELECT id FROM %s" % self._table)
-            // return set(row[0] for row in self._cr.fetchall())
+            // self.env.cr.execute("SELECT id FROM %s" % self._table)
+            // return {row[0] for row in self.env.cr.fetchall()}
             */
             return default;
         }
@@ -654,13 +767,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _for_xml_id(self, full_xml_id):
             // """ Returns the action content for the provided xml_id
             // 
-            // :param xml_id: the namespace-less id of the action (the @id
-            //                attribute from the XML file)
+            // :param full_xml_id: the namespace-less id of the action (the @id
+            //     attribute from the XML file)
             // :return: A read() view of the ir.actions.action safe for web use
             // """
             // record = self.env.ref(full_xml_id)
             // assert isinstance(self.env[record._name], self.env.registry[self._name])
             // return record._get_action_dict()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GenerateActionNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _generate_action_name(self):
+            // self.ensure_one()
+            // if self.state == 'object_create':
+            //     return _("Create %(model_name)s", model_name=self.crud_model_id.name)
+            // if self.state == 'object_write':
+            //     return _("Update %(model_name)s", model_name=self.crud_model_id.name)
+            // if self.state == "object_copy":
+            //     if not self.crud_model_id or not self.resource_ref:
+            //         return _("Duplicate ...")
+            //     record = self.env[self.crud_model_id.model].browse(self.resource_ref.id)
+            //     return _("Duplicate %(record)s", record=record.display_name)
+            // return dict(self._fields["state"]._description_selection(self.env)).get(
+            //     self.state, ""
+            // )
             */
             return default;
         }
@@ -701,10 +836,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def get_available_barcode_masks(self):
             // """ Hook for extension.
+            // 
             // This function returns the available QR-code masks, in the form of a
             // list of (code, mask_function) elements, where code is a string identifying
             // the mask uniquely, and mask_function is a function returning a reportlab
             // Drawing object with the result of the mask, and taking as parameters:
+            // 
             //     - width of the QR-code, in pixels
             //     - height of the QR-code, in pixels
             //     - reportlab Drawing object containing the barcode to apply the mask on
@@ -730,7 +867,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     actions = []
             //     for action in all_actions:
             //         action = dict(action)
-            //         groups = action.pop('groups_id', None)
+            //         groups = action.pop('group_ids', None)
             //         if groups and not any(self.env.user.has_group(ext_id) for ext_id in groups):
             //             # the user may not perform this action
             //             continue
@@ -772,14 +909,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     try:
             //         action = self.env[action_model].sudo().browse(action_id)
             //         fields = ['name', 'binding_view_types']
-            //         for field in ('groups_id', 'res_model', 'sequence', 'domain'):
+            //         for field in ('group_ids', 'res_model', 'sequence', 'domain'):
             //             if field in action._fields:
             //                 fields.append(field)
             //         action = action.read(fields)[0]
-            //         if action.get('groups_id'):
+            //         if action.get('group_ids'):
             //             # transform the list of ids into a list of xml ids
-            //             groups = self.env['res.groups'].browse(action['groups_id'])
-            //             action['groups_id'] = list(groups._ensure_xml_id().values())
+            //             groups = self.env['res.groups'].browse(action['group_ids'])
+            //             action['group_ids'] = list(groups._ensure_xml_id().values())
             //         if 'domain' in action and not action.get('domain'):
             //             action.pop('domain')
             //         result[binding_type].append(frozendict(action))
@@ -794,17 +931,17 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDefaultFormViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<TEntity> GetChildrenDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _get_default_form_view(self):
-            // doc = super(IrActionsActClient, self)._get_default_form_view()
-            // params = doc.find(".//field[@name='params']")
-            // params.getparent().remove(params)
-            // params_store = doc.find(".//field[@name='params_store']")
-            // params_store.getparent().remove(params_store)
-            // return doc
+            // def _get_children_domain(self):
+            // domain = Domain([
+            //     ("model_id", "=", unquote("model_id")),
+            //     ("parent_id", "=", False),
+            //     ("id", "!=", unquote("id")),
+            // ])
+            // return domain
             */
             return default;
         }
@@ -816,7 +953,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_eval_context(self, action=None):
             // """ evaluation context to pass to safe_eval """
             // return {
-            //     'uid': self._uid,
+            //     'uid': self.env.uid,
             //     'user': self.env.user,
             //     'time': tools.safe_eval.time,
             //     'datetime': tools.safe_eval.datetime,
@@ -840,25 +977,25 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         cr.execute("""
             //             INSERT INTO ir_logging(create_date, create_uid, type, dbname, name, level, message, path, line, func)
             //             VALUES (NOW() at time zone 'UTC', %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            //         """, (self.env.uid, 'server', self._cr.dbname, __name__, level, message, "action", action.id, action.name))
+            //         """, (self.env.uid, 'server', self.env.cr.dbname, __name__, level, message, "action", action.id, action.name))
             // 
             // eval_context = super(IrActionsServer, self)._get_eval_context(action=action)
             // model_name = action.model_id.sudo().model
             // model = self.env[model_name]
             // record = None
             // records = None
-            // if self._context.get('active_model') == model_name and self._context.get('active_id'):
-            //     record = model.browse(self._context['active_id'])
-            // if self._context.get('active_model') == model_name and self._context.get('active_ids'):
-            //     records = model.browse(self._context['active_ids'])
-            // if self._context.get('onchange_self'):
-            //     record = self._context['onchange_self']
+            // if self.env.context.get('active_model') == model_name and self.env.context.get('active_id'):
+            //     record = model.browse(self.env.context['active_id'])
+            // if self.env.context.get('active_model') == model_name and self.env.context.get('active_ids'):
+            //     records = model.browse(self.env.context['active_ids'])
+            // if self.env.context.get('onchange_self'):
+            //     record = self.env.context['onchange_self']
             // eval_context.update({
             //     # orm
             //     'env': self.env,
             //     'model': model,
             //     # Exceptions
-            //     'UserError': odoo.exceptions.UserError,
+            //     'UserError': UserError,
             //     # record
             //     'record': record,
             //     'records': records,
@@ -921,11 +1058,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _get_readable_fields(self):
             // return super()._get_readable_fields() | {
-            //     "context", "mobile_view_mode", "domain", "filter", "groups_id", "limit",
+            //     "context", "cache", "mobile_view_mode", "domain", "filter", "group_ids", "limit",
             //     "res_id", "res_model", "search_view_id", "target", "view_id", "view_mode", "views", "embedded_action_ids",
-            //     # `flags` is not a real field of ir.actions.act_window but is used
-            //     # to give the parameters to generate the action
-            //     "flags",
             //     # this is used by frontend, with the document layout wizard before send and print
             //     "close_on_report_download",
             // }
@@ -944,7 +1078,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _get_readable_fields(self):
             // return super()._get_readable_fields() | {
-            //     "groups_id", "model_name",
+            //     "group_ids", "model_name",
             // }
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _get_readable_fields(self):
@@ -963,6 +1097,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     "close_on_report_download",
             //     "domain",
             // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> GetRelationChainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object searched_field_name) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _get_relation_chain(self, searched_field_name):
+            // self.ensure_one()
+            // if (
+            //     not searched_field_name
+            //     or not searched_field_name in self._fields
+            //     or not self[searched_field_name]
+            //     or not self.model_id
+            // ):
+            //     return [], ""
+            // path = self[searched_field_name].split('.')
+            // if not path:
+            //     return [], ""
+            // model = self.env[self.model_id.model]
+            // chain = []
+            // for field_name in path:
+            //     is_last_field = field_name == path[-1]
+            //     field = model._fields[field_name]
+            //     if not is_last_field:
+            //         if not field.relational:
+            //             # sanity check: this should be the last field in the path
+            //             current_field = field.get_description(self.env)["string"]
+            //             searched_field = self._fields[searched_field_name].get_description(self.env)["string"]
+            //             raise ValidationError(_("The path contained by the field '%(searched_field)s' contains a non-relational field (%(current_field)s) that is not the last field in the path. You can't traverse non-relational fields (even in the quantum realm). Make sure only the last field in the path is non-relational.", searched_field=searched_field, current_field=current_field))
+            //         model = self.env[field.comodel_name]
+            //     chain.append(field)
+            // stringified_path = ' > '.join([field.get_description(self.env)["string"] for field in chain])
+            // return chain, stringified_path
             */
             return default;
         }
@@ -1026,7 +1195,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def _get_report(self, report_ref):
             // """Get the report (with sudo) from a reference
-            // report_ref: can be one of
+            // 
+            // :param report_ref: can be one of
+            // 
             //     - ir.actions.report id
             //     - ir.actions.report record
             //     - ir.model.data reference to ir.actions.report
@@ -1070,14 +1241,10 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_runner(self):
             // multi = True
             // t = self.env.registry[self._name]
-            // fn = getattr(t, f'_run_action_{self.state}_multi', None)\
-            //   or getattr(t, f'run_action_{self.state}_multi', None)
+            // fn = getattr(t, f'_run_action_{self.state}_multi', None)
             // if not fn:
             //     multi = False
-            //     fn = getattr(t, f'_run_action_{self.state}', None)\
-            //       or getattr(t, f'run_action_{self.state}', None)
-            // if fn and fn.__name__.startswith('run_action_'):
-            //     fn = partial(fn, self)
+            //     fn = getattr(t, f'_run_action_{self.state}', None)
             // return fn, multi
             */
             return default;
@@ -1104,6 +1271,53 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> GetWarningMessagesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _get_warning_messages(self):
+            // self.ensure_one()
+            // warnings = []
+            // 
+            // if self.model_id and (children_with_different_model := self.child_ids.filtered(lambda a: a.model_id != self.model_id)):
+            //     warnings.append(_("Following child actions should have the same model (%(model)s): %(children)s",
+            //                       model=self.model_id.name,
+            //                       children=', '.join(children_with_different_model.mapped('name'))))
+            // 
+            // if self.group_ids and (children_with_different_groups := self.child_ids.filtered(lambda a: a.group_ids != self.group_ids)):
+            //     warnings.append(_("Following child actions should have the same groups (%(groups)s): %(children)s",
+            //                       groups=', '.join(self.group_ids.mapped('name')),
+            //                       children=', '.join(children_with_different_groups.mapped('name'))))
+            // 
+            // if (children_with_warnings := self.child_ids.filtered('warning')):
+            //     warnings.append(_("Following child actions have warnings: %(children)s", children=', '.join(children_with_warnings.mapped('name'))))
+            // 
+            // if (relation_chain := self._get_relation_chain("update_path")) and relation_chain[0] and isinstance(relation_chain[0][-1], fields.Json):
+            //     warnings.append(_("I'm sorry to say that JSON fields (such as '%s') are currently not supported.", relation_chain[0][-1].string))
+            // 
+            // if self.state == 'object_write' and self.evaluation_type == 'sequence' and self.update_field_type and self.update_field_type not in ('char', 'text'):
+            //     warnings.append(_("A sequence must only be used with character fields."))
+            // 
+            // if self.state == 'webhook' and self.model_id:
+            //     restricted_fields = []
+            //     Model = self.env[self.model_id.model]
+            //     for model_field in self.webhook_field_ids:
+            //         # you might think that the ir.model.field record holds references
+            //         # to the groups, but that's not the case - we need to field object itself
+            //         field = Model._fields[model_field.name]
+            //         if field.groups:
+            //             restricted_fields.append(f"- {model_field.field_description}")
+            //     if restricted_fields:
+            //         warnings.append(_("Group-restricted fields cannot be included in "
+            //                         "webhook payloads, as it could allow any user to "
+            //                         "accidentally leak sensitive information. You will "
+            //                         "have to remove the following fields from the webhook payload:\n%(restricted_fields)s", restricted_fields="\n".join(restricted_fields)))
+            // 
+            // return warnings
+            */
+            return default;
+        }
+
         public async Task<TEntity> GetWkhtmltopdfStateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1118,7 +1332,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // :return: wkhtmltopdf_state
             // '''
-            // return wkhtmltopdf_state
+            // return _wkhtml().state
             */
             return default;
         }
@@ -1129,6 +1343,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def _handle_merge_pdfs_error(self, error=None, error_stream=None):
             // raise UserError(_("Odoo is unable to merge the generated PDFs."))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> HistoryWizardActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def history_wizard_action(self):
+            // self.ensure_one()
+            // return {
+            //     "type": "ir.actions.act_window",
+            //     "name": _("Code History"),
+            //     "target": "new",
+            //     "views": [(False, "form")],
+            //     "res_model": "server.action.history.wizard",
+            //     "context": {"default_action_id": self.id},
+            // }
             */
             return default;
         }
@@ -1159,8 +1391,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         handle_error(error=e, error_stream=stream)
             // result_stream = io.BytesIO()
             // streams.append(result_stream)
-            // writer.write(result_stream)
+            // try:
+            //     writer.write(result_stream)
+            // except PdfReadError:
+            //     raise UserError(_("Odoo is unable to merge the generated PDFs."))
             // return result_stream
+            */
+            return default;
+        }
+
+        public async Task<TEntity> NameDependsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _name_depends(self):
+            // return [
+            //     "state",
+            //     "crud_model_id",
+            //     "resource_ref",
+            // ]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> OnchangeNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _onchange_name(self):
+            // if not self.name:
+            //     self.automated_name = self._generate_action_name()
+            //     self.name = self.automated_name
             */
             return default;
         }
@@ -1177,7 +1438,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // data.setdefault('report_type', 'pdf')
             // # In case of test environment without enough workers to perform calls to wkhtmltopdf,
             // # fallback to render_html.
-            // if (tools.config['test_enable'] or tools.config['test_file']) and not self.env.context.get('force_report_rendering'):
+            // if (modules.module.current_test or tools.config['test_enable']) and not self.env.context.get('force_report_rendering'):
             //     return self._render_qweb_html(report_ref, res_ids, data=data)
             // 
             // self = self.with_context(webp_as_jpg=True)
@@ -1196,13 +1457,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // The idea is to put all headers/footers together. Then, we will use a javascript trick
             // (see minimal_layout template) to set the right header/footer during the processing of wkhtmltopdf.
             // This allows the computation of multiple reports in a single call to wkhtmltopdf.
-            // 
-            // :param html: The html rendered by render_qweb_html.
-            // :type: bodies: list of string representing each one a html body.
-            // :type header: string representing the html header.
-            // :type footer: string representing the html footer.
-            // :type specific_paperformat_args: dictionary of prioritized paperformat values.
-            // :return: bodies, header, footer, specific_paperformat_args
             // '''
             // 
             // # Return empty dictionary if 'web.minimal_layout' not found.
@@ -1282,6 +1536,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> PrepareLocalAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
+            // def _prepare_local_attachments(self, attachments):
+            // for attachment in attachments:
+            //     if attachment._is_remote_source():
+            //         try:
+            //             attachment._migrate_remote_to_local()
+            //         except (ValidationError, requests.exceptions.RequestException) as e:
+            //             _logger.error("Failed to migrate attachment %s to local: %s", attachment.id, e)
+            // return attachments.filtered(lambda a: not a._is_remote_source())
+            */
+            return default;
+        }
+
         public async Task<TEntity> PreparePdfReportAttachmentValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report, object streams) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1327,16 +1597,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RaiseMany2manyErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _raise_many2many_error(self):
-            // pass
-            */
-            return default;
-        }
-
         public async Task<TEntity> ReadAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object load) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1344,7 +1604,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def read(self, fields=None, load='_classic_read'):
             // """ call the method get_empty_list_help of the model and set the window action help message
             // """
-            // result = super(IrActionsActWindow, self).read(fields, load=load)
+            // result = super().read(fields, load=load)
             // if not fields or 'help' in fields:
             //     for values in result:
             //         model = values.get('res_model')
@@ -1356,24 +1616,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 ctx = {}
             //             values['help'] = self.with_context(**ctx).env[model].get_empty_list_help(values.get('help', ''))
             // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RegisterHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _register_hook(self):
-            // super()._register_hook()
-            // 
-            // for cls in self.env.registry[self._name].mro():
-            //     for symbol in vars(cls).keys():
-            //         if symbol.startswith('run_action_'):
-            //             _logger.warning(
-            //                 "RPC-public action methods are deprecated, found %r (in class %s.%s)",
-            //                 symbol, cls.__module__, cls.__name__
-            //             )
             */
             return default;
         }
@@ -1429,7 +1671,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // report_sudo = self._get_report(report_ref)
             // 
             // # Generate the ir.attachment if needed.
-            // if not has_duplicated_ids and report_sudo.attachment and not self._context.get("report_pdf_no_attachment"):
+            // if not has_duplicated_ids and report_sudo.attachment and not self.env.context.get("report_pdf_no_attachment"):
             //     attachment_vals_list = self._prepare_pdf_report_attachment_vals_list(report_sudo, collected_streams)
             //     if attachment_vals_list:
             //         attachment_names = ', '.join(x['name'] for x in attachment_vals_list)
@@ -1511,7 +1753,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //         stream = None
             //         attachment = None
-            //         if not has_duplicated_ids and report_sudo.attachment and not self._context.get("report_pdf_no_attachment"):
+            //         if not has_duplicated_ids and report_sudo.attachment and not self.env.context.get("report_pdf_no_attachment"):
             //             attachment = report_sudo.retrieve_attachment(record)
             // 
             //             # Extract the stream from the attachment.
@@ -1571,9 +1813,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         report_ref=report_ref,
             //         header=header,
             //         footer=footer,
-            //         landscape=self._context.get('landscape'),
+            //         landscape=self.env.context.get('landscape'),
             //         specific_paperformat_args=specific_paperformat_args,
-            //         set_viewport_size=self._context.get('set_viewport_size'),
+            //         set_viewport_size=self.env.context.get('set_viewport_size'),
             //     )
             //     pdf_content_stream = io.BytesIO(pdf_content)
             // 
@@ -1647,9 +1889,11 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 stream = io.BytesIO()
             //                 attachment_writer.write(stream)
             //                 collected_streams[res_ids_wo_stream[i]]['stream'] = stream
-            // 
             //             return collected_streams
-            // 
+            //         else:
+            //             for res_id in res_ids_wo_stream:
+            //                 individual_collected_stream = self._render_qweb_pdf_prepare_streams(report_ref=report_ref, data=data, res_ids=[res_id])
+            //                 collected_streams[res_id]['stream'] = individual_collected_stream[res_id]['stream']
             //     collected_streams[False] = {'stream': pdf_content_stream, 'attachment': None}
             // 
             // return collected_streams
@@ -1769,7 +2013,9 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _run_action_code_multi(self, eval_context):
-            // safe_eval(self.code.strip(), eval_context, mode="exec", nocopy=True, filename=str(self))  # nocopy allows to return 'action'
+            // if not self.code:
+            //     return
+            // safe_eval(self.code.strip(), eval_context, mode="exec", filename=str(self))
             // return eval_context.get('action')
             */
             return default;
@@ -1788,6 +2034,26 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> RunActionObjectCopyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object eval_context) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _run_action_object_copy(self, eval_context=None):
+            // """ Duplicate specified model object.
+            //     If applicable, link active_id.<self.link_field_id> to the new record.
+            // """
+            // dupe = self.env[self.crud_model_id.model].browse(self.resource_ref.id).copy()
+            // 
+            // if self.link_field_id:
+            //     record = self.env[self.model_id.model].browse(self.env.context.get('active_id'))
+            //     if self.link_field_id.ttype in ['one2many', 'many2many']:
+            //         record.write({self.link_field_id.name: [Command.link(dupe.id)]})
+            //     else:
+            //         record.write({self.link_field_id.name: dupe.id})
+            */
+            return default;
+        }
+
         public async Task<TEntity> RunActionObjectCreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object eval_context) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1800,7 +2066,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res_id, _res_name = self.env[self.crud_model_id.model].name_create(self.value)
             // 
             // if self.link_field_id:
-            //     record = self.env[self.model_id.model].browse(self._context.get('active_id'))
+            //     record = self.env[self.model_id.model].browse(self.env.context.get('active_id'))
             //     if self.link_field_id.ttype in ['one2many', 'many2many']:
             //         record.write({self.link_field_id.name: [Command.link(res_id)]})
             //     else:
@@ -1818,13 +2084,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // vals = self._eval_value(eval_context=eval_context)
             // res = {action.update_field_id.name: vals[action.id] for action in self}
             // 
-            // if self._context.get('onchange_self'):
-            //     record_cached = self._context['onchange_self']
+            // if self.env.context.get('onchange_self'):
+            //     record_cached = self.env.context['onchange_self']
             //     for field, new_value in res.items():
             //         record_cached[field] = new_value
             // elif self.update_path:
-            //     starting_record = self.env[self.model_id.model].browse(self._context.get('active_id'))
-            //     _, _, target_records = self._traverse_path(record=starting_record)
+            //     starting_record = self.env[self.model_id.model].browse(self.env.context.get('active_id'))
+            //     path = self.update_path.split('.')
+            //     target_records = reduce(getitem, path[:-1], starting_record)
             //     target_records.write(res)
             */
             return default;
@@ -1836,7 +2103,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _run_action_webhook(self, eval_context=None):
             // """Send a post request with a read of the selected field on active_id."""
-            // record = self.env[self.model_id.model].browse(self._context.get('active_id'))
+            // record = self.env[self.model_id.model].browse(self.env.context.get('active_id'))
             // url = self.webhook_url
             // if not record:
             //     return
@@ -1855,20 +2122,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             // json_values = json.dumps(vals, sort_keys=True, default=str)
             // _logger.info("Webhook call to %s", url)
             // _logger.debug("POST JSON data for webhook call: %s", json_values)
-            // try:
-            //     # 'send and forget' strategy, and avoid locking the user if the webhook
-            //     # is slow or non-functional (we still allow for a 1s timeout so that
-            //     # if we get a proper error response code like 400, 404 or 500 we can log)
-            //     response = requests.post(url, data=json_values, headers={'Content-Type': 'application/json'}, timeout=1)
-            //     response.raise_for_status()
-            // except requests.exceptions.ReadTimeout:
-            //     _logger.warning("Webhook call timed out after 1s - it may or may not have failed. "
-            //                     "If this happens often, it may be a sign that the system you're "
-            //                     "trying to reach is slow or non-functional.")
-            // except requests.exceptions.RequestException as e:
-            //     _logger.warning("Webhook call failed: %s", e)
-            // except Exception as e:  # noqa: BLE001
-            //     raise UserError(_("Wow, your webhook call failed with a really unusual error: %s", e)) from e
+            // 
+            // @self.env.cr.postrollback.add
+            // def _add_post_rollback():
+            //     _logger.warning("Webhook call to %s - cancelled due to a rollback", url)
+            // 
+            // @self.env.cr.postcommit.add
+            // def _add_post_commit():
+            //     _logger.debug("Webhook call to %s - start", url)
+            //     import requests  # noqa: PLC0415
+            //     try:
+            //         # 'send and forget' strategy, and avoid locking the user if the webhook
+            //         # is slow or non-functional (we still allow for a 1s timeout so that
+            //         # if we get a proper error response code like 400, 404 or 500 we can log)
+            //         response = requests.post(url, data=json_values, headers={'Content-Type': 'application/json'}, timeout=1)
+            //         response.raise_for_status()
+            //         _logger.info("Webhook call to %s - succeeded", url)
+            //     except requests.exceptions.ReadTimeout:
+            //         _logger.warning("Webhook call timed out after 1s - it may or may not have failed. "
+            //                         "If this happens often, it may be a sign that the system you're "
+            //                         "trying to reach is slow or non-functional.")
+            //     except requests.exceptions.RequestException as e:
+            //         _logger.warning("Webhook call failed: %s", e)
             */
             return default;
         }
@@ -1895,83 +2170,77 @@ namespace Bamboo.Core.Application.Services.Mixins
             // active_ids (optional)
             //    ids of the current records (mass mode). If ``active_ids`` and
             //    ``active_id`` are present, ``active_ids`` is given precedence.
+            // 
             // :return: an ``action_id`` to be executed, or ``False`` is finished
             //          correctly without return action
             // """
             // res = False
             // for action in self.sudo():
-            //     action_groups = action.groups_id
-            //     if action_groups:
-            //         if not (action_groups & self.env.user.groups_id):
-            //             raise AccessError(_("You don't have enough access rights to run this action."))
-            //     else:
-            //         model_name = action.model_id.model
-            //         try:
-            //             self.env[model_name].check_access("write")
-            //         except AccessError:
-            //             _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
-            //                 action.name, self.env.user.login, model_name,
-            //             )
-            //             raise
-            // 
             //     eval_context = self._get_eval_context(action)
             //     records = eval_context.get('record') or eval_context['model']
             //     records |= eval_context.get('records') or eval_context['model']
-            //     if not action_groups and records.ids:
-            //         # check access rules on real records only; base automations of
-            //         # type 'onchange' can run server actions on new records
-            //         try:
-            //             records.check_access('write')
-            //         except AccessError:
-            //             _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
-            //                 action.name, self.env.user.login, records,
-            //             )
-            //             raise
+            //     action._can_execute_action_on_records(records)
+            //     res = action._run(records, eval_context)
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> RunInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object eval_context) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _run(self, records, eval_context):
+            // self.ensure_one()
+            // if self.warning:
+            //     raise ServerActionWithWarningsError(_("Server action %(action_name)s has one or more warnings, address them first.", action_name=self.name))
             // 
-            //     runner, multi = action._get_runner()
-            //     if runner and multi:
-            //         # call the multi method
-            //         run_self = action.with_context(eval_context['env'].context)
+            // runner, multi = self._get_runner()
+            // res = False
+            // if runner and multi:
+            //     # call the multi method
+            //     run_self = self.with_context(eval_context['env'].context)
+            //     res = runner(run_self, eval_context=eval_context)
+            // elif runner:
+            //     active_id = self.env.context.get('active_id')
+            //     if not active_id and self.env.context.get('onchange_self'):
+            //         active_id = self.env.context['onchange_self']._origin.id
+            //         if not active_id:  # onchange on new record
+            //             res = runner(self, eval_context=eval_context)
+            //     active_ids = self.env.context.get('active_ids', [active_id] if active_id else [])
+            //     for active_id in active_ids:
+            //         # run context dedicated to a particular active_id
+            //         run_self = self.with_context(active_ids=[active_id], active_id=active_id)
+            //         eval_context['env'] = eval_context['env'](context=run_self.env.context)
+            //         eval_context['records'] = eval_context['record'] = records.browse(active_id)
             //         res = runner(run_self, eval_context=eval_context)
-            //     elif runner:
-            //         active_id = self._context.get('active_id')
-            //         if not active_id and self._context.get('onchange_self'):
-            //             active_id = self._context['onchange_self']._origin.id
-            //             if not active_id:  # onchange on new record
-            //                 res = runner(action, eval_context=eval_context)
-            //         active_ids = self._context.get('active_ids', [active_id] if active_id else [])
-            //         for active_id in active_ids:
-            //             # run context dedicated to a particular active_id
-            //             run_self = action.with_context(active_ids=[active_id], active_id=active_id)
-            //             eval_context["env"].context = run_self._context
-            //             eval_context['records'] = eval_context['record'] = records.browse(active_id)
-            //             res = runner(run_self, eval_context=eval_context)
-            //     else:
-            //         _logger.warning(
-            //             "Found no way to execute server action %r of type %r, ignoring it. "
-            //             "Verify that the type is correct or add a method called "
-            //             "`_run_action_<type>` or `_run_action_<type>_multi`.",
-            //             action.name, action.state
-            //         )
+            // else:
+            //     _logger.warning(
+            //         "Found no way to execute server action %r of type %r, ignoring it. "
+            //         "Verify that the type is correct or add a method called "
+            //         "`_run_action_<type>` or `_run_action_<type>_multi`.",
+            //         self.name, self.state
+            //     )
             // return res or False
             */
             return default;
         }
 
-        public async Task<TEntity> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<List<object>> RunWkhtmltoimageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object width, object height, object image_format) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
-            // def _run_wkhtmltoimage(self, bodies, width, height, image_format="jpg"):
+            // def _run_wkhtmltoimage(self, bodies, width, height, image_format="jpg") -> list[bytes | None]:
             // """
-            // :bodies str: valid html documents as strings
-            // :param width int: width in pixels
-            // :param height int: height in pixels
-            // :param image_format union['jpg', 'png']: format of the image
-            // :return list[bytes|None]:
+            // :param str bodies: valid html documents as strings
+            // :param int width: width in pixels
+            // :param int height: height in pixels
+            // :param image_format: format of the image
+            // :type image_format: typing.Literal['jpg', 'png']
             // """
-            // if (tools.config['test_enable'] or tools.config['test_file']) and not self.env.context.get('force_image_rendering'):
+            // if modules.module.current_test:
             //     return [None] * len(bodies)
+            // wkhtmltoimage_version = _wkhtml().wkhtmltoimage_version
             // if not wkhtmltoimage_version or wkhtmltoimage_version < parse_version('0.12.0'):
             //     raise UserError(_('wkhtmltoimage 0.12.0^ is required in order to render images from html'))
             // command_args = [
@@ -1983,17 +2252,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             // with ExitStack() as stack:
             //     files = []
             //     for body in bodies:
-            //         input_file = stack.enter_context(tempfile.NamedTemporaryFile(suffix='.html', prefix='report_image_html_input.tmp.'))
-            //         output_file = stack.enter_context(tempfile.NamedTemporaryFile(suffix=f'.{image_format}', prefix='report_image_output.tmp.'))
-            //         input_file.write(body.encode())
-            //         files.append((input_file, output_file))
+            //         (input_fd, input_path) = tempfile.mkstemp(suffix='.html', prefix='report_image_html_input.tmp.')
+            //         (output_fd, output_path) = tempfile.mkstemp(suffix=f'.{image_format}', prefix='report_image_output.tmp.')
+            //         stack.callback(os.remove, input_path)
+            //         stack.callback(os.remove, output_path)
+            //         os.close(output_fd)
+            //         with closing(os.fdopen(input_fd, 'wb')) as input_file:
+            //             input_file.write(body.encode())
+            //         files.append((input_path, output_path))
             //     output_images = []
-            //     for input_file, output_file in files:
-            //         # smaller bodies may be held in a python buffer until close, force flush
-            //         input_file.flush()
-            //         wkhtmltoimage = [_get_wkhtmltoimage_bin()] + command_args + [input_file.name, output_file.name]
+            //     for (input_path, output_path) in files:
+            //         wkhtmltoimage = [_wkhtml().wkhtmltoimage_bin, *command_args, input_path, output_path]
             //         # start and block, no need for parallelism for now
-            //         completed_process = subprocess.run(wkhtmltoimage, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=False)
+            //         completed_process = subprocess.run(wkhtmltoimage, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=False, encoding='utf-8')
             //         if completed_process.returncode:
             //             message = _(
             //                 'Wkhtmltoimage failed (error code: %(error_code)s). Message: %(error_message_end)s',
@@ -2003,7 +2274,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             _logger.warning(message)
             //             output_images.append(None)
             //         else:
-            //             output_images.append(output_file.read())
+            //             with open(output_path, 'rb') as output_file:
+            //                 output_images.append(output_file.read())
             // return output_images
             */
             return default;
@@ -2025,7 +2297,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             // '''Execute wkhtmltopdf as a subprocess in order to convert html given in input into a pdf
             // document.
             // 
-            // :param list[str] bodies: The html bodies of the report, one per page.
+            // :param Iterable[str] bodies: The html bodies of the report, one per page.
             // :param report_ref: report reference that is needed to get report paperformat.
             // :param str header: The html header of the report containing all headers.
             // :param str footer: The html footer of the report containing all footers.
@@ -2045,107 +2317,106 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     set_viewport_size=set_viewport_size)
             // 
             // files_command_args = []
-            // temporary_files = []
-            // temp_session = None
             // 
-            // # Passing the cookie to wkhtmltopdf in order to resolve internal links.
-            // if request and request.db:
-            //     # Create a temporary session which will not create device logs
-            //     temp_session = root.session_store.new()
-            //     temp_session.update({
-            //         **request.session,
-            //         'debug': '',
-            //         '_trace_disable': True,
-            //     })
-            //     if temp_session.uid:
-            //         temp_session.session_token = security.compute_session_token(temp_session, self.env)
-            //     root.session_store.save(temp_session)
+            // def delete_file(file_path):
+            //     try:
+            //         os.unlink(file_path)
+            //     except OSError:
+            //         _logger.error('Error when trying to remove file %s', file_path)
             // 
-            //     base_url = self._get_report_url()
-            //     domain = urlparse(base_url).hostname
-            //     cookie = f'session_id={temp_session.sid}; HttpOnly; domain={domain}; path=/;'
-            //     cookie_jar_file_fd, cookie_jar_file_path = tempfile.mkstemp(suffix='.txt', prefix='report.cookie_jar.tmp.')
-            //     temporary_files.append(cookie_jar_file_path)
-            //     with closing(os.fdopen(cookie_jar_file_fd, 'wb')) as cookie_jar_file:
-            //         cookie_jar_file.write(cookie.encode())
-            //     command_args.extend(['--cookie-jar', cookie_jar_file_path])
+            // with ExitStack() as stack:
             // 
-            // if header:
-            //     head_file_fd, head_file_path = tempfile.mkstemp(suffix='.html', prefix='report.header.tmp.')
-            //     with closing(os.fdopen(head_file_fd, 'wb')) as head_file:
-            //         head_file.write(header.encode())
-            //     temporary_files.append(head_file_path)
-            //     files_command_args.extend(['--header-html', head_file_path])
-            // if footer:
-            //     foot_file_fd, foot_file_path = tempfile.mkstemp(suffix='.html', prefix='report.footer.tmp.')
-            //     with closing(os.fdopen(foot_file_fd, 'wb')) as foot_file:
-            //         foot_file.write(footer.encode())
-            //     temporary_files.append(foot_file_path)
-            //     files_command_args.extend(['--footer-html', foot_file_path])
+            //     # Passing the cookie to wkhtmltopdf in order to resolve internal links.
+            //     if request and request.db:
+            //         # Create a temporary session which will not create device logs
+            //         temp_session = root.session_store.new()
+            //         temp_session.update({
+            //             **request.session,
+            //             'debug': '',
+            //             '_trace_disable': True,
+            //         })
+            //         if temp_session.uid:
+            //             temp_session.session_token = security.compute_session_token(temp_session, self.env)
+            //         root.session_store.save(temp_session)
+            //         stack.callback(root.session_store.delete, temp_session)
             // 
-            // paths = []
-            // for i, body in enumerate(bodies):
-            //     prefix = '%s%d.' % ('report.body.tmp.', i)
-            //     body_file_fd, body_file_path = tempfile.mkstemp(suffix='.html', prefix=prefix)
-            //     with closing(os.fdopen(body_file_fd, 'wb')) as body_file:
-            //         # HACK: wkhtmltopdf doesn't like big table at all and the
-            //         #       processing time become exponential with the number
-            //         #       of rows (like 1H for 250k rows).
-            //         #
-            //         #       So we split the table into multiple tables containing
-            //         #       500 rows each. This reduce the processing time to 1min
-            //         #       for 250k rows. The number 500 was taken from opw-1689673
-            //         if len(body) < 4 * 1024 * 1024: # 4Mib
-            //             body_file.write(body.encode())
-            //         else:
-            //             tree = lxml.html.fromstring(body)
-            //             _split_table(tree, 500)
-            //             body_file.write(lxml.html.tostring(tree))
-            //     paths.append(body_file_path)
-            //     temporary_files.append(body_file_path)
+            //         base_url = self._get_report_url()
+            //         domain = urlparse(base_url).hostname
+            //         cookie = f'session_id={temp_session.sid}; HttpOnly; domain={domain}; path=/;'
+            //         cookie_jar_file_fd, cookie_jar_file_path = tempfile.mkstemp(suffix='.txt', prefix='report.cookie_jar.tmp.')
+            //         stack.callback(delete_file, cookie_jar_file_path)
+            //         with closing(os.fdopen(cookie_jar_file_fd, 'wb')) as cookie_jar_file:
+            //             cookie_jar_file.write(cookie.encode())
+            //         command_args.extend(['--cookie-jar', cookie_jar_file_path])
             // 
-            // pdf_report_fd, pdf_report_path = tempfile.mkstemp(suffix='.pdf', prefix='report.tmp.')
-            // os.close(pdf_report_fd)
-            // temporary_files.append(pdf_report_path)
+            //     if header:
+            //         head_file_fd, head_file_path = tempfile.mkstemp(suffix='.html', prefix='report.header.tmp.')
+            //         with closing(os.fdopen(head_file_fd, 'wb')) as head_file:
+            //             head_file.write(header.encode())
+            //         stack.callback(delete_file, head_file_path)
+            //         files_command_args.extend(['--header-html', head_file_path])
+            //     if footer:
+            //         foot_file_fd, foot_file_path = tempfile.mkstemp(suffix='.html', prefix='report.footer.tmp.')
+            //         with closing(os.fdopen(foot_file_fd, 'wb')) as foot_file:
+            //             foot_file.write(footer.encode())
+            //         stack.callback(delete_file, foot_file_path)
+            //         files_command_args.extend(['--footer-html', foot_file_path])
             // 
-            // try:
-            //     wkhtmltopdf = [_get_wkhtmltopdf_bin()] + command_args + files_command_args + paths + [pdf_report_path]
-            //     process = subprocess.Popen(wkhtmltopdf, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
-            //     _out, err = process.communicate()
+            //     paths = []
+            //     body_idx = 0
+            //     for body_idx, body in enumerate(bodies):
+            //         prefix = f'report.body.tmp.{body_idx}.'
+            //         body_file_fd, body_file_path = tempfile.mkstemp(suffix='.html', prefix=prefix)
+            //         with closing(os.fdopen(body_file_fd, 'wb')) as body_file:
+            //             # HACK: wkhtmltopdf doesn't like big table at all and the
+            //             #       processing time become exponential with the number
+            //             #       of rows (like 1H for 250k rows).
+            //             #
+            //             #       So we split the table into multiple tables containing
+            //             #       500 rows each. This reduce the processing time to 1min
+            //             #       for 250k rows. The number 500 was taken from opw-1689673
+            //             if len(body) < 4 * 1024 * 1024:  # 4Mib
+            //                 body_file.write(body.encode())
+            //             else:
+            //                 tree = lxml.html.fromstring(body)
+            //                 _split_table(tree, 500)
+            //                 body_file.write(lxml.html.tostring(tree))
+            //         paths.append(body_file_path)
+            //         stack.callback(delete_file, body_file_path)
             // 
-            //     if process.returncode not in [0, 1]:
-            //         if process.returncode == -11:
+            //     pdf_report_fd, pdf_report_path = tempfile.mkstemp(suffix='.pdf', prefix='report.tmp.')
+            //     os.close(pdf_report_fd)
+            //     stack.callback(delete_file, pdf_report_path)
+            // 
+            //     process = _run_wkhtmltopdf(command_args + files_command_args + paths + [pdf_report_path])
+            //     err = process.stderr
+            // 
+            //     match process.returncode:
+            //         case 0:
+            //             pass
+            //         case 1:
+            //             if body_idx:
+            //                 if not _wkhtml().is_patched_qt:
+            //                     if modules.module.current_test:
+            //                         raise unittest.SkipTest("Unable to convert multiple documents via wkhtmltopdf using unpatched QT")
+            //                     raise UserError(_("Tried to convert multiple documents in wkhtmltopdf using unpatched QT"))
+            // 
+            //             _logger.warning("wkhtmltopdf: %s", err)
+            //         case c:
             //             message = _(
             //                 'Wkhtmltopdf failed (error code: %(error_code)s). Memory limit too low or maximum file number of subprocess reached. Message : %(message)s',
-            //                 error_code=process.returncode,
+            //                 error_code=c,
             //                 message=err[-1000:],
-            //             )
-            //         else:
-            //             message = _(
+            //             ) if c == -11 else _(
             //                 'Wkhtmltopdf failed (error code: %(error_code)s). Message: %(message)s',
-            //                 error_code=process.returncode,
+            //                 error_code=c,
             //                 message=err[-1000:],
             //             )
-            //         _logger.warning(message)
-            //         raise UserError(message)
-            //     else:
-            //         if err:
-            //             _logger.warning('wkhtmltopdf: %s' % err)
-            // except:
-            //     raise
-            // finally:
-            //     if temp_session:
-            //         root.session_store.delete(temp_session)
+            //             _logger.warning(message)
+            //             raise UserError(message)
             // 
-            // with open(pdf_report_path, 'rb') as pdf_document:
-            //     pdf_content = pdf_document.read()
-            // 
-            // # Manual cleanup of the temporary files
-            // for temporary_file in temporary_files:
-            //     try:
-            //         os.unlink(temporary_file)
-            //     except (OSError, IOError):
-            //         _logger.error('Error when trying to remove file %s' % temporary_file)
+            //     with open(pdf_report_path, 'rb') as pdf_document:
+            //         pdf_content = pdf_document.read()
             // 
             // return pdf_content
             */
@@ -2157,28 +2428,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def _search_model_id(self, operator, value):
-            // ir_model_ids = None
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // models = self.env['ir.model']
             // if isinstance(value, str):
-            //     names = self.env['ir.model'].name_search(value, operator=operator)
-            //     ir_model_ids = [n[0] for n in names]
-            // 
-            // elif operator in ('any', 'not any'):
-            //     ir_model_ids = self.env['ir.model']._search(value)
-            // 
-            // elif isinstance(value, Iterable):
-            //     ir_model_ids = value
-            // 
-            // elif isinstance(value, int) and not isinstance(value, bool):
-            //     ir_model_ids = [value]
-            // 
-            // if ir_model_ids:
-            //     operator = 'not in' if operator in NEGATIVE_TERM_OPERATORS else 'in'
-            //     ir_model = self.env['ir.model'].browse(ir_model_ids)
-            //     return [('model', operator, ir_model.mapped('model'))]
-            // elif isinstance(value, bool) or value is None:
-            //     return [('model', operator, value)]
-            // else:
-            //     return FALSE_DOMAIN
+            //     models = models.search(Domain('display_name', operator, value))
+            // elif isinstance(value, Domain):
+            //     models = models.search(value)
+            // elif operator == 'any!':
+            //     models = models.sudo().search(Domain('id', operator, value))
+            // elif operator == 'any' or isinstance(value, int):
+            //     models = models.search(Domain('id', operator, value))
+            // elif operator == 'in':
+            //     models = models.search(Domain.OR(
+            //         Domain('id' if isinstance(v, int) else 'display_name', operator, v)
+            //         for v in value
+            //         if v
+            //     ))
+            // return Domain('model', 'in', models.mapped('model'))
             */
             return default;
         }
@@ -2189,6 +2456,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def _selection_target_model(self):
             // return [(model.model, model.name) for model in self.env['ir.model'].sudo().search([])]
+            */
+            return default;
+        }
+
+        public async Task<TEntity> SetCrudModelIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _set_crud_model_id(self):
+            // invalid = self.filtered(lambda a: a.state == 'object_copy' and a.resource_ref and a.resource_ref._name != a.crud_model_id.model)
+            // invalid.resource_ref = False
+            // invalid = self.filtered(lambda a: a.link_field_id and not (
+            //     a.link_field_id.model == a.model_id.model and a.link_field_id.relation == a.crud_model_id.model
+            // ))
+            // invalid.link_field_id = False
             */
             return default;
         }
@@ -2217,70 +2499,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StringifyPathInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<TEntity> TraversePathInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _stringify_path(self):
-            // """ Returns a string representation of the update_path, with the field names
-            // separated by the `>` symbol."""
-            // self.ensure_one()
-            // path = self.update_path
-            // if not path:
-            //     return ''
-            // model = self.env[self.model_id.model]
-            // pretty_path = []
-            // field = None
-            // for field_name in path.split('.'):
-            //     if field and field.type == 'properties':
-            //         pretty_path.append(field_name)
-            //         continue
-            //     field = model._fields[field_name]
-            //     field_id = self.env['ir.model.fields']._get(model._name, field_name)
-            //     if field.relational:
-            //         model = self.env[field.comodel_name]
-            //     pretty_path.append(field_id.field_description)
-            // return ' > '.join(pretty_path)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> TraversePathInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IIrActionsActionsable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def _traverse_path(self, record=None):
-            // """ Traverse the update_path to find the target model and field, and optionally
-            // the target record of an action of type 'object_write'.
+            // def _traverse_path(self):
+            // """ Traverse the update_path to find the target model and field.
             // 
-            // :param record: optional record to use as starting point for the path traversal
-            // :return: a tuple (model, field, records) where model is the target model and field is the
-            //          target field; if no record was provided, records is None, otherwise it is the
-            //             recordset at the end of the path starting from the provided record
+            // :return: a tuple (model, field) where model is the target model and field is the target field
             // """
             // self.ensure_one()
-            // path = self.update_path.split('.')
-            // Model = self.env[self.model_id.model]
-            // # sanity check: we're starting from a record that belongs to the model
-            // if record and record._name != Model._name:
-            //     raise ValidationError(_("I have no idea how you *did that*, but you're trying to use a gibberish configuration: the model of the record on which the action is triggered is not the same as the model of the action."))
-            // for field_name in path:
-            //     is_last_field = field_name == path[-1]
-            //     field = Model._fields[field_name]
-            //     if field.relational and not is_last_field:
-            //         Model = self.env[field.comodel_name]
-            //     elif not field.relational:
-            //         # sanity check: this should be the last field in the path
-            //         if not is_last_field:
-            //             raise ValidationError(_("The path to the field to update contains a non-relational field (%s) that is not the last field in the path. You can't traverse non-relational fields (even in the quantum realm). Make sure only the last field in the path is non-relational.", field_name))
-            //         if isinstance(field, fields.Json):
-            //             raise ValidationError(_("I'm sorry to say that JSON fields (such as %s) are currently not supported.", field_name))
-            // target_records = None
-            // if record is not None:
-            //     target_records = reduce(getitem, path[:-1], record)
-            // model_id = self.env['ir.model']._get(Model._name)
-            // field_id = self.env['ir.model.fields']._get(Model._name, field_name)
-            // return model_id, field_id, target_records
+            // field_chain, _field_chain_str = self._get_relation_chain("update_path")
+            // last_field = field_chain[-1]
+            // model_id = self.env['ir.model']._get(last_field.model_name)
+            // field_id = self.env['ir.model.fields']._get(last_field.model_name, last_field.name)
+            // return model_id, field_id
             */
             return default;
         }
@@ -2315,14 +2548,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             // todos.unlink()
             // filters = self.env['ir.filters'].search([('action_id', 'in', self.ids)])
             // filters.unlink()
-            // res = super(IrActions, self).unlink()
+            // res = super().unlink()
             // # self.get_bindings() depends on action records
             // self.env.registry.clear_cache()
             // return res
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def unlink(self):
             // self.env.registry.clear_cache()
-            // return super(IrActionsActWindow, self).unlink()
+            // return super().unlink()
             */
             return default;
         }
@@ -2337,15 +2570,42 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> WarningDependsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def _warning_depends(self):
+            // return [
+            //     'state',
+            //     'model_id',
+            //     'group_ids',
+            //     'parent_id',
+            //     'child_ids.warning',
+            //     'child_ids.model_id',
+            //     'child_ids.group_ids',
+            //     'update_path',
+            //     'update_field_type',
+            //     'evaluation_type',
+            //     'webhook_field_ids'
+            // ]
+            */
+            return default;
+        }
+
         public async Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
             // def write(self, vals):
-            // res = super(IrActions, self).write(vals)
+            // res = super().write(vals)
             // # self.get_bindings() depends on action records
             // self.env.registry.clear_cache()
             // return res
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
+            // def write(self, vals):
+            // if (new_code := vals.get("code")) and new_code != self.code:
+            //     self.env["ir.actions.server.history"].create({"action_id": self.id, "code": new_code})
+            // return super().write(vals)
             */
             return default;
         }

@@ -93,7 +93,7 @@ namespace Bamboo.Core.Application.Services
             // return wish.filtered(
             //     lambda wish:
             //         wish.sudo().product_id.product_tmpl_id.website_published
-            //         and wish.sudo().product_id.product_tmpl_id._can_be_added_to_cart()
+            //         and wish.sudo().product_id.product_tmpl_id._is_add_to_cart_possible()
             // )
             */
             var entity = await Repository.GetAsync(id); return entity;

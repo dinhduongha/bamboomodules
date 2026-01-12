@@ -11,18 +11,18 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SpreadsheetDashboardCopyDataRequestDto input)
+        [Route("{id}/action-toggle-favorite")]
+        public async Task<IActionResult> ActionToggleFavoriteAsync(Guid id)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            var result = await _appService.ToggleFavoriteAsync(id);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-readonly-dashboard")]
-        public async Task<IActionResult> GetReadonlyDashboardAsync(Guid id)
+        [Route("{id}/copy-data")]
+        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SpreadsheetDashboardCopyDataRequestDto input)
         {
-            var result = await _appService.GetReadonlyDashboardAsync(id);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
     }

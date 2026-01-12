@@ -93,13 +93,37 @@ namespace Bamboo.Core.Application.Services
             //     group_stock_multi_locations = self.env.ref('stock.group_stock_multi_locations')
             //     if max_count <= 1 and group_stock_multi_warehouses in group_user.implied_ids:
             //         group_user.write({'implied_ids': [(3, group_stock_multi_warehouses.id)]})
-            //         group_stock_multi_warehouses.write({'users': [(3, user.id) for user in group_user.users]})
+            //         group_stock_multi_warehouses.write({'user_ids': [(3, user.id) for user in group_user.all_user_ids]})
             //     if max_count > 1 and group_stock_multi_warehouses not in group_user.implied_ids:
             //         if group_stock_multi_locations not in group_user.implied_ids:
             //             self.env['res.config.settings'].create({
             //                 'group_stock_multi_locations': True,
             //             }).execute()
             //         group_user.write({'implied_ids': [(4, group_stock_multi_warehouses.id), (4, group_stock_multi_locations.id)]})
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouse> ComputeBuyToResupplyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _compute_buy_to_resupply(self):
+            // for warehouse in self:
+            //     buy_route = warehouse.buy_pull_id.route_id
+            //     warehouse.buy_to_resupply = bool(buy_route.product_selectable or buy_route.warehouse_ids.filtered(lambda w: w.id == warehouse.id))
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouse> ComputeManufactureToResupplyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
+            // def _compute_manufacture_to_resupply(self):
+            // for warehouse in self:
+            //     manufacture_route = warehouse.manufacture_pull_id.route_id
+            //     warehouse.manufacture_to_resupply = bool(manufacture_route.product_selectable or manufacture_route.warehouse_ids.filtered(lambda w: w.id == warehouse.id))
             */
             return default;
         }
@@ -127,7 +151,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_warehouse.py) ---
             // def create(self, vals_list):
             // res = super().create(vals_list)
-            // res._update_subcontracting_locations_rules()
             // # if new warehouse has resupply enabled, enable global route
             // if any([vals.get('subcontracting_to_resupply', False) for vals in vals_list]):
             //     res._update_global_route_resupply_subcontractor()
@@ -136,7 +159,7 @@ namespace Bamboo.Core.Application.Services
             // def create(self, vals_list):
             // res = super().create(vals_list)
             // # if new warehouse has resupply enabled, enable global route
-            // if any([vals.get('subcontracting_dropshipping_to_resupply', False) for vals in vals_list]):
+            // if any(vals.get('subcontracting_to_resupply', False) for vals in vals_list):
             //     res.update_global_route_dropship_subcontractor()
             // return res
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
@@ -151,8 +174,7 @@ namespace Bamboo.Core.Application.Services
             //         if 'partner_id' not in vals:
             //             vals['partner_id'] = company.partner_id.id
             //     # create view location for warehouse then create all locations
-            //     loc_vals = {'name': vals.get('code'), 'usage': 'view',
-            //                 'location_id': self.env.ref('stock.stock_location_locations').id}
+            //     loc_vals = {'name': vals.get('code'), 'usage': 'view'}
             //     if vals.get('company_id'):
             //         loc_vals['company_id'] = vals.get('company_id')
             //     vals['view_location_id'] = self.env['stock.location'].create(loc_vals).id
@@ -233,7 +255,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_warehouse.py) ---
             // def _create_missing_pos_picking_types(self):
-            // warehouses = self.env['stock.warehouse'].search([('pos_type_id', '=', False)])
+            // warehouses = self.env['stock.warehouse'].with_context(active_test=False).search([('pos_type_id', '=', False)])
             // for warehouse in warehouses:
             //     new_vals = warehouse._create_or_update_sequences_and_picking_types()
             //     warehouse.write(new_vals)
@@ -267,11 +289,25 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockWarehouse> CreateOrUpdateRouteInternalAsync()
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
+            // def _create_or_update_route(self):
+            // manufacture_route = self._find_or_create_global_route('mrp.route_warehouse0_manufacture', _('Manufacture'))
+            // for warehouse in self:
+            //     if warehouse.manufacture_to_resupply:
+            //         manufacture_route.warehouse_ids = [Command.link(warehouse.id)]
+            // return super()._create_or_update_route()
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _create_or_update_route(self):
+            // purchase_route = self._find_or_create_global_route('purchase_stock.route_warehouse0_buy', _('Buy'))
+            // for warehouse in self:
+            //     if warehouse.buy_to_resupply:
+            //         purchase_route.warehouse_ids = [Command.link(warehouse.id)]
+            // return super()._create_or_update_route()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
             // def _create_or_update_route(self):
             // """ Create or update the warehouse's routes.
             // _get_routes_values method return a dict with:
-            //     - route field name (e.g: crossdock_route_id).
+            //     - route field name (e.g: delivery_route_id).
             //     - field that trigger an update on the route (key 'depends').
             //     - routing_key used in order to find rules contained in the route.
             //     - create values.
@@ -288,6 +324,7 @@ namespace Bamboo.Core.Application.Services
             // (_find_existing_rule_or_create method is responsible for this part).
             // """
             // # Create routes and active/create their related rules.
+            // self.ensure_one()
             // routes = []
             // rules_dict = self.get_rules_dict()
             // for route_field, route_data in self._get_routes_values().items():
@@ -412,7 +449,7 @@ namespace Bamboo.Core.Application.Services
             //             values={'route_id': inter_wh_route.id})
             //     pull_rules_list += self._get_supply_pull_rules_values(
             //         [self.Routing(transit_location, self.lot_stock_id, self.in_type_id, 'pull')],
-            //         values={'route_id': inter_wh_route.id, 'propagate_warehouse_id': supplier_wh.id})
+            //         values={'route_id': inter_wh_route.id})
             //     for pull_rule_vals in pull_rules_list:
             //         Rule.create(pull_rule_vals)
             */
@@ -469,7 +506,7 @@ namespace Bamboo.Core.Application.Services
             //     if raise_if_not_found:
             //         raise UserError(_('Can\'t find any generic route %s.', route_name))
             //     elif data_route and create:
-            //         route = data_route.copy({'name': data_route.name, 'company_id': company.id, 'rule_ids': False})
+            //         route = data_route.copy({'name': route_name, 'company_id': company.id, 'rule_ids': False})
             // return route
             */
             return default;
@@ -611,20 +648,20 @@ namespace Bamboo.Core.Application.Services
             // production_location_id = self._get_production_location()
             // rules.update({
             //     'subcontracting_dropshipping_pull_id': {
-            //         'depends': ['subcontracting_dropshipping_to_resupply'],
+            //         'depends': ['subcontracting_to_resupply'],
             //         'create_values': {
             //             'procure_method': 'make_to_order',
             //             'company_id': self.company_id.id,
             //             'action': 'pull',
             //             'auto': 'manual',
-            //             'route_id': self._find_or_create_global_route('mrp_subcontracting_dropshipping.route_subcontracting_dropshipping', _('Dropship Subcontractor on Order')).id,
+            //             'route_id': self._find_or_create_global_route('stock_dropshipping.route_drop_shipping', self.env._('Dropship Subcontractor on Order')).id,
             //             'name': self._format_rulename(subcontract_location_id, production_location_id, False),
             //             'location_dest_id': production_location_id.id,
             //             'location_src_id': subcontract_location_id.id,
             //             'picking_type_id': self.subcontracting_type_id.id
             //         },
             //         'update_values': {
-            //             'active': self.subcontracting_dropshipping_to_resupply
+            //             'active': self.subcontracting_to_resupply
             //         }
             //     },
             // })
@@ -639,7 +676,6 @@ namespace Bamboo.Core.Application.Services
             //         'create_values': {
             //             'action': 'buy',
             //             'picking_type_id': self.in_type_id.id,
-            //             'group_propagation_option': 'none',
             //             'company_id': self.company_id.id,
             //             'route_id': self._find_or_create_global_route('purchase_stock.route_warehouse0_buy', _('Buy')).id,
             //             'propagate_cancel': self.reception_steps != 'one_step',
@@ -955,7 +991,7 @@ namespace Bamboo.Core.Application.Services
             // return data, max_sequence + 4
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_warehouse.py) ---
             // def _get_picking_type_create_values(self, max_sequence):
-            // picking_type_create_values, max_sequence = super(Warehouse, self)._get_picking_type_create_values(max_sequence)
+            // picking_type_create_values, max_sequence = super()._get_picking_type_create_values(max_sequence)
             // picking_type_create_values.update({
             //     'pos_type_id': {
             //         'name': _('PoS Orders'),
@@ -972,18 +1008,20 @@ namespace Bamboo.Core.Application.Services
             // def _get_picking_type_create_values(self, max_sequence):
             // data, next_sequence = super(StockWarehouse, self)._get_picking_type_create_values(max_sequence)
             // prod_location = self._get_production_location()
-            // scrap_location = self.env['stock.location'].search([('scrap_location', '=', True), ('company_id', 'in', [self.company_id.id, False])], limit=1)
+            // scrap_location_id = self.env['stock.location'].search_read([('usage', '=', 'inventory'), ('company_id', 'in', [self.company_id.id, False])], fields=['id'], limit=1)[0].get('id')
             // data.update({
             //     'repair_type_id': {
             //         'name': _('Repairs'),
             //         'code': 'repair_operation',
             //         'default_location_src_id': self.lot_stock_id.id,
             //         'default_location_dest_id': prod_location.id,
-            //         'default_remove_location_dest_id':scrap_location.id,
+            //         'default_remove_location_dest_id': scrap_location_id,
             //         'default_recycle_location_dest_id': self.lot_stock_id.id,
             //         'sequence': next_sequence + 1,
             //         'sequence_code': 'RO',
             //         'company_id': self.company_id.id,
+            //         'use_create_lots': True,
+            //         'use_existing_lots': True,
             //     },
             // })
             // return data, max_sequence + 2
@@ -1130,7 +1168,7 @@ namespace Bamboo.Core.Application.Services
             // return data
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_warehouse.py) ---
             // def _get_picking_type_update_values(self):
-            // picking_type_update_values = super(Warehouse, self)._get_picking_type_update_values()
+            // picking_type_update_values = super()._get_picking_type_update_values()
             // picking_type_update_values.update({
             //     'pos_type_id': {'default_location_src_id': self.lot_stock_id.id}
             // })
@@ -1187,6 +1225,24 @@ namespace Bamboo.Core.Application.Services
             //         'barcode': self.code.replace(" ", "").upper() + "XD",
             //     }
             // }
+            --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_warehouse.py) ---
+            // def _get_picking_type_update_values(self):
+            // values = super()._get_picking_type_update_values()
+            // if self.delivery_steps == 'pick_pack_ship':
+            //     if values.get('pack_type_id'):
+            //         values['pack_type_id']['dispatch_management'] = True
+            // elif self.delivery_steps == 'pick_ship':
+            //     if values.get('pick_type_id'):
+            //         values['pick_type_id']['dispatch_management'] = True
+            // 
+            // if values.get('out_type_id'):
+            //     values['out_type_id']['dispatch_management'] = True
+            //     if self.delivery_steps in ('pick_ship', 'pick_pack_ship'):
+            //         values['out_type_id']['dock_ids'] = [Command.link(self.wh_output_stock_loc_id.id)]
+            // if values.get('in_type_id'):
+            //     values['in_type_id']['dispatch_management'] = True
+            // 
+            // return values
             */
             return default;
         }
@@ -1256,13 +1312,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockWarehouse> GetReceiveRulesDictInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
-            // def _get_receive_rules_dict(self):
-            // rules = super()._get_receive_rules_dict()
-            // customer_loc, __ = self._get_partner_locations()
-            // # Sets the right order for new warehouses: buy then push.
-            // rules['crossdock'].insert(0, self.Routing(self.env['stock.location'], customer_loc, self.in_type_id, 'buy'))
-            // return rules
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
             // def _get_receive_rules_dict(self):
             // """ Return receive route rules without initial pull rule in order to update warehouse routes.
@@ -1278,7 +1327,6 @@ namespace Bamboo.Core.Application.Services
             //     'three_steps': [
             //         self.Routing(self.wh_input_stock_loc_id, self.wh_qc_stock_loc_id, self.qc_type_id, 'push'),
             //         self.Routing(self.wh_qc_stock_loc_id, self.lot_stock_id, self.store_type_id, 'push')],
-            //     'crossdock': [self.Routing(self.wh_input_stock_loc_id, self.wh_output_stock_loc_id, self.xdock_type_id, 'push')],
             // }
             */
             return default;
@@ -1362,13 +1410,6 @@ namespace Bamboo.Core.Application.Services
             // routes = super(StockWarehouse, self)._get_routes_values()
             // routes.update(self._get_receive_routes_values('buy_to_resupply'))
             // return routes
-            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: stock_warehouse.py) ---
-            // def _get_routes_values(self):
-            // routes = super()._get_routes_values()
-            // if routes.get('crossdock_route_id'):
-            //     routes['crossdock_route_id']['route_update_values']['sale_selectable'] = True
-            //     routes['crossdock_route_id']['route_create_values']['sale_selectable'] = True
-            // return routes
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
             // def _get_routes_values(self):
             // """ Return information in order to update warehouse routes.
@@ -1398,7 +1439,7 @@ namespace Bamboo.Core.Application.Services
             //             'warehouse_selectable': True,
             //             'product_selectable': False,
             //             'company_id': self.company_id.id,
-            //             'sequence': 9,
+            //             'sequence': 50,
             //         },
             //         'rules_values': {
             //             'active': True,
@@ -1417,28 +1458,13 @@ namespace Bamboo.Core.Application.Services
             //             'warehouse_selectable': True,
             //             'product_selectable': False,
             //             'company_id': self.company_id.id,
-            //             'sequence': 10,
+            //             'sequence': 60,
             //         },
             //         'rules_values': {
             //             'active': True,
             //             'propagate_carrier': True
             //         }
             //     },
-            //     'crossdock_route_id': {
-            //         'routing_key': 'crossdock',
-            //         'depends': ['delivery_steps', 'reception_steps'],
-            //         'route_update_values': {
-            //             'name': self._format_routename(route_type='crossdock'),
-            //             'active': self.reception_steps != 'one_step' and self.delivery_steps != 'ship_only'
-            //         },
-            //         'route_create_values': {
-            //             'product_selectable': False,
-            //             'product_categ_selectable': False,
-            //             'active': self.delivery_steps != 'ship_only' and self.reception_steps != 'one_step',
-            //             'company_id': self.company_id.id,
-            //             'sequence': 20,
-            //         },
-            //     }
             // }
             */
             return default;
@@ -1506,7 +1532,7 @@ namespace Bamboo.Core.Application.Services
             // return result
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_warehouse.py) ---
             // def get_rules_dict(self):
-            // result = super(StockWarehouse, self).get_rules_dict()
+            // result = super().get_rules_dict()
             // subcontract_location_id = self._get_subcontracting_location()
             // for warehouse in self:
             //     result[warehouse.id].update({
@@ -1537,9 +1563,6 @@ namespace Bamboo.Core.Application.Services
             //             self.Routing(supplier_loc, warehouse.lot_stock_id, warehouse.in_type_id, 'pull'),
             //             self.Routing(warehouse.wh_input_stock_loc_id, warehouse.wh_qc_stock_loc_id, warehouse.qc_type_id, 'push'),
             //             self.Routing(warehouse.wh_qc_stock_loc_id, warehouse.lot_stock_id, warehouse.store_type_id, 'push')],
-            //         'crossdock': [
-            //             self.Routing(supplier_loc, customer_loc, warehouse.in_type_id, 'pull'),
-            //             self.Routing(warehouse.wh_input_stock_loc_id, warehouse.wh_output_stock_loc_id, warehouse.xdock_type_id, 'push')],
             //         'ship_only': [self.Routing(warehouse.lot_stock_id, customer_loc, warehouse.out_type_id, 'pull')],
             //         'pick_ship': [
             //             self.Routing(warehouse.lot_stock_id, customer_loc, warehouse.pick_type_id, 'pull'),
@@ -1588,7 +1611,7 @@ namespace Bamboo.Core.Application.Services
             // return values
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: stock_warehouse.py) ---
             // def _get_sequence_values(self, name=False, code=False):
-            // sequence_values = super(Warehouse, self)._get_sequence_values(name=name, code=code)
+            // sequence_values = super()._get_sequence_values(name=name, code=code)
             // sequence_values.update({
             //     'pos_type_id': {
             //         'name': _('%(name)s Picking POS', name=self.name),
@@ -1678,10 +1701,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_warehouse.py) ---
             // def _get_subcontracting_locations(self):
-            // return self.env['stock.location'].search([
-            //     ('company_id', 'in', self.company_id.ids),
-            //     ('is_subcontracting_location', '=', True),
-            // ])
+            // return self.company_id.subcontracting_location_id.child_internal_location_ids
             */
             return default;
         }
@@ -1712,28 +1732,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockWarehouse> GetWarehouseIdFromContextInternalAsync()
+        protected async Task<StockWarehouse> InverseBuyToResupplyInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
-            // def _get_warehouse_id_from_context(self):
-            // """
-            // Helper method used to extract a single id from the context.
-            // 
-            // The `warehouse_id` dummy field of the `product.template` model is meant to
-            // to be used in the `product_template_search_form_view_stock` search view in
-            // order to add a `warehouse` context key. That key can therefore be any of
-            // the following types: Int, String, List(Int?, String?).
-            // """
-            // context_warehouse = self.env.context.get('warehouse_id', False)
-            // if context_warehouse:
-            //     if isinstance(context_warehouse, int):
-            //         return context_warehouse
-            //     elif isinstance(context_warehouse, list):
-            //         relevant_context = list(filter(lambda key: isinstance(key, int), context_warehouse))
-            //         if relevant_context:
-            //             return relevant_context[0]
-            // return False
+            --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
+            // def _inverse_buy_to_resupply(self):
+            // for warehouse in self:
+            //     buy_route = warehouse.buy_pull_id.route_id
+            //     if not buy_route:
+            //         buy_route = self.env['stock.rule'].search([
+            //             ('action', '=', 'buy'), ('warehouse_id', '=', warehouse.id)]).route_id
+            //     if warehouse.buy_to_resupply:
+            //         buy_route.warehouse_ids = [Command.link(warehouse.id)]
+            //     else:
+            //         buy_route.warehouse_ids = [Command.unlink(warehouse.id)]
+            */
+            return default;
+        }
+
+        protected async Task<StockWarehouse> InverseManufactureToResupplyInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
+            // def _inverse_manufacture_to_resupply(self):
+            // for warehouse in self:
+            //     manufacture_route = warehouse.manufacture_pull_id.route_id
+            //     if not manufacture_route:
+            //         manufacture_route = self.env['stock.rule'].search([
+            //             ('action', '=', 'manufacture'), ('warehouse_id', '=', warehouse.id)]).route_id
+            //     if not manufacture_route:
+            //         continue
+            //     if warehouse.manufacture_to_resupply:
+            //         manufacture_route.warehouse_ids = [Command.link(warehouse.id)]
+            //     else:
+            //         manufacture_route.warehouse_ids = [Command.unlink(warehouse.id)]
             */
             return default;
         }
@@ -1757,6 +1789,48 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockWarehouse> PreparePickupLocationDataInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: stock_warehouse.py) ---
+            // def _prepare_pickup_location_data(self):
+            // # Prepare the warehouse location.
+            // wh_location = self.partner_id
+            // if not wh_location.partner_latitude or not wh_location.partner_longitude:
+            //     wh_location.geo_localize()  # Find the longitude and latitude of the warehouse.
+            // 
+            // # Format the pickup location values of the warehouse.
+            // try:
+            //     pickup_location_values = {
+            //         'id': self.id,
+            //         'name': wh_location['name'].title(),
+            //         'street': wh_location['street'].title(),
+            //         'city': wh_location.city.title(),
+            //         'state': wh_location.state_id.code or '',
+            //         'zip_code': wh_location.zip or '',
+            //         'country_code': wh_location.country_code,
+            //         'latitude': wh_location.partner_latitude,
+            //         'longitude': wh_location.partner_longitude,
+            //     }
+            // except AttributeError:
+            //     return {}
+            // 
+            // # Prepare the opening hours data.
+            // if self.opening_hours:
+            //     opening_hours_dict = {str(i): [] for i in range(7)}
+            //     for att in self.opening_hours.attendance_ids:
+            //         if att.day_period in ('morning', 'afternoon'):
+            //             opening_hours_dict[att.dayofweek].append(
+            //                 f'{format_duration(att.hour_from)} - {format_duration(att.hour_to)}'
+            //             )
+            //     pickup_location_values['opening_hours'] = opening_hours_dict
+            // else:
+            //     pickup_location_values['opening_hours'] = {}
+            // return pickup_location_values
+            */
+            return default;
+        }
+
         protected async Task<StockWarehouse> UpdateDropshipSubcontractRulesInternalAsync()
         {
             /*
@@ -1764,9 +1838,9 @@ namespace Bamboo.Core.Application.Services
             // def _update_dropship_subcontract_rules(self):
             // '''update (archive/unarchive) any warehouse subcontracting location dropship rules'''
             // subcontracting_locations = self._get_subcontracting_locations()
-            // route_id = self._find_or_create_global_route('mrp_subcontracting_dropshipping.route_subcontracting_dropshipping',
+            // route_id = self._find_or_create_global_route('stock_dropshipping.route_drop_shipping',
             //                                    _('Dropship Subcontractor on Order'))
-            // warehouses_dropship = self.filtered(lambda w: w.subcontracting_dropshipping_to_resupply and w.active)
+            // warehouses_dropship = self.filtered(lambda w: w.subcontracting_to_resupply and w.active)
             // if warehouses_dropship:
             //     self.env['stock.rule'].with_context(active_test=False).search([
             //         ('route_id', '=', route_id.id),
@@ -1790,7 +1864,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: stock_warehouse.py) ---
             // def update_global_route_dropship_subcontractor(self):
-            // route_id = self._find_or_create_global_route('mrp_subcontracting_dropshipping.route_subcontracting_dropshipping',
+            // route_id = self._find_or_create_global_route('stock_dropshipping.route_drop_shipping',
             //                                    _('Dropship Subcontractor on Order'))
             // # if route has no pull rules, it means all warehouses have Dropship Subcontractor disabled
             // # Pick type is per company so we need to check rules per company to archive it, however
@@ -1816,6 +1890,7 @@ namespace Bamboo.Core.Application.Services
             //     route_id.active = False
             // else:
             //     route_id.active = True
+            //     self.route_ids = [Command.link(route_id.id)]
             */
             return default;
         }
@@ -1960,17 +2035,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockWarehouse> UpdateSubcontractingLocationsRulesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_warehouse.py) ---
-            // def _update_subcontracting_locations_rules(self):
-            // subcontracting_locations = self._get_subcontracting_locations()
-            // subcontracting_locations._activate_subcontracting_location_rules()
-            */
-            return default;
-        }
-
         protected async Task<StockWarehouse> ValidBarcodeInternalAsync(object barcode, Guid company_id)
         {
             /*
@@ -1999,7 +2063,7 @@ namespace Bamboo.Core.Application.Services
             //     'view_id': False,
             //     'view_mode': 'list,form',
             //     'limit': 20,
-            //     'context': dict(self._context, default_warehouse_selectable=True, default_warehouse_ids=self.ids)
+            //     'context': dict(self.env.context, default_warehouse_selectable=True, default_warehouse_ids=self.ids)
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -2013,7 +2077,7 @@ namespace Bamboo.Core.Application.Services
             // warehouse_action = self.env.ref('stock.action_warehouse_form')
             // msg = _('Please create a warehouse for company %s.', self.env.company.display_name)
             // if not self.env.user.has_group('stock.group_stock_manager'):
-            //     raise UserError('Please contact your administrator to configure your warehouse.')
+            //     raise UserError(self.env._('Please contact your administrator to configure your warehouse.'))
             // raise RedirectWarning(msg, warehouse_action.id, _('Go to Warehouses'))
             */
             return default;
@@ -2042,8 +2106,8 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // res = super().write(vals)
             // # if all warehouses have resupply disabled, disable global route, until its enabled on a warehouse
-            // if 'subcontracting_dropshipping_to_resupply' in vals or 'active' in vals:
-            //     if 'subcontracting_dropshipping_to_resupply' in vals:
+            // if 'subcontracting_to_resupply' in vals or 'active' in vals:
+            //     if 'subcontracting_to_resupply' in vals:
             //         # ignore when warehouse archived since it will auto-archive all of its rules
             //         self._update_dropship_subcontract_rules()
             //     self.update_global_route_dropship_subcontractor()
@@ -2112,7 +2176,7 @@ namespace Bamboo.Core.Application.Services
             //         if move_ids:
             //             raise UserError(_(
             //                 'You still have ongoing operations for operation types %(operations)s in warehouse %(warehouse)s',
-            //                 operations=format_list(self.env, move_ids.mapped('picking_type_id.name')),
+            //                 operations=move_ids.mapped('picking_type_id.name'),
             //                 warehouse=warehouse.name,
             //             ))
             //         else:
@@ -2126,7 +2190,7 @@ namespace Bamboo.Core.Application.Services
             //         if picking_type_using_locations:
             //             raise UserError(_(
             //                 '%(operations)s have default source or destination locations within warehouse %(warehouse)s, therefore you cannot archive it.',
-            //                 operations=format_list(self.env, picking_type_using_locations.mapped('name')),
+            //                 operations=picking_type_using_locations.mapped('name'),
             //                 warehouse=warehouse.name,
             //             ))
             //         warehouse.view_location_id.write({'active': vals['active']})
@@ -2164,8 +2228,7 @@ namespace Bamboo.Core.Application.Services
             //                 ('supplier_wh_id', 'in', to_add.ids),
             //                 ('active', '=', False)
             //             ])
-            //             if existing_routes:
-            //                 existing_routes.toggle_active()
+            //             existing_routes.action_unarchive()
             //             remaining_to_add = to_add - existing_routes.supplier_wh_id
             //             if remaining_to_add:
             //                 warehouse.create_resupply_routes(remaining_to_add)
@@ -2175,7 +2238,7 @@ namespace Bamboo.Core.Application.Services
             //                 ('supplier_wh_id', 'in', to_remove.ids),
             //                 ('active', '=', True)
             //             ])
-            //             to_disable_route_ids.toggle_active()
+            //             to_disable_route_ids.action_archive()
             // 
             // if 'active' in vals:
             //     self._check_multiwarehouse_group()

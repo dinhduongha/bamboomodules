@@ -52,8 +52,8 @@ namespace Bamboo.Core.Application.Services
             // 
             // for ml in self:
             //     # Check here if `ml.quantity` respects the rounding of `ml.product_uom_id`.
-            //     uom_qty = float_round(ml.quantity, precision_rounding=ml.product_uom_id.rounding, rounding_method='HALF-UP')
-            //     precision_digits = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            //     uom_qty = ml.product_uom_id.round(ml.quantity, rounding_method='HALF-UP')
+            //     precision_digits = self.env['decimal.precision'].precision_get('Product Unit')
             //     quantity = float_round(ml.quantity, precision_digits=precision_digits, rounding_method='HALF-UP')
             //     if float_compare(uom_qty, quantity, precision_digits=precision_digits) != 0:
             //         raise UserError(_('The quantity done for the product "%(product)s" doesn\'t respect the rounding precision '
@@ -61,12 +61,12 @@ namespace Bamboo.Core.Application.Services
             //                           'rounding precision of your unit of measure.',
             //                           product=ml.product_id.display_name, unit=ml.product_uom_id.name))
             // 
-            //     qty_done_float_compared = float_compare(ml.quantity, 0, precision_rounding=ml.product_uom_id.rounding)
+            //     qty_done_float_compared = ml.product_uom_id.compare(ml.quantity, 0)
             //     if qty_done_float_compared > 0:
             //         if ml.product_id.tracking == 'none':
             //             continue
             //         picking_type_id = ml.move_id.picking_type_id
-            //         if not picking_type_id and not ml.is_inventory and not ml.lot_id and not ml.move_id.scrap_id:
+            //         if not ml._exclude_requiring_lot():
             //             ml_ids_tracked_without_lot.add(ml.id)
             //             continue
             //         if not picking_type_id or ml.lot_id or (not picking_type_id.use_create_lots and not picking_type_id.use_existing_lots):
@@ -84,7 +84,7 @@ namespace Bamboo.Core.Application.Services
             //     elif not ml.is_inventory:
             //         ml_ids_to_delete.add(ml.id)
             // 
-            // for (product, company), mls in ml_ids_to_check.items():
+            // for (product, _company), mls in ml_ids_to_check.items():
             //     mls = self.env['stock.move.line'].browse(mls)
             //     lots = self.env['stock.lot'].search([
             //         '|', ('company_id', '=', False), ('company_id', '=', ml.company_id.id),
@@ -125,27 +125,31 @@ namespace Bamboo.Core.Application.Services
             //     mls_todo.product_id, mls_todo.location_id | mls_todo.location_dest_id,
             //     extra_domain=['|', ('lot_id', 'in', mls_todo.lot_id.ids), ('lot_id', '=', False)])
             // 
+            // # Prepare package history records before any actual move
+            // if not self.env.context.get('ignore_dest_packages'):
+            //     package_history_vals = mls_todo._prepare_package_history_vals()
+            //     if package_history_vals:
+            //         self.env['stock.package.history'].create(package_history_vals)
+            // 
             // for ml in mls_todo.with_context(quants_cache=quants_cache):
             //     # if this move line is force assigned, unreserve elsewhere if needed
             //     ml._synchronize_quant(-ml.quantity_product_uom, ml.location_id, action="reserved")
             //     available_qty, in_date = ml._synchronize_quant(-ml.quantity_product_uom, ml.location_id)
             //     ml._synchronize_quant(ml.quantity_product_uom, ml.location_dest_id, package=ml.result_package_id, in_date=in_date)
             //     if available_qty < 0:
-            //         ml._free_reservation(
+            //         ml.with_context(quants_cache=None)._free_reservation(
             //             ml.product_id, ml.location_id,
             //             abs(available_qty), lot_id=ml.lot_id, package_id=ml.package_id,
             //             owner_id=ml.owner_id, ml_ids_to_ignore=ml_ids_to_ignore)
             //     ml_ids_to_ignore.add(ml.id)
+            // 
+            // if not self.env.context.get('ignore_dest_packages'):
+            //     mls_todo.result_package_id._apply_dest_to_package()
+            // 
             // # Reset the reserved quantity as we just moved it to the destination location.
             // mls_todo.write({
             //     'date': fields.Datetime.now(),
             // })
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
-            // def _action_done(self):
-            // for line in self:
-            //     if not line.lot_id and not line.lot_name and line.product_id.lot_valuated:
-            //         raise UserError(_("Lot/Serial number is mandatory for product valuated by lot"))
-            // return super()._action_done()
             */
             return default;
         }
@@ -167,10 +171,14 @@ namespace Bamboo.Core.Application.Services
             //         'user_id': self.env.context.get('active_owner_id'),
             //         'description': description,
             //     })
+            //     notification_title = _('The following wave transfer has been created')
+            // else:
+            //     notification_title = _('The following wave transfer has been updated')
             // line_by_picking = defaultdict(lambda: self.env['stock.move.line'])
             // for line in self:
             //     line_by_picking[line.picking_id] |= line
             // picking_to_wave_vals_list = []
+            // split_pickings_ids = set()
             // for picking, lines in line_by_picking.items():
             //     # Move the entire picking if all the line are taken
             //     line_by_move = defaultdict(lambda: self.env['stock.move.line'])
@@ -185,7 +193,7 @@ namespace Bamboo.Core.Application.Services
             //     if lines == picking.move_line_ids and lines.move_id == picking.move_ids:
             //         add_all_moves = True
             //         for move, qty in qty_by_move.items():
-            //             if float_is_zero(qty, precision_rounding=move.product_uom.rounding):
+            //             if move.product_uom.is_zero(qty):
             //                 add_all_moves = False
             //                 break
             //         if add_all_moves:
@@ -199,6 +207,7 @@ namespace Bamboo.Core.Application.Services
             //         'batch_id': wave.id,
             //         'scheduled_date': picking.scheduled_date,
             //     })[0]
+            //     split_pickings_ids.add(picking.id)
             //     for move, move_lines in line_by_move.items():
             //         picking_to_wave_vals['move_line_ids'] += [Command.link(line.id) for line in lines]
             //         # if all the line of a stock move are taken we change the picking on the stock move
@@ -214,9 +223,30 @@ namespace Bamboo.Core.Application.Services
             //     picking_to_wave_vals_list.append(picking_to_wave_vals)
             // 
             // if picking_to_wave_vals_list:
-            //     self.env['stock.picking'].create(picking_to_wave_vals_list)
+            //     split_pickings = self.env['stock.picking'].browse(split_pickings_ids) | self.env['stock.picking'].create(picking_to_wave_vals_list)
+            //     split_pickings._add_to_wave_post_picking_split_hook()
             // if wave.picking_type_id.batch_auto_confirm:
             //     wave.action_confirm()
+            // if not self.env.context.get('from_wave_form'):
+            //     return {
+            //         'type': 'ir.actions.client',
+            //         'tag': 'display_notification',
+            //         'params': {
+            //             'title': notification_title,
+            //             'message': '%s',
+            //             'links': [{
+            //                 'label': wave.name,
+            //                 'url': f'/odoo/action-stock_picking_batch.action_picking_tree_wave/{wave.id}',
+            //             }],
+            //             'sticky': False,
+            //             'next': {'type': 'ir.actions.act_window_close'},
+            //         }
+            //     }
+            // else:
+            //     return {
+            //         'type': 'ir.actions.client',
+            //         'tag': 'soft_reload',
+            //     }
             */
             return default;
         }
@@ -226,32 +256,31 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _apply_putaway_strategy(self):
-            // if self._context.get('avoid_putaway_rules'):
+            // if self.env.context.get('avoid_putaway_rules'):
             //     return
             // self = self.with_context(do_not_unreserve=True)
-            // for package, smls in groupby(self, lambda sml: sml.result_package_id):
+            // for (package), smls in groupby(self, lambda sml: (sml.result_package_id.outermost_package_id)):
             //     smls = self.env['stock.move.line'].concat(*smls)
+            //     locations = smls.move_id.location_dest_id.child_internal_location_ids
             //     excluded_smls = set(smls.ids)
             //     if package.package_type_id:
-            //         best_loc = smls.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls, products=smls.product_id)._get_putaway_strategy(self.env['product.product'], package=package)
-            //         smls.location_dest_id = smls.package_level_id.location_dest_id = best_loc
+            //         best_loc = smls.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls, products=smls.product_id, locations=locations)._get_putaway_strategy(self.env['product.product'], package=package)
+            //         smls.location_dest_id = best_loc
             //     elif package:
             //         used_locations = set()
             //         for sml in smls:
             //             if len(used_locations) > 1:
             //                 break
-            //             sml.location_dest_id = sml.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls)._get_putaway_strategy(sml.product_id, quantity=sml.quantity)
+            //             sml.location_dest_id = sml.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls, locations=locations)._get_putaway_strategy(sml.product_id, quantity=sml.quantity)
             //             excluded_smls.discard(sml.id)
             //             used_locations.add(sml.location_dest_id)
             //         if len(used_locations) > 1:
             //             for move, grouped_smls in smls.grouped('move_id').items():
             //                 grouped_smls.location_dest_id = move.location_dest_id
-            //         else:
-            //             smls.package_level_id.location_dest_id = smls.location_dest_id
             //     else:
             //         for sml in smls:
-            //             putaway_loc_id = sml.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls)._get_putaway_strategy(
-            //                 sml.product_id, quantity=sml.quantity, packaging=sml.move_id.product_packaging_id,
+            //             putaway_loc_id = sml.move_id.location_dest_id.with_context(exclude_sml_ids=excluded_smls, locations=locations)._get_putaway_strategy(
+            //                 sml.product_id, quantity=sml.quantity, packaging=sml.move_id.packaging_uom_id,
             //             )
             //             if putaway_loc_id != sml.location_dest_id:
             //                 sml.location_dest_id = putaway_loc_id
@@ -270,8 +299,10 @@ namespace Bamboo.Core.Application.Services
             // and 'product_id.use_expiration_date' are new fields introduced in this module,
             // there is no need for an UPDATE statement here.
             // """
-            // if not column_exists(self._cr, "stock_move_line", "expiration_date"):
-            //     create_column(self._cr, "stock_move_line", "expiration_date", "timestamp")
+            // if not column_exists(self.env.cr, "stock_move_line", "expiration_date"):
+            //     create_column(self.env.cr, "stock_move_line", "expiration_date", "timestamp")
+            // if not column_exists(self.env.cr, "stock_move_line", "removal_date"):
+            //     create_column(self.env.cr, "stock_move_line", "removal_date", "timestamp")
             // return super()._auto_init()
             */
             return default;
@@ -328,25 +359,26 @@ namespace Bamboo.Core.Application.Services
             // remaining_lines = OrderedSet()
             // for (picking_type, lines) in self.grouped(lambda l: l.picking_type_id).items():
             //     if lines:
-            //         domain = [
-            //             ('picking_type_id', '=', picking_type.id),
-            //             ('company_id', 'in', lines.mapped('company_id').ids),
-            //             ('is_wave', '=', True)
+            //         domains = [
+            //             Domain('picking_type_id', '=', picking_type.id),
+            //             Domain('company_id', 'in', lines.mapped('company_id').ids),
+            //             Domain('is_wave', '=', True),
             //         ]
             //         if picking_type.batch_auto_confirm:
-            //             domain = expression.AND([domain, [('state', 'not in', ['done', 'cancel'])]])
+            //             domains.append(Domain('state', 'not in', ['done', 'cancel']))
             //         else:
-            //             domain = expression.AND([domain, [('state', '=', 'draft')]])
+            //             domains.append(Domain('state', '=', 'draft'))
             //         if picking_type.batch_group_by_partner:
-            //             domain = expression.AND([domain, [('picking_ids.partner_id', 'in', lines.move_id.partner_id.ids)]])
+            //             domains.append(Domain('picking_ids.partner_id', 'in', lines.move_id.partner_id.ids))
             //         if picking_type.batch_group_by_destination:
-            //             domain = expression.AND([domain, [('picking_ids.partner_id.country_id', 'in', lines.move_id.partner_id.country_id.ids)]])
+            //             domains.append(Domain('picking_ids.partner_id.country_id', 'in', lines.move_id.partner_id.country_id.ids))
             //         if picking_type.batch_group_by_src_loc:
-            //             domain = expression.AND([domain, [('picking_ids.location_id', 'in', lines.location_id.ids)]])
+            //             domains.append(Domain('picking_ids.location_id', 'in', lines.location_id.ids))
             //         if picking_type.batch_group_by_dest_loc:
-            //             domain = expression.AND([domain, [('picking_ids.location_dest_id', 'in', lines.location_dest_id.ids)]])
+            //             domains.append(Domain('picking_ids.location_dest_id', 'in', lines.location_dest_id.ids))
+            //         domains = lines._get_potential_existing_waves_extra_domain(domains, picking_type)
             // 
-            //         potential_waves = self.env['stock.picking.batch'].search(domain)
+            //         potential_waves = self.env['stock.picking.batch'].search(Domain.AND(domains))
             //         wave_to_new_lines = defaultdict(set)
             // 
             //         # These dictionaries are used to enforce batch max lines/transfers/weight limits
@@ -378,7 +410,8 @@ namespace Bamboo.Core.Application.Services
             //                 or (picking_type.batch_group_by_dest_loc and line.location_dest_id != wave.picking_ids.location_dest_id) \
             //                 or (picking_type.wave_group_by_product and line.product_id != wave.move_line_ids.product_id) \
             //                 or (picking_type.wave_group_by_category and line.product_id.categ_id != wave.move_line_ids.product_id.categ_id) \
-            //                 or (picking_type.wave_group_by_location and waves_nearest_parent_locations[wave] != nearest_parent_locations[line].id):
+            //                 or (picking_type.wave_group_by_location and waves_nearest_parent_locations[wave] != nearest_parent_locations[line].id) \
+            //                 or not line._is_potential_existing_wave_extra(wave):
             //                     continue
             // 
             //                 wave_new_move_ids = wave_to_new_moves[wave]
@@ -423,31 +456,32 @@ namespace Bamboo.Core.Application.Services
             // picking_types = self.picking_type_id
             // for picking_type in picking_types:
             //     lines = self.filtered(lambda l: l.picking_type_id == picking_type)
-            //     domain = [
+            //     domains = [Domain([
             //         ('id', 'in', lines.ids),
             //         ('company_id', 'in', self.company_id.ids),
             //         ('picking_id.state', '=', 'assigned'),
             //         ('picking_type_id', '=', picking_type.id),
             //         '|',
             //         ('batch_id', '=', False),
-            //         ('batch_id.is_wave', '=', False)
-            //     ]
+            //         ('batch_id.is_wave', '=', False),
+            //     ])]
             //     if picking_type.batch_group_by_partner:
-            //         domain = expression.AND([domain, [('move_id.partner_id', 'in', lines.move_id.partner_id.ids)]])
+            //         domains.append(Domain('move_id.partner_id', 'in', lines.move_id.partner_id.ids))
             //     if picking_type.batch_group_by_destination:
-            //         domain = expression.AND([domain, [('move_id.partner_id.country_id', 'in', lines.move_id.partner_id.country_id.ids)]])
+            //         domains.append(Domain('move_id.partner_id.country_id', 'in', lines.move_id.partner_id.country_id.ids))
             //     if picking_type.batch_group_by_src_loc:
-            //         domain = expression.AND([domain, [('location_id', 'in', lines.location_id.ids)]])
+            //         domains.append(Domain('location_id', 'in', lines.location_id.ids))
             //     if picking_type.batch_group_by_dest_loc:
-            //         domain = expression.AND([domain, [('location_dest_id', 'in', lines.location_dest_id.ids)]])
+            //         domains.append(Domain('location_dest_id', 'in', lines.location_dest_id.ids))
             //     if picking_type.wave_group_by_product:
-            //         domain = expression.AND([domain, [('product_id', 'in', lines.product_id.ids)]])
+            //         domains.append(Domain('product_id', 'in', lines.product_id.ids))
             //     if picking_type.wave_group_by_category:
-            //         domain = expression.AND([domain, [('product_id.categ_id', 'in', lines.product_id.categ_id.ids)]])
+            //         domains.append(Domain('product_id.categ_id', 'in', lines.product_id.categ_id.ids))
             //     if picking_type.wave_group_by_location:
-            //         domain = expression.AND([domain, [('location_id', 'child_of', picking_type.wave_location_ids.ids)]])
+            //         domains.append(Domain('location_id', 'child_of', picking_type.wave_location_ids.ids))
+            //     domains = lines._get_potential_new_waves_extra_domain(domains, picking_type)
             // 
-            //     potential_lines = self.env['stock.move.line'].search(domain)
+            //     potential_lines = self.env['stock.move.line'].search(Domain.AND(domains))
             //     lines_nearest_parent_locations = defaultdict(int)
             //     if picking_type.wave_group_by_location:
             //         for line in potential_lines:
@@ -472,7 +506,8 @@ namespace Bamboo.Core.Application.Services
             //             or (picking_type.batch_group_by_dest_loc and line.location_dest_id != potential_line.location_dest_id) \
             //             or (picking_type.wave_group_by_product and line.product_id != potential_line.product_id) \
             //             or (picking_type.wave_group_by_category and line.product_id.categ_id != potential_line.product_id.categ_id) \
-            //             or (picking_type.wave_group_by_location and lines_nearest_parent_locations[potential_line] != nearest_parent_locations[line].id):
+            //             or (picking_type.wave_group_by_location and lines_nearest_parent_locations[potential_line] != nearest_parent_locations[line].id)  \
+            //             or not line._is_new_potential_line_extra(potential_line):
             //                 continue
             // 
             //             line_to_lines[line].add(potential_line.id)
@@ -533,6 +568,31 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockMoveLine> CheckDestinationsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _check_destinations(self):
+            // if len(self.location_dest_id) > 1:
+            //     view_id = self.env.ref('stock.stock_package_destination_form_view').id
+            //     wiz = self.env['stock.package.destination'].create({
+            //         'move_line_ids': self.ids,
+            //         'location_dest_id': self[0].location_dest_id.id,
+            //     })
+            //     return {
+            //         'name': _('Choose destination location'),
+            //         'view_mode': 'form',
+            //         'res_model': 'stock.package.destination',
+            //         'view_id': view_id,
+            //         'views': [(view_id, 'form')],
+            //         'type': 'ir.actions.act_window',
+            //         'res_id': wiz.id,
+            //         'target': 'new'
+            //     }
+            */
+            return default;
+        }
+
         protected async Task<StockMoveLine> CheckLotProductInternalAsync()
         {
             /*
@@ -556,6 +616,17 @@ namespace Bamboo.Core.Application.Services
             // def _check_positive_quantity(self):
             // if any(ml.quantity < 0 for ml in self):
             //     raise ValidationError(_('You can not enter negative quantities.'))
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> ComputeAllowedUomIdsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _compute_allowed_uom_ids(self):
+            // for line in self:
+            //     line.allowed_uom_ids = line.product_id.uom_id | line.product_id.uom_ids | line.sudo().product_id.seller_ids.product_uom_id
             */
             return default;
         }
@@ -585,9 +656,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _compute_location_id(self):
             // for line in self:
-            //     if not line.location_id:
+            //     if not line.location_id or line._origin.picking_id.location_id != line.picking_id.location_id:
             //         line.location_id = line.move_id.location_id or line.picking_id.location_id
-            //     if not line.location_dest_id:
+            //     if not line.location_dest_id or line._origin.picking_id.location_dest_id != line.picking_id.location_dest_id:
             //         line.location_dest_id = line.move_id.location_dest_id or line.picking_id.location_dest_id
             */
             return default;
@@ -608,73 +679,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockMoveLine> ComputePackagingQtysInternalAsync(object aggregated_move_lines)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
-            // def _compute_packaging_qtys(self, aggregated_move_lines):
-            // non_kit_ml = {}
-            // kit_aggregated_ml = set()
-            // kit_moves = defaultdict(lambda: self.env['stock.move'])
-            // kit_qty = {}
-            // 
-            // for line in aggregated_move_lines.values():
-            //     if line['packaging']:
-            //         bom_id = line['bom']
-            //         if bom_id and bom_id.type == "phantom":
-            //             kit_aggregated_ml.add(line['line_key'])
-            //             kit_moves[bom_id] |= line['move']
-            //         else:
-            //             non_kit_ml[line['line_key']] = line
-            // 
-            // filters = {'incoming_moves': lambda m: True, 'outgoing_moves': lambda m: False}
-            // for bom, moves in kit_moves.items():
-            //     if moves.picking_id.backorder_ids:
-            //         kit_qty_ordered = (moves + moves.picking_id.backorder_ids.move_ids)._compute_kit_quantities(bom.product_id or bom.product_tmpl_id.product_variant_id, 1, bom, filters)
-            //         kit_qty_done = moves._compute_kit_quantities(bom.product_id or bom.product_tmpl_id.product_variant_id, 1, bom, filters)
-            //     else:
-            //         kit_qty_done = moves._compute_kit_quantities(bom.product_id or bom.product_tmpl_id.product_variant_id, 1, bom, filters)
-            //         kit_qty_ordered = kit_qty_done
-            //     kit_qty[bom.id] = (kit_qty_ordered, kit_qty_done)
-            // 
-            // for key in kit_aggregated_ml:
-            //     line = aggregated_move_lines[key]
-            //     bom_id = line['bom']
-            //     kit_qty_ordered, kit_qty_done = kit_qty[bom_id.id]
-            //     if line['packaging'].product_id == line['product']:
-            //         # If packaging has been set directly on the move
-            //         line['packaging_qty'] = line['packaging']._compute_qty(line['qty_ordered'], line['product_uom'])
-            //         line['packaging_quantity'] = line['packaging']._compute_qty(line['quantity'], line['product_uom'])
-            //     else:
-            //         # If packaging comes from the kit
-            //         line['packaging_qty'] = line['packaging']._compute_qty(kit_qty_ordered, bom_id.product_uom_id)
-            //         line['packaging_quantity'] = line['packaging']._compute_qty(kit_qty_done, bom_id.product_uom_id)
-            //     aggregated_move_lines[key] = line
-            // 
-            // non_kit_ml = super()._compute_packaging_qtys(non_kit_ml)
-            // for line in non_kit_ml.values():
-            //     aggregated_move_lines[line['line_key']] = line
-            // 
-            // return aggregated_move_lines
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
-            // def _compute_packaging_qtys(self, aggregated_move_lines):
-            // # Needs to be computed after aggregation of line qtys
-            // for line in aggregated_move_lines.values():
-            //     if line['packaging']:
-            //         line['packaging_qty'] = line['packaging']._compute_qty(line['qty_ordered'], line['product_uom'])
-            //         line['packaging_quantity'] = line['packaging']._compute_qty(line['quantity'], line['product_uom'])
-            // return aggregated_move_lines
-            */
-            return default;
-        }
-
         protected async Task<StockMoveLine> ComputePickedInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _compute_picked(self):
             // for line in self:
-            //     if line.move_id.state == 'done':
+            //     if line.move_id.state == 'done' or (self.env.context.get('allow_parent_move_picked_reset') and line.move_id.picked):
             //         line.picked = True
             */
             return default;
@@ -683,14 +694,13 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> ComputePickingTypeIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _compute_picking_type_id(self):
             // line_to_remove = self.env['stock.move.line']
             // for line in self:
-            //     if not line.production_id:
-            //         continue
-            //     line.picking_type_id = line.production_id.picking_type_id
-            //     line_to_remove |= line
+            //     if production_id := line.production_id or line.move_id.production_id:
+            //         line.picking_type_id = production_id.picking_type_id
+            //         line_to_remove |= line
             // return super(StockMoveLine, self - line_to_remove)._compute_picking_type_id()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _compute_picking_type_id(self):
@@ -702,51 +712,13 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockMoveLine> ComputeProductPackagingQtyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
-            // def _compute_product_packaging_qty(self):
-            // # we catch kit lines where the packaging is still the one from the final product (it has
-            // # not been changed to a packaging of a component)
-            // kit_lines = self.filtered(lambda move_line: move_line.move_id.bom_line_id.bom_id.type == 'phantom' and
-            // move_line.move_id.product_packaging_id and move_line.product_id != move_line.move_id.product_packaging_id.product_id)
-            // for move_line in kit_lines:
-            //     move = move_line.move_id
-            //     bom_line = move.bom_line_id
-            //     kit_bom = bom_line.bom_id
-            // 
-            //     # Convert the move line quantity to the product's move uom
-            //     qty_move_uom = move_line.product_uom_id._compute_quantity(move_line.quantity, move_line.move_id.product_uom)
-            //     # Convert the product's move uom to the bom line's uom
-            //     qty_bom_uom = move.product_uom._compute_quantity(qty_move_uom, bom_line.product_uom_id)
-            //     # calculate the bom's kit qty in kit product uom qty
-            //     bom_qty_product_uom = kit_bom.product_uom_id._compute_quantity(kit_bom.product_qty, kit_bom.product_tmpl_id.uom_id)
-            //     # calculate the comp/final_prod ratio of the BOM
-            //     kit_ratio = bom_line.product_qty / bom_qty_product_uom
-            //     # calculate the number of kit on the move line according to the number of comp
-            //     kit_qty = qty_bom_uom / kit_ratio
-            //     # calculate the quantity needed of packaging
-            //     move_line.product_packaging_qty = kit_qty / move_line.move_id.product_packaging_id.qty
-            // super(StockMoveLine, self - kit_lines)._compute_product_packaging_qty()
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
-            // def _compute_product_packaging_qty(self):
-            // self.product_packaging_qty = 0
-            // for line in self:
-            //     if not line.move_id.product_packaging_id:
-            //         continue
-            //     line.product_packaging_qty = line.move_id.product_packaging_id._compute_qty(line.quantity, line.product_uom_id)
-            */
-            return default;
-        }
-
         protected async Task<StockMoveLine> ComputeProductUomIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _compute_product_uom_id(self):
             // for line in self:
-            //     if not line.product_uom_id or line.product_uom_id.category_id != line.product_id.uom_id.category_id:
+            //     if not line.product_uom_id:
             //         if line.move_id.product_uom:
             //             line.product_uom_id = line.move_id.product_uom.id
             //         else:
@@ -765,12 +737,13 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     product_uom = record.product_id.uom_id
             //     sml_uom = record.product_uom_id
+            //     move_visible_quantity = record.move_id and record.move_id._visible_quantity() or 0.0
             // 
             //     move_demand = record.move_id.product_uom._compute_quantity(record.move_id.product_uom_qty, sml_uom, rounding_method='HALF-UP')
-            //     move_quantity = record.move_id.product_uom._compute_quantity(record.move_id.quantity, sml_uom, rounding_method='HALF-UP')
+            //     move_quantity = record.move_id.product_uom._compute_quantity(move_visible_quantity, sml_uom, rounding_method='HALF-UP')
             //     quant_qty = product_uom._compute_quantity(record.quant_id.available_quantity, sml_uom, rounding_method='HALF-UP')
             // 
-            //     if float_compare(move_demand, move_quantity, precision_rounding=sml_uom.rounding) > 0:
+            //     if sml_uom.compare(move_demand, move_quantity) > 0:
             //         record.quantity = max(0, min(quant_qty, move_demand - move_quantity))
             //     else:
             //         record.quantity = max(0, quant_qty)
@@ -785,6 +758,23 @@ namespace Bamboo.Core.Application.Services
             // def _compute_quantity_product_uom(self):
             // for line in self:
             //     line.quantity_product_uom = line.product_uom_id._compute_quantity(line.quantity, line.product_id.uom_id, rounding_method='HALF-UP')
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> ComputeRemovalDateInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: stock_move_line.py) ---
+            // def _compute_removal_date(self):
+            // for move_line in self:
+            //     if move_line.lot_id.removal_date:
+            //         move_line.removal_date = move_line.lot_id.removal_date
+            //     elif move_line.picking_type_use_create_lots:
+            //         if move_line.product_id.use_expiration_date and move_line.expiration_date:
+            //             move_line.removal_date = move_line.expiration_date - datetime.timedelta(days=move_line.product_id.removal_time)
+            //         else:
+            //             move_line.removal_date = False
             */
             return default;
         }
@@ -810,7 +800,7 @@ namespace Bamboo.Core.Application.Services
             //     sale_line_id = move_line.move_id.sale_line_id
             //     if sale_line_id and sale_line_id.product_id == move_line.product_id:
             //         unit_price = sale_line_id.price_reduce_taxinc
-            //         qty = move_line.product_uom_id._compute_quantity(move_line.quantity, sale_line_id.product_uom)
+            //         qty = move_line.product_uom_id._compute_quantity(move_line.quantity, sale_line_id.product_uom_id)
             //     else:
             //         # For kits, use the regular unit price
             //         unit_price = move_line.product_id.list_price
@@ -868,16 +858,16 @@ namespace Bamboo.Core.Application.Services
         public override async Task<StockMoveLine> CreateAsync(StockMoveLine entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
-            // def create(self, values):
-            // res = super(StockMoveLine, self).create(values)
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
+            // def create(self, vals_list):
+            // res = super().create(vals_list)
             // for line in res:
             //     # If the line is added in a done production, we need to map it
             //     # manually to the produced move lines in order to see them in the
             //     # traceability report
             //     if line.move_id.raw_material_production_id and line.state == 'done':
             //         mo = line.move_id.raw_material_production_id
-            //         finished_lots = mo.lot_producing_id
+            //         finished_lots = mo.lot_producing_ids
             //         finished_lots |= mo.move_finished_ids.filtered(lambda m: m.product_id != mo.product_id).move_line_ids.lot_id
             //         if finished_lots:
             //             produced_move_lines = mo.move_finished_ids.move_line_ids.filtered(lambda sml: sml.lot_id in finished_lots)
@@ -885,6 +875,11 @@ namespace Bamboo.Core.Application.Services
             //         else:
             //             produced_move_lines = mo.move_finished_ids.move_line_ids
             //             line.produce_line_ids = [(6, 0, produced_move_lines.ids)]
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_move_line.py) ---
+            // def create(self, vals_list):
+            // res = super().create(vals_list)
+            // res.move_id.filtered(lambda m: m.is_subcontract)._sync_subcontracting_productions()
             // return res
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def create(self, vals_list):
@@ -901,6 +896,7 @@ namespace Bamboo.Core.Application.Services
             // mls = super().create(vals_list)
             // 
             // created_moves = set()
+            // 
             // def create_move(move_line):
             //     new_move = self.env['stock.move'].create(move_line._prepare_stock_move_vals())
             //     move_line.move_id = new_move.id
@@ -947,12 +943,11 @@ namespace Bamboo.Core.Application.Services
             // self.env['stock.move'].browse(move_to_recompute_state)._recompute_state()
             // self.env['stock.move'].browse(created_moves)._post_process_created_moves()
             // 
-            // for ml, vals in zip(mls, vals_list):
+            // for ml in mls:
             //     if ml.state == 'done':
             //         if ml.product_id.is_storable:
             //             Quant = self.env['stock.quant']
             //             quantity = ml.product_uom_id._compute_quantity(ml.quantity, ml.move_id.product_id.uom_id, rounding_method='HALF-UP')
-            //             in_date = None
             //             available_qty, in_date = Quant._update_available_quantity(ml.product_id, ml.location_id, -quantity, lot_id=ml.lot_id, package_id=ml.package_id, owner_id=ml.owner_id)
             //             if available_qty < 0 and ml.lot_id:
             //                 # see if we can compensate the negative quants with some untracked quants
@@ -971,43 +966,26 @@ namespace Bamboo.Core.Application.Services
             // return mls
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
             // def create(self, vals_list):
-            // analytic_move_to_recompute = set()
-            // move_lines = super(StockMoveLine, self).create(vals_list)
-            // for move_line in move_lines:
-            //     move = move_line.move_id
-            //     analytic_move_to_recompute.add(move.id)
-            //     move_line._update_svl_quantity(move_line.quantity)
-            // if analytic_move_to_recompute:
-            //     self.env['stock.move'].browse(
-            //         analytic_move_to_recompute)._account_analytic_entry_move()
-            // return move_lines
+            // mls = super().create(vals_list)
+            // mls._update_stock_move_value()
+            // return mls
             */
             return await base.CreateAsync(entity, fields);
         }
 
-        protected async Task<StockMoveLine> CreateCorrectionSvlInternalAsync(object move, object diff)
+        protected async Task<StockMoveLine> ExcludeRequiringLotInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
-            // def _create_correction_svl(self, move, diff):
-            // lot = self.lot_id if self.product_id.lot_valuated else self.env['stock.lot']
-            // qty = (lot, abs(diff))
-            // stock_valuation_layers = self.env['stock.valuation.layer']
-            // if (move._is_in() and diff > 0) or (move._is_out() and diff < 0):
-            //     move.product_price_update_before_done(forced_qty=(lot, diff))
-            //     stock_valuation_layers |= move._create_in_svl(forced_quantity=qty)
-            //     if move.product_id.cost_method in ('average', 'fifo'):
-            //         move.product_id._run_fifo_vacuum(move.company_id)
-            // elif (move._is_in() and diff < 0) or (move._is_out() and diff > 0):
-            //     stock_valuation_layers |= move._create_out_svl(forced_quantity=qty)
-            //     if move.product_id.lot_valuated:
-            //         move._product_price_update_after_done()
-            // elif (move._is_dropshipped() and diff > 0) or (move._is_dropshipped_returned() and diff < 0):
-            //     stock_valuation_layers |= move._create_dropshipped_svl(forced_quantity=qty)
-            // elif (move._is_dropshipped() and diff < 0) or (move._is_dropshipped_returned() and diff > 0):
-            //     stock_valuation_layers |= move._create_dropshipped_returned_svl(forced_quantity=qty)
-            // 
-            // stock_valuation_layers._validate_accounting_entries()
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
+            // def _exclude_requiring_lot(self):
+            // return (
+            //     self.move_id.unbuild_id
+            //     and not self.move_id.origin_returned_move_id.move_line_ids.lot_id
+            // ) or super()._exclude_requiring_lot()
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _exclude_requiring_lot(self):
+            // self.ensure_one()
+            // return self.move_id.picking_type_id or self.is_inventory or self.lot_id or self.move_id.scrap_id
             */
             return default;
         }
@@ -1060,13 +1038,12 @@ namespace Bamboo.Core.Application.Services
             // move_to_reassign = self.env['stock.move']
             // to_unlink_candidate_ids = set()
             // 
-            // rounding = self.product_uom_id.rounding
             // for candidate in outdated_candidates:
             //     move_to_reassign |= candidate.move_id
-            //     if float_compare(candidate.quantity_product_uom, quantity, precision_rounding=rounding) <= 0:
+            //     if self.product_uom_id.compare(candidate.quantity_product_uom, quantity) <= 0:
             //         quantity -= candidate.quantity_product_uom
             //         to_unlink_candidate_ids.add(candidate.id)
-            //         if float_is_zero(quantity, precision_rounding=rounding):
+            //         if self.product_uom_id.is_zero(quantity):
             //             break
             //     else:
             //         candidate.quantity -= candidate.product_id.uom_id._compute_quantity(quantity, candidate.product_uom_id, rounding_method='HALF-UP')
@@ -1087,7 +1064,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> GetAggregatedProductQuantitiesInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _get_aggregated_product_quantities(self, **kwargs):
             // """Returns dictionary of products and corresponding values of interest grouped by optional kit_name
             // 
@@ -1122,14 +1099,14 @@ namespace Bamboo.Core.Application.Services
             // return aggregated_move_lines
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _get_aggregated_product_quantities(self, **kwargs):
-            // """ Returns a dictionary of products (key = id+name+description+uom+packaging) and corresponding values of interest.
+            // """ Returns a dictionary of products (key = id+name+description+uom) and corresponding values of interest.
             // 
             // Allows aggregation of data across separate move lines for the same product. This is expected to be useful
             // in things such as delivery reports. Dict key is made as a combination of values we expect to want to group
             // the products by (i.e. so data is not lost). This function purposely ignores lots/SNs because these are
             // expected to already be properly grouped by line.
             // 
-            // returns: dictionary {product_id+name+description+uom+packaging: {product, name, description, quantity, product_uom, packaging}, ...}
+            // returns: dictionary {product_id+name+description+uom: {product, name, description, quantity, product_uom}, ...}
             // """
             // aggregated_move_lines = {}
             // 
@@ -1146,39 +1123,46 @@ namespace Bamboo.Core.Application.Services
             //     aggregated_properties = self._get_aggregated_properties(move_line=move_line)
             //     line_key, uom = aggregated_properties['line_key'], aggregated_properties['product_uom']
             //     quantity = move_line.product_uom_id._compute_quantity(move_line.quantity, uom)
+            //     packaging_quantity = move_line.product_uom_id._compute_quantity(quantity, move_line.move_id.packaging_uom_id)
             //     if line_key not in aggregated_move_lines:
             //         qty_ordered = None
+            //         packaging_qty_ordered = None
             //         if backorders and not kwargs.get('strict'):
             //             qty_ordered = move_line.move_id.product_uom_qty
             //             # Filters on the aggregation key (product, description and uom) to add the
             //             # quantities delayed to backorders to retrieve the original ordered qty.
             //             following_move_lines = backorders.move_line_ids.filtered(
-            //                 lambda ml: self._get_aggregated_properties(move=ml.move_id)['line_key'] == line_key
+            //                 lambda ml: line_key.startswith(self._get_aggregated_properties(move=ml.move_id)['line_key'])
             //             )
             //             qty_ordered += sum(following_move_lines.move_id.mapped('product_uom_qty'))
             //             # Remove the done quantities of the other move lines of the stock move
             //             previous_move_lines = move_line.move_id.move_line_ids.filtered(
-            //                 lambda ml: self._get_aggregated_properties(move=ml.move_id)['line_key'] == line_key and ml.id != move_line.id
+            //                 lambda ml: line_key.startswith(self._get_aggregated_properties(move=ml.move_id)['line_key']) and ml.id != move_line.id
             //             )
             //             qty_ordered -= sum([m.product_uom_id._compute_quantity(m.quantity, uom) for m in previous_move_lines])
+            //             packaging_qty_ordered = move_line.product_uom_id._compute_quantity(qty_ordered, move_line.move_id.packaging_uom_id)
             //         aggregated_move_lines[line_key] = {
             //             **aggregated_properties,
             //             'quantity': quantity,
+            //             'packaging_quantity': packaging_quantity,
             //             'qty_ordered': qty_ordered or quantity,
+            //             'packaging_qty_ordered': packaging_qty_ordered or packaging_quantity,
             //             'product': move_line.product_id,
             //         }
             //     else:
             //         aggregated_move_lines[line_key]['qty_ordered'] += quantity
+            //         aggregated_move_lines[line_key]['packaging_qty_ordered'] += packaging_quantity
             //         aggregated_move_lines[line_key]['quantity'] += quantity
+            //         aggregated_move_lines[line_key]['packaging_quantity'] += packaging_quantity
             // 
             // # Does the same for empty move line to retrieve the ordered qty. for partially done moves
             // # (as they are splitted when the transfer is done and empty moves don't have move lines).
             // if kwargs.get('strict'):
-            //     return self._compute_packaging_qtys(aggregated_move_lines)
+            //     return aggregated_move_lines
             // pickings = (self.picking_id | backorders)
             // for empty_move in pickings.move_ids:
             //     to_bypass = False
-            //     if not (empty_move.product_uom_qty and float_is_zero(empty_move.quantity, precision_rounding=empty_move.product_uom.rounding)):
+            //     if not (empty_move.product_uom_qty and empty_move.product_uom.is_zero(empty_move.quantity)):
             //         continue
             //     if empty_move.state != "cancel":
             //         if empty_move.state != "confirmed" or empty_move.move_line_ids:
@@ -1188,18 +1172,24 @@ namespace Bamboo.Core.Application.Services
             //     aggregated_properties = self._get_aggregated_properties(move=empty_move)
             //     line_key = aggregated_properties['line_key']
             // 
-            //     if line_key not in aggregated_move_lines and not to_bypass:
+            //     if not any(aggregated_key.startswith(line_key) for aggregated_key in aggregated_move_lines) and not to_bypass:
             //         qty_ordered = empty_move.product_uom_qty
             //         aggregated_move_lines[line_key] = {
             //             **aggregated_properties,
             //             'quantity': False,
+            //             'packaging_quantity': 0,
+            //             'packaging_qty_ordered': 0,
             //             'qty_ordered': qty_ordered,
             //             'product': empty_move.product_id,
             //         }
             //     elif line_key in aggregated_move_lines:
             //         aggregated_move_lines[line_key]['qty_ordered'] += empty_move.product_uom_qty
+            //     else:
+            //         keys = list(filter(lambda key: key.startswith(line_key), aggregated_move_lines))
+            //         if keys:
+            //             aggregated_move_lines[keys[0]]['qty_ordered'] += empty_move.product_uom_qty
             // 
-            // return self._compute_packaging_qtys(aggregated_move_lines)
+            // return aggregated_move_lines
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: stock_move.py) ---
             // def _get_aggregated_product_quantities(self, **kwargs):
             // """Returns dictionary of products and corresponding values of interest + hs_code
@@ -1221,7 +1211,7 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> GetAggregatedPropertiesInternalAsync(object move_line, object move)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _get_aggregated_properties(self, move_line=False, move=False):
             // aggregated_properties = super()._get_aggregated_properties(move_line, move)
             // bom = aggregated_properties['move'].bom_line_id.bom_id
@@ -1232,6 +1222,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_aggregated_properties(self, move_line=False, move=False):
             // move = move or move_line.move_id
             // uom = move.product_uom or move_line.product_uom_id
+            // packaging_uom = move.packaging_uom_id
             // name = move.product_id.display_name
             // description = move.description_picking or ""
             // product = move.product_id
@@ -1239,15 +1230,20 @@ namespace Bamboo.Core.Application.Services
             //     description = description.removeprefix(name).strip()
             // elif description.startswith(product.name):
             //     description = description.removeprefix(product.name).strip()
-            // line_key = f'{product.id}_{product.display_name}_{description or ""}_{uom.id}_{move.product_packaging_id or ""}'
-            // return {
+            // line_key = f'{product.id}_{product.display_name}_{description or ""}_{uom.id}_{packaging_uom.id}'
+            // properties = {
             //     'line_key': line_key,
             //     'name': name,
             //     'description': description,
             //     'product_uom': uom,
+            //     'packaging_uom_id': packaging_uom,
             //     'move': move,
-            //     'packaging': move.product_packaging_id,
             // }
+            // if move_line and move_line.result_package_id:
+            //     properties['package'] = move_line.result_package_id
+            //     properties['package_history'] = move_line.package_history_id
+            //     properties['line_key'] += f'_{move_line.result_package_id.id}'
+            // return properties
             */
             return default;
         }
@@ -1290,10 +1286,62 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockMoveLine> GetLinesAndPackagesToPackInternalAsync(object picked_first)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _get_lines_and_packages_to_pack(self, picked_first=True):
+            // """ Get all move lines & packages that need to be put in a pack.
+            // 
+            //     :param picked_first: If enabled, will prioritize picked move lines over other move lines.
+            //     :return: move_lines_to_pack: All move lines without a pack that can be packed
+            //     :return: packages_to_pack: All packages that can be packed
+            // """
+            // if len(self.picking_type_id) > 1:
+            //     raise UserError(_('You cannot pack products into the same package when they are from different transfers with different operation types'))
+            // 
+            // quantity_move_lines = self.filtered(lambda ml: ml.state not in ('done', 'cancel') and ml.product_uom_id.compare(ml.quantity, 0.0) > 0)
+            // if picked_first:
+            //     picked_move_lines = quantity_move_lines.filtered(lambda ml: ml.picked)
+            //     if picked_move_lines:
+            //         # As long as at least a single move line is picked, we ignore the unpicked ones.
+            //         quantity_move_lines = picked_move_lines
+            // 
+            // move_lines_to_pack = quantity_move_lines.filtered(lambda ml: not ml.result_package_id)
+            // packages_to_pack = (quantity_move_lines - move_lines_to_pack).result_package_id.outermost_package_id
+            // 
+            // return move_lines_to_pack, packages_to_pack
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> GetLinesNotEntirePackInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _get_lines_not_entire_pack(self):
+            // """ Checks within self for move lines that should no longer be considered as entire packs.
+            // """
+            // relevant_move_lines = self.filtered(lambda ml: ml.is_entire_pack)
+            // if not relevant_move_lines:
+            //     return False
+            // 
+            // # If `result_package_id` was either removed or changed, cannot be considered as an entire pack anymore.
+            // ids_to_update = set(relevant_move_lines.filtered(lambda ml: ml.package_id != ml.result_package_id).ids)
+            // for package, move_lines in relevant_move_lines.grouped('package_id').items():
+            //     pickings = move_lines.picking_id
+            //     if not pickings._is_single_transfer() or not pickings._check_move_lines_map_quant_package(package):
+            //         ids_to_update.update(pickings.move_line_ids.filtered(lambda ml: ml.package_id == package).ids)
+            // 
+            // return self.env['stock.move.line'].browse(ids_to_update)
+            */
+            return default;
+        }
+
         protected async Task<StockMoveLine> GetLinkableMovesInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _get_linkable_moves(self):
             // """ Don't linke move lines with kit products to moves with dissimilar locations so that
             // post `action_explode()` move lines will have accurate location data.
@@ -1328,17 +1376,17 @@ namespace Bamboo.Core.Application.Services
             // dirty_move_lines = self.env['stock.move.line'].browse(dirty_move_line_ids)
             // quants_data = []
             // move_lines_data = []
-            // domain = [("id", "in", dirty_quant_ids)]
-            // for move_line in dirty_move_lines | deleted_move_lines:
-            //     move_line_domain = [
+            // domain = Domain("id", "in", dirty_quant_ids) | Domain.OR(
+            //     Domain([
             //         ("product_id", "=", move_line.product_id.id),
             //         ("lot_id", "=", move_line.lot_id.id),
             //         ("location_id", "=", move_line.location_id.id),
             //         ("package_id", "=", move_line.package_id.id),
             //         ("owner_id", "=", move_line.owner_id.id),
-            //     ]
-            //     domain = expression.OR([domain, move_line_domain])
-            // if domain:
+            //     ])
+            //     for move_line in dirty_move_lines | deleted_move_lines
+            // )
+            // if not domain.is_false():
             //     quants = self.env['stock.quant'].search(domain)
             //     for quant in quants:
             //         dirty_lines = dirty_move_lines.filtered(lambda ml: ml.product_id == quant.product_id
@@ -1358,6 +1406,49 @@ namespace Bamboo.Core.Application.Services
             // return [quants_data, move_lines_data]
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<StockMoveLine> GetPackageCarrierTypeForPackInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: stock_move.py) ---
+            // def _get_package_carrier_type_for_pack(self):
+            // if len(self.carrier_id) > 1 or any(not ml.carrier_id for ml in self):
+            //     # avoid (duplicate) costs for products
+            //     raise UserError(self.env._("You cannot pack products into the same package when they have different carriers (i.e. check that all of their transfers have a carrier assigned and are using the same carrier)."))
+            // 
+            // # As we pass the `delivery_type` ('fixed' or 'base_on_rule' by default) in a key that
+            // # corresponds to the `package_carrier_type` (defaults to 'none'), we do a conversion.
+            // # No need to convert for other carriers as the `delivery_type` and
+            // # `package_carrier_type` will be the same in these cases.
+            // package_carrier_type = self.carrier_id.delivery_type
+            // if package_carrier_type in ['fixed', 'base_on_rule']:
+            //     package_carrier_type = 'none'
+            // return package_carrier_type
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> GetPotentialExistingWavesExtraDomainInternalAsync(object domain_list, object picking_type)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_move_line.py) ---
+            // def _get_potential_existing_waves_extra_domain(self, domain_list, picking_type):
+            // """Extend extra conditions here"""
+            // return domain_list
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> GetPotentialNewWavesExtraDomainInternalAsync(object domain_list, object picking_type)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_move_line.py) ---
+            // def _get_potential_new_waves_extra_domain(self, domain_list, picking_type):
+            // """Extend extra conditions here"""
+            // return domain_list
+            */
+            return default;
         }
 
         protected async Task<StockMoveLine> GetPutawayAdditionalQtyInternalAsync()
@@ -1381,7 +1472,7 @@ namespace Bamboo.Core.Application.Services
             // def _get_revert_inventory_move_values(self):
             // self.ensure_one()
             // return {
-            //     'name':_('%s [reverted]', self.reference),
+            //     'inventory_name': _('%s [reverted]', self.reference),
             //     'product_id': self.product_id.id,
             //     'product_uom': self.product_uom_id.id,
             //     'product_uom_qty': self.quantity,
@@ -1411,9 +1502,9 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> GetSimilarMoveLinesInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _get_similar_move_lines(self):
-            // lines = super(StockMoveLine, self)._get_similar_move_lines()
+            // lines = super()._get_similar_move_lines()
             // if self.move_id.production_id:
             //     finished_moves = self.move_id.production_id.move_finished_ids
             //     finished_move_lines = finished_moves.mapped('move_line_ids')
@@ -1435,22 +1526,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> InitAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
-            // def init(self):
-            // if not tools.index_exists(self._cr, 'stock_move_line_free_reservation_index'):
-            //     self._cr.execute("""
-            //         CREATE INDEX stock_move_line_free_reservation_index
-            //         ON
-            //             stock_move_line (id, company_id, product_id, lot_id, location_id, owner_id, package_id)
-            //         WHERE
-            //             (state IS NULL OR state NOT IN ('cancel', 'done')) AND quantity_product_uom > 0 AND not picked""")
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<StockMoveLine> IsAutoWaveableInternalAsync()
         {
             /*
@@ -1458,11 +1533,33 @@ namespace Bamboo.Core.Application.Services
             // def _is_auto_waveable(self):
             // self.ensure_one()
             // if not self.picking_id \
-            //    or (self.picking_id.state != 'assigned' or float_is_zero(self.quantity, precision_rounding=self.product_uom_id.rounding)) and not self.env.context.get('skip_auto_waveable')  \
+            //    or (self.picking_id.state != 'assigned' or self.product_uom_id.is_zero(self.quantity)) and not self.env.context.get('skip_auto_waveable')  \
             //    or self.batch_id.is_wave \
             //    or not self.picking_type_id._is_auto_wave_grouped() \
             //    or (self.picking_type_id.wave_group_by_category and self.product_id.categ_id not in self.picking_type_id.wave_category_ids):  # noqa: SIM103
             //     return False
+            // return True
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> IsNewPotentialLineExtraInternalAsync(object potential_line)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_move_line.py) ---
+            // def _is_new_potential_line_extra(self, potential_line):
+            // """Extend extra conditions here"""
+            // return True
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> IsPotentialExistingWaveExtraInternalAsync(object wave)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_move_line.py) ---
+            // def _is_potential_existing_wave_extra(self, wave):
+            // """Extend extra conditions here"""
             // return True
             */
             return default;
@@ -1481,9 +1578,9 @@ namespace Bamboo.Core.Application.Services
             // if 'location_dest_id' in vals:
             //     data['location_dest_name'] = self.env['stock.location'].browse(vals.get('location_dest_id')).name
             // if 'package_id' in vals and vals['package_id'] != move.package_id.id:
-            //     data['package_name'] = self.env['stock.quant.package'].browse(vals.get('package_id')).name
+            //     data['package_name'] = self.env['stock.package'].browse(vals.get('package_id')).name
             // if 'package_result_id' in vals and vals['package_result_id'] != move.package_result_id.id:
-            //     data['result_package_name'] = self.env['stock.quant.package'].browse(vals.get('result_package_id')).name
+            //     data['result_package_dest_name'] = self.env['stock.package'].browse(vals.get('result_package_id')).name
             // if 'owner_id' in vals and vals['owner_id'] != move.owner_id.id:
             //     data['owner_name'] = self.env['res.partner'].browse(vals.get('owner_id')).name
             // record.message_post_with_source(
@@ -1498,22 +1595,9 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> OnchangeProductIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product_expiry, FILE: stock_move_line.py) ---
-            // def _onchange_product_id(self):
-            // res = super()._onchange_product_id()
-            // if self.picking_type_use_create_lots:
-            //     if self.product_id.use_expiration_date:
-            //         from_date = self.picking_id.scheduled_date or fields.Datetime.today()
-            //         self.expiration_date = from_date + datetime.timedelta(days=self.product_id.expiration_time)
-            //     else:
-            //         self.expiration_date = False
-            // return res
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _onchange_product_id(self):
             // if self.product_id:
-            //     if self.picking_id:
-            //         product = self.product_id.with_context(lang=self.picking_id.partner_id.lang or self.env.user.lang)
-            //         self.description_picking = product._get_description(self.picking_id.picking_type_id)
             //     self.lots_visible = self.product_id.tracking != 'none'
             */
             return default;
@@ -1529,8 +1613,7 @@ namespace Bamboo.Core.Application.Services
             //         and self.location_dest_id == default_dest_location:
             //     quantity = self.quantity_product_uom
             //     self.location_dest_id = default_dest_location.with_context(exclude_sml_ids=self.ids)._get_putaway_strategy(
-            //         self.product_id, quantity=quantity, package=self.result_package_id,
-            //         packaging=self.move_id.product_packaging_id)
+            //         self.product_id, quantity=quantity, package=self.result_package_id)
             */
             return default;
         }
@@ -1545,7 +1628,7 @@ namespace Bamboo.Core.Application.Services
             // """
             // res = {}
             // if self.quantity and self.product_id.tracking == 'serial':
-            //     if float_compare(self.quantity_product_uom, 1.0, precision_rounding=self.product_id.uom_id.rounding) != 0 and not float_is_zero(self.quantity_product_uom, precision_rounding=self.product_id.uom_id.rounding):
+            //     if self.product_id.uom_id.compare(self.quantity_product_uom, 1.0) != 0 and not self.product_id.uom_id.is_zero(self.quantity_product_uom):
             //         raise UserError(_('You can only process 1.0 %s of products with unique serial number.', self.product_id.uom_id.name))
             // return res
             */
@@ -1559,7 +1642,7 @@ namespace Bamboo.Core.Application.Services
             // def _onchange_serial_number(self):
             // current_location_id = self.location_id
             // res = super()._onchange_serial_number()
-            // if res and not self.lot_name and current_location_id.is_subcontracting_location:
+            // if res and not self.lot_name and current_location_id.is_subcontract():
             //     # we want to avoid auto-updating source location in this case + change the warning message
             //     self.location_id = current_location_id
             //     res['warning']['message'] = res['warning']['message'].split("\n\n", 1)[0] + "\n\n" + \
@@ -1594,7 +1677,7 @@ namespace Bamboo.Core.Application.Services
             //                     message = _(
             //                         'Serial number (%(serial_number)s) already exists in location(s): %(location_list)s. Please correct the serial number encoded.',
             //                         serial_number=self.lot_name,
-            //                         location_list=format_list(self.env, quants.location_id.mapped('display_name'))
+            //                         location_list=quants.location_id.mapped('display_name')
             //                     )
             //         elif self.lot_id:
             //             counter = Counter([line.lot_id.id for line in move_lines_to_check])
@@ -1656,6 +1739,62 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
+        protected async Task<StockMoveLine> PostPutInPackHookInternalAsync(object package)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _post_put_in_pack_hook(self, package):
+            // if package and self.picking_type_id.auto_print_package_label:
+            //     if self.picking_type_id.package_label_to_print == 'pdf':
+            //         action = self.env.ref("stock.action_report_package_barcode_small").report_action(package.id, config=False)
+            //     elif self.picking_type_id.package_label_to_print == 'zpl':
+            //         action = self.env.ref("stock.label_package_template").report_action(package.id, config=False)
+            //     if action:
+            //         action.update({'close_on_report_download': True})
+            //         clean_action(action, self.env)
+            //         return action
+            // return package
+            --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: stock_move.py) ---
+            // def _post_put_in_pack_hook(self, package):
+            // weight = self.env.context.get('weight')
+            // if weight:
+            //     package.shipping_weight = weight
+            // return super()._post_put_in_pack_hook(package)
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> PrePutInPackHookInternalAsync(object all_lines, Guid package_id, Guid package_type_id, object package_name, object from_package_wizard)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _pre_put_in_pack_hook(self, all_lines=False, package_id=False, package_type_id=False, package_name=False, from_package_wizard=False):
+            // move_lines = all_lines if self.env.context.get('force_move_lines') and all_lines else self
+            // action = move_lines._check_destinations()
+            // if action:
+            //     return action
+            // if self._should_display_put_in_pack_wizard(package_id, package_type_id, package_name, from_package_wizard):
+            //     action = self.env["ir.actions.actions"]._for_xml_id("stock.action_put_in_pack_wizard")
+            //     action['context'] = {
+            //         **literal_eval(action.get('context', '{}')),
+            //         'all_move_line_ids': move_lines.ids,
+            //         'default_move_line_ids': self.ids,
+            //         'default_location_dest_id': self.location_dest_id.id,
+            //         'picking_ids': move_lines.picking_id.ids,
+            //     }
+            //     return action
+            --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: stock_move.py) ---
+            // def _pre_put_in_pack_hook(self, all_lines=False, package_id=False, package_type_id=False, package_name=False, from_package_wizard=False):
+            // res = super()._pre_put_in_pack_hook(all_lines, package_id, package_type_id, package_name, from_package_wizard)
+            // if res and not from_package_wizard and self.carrier_id:
+            //     context = res.get('context', {})
+            //     context['default_package_carrier_type'] = self._get_package_carrier_type_for_pack()
+            //     res['context'] = context
+            // return res
+            */
+            return default;
+        }
+
         protected async Task<StockMoveLine> PrepareNewLotValsInternalAsync()
         {
             /*
@@ -1679,10 +1818,37 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockMoveLine> PreparePackageHistoryValsInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _prepare_package_history_vals(self):
+            // history_vals = []
+            // packages = self.env['stock.package'].browse(self.result_package_id._get_all_package_dest_ids())
+            // for package in packages:
+            //     history_vals.append({
+            //         'location_id': package.location_id.id,
+            //         'location_dest_id': package.location_dest_id.id,
+            //         'move_line_ids': [Command.set(package.move_line_ids.filtered(lambda ml: ml.result_package_id == package).ids)],
+            //         'picking_ids': [Command.set(package.picking_ids.ids)],
+            //         'package_id': package.id,
+            //         'package_name': package.complete_name,
+            //         'parent_orig_id': package.parent_package_id.id,
+            //         'parent_orig_name': package.parent_package_id.complete_name,
+            //         'parent_dest_id': package.package_dest_id.id,
+            //         'parent_dest_name': package.package_dest_id.dest_complete_name,
+            //         'outermost_dest_id': package.outermost_package_id.id,
+            //     })
+            // 
+            // return history_vals
+            */
+            return default;
+        }
+
         protected async Task<StockMoveLine> PrepareStockMoveValsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _prepare_stock_move_vals(self):
             // move_vals = super()._prepare_stock_move_vals()
             // if self.env['product.product'].browse(move_vals['product_id']).is_kits:
@@ -1693,11 +1859,9 @@ namespace Bamboo.Core.Application.Services
             // def _prepare_stock_move_vals(self):
             // self.ensure_one()
             // return {
-            //     'name': _('New Move: %(product)s', product=self.product_id.display_name),
             //     'product_id': self.product_id.id,
             //     'product_uom_qty': 0 if self.picking_id and self.picking_id.state != 'done' else self.quantity,
             //     'product_uom': self.product_uom_id.id,
-            //     'description_picking': self.description_picking or self.product_id.with_context(lang=self.env.context.get('lang'))._get_description(self.picking_type_id),
             //     'location_id': self.picking_id.location_id.id,
             //     'location_dest_id': self.picking_id.location_dest_id.id,
             //     'picked': self.picked,
@@ -1707,7 +1871,6 @@ namespace Bamboo.Core.Application.Services
             //     'restrict_partner_id': self.picking_id.owner_id.id,
             //     'company_id': self.picking_id.company_id.id,
             //     'partner_id': self.picking_id.partner_id.id,
-            //     'package_level_id': self.package_level_id.id,
             // }
             */
             return default;
@@ -1717,12 +1880,63 @@ namespace Bamboo.Core.Application.Services
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
-            // def action_put_in_pack(self):
-            // if len(self.picking_id) > 1:
-            //     raise UserError(_("You cannot directly pack quantities from different transfers into the same package through this view. Try adding them to a batch picking and pack it there."))
-            // return self.picking_id.action_put_in_pack(move_lines_to_pack=self)
+            // def action_put_in_pack(self, *, package_id=False, package_type_id=False, package_name=False):
+            // move_lines = self
+            // if self.env.context.get('all_move_line_ids'):
+            //     move_lines = self.env['stock.move.line'].browse(self.env.context['all_move_line_ids'])
+            // # From the 'Moves' button, we want to take all move lines, without caring for picked or with/without packages.
+            // force_move_lines = bool(self.env.context.get('force_move_lines'))
+            // 
+            // move_lines_to_pack, packages_to_pack = move_lines._get_lines_and_packages_to_pack(picked_first=not force_move_lines)
+            // done_pack = False
+            // if move_lines_to_pack:
+            //     action = move_lines_to_pack._pre_put_in_pack_hook(move_lines, package_id, package_type_id, package_name, self.env.context.get('from_package_wizard'))
+            //     if action:
+            //         return action
+            // 
+            //     package = move_lines_to_pack._put_in_pack(package_id, package_type_id, package_name)
+            //     done_pack = move_lines_to_pack._post_put_in_pack_hook(package)
+            // if done_pack and not force_move_lines:
+            //     return done_pack
+            // elif packages_to_pack:
+            //     if done_pack:
+            //         packages_to_pack -= done_pack
+            //         package_id = done_pack.id
+            //     if packages_to_pack:
+            //         return packages_to_pack.action_put_in_pack(package_id=package_id, package_type_id=package_type_id, package_name=package_name)
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        protected async Task<StockMoveLine> PutInPackInternalAsync(Guid package_id, Guid package_type_id, object package_name)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _put_in_pack(self, package_id=False, package_type_id=False, package_name=False):
+            // if package_id:
+            //     package = self.env['stock.package'].browse(package_id)
+            // elif package_type_id:
+            //     package = self.env['stock.package'].create({
+            //         'name': package_name,
+            //         'package_type_id': package_type_id,
+            //     })
+            // else:
+            //     package_vals = {'name': package_name}
+            //     package_type = self.move_id.packaging_uom_id.package_type_id
+            //     if len(package_type) == 1:
+            //         package_vals['package_type_id'] = package_type.id
+            //     package = self.env['stock.package'].create(package_vals)
+            // if len(self) == 1:
+            //     default_dest_location = self._get_default_dest_location()
+            //     self.location_dest_id = default_dest_location._get_putaway_strategy(
+            //         product=self.product_id,
+            //         quantity=self.quantity,
+            //         package=package
+            //     )
+            // self.write({'result_package_id': package.id})
+            // return package
+            */
+            return default;
         }
 
         public async Task<StockMoveLine> RevertInventoryAsync(Guid id)
@@ -1735,7 +1949,7 @@ namespace Bamboo.Core.Application.Services
             // self = self.with_context(inventory_mode=False)
             // processed_move_line = self.env['stock.move.line']
             // for move_line in self:
-            //     if move_line.is_inventory and not float_is_zero(move_line.quantity, precision_rounding=move_line.product_uom_id.rounding):
+            //     if move_line.is_inventory and not move_line.product_uom_id.is_zero(move_line.quantity):
             //         processed_move_line += move_line
             //         move_vals.append(move_line._get_revert_inventory_move_values())
             // if not processed_move_line:
@@ -1750,12 +1964,11 @@ namespace Bamboo.Core.Application.Services
             // moves = self.env['stock.move'].create(move_vals)
             // moves._action_done()
             // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'success',
-            //         'message': _("The inventory adjustments have been reverted."),
-            //     }
+            //     'name': _('Reverted Moves'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'stock.move.line',
+            //     'view_mode': 'list',
+            //     'domain': [('id', 'in', moves.move_line_ids.ids + self.ids)]
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -1764,22 +1977,28 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockMoveLine> SearchPickingTypeIdInternalAsync(object @operator, object @value)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def _search_picking_type_id(self, operator, value):
-            // res = super()._search_picking_type_id(operator=operator, value=value)
-            // if operator in ['not in', '!=', 'not ilike']:
-            //     if value is False:
-            //         return expression.OR([[('production_id.picking_type_id', operator, value)], res])
-            //     else:
-            //         return expression.AND([[('production_id.picking_type_id', operator, value)], res])
-            // else:
-            //     if value is False:
-            //         return expression.AND([[('production_id.picking_type_id', operator, value)], res])
-            //     else:
-            //         return expression.OR([[('production_id.picking_type_id', operator, value)], res])
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // domain = super()._search_picking_type_id(operator, value)
+            // return (Domain('production_id', '=', False) & domain) | Domain('production_id.picking_type_id', operator, value)
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def _search_picking_type_id(self, operator, value):
-            // return [('picking_id.picking_type_id', operator, value)]
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     return NotImplemented
+            // return Domain('picking_id.picking_type_id', operator, value)
+            */
+            return default;
+        }
+
+        protected async Task<StockMoveLine> ShouldDisplayPutInPackWizardInternalAsync(Guid package_id, Guid package_type_id, object package_name, object from_package_wizard)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _should_display_put_in_pack_wizard(self, package_id, package_type_id, package_name, from_package_wizard):
+            // define_package_type = self._should_set_package()
+            // return define_package_type and not from_package_wizard and (not package_id and not package_type_id and not package_name)
             */
             return default;
         }
@@ -1800,6 +2019,22 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        protected async Task<StockMoveLine> ShouldSetPackageInternalAsync()
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
+            // def _should_set_package(self):
+            // package_type = self.picking_id.picking_type_id
+            // return len(package_type) == 1 and package_type.set_package_type
+            --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: stock_move.py) ---
+            // def _should_set_package(self):
+            // if self.carrier_id:
+            //     return True
+            // return super()._should_set_package()
+            */
+            return default;
+        }
+
         protected async Task<StockMoveLine> ShouldShowLotInInvoiceInternalAsync()
         {
             /*
@@ -1808,17 +2043,7 @@ namespace Bamboo.Core.Application.Services
             // return super()._should_show_lot_in_invoice() or self.move_id.repair_line_type
             --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: stock.py) ---
             // def _should_show_lot_in_invoice(self):
-            // return 'customer' in {self.location_id.usage, self.location_dest_id.usage}
-            */
-            return default;
-        }
-
-        protected async Task<StockMoveLine> SortingMoveLinesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
-            // def _sorting_move_lines(self):
-            // return (self.id,)
+            // return 'customer' in {self.location_id.usage, self.location_dest_id.usage} or self.env.ref('stock.stock_location_inter_company') in (self.location_id, self.location_dest_id)
             */
             return default;
         }
@@ -1833,7 +2058,7 @@ namespace Bamboo.Core.Application.Services
             // package = quants_value.get('package', self.package_id)
             // owner = quants_value.get('owner', self.owner_id)
             // available_qty = 0
-            // if not self.product_id.is_storable or float_is_zero(quantity, precision_rounding=self.product_uom_id.rounding):
+            // if not self.product_id.is_storable or self.product_uom_id.is_zero(quantity):
             //     return 0, False
             // if action == "available":
             //     available_qty, in_date = self.env['stock.quant']._update_available_quantity(self.product_id, location, quantity, lot_id=lot, package_id=package, owner_id=owner, in_date=in_date)
@@ -1855,30 +2080,30 @@ namespace Bamboo.Core.Application.Services
         public override async Task<object> UnlinkAsync(List<Guid> ids)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_move_line.py) ---
+            // def unlink(self):
+            // moves_to_sync = self.move_id.filtered(lambda m: m.is_subcontract)
+            // res = super().unlink()
+            // moves_to_sync._sync_subcontracting_productions()
+            // return res
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def unlink(self):
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // precision = self.env['decimal.precision'].precision_get('Product Unit')
             // for ml in self:
             //     # Unlinking a move line should unreserve.
             //     if not float_is_zero(ml.quantity_product_uom, precision_digits=precision) and ml.move_id and not ml.move_id._should_bypass_reservation(ml.location_id):
             //         self.env['stock.quant']._update_reserved_quantity(ml.product_id, ml.location_id, -ml.quantity_product_uom, lot_id=ml.lot_id, package_id=ml.package_id, owner_id=ml.owner_id, strict=True)
             // moves = self.mapped('move_id')
-            // package_levels = self.package_level_id
+            // packages = self.env['stock.package'].browse(self.result_package_id._get_all_package_dest_ids())
             // res = super().unlink()
-            // package_levels = package_levels.filtered(lambda pl: not (pl.move_line_ids or pl.move_ids))
-            // if package_levels:
-            //     package_levels.unlink()
             // if moves:
             //     # Add with_prefetch() to set the _prefecht_ids = _ids
             //     # because _prefecht_ids generator look lazily on the cache of move_id
             //     # which is clear by the unlink of move line
             //     moves.with_prefetch()._recompute_state()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
-            // def unlink(self):
-            // analytic_move_to_recompute = self.move_id
-            // res = super().unlink()
-            // analytic_move_to_recompute._account_analytic_entry_move()
+            // if packages:
+            //     # Clear the dest from packages if not linked to any active picking
+            //     packages.filtered(lambda p: p.package_dest_id and not p.picking_ids).package_dest_id = False
             // return res
             */
             return await base.UnlinkAsync(ids);
@@ -1891,24 +2116,39 @@ namespace Bamboo.Core.Application.Services
             // def _unlink_except_done_or_cancel(self):
             // for ml in self:
             //     if ml.state in ('done', 'cancel'):
-            //         raise UserError(_('You can not delete product moves if the picking is done. You can only correct the done quantities.'))
+            //         raise UserError(_(
+            //             "Deleting product moves after the transfer is done?\n\n"
+            //             "That would be like going back in time to revert all operations triggered after this move. Who knows what the end result would be, So let's not do it.\n\n"
+            //             "Try changing the “done” quantity to 0 instead."
+            //         ))
             */
             return default;
         }
 
-        protected async Task<StockMoveLine> UpdateSvlQuantityInternalAsync(object added_qty)
+        protected async Task<StockMoveLine> UpdateStockMoveValueInternalAsync(object old_qty_by_ml)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
-            // def _update_svl_quantity(self, added_qty):
-            // self.ensure_one()
-            // if self.state != 'done':
-            //     return
-            // product_uom = self.product_id.uom_id
-            // added_uom_qty = self.product_uom_id._compute_quantity(added_qty, product_uom, rounding_method='HALF-UP')
-            // if float_is_zero(added_uom_qty, precision_rounding=product_uom.rounding):
-            //     return
-            // self._create_correction_svl(self.move_id, added_uom_qty)
+            // def _update_stock_move_value(self, old_qty_by_ml=None):
+            // move_to_update = set()
+            // if not old_qty_by_ml:
+            //     old_qty_by_ml = {}
+            // 
+            // for move, mls in self.grouped('move_id').items():
+            //     if not (move.is_in or move.is_out):
+            //         continue
+            //     if move.is_in:
+            //         move_to_update.add(move.id)
+            //     elif move.is_out:
+            //         delta = sum(
+            //             ml.quantity - old_qty_by_ml.get(ml, 0)
+            //             for ml in mls
+            //             if not ml._should_exclude_for_valuation()
+            //         )
+            //         if delta:
+            //             move._set_value(correction_quantity=delta)
+            // if move_to_update:
+            //     self.env['stock.move'].browse(move_to_update)._set_value()
             */
             return default;
         }
@@ -1916,22 +2156,19 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, StockMoveLine entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
             // def write(self, vals):
             // for move_line in self:
             //     production = move_line.move_id.production_id or move_line.move_id.raw_material_production_id
             //     if production and move_line.state == 'done' and any(field in vals for field in ('lot_id', 'location_id', 'quantity')):
             //         move_line._log_message(production, move_line, 'mrp.track_production_move_template', vals)
-            // return super(StockMoveLine, self).write(vals)
+            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_move_line.py) ---
             // def write(self, vals):
-            // for move_line in self:
-            //     if vals.get('lot_id') and move_line.move_id.is_subcontract and move_line.location_id.is_subcontracting_location:
-            //         # Update related subcontracted production to keep consistency between production and reception.
-            //         subcontracted_production = move_line.move_id._get_subcontract_production().filtered(lambda p: p.state not in ('done', 'cancel') and p.lot_producing_id == move_line.lot_id)
-            //         if subcontracted_production:
-            //             subcontracted_production.lot_producing_id = vals['lot_id']
-            // return super().write(vals)
+            // res = super().write(vals)
+            // if not self.env.context.get('mrp_subcontracting') and ('quantity' in vals or 'lot_id' in vals):
+            //     self.move_id.filtered(lambda m: m.is_subcontract).with_context(no_procurement=True)._sync_subcontracting_productions()
+            // return res
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
             // def write(self, vals):
             // if 'product_id' in vals and any(vals.get('state', ml.state) != 'draft' and vals['product_id'] != ml.product_id.id for ml in self):
@@ -1941,12 +2178,16 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("Changing the Lot/Serial number for move lines with different products is not allowed."))
             // 
             // moves_to_recompute_state = self.env['stock.move']
+            // packages_to_check = self.env['stock.package']
+            // if 'result_package_id' in vals:
+            //     # Either changed the result package or removed it
+            //     packages_to_check = self.env['stock.package'].browse(self.result_package_id._get_all_package_dest_ids())
             // triggers = [
             //     ('location_id', 'stock.location'),
             //     ('location_dest_id', 'stock.location'),
             //     ('lot_id', 'stock.lot'),
-            //     ('package_id', 'stock.quant.package'),
-            //     ('result_package_id', 'stock.quant.package'),
+            //     ('package_id', 'stock.package'),
+            //     ('result_package_id', 'stock.package'),
             //     ('owner_id', 'res.partner'),
             //     ('product_uom_id', 'uom.uom')
             // ]
@@ -1954,20 +2195,11 @@ namespace Bamboo.Core.Application.Services
             //     vals.update(self._copy_quant_info(vals))
             // updates = {}
             // for key, model in triggers:
+            //     if self.env.context.get('skip_uom_conversion'):
+            //         continue
             //     if key in vals:
             //         updates[key] = vals[key] if isinstance(vals[key], models.BaseModel) else self.env[model].browse(vals[key])
             // 
-            // if 'result_package_id' in updates:
-            //     for ml in self.filtered(lambda ml: ml.package_level_id):
-            //         if updates.get('result_package_id'):
-            //             ml.package_level_id.package_id = updates.get('result_package_id')
-            //         else:
-            //             # TODO: make package levels less of a pain and fix this
-            //             package_level = ml.package_level_id
-            //             ml.package_level_id = False
-            //             # Only need to unlink the package level if it's empty. Otherwise will unlink it to still valid move lines.
-            //             if not package_level.move_line_ids:
-            //                 package_level.unlink()
             // # When we try to write on a reserved move line any fields from `triggers`, result_package_id excepted,
             // # or directly reserved_uom_qty` (the actual reserved quantity), we need to make sure the associated
             // # quants are correctly updated in order to not make them out of sync (i.e. the sum of the
@@ -1983,13 +2215,13 @@ namespace Bamboo.Core.Application.Services
             //             new_reserved_qty = new_ml_uom._compute_quantity(
             //                 vals.get('quantity', ml.quantity), ml.product_id.uom_id, rounding_method='HALF-UP')
             //             # Make sure `reserved_uom_qty` is not negative.
-            //             if float_compare(new_reserved_qty, 0, precision_rounding=ml.product_id.uom_id.rounding) < 0:
+            //             if ml.product_id.uom_id.compare(new_reserved_qty, 0) < 0:
             //                 raise UserError(_('Reserving a negative quantity is not allowed.'))
             //         else:
             //             new_reserved_qty = ml.quantity_product_uom
             // 
             //         # Unreserve the old charateristics of the move line.
-            //         if not float_is_zero(ml.quantity_product_uom, precision_rounding=ml.product_uom_id.rounding):
+            //         if not ml.product_uom_id.is_zero(ml.quantity_product_uom):
             //             ml._synchronize_quant(-ml.quantity_product_uom, ml.location_id, action="reserved")
             // 
             //         # Reserve the maximum available of the new charateristics of the move line.
@@ -2008,7 +2240,7 @@ namespace Bamboo.Core.Application.Services
             //     next_moves = self.env['stock.move']
             //     mls = self.filtered(lambda ml: ml.move_id.state == 'done' and ml.product_id.is_storable)
             //     if not updates:  # we can skip those where quantity is already good up to UoM rounding
-            //         mls = mls.filtered(lambda ml: not float_is_zero(ml.quantity - vals['quantity'], precision_rounding=ml.product_uom_id.rounding))
+            //         mls = mls.filtered(lambda ml: not ml.product_uom_id.is_zero(ml.quantity - vals['quantity']))
             //     for ml in mls:
             //         # undo the original move line
             //         in_date = ml._synchronize_quant(-ml.quantity_product_uom, ml.location_dest_id, package=ml.result_package_id)[1]
@@ -2036,7 +2268,7 @@ namespace Bamboo.Core.Application.Services
             //         if ('quantity' in vals or 'product_uom_id' in vals) and ml.picked:
             //             new_qty = updates.get('product_uom_id', ml.product_uom_id)._compute_quantity(vals.get('quantity', ml.quantity), ml.product_id.uom_id, rounding_method='HALF-UP')
             //             old_qty = ml.product_uom_id._compute_quantity(ml.quantity, ml.product_id.uom_id, rounding_method='HALF-UP')
-            //             if float_compare(old_qty, new_qty, precision_rounding=ml.product_uom_id.rounding) < 0:
+            //             if ml.product_uom_id.compare(old_qty, new_qty) < 0:
             //                 updated_ml_ids.add(ml.id)
             //     self.env['stock.move.line'].browse(updated_ml_ids).date = fields.Datetime.now()
             // 
@@ -2051,6 +2283,14 @@ namespace Bamboo.Core.Application.Services
             //             abs(available_qty), lot_id=ml.lot_id, package_id=ml.package_id,
             //             owner_id=ml.owner_id)
             // 
+            // if packages_to_check:
+            //     # Clear the dest from packages if not linked to any active picking
+            //     packages_to_check.filtered(lambda p: p.package_dest_id and not p.picking_ids).package_dest_id = False
+            // if updates or 'quantity' in vals:
+            //     # Updated fields could imply that entire packs are no longer entire.
+            //     if mls_to_update := self._get_lines_not_entire_pack():
+            //         mls_to_update.write({'is_entire_pack': False})
+            // 
             // # As stock_account values according to a move's `product_uom_qty`, we consider that any
             // # done stock move should have its `quantity_done` equals to its `product_uom_qty`, and
             // # this is what move's `action_done` will do. So, we replicate the behavior here.
@@ -2064,45 +2304,14 @@ namespace Bamboo.Core.Application.Services
             // return res
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move_line.py) ---
             // def write(self, vals):
-            // analytic_move_to_recompute = set()
-            // if 'quantity' in vals or 'move_id' in vals:
-            //     for move_line in self:
-            //         move_id = vals.get('move_id', move_line.move_id.id)
-            //         analytic_move_to_recompute.add(move_id)
-            // new_lot = False
-            // if 'lot_id' in vals:
-            //     new_lot = vals.get('lot_id')
-            // if 'quant_id' in vals:
-            //     new_quant = vals.get('quant_id')
-            //     new_lot = self.env['stock.quant'].browse(new_quant).lot_id.id
-            // if new_lot:
-            //     # remove quantity of old lot
-            //     for move_line in self:
-            //         move_line._update_svl_quantity(-move_line.quantity)
-            // elif 'quantity' in vals:
-            //     # directly updates the right quantity if no lot change
-            //     for move_line in self:
-            //         move_line._update_svl_quantity(vals['quantity'] - move_line.quantity)
-            // if 'location_id' in vals or 'location_dest_id' in vals:
-            //     for move_line in self:
-            //         if move_line.state != 'done':
-            //             continue
-            //         new_loc_id = vals.get('location_id', move_line.location_id.id)
-            //         new_loc = self.env['stock.location'].browse(new_loc_id)
-            //         new_dest_loc_id = vals.get('location_dest_id', move_line.location_dest_id.id)
-            //         new_dest_loc = self.env['stock.location'].browse(new_dest_loc_id)
-            //         if move_line.location_id._should_be_valued() != new_loc._should_be_valued() \
-            //                 or move_line.location_dest_id._should_be_valued() != new_dest_loc._should_be_valued():
-            //             raise ValidationError(_("The stock valuation of a move is based on the type of the source and destination locations. "
-            //                                     "As the move is already processed, you cannot modify the locations in a way that changes the "
-            //                                     "valuation logic defined during the initial processing."))
+            // valuation_fields = ['quantity', 'location_id', 'location_dest_id', 'owner_id', 'quant_id', 'lot_id']
+            // valuation_trigger = any(field in vals for field in valuation_fields)
+            // qty_by_ml = {}
+            // if valuation_trigger:
+            //     qty_by_ml = {ml: ml.quantity for ml in self if ml.move_id.is_in or ml.move_id.is_out}
             // res = super().write(vals)
-            // if new_lot:
-            //     # add quantity of new lot
-            //     for move_line in self:
-            //         move_line._update_svl_quantity(vals.get('quantity', move_line.quantity))
-            // if analytic_move_to_recompute:
-            //     self.env['stock.move'].browse(analytic_move_to_recompute)._account_analytic_entry_move()
+            // if valuation_trigger and qty_by_ml:
+            //     self._update_stock_move_value(qty_by_ml)
             // return res
             */
             return await base.WriteAsync(ids, entity, fields);

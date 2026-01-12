@@ -31,24 +31,17 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: mail_activity.py) ---
             // def _action_done(self, feedback=False, attachment_ids=False):
-            // events = self.calendar_event_id
-            // # To avoid the feedback to be included in the activity note (due to the synchronization in event.write
-            // # that updates the related activity note each time the event description is updated),
-            // # when the activity is written as a note in the chatter in _action_done (leading to duplicate feedback),
-            // # we call super before updating the description. As self is deleted in super, we load the related events before.
-            // messages, activities = super(MailActivity, self)._action_done(feedback=feedback, attachment_ids=attachment_ids)
+            // # Add feedback to the internal event 'notes', which is not synchronized with the activity's 'note'
             // if feedback:
-            //     for event in events:
-            //         description = event.description
-            //         description = '%s<br />%s' % (
-            //             description if not tools.is_html_empty(description) else '',
-            //             _('Feedback: %(feedback)s', feedback=tools.plaintext2html(feedback)) if feedback else '',
-            //         )
-            //         event.write({'description': description})
-            // return messages, activities
+            //     for event in self.calendar_event_id:
+            //         notes = event.notes if not tools.is_html_empty(event.notes) else ''
+            //         notes_feedback = _('Feedback: %s', tools.plaintext2html(feedback))
+            //         notes = f'{notes}<br />{notes_feedback}'
+            //         event.write({'notes': notes})
+            // return super()._action_done(feedback=feedback, attachment_ids=attachment_ids)
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def _action_done(self, feedback=False, attachment_ids=None):
-            // """ Private implementation of marking activity as done: posting a message, deleting activity
+            // """ Private implementation of marking activity as done: posting a message, archiving activity
             //     (since done), and eventually create the automatical next activity (depending on config).
             //     :param feedback: optional feedback from user when marking activity as done
             //     :param attachment_ids: list of ir.attachment ids to attach to the posted mail.message
@@ -60,21 +53,17 @@ namespace Bamboo.Core.Application.Services
             // messages = self.env['mail.message']
             // next_activities_values = []
             // 
-            // # Search for all attachments linked to the activities we are about to unlink. This way, we
-            // # can link them to the message posted and prevent their deletion.
-            // attachments = self.env['ir.attachment'].search_read([
+            // # Search for all attachments linked to the activities we are about to archive. This way, we
+            // # can link them to the message posted and prevent their disparition. The move is done in
+            // # sudo to avoid losing inaccessible attachments.
+            // activity_attachments = self.env['ir.attachment'].sudo().search_fetch([
             //     ('res_model', '=', self._name),
             //     ('res_id', 'in', self.ids),
-            // ], ['id', 'res_id'])
+            // ], ['res_id']).grouped('res_id')
             // 
-            // activity_attachments = defaultdict(list)
-            // for attachment in attachments:
-            //     activity_id = attachment['res_id']
-            //     activity_attachments[activity_id].append(attachment['id'])
-            // 
-            // for model, activity_data in self._classify_by_model().items():
+            // for model, activity_data in self.filtered('res_model')._classify_by_model().items():
             //     # Allow user without access to the record to "mark as done" activities assigned to them. At the end of the
-            //     # method, the activity is unlinked or archived which ensure the user has enough right on the activities.
+            //     # method, the activity is archived which ensure the user has enough right on the activities.
             //     records_sudo = self.env[model].sudo().browse(activity_data['record_ids'])
             //     for record_sudo, activity in zip(records_sudo, activity_data['activities']):
             //         # extract value to generate next activities
@@ -95,32 +84,28 @@ namespace Bamboo.Core.Application.Services
             //             mail_activity_type_id=activity.activity_type_id.id,
             //             subtype_xmlid='mail.mt_activities',
             //         )
-            //         if activity.activity_type_id.keep_done:
-            //             attachment_ids = (attachment_ids or []) + activity_attachments.get(activity.id, [])
-            //             if attachment_ids:
-            //                 activity.attachment_ids = attachment_ids
+            //         if attachment_ids:
+            //             activity.attachment_ids = attachment_ids
             // 
             //         # Moving the attachments in the message
             //         # TODO: Fix void res_id on attachment when you create an activity with an image
             //         # directly, see route /web_editor/attachment/add
-            //         if activity_attachments[activity.id]:
-            //             message_attachments = self.env['ir.attachment'].browse(activity_attachments[activity.id])
-            //             if message_attachments:
-            //                 message_attachments.write({
-            //                     'res_id': activity_message.id,
-            //                     'res_model': activity_message._name,
-            //                 })
-            //                 activity_message.attachment_ids = message_attachments
+            //         if message_attachments := activity_attachments.get(activity.id):
+            //             message_attachments.write({
+            //                 'res_id': activity_message.id,
+            //                 'res_model': activity_message._name,
+            //             })
+            //             activity_message.attachment_ids = message_attachments
             //         messages += activity_message
             // 
             // next_activities = self.env['mail.activity']
             // if next_activities_values:
             //     next_activities = self.env['mail.activity'].create(next_activities_values)
             // 
-            // activity_to_keep = self.filtered('activity_type_id.keep_done')
-            // activity_to_keep.action_archive()
-            // (self - activity_to_keep).unlink()  # will unlink activity, dont access `self` after that
-            // 
+            // # once done, archive to keep history without keeping them alive
+            // self.action_archive()
+            // if feedback:
+            //     self.feedback = feedback
             // return messages, next_activities
             */
             return default;
@@ -131,7 +116,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def activity_format(self):
-            // return Store(self).get_result()
+            // return Store().add(self).get_result()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -189,12 +174,15 @@ namespace Bamboo.Core.Application.Services
             //     return result
             // 
             // # now check access on related document of 'activities', and collect the
-            // # ids of forbidden activities
+            // # ids of forbidden activities; free activities are checked against user_id
             // model_docid_actids = defaultdict(lambda: defaultdict(list))
-            // for activity in activities.sudo():
-            //     model_docid_actids[activity.res_model][activity.res_id].append(activity.id)
-            // 
             // forbidden_ids = []
+            // for activity in activities.sudo():
+            //     if activity.res_model:
+            //         model_docid_actids[activity.res_model][activity.res_id].append(activity.id)
+            //     elif activity.user_id.id != self.env.uid:
+            //         forbidden_ids.append(activity.id)
+            // 
             // for doc_model, docid_actids in model_docid_actids.items():
             //     documents = self.env[doc_model].browse(docid_actids)
             //     doc_operation = getattr(
@@ -225,11 +213,12 @@ namespace Bamboo.Core.Application.Services
             // are classified by model. Activities not linked to a valid record through
             // res_model / res_id are ignored.
             // 
-            // :return dict: for each model having at least one activity in self, have
+            // :returns: for each model having at least one activity in self, have
             //   a sub-dict containing
             //     * activities: activities related to that model;
             //     * record IDs: record linked to the activities of that model, in same
             //       order;
+            // :rtype: dict
             // """
             // data_by_model = {}
             // for activity in self.filtered(lambda act: act.res_model and act.res_id):
@@ -309,7 +298,9 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def _compute_res_name(self):
-            // for activity in self:
+            // free = self.filtered(lambda a: not a.res_model or not a.res_id)
+            // free.res_name = False
+            // for activity in (self - free):
             //     activity.res_name = activity.res_model and \
             //         self.env[activity.res_model].browse(activity.res_id).display_name
             */
@@ -363,7 +354,7 @@ namespace Bamboo.Core.Application.Services
             //     'default_activity_type_id': self.activity_type_id.id,
             //     'default_res_id': self.env.context.get('default_res_id'),
             //     'default_res_model': self.env.context.get('default_res_model'),
-            //     'default_name': self.summary or self.res_name,
+            //     'default_name': self.res_name,
             //     'default_description': self.note if not is_html_empty(self.note) else '',
             //     'default_activity_ids': [(6, 0, self.ids)],
             //     'default_partner_ids': self.user_id.partner_id.ids,
@@ -371,6 +362,7 @@ namespace Bamboo.Core.Application.Services
             //     'initial_date': self.date_deadline,
             //     'default_calendar_event_id': self.calendar_event_id.id,
             //     'orig_activity_ids': self.ids,
+            //     'return_to_parent_breadcrumb': True,
             // }
             // return action
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: mail_activity.py) ---
@@ -400,16 +392,10 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def _default_activity_type_for_model(self, model):
-            // todo_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mail_activity_data_todo', raise_if_not_found=False)
-            // activity_type_todo = self.env['mail.activity.type'].browse(todo_id) if todo_id else self.env['mail.activity.type']
-            // if activity_type_todo and activity_type_todo.active and \
-            //         (activity_type_todo.res_model == model or not activity_type_todo.res_model):
-            //     return activity_type_todo
-            // activity_type_model = self.env['mail.activity.type'].search([('res_model', '=', model)], limit=1)
-            // if activity_type_model:
-            //     return activity_type_model
-            // activity_type_generic = self.env['mail.activity.type'].search([('res_model', '=', False)], limit=1)
-            // return activity_type_generic
+            // """ Take first one found, ordered by sequence. Keep it simple. """
+            // if model:
+            //     return self.env['mail.activity.type'].search(['|', ('res_model', '=', model), ('res_model', '=', False)], limit=1)
+            // return self.env['mail.activity.type'].search([('res_model', '=', False)], limit=1)
             */
             return default;
         }
@@ -420,10 +406,9 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def _default_activity_type(self):
             // default_vals = self.default_get(['res_model_id', 'res_model'])
-            // if not default_vals.get('res_model_id'):
-            //     return False
-            // 
-            // current_model = self.env["ir.model"].sudo().browse(default_vals['res_model_id']).model
+            // current_model = default_vals.get('res_model')
+            // if default_vals.get('res_model_id'):
+            //     current_model = self.env["ir.model"].sudo().browse(default_vals['res_model_id']).model
             // return self._default_activity_type_for_model(current_model)
             */
             return default;
@@ -572,9 +557,8 @@ namespace Bamboo.Core.Application.Services
             // :param int offset: offset of the first record to fetch
             // :param bool fetch_done: determines if "done" activities are integrated in the
             //     aggregated data or not.
-            // :return dict: {'activity_types': dict of activity type info
-            //                     {id: int, name: str, mail_template: list of {id:int, name:str},
-            //                     keep_done: bool}
+            // :returns: {'activity_types': dict of activity type info
+            //                     {id: int, name: str, mail_template: list of {id:int, name:str}}
             //                'activity_res_ids': list<int> of record id ordered by closest date
             //                     (deadline for ongoing activities, and done date for done activities)
             //                'grouped_activities': dict<dict>
@@ -590,6 +574,7 @@ namespace Bamboo.Core.Application.Services
             //                         attachments_info: dict with information about the attachments
             //                             {'count': int, 'most_recent_id': int, 'most_recent_name': str}
             //                }
+            // :rtype: dict
             // """
             // user_tz = self.user_id.sudo().tz
             // DocModel = self.env[res_model]
@@ -597,7 +582,6 @@ namespace Bamboo.Core.Application.Services
             // 
             // # 1. Retrieve all ongoing and completed activities according to the parameters
             // activity_types = self.env['mail.activity.type'].search([('res_model', 'in', (res_model, False))])
-            // fetch_done = fetch_done and activity_types.filtered('keep_done')
             // activity_domain = [('res_model', '=', res_model)]
             // is_filtered = domain or limit or offset
             // if is_filtered:
@@ -650,6 +634,7 @@ namespace Bamboo.Core.Application.Services
             //     # As ongoing is sorted on date_deadline, we get assignees on activity with oldest deadline first
             //     user_assigned_ids = ongoing.user_id.ids
             //     attachments = [attachments_by_id[attach.id] for attach in completed.attachment_ids]
+            // 
             //     grouped_activities[res_id][activity_type_id.id] = {
             //         'count_by_state': dict(Counter(
             //             self._compute_state_from_date(act.date_deadline, user_tz) if act.active else 'done'
@@ -658,6 +643,7 @@ namespace Bamboo.Core.Application.Services
             //         'reporting_date': ongoing and date_deadline or date_done or None,
             //         'state': self._compute_state_from_date(date_deadline, user_tz) if ongoing else 'done',
             //         'user_assigned_ids': user_assigned_ids,
+            //         'summaries': [act.summary if act.summary else '' for act in activities],
             //     }
             //     if attachments:
             //         most_recent_attachment = max(attachments, key=lambda a: (a['create_date'], a['id']))
@@ -680,7 +666,6 @@ namespace Bamboo.Core.Application.Services
             //     'activity_types': [
             //         {
             //             'id': activity_type.id,
-            //             'keep_done': activity_type.keep_done,
             //             'name': activity_type.name,
             //             'template_ids': [
             //                 {'id': mail_template_id.id, 'name': mail_template_id.name}
@@ -719,9 +704,7 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def action_notify(self):
-            // if not self:
-            //     return
-            // for activity in self:
+            // for activity in self.filtered('res_model'):
             //     if activity.user_id.lang:
             //         # Send the notification in the assigned user's language
             //         activity = activity.with_context(lang=activity.user_id.lang)
@@ -741,14 +724,13 @@ namespace Bamboo.Core.Application.Services
             //         record.message_notify(
             //             partner_ids=activity.user_id.partner_id.ids,
             //             body=body,
-            //             record_name=activity.res_name,
             //             model_description=model_description,
             //             email_layout_xmlid='mail.mail_notification_layout',
             //             subject=_('"%(activity_name)s: %(summary)s" assigned to you',
             //                       activity_name=activity.res_name,
-            //                       summary=activity.summary or activity.activity_type_id.name),
-            //             subtitles=[_('Activity: %s', activity.activity_type_id.name),
-            //                        _('Deadline: %s', activity.date_deadline.strftime(get_lang(activity.env).date_format))]
+            //                       summary=activity.summary or activity.activity_type_id.name or ''),
+            //             subtitles=[_('Activity: %s', activity.activity_type_id.name or _('Todo')),
+            //                        _('Deadline: %s', activity.date_deadline.strftime(get_lang(activity.env).date_format))],
             //         )
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -798,14 +780,34 @@ namespace Bamboo.Core.Application.Services
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
             // def action_open_document(self):
-            // """ Opens the related record based on the model and ID """
+            // """ Opens the related record based on the model and ID, or activity if user has no
+            //  access to the related record."""
             // self.ensure_one()
+            // if not self.res_model:
+            //     return {
+            //         'res_id': self.id,
+            //         'type': 'ir.actions.act_window',
+            //         'view_mode': 'form',
+            //         'res_model': 'mail.activity',
+            //         'view_id': self.env.ref('mail.mail_activity_view_form_popup').id,
+            //         'target': 'new',
+            //     }
+            // if not self.env[self.res_model].browse(self.res_id).has_access('read'):
+            //     return {
+            //         'res_id': self.id,
+            //         'res_model': 'mail.activity',
+            //         'target': 'current',
+            //         'type': 'ir.actions.act_window',
+            //         'view_mode': 'form',
+            //         'views': [(self.env.ref('mail.mail_activity_view_form_without_record_access').id, 'form')],
+            //     }
             // return {
             //     'res_id': self.res_id,
             //     'res_model': self.res_model,
             //     'target': 'current',
             //     'type': 'ir.actions.act_window',
             //     'view_mode': 'form',
+            //     'views': [(False, 'form')],
             // }
             */
             var entity = await Repository.GetAsync(id); return entity;
@@ -826,7 +828,7 @@ namespace Bamboo.Core.Application.Services
             //     'previous_activity_type_id': self.activity_type_id.id,
             //     'res_id': self.res_id,
             //     'res_model': self.res_model,
-            //     'res_model_id': self.env['ir.model']._get(self.res_model).id,
+            //     'res_model_id': self.env['ir.model']._get(self.res_model).id if self.res_model else False,
             // })
             // virtual_activity = self.new(vals)
             // virtual_activity._onchange_previous_activity_type_id()
@@ -836,11 +838,41 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        public async Task<MailActivity> RescheduleNextweekAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
+            // def action_reschedule_nextweek(self):
+            // self.filtered('active').date_deadline = date.today() + relativedelta(weeks=1, weekday=MO(-1))
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<MailActivity> RescheduleTodayAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
+            // def action_reschedule_today(self):
+            // self.filtered('active').date_deadline = date.today()
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public async Task<MailActivity> RescheduleTomorrowAsync(Guid id)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
+            // def action_reschedule_tomorrow(self):
+            // self.filtered('active').date_deadline = date.today() + timedelta(days=1)
+            */
+            var entity = await Repository.GetAsync(id); return entity;
+        }
+
         protected async Task<MailActivity> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None):
+            // def _search(self, domain, offset=0, limit=None, order=None, *, bypass_access=False, **kwargs):
             // """ Override that adds specific access rights of mail.activity, to remove
             // ids uid could not see according to our custom rules. Please refer to
             // :meth:`_check_access` for more details about those rules.
@@ -848,12 +880,12 @@ namespace Bamboo.Core.Application.Services
             // The method is inspired by what has been done on mail.message. """
             // 
             // # Rules do not apply to administrator
-            // if self.env.is_superuser():
-            //     return super()._search(domain, offset, limit, order)
+            // if self.env.is_superuser() or bypass_access:
+            //     return super()._search(domain, offset, limit, order, bypass_access=True, **kwargs)
             // 
             // # retrieve activities and their corresponding res_model, res_id
             // # Don't use the ORM to avoid cache pollution
-            // query = super()._search(domain, offset, limit, order)
+            // query = super()._search(domain, offset, limit, order, **kwargs)
             // fnames_to_read = ['id', 'res_model', 'res_id', 'user_id']
             // rows = self.env.execute_query(query.select(
             //     *[self._field_to_sql(self._table, fname) for fname in fnames_to_read],
@@ -863,7 +895,7 @@ namespace Bamboo.Core.Application.Services
             // # Note: the user can read all activities assigned to him (see at the end of the method)
             // model_ids = defaultdict(set)
             // for __, res_model, res_id, user_id in rows:
-            //     if user_id != self.env.uid:
+            //     if user_id != self.env.uid and res_model:
             //         model_ids[res_model].add(res_id)
             // 
             // allowed_ids = defaultdict(set)
@@ -884,33 +916,36 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailActivity> SnoozeAsync(Guid id)
+        protected async Task<MailActivity> ToStoreDefaultsInternalAsync(object target)
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: mail_activity.py) ---
+            // def _to_store_defaults(self, target):
+            // return super()._to_store_defaults(target) + [Store.One("calendar_event_id", [])]
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
-            // def action_snooze(self):
-            // today = date.today()
-            // for activity in self:
-            //     if activity.active:
-            //         activity.date_deadline = max(activity.date_deadline, today) + timedelta(days=7)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<MailActivity> ToStoreInternalAsync(object store)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
-            // def _to_store(self, store: Store):
-            // for activity in self:
-            //     data = activity.read()[0]
-            //     data["mail_template_ids"] = [
-            //         {"id": mail_template.id, "name": mail_template.name}
-            //         for mail_template in activity.mail_template_ids
-            //     ]
-            //     data["attachment_ids"] = Store.many(activity.attachment_ids, fields=["name"])
-            //     data["persona"] = Store.one(activity.user_id.partner_id)
-            //     store.add(activity, data)
+            // def _to_store_defaults(self, target):
+            // return [
+            //     "activity_category",
+            //     Store.One("activity_type_id", "name"),
+            //     "can_write",
+            //     "chaining_type",
+            //     "create_date",
+            //     Store.One("create_uid", Store.One("partner_id", "name")),
+            //     "date_deadline",
+            //     "date_done",
+            //     "icon",
+            //     "note",
+            //     "res_id",
+            //     "res_model",
+            //     "state",
+            //     "summary",
+            //     Store.One("user_id", Store.One("partner_id")),
+            //     Store.Many("attachment_ids", ["name"]),
+            //     Store.Many("mail_template_ids", ["name"]),
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: mail_activity.py) ---
+            // def _to_store_defaults(self, target):
+            // return super()._to_store_defaults(target) + [Store.One("request_partner_id", [])]
             */
             return default;
         }
@@ -926,6 +961,79 @@ namespace Bamboo.Core.Application.Services
             // return res
             */
             var entity = await Repository.GetAsync(id); return entity;
+        }
+
+        public override async Task<List<object>> WriteAsync(List<Guid> ids, MailActivity entity, List<string> fields)
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: mail_activity.py) ---
+            // def write(self, vals):
+            // # synchronize calendar events
+            // res = super().write(vals)
+            // # protect against loops in case of ill-managed timezones
+            // if 'date_deadline' in vals and not self.env.context.get('calendar_event_meeting_update') and self.calendar_event_id:
+            //     date_deadline = self[0].date_deadline  # updated, hence all same value
+            //     # also protect against loops in case of ill-managed timezones
+            //     events = self.calendar_event_id.with_context(mail_activity_meeting_update=True)
+            //     user_tz = self.env.context.get('tz') or 'UTC'
+            //     for event in events:
+            //         # allday: just apply diff between dates
+            //         if event.allday and event.start_date != date_deadline:
+            //             event.start = event.start + (date_deadline - event.start_date)
+            //         # otherwise: we have to check if day did change, based on TZ
+            //         elif not event.allday:
+            //             # old start in user timezone
+            //             old_deadline_dt = pytz.utc.localize(event.start).astimezone(pytz.timezone(user_tz))
+            //             date_diff = date_deadline - old_deadline_dt.date()
+            //             event.start = event.start + date_diff
+            // 
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
+            // def write(self, vals):
+            // today = fields.Date.today()
+            // 
+            // def get_user_todo_activity_count(activities):
+            //     return {
+            //         user: len(user_activities.filtered(lambda a: a.active and a.date_deadline <= today))
+            //         for user, user_activities in activities.grouped('user_id').items()
+            //         if user
+            //     }
+            // 
+            // original_user_todo_activity_count = None
+            // if 'date_deadline' in vals or 'active' in vals or 'user_id' in vals:
+            //     original_user_todo_activity_count = get_user_todo_activity_count(self)
+            // 
+            // new_user_activities = self.env['mail.activity']
+            // if vals.get('user_id'):
+            //     new_user_activities = self.filtered(lambda activity: activity.user_id.id != vals.get('user_id'))
+            // 
+            // res = super().write(vals)
+            // 
+            // # notify new responsibles
+            // if vals.get('user_id'):
+            //     if vals['user_id'] != self.env.uid:
+            //         if not self.env.context.get('mail_activity_quick_update', False):
+            //             new_user_activities.action_notify()
+            //     new_user = self.env['res.users'].browse(vals['user_id'])
+            //     for res_model, model_activities in new_user_activities.filtered(
+            //         lambda activity: activity.res_model and activity.res_id
+            //     ).grouped('res_model').items():
+            //         res_ids = list(set(model_activities.mapped('res_id')))
+            //         self.env[res_model].browse(res_ids).message_subscribe(partner_ids=new_user.partner_id.ids)
+            // 
+            // # update activity counter
+            // if original_user_todo_activity_count is not None:
+            //     new_user_todo_activity_count = get_user_todo_activity_count(self)
+            //     for user in new_user_todo_activity_count.keys() | original_user_todo_activity_count.keys():
+            //         count_diff = new_user_todo_activity_count.get(user, 0) - original_user_todo_activity_count.get(user, 0)
+            //         if count_diff > 0:
+            //             user._bus_send("mail.activity/updated", {"activity_created": True, "count_diff": count_diff})
+            //         elif count_diff < 0:
+            //             user._bus_send("mail.activity/updated", {"activity_deleted": True, "count_diff": count_diff})
+            // 
+            // return res
+            */
+            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

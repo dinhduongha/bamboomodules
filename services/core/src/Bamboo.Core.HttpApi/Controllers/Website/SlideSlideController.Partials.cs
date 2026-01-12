@@ -75,26 +75,18 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/get-base-url")]
+        public async Task<IActionResult> GetBaseUrlAsync(Guid id)
+        {
+            var result = await _appService.GetBaseUrlAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/message-post")]
         public async Task<IActionResult> MessagePostAsync(Guid id)
         {
             var result = await _appService.MessagePostAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/open-website-url")]
-        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
-        {
-            var result = await _appService.OpenWebsiteUrlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
-        {
-            var result = await _appService.ToggleActiveAsync(id);
             return Ok(result);
         }
     }

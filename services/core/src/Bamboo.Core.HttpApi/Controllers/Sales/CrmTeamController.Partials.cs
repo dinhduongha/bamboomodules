@@ -19,6 +19,22 @@ namespace Bamboo.Core.HttpApi.Controllers
         }
         
         [HttpPost]
+        [Route("{id}/action-open-leads")]
+        public async Task<IActionResult> ActionOpenLeadsAsync(Guid id)
+        {
+            var result = await _appService.OpenLeadsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-unassigned-leads")]
+        public async Task<IActionResult> ActionOpenUnassignedLeadsAsync(Guid id)
+        {
+            var result = await _appService.OpenUnassignedLeadsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
         [Route("{id}/action-opportunity-forecast")]
         public async Task<IActionResult> ActionOpportunityForecastAsync(Guid id)
         {
