@@ -22,7 +22,7 @@
             }
             @* Đặt autofocus vào trường UserId để tránh lỗi setSelectionRange trên input type="email" *@
             <abp-input asp-for="Member.UserId" autofocus="true" /> 
-            <abp-input asp-for="Member.Email" />
+            <abp-input asp-for="Member.UserNameOrEmail" />
             <abp-select asp-for="Member.RoleId" 
                         asp-items="Model.Roles" 
                         label="@L["Roles"].Value"

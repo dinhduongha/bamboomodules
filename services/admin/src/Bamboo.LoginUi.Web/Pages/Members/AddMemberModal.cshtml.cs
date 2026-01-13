@@ -54,7 +54,7 @@ public class AddMemberModalModel : AbpPageModel
         if (CurrentTenant.IsAvailable)
         {
             // Tenant admin: Tải vai trò của tenant hiện tại
-            var roles = await _roleRepository.GetListAsync();
+            var roles = await _roleRepository.GetListAsync(r => r.Name != "owner");
             Roles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
             // Tìm Id của vai trò 'group_user' và đặt làm giá trị mặc định
             var defaultRole = roles.FirstOrDefault(r => r.Name == "group_user");

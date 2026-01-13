@@ -266,12 +266,13 @@ public class SiWXSignInModel : AccountPageModel
                 // Trang Register của ABP sẽ tự động check External Cookie và hiển thị form điền Email
                 return RedirectToPage("/Account/Register", new { ReturnUrl = ReturnUrl });
             }
+            var domain = _configuration["App:Domain"] ?? "dad.vn";
             // B. Tự động tạo User mới
             // Lưu ý: Email ví dụ, có thể custom theo logic dự án
             var user = new IdentityUser(
                 id: _guidGenerator.Create(),
                 userName: address, // Username là địa chỉ ví
-                email: $"{address.ToLower()}@dad.local",
+                email: $"{address.ToLower()}@{domain}",
                 tenantId: _currentTenant.Id // Quan trọng cho Multi-tenancy
             );
             user.IsExternal = true;

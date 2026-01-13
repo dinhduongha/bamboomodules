@@ -24,11 +24,11 @@ using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using static Volo.Abp.TenantManagement.TenantManagementPermissions;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 using Bamboo.AdminExtensions.Dtos;
 using Bamboo.Admin.Domain.Shared;
-using static Volo.Abp.TenantManagement.TenantManagementPermissions;
 using Bamboo.Admin;
 using Bamboo.Admin.Domain.Shared.Enums;
 
@@ -288,7 +288,7 @@ public class TenantService : ApplicationService
         return tenant;
     }
 
-    //[Authorize(Roles = "members")]
+    //[Authorize(Roles = "superadmin,admin,members")]
     public async Task<TenantDto> CreateAsync(TenantCreateDto input)
     {
         if (CurrentTenant.IsAvailable)
@@ -299,10 +299,13 @@ public class TenantService : ApplicationService
         {
             throw new UserFriendlyException("Only host user can create tenant");
         }
-
+        if (!CurrentUser.Id.HasValue)
+        {
+            throw new UserFriendlyException("Host user login required!");
+        }
         if (!Regex.Match(input.Name, @"^[a-zA-Z0-9]*$").Success)
         {
-            throw new UserFriendlyException($"Name is invalid");
+            throw new UserFriendlyException($"Tenant name is invalid");
         }
 
         var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => tenant.Name == input.Name
@@ -313,7 +316,7 @@ public class TenantService : ApplicationService
             {
                 return ObjectMapper.Map<Tenant, TenantDto>(tenant);
             }
-            throw new UserFriendlyException("Name is exist");
+            throw new UserFriendlyException("Tenant is exist");
         }
         var count = await _tenantRepository.CountAsync(x => x.CreatorId == CurrentUser.Id);
         var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
@@ -321,7 +324,7 @@ public class TenantService : ApplicationService
         //var maxTenant = _configuration.GetValue("App:MaxTenantPerAccount", 1);
         if (count >= maxTenant)
         {
-            throw new UserFriendlyException($"Too many items created");
+            throw new UserFriendlyException($"User had created too many tenants");
         }
         try
         {
@@ -329,19 +332,21 @@ public class TenantService : ApplicationService
             input.SetProperty("admin", input.AdminEmailAddress);
             input.MapExtraPropertiesTo(tenant);
             tenant.CreatorId = CurrentUser.Id;
-            tenant.SetProperty("email", input.AdminEmailAddress);
+            //tenant.SetProperty("email", CurrentUser.Email ?? input.AdminEmailAddress);
             tenant.SetProperty("creator", CurrentUser.Id);
+            tenant.SetProperty("OwnerId", CurrentUser.Id);
+
             tenant = await _tenantRepository.InsertAsync(tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
             tenant = await CreateAdminTenantUserAsync(currentUser, input.AdminPassword, tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
+            return ObjectMapper.Map<Tenant, TenantDto>(tenant);
+
         }
         catch (Exception e)
         {
             throw new UserFriendlyException($"{e.ToString()}");
         }
-        return ObjectMapper.Map<Tenant, TenantDto>(tenant);
-        //return await TenantAppService.CreateAsync(input);
     }
 
     public async Task<TenantDto> MigrateAsync(TenantMigrateDto data)
@@ -354,29 +359,38 @@ public class TenantService : ApplicationService
         {
             throw new UserFriendlyException("Only host user can migrate tenant");
         }
+        if (!CurrentUser.Id.HasValue)
+        {
+            throw new UserFriendlyException("Host user login required!");
+        }
         var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
         var adminRandomPassword = _configuration.GetValue("App:AdminRandomPassword", false);
         string adminTenantPassword =
             adminRandomPassword ? GuidGenerator.Create().ToString()
-            : _configuration.GetValue("App:AdminTenantPassword",
-            IdentityDataSeedContributor.AdminPasswordDefaultValue);
+            : (data.Password ?? _configuration.GetValue("App:AdminTenantPassword",
+            IdentityDataSeedContributor.AdminPasswordDefaultValue));
+
+        string adminTenantEmail = data.AdminEmail ?? CurrentUser.Email ?? IdentityDataSeedContributor.AdminEmailDefaultValue;
 
         TenantCreateDto input = new TenantCreateDto()
         {
             Name = data.Name,
-            AdminEmailAddress = CurrentUser.Email,
+            AdminEmailAddress = adminTenantEmail,
             AdminPassword = adminTenantPassword,
         };
         var newId = GuidGenerator.Create();
+        bool autoTenantId = true;
         if (data.Uuid != null)
         {
             newId = (Guid)data.Uuid;
+            autoTenantId = false;
         }
         else
         {
             if (data.Id != null)
             {
                 newId = Utils.NewGuid((long)data.Id);
+                autoTenantId = false;
             }
         }
 
@@ -386,6 +400,7 @@ public class TenantService : ApplicationService
                 || (tenant.Id == data.Uuid)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
         if (tenant != null)
         {
+            //tenant = await CreateAdminTenantUserAsync(currentUser, data.Password ?? adminTenantPassword, tenant);
             //if (tenant.CreatorId == CurrentUser.Id)
             {
                 return ObjectMapper.Map<Tenant, TenantDto>(tenant);
@@ -398,20 +413,34 @@ public class TenantService : ApplicationService
             input.SetProperty("admin", input.AdminEmailAddress);
             input.MapExtraPropertiesTo(tenant);
             tenant.CreatorId = CurrentUser.Id;
-            tenant.SetProperty("email", input.AdminEmailAddress);
+            //tenant.SetProperty("email", input.AdminEmailAddress);
             tenant.SetProperty("creator", CurrentUser.Id);
+            tenant.SetProperty("OwnerId", CurrentUser.Id);
+            if (!string.IsNullOrWhiteSpace(data.Description))
+            {
+                tenant.SetProperty("Description", data.Description);
+            }
             tenant = await _tenantRepository.InsertAsync(tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            var _ctx = await _dbContextProvider.GetDbContextAsync();
-            var sql = $"UPDATE public.\"AbpTenants\" SET \"Id\"='{newId}' WHERE \"Id\"='{tenant.Id}';";
-            await _ctx.Database.ExecuteSqlRawAsync(sql);
-            tenant = await CreateAdminTenantUserAsync(currentUser, data.Password, null);
+            if (!autoTenantId)
+            {
+                var _ctx = await _dbContextProvider.GetDbContextAsync();
+                var sql = $"UPDATE public.\"AbpTenants\" SET \"Id\"='{newId}' WHERE \"Id\"='{tenant.Id}';";
+                await _ctx.Database.ExecuteSqlRawAsync(sql);
+            }
+            tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => tenant.Id == newId);
+            if (tenant != null)
+            {
+                tenant = await CreateAdminTenantUserAsync(currentUser, data.Password ?? adminTenantPassword, tenant);
+            }
+            return ObjectMapper.Map<Tenant, TenantDto>(tenant);
         }
         catch
         {
+            throw;
         }
-        return ObjectMapper.Map<Tenant, TenantDto>(tenant);
+
     }
 
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()

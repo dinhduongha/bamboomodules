@@ -62,7 +62,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
             Tenant = new TenantCreateDto
             {
                 // Gán email mặc định để logic tạo admin hoạt động
-                AdminEmailAddress = "admin@dad.vn"
+                AdminEmailAddress = $"admin@dad.vn"
             };
         }
 

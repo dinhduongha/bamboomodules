@@ -171,6 +171,7 @@ public class LoginUiLoginModel : LoginModel
         }
         if (isAutoExternalAccount)
         {
+            var domain = _configuration["App:Domain"] ?? "dad.vn";
             // A. TRÍCH XUẤT CLAIMS (User Data)
             var claims = loginInfo.Principal;
 
@@ -178,6 +179,7 @@ public class LoginUiLoginModel : LoginModel
             // ABP đã map nó vào loginInfo.ProviderKey, đây là cái an toàn nhất để link
             var providerKey = loginInfo.ProviderKey;
             var provider = loginInfo.LoginProvider;
+            var isGoogle = (provider == "Google");
 
             // 2. Lấy Email (để lưu vào profile, không dùng để link account nếu muốn bảo mật tuyệt đối)
             var email = claims.FindFirstValue(ClaimTypes.Email);
@@ -207,7 +209,7 @@ public class LoginUiLoginModel : LoginModel
             // Ví dụ kết quả: nguyenvana12345
             string safeUserName = !string.IsNullOrWhiteSpace(cleanName) ? $"{cleanName}{uniqueSuffix}{provider.ToLower()}" : $"{cleanSurname}{cleanGivenName}{uniqueSuffix}{provider.ToLower()}";
             //string safeUserName = NormalizeToEnglish($"{providerKey}-{provider}");
-            string emailLocal = $"noemail_{safeUserName}@dad.local";
+            string emailLocal = $"noemail_{safeUserName}@{domain}";
             // Nếu chuỗi rỗng (trường hợp user ko có tên), dùng fallback
             if (string.IsNullOrWhiteSpace(safeUserName))
             {
@@ -216,7 +218,7 @@ public class LoginUiLoginModel : LoginModel
 
             // C. TẠO USER
             // Lưu ý: ABP mặc định dùng Email làm Username, ta sẽ override bằng safeUserName
-            var user = new IdentityUser(GuidGenerator.Create(), safeUserName, emailLocal ?? $"noemail_{safeUserName}@dad.local", CurrentTenant.Id);
+            var user = new IdentityUser(GuidGenerator.Create(), safeUserName, isGoogle ? (email ?? emailLocal) : emailLocal, CurrentTenant.Id);
 
             // Set lại Name/Surname cho đẹp (giữ nguyên unicode để hiển thị)
             user.Name = !string.IsNullOrWhiteSpace(name) ? name : givenName + " " + surname;
@@ -232,9 +234,10 @@ public class LoginUiLoginModel : LoginModel
                 name = name
             };
             user.SetProperty("info", info);
-
-            // user.SetEmailConfirmed(true); 
-
+            if (isGoogle && !string.IsNullOrWhiteSpace(email) && email.Contains("gmail.com"))
+            {
+                user.SetEmailConfirmed(true);
+            }
             var createResult = await UserManager.CreateAsync(user);
             if (createResult.Succeeded)
             {

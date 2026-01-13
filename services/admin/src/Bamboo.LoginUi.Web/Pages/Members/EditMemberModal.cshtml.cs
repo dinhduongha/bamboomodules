@@ -61,7 +61,7 @@ public class EditMemberModalModel : AbpPageModel
         using (_dataFilter.Disable<IMultiTenant>())
         {
             var user = await _userRepository.FindAsync(member.UserId.Value);
-            var roles = await _roleRepository.GetListAsync(r => r.TenantId == member.TenantId);
+            var roles = await _roleRepository.GetListAsync(r => r.TenantId == member.TenantId && r.Name != "owner");
             AllRoles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
             Member = new EditMemberViewModel
             {

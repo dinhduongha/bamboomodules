@@ -176,11 +176,22 @@ public class TenantMemberAppService :
         Volo.Abp.Identity.IdentityUser? user;
         using (CurrentTenant.Change(null))
         {
-            user = await _userRepository.FirstOrDefaultAsync(x => x.Id == input.UserId); ;
+            if (input.UserId.HasValue)
+            {
+                user = await _userRepository.FirstOrDefaultAsync(x => x.Id == input.UserId);
+            }
+            else if (!string.IsNullOrWhiteSpace(input.UserName))
+            {
+                user = await _userRepository.FirstOrDefaultAsync(x => x.UserName == input.UserName);
+            }
+            else
+            {
+                throw new Volo.Abp.UserFriendlyException(L["InvalidUserInput"]);
+            }
         }
         if (user == null)
         {
-            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", input.UserId]);
+            throw new Volo.Abp.UserFriendlyException(L["UserNotFound"]);
         }
         // 1. Tìm user 
         // var user = await _userRepository.GetAsync(input.UserId);
@@ -221,6 +232,10 @@ public class TenantMemberAppService :
 
     public async Task<PagedResultDto<TenantMemberDto>> GetMyWorkspacesAsync()
     {
+        if (!CurrentUser.Id.HasValue)
+        {
+            throw new UserFriendlyException("Login requred.");
+        }
         using (_dataFilter.Disable<IMultiTenant>())
         {
             var userId = CurrentUser.GetId();

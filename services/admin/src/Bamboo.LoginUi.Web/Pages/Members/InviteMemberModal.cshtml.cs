@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Bamboo.Admin;
-using Bamboo.Admin.Domain.Shared.Enums;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
+
+using Bamboo.Admin;
+using Bamboo.Admin.Domain.Shared.Enums;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 
@@ -53,7 +56,7 @@ public class InviteMemberModalModel : AbpPageModel
         if (CurrentTenant.IsAvailable)
         {
             // Nếu là admin của tenant, tải sẵn danh sách vai trò
-            var roles = await _roleRepository.GetListAsync();
+            var roles = await _roleRepository.GetListAsync(r => r.Name != "owner");
             Roles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
             Member.RoleName = "group_user";
         }
@@ -95,11 +98,23 @@ public class InviteMemberModalModel : AbpPageModel
         Volo.Abp.Identity.IdentityUser user;
         using (CurrentTenant.Change(null))
         {
-            user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId); ;
+            if (Member.UserId != null)
+            {
+                user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId);
+                if (user == null)
+                {
+                    throw new Volo.Abp.UserFriendlyException(L["UserNotFound", Member.UserId.ToString()]);
+                }
+            }
+            else
+            {
+                user = await _userRepository.FirstOrDefaultAsync(x => x.Email == Member.UserNameOrEmail
+                                    || x.UserName == Member.UserNameOrEmail);
+            }
         }
         if (user == null)
         {
-            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", Member.Email]);
+            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", Member.UserNameOrEmail]);
         }
 
         // Kiểm tra xem người dùng đã được mời hoặc đã là thành viên chưa
@@ -117,11 +132,12 @@ public class InviteMemberModalModel : AbpPageModel
         }
         // Gán vai trò cho lời mời
         // Cần tắt bộ lọc IMultiTenant để Host có thể query role của tenant khác
+        //using (CurrentTenant.Change(tenantId.Value))
         using (_dataFilter.Disable<IMultiTenant>())
         {
             if (Member.Roles.Any())
             {
-                var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId.Value && Member.Roles.Contains(r.Name));
+                var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId.Value && Member.Roles.Contains(r.Name) && r.Name != "owner");
                 foreach (var role in roles)
                 {
                     invitation.AddRole(role.Id, GuidGenerator);
@@ -140,7 +156,7 @@ public class InviteMemberModalModel : AbpPageModel
         using (_dataFilter.Disable<IMultiTenant>())
         {
             // Lấy các vai trò có TenantId khớp, hoặc là null (cho Host)
-            var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId);
+            var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId && r.Name != "owner");
             // Trả về Name làm value để khớp với asp-for="Member.RoleName"
             return new JsonResult(roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList());
         }
@@ -153,9 +169,8 @@ public class InviteMemberViewModel
 
     public Guid? RoleId { get; set; }
 
-    [EmailAddress]
     [Display(Name = "EmailAddress")]
-    public string? Email { get; set; }
+    public string? UserNameOrEmail { get; set; }
 
     public string? RoleName { get; set; }
 
