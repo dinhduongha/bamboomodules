@@ -18,11 +18,14 @@ namespace Bamboo.Core.Models;
 //[Index("ParentId", Name = "res_company__parent_id_index")]
 //[Index("ParentPath", Name = "res_company__parent_path_index")]
 //[Index("Name", Name = "res_company_name_uniq", IsUnique = true)]
-public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResCompany : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
