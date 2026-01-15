@@ -25,120 +25,120 @@ namespace Bamboo.Core.HttpApi
             _jsonSerializerOptions = jsonSerializerOptions.Value;
         }
 
-        [HttpGet("{modelName}/read/{id}")]
-        public async Task<JsonElement> ReadAsync(string modelName, Guid id, List<string> fields = null)
+        [HttpGet("{model}/read/{id}")]
+        public async Task<JsonElement> ReadAsync(string model, Guid id, List<string> fields = null)
         {
-            var results = await _genericModelService.ReadAsync(modelName, [id], fields);
+            var results = await _genericModelService.ReadAsync(model, [id], fields);
             JsonElement jsonElement = results
             .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
             .FirstOrDefault();
             return jsonElement;
         }
 
-        [HttpPost("{modelName}/read")]
-        public async Task<List<JsonElement>> ReadAsync(string modelName, [FromBody] ReadRequestDto request)
+        [HttpPost("{model}/read")]
+        public async Task<List<JsonElement>> ReadAsync(string model, [FromBody] ReadRequestDto request)
         {
-            var results = await _genericModelService.ReadAsync(modelName, request.Ids, request.Fields);
+            var results = await _genericModelService.ReadAsync(model, request.Ids, request.Fields);
             List<JsonElement> jsonElementList = results
             .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
             .ToList();
             return jsonElementList;
         }
 
-        [HttpPost("{modelName}/search")]
-        public async Task<List<Guid>> SearchAsync(string modelName, [FromBody] SearchRequestDto request)
+        [HttpPost("{model}/search")]
+        public async Task<List<Guid>> SearchAsync(string model, [FromBody] SearchRequestDto request)
         {
-            return await _genericModelService.SearchAsync(modelName, request.Domain, request.Offset, request.Limit, request.Order);
+            return await _genericModelService.SearchAsync(model, request.Domain, request.Offset, request.Limit, request.Order);
         }
 
-        [HttpPost("{modelName}/search_read")]
-        public async Task<List<JsonElement>> SearchReadAsync(string modelName, [FromBody] SearchReadRequestDto request)
+        [HttpPost("{model}/search_read")]
+        public async Task<List<JsonElement>> SearchReadAsync(string model, [FromBody] SearchReadRequestDto request)
         {
-            var results = await _genericModelService.SearchReadAsync(modelName, request.Domain, request.Fields, request.Offset, request.Limit, request.Order);
-            List<JsonElement> jsonElementList = results
-                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
-                .ToList();
-                return jsonElementList;
-        }
-
-        [HttpPost("{modelName}/create")]
-        public async Task<JsonElement> CreateAsync(string modelName, [FromBody] CreateRequestDto request)
-        {
-            var result = await _genericModelService.CreateAsync(modelName, request.Entity, request.Fields);
-            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
-        }
-
-        [HttpPut("{modelName}/update/{id}")]
-        public async Task<JsonElement> UpdateAsync(string modelName, Guid id, [FromBody] UpdateRequestDto request)
-        {
-            var results = await _genericModelService.WriteAsync(modelName, [id], request.Entity, request.Fields);
-            if (results != null && results.Count > 0)
-            { 
-                return JsonSerializer.SerializeToElement(results[0], _jsonSerializerOptions);
-            }
-            return default;
-        }
-
-        [HttpPut("{modelName}/write")]
-        public async Task<List<JsonElement>> WriteAsync(string modelName, List<Guid> ids, [FromBody] UpdateRequestDto request)
-        {
-            var results = await _genericModelService.WriteAsync(modelName, ids, request.Entity, request.Fields);
+            var results = await _genericModelService.SearchReadAsync(model, request.Domain, request.Fields, request.Offset, request.Limit, request.Order);
             List<JsonElement> jsonElementList = results
                 .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
                 .ToList();
             return jsonElementList;
         }
 
-        [HttpDelete("{modelName}/unlink")]
-        public async Task DeleteAsync(string modelName, List<Guid> ids)
+        [HttpPost("{model}/create")]
+        public async Task<JsonElement> CreateAsync(string model, [FromBody] CreateRequestDto request)
         {
-            await _genericModelService.DeleteAsync(modelName, ids);
+            var result = await _genericModelService.CreateAsync(model, request.Entity, request.Fields);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        [HttpPost("{modelName}/update_json")]
-        public async Task<object> UpdateJsonAsync(string modelName, [FromBody] UpdateJsonRequestDto request)
+        [HttpPut("{model}/update/{id}")]
+        public async Task<JsonElement> UpdateAsync(string model, Guid id, [FromBody] UpdateRequestDto request)
+        {
+            var results = await _genericModelService.WriteAsync(model, [id], request.Entity, request.Fields);
+            if (results != null && results.Count > 0)
+            {
+                return JsonSerializer.SerializeToElement(results[0], _jsonSerializerOptions);
+            }
+            return default;
+        }
+
+        [HttpPut("{model}/write")]
+        public async Task<List<JsonElement>> WriteAsync(string model, List<Guid> ids, [FromBody] UpdateRequestDto request)
+        {
+            var results = await _genericModelService.WriteAsync(model, ids, request.Entity, request.Fields);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+            return jsonElementList;
+        }
+
+        [HttpDelete("{model}/unlink")]
+        public async Task DeleteAsync(string model, List<Guid> ids)
+        {
+            await _genericModelService.DeleteAsync(model, ids);
+        }
+
+        [HttpPost("{model}/update_json")]
+        public async Task<object> UpdateJsonAsync(string model, [FromBody] UpdateJsonRequestDto request)
         {
             return null;
-            //return await _genericModelService.UpdateJsonAsync(modelName, request.Entity, request.Fields);
+            //return await _genericModelService.UpdateJsonAsync(model, request.Entity, request.Fields);
         }
 
-        [HttpPost("{modelName}/fields_get")]
-        public async Task<JsonElement> FieldsGetAsync(string modelName)
+        [HttpPost("{model}/fields_get")]
+        public async Task<JsonElement> FieldsGetAsync(string model)
         {
-            var result = await _genericModelService.FieldsGetAsync(modelName);
+            var result = await _genericModelService.FieldsGetAsync(model);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        [HttpPost("{modelName}/name_get")]
-        public async Task<List<(Guid Id, string Name)>> NameGetAsync(string modelName, [FromBody] NameGetRequestDto request)
+        [HttpPost("{model}/name_get")]
+        public async Task<List<(Guid Id, string Name)>> NameGetAsync(string model, [FromBody] NameGetRequestDto request)
         {
-            return await _genericModelService.NameGetAsync(modelName, request.Ids);
+            return await _genericModelService.NameGetAsync(model, request.Ids);
         }
 
-        [HttpPost("{modelName}/name_search")]
-        public async Task<List<(Guid Id, string Name)>> NameSearchAsync(string modelName, [FromBody] NameSearchRequestDto request)
+        [HttpPost("{model}/name_search")]
+        public async Task<List<(Guid Id, string Name)>> NameSearchAsync(string model, [FromBody] NameSearchRequestDto request)
         {
-            return await _genericModelService.NameSearchAsync(modelName, request.Name, request.Domain, request.Operator, request.Limit);
+            return await _genericModelService.NameSearchAsync(model, request.Name, request.Domain, request.Operator, request.Limit);
         }
 
-        [HttpPost("{modelName}/copy/{id}")]
-        public async Task<JsonElement> CopyAsync(string modelName, Guid id, [FromBody] CopyRequestDto request)
+        [HttpPost("{model}/copy/{id}")]
+        public async Task<JsonElement> CopyAsync(string model, Guid id, [FromBody] CopyRequestDto request)
         {
-            var result = await _genericModelService.CopyAsync(modelName, id, request.Fields, request.DefaultValues);
+            var result = await _genericModelService.CopyAsync(model, id, request.Fields, request.DefaultValues);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        [HttpPost("{modelName}/default")]
-        public async Task<JsonElement> DefaultAsync(string modelName, List<string> fields)
+        [HttpPost("{model}/default")]
+        public async Task<JsonElement> DefaultAsync(string model, List<string> fields)
         {
-            var result = await _genericModelService.DefaultGetAsync(modelName, fields);
+            var result = await _genericModelService.DefaultGetAsync(model, fields);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        [HttpPost("{modelName}/call")]
-        public async Task<JsonElement> CallServiceAsync(string modelName, string method, [FromBody] List<object> args)
+        [HttpPost("{model}/call/{method}")]
+        public async Task<JsonElement> CallServiceAsync(string model, string method, [FromBody] List<object> args)
         {
-            var result = await _genericModelService.CallServiceAsync(modelName, method, args);
+            var result = await _genericModelService.CallServiceAsync(model, method, args);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
     }

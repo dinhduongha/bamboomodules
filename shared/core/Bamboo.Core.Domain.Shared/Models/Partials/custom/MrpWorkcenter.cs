@@ -15,12 +15,14 @@ namespace Bamboo.Core.Models;
 
 public partial class MrpWorkcenter
 {
+    [Column("status")]
+    public long? Status { get; set; }
+
     [Column("categ_id")]
     public Guid? CategId { get; set; }
 
-    // [Many2one]
-    [ForeignKey("WorkcenterCategId")]
-    public virtual MrpWorkcenterCategory? MrpCateg { get; set; }
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -33,5 +35,9 @@ public partial class MrpWorkcenter
     // [ForeignKey("StockPickingTypeId")] // Many2many // Normal
     // [InverseProperty("StockPickingType")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenterCategory> WorkcenterCategory { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("UserId")]
+    public virtual ResUsers? User { get; set; }
 
 }

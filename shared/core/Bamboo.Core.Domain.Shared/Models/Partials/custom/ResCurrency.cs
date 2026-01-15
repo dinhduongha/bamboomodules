@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 public partial class ResCurrency
 {
     [Column("stable_coin")]
-    public bool? StableCoin { get; set; } = false;
+    public bool? IsStableCoin { get; set; } = false;
 
     [Column("network")]
     public string? Network { get; set; }

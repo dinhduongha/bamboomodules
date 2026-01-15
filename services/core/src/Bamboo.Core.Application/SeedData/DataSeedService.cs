@@ -11,6 +11,9 @@ using System.Xml.Linq;
 using System.Collections.Concurrent;
 using System.Globalization;
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Auditing;
@@ -21,8 +24,6 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Uow;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 
 using Bamboo.Core.Models;
 namespace Bamboo.Core.Application
@@ -61,6 +62,25 @@ namespace Bamboo.Core.Application
             _junctionTableService = junctionTableService;
         }
 
+        public async Task SeedDataAsync(List<string> paths, Guid? tenantId = null, bool includeDemoData = false)
+        {
+            foreach (var path in paths)
+            {
+                await SeedDataAsync(path, tenantId, includeDemoData);
+            }
+        }
+
+        public async Task<ResCompany> SeedTenantDataAsync(Guid? tenantId = null, string name = "")
+        {
+            return null;
+        }
+
+        public async Task<ResUsers> SeedUserDataAsync(Guid? userId = null, string name = "")
+        {
+            var userRepository = LazyServiceProvider.LazyGetService<IRepository<ResUsers, Guid>>();
+            return null;
+        }
+
         private object GetOrAddRepository(Type entityType)
         {
             return _repositoryCache.GetOrAdd(entityType, type =>
@@ -68,14 +88,6 @@ namespace Bamboo.Core.Application
                 var repoType = typeof(IRepository<,>).MakeGenericType(type, typeof(Guid));
                 return _serviceProvider.GetRequiredService(repoType);
             });
-        }
-
-        public async Task SeedDataAsync(List<string> paths, Guid? tenantId = null, bool includeDemoData = false)
-        {
-            foreach (var path in paths)
-            {
-                await SeedDataAsync(path, tenantId, includeDemoData);
-            }
         }
 
         [DisableAuditing]

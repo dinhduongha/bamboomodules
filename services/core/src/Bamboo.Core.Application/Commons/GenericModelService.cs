@@ -93,7 +93,7 @@ namespace Bamboo.Core.Application
         public async Task<JsonElement> NameCreateAsync(string modelName, string name)
         {
             var service = GetGenericService(modelName);
-            var result =  await CallServiceMethodAsync<object>(service, "NameCreateAsync", modelName, name);
+            var result = await CallServiceMethodAsync<object>(service, "NameCreateAsync", modelName, name);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
@@ -147,9 +147,10 @@ namespace Bamboo.Core.Application
 
         private object GetGenericService(string modelName)
         {
-            var entityType = _modelTypeRegistry.GetType(modelName);            
+            var entityType = _modelTypeRegistry.GetType(modelName);
             var serviceType = _modelTypeRegistry.GetServiceInterfaceType(modelName);
-            if (serviceType == null) {
+            if (serviceType == null)
+            {
                 serviceType = typeof(IGenericApplicationService<>).MakeGenericType(entityType);
             }
             return _serviceProvider.GetService(serviceType)
@@ -158,7 +159,7 @@ namespace Bamboo.Core.Application
 
         private async Task<TResult> CallServiceMethodAsync<TResult>(object service, string methodName, params object[] args)
         {
-            var method = service.GetType().GetMethod(methodName);
+            var method = service.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Public);
             if (method == null)
                 throw new UserFriendlyException($"Method {methodName} not found");
 
