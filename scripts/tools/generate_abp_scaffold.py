@@ -572,7 +572,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
         f"\nnamespace {service_namespace}", f"{{",
         #f"    [Module(\"{module_name}\"{(', ' + depends_str) if depends_str else ''})]",
         module_attr_str,
-        f"    public class {service_name} : {base_class}, {interface_name}", f"    {{",
+        f"    public partial class {service_name} : {base_class}, {interface_name}", f"    {{",
         '\n'.join([f"        {field}" for field in private_fields]),
         f"        public {service_name}({', '.join(constructor_params)}) {base_call}",
         f"        {{",
@@ -804,6 +804,8 @@ def create_controller_content(project_base_name, module_name, module_category, m
     namespace {controller_namespace}
     {{
         // Category: {module_category}, Module: {module_name}
+        // Interface only, not yet implemented service layer
+        [NonController]
         [Authorize]
         {route}
         public partial class {controller_name} : {base_class}
@@ -1691,7 +1693,8 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         if model_name == 'models.Model' or 'base_module' not in data: continue
         CATEGORY_REMAPPING = {
                 'Inventory': 'Supply Chain',
-                'Manufacturing': 'Supply Chain'
+                'Manufacturing': 'Supply Chain',
+                'Generic Modules': 'HumanResources'
             }
 
         is_auto = data.get('is_auto', True)
@@ -1723,6 +1726,9 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                 elif base_module.startswith('barcodes'):
                     grouping_key_pascal = "SupplyChain"
                     final_category_for_attr = "Supply Chain"
+                elif base_module.startswith('utm'):
+                    grouping_key_pascal = "Marketing"
+                    final_category_for_attr = "Marketing"         
                 else:
                     grouping_key_pascal = "Misc"
                     final_category_for_attr = "Misc"
