@@ -11,7 +11,7 @@ namespace Bamboo.Core.Models;
 public partial class StockLocation
 {
     [Column("location_type")]
-    public string LocationType { get; set; } = "internal"; // enum string: "internal", "view", "transit", "customer", "vehicle", "salesman_personal", ...
+    public string? LocationType { get; set; } = "internal"; // enum string: "internal", "view", "transit", "customer", "vehicle", "salesman_personal", ...
 
     [Column("vehicle_id")]
     public Guid? VehicleId { get; set; }

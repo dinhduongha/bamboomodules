@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "ir_model_fields__state_index")]
 //[Index("WebsiteFormBlacklisted", Name = "ir_model_fields__website_form_blacklisted_index")]
 //[Index("Model", "Name", Name = "ir_model_fields_name_unique", IsUnique = true)]
-public partial class IrModelFields: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class IrModelFields : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -115,7 +115,7 @@ public partial class IrModelFields: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public bool? Index { get; set; }
 
     [Column("translate")]
-    public bool? Translate { get; set; }
+    public string? Translate { get; set; }
 
     [Column("company_dependent")]
     public bool? CompanyDependent { get; set; }

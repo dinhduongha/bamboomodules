@@ -46,7 +46,7 @@ public partial class ResPartner
     public DateTimeOffset? LastNoSaleDate { get; set; }
 
     [Column("is_key_account")]
-    public bool IsKeyAccount { get; set; } = false;
+    public bool? IsKeyAccount { get; set; } = false;
 
     [Column("last_inventory_qty_json")]
     public string? LastInventoryQtyJson { get; set; }
@@ -55,7 +55,7 @@ public partial class ResPartner
     public string? POSMPhotosJson { get; set; }
 
     [Column("expiry_date_tracking")]
-    public bool ExpiryDateTracking { get; set; } = false;
+    public bool? ExpiryDateTracking { get; set; } = false;
 
     [Column("last_posm_check_date")]
     public DateTimeOffset? LastPOSMCheckDate { get; set; }

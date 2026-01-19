@@ -10,32 +10,32 @@ namespace Bamboo.Core.EntityFrameworkCore
     {
         public static void ConfigureOrmSignalingTemplates(this ModelBuilder modelBuilder)
         {
-        modelBuilder.Entity<OrmSignalingTemplates>(entity =>
-            {
-            entity.HasKey(e => e.Id).HasName("orm_signaling_templates_pkey");
+            modelBuilder.Entity<OrmSignalingTemplates>(entity =>
+                {
+                    entity.HasKey(e => e.Id).HasName("orm_signaling_templates_pkey");
 
-                        entity.ToTable("orm_signaling_templates");
+                    entity.ToTable("orm_signaling_templates");
 
-                        entity.HasIndex(e => e.TenantId);
+                    //entity.HasIndex(e => e.TenantId);
 
-                        entity.HasIndex(e => e.OrganizationUnitId);
+                    //entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.Property(e => e.Id)
-                            .HasDefaultValueSql("uuidv7()")
-                            .HasColumnName("id");
+                    entity.Property(e => e.Id)
+                    .HasDefaultValueSql("uuidv7()")
+                    .HasColumnName("id");
 
-                        entity.Property(e => e.TenantId).HasColumnName("company_id");
+                    //entity.Property(e => e.TenantId).HasColumnName("company_id");
 
-                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-                        entity.Property(e => e.Date)
-                            .HasDefaultValueSql("now()")
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("date");
+                    //entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                    entity.Property(e => e.Date)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("date");
 
-                entity.TryConfigureExtraProperties();
-                entity.TryConfigureObjectExtensions();
-                entity.TryConfigureConcurrencyStamp();
-            });
+                    entity.TryConfigureExtraProperties();
+                    entity.TryConfigureObjectExtensions();
+                    entity.TryConfigureConcurrencyStamp();
+                });
         }
     }
 }

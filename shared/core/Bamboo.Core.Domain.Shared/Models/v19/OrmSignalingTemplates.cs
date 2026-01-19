@@ -15,17 +15,18 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("orm_signaling_templates")]
-public partial class OrmSignalingTemplates : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//public partial class OrmSignalingTemplates : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class OrmSignalingTemplates : Entity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    // [Column("company_id")]
+    // public Guid? TenantId { get; set; }
 
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId { get; set; }
+    // [Column("organization_unit_id")]
+    // public Guid? OrganizationUnitId { get; set; }
 
     [Column("date", TypeName = "timestamp without time zone")]
     public DateTime? Date { get; set; }

@@ -12,16 +12,16 @@ public partial class StockPicking
     public Guid? VehicleId { get; set; }
 
     [Column("planned_start_time")]
-    public DateTime? PlannedStartTime { get; set; }
+    public DateTimeOffset? PlannedStartTime { get; set; }
 
     [Column("actual_delivery_time")]
-    public DateTime? ActualDeliveryTime { get; set; }
+    public DateTimeOffset? ActualDeliveryTime { get; set; }
 
     [Column("delivery_status")]
-    public string DeliveryStatus { get; set; } = "pending"; // enum string: "pending", "in_transit", "delivered", ...
+    public string? DeliveryStatus { get; set; } = "pending"; // enum string: "pending", "in_transit", "delivered", ...
 
     [Column("vmi_order_flag")]
-    public bool VMIOrderFlag { get; set; } = false;
+    public bool? VMIOrderFlag { get; set; } = false;
 
     [Column("promotion_applied_json")]
     public string? PromotionAppliedJson { get; set; }
