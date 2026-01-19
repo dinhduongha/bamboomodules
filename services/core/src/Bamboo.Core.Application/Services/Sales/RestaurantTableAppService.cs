@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PosRestaurant", Category = "Sales", Depends = new[] { "point_of_sale" })]
-    public class RestaurantTableAppService : GenericApplicationService<RestaurantTable>, IRestaurantTableAppService
+    public partial class RestaurantTableAppService : GenericApplicationService<RestaurantTable>, IRestaurantTableAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public RestaurantTableAppService(IRepository<RestaurantTable, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

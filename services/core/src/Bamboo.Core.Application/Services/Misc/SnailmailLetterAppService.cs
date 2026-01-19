@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Snailmail", Category = "Misc", Depends = new[] { "iap_mail", "mail" })]
-    public class SnailmailLetterAppService : GenericApplicationService<SnailmailLetter>, ISnailmailLetterAppService
+    public partial class SnailmailLetterAppService : GenericApplicationService<SnailmailLetter>, ISnailmailLetterAppService
     {
 
         public SnailmailLetterAppService(IRepository<SnailmailLetter, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

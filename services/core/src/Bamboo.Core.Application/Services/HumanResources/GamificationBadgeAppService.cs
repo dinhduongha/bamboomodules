@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public class GamificationBadgeAppService : GenericApplicationService<GamificationBadge>, IGamificationBadgeAppService
+    public partial class GamificationBadgeAppService : GenericApplicationService<GamificationBadge>, IGamificationBadgeAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

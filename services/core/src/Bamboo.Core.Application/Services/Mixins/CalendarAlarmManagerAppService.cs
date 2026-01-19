@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public class CalendarAlarmManagerAppService : ApplicationService, ICalendarAlarmManagerAppService
+    public partial class CalendarAlarmManagerAppService : ApplicationService, ICalendarAlarmManagerAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public CalendarAlarmManagerAppService(IServiceProvider serviceProvider) 

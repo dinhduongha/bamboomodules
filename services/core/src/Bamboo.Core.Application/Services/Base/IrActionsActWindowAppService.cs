@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrActionsActWindowAppService : GenericApplicationService<IrActWindow>, IIrActionsActWindowAppService
+    public partial class IrActionsActWindowAppService : GenericApplicationService<IrActWindow>, IIrActionsActWindowAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
         public IrActionsActWindowAppService(IRepository<IrActWindow, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

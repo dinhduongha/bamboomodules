@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public class AccountAnalyticLineAppService : GenericApplicationService<AccountAnalyticLine>, IAccountAnalyticLineAppService
+    public partial class AccountAnalyticLineAppService : GenericApplicationService<AccountAnalyticLine>, IAccountAnalyticLineAppService
     {
         private readonly IAnalyticPlanFieldsMixinAppService _analyticPlanFieldsMixinAppService;
         public AccountAnalyticLineAppService(IRepository<AccountAnalyticLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

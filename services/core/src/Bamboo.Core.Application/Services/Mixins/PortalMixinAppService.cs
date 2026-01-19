@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("portal", Category = "Misc", Depends = new[] { "web", "html_editor", "http_routing", "mail", "auth_signup" })]
-    public class PortalMixinAppService : ApplicationService, IPortalMixinAppService
+    public partial class PortalMixinAppService : ApplicationService, IPortalMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public PortalMixinAppService(IServiceProvider serviceProvider) 

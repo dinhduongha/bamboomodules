@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrActionsServerAppService : GenericApplicationService<IrActServer>, IIrActionsServerAppService
+    public partial class IrActionsServerAppService : GenericApplicationService<IrActServer>, IIrActionsServerAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;

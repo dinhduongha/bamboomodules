@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("pos_hr", Category = "Sales", Depends = new[] { "point_of_sale", "hr" })]
-    public class ReportPosHrSingleEmployeeSalesReportAppService : ApplicationService, IReportPosHrSingleEmployeeSalesReportAppService
+    public partial class ReportPosHrSingleEmployeeSalesReportAppService : ApplicationService, IReportPosHrSingleEmployeeSalesReportAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ReportPosHrSingleEmployeeSalesReportAppService(IServiceProvider serviceProvider) 

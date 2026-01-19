@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountRootAppService : GenericApplicationService<AccountRoot>, IAccountRootAppService
+    public partial class AccountRootAppService : GenericApplicationService<AccountRoot>, IAccountRootAppService
     {
 
         public AccountRootAppService(IRepository<AccountRoot, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

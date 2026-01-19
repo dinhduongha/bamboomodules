@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes", "base_geolocalize" })]
-    public class HrAttendanceOvertimeLineAppService : GenericApplicationService<HrAttendanceOvertimeLine>, IHrAttendanceOvertimeLineAppService
+    public partial class HrAttendanceOvertimeLineAppService : GenericApplicationService<HrAttendanceOvertimeLine>, IHrAttendanceOvertimeLineAppService
     {
 
         public HrAttendanceOvertimeLineAppService(IRepository<HrAttendanceOvertimeLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

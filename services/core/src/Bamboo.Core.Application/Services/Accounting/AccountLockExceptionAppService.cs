@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountLockExceptionAppService : GenericApplicationService<AccountLockException>, IAccountLockExceptionAppService
+    public partial class AccountLockExceptionAppService : GenericApplicationService<AccountLockException>, IAccountLockExceptionAppService
     {
 
         public AccountLockExceptionAppService(IRepository<AccountLockException, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

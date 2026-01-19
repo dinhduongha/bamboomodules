@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public class ProjectMilestoneAppService : GenericApplicationService<ProjectMilestone>, IProjectMilestoneAppService
+    public partial class ProjectMilestoneAppService : GenericApplicationService<ProjectMilestone>, IProjectMilestoneAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public ProjectMilestoneAppService(IRepository<ProjectMilestone, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

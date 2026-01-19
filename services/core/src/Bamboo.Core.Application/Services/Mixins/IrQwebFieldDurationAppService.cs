@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class IrQwebFieldDurationAppService : ApplicationService, IIrQwebFieldDurationAppService
+    public partial class IrQwebFieldDurationAppService : ApplicationService, IIrQwebFieldDurationAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrQwebFieldDurationAppService(IServiceProvider serviceProvider) 

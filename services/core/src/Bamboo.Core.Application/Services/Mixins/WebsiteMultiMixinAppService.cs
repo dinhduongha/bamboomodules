@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteMultiMixinAppService : ApplicationService, IWebsiteMultiMixinAppService
+    public partial class WebsiteMultiMixinAppService : ApplicationService, IWebsiteMultiMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebsiteMultiMixinAppService(IServiceProvider serviceProvider) 
@@ -1104,13 +1104,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
             // def _load_pos_data_fields(self, config):
-            // return [
-            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
-            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
-            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
-            // ]
+            // return ['name', 'pos_description', 'color', 'has_image', 'write_date']
             */
             return default;
         }

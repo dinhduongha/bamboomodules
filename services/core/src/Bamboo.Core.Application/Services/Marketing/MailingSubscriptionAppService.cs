@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public class MailingSubscriptionAppService : GenericApplicationService<MailingSubscription>, IMailingSubscriptionAppService
+    public partial class MailingSubscriptionAppService : GenericApplicationService<MailingSubscription>, IMailingSubscriptionAppService
     {
 
         public MailingSubscriptionAppService(IRepository<MailingSubscription, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

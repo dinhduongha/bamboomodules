@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public class MailTrackingValueAppService : GenericApplicationService<MailTrackingValue>, IMailTrackingValueAppService
+    public partial class MailTrackingValueAppService : GenericApplicationService<MailTrackingValue>, IMailTrackingValueAppService
     {
 
         public MailTrackingValueAppService(IRepository<MailTrackingValue, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

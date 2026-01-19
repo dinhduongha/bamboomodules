@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResUsersIdentitycheckAppService : GenericApplicationService<ResUsersIdentitycheck>, IResUsersIdentitycheckAppService
+    public partial class ResUsersIdentitycheckAppService : GenericApplicationService<ResUsersIdentitycheck>, IResUsersIdentitycheckAppService
     {
 
         public ResUsersIdentitycheckAppService(IRepository<ResUsersIdentitycheck, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

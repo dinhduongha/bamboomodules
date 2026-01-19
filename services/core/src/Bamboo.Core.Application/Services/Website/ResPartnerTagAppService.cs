@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteCustomer", Category = "Website", Depends = new[] { "website_crm_partner_assign", "website_partner", "website_google_map" })]
-    public class ResPartnerTagAppService : GenericApplicationService<ResPartnerTag>, IResPartnerTagAppService
+    public partial class ResPartnerTagAppService : GenericApplicationService<ResPartnerTag>, IResPartnerTagAppService
     {
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
         public ResPartnerTagAppService(IRepository<ResPartnerTag, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

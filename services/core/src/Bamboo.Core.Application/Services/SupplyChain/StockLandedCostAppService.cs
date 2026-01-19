@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockLandedCosts", Category = "SupplyChain", Depends = new[] { "stock_account", "purchase_stock" })]
-    public class StockLandedCostAppService : GenericApplicationService<StockLandedCost>, IStockLandedCostAppService
+    public partial class StockLandedCostAppService : GenericApplicationService<StockLandedCost>, IStockLandedCostAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

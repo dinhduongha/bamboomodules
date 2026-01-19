@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public class EventQuestionAnswerAppService : GenericApplicationService<EventQuestionAnswer>, IEventQuestionAnswerAppService
+    public partial class EventQuestionAnswerAppService : GenericApplicationService<EventQuestionAnswer>, IEventQuestionAnswerAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public EventQuestionAnswerAppService(IRepository<EventQuestionAnswer, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

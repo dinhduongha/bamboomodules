@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResPartnerAppService : GenericApplicationService<ResPartner>, IResPartnerAppService
+    public partial class ResPartnerAppService : GenericApplicationService<ResPartner>, IResPartnerAppService
     {
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;

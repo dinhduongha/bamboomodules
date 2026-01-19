@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteTechnicalPageAppService : GenericApplicationService<WebsiteTechnicalPage>, IWebsiteTechnicalPageAppService
+    public partial class WebsiteTechnicalPageAppService : GenericApplicationService<WebsiteTechnicalPage>, IWebsiteTechnicalPageAppService
     {
 
         public WebsiteTechnicalPageAppService(IRepository<WebsiteTechnicalPage, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

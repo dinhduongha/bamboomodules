@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery", "html_builder" })]
-    public class ProductFeedAppService : GenericApplicationService<ProductFeed>, IProductFeedAppService
+    public partial class ProductFeedAppService : GenericApplicationService<ProductFeed>, IProductFeedAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public ProductFeedAppService(IRepository<ProductFeed, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

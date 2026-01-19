@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public class ProductTemplateAttributeLineAppService : GenericApplicationService<ProductTemplateAttributeLine>, IProductTemplateAttributeLineAppService
+    public partial class ProductTemplateAttributeLineAppService : GenericApplicationService<ProductTemplateAttributeLine>, IProductTemplateAttributeLineAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ProductTemplateAttributeLineAppService(IRepository<ProductTemplateAttributeLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

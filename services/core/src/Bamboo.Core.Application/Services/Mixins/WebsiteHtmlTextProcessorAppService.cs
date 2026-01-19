@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteHtmlTextProcessorAppService : ApplicationService, IWebsiteHtmlTextProcessorAppService
+    public partial class WebsiteHtmlTextProcessorAppService : ApplicationService, IWebsiteHtmlTextProcessorAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebsiteHtmlTextProcessorAppService(IServiceProvider serviceProvider) 

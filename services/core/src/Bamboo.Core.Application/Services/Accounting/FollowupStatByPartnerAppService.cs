@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountFollowup", Category = "Accounting", Depends = new[] { "account", "mail" })]
-    public class FollowupStatByPartnerAppService : GenericApplicationService<FollowupStatByPartner>, IFollowupStatByPartnerAppService
+    public partial class FollowupStatByPartnerAppService : GenericApplicationService<FollowupStatByPartner>, IFollowupStatByPartnerAppService
     {
 
         public FollowupStatByPartnerAppService(IRepository<FollowupStatByPartner, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

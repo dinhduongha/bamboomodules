@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventExhibitor", Category = "Marketing", Depends = new[] { "website_event" })]
-    public class EventSponsorAppService : GenericApplicationService<EventSponsor>, IEventSponsorAppService
+    public partial class EventSponsorAppService : GenericApplicationService<EventSponsor>, IEventSponsorAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

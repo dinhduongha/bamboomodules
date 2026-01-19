@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner", "html_builder" })]
-    public class BlogPostAppService : GenericApplicationService<BlogPost>, IBlogPostAppService
+    public partial class BlogPostAppService : GenericApplicationService<BlogPost>, IBlogPostAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteCoverPropertiesMixinAppService _websiteCoverPropertiesMixinAppService;

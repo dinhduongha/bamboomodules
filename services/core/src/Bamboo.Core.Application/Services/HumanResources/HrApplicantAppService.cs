@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrRecruitment", Category = "HumanResources", Depends = new[] { "hr", "calendar", "utm", "attachment_indexation", "web_tour", "digest" })]
-    public class HrApplicantAppService : GenericApplicationService<HrApplicant>, IHrApplicantAppService
+    public partial class HrApplicantAppService : GenericApplicationService<HrApplicant>, IHrApplicantAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;

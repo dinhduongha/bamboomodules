@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Delivery", Category = "Sales", Depends = new[] { "sale", "payment_custom" })]
-    public class DeliveryCarrierAppService : GenericApplicationService<DeliveryCarrier>, IDeliveryCarrierAppService
+    public partial class DeliveryCarrierAppService : GenericApplicationService<DeliveryCarrier>, IDeliveryCarrierAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         public DeliveryCarrierAppService(IRepository<DeliveryCarrier, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

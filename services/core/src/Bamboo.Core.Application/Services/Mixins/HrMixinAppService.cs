@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public class HrMixinAppService : ApplicationService, IHrMixinAppService
+    public partial class HrMixinAppService : ApplicationService, IHrMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public HrMixinAppService(IServiceProvider serviceProvider) 

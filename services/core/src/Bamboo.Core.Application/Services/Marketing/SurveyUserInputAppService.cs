@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Survey", Category = "Marketing", Depends = new[] { "auth_signup", "http_routing", "mail", "web_tour", "gamification" })]
-    public class SurveyUserInputAppService : GenericApplicationService<SurveyUserInput>, ISurveyUserInputAppService
+    public partial class SurveyUserInputAppService : GenericApplicationService<SurveyUserInput>, ISurveyUserInputAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

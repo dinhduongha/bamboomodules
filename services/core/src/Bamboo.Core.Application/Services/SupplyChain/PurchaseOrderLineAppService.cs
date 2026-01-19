@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Purchase", Category = "SupplyChain", Depends = new[] { "account" })]
-    public class PurchaseOrderLineAppService : GenericApplicationService<PurchaseOrderLine>, IPurchaseOrderLineAppService
+    public partial class PurchaseOrderLineAppService : GenericApplicationService<PurchaseOrderLine>, IPurchaseOrderLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         public PurchaseOrderLineAppService(IRepository<PurchaseOrderLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

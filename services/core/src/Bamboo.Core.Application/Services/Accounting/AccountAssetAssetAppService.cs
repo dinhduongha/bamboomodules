@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountAsset", Category = "Accounting", Depends = new[] { "account" })]
-    public class AccountAssetAssetAppService : GenericApplicationService<AccountAssetAsset>, IAccountAssetAssetAppService
+    public partial class AccountAssetAssetAppService : GenericApplicationService<AccountAssetAsset>, IAccountAssetAssetAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;

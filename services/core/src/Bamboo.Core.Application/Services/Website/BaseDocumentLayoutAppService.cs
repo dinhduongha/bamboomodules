@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Web", Category = "Website", Depends = new[] { "base" })]
-    public class BaseDocumentLayoutAppService : GenericApplicationService<BaseDocumentLayout>, IBaseDocumentLayoutAppService
+    public partial class BaseDocumentLayoutAppService : GenericApplicationService<BaseDocumentLayout>, IBaseDocumentLayoutAppService
     {
 
         public BaseDocumentLayoutAppService(IRepository<BaseDocumentLayout, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

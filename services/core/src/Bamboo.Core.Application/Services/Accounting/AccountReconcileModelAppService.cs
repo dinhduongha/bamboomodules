@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountReconcileModelAppService : GenericApplicationService<AccountReconcileModel>, IAccountReconcileModelAppService
+    public partial class AccountReconcileModelAppService : GenericApplicationService<AccountReconcileModel>, IAccountReconcileModelAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public AccountReconcileModelAppService(IRepository<AccountReconcileModel, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SalesTeam", Category = "Sales", Depends = new[] { "base", "mail" })]
-    public class CrmTeamAppService : GenericApplicationService<CrmTeam>, ICrmTeamAppService
+    public partial class CrmTeamAppService : GenericApplicationService<CrmTeam>, ICrmTeamAppService
     {
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

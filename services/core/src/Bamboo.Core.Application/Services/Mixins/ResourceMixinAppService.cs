@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("resource", Category = "Misc", Depends = new[] { "base", "web" })]
-    public class ResourceMixinAppService : ApplicationService, IResourceMixinAppService
+    public partial class ResourceMixinAppService : ApplicationService, IResourceMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ResourceMixinAppService(IServiceProvider serviceProvider) 

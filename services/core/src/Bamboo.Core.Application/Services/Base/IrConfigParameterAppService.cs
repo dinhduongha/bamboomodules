@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrConfigParameterAppService : GenericApplicationService<IrConfigParameter>, IIrConfigParameterAppService
+    public partial class IrConfigParameterAppService : GenericApplicationService<IrConfigParameter>, IIrConfigParameterAppService
     {
 
         public IrConfigParameterAppService(IRepository<IrConfigParameter, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

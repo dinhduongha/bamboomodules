@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSaleWishlist", Category = "Website", Depends = new[] { "website_sale" })]
-    public class ProductWishlistAppService : GenericApplicationService<ProductWishlist>, IProductWishlistAppService
+    public partial class ProductWishlistAppService : GenericApplicationService<ProductWishlist>, IProductWishlistAppService
     {
 
         public ProductWishlistAppService(IRepository<ProductWishlist, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

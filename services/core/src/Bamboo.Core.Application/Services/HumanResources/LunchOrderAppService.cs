@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public class LunchOrderAppService : GenericApplicationService<LunchOrder>, ILunchOrderAppService
+    public partial class LunchOrderAppService : GenericApplicationService<LunchOrder>, ILunchOrderAppService
     {
 
         public LunchOrderAppService(IRepository<LunchOrder, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

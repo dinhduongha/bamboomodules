@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrUiMenuAppService : GenericApplicationService<IrUiMenu>, IIrUiMenuAppService
+    public partial class IrUiMenuAppService : GenericApplicationService<IrUiMenu>, IIrUiMenuAppService
     {
 
         public IrUiMenuAppService(IRepository<IrUiMenu, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

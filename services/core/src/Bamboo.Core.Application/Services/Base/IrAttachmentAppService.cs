@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrAttachmentAppService : GenericApplicationService<IrAttachment>, IIrAttachmentAppService
+    public partial class IrAttachmentAppService : GenericApplicationService<IrAttachment>, IIrAttachmentAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public IrAttachmentAppService(IRepository<IrAttachment, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

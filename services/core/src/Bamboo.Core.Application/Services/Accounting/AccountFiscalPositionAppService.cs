@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountFiscalPositionAppService : GenericApplicationService<AccountFiscalPosition>, IAccountFiscalPositionAppService
+    public partial class AccountFiscalPositionAppService : GenericApplicationService<AccountFiscalPosition>, IAccountFiscalPositionAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public AccountFiscalPositionAppService(IRepository<AccountFiscalPosition, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

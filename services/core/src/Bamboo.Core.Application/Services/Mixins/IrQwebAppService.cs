@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class IrQwebAppService : ApplicationService, IIrQwebAppService
+    public partial class IrQwebAppService : ApplicationService, IIrQwebAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrQwebAppService(IServiceProvider serviceProvider) 

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public class FleetVehicleLogContractAppService : GenericApplicationService<FleetVehicleLogContract>, IFleetVehicleLogContractAppService
+    public partial class FleetVehicleLogContractAppService : GenericApplicationService<FleetVehicleLogContract>, IFleetVehicleLogContractAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

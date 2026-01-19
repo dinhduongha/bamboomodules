@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Crm", Category = "Sales", Depends = new[] { "base_setup", "sales_team", "mail", "calendar", "resource", "utm", "web_tour", "contacts", "digest", "phone_validation" })]
-    public class CrmLostReasonAppService : GenericApplicationService<CrmLostReason>, ICrmLostReasonAppService
+    public partial class CrmLostReasonAppService : GenericApplicationService<CrmLostReason>, ICrmLostReasonAppService
     {
 
         public CrmLostReasonAppService(IRepository<CrmLostReason, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

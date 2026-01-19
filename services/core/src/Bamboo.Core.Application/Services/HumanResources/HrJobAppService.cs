@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public class HrJobAppService : GenericApplicationService<HrJob>, IHrJobAppService
+    public partial class HrJobAppService : GenericApplicationService<HrJob>, IHrJobAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;

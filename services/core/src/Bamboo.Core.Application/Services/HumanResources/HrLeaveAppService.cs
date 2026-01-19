@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public class HrLeaveAppService : GenericApplicationService<HrLeave>, IHrLeaveAppService
+    public partial class HrLeaveAppService : GenericApplicationService<HrLeave>, IHrLeaveAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadMainAttachmentAppService _mailThreadMainAttachmentAppService;

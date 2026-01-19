@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public class CalendarFiltersAppService : GenericApplicationService<CalendarFilters>, ICalendarFiltersAppService
+    public partial class CalendarFiltersAppService : GenericApplicationService<CalendarFilters>, ICalendarFiltersAppService
     {
 
         public CalendarFiltersAppService(IRepository<CalendarFilters, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

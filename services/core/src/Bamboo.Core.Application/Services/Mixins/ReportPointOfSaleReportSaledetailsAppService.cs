@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("point_of_sale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public class ReportPointOfSaleReportSaledetailsAppService : ApplicationService, IReportPointOfSaleReportSaledetailsAppService
+    public partial class ReportPointOfSaleReportSaledetailsAppService : ApplicationService, IReportPointOfSaleReportSaledetailsAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ReportPointOfSaleReportSaledetailsAppService(IServiceProvider serviceProvider) 

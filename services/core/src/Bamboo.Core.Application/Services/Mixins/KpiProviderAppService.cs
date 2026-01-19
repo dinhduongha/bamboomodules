@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base_setup", Category = "Base", Depends = new[] { "base", "web" })]
-    public class KpiProviderAppService : ApplicationService, IKpiProviderAppService
+    public partial class KpiProviderAppService : ApplicationService, IKpiProviderAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public KpiProviderAppService(IServiceProvider serviceProvider) 

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Sms", Category = "Sales", Depends = new[] { "base", "iap_mail", "mail", "phone_validation" })]
-    public class SmsTemplateAppService : GenericApplicationService<SmsTemplate>, ISmsTemplateAppService
+    public partial class SmsTemplateAppService : GenericApplicationService<SmsTemplate>, ISmsTemplateAppService
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
         private readonly ITemplateResetMixinAppService _templateResetMixinAppService;

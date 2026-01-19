@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public class ImLivechatChannelMemberHistoryAppService : GenericApplicationService<ImLivechatChannelMemberHistory>, IImLivechatChannelMemberHistoryAppService
+    public partial class ImLivechatChannelMemberHistoryAppService : GenericApplicationService<ImLivechatChannelMemberHistory>, IImLivechatChannelMemberHistoryAppService
     {
 
         public ImLivechatChannelMemberHistoryAppService(IRepository<ImLivechatChannelMemberHistory, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

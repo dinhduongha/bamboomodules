@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteSeoMetadataAppService : ApplicationService, IWebsiteSeoMetadataAppService
+    public partial class WebsiteSeoMetadataAppService : ApplicationService, IWebsiteSeoMetadataAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebsiteSeoMetadataAppService(IServiceProvider serviceProvider) 
@@ -6073,11 +6073,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeFiscalCountryCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _compute_fiscal_country_codes(self):
             // for record in self:
             //     allowed_companies = record.company_id or self.env.companies
-            //     record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
+            //     country_codes = allowed_companies.mapped('account_fiscal_country_id.code')
+            //     if record.country_code:
+            //         country_codes.append(record.country_code)
+            //     record.fiscal_country_codes = ",".join(set(country_codes))
             */
             return default;
         }
@@ -10982,16 +10985,29 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
             // def default_get(self, fields):
-            // result = super().default_get(fields)
-            // if 'date_begin' in fields and 'date_begin' not in result:
-            //     now = Datetime.now()
-            //     # Round the datetime to the nearest half hour (e.g. 08:17 => 08:30 and 08:37 => 09:00)
-            //     result['date_begin'] = now.replace(second=0, microsecond=0) + timedelta(minutes=-now.minute % 30)
-            // if 'date_end' in fields and 'date_end' not in result and result.get('date_begin'):
-            //     result['date_end'] = result['date_begin'] + timedelta(days=1)
-            // return result
+            // default_vals = super().default_get(fields)
+            // if self.env.context.get('partner_set_default_grade_activation'):
+            //     # sets the lowest grade and activation if no default values given, mainly useful while
+            //     # creating assigned partner on the fly (to make it visible in same m2o again)
+            //     if 'grade_id' in fields and not default_vals.get('grade_id'):
+            //         default_vals['grade_id'] = self.env['res.partner.grade'].search([], order='sequence', limit=1).id
+            //     if 'activation' in fields and not default_vals.get('activation'):
+            //         default_vals['activation'] = self.env['res.partner.activation'].search([], order='sequence', limit=1).id
+            // return default_vals
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def default_get(self, fields):
+            // """Add the company of the parent as default if we are creating a child partner. """
+            // values = super().default_get(fields)
+            // if 'parent_id' in fields and values.get('parent_id'):
+            //     parent = self.browse(values.get('parent_id'))
+            //     values['company_id'] = parent.company_id.id
+            // # protection for `default_type` values leaking from menu action context (e.g. for crm's email)
+            // if 'type' in fields and values.get('type'):
+            //     if values['type'] not in self._fields['type'].get_values(self.env):
+            //         values['type'] = None
+            // return values
             */
             return default;
         }
@@ -13407,15 +13423,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetBackendRootMenuIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: contacts, FILE: res_partner.py) ---
             // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('mrp.menu_mrp_root').id]
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
-            // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('purchase.menu_purchase_root').id]
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_template.py) ---
-            // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('sale.sale_menu_root').id]
+            // return super()._get_backend_root_menu_ids() + [self.env.ref('contacts.menu_contacts').id]
             */
             return default;
         }
@@ -14910,31 +14920,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Products'),
-            //     'template': '/product/static/xls/product_template.xls'
+            //     'label': _('Import Template for Contacts'),
+            //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
-            // def get_import_templates(self):
-            // res = super(ProductTemplate, self).get_import_templates()
-            // if self.env.context.get('purchase_product_template'):
-            //     return [{
-            //         'label': _('Import Template for Products'),
-            //         'template': '/purchase/static/xls/product_purchase.xls'
-            //     }]
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_template.py) ---
-            // def get_import_templates(self):
-            // res = super(ProductTemplate, self).get_import_templates()
-            // if self.env.context.get('sale_multi_pricelist_product_template'):
-            //     if self.env.user.has_group('product.group_product_pricelist'):
-            //         return [{
-            //             'label': _("Import Template for Products"),
-            //             'template': '/product/static/xls/product_template.xls'
-            //         }]
-            // return res
             */
             return default;
         }
@@ -18521,9 +18512,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_domain(self, data, config):
-            // return [('event_ticket_ids', 'in', [ticket['id'] for ticket in data['event.event.ticket']])]
+            // # Collect partner IDs from loaded orders
+            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']}
+            // 
+            // # Extract partner IDs from the tuples returned by get_limited_partners_loading
+            // limited_partner_ids = {partner[0] for partner in config.get_limited_partners_loading()}
+            // 
+            // limited_partner_ids.add(self.env.user.partner_id.id)  # Ensure current user is included
+            // partner_ids = limited_partner_ids.union(loaded_order_partner_ids)
+            // return [('id', 'in', list(partner_ids))]
             */
             return default;
         }
@@ -18531,11 +18530,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_fields(self, config):
-            // return ['id', 'name', 'seats_available', 'event_ticket_ids', 'registration_ids', 'seats_limited', 'write_date',
-            //         'question_ids', 'general_question_ids', 'specific_question_ids', 'seats_max',
-            //         'is_multi_slots', 'event_slot_ids']
+            // return [
+            //     'id', 'name', 'street', 'street2', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'email',
+            //     'barcode', 'write_date', 'property_product_pricelist', 'parent_name', 'pos_contact_address',
+            //     'invoice_emails', 'fiscal_position_id', 'is_company', 'property_account_receivable_id',
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: res_partner.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return super()._load_pos_data_fields(config) + ['sale_warn_msg']
             */
             return default;
         }
@@ -18672,10 +18676,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_partner.py) ---
             // def _load_pos_self_data_domain(self, data, config):
-            // domain = super()._load_pos_self_data_domain(data, config)
-            // return Domain.AND([domain, [('self_order_available', '=', True)]])
+            // return False
             */
             return default;
         }

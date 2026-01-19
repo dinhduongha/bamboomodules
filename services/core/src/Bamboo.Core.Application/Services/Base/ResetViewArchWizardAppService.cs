@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResetViewArchWizardAppService : GenericApplicationService<ResetViewArchWizard>, IResetViewArchWizardAppService
+    public partial class ResetViewArchWizardAppService : GenericApplicationService<ResetViewArchWizard>, IResetViewArchWizardAppService
     {
 
         public ResetViewArchWizardAppService(IRepository<ResetViewArchWizard, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

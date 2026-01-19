@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SpreadsheetDashboardModule", Category = "Productivity", Depends = new[] { "spreadsheet" })]
-    public class SpreadsheetDashboardShareAppService : GenericApplicationService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
+    public partial class SpreadsheetDashboardShareAppService : GenericApplicationService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
     {
         private readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
         public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

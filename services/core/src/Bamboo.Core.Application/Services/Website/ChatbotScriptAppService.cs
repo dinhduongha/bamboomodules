@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public class ChatbotScriptAppService : GenericApplicationService<ChatbotScript>, IChatbotScriptAppService
+    public partial class ChatbotScriptAppService : GenericApplicationService<ChatbotScript>, IChatbotScriptAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IUtmSourceMixinAppService _utmSourceMixinAppService;

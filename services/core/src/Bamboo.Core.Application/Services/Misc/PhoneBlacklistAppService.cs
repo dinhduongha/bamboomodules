@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PhoneValidation", Category = "Misc", Depends = new[] { "base", "mail" })]
-    public class PhoneBlacklistAppService : GenericApplicationService<PhoneBlacklist>, IPhoneBlacklistAppService
+    public partial class PhoneBlacklistAppService : GenericApplicationService<PhoneBlacklist>, IPhoneBlacklistAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public PhoneBlacklistAppService(IRepository<PhoneBlacklist, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

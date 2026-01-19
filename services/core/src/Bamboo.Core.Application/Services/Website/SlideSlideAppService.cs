@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSlides", Category = "Website", Depends = new[] { "portal_rating", "website", "website_mail", "website_profile" })]
-    public class SlideSlideAppService : GenericApplicationService<SlideSlide>, ISlideSlideAppService
+    public partial class SlideSlideAppService : GenericApplicationService<SlideSlide>, ISlideSlideAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

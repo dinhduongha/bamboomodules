@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseImport", Category = "Base", Depends = new[] { "web" })]
-    public class BaseImportImportAppService : GenericApplicationService<BaseImportImport>, IBaseImportImportAppService
+    public partial class BaseImportImportAppService : GenericApplicationService<BaseImportImport>, IBaseImportImportAppService
     {
 
         public BaseImportImportAppService(IRepository<BaseImportImport, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

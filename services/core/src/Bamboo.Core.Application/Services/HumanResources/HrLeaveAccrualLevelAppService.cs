@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public class HrLeaveAccrualLevelAppService : GenericApplicationService<HrLeaveAccrualLevel>, IHrLeaveAccrualLevelAppService
+    public partial class HrLeaveAccrualLevelAppService : GenericApplicationService<HrLeaveAccrualLevel>, IHrLeaveAccrualLevelAppService
     {
 
         public HrLeaveAccrualLevelAppService(IRepository<HrLeaveAccrualLevel, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

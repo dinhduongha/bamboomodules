@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class _UnknownAppService : ApplicationService, I_UnknownAppService
+    public partial class _UnknownAppService : ApplicationService, I_UnknownAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public _UnknownAppService(IServiceProvider serviceProvider) 

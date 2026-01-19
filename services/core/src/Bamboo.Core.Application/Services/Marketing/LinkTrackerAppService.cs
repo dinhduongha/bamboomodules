@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("LinkTrackerModule", Category = "Marketing", Depends = new[] { "utm", "mail" })]
-    public class LinkTrackerAppService : GenericApplicationService<LinkTracker>, ILinkTrackerAppService
+    public partial class LinkTrackerAppService : GenericApplicationService<LinkTracker>, ILinkTrackerAppService
     {
         private readonly IUtmMixinAppService _utmMixinAppService;
         public LinkTrackerAppService(IRepository<LinkTracker, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

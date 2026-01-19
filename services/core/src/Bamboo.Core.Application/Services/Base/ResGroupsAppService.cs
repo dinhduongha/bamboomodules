@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResGroupsAppService : GenericApplicationService<ResGroups>, IResGroupsAppService
+    public partial class ResGroupsAppService : GenericApplicationService<ResGroups>, IResGroupsAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public ResGroupsAppService(IRepository<ResGroups, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class DecimalPrecisionAppService : GenericApplicationService<DecimalPrecision>, IDecimalPrecisionAppService
+    public partial class DecimalPrecisionAppService : GenericApplicationService<DecimalPrecision>, IDecimalPrecisionAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public DecimalPrecisionAppService(IRepository<DecimalPrecision, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

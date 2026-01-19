@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public class HrEmployeePublicAppService : GenericApplicationService<HrEmployeePublic>, IHrEmployeePublicAppService
+    public partial class HrEmployeePublicAppService : GenericApplicationService<HrEmployeePublic>, IHrEmployeePublicAppService
     {
 
         public HrEmployeePublicAppService(IRepository<HrEmployeePublic, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

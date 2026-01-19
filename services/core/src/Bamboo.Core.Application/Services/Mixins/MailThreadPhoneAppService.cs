@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("phone_validation", Category = "Misc", Depends = new[] { "base", "mail" })]
-    public class MailThreadPhoneAppService : ApplicationService, IMailThreadPhoneAppService
+    public partial class MailThreadPhoneAppService : ApplicationService, IMailThreadPhoneAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public MailThreadPhoneAppService(IServiceProvider serviceProvider) 

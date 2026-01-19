@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("account_edi_ubl_cii", Category = "Accounting", Depends = new[] { "account" })]
-    public class AccountEdiXmlUbl21AppService : ApplicationService, IAccountEdiXmlUbl21AppService
+    public partial class AccountEdiXmlUbl21AppService : ApplicationService, IAccountEdiXmlUbl21AppService
     {
         private readonly IServiceProvider _serviceProvider;
         public AccountEdiXmlUbl21AppService(IServiceProvider serviceProvider) 

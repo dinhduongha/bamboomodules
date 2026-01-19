@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("transifex", Category = "Misc", Depends = new[] { "base", "web" })]
-    public class TransifexTranslationAppService : ApplicationService, ITransifexTranslationAppService
+    public partial class TransifexTranslationAppService : ApplicationService, ITransifexTranslationAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public TransifexTranslationAppService(IServiceProvider serviceProvider) 

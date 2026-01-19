@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SalePdfQuoteBuilder", Category = "Sales", Depends = new[] { "sale_management" })]
-    public class QuotationDocumentAppService : GenericApplicationService<QuotationDocument>, IQuotationDocumentAppService
+    public partial class QuotationDocumentAppService : GenericApplicationService<QuotationDocument>, IQuotationDocumentAppService
     {
 
         public QuotationDocumentAppService(IRepository<QuotationDocument, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

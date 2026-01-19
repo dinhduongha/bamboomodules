@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteSearchableMixinAppService : ApplicationService, IWebsiteSearchableMixinAppService
+    public partial class WebsiteSearchableMixinAppService : ApplicationService, IWebsiteSearchableMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebsiteSearchableMixinAppService(IServiceProvider serviceProvider) 
@@ -6812,16 +6812,18 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IWebsiteSearchableMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: product_template.py) ---
             // def default_get(self, fields):
-            // result = super().default_get(fields)
-            // if 'date_begin' in fields and 'date_begin' not in result:
-            //     now = Datetime.now()
-            //     # Round the datetime to the nearest half hour (e.g. 08:17 => 08:30 and 08:37 => 09:00)
-            //     result['date_begin'] = now.replace(second=0, microsecond=0) + timedelta(minutes=-now.minute % 30)
-            // if 'date_end' in fields and 'date_end' not in result and result.get('date_begin'):
-            //     result['date_end'] = result['date_begin'] + timedelta(days=1)
+            // result = super(ProductTemplate, self).default_get(fields)
+            // if self.env.context.get('default_can_be_expensed'):
+            //     result['supplier_taxes_id'] = False
             // return result
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            // def default_get(self, fields):
+            // res = super().default_get(fields)
+            // if ('uom_id' in fields and not res.get('uom_id')) or self.env.context.get('default_uom_id') is False:
+            //     res['uom_id'] = self._get_default_uom_id().id
+            // return res
             */
             return default;
         }
@@ -11097,9 +11099,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteSearchableMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_template.py) ---
             // def _load_pos_data_domain(self, data, config):
-            // return [('event_ticket_ids', 'in', [ticket['id'] for ticket in data['event.event.ticket']])]
+            // domain = [
+            //     *self.env['product.template']._check_company_domain(config.company_id),
+            //     ('available_in_pos', '=', True),
+            //     ('sale_ok', '=', True),
+            // ]
+            // if config.limit_categories:
+            //     domain += [('pos_categ_ids', 'in', config.iface_available_categ_ids.ids)]
+            // return domain
             */
             return default;
         }
@@ -11107,11 +11116,24 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteSearchableMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_template.py) ---
+            // def _load_pos_data_fields(self, config_id):
+            // return [
+            //     'id', 'display_name', 'standard_price', 'categ_id', 'pos_categ_ids', 'taxes_id', 'barcode', 'name', 'list_price', 'is_favorite',
+            //     'default_code', 'to_weight', 'uom_id', 'description_sale', 'description', 'tracking', 'type', 'service_tracking', 'is_storable',
+            //     'write_date', 'color', 'pos_sequence', 'available_in_pos', 'attribute_line_ids', 'active', 'image_128', 'combo_ids', 'product_variant_ids', 'public_description',
+            //     'pos_optional_product_ids', 'sequence', 'product_tag_ids'
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: product_template.py) ---
             // def _load_pos_data_fields(self, config):
-            // return ['id', 'name', 'seats_available', 'event_ticket_ids', 'registration_ids', 'seats_limited', 'write_date',
-            //         'question_ids', 'general_question_ids', 'specific_question_ids', 'seats_max',
-            //         'is_multi_slots', 'event_slot_ids']
+            // params = super()._load_pos_data_fields(config)
+            // params += ['invoice_policy', 'type', 'sale_line_warn_msg']
+            // return params
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
+            // def _load_pos_data_fields(self, config):
+            // params = super()._load_pos_data_fields(config)
+            // params += ['self_order_available']
+            // return params
             */
             return default;
         }

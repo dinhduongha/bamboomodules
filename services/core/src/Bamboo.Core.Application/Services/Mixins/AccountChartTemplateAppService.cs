@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountChartTemplateAppService : ApplicationService, IAccountChartTemplateAppService
+    public partial class AccountChartTemplateAppService : ApplicationService, IAccountChartTemplateAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public AccountChartTemplateAppService(IServiceProvider serviceProvider) 

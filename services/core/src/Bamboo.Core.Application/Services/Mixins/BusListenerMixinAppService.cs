@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("bus", Category = "Base", Depends = new[] { "base", "web" })]
-    public class BusListenerMixinAppService : ApplicationService, IBusListenerMixinAppService
+    public partial class BusListenerMixinAppService : ApplicationService, IBusListenerMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public BusListenerMixinAppService(IServiceProvider serviceProvider) 
@@ -148,23 +148,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionGetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def action_get(self):
-            // if self.env.user.employee_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('hr.res_users_action_my')
-            //     groups = {
-            //         group_xml_id[0]: True
-            //         for group_xml_id in self.env.user.all_group_ids._get_external_ids().values()
-            //         if group_xml_id
-            //     }
-            //     action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            //     action_context.update(groups)
-            //     action['context'] = str(action_context)
-            //     return action
-            // return super().action_get()
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def action_get(self):
-            // return self.sudo().env.ref('base.action_res_users_my').read()[0]
+            // return self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
             */
             return default;
         }
@@ -222,24 +208,23 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenEmployeesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
             // def action_open_employees(self):
             // self.ensure_one()
-            // employees = self.employee_ids
-            // model = 'hr.employee' if self.env.user.has_group('hr.group_hr_user') else 'hr.employee.public'
-            // if len(employees) > 1:
+            // if self.employees_count > 1:
             //     return {
             //         'name': _('Related Employees'),
             //         'type': 'ir.actions.act_window',
-            //         'res_model': model,
-            //         'view_mode': 'kanban,list,form',
-            //         'domain': [('id', 'in', employees.ids)],
+            //         'res_model': 'hr.employee',
+            //         'view_mode': 'kanban',
+            //         'domain': [('id', 'in', self.employee_ids.ids),
+            //                    ('company_id', 'in', self.env.companies.ids)],
             //     }
             // return {
             //     'name': _('Employee'),
             //     'type': 'ir.actions.act_window',
-            //     'res_model': model,
-            //     'res_id': employees.id,
+            //     'res_model': 'hr.employee',
+            //     'res_id': self.employee_ids.filtered(lambda e: e.company_id in self.env.companies).id,
             //     'view_mode': 'form',
             // }
             */
@@ -580,18 +565,18 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionShowInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
             // def _action_show(self):
             // """If self is a singleton, directly access the form view. If it is a recordset, open a list view"""
-            // view_id = self.env.ref('base.view_users_form').id
+            // view_id = self.env.ref('base.view_partner_form').id
             // action = {
             //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.users',
+            //     'res_model': 'res.partner',
             //     'context': {'create': False},
             // }
             // if len(self) > 1:
             //     action.update({
-            //         'name': _('Users'),
+            //         'name': _('Contacts'),
             //         'view_mode': 'list,form',
             //         'views': [[None, 'list'], [view_id, 'form']],
             //         'domain': [('id', 'in', self.ids)],
@@ -2678,26 +2663,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckDisjointGroupsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def _check_disjoint_groups(self):
-            // super()._check_disjoint_groups()
-            // internal_users = self.env.ref('base.group_user').all_user_ids & self
-            // if any(user.website_id for user in internal_users):
-            //     raise ValidationError(_("Remove website on related partner before they become internal user."))
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_disjoint_groups(self):
-            // """We check that no users are both portal and users (same with public).
-            //    This could typically happen because of implied groups.
-            // """
-            // user_type_groups = self.env['res.groups']._get_user_type_groups()
-            // for user in self:
-            //     disjoint_groups = user.all_group_ids & user_type_groups
-            //     if len(disjoint_groups) > 1:
-            //         raise ValidationError(_(
-            //             "User %(user)s cannot be at the same time in exclusive groups %(groups)s.",
-            //             user=repr(user.name),
-            //             groups=", ".join(repr(g.display_name) for g in disjoint_groups),
-            //         ))
+            // # check for users that might have two exclusive groups
+            // self.env.registry.clear_cache('groups')
+            // self.all_implied_by_ids._check_user_disjoint_groups()
             */
             return default;
         }
@@ -6582,10 +6552,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTzOffsetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_tz_offset(self):
-            // for user in self:
-            //     user.tz_offset = datetime.datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
+            // for partner in self:
+            //     partner.tz_offset = datetime.datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime('%z')
             */
             return default;
         }
@@ -6844,11 +6814,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
             // def copy(self, default=None):
-            // if not default or not default.get('email'):
-            //     # avoid sending email to the user we are duplicating
-            //     self = self.with_context(no_reset_password=True)
+            // for attachment in self:
+            //     index_content_cache[attachment.checksum] = attachment.index_content
             // return super().copy(default=default)
             */
             return default;
@@ -6857,15 +6826,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
             // def copy_data(self, default=None):
             // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
-            // for user, vals in zip(self, vals_list):
-            //     if ('name' not in default) and ('partner_id' not in default):
-            //         vals['name'] = _("%s (copy)", user.name)
-            //     if 'login' not in default:
-            //         vals['login'] = _("%s (copy)", user.login)
+            // for group, vals in zip(self, vals_list):
+            //     vals['name'] = default.get('name') or self.env._('%s (copy)', group.name)
             // return vals_list
             */
             return default;
@@ -11436,20 +11402,51 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetLockTimeoutsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
             // def _get_lock_timeouts(self):
             // """
-            // Return the user's configured session and inactivity timeouts.
+            // Compute the session and inactivity timeout settings for the user.
             // 
-            // Delegates to the group-level `_get_lock_timeouts`, using the user's group membership
-            // to determine applicable timeout settings.
+            // This method returns the shortest configured timeouts (in seconds) across all groups
+            // implied by the user's group membership. For each type of timeout, it distinguishes
+            // between those that require MFA and those that do not.
             // 
-            // :return: A dictionary of timeout types and values, as defined by `_get_lock_timeouts` on groups.
+            // :return: A dictionary with timeout types as keys and a list of tuples as values.
+            //     Each tuple is of the form (timeout_in_seconds, requires_mfa), ordered from shortest to longest.
+            // 
+            //     Example::
+            // 
+            //         {
+            //             'lock_timeout': [(43200, False), (86400, True)],
+            //             'lock_timeout_inactivity': [(900, False)]
+            //         }
+            // 
             // :rtype: dict
             // """
-            // self.ensure_one()
-            // # Take advantage of the ormcache of `self._get_group_ids()` to get the user groups and avoid queries
-            // return self.env["res.groups"].browse(self._get_group_ids())._get_lock_timeouts()
+            // result = {}
+            // 
+            // for key, mfa_key in [
+            //     ("lock_timeout", "lock_timeout_mfa"),
+            //     ("lock_timeout_inactivity", "lock_timeout_inactivity_mfa"),
+            // ]:
+            //     # `with_context({})` because
+            //     # - Same reasons than https://github.com/odoo/odoo/commit/7a0255665714f2c0129d04d4a3f14a3137c159f1
+            //     # - As this method is decorated with `@ormcache('self._ids')`, it cannot depend on the context
+            //     values = [(g[key], g[mfa_key]) for g in self.with_context({}).all_implied_ids if g[key]]
+            //     min_non_mfa = min((timeout for timeout, mfa in values if not mfa), default=None)
+            //     min_mfa = min((timeout for timeout, mfa in values if mfa), default=None)
+            // 
+            //     result[key] = []
+            // 
+            //     if min_mfa:
+            //         result[key].append((min_mfa * 60, True))
+            //     if min_non_mfa and (not min_mfa or min_non_mfa < min_mfa):
+            //         result[key].append((min_non_mfa * 60, False))
+            // 
+            //     # Sort from lowest timeout to highest
+            //     result[key].sort()
+            // 
+            // return result
             */
             return default;
         }
@@ -11777,23 +11774,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IBusListenerMixinable
+        public async Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_users.py) ---
-            // def _get_on_leave_ids(self, partner=False):
-            // now = fields.Datetime.now()
-            // field = 'partner_id' if partner else 'id'
-            // self.flush_model(['active'])
-            // self.env['hr.leave'].flush_model(['user_id', 'state', 'date_from', 'date_to'])
-            // self.env.cr.execute('''SELECT res_users.%s FROM res_users
-            //                     JOIN hr_leave ON hr_leave.user_id = res_users.id
-            //                     AND hr_leave.state = 'validate'
-            //                     AND res_users.active = 't'
-            //                     AND hr_leave.date_from <= %%s AND hr_leave.date_to >= %%s
-            //                     RIGHT JOIN hr_leave_type ON hr_leave.holiday_status_id = hr_leave_type.id
-            //                     AND hr_leave_type.time_type = 'leave';''' % field, (now, now))
-            // return [r[0] for r in self.env.cr.fetchall()]
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_partner.py) ---
+            // def _get_on_leave_ids(self):
+            // return self.env['res.users']._get_on_leave_ids(partner=True)
             */
             return default;
         }
@@ -12531,9 +12517,24 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetStoreAvatarCardFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
             // def _get_store_avatar_card_fields(self, target):
-            // return ["share", Store.One("partner_id", self.partner_id._get_store_avatar_card_fields(target))]
+            // avatar_card_fields = super()._get_store_avatar_card_fields(target)
+            // if target.is_internal(self.env):
+            //     # sudo: res.partner - internal users can access employee information of partner
+            //     employee_fields = self.sudo().employee_ids._get_store_avatar_card_fields(target)
+            //     avatar_card_fields.append(Store.Many("employee_ids", employee_fields, mode="ADD", sudo=True))
+            // return avatar_card_fields
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            // def _get_store_avatar_card_fields(self, target):
+            // fields = [
+            //     "im_status",
+            //     "name",
+            //     "partner_share",
+            // ]
+            // if target.is_internal(self.env):
+            //     fields.extend(["email", "phone"])
+            // return fields
             */
             return default;
         }
@@ -14054,28 +14055,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: ir_attachment.py) ---
             // def init(self):
-            // super().init()
-            // if not sql.column_exists(self.env.cr, self._table, "totp_secret"):
-            //     self.env.cr.execute("ALTER TABLE res_users ADD COLUMN totp_secret varchar")
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def init(self):
-            // cr = self.env.cr
+            // if self.env.registry.has_trigram:
+            //     indexed_field = SQL('UNACCENT(index_content)') if self.env.registry.has_unaccent else SQL('index_content')
             // 
-            // # allow setting plaintext passwords via SQL and have them
-            // # automatically encrypted at startup: look for passwords which don't
-            // # match the "extended" MCF and pass those through passlib.
-            // # Alternative: iterate on *all* passwords and use CryptContext.identify
-            // cr.execute(r"""
-            // SELECT id, password FROM res_users
-            // WHERE password IS NOT NULL
-            //   AND password !~ '^\$[^$]+\$[^$]+\$.'
-            // """)
-            // if self.env.cr.rowcount:
-            //     ResUsers = self.sudo()
-            //     for uid, pw in cr.fetchall():
-            //         ResUsers.browse(uid).password = pw
+            //     self.env.cr.execute(SQL('''
+            //         CREATE INDEX IF NOT EXISTS ir_attachment_index_content_applicant_trgm_idx
+            //             ON ir_attachment USING gin (%(indexed_field)s gin_trgm_ops)
+            //          WHERE res_model = 'hr.applicant'
+            //     ''', indexed_field=indexed_field))
             */
             return default;
         }
@@ -14923,9 +14912,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_domain(self, data, config):
-            // return [('id', '=', self.env.uid)]
+            // # Collect partner IDs from loaded orders
+            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']}
+            // 
+            // # Extract partner IDs from the tuples returned by get_limited_partners_loading
+            // limited_partner_ids = {partner[0] for partner in config.get_limited_partners_loading()}
+            // 
+            // limited_partner_ids.add(self.env.user.partner_id.id)  # Ensure current user is included
+            // partner_ids = limited_partner_ids.union(loaded_order_partner_ids)
+            // return [('id', 'in', list(partner_ids))]
             */
             return default;
         }
@@ -14933,9 +14930,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_fields(self, config):
-            // return ['id', 'name', 'partner_id', 'all_group_ids']
+            // return [
+            //     'id', 'name', 'street', 'street2', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'email',
+            //     'barcode', 'write_date', 'property_product_pricelist', 'parent_name', 'pos_contact_address',
+            //     'invoice_emails', 'fiscal_position_id', 'is_company', 'property_account_receivable_id',
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: res_partner.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return super()._load_pos_data_fields(config) + ['sale_warn_msg']
             */
             return default;
         }
@@ -16348,9 +16352,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeParentIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def onchange_parent_id(self):
-            // return self.partner_id.onchange_parent_id()
+            // # return values in result, as this method is used by _fields_sync()
+            // if not self.parent_id:
+            //     return
+            // result = {}
+            // partner = self._origin
+            // if (partner.type or self.type) == 'contact':
+            //     # for contacts: copy the parent address, if set (aka, at least one
+            //     # value is set in the address: otherwise, keep the one from the
+            //     # contact)
+            //     if address_values := self.parent_id._get_address_values():
+            //         result['value'] = address_values
+            // return result
             */
             return default;
         }

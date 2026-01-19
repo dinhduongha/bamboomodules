@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrMailServerAppService : GenericApplicationService<IrMailServer>, IIrMailServerAppService
+    public partial class IrMailServerAppService : GenericApplicationService<IrMailServer>, IIrMailServerAppService
     {
         private readonly IGoogleGmailMixinAppService _googleGmailMixinAppService;
         private readonly IMicrosoftOutlookMixinAppService _microsoftOutlookMixinAppService;

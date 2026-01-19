@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("DataRecycle", Category = "Productivity", Depends = new[] { "mail" })]
-    public class DataRecycleRecordAppService : GenericApplicationService<DataRecycleRecord>, IDataRecycleRecordAppService
+    public partial class DataRecycleRecordAppService : GenericApplicationService<DataRecycleRecord>, IDataRecycleRecordAppService
     {
 
         public DataRecycleRecordAppService(IRepository<DataRecycleRecord, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

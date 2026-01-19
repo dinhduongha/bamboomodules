@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 
+
 //namespace Bamboo.Core.Application
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IGenericApplicationService<TEntity> : IApplicationService
+    public interface IGenericApplicationService<TEntity> : ICrudAppService<TEntity, Guid>
         where TEntity : class, IEntity<Guid>
     {
         Task<List<object>> ReadAsync(List<Guid> ids, List<string> fields);
@@ -30,7 +31,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<object> OnchangeAsync(List<string> changedFields, TEntity values, Dictionary<string, object> fieldInfo);
         //Task<object> OnchangeAsync(object values, object field_names, object fields_spec);
     }
- 
+
     public class OnchangeResult
     {
         public Dictionary<string, object> Value { get; set; }

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public class AnalyticPlanFieldsMixinAppService : ApplicationService, IAnalyticPlanFieldsMixinAppService
+    public partial class AnalyticPlanFieldsMixinAppService : ApplicationService, IAnalyticPlanFieldsMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public AnalyticPlanFieldsMixinAppService(IServiceProvider serviceProvider) 

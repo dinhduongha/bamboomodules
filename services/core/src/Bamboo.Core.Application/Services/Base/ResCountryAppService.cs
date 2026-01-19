@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResCountryAppService : GenericApplicationService<ResCountry>, IResCountryAppService
+    public partial class ResCountryAppService : GenericApplicationService<ResCountry>, IResCountryAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ResCountryAppService(IRepository<ResCountry, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

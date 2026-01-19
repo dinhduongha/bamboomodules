@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public class DiscussChannelMemberAppService : GenericApplicationService<DiscussChannelMember>, IDiscussChannelMemberAppService
+    public partial class DiscussChannelMemberAppService : GenericApplicationService<DiscussChannelMember>, IDiscussChannelMemberAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public DiscussChannelMemberAppService(IRepository<DiscussChannelMember, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

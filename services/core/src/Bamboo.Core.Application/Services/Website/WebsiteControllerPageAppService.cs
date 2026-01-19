@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsiteControllerPageAppService : GenericApplicationService<WebsiteControllerPage>, IWebsiteControllerPageAppService
+    public partial class WebsiteControllerPageAppService : GenericApplicationService<WebsiteControllerPage>, IWebsiteControllerPageAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrUiViewAppService : GenericApplicationService<IrUiView>, IIrUiViewAppService
+    public partial class IrUiViewAppService : GenericApplicationService<IrUiView>, IIrUiViewAppService
     {
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
         public IrUiViewAppService(IRepository<IrUiView, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

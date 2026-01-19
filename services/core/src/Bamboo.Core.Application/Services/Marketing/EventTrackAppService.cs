@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventTrack", Category = "Marketing", Depends = new[] { "website_event" })]
-    public class EventTrackAppService : GenericApplicationService<EventTrack>, IEventTrackAppService
+    public partial class EventTrackAppService : GenericApplicationService<EventTrack>, IEventTrackAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmRecurringPayments", Category = "Accounting", Depends = new[] { "account" })]
-    public class RecurringPaymentAppService : GenericApplicationService<RecurringPayment>, IRecurringPaymentAppService
+    public partial class RecurringPaymentAppService : GenericApplicationService<RecurringPayment>, IRecurringPaymentAppService
     {
 
         public RecurringPaymentAppService(IRepository<RecurringPayment, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteForum", Category = "Website", Depends = new[] { "auth_signup", "website_mail", "website_profile" })]
-    public class ForumPostAppService : GenericApplicationService<ForumPost>, IForumPostAppService
+    public partial class ForumPostAppService : GenericApplicationService<ForumPost>, IForumPostAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;

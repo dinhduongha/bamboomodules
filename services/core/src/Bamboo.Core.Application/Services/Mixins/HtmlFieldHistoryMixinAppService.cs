@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("html_editor", Category = "Misc", Depends = new[] { "base", "bus", "web" })]
-    public class HtmlFieldHistoryMixinAppService : ApplicationService, IHtmlFieldHistoryMixinAppService
+    public partial class HtmlFieldHistoryMixinAppService : ApplicationService, IHtmlFieldHistoryMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public HtmlFieldHistoryMixinAppService(IServiceProvider serviceProvider) 

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Sale", Category = "Sales", Depends = new[] { "sales_team", "account_payment", "utm" })]
-    public class SaleOrderLineAppService : GenericApplicationService<SaleOrderLine>, ISaleOrderLineAppService
+    public partial class SaleOrderLineAppService : GenericApplicationService<SaleOrderLine>, ISaleOrderLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;

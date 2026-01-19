@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class SequenceMixinAppService : ApplicationService, ISequenceMixinAppService
+    public partial class SequenceMixinAppService : ApplicationService, ISequenceMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public SequenceMixinAppService(IServiceProvider serviceProvider) 

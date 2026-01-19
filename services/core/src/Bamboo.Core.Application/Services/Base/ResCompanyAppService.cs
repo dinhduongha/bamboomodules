@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class ResCompanyAppService : GenericApplicationService<ResCompany>, IResCompanyAppService
+    public partial class ResCompanyAppService : GenericApplicationService<ResCompany>, IResCompanyAppService
     {
         private readonly IFormatAddressMixinAppService _formatAddressMixinAppService;
         private readonly IFormatVatLabelMixinAppService _formatVatLabelMixinAppService;

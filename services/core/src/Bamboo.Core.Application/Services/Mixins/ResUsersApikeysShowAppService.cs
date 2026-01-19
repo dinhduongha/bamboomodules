@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class ResUsersApikeysShowAppService : ApplicationService, IResUsersApikeysShowAppService
+    public partial class ResUsersApikeysShowAppService : ApplicationService, IResUsersApikeysShowAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ResUsersApikeysShowAppService(IServiceProvider serviceProvider) 

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountMoveLineAppService : GenericApplicationService<AccountMoveLine>, IAccountMoveLineAppService
+    public partial class AccountMoveLineAppService : GenericApplicationService<AccountMoveLine>, IAccountMoveLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         public AccountMoveLineAppService(IRepository<AccountMoveLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

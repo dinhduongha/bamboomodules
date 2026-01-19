@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountBudget", Category = "Accounting", Depends = new[] { "account" })]
-    public class CrossoveredBudgetLinesAppService : GenericApplicationService<CrossoveredBudgetLines>, ICrossoveredBudgetLinesAppService
+    public partial class CrossoveredBudgetLinesAppService : GenericApplicationService<CrossoveredBudgetLines>, ICrossoveredBudgetLinesAppService
     {
 
         public CrossoveredBudgetLinesAppService(IRepository<CrossoveredBudgetLines, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

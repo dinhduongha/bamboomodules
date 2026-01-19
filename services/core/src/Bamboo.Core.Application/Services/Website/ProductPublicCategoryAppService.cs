@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery", "html_builder" })]
-    public class ProductPublicCategoryAppService : GenericApplicationService<ProductPublicCategory>, IProductPublicCategoryAppService
+    public partial class ProductPublicCategoryAppService : GenericApplicationService<ProductPublicCategory>, IProductPublicCategoryAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IWebsiteMultiMixinAppService _websiteMultiMixinAppService;

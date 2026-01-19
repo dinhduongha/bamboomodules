@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public class MailScheduledMessageAppService : GenericApplicationService<MailScheduledMessage>, IMailScheduledMessageAppService
+    public partial class MailScheduledMessageAppService : GenericApplicationService<MailScheduledMessage>, IMailScheduledMessageAppService
     {
 
         public MailScheduledMessageAppService(IRepository<MailScheduledMessage, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

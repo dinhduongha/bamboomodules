@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public class FleetVehicleAssignationLogAppService : GenericApplicationService<FleetVehicleAssignationLog>, IFleetVehicleAssignationLogAppService
+    public partial class FleetVehicleAssignationLogAppService : GenericApplicationService<FleetVehicleAssignationLog>, IFleetVehicleAssignationLogAppService
     {
 
         public FleetVehicleAssignationLogAppService(IRepository<FleetVehicleAssignationLog, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

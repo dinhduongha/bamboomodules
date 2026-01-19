@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public class MailingMailingAppService : GenericApplicationService<MailingMailing>, IMailingMailingAppService
+    public partial class MailingMailingAppService : GenericApplicationService<MailingMailing>, IMailingMailingAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;

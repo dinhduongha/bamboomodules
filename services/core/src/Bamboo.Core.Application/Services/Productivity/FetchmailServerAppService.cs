@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public class FetchmailServerAppService : GenericApplicationService<FetchmailServer>, IFetchmailServerAppService
+    public partial class FetchmailServerAppService : GenericApplicationService<FetchmailServer>, IFetchmailServerAppService
     {
         private readonly IGoogleGmailMixinAppService _googleGmailMixinAppService;
         private readonly IMicrosoftOutlookMixinAppService _microsoftOutlookMixinAppService;

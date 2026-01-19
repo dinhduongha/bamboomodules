@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Loyalty", Category = "Sales", Depends = new[] { "product", "portal", "account" })]
-    public class LoyaltyRewardAppService : GenericApplicationService<LoyaltyReward>, ILoyaltyRewardAppService
+    public partial class LoyaltyRewardAppService : GenericApplicationService<LoyaltyReward>, ILoyaltyRewardAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public LoyaltyRewardAppService(IRepository<LoyaltyReward, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

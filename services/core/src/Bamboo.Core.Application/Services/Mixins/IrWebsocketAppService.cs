@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("bus", Category = "Base", Depends = new[] { "base", "web" })]
-    public class IrWebsocketAppService : ApplicationService, IIrWebsocketAppService
+    public partial class IrWebsocketAppService : ApplicationService, IIrWebsocketAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrWebsocketAppService(IServiceProvider serviceProvider) 

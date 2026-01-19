@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Iap", Category = "Misc", Depends = new[] { "web", "base_setup" })]
-    public class IapAccountAppService : GenericApplicationService<IapAccount>, IIapAccountAppService
+    public partial class IapAccountAppService : GenericApplicationService<IapAccount>, IIapAccountAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public IapAccountAppService(IRepository<IapAccount, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

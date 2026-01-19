@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("board", Category = "Productivity", Depends = new[] { "spreadsheet_dashboard" })]
-    public class BoardBoardAppService : ApplicationService, IBoardBoardAppService
+    public partial class BoardBoardAppService : ApplicationService, IBoardBoardAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public BoardBoardAppService(IServiceProvider serviceProvider) 

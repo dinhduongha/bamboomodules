@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public class WebsitePublishedMultiMixinAppService : ApplicationService, IWebsitePublishedMultiMixinAppService
+    public partial class WebsitePublishedMultiMixinAppService : ApplicationService, IWebsitePublishedMultiMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebsitePublishedMultiMixinAppService(IServiceProvider serviceProvider) 
@@ -5199,11 +5199,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeFiscalCountryCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _compute_fiscal_country_codes(self):
             // for record in self:
             //     allowed_companies = record.company_id or self.env.companies
-            //     record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
+            //     country_codes = allowed_companies.mapped('account_fiscal_country_id.code')
+            //     if record.country_code:
+            //         country_codes.append(record.country_code)
+            //     record.fiscal_country_codes = ",".join(set(country_codes))
             */
             return default;
         }
@@ -5534,10 +5537,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeIsMondialrelayInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: delivery_carrier.py) ---
+            --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: res_partner.py) ---
             // def _compute_is_mondialrelay(self):
-            // for c in self:
-            //     c.is_mondialrelay = c.product_id.default_code == "MR"
+            // for p in self:
+            //     p.is_mondialrelay = p.ref and p.ref.startswith('MR#')
             */
             return default;
         }
@@ -7730,9 +7733,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeVolumeUomNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
             // def _compute_volume_uom_name(self):
-            // self.volume_uom_name = self._get_volume_uom_name_from_ir_config_parameter()
+            // self.volume_uom_name = self.env['product.template']._get_volume_uom_name_from_ir_config_parameter()
             */
             return default;
         }
@@ -7897,9 +7900,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWeightUomNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
             // def _compute_weight_uom_name(self):
-            // self.weight_uom_name = self._get_weight_uom_name_from_ir_config_parameter()
+            // self.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
             */
             return default;
         }
@@ -10611,15 +10614,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetBackendRootMenuIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: contacts, FILE: res_partner.py) ---
             // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('mrp.menu_mrp_root').id]
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
-            // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('purchase.menu_purchase_root').id]
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_template.py) ---
-            // def _get_backend_root_menu_ids(self):
-            // return super()._get_backend_root_menu_ids() + [self.env.ref('sale.sale_menu_root').id]
+            // return super()._get_backend_root_menu_ids() + [self.env.ref('contacts.menu_contacts').id]
             */
             return default;
         }
@@ -11972,31 +11969,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Products'),
-            //     'template': '/product/static/xls/product_template.xls'
+            //     'label': _('Import Template for Contacts'),
+            //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
-            // def get_import_templates(self):
-            // res = super(ProductTemplate, self).get_import_templates()
-            // if self.env.context.get('purchase_product_template'):
-            //     return [{
-            //         'label': _('Import Template for Products'),
-            //         'template': '/purchase/static/xls/product_purchase.xls'
-            //     }]
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_template.py) ---
-            // def get_import_templates(self):
-            // res = super(ProductTemplate, self).get_import_templates()
-            // if self.env.context.get('sale_multi_pricelist_product_template'):
-            //     if self.env.user.has_group('product.group_product_pricelist'):
-            //         return [{
-            //             'label': _("Import Template for Products"),
-            //             'template': '/product/static/xls/product_template.xls'
-            //         }]
-            // return res
             */
             return default;
         }
@@ -15395,9 +15373,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_domain(self, data, config):
-            // return [('event_ticket_ids', 'in', [ticket['id'] for ticket in data['event.event.ticket']])]
+            // # Collect partner IDs from loaded orders
+            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']}
+            // 
+            // # Extract partner IDs from the tuples returned by get_limited_partners_loading
+            // limited_partner_ids = {partner[0] for partner in config.get_limited_partners_loading()}
+            // 
+            // limited_partner_ids.add(self.env.user.partner_id.id)  # Ensure current user is included
+            // partner_ids = limited_partner_ids.union(loaded_order_partner_ids)
+            // return [('id', 'in', list(partner_ids))]
             */
             return default;
         }
@@ -15405,11 +15391,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_fields(self, config):
-            // return ['id', 'name', 'seats_available', 'event_ticket_ids', 'registration_ids', 'seats_limited', 'write_date',
-            //         'question_ids', 'general_question_ids', 'specific_question_ids', 'seats_max',
-            //         'is_multi_slots', 'event_slot_ids']
+            // return [
+            //     'id', 'name', 'street', 'street2', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'email',
+            //     'barcode', 'write_date', 'property_product_pricelist', 'parent_name', 'pos_contact_address',
+            //     'invoice_emails', 'fiscal_position_id', 'is_company', 'property_account_receivable_id',
+            // ]
+            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: res_partner.py) ---
+            // def _load_pos_data_fields(self, config):
+            // return super()._load_pos_data_fields(config) + ['sale_warn_msg']
             */
             return default;
         }
@@ -15546,10 +15537,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsitePublishedMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_partner.py) ---
             // def _load_pos_self_data_domain(self, data, config):
-            // domain = super()._load_pos_self_data_domain(data, config)
-            // return Domain.AND([domain, [('self_order_available', '=', True)]])
+            // return False
             */
             return default;
         }

@@ -22,14 +22,16 @@ using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Volo.Abp.Application.Dtos;
 
 namespace Bamboo.Core.Application
 {
-    public class GenericApplicationService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
+    //public class GenericApplicationService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
+    public class GenericApplicationService<TEntity> : CrudAppService<TEntity, TEntity, Guid>, IGenericApplicationService<TEntity>
         where TEntity : class, IEntity<Guid>
     {
         //protected readonly IRepository<TEntity, Guid> Repository;
-        protected readonly IRepository<TEntity, Guid> Repository;
+        //protected readonly IRepository<TEntity, Guid> Repository;
         protected readonly IAuthorizationService _authorizationService;
         protected readonly IDomainParser _domainParser;
         protected readonly IServiceProvider _serviceProvider;
@@ -48,9 +50,10 @@ namespace Bamboo.Core.Application
             IDataFilter dataFilter,
             IObjectMapper objectMapper,
             IMemoryCache memoryCache)
+            : base(repository)
         {
-            Repository = repository;
-            Repository = repository;
+            //Repository = repository;
+            //Repository = repository;
             _serviceProvider = serviceProvider;
             _authorizationService = authorizationService;
             _domainParser = domainParser;
@@ -59,7 +62,7 @@ namespace Bamboo.Core.Application
             _objectMapper = objectMapper;
             _memoryCache = memoryCache;
 
-            _currentTenant =  _serviceProvider.GetRequiredService<ICurrentTenant>();
+            _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
             if (!_currentTenant.Id.HasValue)
             {
                 _dataFilter.Disable<IMultiTenant>();
@@ -244,7 +247,7 @@ namespace Bamboo.Core.Application
 
             return await Repository.InsertAsync(newEntity);
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
-            var returnFields = readFieldPermissions == null? allowedFields: allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
+            var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
             foreach (var field in returnFields)
@@ -316,7 +319,7 @@ namespace Bamboo.Core.Application
             }
 
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
-            var returnFields = readFieldPermissions == null? allowedFields: allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
+            var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
             foreach (var field in returnFields)
@@ -341,6 +344,7 @@ namespace Bamboo.Core.Application
                 .ToDynamicList();
             return result.Select(r =>
             {
+                //var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
                 var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
                 foreach (var field in returnFields.Where(f => relationFields.ContainsKey(f)))
                 {
@@ -364,7 +368,7 @@ namespace Bamboo.Core.Application
             var entity = query.Where(e => ids.Contains(e.Id)).FirstOrDefault();
             if (entity == null)
                 throw new UserFriendlyException("Entity not found or access denied");
-            Repository.DeleteManyAsync(ids);
+            await Repository.DeleteManyAsync(ids);
         }
 
         public virtual async Task<object> UnlinkAsync(List<Guid> ids)
@@ -476,7 +480,7 @@ namespace Bamboo.Core.Application
 
             await Repository.InsertAsync(newEntity);
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
-            var returnFields = readFieldPermissions == null? allowedFields: allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
+            var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
             foreach (var field in returnFields)
@@ -579,7 +583,7 @@ namespace Bamboo.Core.Application
         }
 
         public virtual async Task<TEntity> DefaultGetAsync(object fields)
-        { 
+        {
             throw new UserFriendlyException("Not implemented");
         }
 
@@ -700,6 +704,34 @@ namespace Bamboo.Core.Application
             if (result is Task<TResult> task)
                 return await task;
             return (TResult)result;
+        }
+
+        public override async Task<TEntity> GetAsync(Guid id)
+        {
+            return await base.GetAsync(id);
+        }
+
+        public override async Task<PagedResultDto<TEntity>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            return await base.GetListAsync(input);
+        }
+
+        public override async Task<TEntity> CreateAsync(TEntity input)
+        {
+            //return await base.CreateAsync(input);
+            throw new NotImplementedException();
+        }
+
+        public override async Task<TEntity> UpdateAsync(Guid id, TEntity input)
+        {
+            //return await base.UpdateAsync(id, input);
+            throw new NotImplementedException();
+        }
+
+        public override async Task DeleteAsync(Guid id)
+        {
+            //await base.DeleteAsync(id);
+            throw new NotImplementedException();
         }
     }
 }

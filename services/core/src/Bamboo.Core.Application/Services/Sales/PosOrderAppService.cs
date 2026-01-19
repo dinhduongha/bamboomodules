@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public class PosOrderAppService : GenericApplicationService<PosOrder>, IPosOrderAppService
+    public partial class PosOrderAppService : GenericApplicationService<PosOrder>, IPosOrderAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountDocumentImportMixinAppService : ApplicationService, IAccountDocumentImportMixinAppService
+    public partial class AccountDocumentImportMixinAppService : ApplicationService, IAccountDocumentImportMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public AccountDocumentImportMixinAppService(IServiceProvider serviceProvider) 

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class ImageMixinAppService : ApplicationService, IImageMixinAppService
+    public partial class ImageMixinAppService : ApplicationService, IImageMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ImageMixinAppService(IServiceProvider serviceProvider) 

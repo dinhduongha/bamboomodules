@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public class StockReplenishMixinAppService : ApplicationService, IStockReplenishMixinAppService
+    public partial class StockReplenishMixinAppService : ApplicationService, IStockReplenishMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public StockReplenishMixinAppService(IServiceProvider serviceProvider) 

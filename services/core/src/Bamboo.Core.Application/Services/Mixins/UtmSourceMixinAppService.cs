@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("utm", Category = "Marketing", Depends = new[] { "base", "web" })]
-    public class UtmSourceMixinAppService : ApplicationService, IUtmSourceMixinAppService
+    public partial class UtmSourceMixinAppService : ApplicationService, IUtmSourceMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public UtmSourceMixinAppService(IServiceProvider serviceProvider) 

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockPickingBatchModule", Category = "SupplyChain", Depends = new[] { "stock" })]
-    public class StockPickingBatchAppService : GenericApplicationService<StockPickingBatch>, IStockPickingBatchAppService
+    public partial class StockPickingBatchAppService : GenericApplicationService<StockPickingBatch>, IStockPickingBatchAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base_geolocalize", Category = "Sales", Depends = new[] { "base_setup" })]
-    public class BaseGeocoderAppService : ApplicationService, IBaseGeocoderAppService
+    public partial class BaseGeocoderAppService : ApplicationService, IBaseGeocoderAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public BaseGeocoderAppService(IServiceProvider serviceProvider) 

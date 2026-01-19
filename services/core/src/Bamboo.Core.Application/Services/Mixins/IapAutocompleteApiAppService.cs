@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("partner_autocomplete", Category = "Misc", Depends = new[] { "iap_mail" })]
-    public class IapAutocompleteApiAppService : ApplicationService, IIapAutocompleteApiAppService
+    public partial class IapAutocompleteApiAppService : ApplicationService, IIapAutocompleteApiAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IapAutocompleteApiAppService(IServiceProvider serviceProvider) 

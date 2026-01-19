@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PurchaseRequisitionModule", Category = "SupplyChain", Depends = new[] { "purchase" })]
-    public class PurchaseRequisitionAppService : GenericApplicationService<PurchaseRequisition>, IPurchaseRequisitionAppService
+    public partial class PurchaseRequisitionAppService : GenericApplicationService<PurchaseRequisition>, IPurchaseRequisitionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

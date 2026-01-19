@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SmsTwilio", Category = "Misc", Depends = new[] { "sms" })]
-    public class SmsTwilioNumberAppService : GenericApplicationService<SmsTwilioNumber>, ISmsTwilioNumberAppService
+    public partial class SmsTwilioNumberAppService : GenericApplicationService<SmsTwilioNumber>, ISmsTwilioNumberAppService
     {
 
         public SmsTwilioNumberAppService(IRepository<SmsTwilioNumber, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

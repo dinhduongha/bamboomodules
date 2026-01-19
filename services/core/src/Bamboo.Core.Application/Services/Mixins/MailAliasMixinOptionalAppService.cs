@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public class MailAliasMixinOptionalAppService : ApplicationService, IMailAliasMixinOptionalAppService
+    public partial class MailAliasMixinOptionalAppService : ApplicationService, IMailAliasMixinOptionalAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public MailAliasMixinOptionalAppService(IServiceProvider serviceProvider) 

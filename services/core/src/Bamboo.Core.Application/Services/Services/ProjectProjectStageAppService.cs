@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public class ProjectProjectStageAppService : GenericApplicationService<ProjectProjectStage>, IProjectProjectStageAppService
+    public partial class ProjectProjectStageAppService : GenericApplicationService<ProjectProjectStage>, IProjectProjectStageAppService
     {
 
         public ProjectProjectStageAppService(IRepository<ProjectProjectStage, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

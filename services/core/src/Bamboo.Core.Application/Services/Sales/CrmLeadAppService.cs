@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Crm", Category = "Sales", Depends = new[] { "base_setup", "sales_team", "mail", "calendar", "resource", "utm", "web_tour", "contacts", "digest", "phone_validation" })]
-    public class CrmLeadAppService : GenericApplicationService<CrmLead>, ICrmLeadAppService
+    public partial class CrmLeadAppService : GenericApplicationService<CrmLead>, ICrmLeadAppService
     {
         private readonly IFormatAddressMixinAppService _formatAddressMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;

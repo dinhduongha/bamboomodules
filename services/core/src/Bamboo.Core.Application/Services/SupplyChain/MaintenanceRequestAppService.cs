@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Maintenance", Category = "SupplyChain", Depends = new[] { "mail" })]
-    public class MaintenanceRequestAppService : GenericApplicationService<MaintenanceRequest>, IMaintenanceRequestAppService
+    public partial class MaintenanceRequestAppService : GenericApplicationService<MaintenanceRequest>, IMaintenanceRequestAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadCcAppService _mailThreadCcAppService;

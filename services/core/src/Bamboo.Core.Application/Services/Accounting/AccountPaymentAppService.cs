@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountPaymentAppService : GenericApplicationService<AccountPayment>, IAccountPaymentAppService
+    public partial class AccountPaymentAppService : GenericApplicationService<AccountPayment>, IAccountPaymentAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadMainAttachmentAppService _mailThreadMainAttachmentAppService;

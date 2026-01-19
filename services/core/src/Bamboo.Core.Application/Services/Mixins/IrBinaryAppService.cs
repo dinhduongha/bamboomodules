@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class IrBinaryAppService : ApplicationService, IIrBinaryAppService
+    public partial class IrBinaryAppService : ApplicationService, IIrBinaryAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrBinaryAppService(IServiceProvider serviceProvider) 

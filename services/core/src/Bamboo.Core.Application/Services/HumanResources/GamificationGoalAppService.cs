@@ -17,7 +17,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public class GamificationGoalAppService : GenericApplicationService<GamificationGoal>, IGamificationGoalAppService
+    public partial class GamificationGoalAppService : GenericApplicationService<GamificationGoal>, IGamificationGoalAppService
     {
 
         public GamificationGoalAppService(IRepository<GamificationGoal, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

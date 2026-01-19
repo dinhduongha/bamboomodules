@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class IrQwebFieldFloatAppService : ApplicationService, IIrQwebFieldFloatAppService
+    public partial class IrQwebFieldFloatAppService : ApplicationService, IIrQwebFieldFloatAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrQwebFieldFloatAppService(IServiceProvider serviceProvider) 

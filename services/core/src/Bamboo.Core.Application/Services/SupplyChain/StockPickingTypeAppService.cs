@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public class StockPickingTypeAppService : GenericApplicationService<StockPickingType>, IStockPickingTypeAppService
+    public partial class StockPickingTypeAppService : GenericApplicationService<StockPickingType>, IStockPickingTypeAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public StockPickingTypeAppService(IRepository<StockPickingType, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)

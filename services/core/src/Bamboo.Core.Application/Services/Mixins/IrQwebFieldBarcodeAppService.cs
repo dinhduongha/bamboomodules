@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("base", Category = "Base")]
-    public class IrQwebFieldBarcodeAppService : ApplicationService, IIrQwebFieldBarcodeAppService
+    public partial class IrQwebFieldBarcodeAppService : ApplicationService, IIrQwebFieldBarcodeAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IrQwebFieldBarcodeAppService(IServiceProvider serviceProvider) 

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("rating", Category = "Productivity", Depends = new[] { "mail" })]
-    public class RatingParentMixinAppService : ApplicationService, IRatingParentMixinAppService
+    public partial class RatingParentMixinAppService : ApplicationService, IRatingParentMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public RatingParentMixinAppService(IServiceProvider serviceProvider) 

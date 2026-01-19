@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public class ProjectProjectAppService : GenericApplicationService<ProjectProject>, IProjectProjectAppService
+    public partial class ProjectProjectAppService : GenericApplicationService<ProjectProject>, IProjectProjectAppService
     {
         private readonly IAnalyticPlanFieldsMixinAppService _analyticPlanFieldsMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;

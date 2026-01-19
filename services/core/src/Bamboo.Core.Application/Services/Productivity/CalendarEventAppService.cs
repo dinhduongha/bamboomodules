@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public class CalendarEventAppService : GenericApplicationService<CalendarEvent>, ICalendarEventAppService
+    public partial class CalendarEventAppService : GenericApplicationService<CalendarEvent>, ICalendarEventAppService
     {
         private readonly IGoogleCalendarSyncAppService _googleCalendarSyncAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("rating", Category = "Productivity", Depends = new[] { "mail" })]
-    public class RatingMixinAppService : ApplicationService, IRatingMixinAppService
+    public partial class RatingMixinAppService : ApplicationService, IRatingMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public RatingMixinAppService(IServiceProvider serviceProvider) 
@@ -2463,20 +2463,21 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IRatingMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
             // def _compute_display_name(self):
-            // display_default_code = self.env.context.get('display_default_code', True)
-            // for template in self:
-            //     if not template.name:
-            //         template.display_name = False
-            //     elif not (display_default_code and template.default_code):
-            //         template.display_name = template.name
-            //     elif self.env.context.get('formatted_display_name'):
-            //         code_prefix = f'\t--{template.default_code}--'
-            //         template.display_name = f'{template.name}{code_prefix}'
-            //     else:
-            //         code_prefix = f'[{template.default_code}] '
-            //         template.display_name = f'{code_prefix}{template.name}'
+            // for channel in self:
+            //     if channel.name:
+            //         channel.display_name = channel.name
+            //         continue
+            //     parts = channel.channel_name_member_ids.mapped(
+            //         lambda m: m.partner_id.name or m.guest_id.name
+            //     )
+            //     if channel.member_count > 3:
+            //         remaining = channel.member_count - 3
+            //         parts.append(
+            //             self.env._("1 other") if remaining == 1 else self.env._("%s others", remaining)
+            //         )
+            //     channel.display_name = format_list(self.env, parts)
             */
             return default;
         }

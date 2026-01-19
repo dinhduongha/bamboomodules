@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public class MrpProductionAppService : GenericApplicationService<MrpProduction>, IMrpProductionAppService
+    public partial class MrpProductionAppService : GenericApplicationService<MrpProduction>, IMrpProductionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;

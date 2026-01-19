@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("iap", Category = "Misc", Depends = new[] { "web", "base_setup" })]
-    public class IapEnrichApiAppService : ApplicationService, IIapEnrichApiAppService
+    public partial class IapEnrichApiAppService : ApplicationService, IIapEnrichApiAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public IapEnrichApiAppService(IServiceProvider serviceProvider) 

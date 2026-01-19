@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("google_account", Category = "Misc", Depends = new[] { "base_setup" })]
-    public class GoogleServiceAppService : ApplicationService, IGoogleServiceAppService
+    public partial class GoogleServiceAppService : ApplicationService, IGoogleServiceAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public GoogleServiceAppService(IServiceProvider serviceProvider) 
