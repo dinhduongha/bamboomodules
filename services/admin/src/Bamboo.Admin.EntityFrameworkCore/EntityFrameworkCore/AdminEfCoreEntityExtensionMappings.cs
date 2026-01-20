@@ -61,7 +61,17 @@ public static class AdminEfCoreEntityExtensionMappings
 
             ObjectExtensionManager.Instance
                 .MapEfCoreProperty<Tenant, Guid?>("OwnerId")
+                .MapEfCoreProperty<Tenant, Guid?>("ParentId")
+                .MapEfCoreProperty<Tenant, long>("MaxChild", (entityBuilder, propertyBuilder) =>
+                {
+                    propertyBuilder.HasDefaultValue(0);
+                })
+                .MapEfCoreProperty<Tenant, long>("VipLevel", (entityBuilder, propertyBuilder) =>
+                {
+                    propertyBuilder.HasDefaultValue(0);
+                })
                 .MapEfCoreProperty<Tenant, string>("Host")
+                .MapEfCoreProperty<Tenant, string>("ParentPath")
                 .MapEfCoreProperty<Tenant, string?>("Description");
 
             ObjectExtensionManager.Instance

@@ -2166,6 +2166,11 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<long>("MaxChild")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -2178,6 +2183,17 @@ namespace Bamboo.Admin.Migrations
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ParentPath")
+                        .HasColumnType("text");
+
+                    b.Property<long>("VipLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
 
                     b.HasKey("Id");
 
@@ -2250,9 +2266,6 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Bamboo.Admin.TenantOwner", b =>
                 {
                     b.HasBaseType("Volo.Abp.TenantManagement.Tenant");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid");
 
                     b.ToTable("AbpTenants");
 

@@ -243,6 +243,7 @@ namespace Bamboo.Admin.Controllers
                 {
                     identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));
                 }
+                identity.AddClaim(new Claim("tenant_user", "false"));
 
                 // Copy Scopes từ request
                 newPrincipal.SetScopes(request.GetScopes());
