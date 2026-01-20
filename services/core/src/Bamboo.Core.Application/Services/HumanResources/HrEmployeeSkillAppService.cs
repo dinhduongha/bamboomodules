@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class HrEmployeeSkillAppService : GenericApplicationService<HrEmployeeSkill>, IHrEmployeeSkillAppService
     {
         private readonly IHrIndividualSkillMixinAppService _hrIndividualSkillMixinAppService;
-        public HrEmployeeSkillAppService(IRepository<HrEmployeeSkill, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IHrIndividualSkillMixinAppService hrIndividualSkillMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public HrEmployeeSkillAppService(IRepository<HrEmployeeSkill, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IHrIndividualSkillMixinAppService hrIndividualSkillMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
         {
             _hrIndividualSkillMixinAppService = hrIndividualSkillMixinAppService;
         }

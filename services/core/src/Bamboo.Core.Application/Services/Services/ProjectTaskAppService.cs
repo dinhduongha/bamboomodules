@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
@@ -26,7 +27,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailTrackingDurationMixinAppService _mailTrackingDurationMixinAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;
         private readonly IRatingMixinAppService _ratingMixinAppService;
-        public ProjectTaskAppService(IRepository<ProjectTask, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IHtmlFieldHistoryMixinAppService htmlFieldHistoryMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadCcAppService mailThreadCcAppService, IMailTrackingDurationMixinAppService mailTrackingDurationMixinAppService, IPortalMixinAppService portalMixinAppService, IRatingMixinAppService ratingMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ProjectTaskAppService(IRepository<ProjectTask, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IHtmlFieldHistoryMixinAppService htmlFieldHistoryMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadCcAppService mailThreadCcAppService, IMailTrackingDurationMixinAppService mailTrackingDurationMixinAppService, IPortalMixinAppService portalMixinAppService, IRatingMixinAppService ratingMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
         {
             _htmlFieldHistoryMixinAppService = htmlFieldHistoryMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;

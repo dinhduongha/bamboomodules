@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;
         private readonly IMailThreadPhoneAppService _mailThreadPhoneAppService;
         private readonly IPropertiesBaseDefinitionMixinAppService _propertiesBaseDefinitionMixinAppService;
-        public MailingContactAppService(IRepository<MailingContact, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService, IPropertiesBaseDefinitionMixinAppService propertiesBaseDefinitionMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MailingContactAppService(IRepository<MailingContact, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadBlacklistAppService mailThreadBlacklistAppService, IMailThreadPhoneAppService mailThreadPhoneAppService, IPropertiesBaseDefinitionMixinAppService propertiesBaseDefinitionMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
         {
             _mailThreadBlacklistAppService = mailThreadBlacklistAppService;
             _mailThreadPhoneAppService = mailThreadPhoneAppService;

@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("web_editor", Category = "Website", Depends = new[] { "bus", "web", "html_editor" })]
-    public class WebEditorAssetsAppService : ApplicationService, IWebEditorAssetsAppService
+    public partial class WebEditorAssetsAppService : ApplicationService, IWebEditorAssetsAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public WebEditorAssetsAppService(IServiceProvider serviceProvider) 

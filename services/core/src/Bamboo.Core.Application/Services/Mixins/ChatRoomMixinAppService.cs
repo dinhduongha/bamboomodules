@@ -16,7 +16,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services.Mixins
 {
     [Module("website_jitsi", Category = "Website", Depends = new[] { "website" })]
-    public class ChatRoomMixinAppService : ApplicationService, IChatRoomMixinAppService
+    public partial class ChatRoomMixinAppService : ApplicationService, IChatRoomMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
         public ChatRoomMixinAppService(IServiceProvider serviceProvider) 

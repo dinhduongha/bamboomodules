@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
@@ -18,11 +19,11 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventMeet", Category = "Marketing", Depends = new[] { "website_event_jitsi" })]
-    public class EventMeetingRoomAppService : GenericApplicationService<EventMeetingRoom>, IEventMeetingRoomAppService
+    public partial class EventMeetingRoomAppService : GenericApplicationService<EventMeetingRoom>, IEventMeetingRoomAppService
     {
         private readonly IChatRoomMixinAppService _chatRoomMixinAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
-        public EventMeetingRoomAppService(IRepository<EventMeetingRoom, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IChatRoomMixinAppService chatRoomMixinAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public EventMeetingRoomAppService(IRepository<EventMeetingRoom, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IChatRoomMixinAppService chatRoomMixinAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
         {
             _chatRoomMixinAppService = chatRoomMixinAppService;
             _websitePublishedMixinAppService = websitePublishedMixinAppService;

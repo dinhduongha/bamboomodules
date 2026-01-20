@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IGoogleCalendarSyncAppService _googleCalendarSyncAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IMicrosoftCalendarSyncAppService _microsoftCalendarSyncAppService;
-        public CalendarEventAppService(IRepository<CalendarEvent, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IGoogleCalendarSyncAppService googleCalendarSyncAppService, IMailThreadAppService mailThreadAppService, IMicrosoftCalendarSyncAppService microsoftCalendarSyncAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public CalendarEventAppService(IRepository<CalendarEvent, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IGoogleCalendarSyncAppService googleCalendarSyncAppService, IMailThreadAppService mailThreadAppService, IMicrosoftCalendarSyncAppService microsoftCalendarSyncAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
         {
             _googleCalendarSyncAppService = googleCalendarSyncAppService;
             _mailThreadAppService = mailThreadAppService;

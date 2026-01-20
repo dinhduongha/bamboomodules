@@ -4,9 +4,11 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Distributed;
 
 using Volo.Abp;
 using Volo.Abp.Application.Services;
@@ -38,18 +40,18 @@ namespace Bamboo.Core.Application
         protected readonly IModelTypeRegistry _modelTypeRegistry;
         protected readonly IDataFilter _dataFilter;
         protected readonly IObjectMapper _objectMapper;
-        protected readonly IMemoryCache _memoryCache;
+        protected readonly IDistributedCache _cache;
         private readonly bool _filterFieldAccess = false;
         protected readonly ICurrentTenant _currentTenant;
         public GenericApplicationService(
             IRepository<TEntity, Guid> repository,
             IServiceProvider serviceProvider,
-            IAuthorizationService authorizationService,
-            IDomainParser domainParser,
-            IModelTypeRegistry modelTypeRegistry,
             IDataFilter dataFilter,
             IObjectMapper objectMapper,
-            IMemoryCache memoryCache)
+            IDistributedCache cache,
+            IAuthorizationService authorizationService,
+            IDomainParser domainParser,
+            IModelTypeRegistry modelTypeRegistry)
             : base(repository)
         {
             //Repository = repository;
@@ -60,7 +62,7 @@ namespace Bamboo.Core.Application
             _modelTypeRegistry = modelTypeRegistry;
             _dataFilter = dataFilter;
             _objectMapper = objectMapper;
-            _memoryCache = memoryCache;
+            _cache = cache;
 
             _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
             if (!_currentTenant.Id.HasValue)
@@ -81,10 +83,32 @@ namespace Bamboo.Core.Application
             }
 
             var cacheKey = $"FieldAccess_{modelName}_{operation}";
-            if (!_memoryCache.TryGetValue(cacheKey, out Dictionary<string, bool> fieldPermissions))
+            Dictionary<string, bool>? fieldPermissions;
+            // if (!_cache.TryGetValue(cacheKey, out Dictionary<string, bool> fieldPermissions))
+            // {
+            //     fieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, operation);
+            //     _cache.Set(cacheKey, fieldPermissions, TimeSpan.FromMinutes(10));
+            // }
+            var cachedValue = await _cache.GetStringAsync(cacheKey);
+            if (cachedValue == null)
             {
-                fieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, operation);
-                _memoryCache.Set(cacheKey, fieldPermissions, TimeSpan.FromMinutes(10));
+                fieldPermissions = await _authorizationService
+                    .GetFieldAccessAsync(modelName, operation);
+
+                await _cache.SetStringAsync(
+                    cacheKey,
+                    JsonSerializer.Serialize(fieldPermissions),
+                    new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                    }
+                );
+            }
+            else
+            {
+                fieldPermissions =
+                    JsonSerializer.Deserialize<Dictionary<string, bool>>(cachedValue)
+                    ?? new Dictionary<string, bool>();
             }
 
             if (fields == null || !fields.Any())
@@ -624,7 +648,11 @@ namespace Bamboo.Core.Application
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
             var cacheKey = $"FieldsMetadata_{modelName}";
-            if (!_memoryCache.TryGetValue(cacheKey, out Dictionary<string, Dictionary<string, object>> metadata))
+            Dictionary<string, Dictionary<string, object>> metadata;
+            var cachedValue = await _cache.GetStringAsync(cacheKey);
+
+            //if (!_memoryCache.TryGetValue(cacheKey, out Dictionary<string, Dictionary<string, object>> metadata))
+            if (cachedValue == null)
             {
                 metadata = new Dictionary<string, Dictionary<string, object>>();
                 var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
@@ -661,8 +689,21 @@ namespace Bamboo.Core.Application
 
                     metadata[field] = fieldInfo;
                 }
-
-                _memoryCache.Set(cacheKey, metadata, TimeSpan.FromMinutes(30));
+                await _cache.SetStringAsync(
+                    cacheKey,
+                    JsonSerializer.Serialize(metadata),
+                    new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                    }
+                );
+                //_memoryCache.Set(cacheKey, metadata, TimeSpan.FromMinutes(30));
+            }
+            else
+            {
+                metadata =
+                    JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(cachedValue)
+                    ?? new Dictionary<string, Dictionary<string, object>>();
             }
 
             return metadata;
