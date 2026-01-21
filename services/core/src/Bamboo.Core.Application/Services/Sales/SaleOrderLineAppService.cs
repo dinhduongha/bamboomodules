@@ -15,6 +15,7 @@ using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
+using System.Text.Json;
 
 namespace Bamboo.Core.Application.Services
 {
@@ -3739,7 +3740,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domain = null, string @operator = "ilike", int limit = 100)
+        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_service, FILE: sale_order_line.py) ---

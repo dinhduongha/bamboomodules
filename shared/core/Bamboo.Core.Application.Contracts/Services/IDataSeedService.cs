@@ -12,6 +12,6 @@ public interface IDataSeedService : IApplicationService
     Task SeedDataAsync(List<string> paths, Guid? tenantId = null, bool includeDemoData = false);
 
     Task<ResCompany> SeedTenantDataAsync(Guid? tenantId = null, string? name = null);
-
+    Task<ResOrganization> SeedOrganizationDataAsync(Guid? tenantId = null, Guid? organizationId = null, string? name = null);
     Task<ResUsers> SeedUserDataAsync(Guid? userId = null, string? name = null);
 }

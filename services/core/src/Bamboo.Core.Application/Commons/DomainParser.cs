@@ -53,21 +53,22 @@ namespace Bamboo.Core.Application.Services.Commons
             _modelTypeRegistry = modelTypeRegistry;
         }
 
-        public async Task<IQueryable<TEntity>> ApplyDomain<TEntity>(IQueryable<TEntity> query, string domainJson)
+        public async Task<IQueryable<TEntity>> ApplyDomain<TEntity>(IQueryable<TEntity> query, JsonElement? domain)
             where TEntity : class, IEntity<Guid>
         {
-            if (string.IsNullOrEmpty(domainJson))
-                return query;
             return query;
-            var domain = JsonSerializer.Deserialize<List<object>>(domainJson, new JsonSerializerOptions
-            {
-                Converters = { new ObjectToInferredTypeConverter() }
-            });
-            //var jsonFields = GetJsonFields<TEntity>();
-            var jsonFields = GetJsonFieldsAsync<TEntity>().Result;
-            var relationFields = GetRelationFields<TEntity>();
-            var (predicate, parameters) = ParseDomain(domain, jsonFields, relationFields);
-            return query.Where(predicate, parameters.ToArray());
+            // if (string.IsNullOrEmpty(domainJson))
+            //     return query;
+            // return query;
+            // var domain = JsonSerializer.Deserialize<List<object>>(domainJson, new JsonSerializerOptions
+            // {
+            //     Converters = { new ObjectToInferredTypeConverter() }
+            // });
+            // //var jsonFields = GetJsonFields<TEntity>();
+            // var jsonFields = GetJsonFieldsAsync<TEntity>().Result;
+            // var relationFields = GetRelationFields<TEntity>();
+            // var (predicate, parameters) = ParseDomain(domain, jsonFields, relationFields);
+            // return query.Where(predicate, parameters.ToArray());
         }
 
         private List<string> GetJsonFields<TEntity>()

@@ -137,7 +137,7 @@ namespace Bamboo.Core.Application
             return relationFields;
         }
 
-        public virtual async Task<List<Guid>> SearchAsync(string domain, long offset = 0, int limit = 100, string order = null)
+        public virtual async Task<List<Guid>> SearchAsync(JsonElement? domain, long offset = 0, int limit = 100, string order = null)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
@@ -195,7 +195,7 @@ namespace Bamboo.Core.Application
             }).ToList();
         }
 
-        public virtual async Task<List<object>> SearchReadAsync(string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
+        public virtual async Task<List<object>> SearchReadAsync(JsonElement? domain = null, List<string> fields = null, long offset = 0, int limit = 100, string order = null)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
@@ -445,14 +445,14 @@ namespace Bamboo.Core.Application
             return result.Select(r => (r.Id, r.Name)).ToList();
         }
 
-        public virtual async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domainJson = null, string @operator = "ilike", int limit = 100)
+        public virtual async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
             var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = await _domainParser.ApplyDomain(query, domainJson);
+            query = await _domainParser.ApplyDomain(query, domain);
 
             if (!string.IsNullOrEmpty(name))
             {

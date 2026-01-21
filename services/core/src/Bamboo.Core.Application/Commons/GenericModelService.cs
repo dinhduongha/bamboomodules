@@ -41,13 +41,13 @@ namespace Bamboo.Core.Application
             return jsonElementList;
         }
 
-        public async Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, int limit = 100, string order = null)
+        public async Task<List<Guid>> SearchAsync(string modelName, JsonElement? domain = null, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
             return await CallServiceMethodAsync<List<Guid>>(service, "SearchAsync", domain, offset, limit, order);
         }
 
-        public async Task<List<JsonElement>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
+        public async Task<List<JsonElement>> SearchReadAsync(string modelName, JsonElement? domain = null, List<string> fields = null, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
             var results = await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields ?? [], offset, limit, order);
@@ -103,7 +103,7 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<List<(Guid Id, string Name)>>(service, "NameGetAsync", ids);
         }
 
-        public async Task<List<(Guid Id, string Name)>> NameSearchAsync(string modelName, string name, string domain = null, string @operator = "ilike", int limit = 100)
+        public async Task<List<(Guid Id, string Name)>> NameSearchAsync(string modelName, string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100)
         {
             var service = GetGenericService(modelName);
             return await CallServiceMethodAsync<List<(Guid Id, string Name)>>(service, "NameSearchAsync", name, domain, @operator, limit);

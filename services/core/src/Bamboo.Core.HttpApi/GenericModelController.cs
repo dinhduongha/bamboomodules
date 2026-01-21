@@ -14,15 +14,23 @@ using Bamboo.Core.Application.Dtos;
 namespace Bamboo.Core.HttpApi
 {
     [Route("api/v1/generic")]
+    ///web/dataset/call_kw
     public class GenericModelController : AbpController
     {
         private readonly IGenericModelService _genericModelService;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
+        static readonly JsonSerializerOptions _jsonSerializerOptions =
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower,
+                DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower, // nếu serialize Dictionary
+                PropertyNameCaseInsensitive = true // thường bật cho deserialize
+            };
 
+        //private readonly JsonSerializerOptions _jsonSerializerOptions;
         public GenericModelController(IOptions<JsonSerializerOptions> jsonSerializerOptions, IGenericModelService genericModelService)
         {
             _genericModelService = genericModelService;
-            _jsonSerializerOptions = jsonSerializerOptions.Value;
+            //_jsonSerializerOptions = jsonSerializerOptions.Value;
         }
 
         [HttpGet("{model}/read/{id}")]
@@ -30,7 +38,7 @@ namespace Bamboo.Core.HttpApi
         {
             var results = await _genericModelService.ReadAsync(model, [id], fields);
             JsonElement jsonElement = results
-            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions).ToCamelCase())
             .FirstOrDefault();
             return jsonElement;
         }
@@ -40,7 +48,7 @@ namespace Bamboo.Core.HttpApi
         {
             var results = await _genericModelService.ReadAsync(model, request.Ids, request.Fields);
             List<JsonElement> jsonElementList = results
-            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions).ToCamelCase())
             .ToList();
             return jsonElementList;
         }
@@ -56,7 +64,7 @@ namespace Bamboo.Core.HttpApi
         {
             var results = await _genericModelService.SearchReadAsync(model, request.Domain, request.Fields, request.Offset, request.Limit, request.Order);
             List<JsonElement> jsonElementList = results
-                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .Select(item => JsonSerializer.SerializeToElement(item).ToCamelCase())
                 .ToList();
             return jsonElementList;
         }

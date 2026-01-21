@@ -26,6 +26,7 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.Uow;
 
 using Bamboo.Core.Models;
+using Volo.Abp.Users;
 namespace Bamboo.Core.Application
 {
     /*
@@ -75,9 +76,36 @@ namespace Bamboo.Core.Application
             return null;
         }
 
+        public async Task<ResOrganization> SeedOrganizationDataAsync(Guid? tenantId = null, Guid? organizationId = null, string name = "")
+        {
+            return null;
+        }
+
         public async Task<ResUsers> SeedUserDataAsync(Guid? userId = null, string name = "")
         {
+            if (CurrentTenant.Id.HasValue)
+            {
+                // throw new
+            }
+            bool isExternalUser =
+                bool.TryParse(CurrentUser.FindClaimValue("isExternal"), out var result)
+                && result;
+            if (CurrentUser.IsInRole("admin"))
+            {
+                // user là Admin
+            }
+            var seedUserId = userId ?? CurrentUser.Id;
             var userRepository = LazyServiceProvider.LazyGetService<IRepository<ResUsers, Guid>>();
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == seedUserId);
+            if (user == null)
+            {
+                user = new ResUsers
+                {
+                    Id = (Guid)seedUserId,
+                    Login = CurrentUser.UserName,
+                };
+            }
+
             return null;
         }
 

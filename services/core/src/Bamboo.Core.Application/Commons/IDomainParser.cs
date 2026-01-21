@@ -13,6 +13,6 @@ namespace Bamboo.Core.Application
 {
     public interface IDomainParser : ITransientDependency
     {
-        Task<IQueryable<TEntity>> ApplyDomain<TEntity>(IQueryable<TEntity> query, string domainJson) where TEntity : class, IEntity<Guid>;
+        Task<IQueryable<TEntity>> ApplyDomain<TEntity>(IQueryable<TEntity> query, JsonElement? domain) where TEntity : class, IEntity<Guid>;
     }
 }

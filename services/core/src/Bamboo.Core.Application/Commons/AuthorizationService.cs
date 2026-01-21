@@ -14,6 +14,7 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.Users;
 
 using Bamboo.Core.Models;
+using System.Text.Json;
 
 namespace Bamboo.Core.Application.Services.Commons
 {
@@ -56,7 +57,7 @@ namespace Bamboo.Core.Application.Services.Commons
 
         public async Task CheckAccessAsync(string modelName, string operation)
         {
-            return ;
+            return;
             var cacheKey = $"ModelAccess_{modelName}_{operation}_{_currentUser.Id}";
             if (!_memoryCache.TryGetValue(cacheKey, out bool hasAccess))
             {
@@ -83,6 +84,23 @@ namespace Bamboo.Core.Application.Services.Commons
             if (!hasAccess)
                 throw new UserFriendlyException($"No {operation} permission for model {modelName}");
         }
+        static JsonElement? ParseJsonElementOrNull(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                return doc.RootElement.Clone();
+            }
+            catch (JsonException)
+            {
+                // JSON không hợp lệ
+                return null;
+            }
+        }
+
 
         public async Task<IQueryable<TEntity>> ApplyRulesAsync<TEntity>(IQueryable<TEntity> query, string modelName)
             where TEntity : class, IEntity<Guid>
@@ -105,7 +123,8 @@ namespace Bamboo.Core.Application.Services.Commons
             {
                 if (!string.IsNullOrEmpty(rule.DomainForce))
                 {
-                    query = await _domainParser.ApplyDomain(query, rule.DomainForce);
+                    var domain = ParseJsonElementOrNull(rule.DomainForce);
+                    query = await _domainParser.ApplyDomain(query, domain);
                 }
             }
             return query;

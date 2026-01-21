@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
@@ -12,8 +13,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         where TEntity : class, IEntity<Guid>
     {
         Task<List<object>> ReadAsync(List<Guid> ids, List<string> fields);
-        Task<List<Guid>> SearchAsync(string domain, long offset, int limit, string order);
-        Task<List<object>> SearchReadAsync(string domain, List<string> fields, long offset, int limit, string order);
+        Task<List<Guid>> SearchAsync(JsonElement? domain, long offset, int limit, string order);
+        Task<List<object>> SearchReadAsync(JsonElement? domain, List<string> fields, long offset, int limit, string order);
         Task<TEntity> CreateAsync(TEntity entity, List<string> fields);
         Task<List<object>> WriteAsync(List<Guid> ids, TEntity entity, List<string> fields);
         Task DeleteAsync(List<Guid> ids);
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 
         Task<object> NameCreateAsync(string name);
         Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids);
-        Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domain = null, string @operator = "ilike", int limit = 100);
+        Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100);
         Task<TEntity> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null);
         //Task<Dictionary<string, object>> DefaultGetAsync(List<string> fields);
         Task<TEntity> DefaultGetAsync(List<string> fields);
