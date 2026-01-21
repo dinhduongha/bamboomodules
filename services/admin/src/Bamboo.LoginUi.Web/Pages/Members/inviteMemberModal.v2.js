@@ -16,7 +16,7 @@ $(function () {
       console.log("Modal inviteMemberModal tenantSelect changed");
 
       abp.ajax({
-        url: "/Members/CreateUserModal?handler=Roles&tenantId=" + tenantId,
+        url: "/Members/InviteMemberModal?handler=Roles&tenantId=" + tenantId,
         type: "GET",
         dataType: "json",
         success: function (roles) {
