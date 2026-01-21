@@ -154,14 +154,17 @@ namespace Bamboo.Core.Application
                 serviceType = typeof(IGenericApplicationService<>).MakeGenericType(entityType);
             }
             return _serviceProvider.GetService(serviceType)
-                ?? throw new UserFriendlyException($"Service for {modelName} not found");
+                ?? throw new UserFriendlyException($"AppService for {modelName} not found");
         }
 
         private async Task<TResult> CallServiceMethodAsync<TResult>(object service, string methodName, params object[] args)
         {
-            var method = service.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Public);
+            var method = service.GetType().GetMethod(methodName);
             if (method == null)
                 throw new UserFriendlyException($"Method {methodName} not found");
+
+            if (!method.IsPublic)
+                throw new UserFriendlyException($"Method {methodName} is not public");
 
             var result = method.Invoke(service, args);
             if (result is Task<TResult> task)
