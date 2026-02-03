@@ -49,7 +49,34 @@ namespace Bamboo.Core.HttpApi
         }
 
         [HttpPost]
-        public async Task<object> HandleJsonRpcAsync([FromBody] JsonRpcRequest request)
+        [Route("{model}/{method}")]
+        public async Task<object> HandleJsonRpcAsync(string model, string method, [FromBody] JsonRpcRequest request)
+        {
+            if (request.Jsonrpc != "2.0" || request.Method != "call")
+                return CreateErrorResponse(request.Id, -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
+
+            try
+            {
+                var result = await ProcessRequestAsync(request);
+                return new JsonRpcResponse
+                {
+                    Jsonrpc = "2.0",
+                    Id = request.Id,
+                    Result = result
+                };
+            }
+            catch (UserFriendlyException ex)
+            {
+                return CreateErrorResponse(request.Id, -32000, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorResponse(request.Id, -32603, "Internal error: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<object> HandleModelJsonRpcAsync([FromBody] JsonRpcRequest request)
         {
             if (request.Jsonrpc != "2.0" || request.Method != "call")
                 return CreateErrorResponse(request.Id, -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
