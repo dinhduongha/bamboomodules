@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductTagAppService : IGenericApplicationService<ProductTag>
+    public interface IProductTagAppService : IGenericAppService<ProductTag>
     {
         Task<ProductTag> CopyDataAsync(ProductTagCopyDataRequestDto input);
     }

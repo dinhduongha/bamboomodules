@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResConfigSettingsAppService : IGenericApplicationService<ResConfigSettings>
+    public interface IResConfigSettingsAppService : IGenericAppService<ResConfigSettings>
     {
         Task<ResConfigSettings> ButtonDisconnectThisDatabaseAsync(Guid[] ids);
         Task<ResConfigSettings> ButtonOpenPeppolConfigWizardAsync(Guid[] ids);

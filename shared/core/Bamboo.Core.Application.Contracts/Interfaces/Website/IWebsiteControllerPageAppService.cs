@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebsiteControllerPageAppService : IGenericApplicationService<WebsiteControllerPage>
+    public interface IWebsiteControllerPageAppService : IGenericAppService<WebsiteControllerPage>
     {
         Task<WebsiteControllerPage> OpenWebsiteUrlAsync(Guid[] ids);
     }

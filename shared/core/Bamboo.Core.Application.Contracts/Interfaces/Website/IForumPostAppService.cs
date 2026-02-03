@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IForumPostAppService : IGenericApplicationService<ForumPost>
+    public interface IForumPostAppService : IGenericAppService<ForumPost>
     {
         Task<ForumPost> CloseAsync(ForumPostCloseRequestDto input);
         Task<ForumPost> ConvertAnswerToCommentAsync(Guid[] ids);

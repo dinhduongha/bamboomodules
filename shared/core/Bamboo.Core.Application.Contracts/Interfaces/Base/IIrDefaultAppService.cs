@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrDefaultAppService : IGenericApplicationService<IrDefault>
+    public interface IIrDefaultAppService : IGenericAppService<IrDefault>
     {
         Task<IrDefault> DiscardRecordsAsync(IrDefaultDiscardRecordsRequestDto input);
         Task<IrDefault> DiscardValuesAsync(IrDefaultDiscardValuesRequestDto input);

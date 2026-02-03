@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrExpenseAppService : IGenericApplicationService<HrExpense>
+    public interface IHrExpenseAppService : IGenericAppService<HrExpense>
     {
         Task<HrExpense> ApproveAsync(Guid[] ids);
         Task<HrExpense> ApproveDuplicatesAsync(Guid[] ids);

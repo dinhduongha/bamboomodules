@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountJournalAppService : IGenericApplicationService<AccountJournal>
+    public interface IAccountJournalAppService : IGenericAppService<AccountJournal>
     {
         Task<AccountJournal> ArchiveAsync(Guid[] ids);
         Task<AccountJournal> ButtonFetchInEinvoicesAsync(Guid[] ids);

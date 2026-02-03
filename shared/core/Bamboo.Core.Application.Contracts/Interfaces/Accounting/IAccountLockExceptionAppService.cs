@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountLockExceptionAppService : IGenericApplicationService<AccountLockException>
+    public interface IAccountLockExceptionAppService : IGenericAppService<AccountLockException>
     {
         Task<AccountLockException> RevokeAsync(Guid[] ids);
         Task<AccountLockException> ShowAuditTrailDuringExceptionAsync(Guid[] ids);

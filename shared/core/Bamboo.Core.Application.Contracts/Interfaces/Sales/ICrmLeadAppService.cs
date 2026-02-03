@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICrmLeadAppService : IGenericApplicationService<CrmLead>
+    public interface ICrmLeadAppService : IGenericAppService<CrmLead>
     {
         Task<CrmLead> AssignGeoLocalizeAsync(CrmLeadAssignGeoLocalizeRequestDto input);
         Task<CrmLead> AssignPartnerAsync(Guid[] ids);

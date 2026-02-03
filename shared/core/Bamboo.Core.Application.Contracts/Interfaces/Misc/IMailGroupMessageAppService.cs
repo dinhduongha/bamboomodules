@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailGroupMessageAppService : IGenericApplicationService<MailGroupMessage>
+    public interface IMailGroupMessageAppService : IGenericAppService<MailGroupMessage>
     {
         Task<MailGroupMessage> CopyDataAsync(MailGroupMessageCopyDataRequestDto input);
         Task<MailGroupMessage> ModerateAcceptAsync(Guid[] ids);

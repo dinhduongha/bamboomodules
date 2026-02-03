@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductAttributeAppService : IGenericApplicationService<ProductAttribute>
+    public interface IProductAttributeAppService : IGenericAppService<ProductAttribute>
     {
         Task<ProductAttribute> ArchiveAsync(Guid[] ids);
         Task<ProductAttribute> OpenProductTemplateAttributeLinesAsync(Guid[] ids);

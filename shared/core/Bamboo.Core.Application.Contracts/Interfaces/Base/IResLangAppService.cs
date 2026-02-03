@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResLangAppService : IGenericApplicationService<ResLang>
+    public interface IResLangAppService : IGenericAppService<ResLang>
     {
         Task<ResLang> ActivateLangsAsync(Guid[] ids);
         Task<object> CACHEDFIELDSAsync(Guid[] ids);

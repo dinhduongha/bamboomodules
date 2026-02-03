@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IFleetVehicleModelBrandAppService : IGenericApplicationService<FleetVehicleModelBrand>
+    public interface IFleetVehicleModelBrandAppService : IGenericAppService<FleetVehicleModelBrand>
     {
         Task<FleetVehicleModelBrand> BrandModelAsync(Guid[] ids);
         Task<FleetVehicleModelBrand> OpenBrandFormAsync(Guid[] ids);

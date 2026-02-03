@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 namespace Bamboo.Core.Models;
@@ -23,8 +24,8 @@ public partial class StockPicking
     [Column("vmi_order_flag")]
     public bool? VMIOrderFlag { get; set; } = false;
 
-    [Column("promotion_applied_json")]
-    public string? PromotionAppliedJson { get; set; }
+    [Column("promotion_applied_json", TypeName = "jsonb")]
+    public Dictionary<string, object>? PromotionApplied { get; set; }
 
     // Navigation properties mới
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

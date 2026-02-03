@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailMessageSubtypeAppService : IGenericApplicationService<MailMessageSubtype>
+    public interface IMailMessageSubtypeAppService : IGenericAppService<MailMessageSubtype>
     {
         Task<MailMessageSubtype> DefaultSubtypesAsync(MailMessageSubtypeDefaultSubtypesRequestDto input);
     }

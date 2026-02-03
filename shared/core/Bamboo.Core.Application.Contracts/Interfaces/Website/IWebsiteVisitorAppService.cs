@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebsiteVisitorAppService : IGenericApplicationService<WebsiteVisitor>
+    public interface IWebsiteVisitorAppService : IGenericAppService<WebsiteVisitor>
     {
         Task<WebsiteVisitor> SendChatRequestAsync(Guid[] ids);
         Task<WebsiteVisitor> SendMailAsync(Guid[] ids);

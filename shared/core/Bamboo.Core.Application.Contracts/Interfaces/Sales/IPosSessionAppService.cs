@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosSessionAppService : IGenericApplicationService<PosSession>
+    public interface IPosSessionAppService : IGenericAppService<PosSession>
     {
         Task<PosSession> CloseSessionFromUiAsync(PosSessionCloseSessionFromUiRequestDto input);
         Task<PosSession> DeleteCashInOutAsync(PosSessionDeleteCashInOutRequestDto input);

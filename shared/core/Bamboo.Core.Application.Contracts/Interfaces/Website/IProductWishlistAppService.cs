@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductWishlistAppService : IGenericApplicationService<ProductWishlist>
+    public interface IProductWishlistAppService : IGenericAppService<ProductWishlist>
     {
         Task<ProductWishlist> CurrentAsync(Guid[] ids);
     }

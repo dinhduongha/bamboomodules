@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountBankStatementLineAppService : IGenericApplicationService<AccountBankStatementLine>
+    public interface IAccountBankStatementLineAppService : IGenericAppService<AccountBankStatementLine>
     {
         Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(AccountBankStatementLineFormattedReadGroupRequestDto input);
         Task<AccountBankStatementLine> NewAsync(AccountBankStatementLineNewRequestDto input);

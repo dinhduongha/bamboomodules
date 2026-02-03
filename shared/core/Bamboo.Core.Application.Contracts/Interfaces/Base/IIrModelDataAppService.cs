@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrModelDataAppService : IGenericApplicationService<IrModelData>
+    public interface IIrModelDataAppService : IGenericAppService<IrModelData>
     {
         Task<IrModelData> CheckObjectReferenceAsync(IrModelDataCheckObjectReferenceRequestDto input);
         Task<IrModelData> CopyDataAsync(IrModelDataCopyDataRequestDto input);

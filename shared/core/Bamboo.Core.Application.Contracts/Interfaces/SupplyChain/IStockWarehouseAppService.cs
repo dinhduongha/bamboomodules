@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockWarehouseAppService : IGenericApplicationService<StockWarehouse>
+    public interface IStockWarehouseAppService : IGenericAppService<StockWarehouse>
     {
         Task<StockWarehouse> CopyDataAsync(StockWarehouseCopyDataRequestDto input);
         Task<StockWarehouse> CreateResupplyRoutesAsync(StockWarehouseCreateResupplyRoutesRequestDto input);

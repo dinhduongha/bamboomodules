@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISurveySurveyAppService : IGenericApplicationService<SurveySurvey>
+    public interface ISurveySurveyAppService : IGenericAppService<SurveySurvey>
     {
         Task<SurveySurvey> ArchiveAsync(Guid[] ids);
         Task<SurveySurvey> CheckValidityAsync(Guid[] ids);

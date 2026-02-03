@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResCurrencyAppService : IGenericApplicationService<ResCurrency>
+    public interface IResCurrencyAppService : IGenericAppService<ResCurrency>
     {
         Task<ResCurrency> AmountToTextAsync(ResCurrencyAmountToTextRequestDto input);
         Task<ResCurrency> CompareAmountsAsync(ResCurrencyCompareAmountsRequestDto input);

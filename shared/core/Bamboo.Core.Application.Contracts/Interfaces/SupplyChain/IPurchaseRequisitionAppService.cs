@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPurchaseRequisitionAppService : IGenericApplicationService<PurchaseRequisition>
+    public interface IPurchaseRequisitionAppService : IGenericAppService<PurchaseRequisition>
     {
         Task<PurchaseRequisition> CancelAsync(Guid[] ids);
         Task<PurchaseRequisition> ConfirmAsync(Guid[] ids);

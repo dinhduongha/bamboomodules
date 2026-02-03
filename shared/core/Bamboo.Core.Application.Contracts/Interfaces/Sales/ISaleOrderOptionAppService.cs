@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISaleOrderOptionAppService : IGenericApplicationService<SaleOrderOption>
+    public interface ISaleOrderOptionAppService : IGenericAppService<SaleOrderOption>
     {
         Task<SaleOrderOption> AddOptionToOrderAsync(Guid[] ids);
         Task<SaleOrderOption> ButtonAddToOrderAsync(Guid[] ids);

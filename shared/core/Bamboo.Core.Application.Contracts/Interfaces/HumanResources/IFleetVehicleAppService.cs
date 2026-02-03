@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IFleetVehicleAppService : IGenericApplicationService<FleetVehicle>
+    public interface IFleetVehicleAppService : IGenericAppService<FleetVehicle>
     {
         Task<FleetVehicle> AcceptDriverChangeAsync(Guid[] ids);
         Task<FleetVehicle> ActShowLogCostAsync(Guid[] ids);

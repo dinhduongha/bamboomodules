@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IUomUomAppService : IGenericApplicationService<UomUom>
+    public interface IUomUomAppService : IGenericAppService<UomUom>
     {
         Task<UomUom> CompareAsync(UomUomCompareRequestDto input);
         Task<bool> IsZeroAsync(UomUomIsZeroRequestDto input);

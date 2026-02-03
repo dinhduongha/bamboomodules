@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockPackageTypeAppService : IGenericApplicationService<StockPackageType>
+    public interface IStockPackageTypeAppService : IGenericAppService<StockPackageType>
     {
         Task<StockPackageType> CopyDataAsync(StockPackageTypeCopyDataRequestDto input);
     }

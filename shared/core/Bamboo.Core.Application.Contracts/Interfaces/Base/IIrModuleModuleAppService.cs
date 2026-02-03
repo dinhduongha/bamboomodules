@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrModuleModuleAppService : IGenericApplicationService<IrModuleModule>
+    public interface IIrModuleModuleAppService : IGenericAppService<IrModuleModule>
     {
         Task<IrModuleModule> ButtonChooseThemeAsync(Guid[] ids);
         Task<IrModuleModule> ButtonImmediateInstallAppAsync(Guid[] ids);

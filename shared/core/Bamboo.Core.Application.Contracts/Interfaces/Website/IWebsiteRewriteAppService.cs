@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebsiteRewriteAppService : IGenericApplicationService<WebsiteRewrite>
+    public interface IWebsiteRewriteAppService : IGenericAppService<WebsiteRewrite>
     {
         Task<WebsiteRewrite> GetImportTemplatesAsync(Guid[] ids);
         Task<WebsiteRewrite> RefreshRoutesAsync(Guid[] ids);

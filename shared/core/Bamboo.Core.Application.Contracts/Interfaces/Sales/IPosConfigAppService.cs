@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosConfigAppService : IGenericApplicationService<PosConfig>
+    public interface IPosConfigAppService : IGenericAppService<PosConfig>
     {
         Task<PosConfig> CloseKioskSessionAsync(Guid[] ids);
         Task<PosConfig> CloseUiAsync(Guid[] ids);

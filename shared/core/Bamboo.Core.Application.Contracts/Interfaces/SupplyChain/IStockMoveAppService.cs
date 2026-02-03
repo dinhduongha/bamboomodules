@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockMoveAppService : IGenericApplicationService<StockMove>
+    public interface IStockMoveAppService : IGenericAppService<StockMove>
     {
         Task<StockMove> AddFromCatalogByproductAsync(Guid[] ids);
         Task<StockMove> AddFromCatalogRawAsync(Guid[] ids);

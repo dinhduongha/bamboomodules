@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IRecurringPaymentAppService : IGenericApplicationService<RecurringPayment>
+    public interface IRecurringPaymentAppService : IGenericAppService<RecurringPayment>
     {
         Task<RecurringPayment> ComputeNextDateAsync(RecurringPaymentComputeNextDateRequestDto input);
         Task<RecurringPayment> CreateLinesAsync(RecurringPaymentCreateLinesRequestDto input);

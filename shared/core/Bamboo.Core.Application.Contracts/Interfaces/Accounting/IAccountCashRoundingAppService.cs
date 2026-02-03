@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountCashRoundingAppService : IGenericApplicationService<AccountCashRounding>
+    public interface IAccountCashRoundingAppService : IGenericAppService<AccountCashRounding>
     {
         Task<AccountCashRounding> ComputeDifferenceAsync(AccountCashRoundingComputeDifferenceRequestDto input);
         Task<AccountCashRounding> RoundAsync(AccountCashRoundingRoundRequestDto input);

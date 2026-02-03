@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPaymentProviderAppService : IGenericApplicationService<PaymentProvider>
+    public interface IPaymentProviderAppService : IGenericAppService<PaymentProvider>
     {
         Task<PaymentProvider> ButtonImmediateInstallAsync(Guid[] ids);
         Task<PaymentProvider> GetBaseUrlAsync(Guid[] ids);

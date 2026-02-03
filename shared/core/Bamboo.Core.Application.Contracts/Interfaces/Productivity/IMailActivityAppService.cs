@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailActivityAppService : IGenericApplicationService<MailActivity>
+    public interface IMailActivityAppService : IGenericAppService<MailActivity>
     {
         Task<MailActivity> ActivityFormatAsync(Guid[] ids);
         Task<MailActivity> CancelAsync(Guid[] ids);

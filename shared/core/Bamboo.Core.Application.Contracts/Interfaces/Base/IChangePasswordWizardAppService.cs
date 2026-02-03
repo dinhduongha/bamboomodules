@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IChangePasswordWizardAppService : IGenericApplicationService<ChangePasswordWizard>
+    public interface IChangePasswordWizardAppService : IGenericAppService<ChangePasswordWizard>
     {
         Task<ChangePasswordWizard> ChangePasswordButtonAsync(Guid[] ids);
     }

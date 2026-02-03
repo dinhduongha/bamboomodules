@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountTaxAppService : IGenericApplicationService<AccountTax>
+    public interface IAccountTaxAppService : IGenericAppService<AccountTax>
     {
         Task<AccountTax> ComputeAllAsync(AccountTaxComputeAllRequestDto input);
         Task<AccountTax> CopyDataAsync(AccountTaxCopyDataRequestDto input);

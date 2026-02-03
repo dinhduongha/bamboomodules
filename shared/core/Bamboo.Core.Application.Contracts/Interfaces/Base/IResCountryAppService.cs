@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResCountryAppService : IGenericApplicationService<ResCountry>
+    public interface IResCountryAppService : IGenericAppService<ResCountry>
     {
         Task<ResCountry> GetAddressFieldsAsync(Guid[] ids);
     }

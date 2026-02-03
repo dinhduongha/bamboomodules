@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IRestaurantTableAppService : IGenericApplicationService<RestaurantTable>
+    public interface IRestaurantTableAppService : IGenericAppService<RestaurantTable>
     {
         Task<RestaurantTable> AreOrdersStillInDraftAsync(Guid[] ids);
     }

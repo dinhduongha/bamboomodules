@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockLotAppService : IGenericApplicationService<StockLot>
+    public interface IStockLotAppService : IGenericAppService<StockLot>
     {
         Task<StockLot> CopyDataAsync(StockLotCopyDataRequestDto input);
         Task<StockLot> GenerateLotNamesAsync(StockLotGenerateLotNamesRequestDto input);

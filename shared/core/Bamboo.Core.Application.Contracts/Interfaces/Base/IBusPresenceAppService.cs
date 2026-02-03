@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBusPresenceAppService : IGenericApplicationService<BusPresence>
+    public interface IBusPresenceAppService : IGenericAppService<BusPresence>
     {
         Task<BusPresence> InitAsync(Guid[] ids);
         Task<BusPresence> UpdatePresenceAsync(BusPresenceUpdatePresenceRequestDto input);

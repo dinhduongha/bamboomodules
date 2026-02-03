@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailGroupAppService : IGenericApplicationService<MailGroup>
+    public interface IMailGroupAppService : IGenericAppService<MailGroup>
     {
         Task<MailGroup> CloseAsync(Guid[] ids);
         Task<MailGroup> GoToWebsiteAsync(Guid[] ids);

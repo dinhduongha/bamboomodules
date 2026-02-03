@@ -33,6 +33,11 @@ namespace Bamboo.Core.Application
         Task<JsonElement> OnChangeAsync(string modelName, OnChangeRequestDto input);
         Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(string modelName, FieldsGetRequestDto input);
         Task<object> CallServiceAsync(string modelName, string methodName, params object[] args);
+
+        Task<JsonElement> DispatchJson2Async(string model, string rpcMethod, JsonElement body);
+        Task<JsonElement> DispatchLegacyJsonRpcAsync(JsonRpcParams rpcParams);
+        Task<object> ProcessRequestAsync(string modelName, string method, List<object>? args, Dictionary<string, object>? kwargs, JsonElement? body);
+
     }
 
 }

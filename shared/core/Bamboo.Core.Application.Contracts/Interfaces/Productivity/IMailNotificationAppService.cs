@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailNotificationAppService : IGenericApplicationService<MailNotification>
+    public interface IMailNotificationAppService : IGenericAppService<MailNotification>
     {
         Task<MailNotification> FormatFailureReasonAsync(Guid[] ids);
     }

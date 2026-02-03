@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProjectTagsAppService : IGenericApplicationService<ProjectTags>
+    public interface IProjectTagsAppService : IGenericAppService<ProjectTags>
     {
         Task<ProjectTags> ArrangeTagListByIdAsync(ProjectTagsArrangeTagListByIdRequestDto input);
         Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(ProjectTagsFormattedReadGroupRequestDto input);

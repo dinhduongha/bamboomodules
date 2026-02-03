@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebsiteAppService : IGenericApplicationService<Website>
+    public interface IWebsiteAppService : IGenericAppService<Website>
     {
         Task<Website> ButtonGoWebsiteAsync(WebsiteButtonGoWebsiteRequestDto input);
         Task<Website> CheckExistingPageAsync(WebsiteCheckExistingPageRequestDto input);

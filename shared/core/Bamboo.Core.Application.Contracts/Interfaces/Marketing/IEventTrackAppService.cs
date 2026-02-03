@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventTrackAppService : IGenericApplicationService<EventTrack>
+    public interface IEventTrackAppService : IGenericAppService<EventTrack>
     {
         Task<EventTrack> AddQuizAsync(Guid[] ids);
         Task<EventTrack> GetBackendMenuIdAsync(Guid[] ids);

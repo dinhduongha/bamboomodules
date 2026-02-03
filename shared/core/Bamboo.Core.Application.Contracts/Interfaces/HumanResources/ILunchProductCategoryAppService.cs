@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILunchProductCategoryAppService : IGenericApplicationService<LunchProductCategory>
+    public interface ILunchProductCategoryAppService : IGenericAppService<LunchProductCategory>
     {
         Task<LunchProductCategory> ArchiveAsync(Guid[] ids);
         Task<LunchProductCategory> UnarchiveAsync(Guid[] ids);

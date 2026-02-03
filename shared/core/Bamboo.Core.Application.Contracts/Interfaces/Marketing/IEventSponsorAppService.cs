@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventSponsorAppService : IGenericApplicationService<EventSponsor>
+    public interface IEventSponsorAppService : IGenericAppService<EventSponsor>
     {
         Task<EventSponsor> GetBackendMenuIdAsync(Guid[] ids);
         Task<EventSponsor> GetBaseUrlAsync(Guid[] ids);

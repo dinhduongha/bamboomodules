@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailMessageAppService : IGenericApplicationService<MailMessage>
+    public interface IMailMessageAppService : IGenericAppService<MailMessage>
     {
         Task<MailMessage> CancelLetterAsync(Guid[] ids);
         Task<MailMessage> ExportDataAsync(MailMessageExportDataRequestDto input);

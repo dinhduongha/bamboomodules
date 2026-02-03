@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResCompanyAppService : IGenericApplicationService<ResCompany>
+    public interface IResCompanyAppService : IGenericAppService<ResCompany>
     {
         Task<ResCompany> AllCompanyBranchesAsync(Guid[] ids);
         Task<ResCompany> CacheInvalidationFieldsAsync(Guid[] ids);

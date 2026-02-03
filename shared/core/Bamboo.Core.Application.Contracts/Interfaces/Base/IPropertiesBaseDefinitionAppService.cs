@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPropertiesBaseDefinitionAppService : IGenericApplicationService<PropertiesBaseDefinition>
+    public interface IPropertiesBaseDefinitionAppService : IGenericAppService<PropertiesBaseDefinition>
     {
         Task<PropertiesBaseDefinition> GetPropertiesBaseDefinitionAsync(PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input);
     }

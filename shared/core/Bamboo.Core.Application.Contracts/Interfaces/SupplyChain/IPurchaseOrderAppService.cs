@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPurchaseOrderAppService : IGenericApplicationService<PurchaseOrder>
+    public interface IPurchaseOrderAppService : IGenericAppService<PurchaseOrder>
     {
         Task<PurchaseOrder> AcknowledgeAsync(Guid[] ids);
         Task<PurchaseOrder> AddFromCatalogAsync(Guid[] ids);

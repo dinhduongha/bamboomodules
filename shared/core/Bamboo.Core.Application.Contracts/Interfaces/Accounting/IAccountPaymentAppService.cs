@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountPaymentAppService : IGenericApplicationService<AccountPayment>
+    public interface IAccountPaymentAppService : IGenericAppService<AccountPayment>
     {
         Task<AccountPayment> ButtonOpenBillsAsync(Guid[] ids);
         Task<AccountPayment> ButtonOpenInvoicesAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILoyaltyRewardAppService : IGenericApplicationService<LoyaltyReward>
+    public interface ILoyaltyRewardAppService : IGenericAppService<LoyaltyReward>
     {
     }
 }

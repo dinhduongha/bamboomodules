@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailingTraceAppService : IGenericApplicationService<MailingTrace>
+    public interface IMailingTraceAppService : IGenericAppService<MailingTrace>
     {
         Task<MailingTrace> SetBouncedAsync(MailingTraceSetBouncedRequestDto input);
         Task<MailingTrace> SetCanceledAsync(MailingTraceSetCanceledRequestDto input);

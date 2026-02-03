@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IImLivechatChannelAppService : IGenericApplicationService<ImLivechatChannel>
+    public interface IImLivechatChannelAppService : IGenericAppService<ImLivechatChannel>
     {
         Task<ImLivechatChannel> GetLivechatInfoAsync(ImLivechatChannelGetLivechatInfoRequestDto input);
         Task<ImLivechatChannel> JoinAsync(Guid[] ids);

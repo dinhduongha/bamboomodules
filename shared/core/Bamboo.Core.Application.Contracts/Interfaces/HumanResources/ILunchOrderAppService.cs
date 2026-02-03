@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILunchOrderAppService : IGenericApplicationService<LunchOrder>
+    public interface ILunchOrderAppService : IGenericAppService<LunchOrder>
     {
         Task<LunchOrder> AddToCartAsync(Guid[] ids);
         Task<LunchOrder> CancelAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISpreadsheetDashboardShareAppService : IGenericApplicationService<SpreadsheetDashboardShare>
+    public interface ISpreadsheetDashboardShareAppService : IGenericAppService<SpreadsheetDashboardShare>
     {
         Task<SpreadsheetDashboardShare> GetShareUrlAsync(SpreadsheetDashboardShareGetShareUrlRequestDto input);
     }

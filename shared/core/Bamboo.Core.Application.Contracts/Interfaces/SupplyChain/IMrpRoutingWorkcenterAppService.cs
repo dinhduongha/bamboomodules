@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpRoutingWorkcenterAppService : IGenericApplicationService<MrpRoutingWorkcenter>
+    public interface IMrpRoutingWorkcenterAppService : IGenericAppService<MrpRoutingWorkcenter>
     {
         Task<MrpRoutingWorkcenter> ArchiveAsync(Guid[] ids);
         Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid[] ids);

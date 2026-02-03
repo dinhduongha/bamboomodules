@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountMoveLineAppService : IGenericApplicationService<AccountMoveLine>
+    public interface IAccountMoveLineAppService : IGenericAppService<AccountMoveLine>
     {
         Task<AccountMoveLine> AddFromCatalogAsync(Guid[] ids);
         Task<AccountMoveLine> AssetCreateAsync(Guid[] ids);

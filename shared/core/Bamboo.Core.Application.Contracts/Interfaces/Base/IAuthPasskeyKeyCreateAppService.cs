@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAuthPasskeyKeyCreateAppService : IGenericApplicationService<AuthPasskeyKeyCreate>
+    public interface IAuthPasskeyKeyCreateAppService : IGenericAppService<AuthPasskeyKeyCreate>
     {
         Task<AuthPasskeyKeyCreate> MakeKeyAsync(AuthPasskeyKeyCreateMakeKeyRequestDto input);
     }

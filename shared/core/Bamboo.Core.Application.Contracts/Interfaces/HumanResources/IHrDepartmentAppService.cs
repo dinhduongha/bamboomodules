@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrDepartmentAppService : IGenericApplicationService<HrDepartment>
+    public interface IHrDepartmentAppService : IGenericAppService<HrDepartment>
     {
         Task<HrDepartment> EmployeeFromDepartmentAsync(Guid[] ids);
         Task<HrDepartment> GetChildrenDepartmentIdsAsync(Guid[] ids);

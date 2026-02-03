@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventMailRegistrationAppService : IGenericApplicationService<EventMailRegistration>
+    public interface IEventMailRegistrationAppService : IGenericAppService<EventMailRegistration>
     {
         Task<EventMailRegistration> ExecuteAsync(Guid[] ids);
     }

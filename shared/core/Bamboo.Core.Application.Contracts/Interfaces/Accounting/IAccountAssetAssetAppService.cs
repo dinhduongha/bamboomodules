@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountAssetAssetAppService : IGenericApplicationService<AccountAssetAsset>
+    public interface IAccountAssetAssetAppService : IGenericAppService<AccountAssetAsset>
     {
         Task<AccountAssetAsset> ComputeDepreciationBoardAsync(Guid[] ids);
         Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(AccountAssetAssetComputeGeneratedEntriesRequestDto input);

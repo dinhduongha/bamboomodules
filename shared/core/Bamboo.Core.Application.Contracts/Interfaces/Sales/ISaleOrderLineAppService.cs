@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISaleOrderLineAppService : IGenericApplicationService<SaleOrderLine>
+    public interface ISaleOrderLineAppService : IGenericAppService<SaleOrderLine>
     {
         Task<SaleOrderLine> AddFromCatalogAsync(Guid[] ids);
         Task<SaleOrderLine> ComputeUomQtyAsync(SaleOrderLineComputeUomQtyRequestDto input);

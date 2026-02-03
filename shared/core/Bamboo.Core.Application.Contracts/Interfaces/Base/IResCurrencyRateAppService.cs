@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResCurrencyRateAppService : IGenericApplicationService<ResCurrencyRate>
+    public interface IResCurrencyRateAppService : IGenericAppService<ResCurrencyRate>
     {
         Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(ResCurrencyRateGetRatesForSpreadsheetRequestDto input);
     }

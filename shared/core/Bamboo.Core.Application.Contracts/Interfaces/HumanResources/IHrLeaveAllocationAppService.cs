@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrLeaveAllocationAppService : IGenericApplicationService<HrLeaveAllocation>
+    public interface IHrLeaveAllocationAppService : IGenericAppService<HrLeaveAllocation>
     {
         Task<HrLeaveAllocation> ActivityUpdateAsync(Guid[] ids);
         Task<HrLeaveAllocation> AddFollowerAsync(HrLeaveAllocationAddFollowerRequestDto input);

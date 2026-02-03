@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductPublicCategoryAppService : IGenericApplicationService<ProductPublicCategory>
+    public interface IProductPublicCategoryAppService : IGenericAppService<ProductPublicCategory>
     {
         Task<ProductPublicCategory> CheckParentIdAsync(Guid[] ids);
         Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input);

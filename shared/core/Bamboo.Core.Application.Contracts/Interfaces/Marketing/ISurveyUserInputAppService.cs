@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISurveyUserInputAppService : IGenericApplicationService<SurveyUserInput>
+    public interface ISurveyUserInputAppService : IGenericAppService<SurveyUserInput>
     {
         Task<SurveyUserInput> GetPrintUrlAsync(Guid[] ids);
         Task<SurveyUserInput> GetStartUrlAsync(Guid[] ids);

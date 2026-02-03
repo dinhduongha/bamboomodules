@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrModelFieldsAppService : IGenericApplicationService<IrModelFields>
+    public interface IIrModelFieldsAppService : IGenericAppService<IrModelFields>
     {
         Task<IrModelFields> FormbuilderWhitelistAsync(IrModelFieldsFormbuilderWhitelistRequestDto input);
         Task<IrModelFields> GetFieldHelpAsync(IrModelFieldsGetFieldHelpRequestDto input);

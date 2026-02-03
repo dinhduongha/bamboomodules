@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILunchCashmoveAppService : IGenericApplicationService<LunchCashmove>
+    public interface ILunchCashmoveAppService : IGenericAppService<LunchCashmove>
     {
         Task<LunchCashmove> GetWalletBalanceAsync(LunchCashmoveGetWalletBalanceRequestDto input);
     }

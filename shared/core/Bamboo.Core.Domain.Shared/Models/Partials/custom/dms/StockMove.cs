@@ -8,5 +8,4 @@ public partial class StockMove
     [Column("sequence_in_route")]
     public int? SequenceInRoute { get; set; } = 0;
 
-    // Không có FK mới cần navigation
 }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResPartnerAppService : IGenericApplicationService<ResPartner>
+    public interface IResPartnerAppService : IGenericAppService<ResPartner>
     {
         Task<ResPartner> AddressGetAsync(ResPartnerAddressGetRequestDto input);
         Task<ResPartner> AutocompleteByNameAsync(ResPartnerAutocompleteByNameRequestDto input);

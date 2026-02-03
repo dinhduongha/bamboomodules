@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebTourTourStepAppService : IGenericApplicationService<WebTourTourStep>
+    public interface IWebTourTourStepAppService : IGenericAppService<WebTourTourStep>
     {
         Task<WebTourTourStep> GetStepsJsonAsync(Guid[] ids);
     }

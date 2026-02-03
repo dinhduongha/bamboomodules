@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrLeaveTypeAppService : IGenericApplicationService<HrLeaveType>
+    public interface IHrLeaveTypeAppService : IGenericAppService<HrLeaveType>
     {
         Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid[] ids);
         Task<HrLeaveType> CopyDataAsync(HrLeaveTypeCopyDataRequestDto input);

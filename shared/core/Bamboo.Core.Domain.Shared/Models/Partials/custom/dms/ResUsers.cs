@@ -24,7 +24,7 @@ public partial class ResUsers
     public decimal? TargetDailySales { get; set; }
 
     [Column("target_monthly_visit")]
-    public int? TargetMonthlyVisit { get; set; }
+    public long? TargetMonthlyVisit { get; set; }
 
     [Column("achievement_today")]
     public decimal? AchievementToday { get; set; } // computed, nhưng vẫn lưu để dễ query

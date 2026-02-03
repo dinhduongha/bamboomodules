@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISurveyQuestionAppService : IGenericApplicationService<SurveyQuestion>
+    public interface ISurveyQuestionAppService : IGenericAppService<SurveyQuestion>
     {
         Task<SurveyQuestion> ValidateQuestionAsync(SurveyQuestionValidateQuestionRequestDto input);
     }

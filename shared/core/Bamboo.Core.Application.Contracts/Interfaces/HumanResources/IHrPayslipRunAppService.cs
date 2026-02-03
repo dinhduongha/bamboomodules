@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrPayslipRunAppService : IGenericApplicationService<HrPayslipRun>
+    public interface IHrPayslipRunAppService : IGenericAppService<HrPayslipRun>
     {
         Task<HrPayslipRun> ClosePayslipRunAsync(Guid[] ids);
         Task<HrPayslipRun> DonePayslipRunAsync(Guid[] ids);

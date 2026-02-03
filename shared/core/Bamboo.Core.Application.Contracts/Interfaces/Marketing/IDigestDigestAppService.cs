@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDigestDigestAppService : IGenericApplicationService<DigestDigest>
+    public interface IDigestDigestAppService : IGenericAppService<DigestDigest>
     {
         Task<DigestDigest> ActivateAsync(Guid[] ids);
         Task<DigestDigest> DeactivateAsync(Guid[] ids);

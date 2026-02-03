@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDiscussChannelRtcSessionAppService : IGenericApplicationService<DiscussChannelRtcSession>
+    public interface IDiscussChannelRtcSessionAppService : IGenericAppService<DiscussChannelRtcSession>
     {
         Task<DiscussChannelRtcSession> DisconnectAsync(Guid[] ids);
     }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResourceCalendarLeavesAppService : IGenericApplicationService<ResourceCalendarLeaves>
+    public interface IResourceCalendarLeavesAppService : IGenericAppService<ResourceCalendarLeaves>
     {
         Task<ResourceCalendarLeaves> CheckDatesAsync(Guid[] ids);
     }

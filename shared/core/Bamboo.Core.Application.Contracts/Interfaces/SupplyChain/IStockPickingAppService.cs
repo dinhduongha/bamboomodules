@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockPickingAppService : IGenericApplicationService<StockPicking>
+    public interface IStockPickingAppService : IGenericAppService<StockPicking>
     {
         Task<StockPicking> AddEntirePacksAsync(StockPickingAddEntirePacksRequestDto input);
         Task<StockPicking> AddOperationsAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrResumeLineAppService : IGenericApplicationService<HrResumeLine>
+    public interface IHrResumeLineAppService : IGenericAppService<HrResumeLine>
     {
         Task<HrResumeLine> CopyDataAsync(HrResumeLineCopyDataRequestDto input);
     }

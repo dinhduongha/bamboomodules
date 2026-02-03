@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosOrderLineAppService : IGenericApplicationService<PosOrderLine>
+    public interface IPosOrderLineAppService : IGenericAppService<PosOrderLine>
     {
         Task<PosOrderLine> GetExistingLotsAsync(PosOrderLineGetExistingLotsRequestDto input);
     }

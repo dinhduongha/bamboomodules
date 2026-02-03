@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountFiscalPositionAppService : IGenericApplicationService<AccountFiscalPosition>
+    public interface IAccountFiscalPositionAppService : IGenericAppService<AccountFiscalPosition>
     {
         Task<AccountFiscalPosition> ArchiveAsync(Guid[] ids);
         Task<AccountFiscalPosition> CreateForeignTaxesAsync(Guid[] ids);

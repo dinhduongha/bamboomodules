@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockPackageAppService : IGenericApplicationService<StockPackage>
+    public interface IStockPackageAppService : IGenericAppService<StockPackage>
     {
         Task<StockPackage> AddToPickingAsync(Guid[] ids);
         Task<StockPackage> PutInPackAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosPresetAppService : IGenericApplicationService<PosPreset>
+    public interface IPosPresetAppService : IGenericAppService<PosPreset>
     {
         Task<PosPreset> GetAvailableSlotsAsync(Guid[] ids);
         Task<PosPreset> OpenLinkedConfigAsync(Guid[] ids);

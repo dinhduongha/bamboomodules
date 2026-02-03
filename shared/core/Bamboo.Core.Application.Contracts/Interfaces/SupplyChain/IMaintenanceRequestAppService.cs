@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMaintenanceRequestAppService : IGenericApplicationService<MaintenanceRequest>
+    public interface IMaintenanceRequestAppService : IGenericAppService<MaintenanceRequest>
     {
         Task<MaintenanceRequest> ActivityUpdateAsync(Guid[] ids);
         Task<MaintenanceRequest> ArchiveEquipmentRequestAsync(Guid[] ids);

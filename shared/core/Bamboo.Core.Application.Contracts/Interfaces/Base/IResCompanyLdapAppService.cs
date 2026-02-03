@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResCompanyLdapAppService : IGenericApplicationService<ResCompanyLdap>
+    public interface IResCompanyLdapAppService : IGenericAppService<ResCompanyLdap>
     {
         Task<ResCompanyLdap> TestLdapConnectionAsync(Guid[] ids);
     }

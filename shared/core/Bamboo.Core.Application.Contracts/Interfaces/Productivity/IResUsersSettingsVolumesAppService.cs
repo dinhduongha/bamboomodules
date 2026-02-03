@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResUsersSettingsVolumesAppService : IGenericApplicationService<ResUsersSettingsVolumes>
+    public interface IResUsersSettingsVolumesAppService : IGenericAppService<ResUsersSettingsVolumes>
     {
         Task<ResUsersSettingsVolumes> InitAsync(Guid[] ids);
     }

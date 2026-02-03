@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrLoggingAppService : IGenericApplicationService<IrLogging>
+    public interface IIrLoggingAppService : IGenericAppService<IrLogging>
     {
         Task<IrLogging> InitAsync(Guid[] ids);
     }

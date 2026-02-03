@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebsiteMenuAppService : IGenericApplicationService<WebsiteMenu>
+    public interface IWebsiteMenuAppService : IGenericAppService<WebsiteMenu>
     {
         Task<WebsiteMenu> GetTreeAsync(WebsiteMenuGetTreeRequestDto input);
         Task<WebsiteMenu> SaveAsync(WebsiteMenuSaveRequestDto input);

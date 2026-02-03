@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICalendarRecurrenceAppService : IGenericApplicationService<CalendarRecurrence>
+    public interface ICalendarRecurrenceAppService : IGenericAppService<CalendarRecurrence>
     {
         Task<CalendarRecurrence> GetRecurrenceNameAsync(Guid[] ids);
     }

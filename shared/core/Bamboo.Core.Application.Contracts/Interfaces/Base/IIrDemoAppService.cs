@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrDemoAppService : IGenericApplicationService<IrDemo>
+    public interface IIrDemoAppService : IGenericAppService<IrDemo>
     {
         Task<IrDemo> InstallDemoAsync(Guid[] ids);
     }

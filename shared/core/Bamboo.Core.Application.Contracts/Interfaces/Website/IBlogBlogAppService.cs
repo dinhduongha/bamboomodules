@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBlogBlogAppService : IGenericApplicationService<BlogBlog>
+    public interface IBlogBlogAppService : IGenericAppService<BlogBlog>
     {
         Task<BlogBlog> AllTagsAsync(BlogBlogAllTagsRequestDto input);
         Task<BlogBlog> MessagePostAsync(Guid[] ids);

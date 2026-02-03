@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrAssetAppService : IGenericApplicationService<IrAsset>
+    public interface IIrAssetAppService : IGenericAppService<IrAsset>
     {
         Task<IrAsset> FilterDuplicateAsync(IrAssetFilterDuplicateRequestDto input);
     }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockQuantPackageAppService : IGenericApplicationService<StockQuantPackage>
+    public interface IStockQuantPackageAppService : IGenericAppService<StockQuantPackage>
     {
         Task<StockQuantPackage> UnpackAsync(Guid[] ids);
         Task<StockQuantPackage> ViewPickingAsync(Guid[] ids);

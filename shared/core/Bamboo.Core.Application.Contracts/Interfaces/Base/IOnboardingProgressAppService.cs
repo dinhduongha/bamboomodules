@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IOnboardingProgressAppService : IGenericApplicationService<OnboardingProgress>
+    public interface IOnboardingProgressAppService : IGenericAppService<OnboardingProgress>
     {
         Task<OnboardingProgress> CloseAsync(Guid[] ids);
         Task<OnboardingProgress> ToggleVisibilityAsync(Guid[] ids);

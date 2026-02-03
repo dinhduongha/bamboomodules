@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResUsersSettingsAppService : IGenericApplicationService<ResUsersSettings>
+    public interface IResUsersSettingsAppService : IGenericAppService<ResUsersSettings>
     {
         Task<ResUsersSettings> GetEmbeddedActionsSettingsAsync(Guid[] ids);
         Task<ResUsersSettings> SetEmbeddedActionsSettingAsync(ResUsersSettingsSetEmbeddedActionsSettingRequestDto input);

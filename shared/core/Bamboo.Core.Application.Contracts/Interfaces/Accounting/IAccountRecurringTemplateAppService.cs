@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountRecurringTemplateAppService : IGenericApplicationService<AccountRecurringTemplate>
+    public interface IAccountRecurringTemplateAppService : IGenericAppService<AccountRecurringTemplate>
     {
         Task<AccountRecurringTemplate> DoneAsync(Guid[] ids);
         Task<AccountRecurringTemplate> DraftAsync(Guid[] ids);

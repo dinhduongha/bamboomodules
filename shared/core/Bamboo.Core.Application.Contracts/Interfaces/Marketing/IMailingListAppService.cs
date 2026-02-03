@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailingListAppService : IGenericApplicationService<MailingList>
+    public interface IMailingListAppService : IGenericAppService<MailingList>
     {
         Task<MailingList> CopyDataAsync(MailingListCopyDataRequestDto input);
         Task<MailingList> MergeAsync(MailingListMergeRequestDto input);

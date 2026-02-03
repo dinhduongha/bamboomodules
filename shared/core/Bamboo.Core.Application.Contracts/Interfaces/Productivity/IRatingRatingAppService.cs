@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IRatingRatingAppService : IGenericApplicationService<RatingRating>
+    public interface IRatingRatingAppService : IGenericAppService<RatingRating>
     {
         Task<RatingRating> OpenRatedObjectAsync(Guid[] ids);
         Task<RatingRating> ResetAsync(Guid[] ids);

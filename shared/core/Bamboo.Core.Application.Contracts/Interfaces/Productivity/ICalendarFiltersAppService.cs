@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICalendarFiltersAppService : IGenericApplicationService<CalendarFilters>
+    public interface ICalendarFiltersAppService : IGenericAppService<CalendarFilters>
     {
         Task<CalendarFilters> UnlinkFromPartnerIdAsync(CalendarFiltersUnlinkFromPartnerIdRequestDto input);
     }

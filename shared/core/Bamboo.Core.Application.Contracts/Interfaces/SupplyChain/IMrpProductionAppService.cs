@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpProductionAppService : IGenericApplicationService<MrpProduction>
+    public interface IMrpProductionAppService : IGenericAppService<MrpProduction>
     {
         Task<MrpProduction> AssignAsync(Guid[] ids);
         Task<MrpProduction> ButtonMarkDoneAsync(Guid[] ids);

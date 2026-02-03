@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAuthTotpDeviceAppService : IGenericApplicationService<AuthTotpDevice>
+    public interface IAuthTotpDeviceAppService : IGenericAppService<AuthTotpDevice>
     {
         Task<AuthTotpDevice> InitAsync(Guid[] ids);
         Task<AuthTotpDevice> RemoveAsync(Guid[] ids);

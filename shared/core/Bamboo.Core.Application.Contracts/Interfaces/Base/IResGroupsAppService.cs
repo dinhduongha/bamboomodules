@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResGroupsAppService : IGenericApplicationService<ResGroups>
+    public interface IResGroupsAppService : IGenericAppService<ResGroups>
     {
         Task<ResGroups> CopyDataAsync(ResGroupsCopyDataRequestDto input);
         Task<ResGroups> GetApplicationGroupsAsync(ResGroupsGetApplicationGroupsRequestDto input);

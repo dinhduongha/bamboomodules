@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IWebTourTourAppService : IGenericApplicationService<WebTourTour>
+    public interface IWebTourTourAppService : IGenericAppService<WebTourTour>
     {
         Task<WebTourTour> ConsumeAsync(WebTourTourConsumeRequestDto input);
         Task<WebTourTour> ExportJsFileAsync(Guid[] ids);

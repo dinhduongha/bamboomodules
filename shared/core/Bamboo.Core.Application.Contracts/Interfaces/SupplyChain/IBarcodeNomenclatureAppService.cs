@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBarcodeNomenclatureAppService : IGenericApplicationService<BarcodeNomenclature>
+    public interface IBarcodeNomenclatureAppService : IGenericAppService<BarcodeNomenclature>
     {
         Task<BarcodeNomenclature> Gs1DateToDateAsync(BarcodeNomenclatureGs1DateToDateRequestDto input);
         Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(BarcodeNomenclatureGs1DecomposeExtendedRequestDto input);

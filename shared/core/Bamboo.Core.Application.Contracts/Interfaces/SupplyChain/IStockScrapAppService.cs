@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockScrapAppService : IGenericApplicationService<StockScrap>
+    public interface IStockScrapAppService : IGenericAppService<StockScrap>
     {
         Task<StockScrap> CheckAvailableQtyAsync(Guid[] ids);
         Task<StockScrap> DoReplenishAsync(StockScrapDoReplenishRequestDto input);

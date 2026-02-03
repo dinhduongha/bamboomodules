@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMaintenanceEquipmentAppService : IGenericApplicationService<MaintenanceEquipment>
+    public interface IMaintenanceEquipmentAppService : IGenericAppService<MaintenanceEquipment>
     {
         Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid[] ids);
     }

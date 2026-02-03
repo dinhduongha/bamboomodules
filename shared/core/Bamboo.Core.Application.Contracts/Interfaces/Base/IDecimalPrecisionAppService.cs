@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDecimalPrecisionAppService : IGenericApplicationService<DecimalPrecision>
+    public interface IDecimalPrecisionAppService : IGenericAppService<DecimalPrecision>
     {
         Task<DecimalPrecision> PrecisionGetAsync(DecimalPrecisionPrecisionGetRequestDto input);
     }

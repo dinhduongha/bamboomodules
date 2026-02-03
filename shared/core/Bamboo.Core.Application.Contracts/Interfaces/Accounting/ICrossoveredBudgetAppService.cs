@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICrossoveredBudgetAppService : IGenericApplicationService<CrossoveredBudget>
+    public interface ICrossoveredBudgetAppService : IGenericAppService<CrossoveredBudget>
     {
         Task<CrossoveredBudget> BudgetCancelAsync(Guid[] ids);
         Task<CrossoveredBudget> BudgetConfirmAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrExpenseSheetAppService : IGenericApplicationService<HrExpenseSheet>
+    public interface IHrExpenseSheetAppService : IGenericAppService<HrExpenseSheet>
     {
         Task<HrExpenseSheet> ActivityUpdateAsync(Guid[] ids);
         Task<HrExpenseSheet> ApproveExpenseSheetsAsync(Guid[] ids);

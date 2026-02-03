@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPaymentTransactionAppService : IGenericApplicationService<PaymentTransaction>
+    public interface IPaymentTransactionAppService : IGenericAppService<PaymentTransaction>
     {
         Task<PaymentTransaction> CaptureAsync(Guid[] ids);
         Task<PaymentTransaction> DemoSetCanceledAsync(Guid[] ids);

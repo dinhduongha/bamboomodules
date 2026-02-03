@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrProfileAppService : IGenericApplicationService<IrProfile>
+    public interface IIrProfileAppService : IGenericAppService<IrProfile>
     {
         Task<IrProfile> SetProfilingAsync(IrProfileSetProfilingRequestDto input);
         Task<IrProfile> ViewSpeedscopeAsync(Guid[] ids);

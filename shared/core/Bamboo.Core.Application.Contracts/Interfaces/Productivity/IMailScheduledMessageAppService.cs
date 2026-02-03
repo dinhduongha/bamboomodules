@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailScheduledMessageAppService : IGenericApplicationService<MailScheduledMessage>
+    public interface IMailScheduledMessageAppService : IGenericAppService<MailScheduledMessage>
     {
         Task<MailScheduledMessage> OpenEditFormAsync(Guid[] ids);
         Task<MailScheduledMessage> PostMessageAsync(Guid[] ids);

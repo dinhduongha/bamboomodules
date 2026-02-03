@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILoyaltyCardAppService : IGenericApplicationService<LoyaltyCard>
+    public interface ILoyaltyCardAppService : IGenericAppService<LoyaltyCard>
     {
         Task<LoyaltyCard> ArchiveAsync(Guid[] ids);
         Task<LoyaltyCard> CouponSendAsync(Guid[] ids);

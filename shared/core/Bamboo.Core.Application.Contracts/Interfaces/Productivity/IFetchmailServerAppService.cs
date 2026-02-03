@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IFetchmailServerAppService : IGenericApplicationService<FetchmailServer>
+    public interface IFetchmailServerAppService : IGenericAppService<FetchmailServer>
     {
         Task<FetchmailServer> ButtonConfirmLoginAsync(Guid[] ids);
         Task<FetchmailServer> FetchMailAsync(Guid[] ids);

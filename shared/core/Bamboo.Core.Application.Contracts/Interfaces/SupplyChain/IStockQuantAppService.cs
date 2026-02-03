@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockQuantAppService : IGenericApplicationService<StockQuant>
+    public interface IStockQuantAppService : IGenericAppService<StockQuant>
     {
         Task<StockQuant> ApplyAllAsync(Guid[] ids);
         Task<StockQuant> ApplyInventoryAsync(StockQuantApplyInventoryRequestDto input);

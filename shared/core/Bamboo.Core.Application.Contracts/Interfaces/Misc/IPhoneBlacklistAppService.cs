@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPhoneBlacklistAppService : IGenericApplicationService<PhoneBlacklist>
+    public interface IPhoneBlacklistAppService : IGenericAppService<PhoneBlacklist>
     {
         Task<PhoneBlacklist> AddAsync(PhoneBlacklistAddRequestDto input);
         Task<PhoneBlacklist> AddAsync(Guid[] ids);

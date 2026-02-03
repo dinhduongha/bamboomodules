@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDeliveryCarrierAppService : IGenericApplicationService<DeliveryCarrier>
+    public interface IDeliveryCarrierAppService : IGenericAppService<DeliveryCarrier>
     {
         Task<DeliveryCarrier> AvailableCarriersAsync(DeliveryCarrierAvailableCarriersRequestDto input);
         Task<DeliveryCarrier> BaseOnRuleCancelShipmentAsync(DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input);

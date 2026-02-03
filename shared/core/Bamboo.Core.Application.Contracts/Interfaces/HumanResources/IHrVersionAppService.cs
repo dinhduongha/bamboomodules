@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrVersionAppService : IGenericApplicationService<HrVersion>
+    public interface IHrVersionAppService : IGenericAppService<HrVersion>
     {
         Task<HrVersion> CheckContractFinishedAsync(Guid[] ids);
         Task<HrVersion> GenerateWorkEntriesAsync(HrVersionGenerateWorkEntriesRequestDto input);

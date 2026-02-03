@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResUsersIdentitycheckAppService : IGenericApplicationService<ResUsersIdentitycheck>
+    public interface IResUsersIdentitycheckAppService : IGenericAppService<ResUsersIdentitycheck>
     {
         Task<ResUsersIdentitycheck> RunCheckAsync(Guid[] ids);
         Task<ResUsersIdentitycheck> UsePasswordAsync(Guid[] ids);

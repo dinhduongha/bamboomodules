@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductSupplierinfoAppService : IGenericApplicationService<ProductSupplierinfo>
+    public interface IProductSupplierinfoAppService : IGenericAppService<ProductSupplierinfo>
     {
         Task<ProductSupplierinfo> GetImportTemplatesAsync(Guid[] ids);
         Task<ProductSupplierinfo> SetSupplierAsync(Guid[] ids);

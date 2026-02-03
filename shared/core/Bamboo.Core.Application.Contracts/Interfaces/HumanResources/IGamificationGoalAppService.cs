@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IGamificationGoalAppService : IGenericApplicationService<GamificationGoal>
+    public interface IGamificationGoalAppService : IGenericAppService<GamificationGoal>
     {
         Task<GamificationGoal> CancelAsync(Guid[] ids);
         Task<GamificationGoal> FailAsync(Guid[] ids);

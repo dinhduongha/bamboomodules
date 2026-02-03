@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrCandidateAppService : IGenericApplicationService<HrCandidate>
+    public interface IHrCandidateAppService : IGenericAppService<HrCandidate>
     {
         Task<HrCandidate> CreateApplicationAsync(Guid[] ids);
         Task<HrCandidate> CreateEmployeeFromCandidateAsync(Guid[] ids);

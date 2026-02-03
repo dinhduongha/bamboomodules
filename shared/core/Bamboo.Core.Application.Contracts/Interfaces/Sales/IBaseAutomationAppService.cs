@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBaseAutomationAppService : IGenericApplicationService<BaseAutomation>
+    public interface IBaseAutomationAppService : IGenericAppService<BaseAutomation>
     {
         Task<BaseAutomation> OpenScheduledActionAsync(Guid[] ids);
         Task<BaseAutomation> RotateWebhookUuidAsync(Guid[] ids);

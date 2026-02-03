@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosPaymentMethodAppService : IGenericApplicationService<PosPaymentMethod>
+    public interface IPosPaymentMethodAppService : IGenericAppService<PosPaymentMethod>
     {
         Task<PosPaymentMethod> CopyDataAsync(PosPaymentMethodCopyDataRequestDto input);
         Task<PosPaymentMethod> ForcePdvAsync(Guid[] ids);

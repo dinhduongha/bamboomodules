@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrSkillTypeAppService : IGenericApplicationService<HrSkillType>
+    public interface IHrSkillTypeAppService : IGenericAppService<HrSkillType>
     {
         Task<HrSkillType> CopyDataAsync(HrSkillTypeCopyDataRequestDto input);
     }

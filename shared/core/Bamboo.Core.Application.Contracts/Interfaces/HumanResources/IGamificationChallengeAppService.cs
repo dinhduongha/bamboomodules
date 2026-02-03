@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IGamificationChallengeAppService : IGenericApplicationService<GamificationChallenge>
+    public interface IGamificationChallengeAppService : IGenericAppService<GamificationChallenge>
     {
         Task<GamificationChallenge> AcceptChallengeAsync(Guid[] ids);
         Task<GamificationChallenge> CheckAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IThemeIrUiViewAppService : IGenericApplicationService<ThemeIrUiView>
+    public interface IThemeIrUiViewAppService : IGenericAppService<ThemeIrUiView>
     {
         Task<ThemeIrUiView> ComputeArchFsAsync(Guid[] ids);
     }

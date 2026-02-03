@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProjectTaskTypeAppService : IGenericApplicationService<ProjectTaskType>
+    public interface IProjectTaskTypeAppService : IGenericAppService<ProjectTaskType>
     {
         Task<ProjectTaskType> CopyDataAsync(ProjectTaskTypeCopyDataRequestDto input);
         Task<ProjectTaskType> UnarchiveAsync(Guid[] ids);

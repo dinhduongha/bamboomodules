@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockRuleAppService : IGenericApplicationService<StockRule>
+    public interface IStockRuleAppService : IGenericAppService<StockRule>
     {
         Task<StockRule> CopyDataAsync(StockRuleCopyDataRequestDto input);
         Task<StockRule> RunAsync(StockRuleRunRequestDto input);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpWorkorderAppService : IGenericApplicationService<MrpWorkorder>
+    public interface IMrpWorkorderAppService : IGenericAppService<MrpWorkorder>
     {
         Task<MrpWorkorder> ButtonFinishAsync(Guid[] ids);
         Task<MrpWorkorder> ButtonPendingAsync(Guid[] ids);

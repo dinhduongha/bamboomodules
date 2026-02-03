@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICardCampaignAppService : IGenericApplicationService<CardCampaign>
+    public interface ICardCampaignAppService : IGenericAppService<CardCampaign>
     {
         Task<CardCampaign> PreviewAsync(Guid[] ids);
         Task<CardCampaign> ShareAsync(Guid[] ids);

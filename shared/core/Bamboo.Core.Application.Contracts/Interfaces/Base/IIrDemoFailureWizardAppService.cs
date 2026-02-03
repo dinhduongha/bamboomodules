@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrDemoFailureWizardAppService : IGenericApplicationService<IrDemoFailureWizard>
+    public interface IIrDemoFailureWizardAppService : IGenericAppService<IrDemoFailureWizard>
     {
         Task<IrDemoFailureWizard> DoneAsync(Guid[] ids);
     }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductProductAppService : IGenericApplicationService<ProductProduct>
+    public interface IProductProductAppService : IGenericAppService<ProductProduct>
     {
         Task<ProductProduct> ArchiveAsync(Guid[] ids);
         Task<ProductProduct> BomCostAsync(Guid[] ids);

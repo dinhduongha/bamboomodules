@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrUiMenuAppService : IGenericApplicationService<IrUiMenu>
+    public interface IIrUiMenuAppService : IGenericAppService<IrUiMenu>
     {
         Task<IrUiMenu> GetUserRootsAsync(Guid[] ids);
         Task<IrUiMenu> LoadMenusAsync(IrUiMenuLoadMenusRequestDto input);

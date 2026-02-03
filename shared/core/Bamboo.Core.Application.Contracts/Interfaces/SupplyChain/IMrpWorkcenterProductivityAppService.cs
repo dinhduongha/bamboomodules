@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpWorkcenterProductivityAppService : IGenericApplicationService<MrpWorkcenterProductivity>
+    public interface IMrpWorkcenterProductivityAppService : IGenericAppService<MrpWorkcenterProductivity>
     {
         Task<MrpWorkcenterProductivity> ButtonBlockAsync(Guid[] ids);
     }

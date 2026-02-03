@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrEmployeePublicAppService : IGenericApplicationService<HrEmployeePublic>
+    public interface IHrEmployeePublicAppService : IGenericAppService<HrEmployeePublic>
     {
         Task<HrEmployeePublic> GetAvatarCardDataAsync(HrEmployeePublicGetAvatarCardDataRequestDto input);
         Task<HrEmployeePublic> InitAsync(Guid[] ids);

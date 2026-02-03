@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductPricelistAppService : IGenericApplicationService<ProductPricelist>
+    public interface IProductPricelistAppService : IGenericAppService<ProductPricelist>
     {
         Task<ProductPricelist> ArchiveAsync(Guid[] ids);
         Task<ProductPricelist> CopyDataAsync(ProductPricelistCopyDataRequestDto input);

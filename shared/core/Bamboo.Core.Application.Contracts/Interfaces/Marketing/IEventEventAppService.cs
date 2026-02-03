@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventEventAppService : IGenericApplicationService<EventEvent>
+    public interface IEventEventAppService : IGenericAppService<EventEvent>
     {
         Task<EventEvent> CopyDataAsync(EventEventCopyDataRequestDto input);
         Task<EventEvent> CopyEventMenusAsync(EventEventCopyEventMenusRequestDto input);

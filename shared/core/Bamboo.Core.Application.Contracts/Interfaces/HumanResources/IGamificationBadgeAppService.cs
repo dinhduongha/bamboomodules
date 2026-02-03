@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IGamificationBadgeAppService : IGenericApplicationService<GamificationBadge>
+    public interface IGamificationBadgeAppService : IGenericAppService<GamificationBadge>
     {
         Task<GamificationBadge> CheckGrantingAsync(Guid[] ids);
         Task<GamificationBadge> GetGrantedEmployeesAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventLeadRuleAppService : IGenericApplicationService<EventLeadRule>
+    public interface IEventLeadRuleAppService : IGenericAppService<EventLeadRule>
     {
         Task<EventLeadRule> ExecuteRuleAsync(Guid[] ids);
     }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrFiltersAppService : IGenericApplicationService<IrFilters>
+    public interface IIrFiltersAppService : IGenericAppService<IrFilters>
     {
         Task<IrFilters> CopyDataAsync(IrFiltersCopyDataRequestDto input);
         Task<IrFilters> CreateFilterAsync(IrFiltersCreateFilterRequestDto input);

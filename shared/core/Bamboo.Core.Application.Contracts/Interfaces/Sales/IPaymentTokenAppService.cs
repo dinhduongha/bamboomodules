@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPaymentTokenAppService : IGenericApplicationService<PaymentToken>
+    public interface IPaymentTokenAppService : IGenericAppService<PaymentToken>
     {
         Task<PaymentToken> GetLinkedRecordsInfoAsync(Guid[] ids);
     }

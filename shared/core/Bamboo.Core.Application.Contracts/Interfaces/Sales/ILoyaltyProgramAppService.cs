@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILoyaltyProgramAppService : IGenericApplicationService<LoyaltyProgram>
+    public interface ILoyaltyProgramAppService : IGenericAppService<LoyaltyProgram>
     {
         Task<LoyaltyProgram> CreateFromTemplateAsync(LoyaltyProgramCreateFromTemplateRequestDto input);
         Task<LoyaltyProgram> GetProgramTemplatesAsync(Guid[] ids);

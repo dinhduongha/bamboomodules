@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountAccountAppService : IGenericApplicationService<AccountAccount>
+    public interface IAccountAccountAppService : IGenericAppService<AccountAccount>
     {
         Task<AccountAccount> CopyDataAsync(AccountAccountCopyDataRequestDto input);
         Task<AccountAccount> CopyTranslationsAsync(AccountAccountCopyTranslationsRequestDto input);

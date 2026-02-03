@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISmsTemplateAppService : IGenericApplicationService<SmsTemplate>
+    public interface ISmsTemplateAppService : IGenericAppService<SmsTemplate>
     {
         Task<SmsTemplate> CopyDataAsync(SmsTemplateCopyDataRequestDto input);
         Task<SmsTemplate> CreateSidebarActionAsync(Guid[] ids);

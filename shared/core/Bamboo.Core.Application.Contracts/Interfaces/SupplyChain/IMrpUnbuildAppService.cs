@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpUnbuildAppService : IGenericApplicationService<MrpUnbuild>
+    public interface IMrpUnbuildAppService : IGenericAppService<MrpUnbuild>
     {
         Task<MrpUnbuild> UnbuildAsync(Guid[] ids);
         Task<MrpUnbuild> ValidateAsync(Guid[] ids);

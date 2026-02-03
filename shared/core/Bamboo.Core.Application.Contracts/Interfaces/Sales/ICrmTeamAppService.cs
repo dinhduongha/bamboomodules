@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICrmTeamAppService : IGenericApplicationService<CrmTeam>
+    public interface ICrmTeamAppService : IGenericAppService<CrmTeam>
     {
         Task<CrmTeam> AssignLeadsAsync(Guid[] ids);
         Task<CrmTeam> GetAbandonedCartsAsync(Guid[] ids);

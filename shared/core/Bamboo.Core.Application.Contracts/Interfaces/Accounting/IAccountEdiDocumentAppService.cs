@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountEdiDocumentAppService : IGenericApplicationService<AccountEdiDocument>
+    public interface IAccountEdiDocumentAppService : IGenericAppService<AccountEdiDocument>
     {
         Task<AccountEdiDocument> ExportXmlAsync(Guid[] ids);
     }

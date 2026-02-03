@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResourceResourceAppService : IGenericApplicationService<ResourceResource>
+    public interface IResourceResourceAppService : IGenericAppService<ResourceResource>
     {
         Task<ResourceResource> CopyDataAsync(ResourceResourceCopyDataRequestDto input);
         Task<ResourceResource> GetAvatarCardDataAsync(ResourceResourceGetAvatarCardDataRequestDto input);

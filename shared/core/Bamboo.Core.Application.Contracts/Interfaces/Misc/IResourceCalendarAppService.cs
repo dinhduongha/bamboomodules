@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResourceCalendarAppService : IGenericApplicationService<ResourceCalendar>
+    public interface IResourceCalendarAppService : IGenericAppService<ResourceCalendar>
     {
         Task<ResourceCalendar> CopyDataAsync(ResourceCalendarCopyDataRequestDto input);
         Task<ResourceCalendar> GetWorkDurationDataAsync(ResourceCalendarGetWorkDurationDataRequestDto input);

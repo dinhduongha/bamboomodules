@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILunchSupplierAppService : IGenericApplicationService<LunchSupplier>
+    public interface ILunchSupplierAppService : IGenericAppService<LunchSupplier>
     {
         Task<LunchSupplier> ConfirmOrdersAsync(Guid[] ids);
         Task<LunchSupplier> SendOrdersAsync(Guid[] ids);

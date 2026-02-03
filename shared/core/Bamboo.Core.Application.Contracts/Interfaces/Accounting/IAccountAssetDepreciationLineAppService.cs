@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountAssetDepreciationLineAppService : IGenericApplicationService<AccountAssetDepreciationLine>
+    public interface IAccountAssetDepreciationLineAppService : IGenericAppService<AccountAssetDepreciationLine>
     {
         Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(AccountAssetDepreciationLineCreateGroupedMoveRequestDto input);
         Task<AccountAssetDepreciationLine> CreateMoveAsync(AccountAssetDepreciationLineCreateMoveRequestDto input);

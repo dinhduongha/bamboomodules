@@ -40,8 +40,14 @@ public partial class ResOrganization : FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("origin_organization_unit_id")]
     public Guid? OriginOrganizationUnitId { get; set; }
 
+    [Column("parent_id")]
+    public Guid? ParentId { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -49,17 +55,32 @@ public partial class ResOrganization : FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
+    [Column("manager_id")]
+    public Guid? ManagerId { get; set; } // Quản lý khu vực
+
     [Column("sequence")]
     public long? Sequence { get; set; }
+
+    [Column("target_sales_amount")]
+    public decimal? TargetSalesAmount { get; set; }
+
+    [Column("target_team_count")]
+    public int? TargetTeamCount { get; set; }
+
+    [Column("region_type")]
+    public string RegionType { get; set; } = "area"; // area, region, province, city...
+
+    [Column("is_active")]
+    public bool IsActive { get; set; } = true;
+
+    [Column("description")]
+    public string? Description { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("parent_path")]
     public string? ParentPath { get; set; }
-
-    [Column("parent_id")]
-    public Guid? ParentId { get; set; }
 
     [Column("paperformat_id")]
     public Guid? PaperformatId { get; set; }
@@ -831,4 +852,19 @@ public partial class ResOrganization : FullAuditedAggregateRoot<Guid>, IEntityDt
     // // [ForeignKey("Cid")] // Many2many // Normal
     // // [InverseProperty("Cid")] // Many2many // Normal
     // public virtual ICollection<ResUsers> User { get; set; }
+
+    // Navigation
+    //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("ParentId")]
+    // public virtual ResOrganization? ParentOrganization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("ManagerId")]
+    public virtual ResUsers? Manager { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public virtual ICollection<ResOrganization> Children { get; set; } = new List<ResOrganization>();
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public virtual ICollection<ResTeam> Teams { get; set; } = new List<ResTeam>();
 }

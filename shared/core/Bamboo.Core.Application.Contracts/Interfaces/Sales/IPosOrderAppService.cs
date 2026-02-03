@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPosOrderAppService : IGenericApplicationService<PosOrder>
+    public interface IPosOrderAppService : IGenericAppService<PosOrder>
     {
         Task<PosOrder> AddLoyaltyHistoryLinesAsync(PosOrderAddLoyaltyHistoryLinesRequestDto input);
         Task<PosOrder> AddPaymentAsync(PosOrderAddPaymentRequestDto input);

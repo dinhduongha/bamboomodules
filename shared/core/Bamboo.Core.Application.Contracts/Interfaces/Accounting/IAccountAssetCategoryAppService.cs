@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountAssetCategoryAppService : IGenericApplicationService<AccountAssetCategory>
+    public interface IAccountAssetCategoryAppService : IGenericAppService<AccountAssetCategory>
     {
         Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid[] ids);
         Task<AccountAssetCategory> OnchangeTypeAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IPublisherWarrantyContractAppService : IGenericApplicationService<PublisherWarrantyContract>
+    public interface IPublisherWarrantyContractAppService : IGenericAppService<PublisherWarrantyContract>
     {
         Task<PublisherWarrantyContract> UpdateNotificationAsync(PublisherWarrantyContractUpdateNotificationRequestDto input);
     }

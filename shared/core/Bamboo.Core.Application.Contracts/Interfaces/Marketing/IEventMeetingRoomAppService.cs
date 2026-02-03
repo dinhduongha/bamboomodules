@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventMeetingRoomAppService : IGenericApplicationService<EventMeetingRoom>
+    public interface IEventMeetingRoomAppService : IGenericAppService<EventMeetingRoom>
     {
         Task<EventMeetingRoom> OpenWebsiteUrlAsync(Guid[] ids);
     }

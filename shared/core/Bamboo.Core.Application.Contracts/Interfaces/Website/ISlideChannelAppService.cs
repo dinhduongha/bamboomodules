@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISlideChannelAppService : IGenericApplicationService<SlideChannel>
+    public interface ISlideChannelAppService : IGenericAppService<SlideChannel>
     {
         Task<SlideChannel> ArchiveAsync(Guid[] ids);
         Task<SlideChannel> ChannelEnrollAsync(Guid[] ids);

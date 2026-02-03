@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailGatewayAllowedAppService : IGenericApplicationService<MailGatewayAllowed>
+    public interface IMailGatewayAllowedAppService : IGenericAppService<MailGatewayAllowed>
     {
         Task<MailGatewayAllowed> GetEmptyListHelpAsync(MailGatewayAllowedGetEmptyListHelpRequestDto input);
     }

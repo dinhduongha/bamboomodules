@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockWarehouseOrderpointAppService : IGenericApplicationService<StockWarehouseOrderpoint>
+    public interface IStockWarehouseOrderpointAppService : IGenericAppService<StockWarehouseOrderpoint>
     {
         Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid[] ids);
         Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid[] ids);

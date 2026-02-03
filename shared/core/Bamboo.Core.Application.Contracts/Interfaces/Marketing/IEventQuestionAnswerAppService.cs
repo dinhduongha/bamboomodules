@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventQuestionAnswerAppService : IGenericApplicationService<EventQuestionAnswer>
+    public interface IEventQuestionAnswerAppService : IGenericAppService<EventQuestionAnswer>
     {
         Task<EventQuestionAnswer> AddRuleButtonAsync(Guid[] ids);
     }

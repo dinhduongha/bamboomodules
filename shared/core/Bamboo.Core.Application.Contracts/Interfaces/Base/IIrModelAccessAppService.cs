@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrModelAccessAppService : IGenericApplicationService<IrModelAccess>
+    public interface IIrModelAccessAppService : IGenericAppService<IrModelAccess>
     {
         Task<IrModelAccess> CallCacheClearingMethodsAsync(Guid[] ids);
         Task<IrModelAccess> CheckAsync(IrModelAccessCheckRequestDto input);

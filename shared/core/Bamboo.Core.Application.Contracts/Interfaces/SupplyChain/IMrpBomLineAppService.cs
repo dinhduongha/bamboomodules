@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpBomLineAppService : IGenericApplicationService<MrpBomLine>
+    public interface IMrpBomLineAppService : IGenericAppService<MrpBomLine>
     {
         Task<MrpBomLine> AddFromCatalogAsync(Guid[] ids);
         Task<MrpBomLine> OnchangeProductIdAsync(Guid[] ids);

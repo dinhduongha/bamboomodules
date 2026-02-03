@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IOnboardingOnboardingAppService : IGenericApplicationService<OnboardingOnboarding>
+    public interface IOnboardingOnboardingAppService : IGenericAppService<OnboardingOnboarding>
     {
         Task<OnboardingOnboarding> CloseAsync(Guid[] ids);
         Task<OnboardingOnboarding> ClosePanelAccountDashboardAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IImLivechatChannelRuleAppService : IGenericApplicationService<ImLivechatChannelRule>
+    public interface IImLivechatChannelRuleAppService : IGenericAppService<ImLivechatChannelRule>
     {
         Task<ImLivechatChannelRule> MatchRuleAsync(ImLivechatChannelRuleMatchRuleRequestDto input);
     }

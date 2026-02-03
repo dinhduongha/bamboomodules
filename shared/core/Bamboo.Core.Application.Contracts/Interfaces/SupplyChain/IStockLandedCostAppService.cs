@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockLandedCostAppService : IGenericApplicationService<StockLandedCost>
+    public interface IStockLandedCostAppService : IGenericAppService<StockLandedCost>
     {
         Task<StockLandedCost> ButtonCancelAsync(Guid[] ids);
         Task<StockLandedCost> ButtonValidateAsync(Guid[] ids);

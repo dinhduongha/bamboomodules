@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IImLivechatChannelMemberHistoryAppService : IGenericApplicationService<ImLivechatChannelMemberHistory>
+    public interface IImLivechatChannelMemberHistoryAppService : IGenericAppService<ImLivechatChannelMemberHistory>
     {
         Task<ImLivechatChannelMemberHistory> OpenDiscussChannelViewAsync(ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input);
     }

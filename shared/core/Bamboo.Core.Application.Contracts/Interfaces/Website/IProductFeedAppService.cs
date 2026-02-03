@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductFeedAppService : IGenericApplicationService<ProductFeed>
+    public interface IProductFeedAppService : IGenericAppService<ProductFeed>
     {
         Task<ProductFeed> InvalidateCacheAsync(Guid[] ids);
     }

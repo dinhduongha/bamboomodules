@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrCronAppService : IGenericApplicationService<IrCron>
+    public interface IIrCronAppService : IGenericAppService<IrCron>
     {
         Task<IrCron> MethodDirectTriggerAsync(Guid[] ids);
         Task<IrCron> ToggleAsync(IrCronToggleRequestDto input);

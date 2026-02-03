@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IStockMoveLineAppService : IGenericApplicationService<StockMoveLine>
+    public interface IStockMoveLineAppService : IGenericAppService<StockMoveLine>
     {
         Task<StockMoveLine> GetMoveLineQuantMatchAsync(StockMoveLineGetMoveLineQuantMatchRequestDto input);
         Task<StockMoveLine> OpenAddToWaveAsync(Guid[] ids);

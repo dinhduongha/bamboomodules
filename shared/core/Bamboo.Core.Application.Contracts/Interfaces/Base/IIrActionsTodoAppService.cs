@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IIrActionsTodoAppService : IGenericApplicationService<IrActionsTodo>
+    public interface IIrActionsTodoAppService : IGenericAppService<IrActionsTodo>
     {
         Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid[] ids);
         Task<IrActionsTodo> LaunchAsync(Guid[] ids);

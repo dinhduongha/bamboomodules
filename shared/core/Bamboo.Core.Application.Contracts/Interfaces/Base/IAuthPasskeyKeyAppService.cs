@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAuthPasskeyKeyAppService : IGenericApplicationService<AuthPasskeyKey>
+    public interface IAuthPasskeyKeyAppService : IGenericAppService<AuthPasskeyKey>
     {
         Task<AuthPasskeyKey> DeletePasskeyAsync(Guid[] ids);
         Task<AuthPasskeyKey> InitAsync(Guid[] ids);

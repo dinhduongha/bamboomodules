@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IRestaurantFloorAppService : IGenericApplicationService<RestaurantFloor>
+    public interface IRestaurantFloorAppService : IGenericAppService<RestaurantFloor>
     {
         Task<RestaurantFloor> DeactivateFloorAsync(RestaurantFloorDeactivateFloorRequestDto input);
         Task<RestaurantFloor> RenameFloorAsync(RestaurantFloorRenameFloorRequestDto input);

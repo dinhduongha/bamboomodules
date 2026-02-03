@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResConfigAppService : IGenericApplicationService<ResConfig>
+    public interface IResConfigAppService : IGenericAppService<ResConfig>
     {
         Task<ResConfig> CancelAsync(Guid[] ids);
         Task<ResConfig> CancelActionAsync(Guid[] ids);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IEventBoothRegistrationAppService : IGenericApplicationService<EventBoothRegistration>
+    public interface IEventBoothRegistrationAppService : IGenericAppService<EventBoothRegistration>
     {
         Task<EventBoothRegistration> ConfirmAsync(Guid[] ids);
     }

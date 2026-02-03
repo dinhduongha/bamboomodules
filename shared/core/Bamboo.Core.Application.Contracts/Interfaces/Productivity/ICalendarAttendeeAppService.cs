@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICalendarAttendeeAppService : IGenericApplicationService<CalendarAttendee>
+    public interface ICalendarAttendeeAppService : IGenericAppService<CalendarAttendee>
     {
         Task<CalendarAttendee> DoAcceptAsync(Guid[] ids);
         Task<CalendarAttendee> DoDeclineAsync(Guid[] ids);

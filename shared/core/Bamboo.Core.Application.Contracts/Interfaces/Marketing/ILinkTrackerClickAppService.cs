@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILinkTrackerClickAppService : IGenericApplicationService<LinkTrackerClick>
+    public interface ILinkTrackerClickAppService : IGenericAppService<LinkTrackerClick>
     {
         Task<LinkTrackerClick> AddClickAsync(LinkTrackerClickAddClickRequestDto input);
     }

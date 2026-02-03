@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IResPartnerBankAppService : IGenericApplicationService<ResPartnerBank>
+    public interface IResPartnerBankAppService : IGenericAppService<ResPartnerBank>
     {
         Task<ResPartnerBank> ArchiveBankAsync(Guid[] ids);
         Task<ResPartnerBank> BuildQrCodeBase64Async(ResPartnerBankBuildQrCodeBase64RequestDto input);

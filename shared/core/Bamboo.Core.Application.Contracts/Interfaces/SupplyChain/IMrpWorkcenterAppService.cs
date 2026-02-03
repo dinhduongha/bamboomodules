@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMrpWorkcenterAppService : IGenericApplicationService<MrpWorkcenter>
+    public interface IMrpWorkcenterAppService : IGenericAppService<MrpWorkcenter>
     {
         Task<MrpWorkcenter> ArchiveAsync(Guid[] ids);
         Task<MrpWorkcenter> ShowOperationsAsync(Guid[] ids);

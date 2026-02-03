@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICrmLostReasonAppService : IGenericApplicationService<CrmLostReason>
+    public interface ICrmLostReasonAppService : IGenericAppService<CrmLostReason>
     {
         Task<CrmLostReason> LostLeadsAsync(Guid[] ids);
     }

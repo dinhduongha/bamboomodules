@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBaseEnableProfilingWizardAppService : IGenericApplicationService<BaseEnableProfilingWizard>
+    public interface IBaseEnableProfilingWizardAppService : IGenericAppService<BaseEnableProfilingWizard>
     {
         Task<BaseEnableProfilingWizard> SubmitAsync(Guid[] ids);
     }

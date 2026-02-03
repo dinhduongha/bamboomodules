@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICalendarEventAppService : IGenericApplicationService<CalendarEvent>
+    public interface ICalendarEventAppService : IGenericAppService<CalendarEvent>
     {
         Task<CalendarEvent> ChangeAttendeeStatusAsync(CalendarEventChangeAttendeeStatusRequestDto input);
         Task<CalendarEvent> ClearVideocallLocationAsync(Guid[] ids);

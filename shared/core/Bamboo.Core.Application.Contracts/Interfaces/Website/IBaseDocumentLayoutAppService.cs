@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IBaseDocumentLayoutAppService : IGenericApplicationService<BaseDocumentLayout>
+    public interface IBaseDocumentLayoutAppService : IGenericAppService<BaseDocumentLayout>
     {
         Task<BaseDocumentLayout> DocumentLayoutSaveAsync(Guid[] ids);
         Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProductDocumentAppService : IGenericApplicationService<ProductDocument>
+    public interface IProductDocumentAppService : IGenericAppService<ProductDocument>
     {
         Task<ProductDocument> CopyDataAsync(ProductDocumentCopyDataRequestDto input);
         Task<ProductDocument> OpenPdfFormFieldsAsync(Guid[] ids);

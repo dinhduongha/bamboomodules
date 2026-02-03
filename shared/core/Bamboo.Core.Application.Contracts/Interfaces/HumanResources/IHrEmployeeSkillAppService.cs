@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrEmployeeSkillAppService : IGenericApplicationService<HrEmployeeSkill>
+    public interface IHrEmployeeSkillAppService : IGenericAppService<HrEmployeeSkill>
     {
         Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid[] ids);
         Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid[] ids);

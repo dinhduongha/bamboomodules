@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrTalentPoolAppService : IGenericApplicationService<HrTalentPool>
+    public interface IHrTalentPoolAppService : IGenericAppService<HrTalentPool>
     {
         Task<HrTalentPool> TalentPoolAddTalentsAsync(Guid[] ids);
     }

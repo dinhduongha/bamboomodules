@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailingMailingAppService : IGenericApplicationService<MailingMailing>
+    public interface IMailingMailingAppService : IGenericAppService<MailingMailing>
     {
         Task<MailingMailing> BuySmsCreditsAsync(Guid[] ids);
         Task<MailingMailing> CancelAsync(Guid[] ids);

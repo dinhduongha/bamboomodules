@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProjectProjectAppService : IGenericApplicationService<ProjectProject>
+    public interface IProjectProjectAppService : IGenericAppService<ProjectProject>
     {
         Task<ProjectProject> BillableTimeButtonAsync(Guid[] ids);
         Task<ProjectProject> CheckFeaturesEnabledAsync(ProjectProjectCheckFeaturesEnabledRequestDto input);

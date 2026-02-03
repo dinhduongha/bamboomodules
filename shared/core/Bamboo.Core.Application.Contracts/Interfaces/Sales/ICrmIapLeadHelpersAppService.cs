@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ICrmIapLeadHelpersAppService : IGenericApplicationService<CrmIapLeadHelpers>
+    public interface ICrmIapLeadHelpersAppService : IGenericAppService<CrmIapLeadHelpers>
     {
         Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(CrmIapLeadHelpersLeadValsFromResponseRequestDto input);
     }

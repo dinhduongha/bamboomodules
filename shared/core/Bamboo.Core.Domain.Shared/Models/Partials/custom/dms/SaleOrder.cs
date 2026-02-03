@@ -11,5 +11,4 @@ public partial class SaleOrder
     [Column("delivery_priority")]
     public int? DeliveryPriority { get; set; } = 5; // 1-10, 10 cao nhất
 
-    // Không có FK mới cần navigation
 }

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IFleetVehicleLogContractAppService : IGenericApplicationService<FleetVehicleLogContract>
+    public interface IFleetVehicleLogContractAppService : IGenericAppService<FleetVehicleLogContract>
     {
         Task<FleetVehicleLogContract> CloseAsync(Guid[] ids);
         Task<FleetVehicleLogContract> ComputeNextYearDateAsync(FleetVehicleLogContractComputeNextYearDateRequestDto input);

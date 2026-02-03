@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IUtmCampaignAppService : IGenericApplicationService<UtmCampaign>
+    public interface IUtmCampaignAppService : IGenericAppService<UtmCampaign>
     {
         Task<UtmCampaign> CreateMassSmsAsync(Guid[] ids);
         Task<UtmCampaign> RedirectToInvoicedAsync(Guid[] ids);

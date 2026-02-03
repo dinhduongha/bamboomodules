@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISlideSlideAppService : IGenericApplicationService<SlideSlide>
+    public interface ISlideSlideAppService : IGenericAppService<SlideSlide>
     {
         Task<SlideSlide> CopyDataAsync(SlideSlideCopyDataRequestDto input);
         Task<SlideSlide> DislikeAsync(Guid[] ids);

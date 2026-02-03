@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IAccountMoveAppService : IGenericApplicationService<AccountMove>
+    public interface IAccountMoveAppService : IGenericAppService<AccountMove>
     {
         Task<AccountMove> ActivateCurrencyAsync(Guid[] ids);
         Task<AccountMove> AddFromCatalogAsync(Guid[] ids);

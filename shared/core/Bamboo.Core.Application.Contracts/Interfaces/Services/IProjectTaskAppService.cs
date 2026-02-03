@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProjectTaskAppService : IGenericApplicationService<ProjectTask>
+    public interface IProjectTaskAppService : IGenericAppService<ProjectTask>
     {
         Task<ProjectTask> ArchiveAsync(Guid[] ids);
         Task<ProjectTask> ConvertToSubtaskAsync(Guid[] ids);

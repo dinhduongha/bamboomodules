@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IMailAliasAppService : IGenericApplicationService<MailAlias>
+    public interface IMailAliasAppService : IGenericAppService<MailAlias>
     {
         Task<MailAlias> OpenDocumentAsync(Guid[] ids);
         Task<MailAlias> OpenParentDocumentAsync(Guid[] ids);

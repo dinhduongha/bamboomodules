@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ILunchProductAppService : IGenericApplicationService<LunchProduct>
+    public interface ILunchProductAppService : IGenericAppService<LunchProduct>
     {
         Task<LunchProduct> ToggleActiveAsync(Guid[] ids);
     }

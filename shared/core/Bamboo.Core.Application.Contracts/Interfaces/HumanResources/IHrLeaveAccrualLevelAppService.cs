@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrLeaveAccrualLevelAppService : IGenericApplicationService<HrLeaveAccrualLevel>
+    public interface IHrLeaveAccrualLevelAppService : IGenericAppService<HrLeaveAccrualLevel>
     {
         Task<HrLeaveAccrualLevel> SaveNewAsync(Guid[] ids);
     }

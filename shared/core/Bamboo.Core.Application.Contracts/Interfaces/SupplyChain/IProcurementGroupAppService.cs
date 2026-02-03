@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IProcurementGroupAppService : IGenericApplicationService<ProcurementGroup>
+    public interface IProcurementGroupAppService : IGenericAppService<ProcurementGroup>
     {
         Task<ProcurementGroup> RunAsync(ProcurementGroupRunRequestDto input);
         Task<ProcurementGroup> RunSchedulerAsync(ProcurementGroupRunSchedulerRequestDto input);

@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrRecruitmentSourceAppService : IGenericApplicationService<HrRecruitmentSource>
+    public interface IHrRecruitmentSourceAppService : IGenericAppService<HrRecruitmentSource>
     {
         Task<HrRecruitmentSource> CreateAliasAsync(Guid[] ids);
         Task<HrRecruitmentSource> CreateAndGetAliasAsync(Guid[] ids);

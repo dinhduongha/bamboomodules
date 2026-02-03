@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrContractAppService : IGenericApplicationService<HrContract>
+    public interface IHrContractAppService : IGenericAppService<HrContract>
     {
         Task<HrContract> GenerateWorkEntriesAsync(HrContractGenerateWorkEntriesRequestDto input);
         Task<HrContract> GetAllStructuresAsync(Guid[] ids);

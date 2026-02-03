@@ -14,5 +14,4 @@ public partial class ProductProduct
     [Column("is_deliverable")]
     public bool? IsDeliverable { get; set; } = true;
 
-    // Không có FK mới cần navigation, nên không thêm HasOne ở đây
 }

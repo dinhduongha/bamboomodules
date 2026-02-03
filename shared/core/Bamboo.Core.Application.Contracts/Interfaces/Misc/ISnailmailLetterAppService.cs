@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface ISnailmailLetterAppService : IGenericApplicationService<SnailmailLetter>
+    public interface ISnailmailLetterAppService : IGenericAppService<SnailmailLetter>
     {
         Task<SnailmailLetter> CancelAsync(Guid[] ids);
         Task<SnailmailLetter> SnailmailPrintAsync(Guid[] ids);

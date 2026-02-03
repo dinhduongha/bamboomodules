@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IRepairOrderAppService : IGenericApplicationService<RepairOrder>
+    public interface IRepairOrderAppService : IGenericAppService<RepairOrder>
     {
         Task<RepairOrder> AddFromCatalogAsync(Guid[] ids);
         Task<RepairOrder> AssignAsync(Guid[] ids);

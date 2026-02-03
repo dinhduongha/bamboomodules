@@ -8,7 +8,7 @@ using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IHrAttendanceAppService : IGenericApplicationService<HrAttendance>
+    public interface IHrAttendanceAppService : IGenericAppService<HrAttendance>
     {
         Task<HrAttendance> ApproveOvertimeAsync(Guid[] ids);
         Task<HrAttendance> GetKioskUrlAsync(Guid[] ids);
